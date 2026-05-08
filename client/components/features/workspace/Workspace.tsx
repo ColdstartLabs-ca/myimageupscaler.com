@@ -21,6 +21,7 @@ import { analytics } from '@client/analytics';
 import { useEngagementTracker } from '@client/hooks/useEngagementTracker';
 import { useGallery } from '@client/hooks/useGallery';
 import { useOnboardingDriver } from '@client/hooks/useOnboardingDriver';
+import { FEATURE_FLAGS } from '@shared/config/feature-flags';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useUpgradeAbandonmentDetector } from '@client/hooks/useUpgradeAbandonmentDetector';
 import { useUserData } from '@client/store/userStore';
@@ -133,8 +134,10 @@ const Workspace: React.FC = () => {
     });
   }, [searchParams]);
 
-  // First-time user onboarding state
-  const [isFirstTimeUser] = useState(() => checkIsFirstTimeUser());
+  // First-time user onboarding state (gated by feature flag)
+  const [isFirstTimeUser] = useState(
+    () => FEATURE_FLAGS.ENABLE_ONBOARDING && checkIsFirstTimeUser()
+  );
   const [showSamplesModal, setShowSamplesModal] = useState(false);
   const { startTourPhase1, startTour, startTourPhase3 } = useOnboardingDriver();
 
