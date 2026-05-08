@@ -60,7 +60,9 @@ export type IModelInput =
   | ISeedreamInput
   | IRealEsrganAnimeInput
   | IPImageEditInput
-  | IFluxKontextFastInput;
+  | IFluxKontextFastInput
+  | IClarityProUpscalerInput
+  | IRecraftCrispUpscaleInput;
 
 /**
  * Real-ESRGAN input
@@ -188,6 +190,25 @@ export interface IFluxKontextFastInput {
   output_format?: string;
   output_quality?: number;
   num_inference_steps?: number;
+}
+
+/**
+ * Clarity Pro Upscaler input
+ * Based on Replicate API schema for philz1337x/clarity-pro-upscaler
+ */
+export interface IClarityProUpscalerInput {
+  image: string;
+  scale_factor: number;
+  creativity: number;
+  output_format: string;
+}
+
+/**
+ * Recraft Crisp Upscale input
+ * Based on Replicate API schema for recraft-ai/recraft-crisp-upscale
+ */
+export interface IRecraftCrispUpscaleInput {
+  image: string;
 }
 
 /**

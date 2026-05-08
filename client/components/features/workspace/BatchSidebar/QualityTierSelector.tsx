@@ -46,6 +46,9 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
 
   const formatCredits = (): string => {
     if (currentTierConfig.credits === 'variable') {
+      if (tier === 'clarity-pro') {
+        return 'Variable credits';
+      }
       return '1-8 credits';
     }
 

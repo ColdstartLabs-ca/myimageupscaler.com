@@ -41,6 +41,8 @@ const DEFAULT_MODEL_VERSIONS: Record<string, string> = {
     'xinntao/realesrgan:1b976a4d456ed9e4d1a846597b7614e79eadad3032e9124fa63859db0fd59b56',
   'p-image-edit': 'prunaai/p-image-edit',
   'flux-kontext-fast': 'prunaai/flux-kontext-fast',
+  'clarity-pro-upscaler': 'philz1337x/clarity-pro-upscaler:8e33eb474936d75d3ceaa787f3e66f5ba16f35db0853a7697a4ca4e5fc14b6cd',
+  'recraft-crisp-upscale': 'recraft-ai/recraft-crisp-upscale:2177c1e3a177f5a76c632e467c32b413e424c23d84e43f7b036a965e305f6557',
 };
 
 /**
@@ -58,6 +60,8 @@ const MODEL_COSTS: Record<string, number> = {
   'realesrgan-anime': CONFIG_MODEL_COSTS.REALESRGAN_ANIME_COST,
   'p-image-edit': CONFIG_MODEL_COSTS.P_IMAGE_EDIT_COST,
   'flux-kontext-fast': CONFIG_MODEL_COSTS.FLUX_KONTEXT_FAST_COST,
+  'clarity-pro-upscaler': CONFIG_MODEL_COSTS.CLARITY_PRO_UPSCALER_COST,
+  'recraft-crisp-upscale': CONFIG_MODEL_COSTS.RECRAFT_CRISP_UPSCALE_COST,
 };
 
 /**
@@ -75,6 +79,8 @@ const MODEL_CREDIT_MULTIPLIERS: Record<string, number> = {
   'realesrgan-anime': CREDIT_COSTS.REALESRGAN_ANIME_MULTIPLIER,
   'p-image-edit': CREDIT_COSTS.P_IMAGE_EDIT_MULTIPLIER,
   'flux-kontext-fast': CREDIT_COSTS.FLUX_KONTEXT_FAST_MULTIPLIER,
+  'clarity-pro-upscaler': CREDIT_COSTS.CLARITY_PRO_UPSCALER_MULTIPLIER,
+  'recraft-crisp-upscale': CREDIT_COSTS.RECRAFT_CRISP_UPSCALE_MULTIPLIER,
 };
 
 /**
@@ -126,6 +132,8 @@ export class ModelRegistry {
       'realesrgan-anime': serverEnv.MODEL_VERSION_REALESRGAN_ANIME,
       'p-image-edit': serverEnv.MODEL_VERSION_P_IMAGE_EDIT,
       'flux-kontext-fast': serverEnv.MODEL_VERSION_FLUX_KONTEXT_FAST,
+      'clarity-pro-upscaler': serverEnv.MODEL_VERSION_CLARITY_PRO_UPSCALER,
+      'recraft-crisp-upscale': serverEnv.MODEL_VERSION_RECRAFT_CRISP_UPSCALE,
     };
     return overrides[modelId] || DEFAULT_MODEL_VERSIONS[modelId];
   }
@@ -350,6 +358,44 @@ export class ModelRegistry {
         supportedScales: [], // Enhancement-only, no scale support
         isEnabled: true,
         tierRestriction: undefined, // Free tier
+      },
+      // Clarity Pro Upscaler (Premium Pixel-Aware Upscale)
+      // Creative high-detail upscale with output-megapixel-based pricing
+      {
+        id: 'clarity-pro-upscaler',
+        displayName: 'Clarity Pro',
+        provider: 'replicate',
+        modelVersion: this.getModelVersion('clarity-pro-upscaler'),
+        capabilities: ['upscale', 'enhance', 'face-restoration', 'denoise'],
+        costPerRun: MODEL_COSTS['clarity-pro-upscaler'],
+        creditMultiplier: MODEL_CREDIT_MULTIPLIERS['clarity-pro-upscaler'],
+        qualityScore: 9.6,
+        processingTimeMs: TIMEOUTS.CLARITY_PRO_UPSCALER_PROCESSING_TIME,
+        maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
+        maxInputPixels: MODEL_MAX_INPUT_PIXELS['clarity-pro-upscaler'],
+        maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
+        supportedScales: [2, 4, 8], // 2x, 4x, 8x for launch (16x deferred)
+        isEnabled: serverEnv.ENABLE_PREMIUM_MODELS,
+        tierRestriction: 'hobby',
+      },
+      // Recraft Crisp Upscale (Fixed-Cost Sharp Upscale)
+      // Enhancement-only model with crisp, clean output
+      {
+        id: 'recraft-crisp-upscale',
+        displayName: 'Crisp Upscale',
+        provider: 'replicate',
+        modelVersion: this.getModelVersion('recraft-crisp-upscale'),
+        capabilities: ['enhance', 'denoise', '4k-output'],
+        costPerRun: MODEL_COSTS['recraft-crisp-upscale'],
+        creditMultiplier: MODEL_CREDIT_MULTIPLIERS['recraft-crisp-upscale'],
+        qualityScore: 9.0,
+        processingTimeMs: TIMEOUTS.RECRAFT_CRISP_UPSCALE_PROCESSING_TIME,
+        maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
+        maxInputPixels: MODEL_MAX_INPUT_PIXELS['recraft-crisp-upscale'],
+        maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
+        supportedScales: [], // Enhancement-only, no scale support
+        isEnabled: serverEnv.ENABLE_PREMIUM_MODELS,
+        tierRestriction: 'hobby',
       },
     ];
 

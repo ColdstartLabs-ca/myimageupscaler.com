@@ -27,6 +27,8 @@ const REPLICATE_CONFIG: IProviderConfig = {
     'flux-2-pro',
     'nano-banana-pro',
     'qwen-image-edit',
+    'clarity-pro-upscaler',
+    'recraft-crisp-upscale',
   ],
   // No fallback needed for paid provider
   freeTier: {

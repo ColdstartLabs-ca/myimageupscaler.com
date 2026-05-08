@@ -4,7 +4,11 @@ import { ModelRegistry } from '@server/services/model-registry';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
 import { MODEL_SCALE_CREDIT_MULTIPLIERS } from '@shared/config/model-costs.config';
-import { getCreditsForTierAtScale, modelIdToTier } from '@shared/config/subscription.utils';
+import {
+  calculateProviderAwareCredits,
+  getCreditsForTierAtScale,
+  modelIdToTier,
+} from '@shared/config/subscription.utils';
 import { ErrorCodes, createErrorResponse } from '@shared/utils/errors';
 import { NextRequest, NextResponse } from 'next/server';
 import { ZodError, z } from 'zod';
@@ -43,8 +47,19 @@ const creditEstimateSchema = z.object({
     preferredModel: z.string().optional(),
     targetResolution: z.enum(['2k', '4k', '8k']).optional(),
     selectedModel: z
-      .enum(['auto', 'real-esrgan', 'gfpgan', 'nano-banana', 'clarity-upscaler', 'nano-banana-pro'])
+      .enum([
+        'auto',
+        'real-esrgan',
+        'gfpgan',
+        'nano-banana',
+        'clarity-upscaler',
+        'nano-banana-pro',
+        'clarity-pro-upscaler',
+        'recraft-crisp-upscale',
+      ])
       .default('auto'),
+    inputWidth: z.number().int().positive().optional(),
+    inputHeight: z.number().int().positive().optional(),
   }),
   analysisHint: z
     .object({
@@ -233,24 +248,31 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     // Map resolved model to quality tier for tier-based credit calculation.
-    // This mirrors upscale/route.ts exactly: creditCost = getCreditsForTier(tier) × scaleMultiplier
     const tier = modelIdToTier(modelToUse);
 
-    // Get scale-aware tier credits (e.g., hd-upscale@4x = 8, hd-upscale@2x = 4)
-    const tierCredits = getCreditsForTierAtScale(tier, validatedInput.config.scale);
+    // Use provider-aware pricing for new models, fallback to legacy tier-based for others
+    const providerAware = calculateProviderAwareCredits({
+      modelId: modelToUse,
+      qualityTier: tier,
+      scale: validatedInput.config.scale,
+      inputWidth: validatedInput.config.inputWidth,
+      inputHeight: validatedInput.config.inputHeight,
+    });
 
-    // Apply resolution multiplier if targetResolution is specified
-    const resolutionMultipliers: Record<string, number> = { '2k': 1.0, '4k': 1.5, '8k': 2.0 };
-    const resolutionMultiplier = validatedInput.config.targetResolution
-      ? resolutionMultipliers[validatedInput.config.targetResolution] || 1.0
-      : 1.0;
+    let totalCredits = providerAware.credits;
 
-    // Scale multiplier retained for breakdown transparency
+    // For legacy flat-priced models, apply resolution multiplier and bounds
+    if (providerAware.pricingModel === 'flat') {
+      const resolutionMultipliers: Record<string, number> = { '2k': 1.0, '4k': 1.5, '8k': 2.0 };
+      const resolutionMultiplier = validatedInput.config.targetResolution
+        ? resolutionMultipliers[validatedInput.config.targetResolution] || 1.0
+        : 1.0;
+      totalCredits = Math.ceil(totalCredits * resolutionMultiplier);
+    }
+
+    // Scale multiplier retained for breakdown transparency (legacy only)
     const scaleMultiplier =
       MODEL_SCALE_CREDIT_MULTIPLIERS[modelToUse]?.[validatedInput.config.scale] ?? 1.0;
-
-    // Total credits — matches upscale route formula
-    const totalCredits = Math.ceil(tierCredits * resolutionMultiplier);
 
     // Calculate estimated processing time (scale can still affect processing time)
     const scaleTimeMultipliers: Record<2 | 4 | 8, number> = { 2: 1.0, 4: 1.5, 8: 2.0 };
@@ -263,10 +285,19 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const response = {
       breakdown: {
         tier,
-        tierCredits,
+        tierCredits: providerAware.pricingModel === 'flat' ? getCreditsForTierAtScale(tier, validatedInput.config.scale) : providerAware.credits,
         scaleMultiplier,
-        resolutionMultiplier,
+        resolutionMultiplier:
+          providerAware.pricingModel === 'flat'
+            ? (validatedInput.config.targetResolution
+                ? { '2k': 1.0, '4k': 1.5, '8k': 2.0 }[validatedInput.config.targetResolution] || 1.0
+                : 1.0)
+            : 1.0,
         totalCredits,
+        pricingModel: providerAware.pricingModel,
+        ...(providerAware.outputMegapixels !== undefined
+          ? { outputMegapixels: providerAware.outputMegapixels }
+          : {}),
       },
       modelToBe: modelToUse,
       modelDisplayName: model.displayName,

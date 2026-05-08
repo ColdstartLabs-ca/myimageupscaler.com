@@ -28,7 +28,9 @@ export type QualityTier =
   | 'bg-removal'
   | 'lighting-fix'
   | 'resume-photo'
-  | 'photo-repair';
+  | 'photo-repair'
+  | 'clarity-pro'
+  | 'crisp-upscale';
 
 // Preview images for model gallery (before/after comparison)
 export interface IPreviewImages {
@@ -291,6 +293,35 @@ export const QUALITY_TIER_CONFIG: Record<
     customPrompt:
       'Repair this physically damaged photograph. Preserve original structure and dimensions. Reconstruct any torn, missing, or destroyed areas by intelligently filling in the gaps based on surrounding context. Remove scratches, cracks, water stains, and other physical damage marks. Restore the image to look as if it was never damaged. Preserve the original content, colors, and composition exactly — only repair the physical damage.',
   },
+  'clarity-pro': {
+    label: 'Clarity Pro',
+    credits: 'variable',
+    modelId: 'clarity-pro-upscaler',
+    description: 'Creative high-detail upscale with pixel-aware quality',
+    bestFor: 'Portraits, products, AI images, print',
+    smartAnalysisAlwaysOn: false,
+    useCases: ['creative upscale', 'identity', 'print', 'portrait', 'product', 'high detail'],
+    previewImages: {
+      before: '/before-after/clarity-pro/before.webp',
+      after: '/before-after/clarity-pro/after.webp',
+    },
+    badge: 'popular',
+    popularity: 80,
+  },
+  'crisp-upscale': {
+    label: 'Crisp Upscale',
+    credits: 2,
+    modelId: 'recraft-crisp-upscale',
+    description: 'Sharper, cleaner images with crisp detail',
+    bestFor: 'Web graphics, product shots, print-ready assets',
+    smartAnalysisAlwaysOn: false,
+    useCases: ['crisp', 'sharp', 'clean', 'web', 'print', 'product'],
+    previewImages: {
+      before: '/before-after/crisp-upscale/before.webp',
+      after: '/before-after/crisp-upscale/after.webp',
+    },
+    popularity: 70,
+  },
 };
 
 // Convenience accessors (backward compat)
@@ -319,6 +350,8 @@ export const QUALITY_TIER_SCALES: Record<QualityTier, (2 | 4 | 8)[]> = {
   'lighting-fix': [], // seedream is enhancement-only (no upscale)
   'resume-photo': [], // seedream is enhancement-only (no upscale)
   'photo-repair': [], // seedream is enhancement-only (no upscale)
+  'clarity-pro': [2, 4, 8], // clarity-pro-upscaler supports 2x, 4x, 8x for launch
+  'crisp-upscale': [], // recraft-crisp-upscale is enhancement-only (no scale parameter)
 };
 
 // Additional options (replaces mode + toggles)
@@ -384,7 +417,9 @@ export type ModelId =
   | 'seedream'
   | 'realesrgan-anime'
   | 'p-image-edit'
-  | 'flux-kontext-fast';
+  | 'flux-kontext-fast'
+  | 'clarity-pro-upscaler'
+  | 'recraft-crisp-upscale';
 
 export type ModelCapability =
   | 'upscale'

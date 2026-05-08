@@ -19,6 +19,8 @@ export const MODEL_MAX_INPUT_PIXELS: Record<string, number> = {
   seedream: 4_000_000, // 4M pixels - capable model
   'p-image-edit': 2_073_600, // 2.0736M pixels (1440x1440)
   'flux-kontext-fast': 1_048_576, // 1.048576M pixels (1024x1024)
+  'clarity-pro-upscaler': 4_000_000, // 4M pixels - capable model
+  'recraft-crisp-upscale': 4_000_000, // 4M pixels - capable model
 } as const;
 
 export const MODEL_COSTS = {
@@ -27,6 +29,8 @@ export const MODEL_COSTS = {
   GFPGAN_COST: 0.0025,
   NANO_BANANA_COST: 0.0, // Google Gemini free tier (500 req/day)
   CLARITY_UPSCALER_COST: 0.017,
+  CLARITY_PRO_UPSCALER_COST: 0.03, // philz1337x/clarity-pro-upscaler - per output megapixel, $0.03 minimum
+  RECRAFT_CRISP_UPSCALE_COST: 0.006, // recraft-ai/recraft-crisp-upscale - fixed per image
   FLUX_2_PRO_COST: 0.05, // black-forest-labs/flux-2-pro - premium face restoration
   NANO_BANANA_PRO_COST: 0.13,
   QWEN_IMAGE_EDIT_COST: 0.03, // qwen/qwen-image-edit-2511 - budget image editing
@@ -70,6 +74,8 @@ export const MODEL_COSTS = {
     'realesrgan-anime',
     'p-image-edit',
     'flux-kontext-fast',
+    'clarity-pro-upscaler',
+    'recraft-crisp-upscale',
   ], // All models accessible with hobby tier
   PRO_MODELS: [
     'real-esrgan',
@@ -83,6 +89,8 @@ export const MODEL_COSTS = {
     'realesrgan-anime',
     'p-image-edit',
     'flux-kontext-fast',
+    'clarity-pro-upscaler',
+    'recraft-crisp-upscale',
   ], // All models accessible with pro tier
   BUSINESS_MODELS: [
     'real-esrgan',
@@ -96,6 +104,8 @@ export const MODEL_COSTS = {
     'realesrgan-anime',
     'p-image-edit',
     'flux-kontext-fast',
+    'clarity-pro-upscaler',
+    'recraft-crisp-upscale',
   ], // All models accessible with business tier
 
   // Quality tiers requiring paid subscription (free users blocked)
@@ -112,6 +122,8 @@ export const MODEL_COSTS = {
     'lighting-fix',
     'resume-photo',
     'photo-repair',
+    'clarity-pro',
+    'crisp-upscale',
   ] as const,
   // Quality tiers available to free users
   FREE_QUALITY_TIERS: ['quick', 'face-restore', 'bg-removal'] as const,
@@ -274,6 +286,26 @@ export const MODEL_CONFIG = {
     maxOutputResolution: MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
     supportedScales: [], // Enhancement-only, no scale support
     tierRestriction: null, // Free tier
+  },
+  'clarity-pro-upscaler': {
+    cost: MODEL_COSTS.CLARITY_PRO_UPSCALER_COST,
+    multiplier: 6, // Variable — actual credits computed from output megapixels
+    qualityScore: 9.6,
+    processingTime: MODEL_COSTS.PROCESSING_TIME_SLOW,
+    maxInputResolution: MODEL_COSTS.MAX_INPUT_RESOLUTION,
+    maxOutputResolution: MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
+    supportedScales: [MODEL_COSTS.DEFAULT_SCALE, MODEL_COSTS.MAX_SCALE_STANDARD, MODEL_COSTS.MAX_SCALE_PREMIUM], // 2x, 4x, 8x
+    tierRestriction: 'hobby',
+  },
+  'recraft-crisp-upscale': {
+    cost: MODEL_COSTS.RECRAFT_CRISP_UPSCALE_COST,
+    multiplier: 1, // 2 credits fixed
+    qualityScore: 9.0,
+    processingTime: MODEL_COSTS.PROCESSING_TIME_FAST,
+    maxInputResolution: MODEL_COSTS.MAX_INPUT_RESOLUTION,
+    maxOutputResolution: MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
+    supportedScales: [], // Enhancement-only, no scale support
+    tierRestriction: 'hobby',
   },
 } as const;
 

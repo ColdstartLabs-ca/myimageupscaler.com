@@ -16,3 +16,5 @@ export { SeedreamBuilder } from './seedream.builder';
 export { RealEsrganAnimeBuilder } from './realesrgan-anime.builder';
 export { PImageEditBuilder } from './p-image-edit.builder';
 export { FluxKontextFastBuilder } from './flux-kontext-fast.builder';
+export { ClarityProUpscalerBuilder } from './clarity-pro-upscaler.builder';
+export { RecraftCrispUpscaleBuilder } from './recraft-crisp-upscale.builder';

@@ -76,6 +76,12 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
       return 8;
     }
 
+    if (qualityTier === 'clarity-pro') {
+      // Clarity Pro uses pixel-aware variable pricing — cannot determine without image dimensions
+      // Show minimum cost (6 credits) as a conservative estimate
+      return 6 + smartAnalysisCost;
+    }
+
     // Use scale-aware credit calculation (applies model-specific multipliers)
     return getCreditsForTierAtScale(qualityTier, scale) + smartAnalysisCost;
   };
