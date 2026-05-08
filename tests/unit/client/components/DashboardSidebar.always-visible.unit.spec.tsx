@@ -23,6 +23,7 @@ vi.mock('lucide-react', () => ({
   X: () => null,
   Loader2: () => null,
   Zap: () => null,
+  Image: () => null,
 }));
 
 vi.mock('@client/components/stripe/CreditsDisplay', () => ({

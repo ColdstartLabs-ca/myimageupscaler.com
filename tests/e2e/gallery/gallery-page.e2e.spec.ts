@@ -243,7 +243,6 @@ test.describe('Gallery Page', () => {
       });
 
       await page.goto('/en/dashboard');
-      await page.waitForLoadState('networkidle');
 
       // Click on Gallery in sidebar
       const galleryLink = page.getByRole('button', { name: 'Gallery' });
@@ -705,8 +704,9 @@ test.describe('Gallery Page', () => {
       await galleryPage.goto();
       expect(callCount).toBeGreaterThanOrEqual(1);
 
+      const responsePromise = page.waitForResponse('**/api/gallery**');
       await galleryPage.refreshButton.click();
-      await page.waitForLoadState('networkidle');
+      await responsePromise;
 
       // Should have made additional API calls
       expect(callCount).toBeGreaterThan(1);
