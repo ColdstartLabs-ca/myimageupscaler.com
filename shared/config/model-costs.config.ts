@@ -21,6 +21,7 @@ export const MODEL_MAX_INPUT_PIXELS: Record<string, number> = {
   'flux-kontext-fast': 1_048_576, // 1.048576M pixels (1024x1024)
   'clarity-pro-upscaler': 4_000_000, // 4M pixels - capable model
   'recraft-crisp-upscale': 4_000_000, // 4M pixels - capable model
+  'nano-banana-2': 4_000_000, // 4M pixels - capable model
 } as const;
 
 export const MODEL_COSTS = {
@@ -33,6 +34,7 @@ export const MODEL_COSTS = {
   RECRAFT_CRISP_UPSCALE_COST: 0.006, // recraft-ai/recraft-crisp-upscale - fixed per image
   FLUX_2_PRO_COST: 0.05, // black-forest-labs/flux-2-pro - premium face restoration
   NANO_BANANA_PRO_COST: 0.13,
+  NANO_BANANA_2_COST: 0.08, // google/nano-banana-2 - fast image generation and editing
   QWEN_IMAGE_EDIT_COST: 0.03, // qwen/qwen-image-edit-2511 - budget image editing
   SEEDREAM_COST: 0.04, // bytedance/seedream-4.5 - image editing
   REALESRGAN_ANIME_COST: 0.0022, // xinntao/realesrgan - anime upscaling
@@ -76,6 +78,7 @@ export const MODEL_COSTS = {
     'flux-kontext-fast',
     'clarity-pro-upscaler',
     'recraft-crisp-upscale',
+    'nano-banana-2',
   ], // All models accessible with hobby tier
   PRO_MODELS: [
     'real-esrgan',
@@ -91,6 +94,7 @@ export const MODEL_COSTS = {
     'flux-kontext-fast',
     'clarity-pro-upscaler',
     'recraft-crisp-upscale',
+    'nano-banana-2',
   ], // All models accessible with pro tier
   BUSINESS_MODELS: [
     'real-esrgan',
@@ -106,6 +110,7 @@ export const MODEL_COSTS = {
     'flux-kontext-fast',
     'clarity-pro-upscaler',
     'recraft-crisp-upscale',
+    'nano-banana-2',
   ], // All models accessible with business tier
 
   // Quality tiers requiring paid subscription (free users blocked)
@@ -124,6 +129,7 @@ export const MODEL_COSTS = {
     'photo-repair',
     'clarity-pro',
     'crisp-upscale',
+    'nano-banana-2',
   ] as const,
   // Quality tiers available to free users
   FREE_QUALITY_TIERS: ['quick', 'face-restore', 'bg-removal'] as const,
@@ -305,6 +311,16 @@ export const MODEL_CONFIG = {
     maxInputResolution: MODEL_COSTS.MAX_INPUT_RESOLUTION,
     maxOutputResolution: MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
     supportedScales: [], // Enhancement-only, no scale support
+    tierRestriction: 'hobby',
+  },
+  'nano-banana-2': {
+    cost: MODEL_COSTS.NANO_BANANA_2_COST,
+    multiplier: 6,
+    qualityScore: 9.2,
+    processingTime: MODEL_COSTS.PROCESSING_TIME_MEDIUM,
+    maxInputResolution: MODEL_COSTS.MAX_INPUT_RESOLUTION,
+    maxOutputResolution: MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
+    supportedScales: [MODEL_COSTS.DEFAULT_SCALE, MODEL_COSTS.MAX_SCALE_STANDARD], // Resolution-based (0.5K/1K/2K/4K)
     tierRestriction: 'hobby',
   },
 } as const;

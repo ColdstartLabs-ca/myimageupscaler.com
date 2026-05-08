@@ -54,4 +54,33 @@ describe('Model Registry: New Upscalers', () => {
       );
     });
   });
+
+  describe('nano-banana-2', () => {
+    it('registers as distinct model from nano-banana-pro', () => {
+      const model = registry.getModel('nano-banana-2');
+      expect(model).not.toBeNull();
+      expect(model!.id).toBe('nano-banana-2');
+      expect(model!.displayName).toBe('Nano Banana 2');
+      expect(model!.provider).toBe('replicate');
+      expect(model!.capabilities).toContain('upscale');
+      expect(model!.capabilities).toContain('enhance');
+      expect(model!.supportedScales).toContain(2);
+      expect(model!.supportedScales).toContain(4);
+      expect(model!.tierRestriction).toBe('hobby');
+    });
+
+    it('maps to google/nano-banana-2 version', () => {
+      const model = registry.getModel('nano-banana-2');
+      expect(model!.modelVersion).toBe('google/nano-banana-2');
+    });
+
+    it('is a different model from nano-banana-pro', () => {
+      const nb2 = registry.getModel('nano-banana-2');
+      const nbp = registry.getModel('nano-banana-pro');
+      expect(nb2).not.toBeNull();
+      expect(nbp).not.toBeNull();
+      expect(nb2!.id).not.toBe(nbp!.id);
+      expect(nb2!.modelVersion).not.toBe(nbp!.modelVersion);
+    });
+  });
 });

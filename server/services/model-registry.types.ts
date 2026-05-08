@@ -37,7 +37,8 @@ export type ModelId =
   | 'p-image-edit'
   | 'flux-kontext-fast'
   | 'clarity-pro-upscaler'
-  | 'recraft-crisp-upscale';
+  | 'recraft-crisp-upscale'
+  | 'nano-banana-2';
 
 /**
  * Model configuration interface as defined in the PRD

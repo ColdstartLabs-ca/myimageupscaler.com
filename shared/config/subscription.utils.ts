@@ -813,6 +813,8 @@ export function modelIdToTier(modelId: string): QualityTier {
       return 'clarity-pro';
     case 'recraft-crisp-upscale':
       return 'crisp-upscale';
+    case 'nano-banana-2':
+      return 'nano-banana-2';
     // nano-banana (free Gemini tier) and flux-kontext-fast have no dedicated quality tier
     default:
       return 'quick';

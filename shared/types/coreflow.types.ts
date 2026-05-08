@@ -30,7 +30,8 @@ export type QualityTier =
   | 'resume-photo'
   | 'photo-repair'
   | 'clarity-pro'
-  | 'crisp-upscale';
+  | 'crisp-upscale'
+  | 'nano-banana-2';
 
 // Preview images for model gallery (before/after comparison)
 export interface IPreviewImages {
@@ -322,6 +323,22 @@ export const QUALITY_TIER_CONFIG: Record<
     },
     popularity: 70,
   },
+  'nano-banana-2': {
+    label: 'Nano Banana 2',
+    credits: 6,
+    modelId: 'nano-banana-2',
+    description: "Google's fast image generation model with conversational editing",
+    bestFor: 'Social media, quick edits, batch processing, multi-image fusion',
+    smartAnalysisAlwaysOn: false,
+    useCases: ['fast edit', 'social media', 'batch', 'multi-image', 'creative'],
+    previewImages: {
+      before: '/before-after/nano-banana-2/preview.webp',
+      after: '/before-after/nano-banana-2/preview.webp',
+      displayMode: 'static',
+    },
+    badge: 'recommended',
+    popularity: 85,
+  },
 };
 
 // Convenience accessors (backward compat)
@@ -352,6 +369,7 @@ export const QUALITY_TIER_SCALES: Record<QualityTier, (2 | 4 | 8)[]> = {
   'photo-repair': [], // seedream is enhancement-only (no upscale)
   'clarity-pro': [2, 4, 8], // clarity-pro-upscaler supports 2x, 4x, 8x for launch
   'crisp-upscale': [], // recraft-crisp-upscale is enhancement-only (no scale parameter)
+  'nano-banana-2': [2, 4], // nano-banana-2 is resolution-based (0.5K/1K/2K/4K)
 };
 
 // Additional options (replaces mode + toggles)
@@ -419,7 +437,8 @@ export type ModelId =
   | 'p-image-edit'
   | 'flux-kontext-fast'
   | 'clarity-pro-upscaler'
-  | 'recraft-crisp-upscale';
+  | 'recraft-crisp-upscale'
+  | 'nano-banana-2';
 
 export type ModelCapability =
   | 'upscale'
@@ -484,7 +503,7 @@ export type NanoBananaProAspectRatio =
   | '16:9'
   | '21:9';
 
-export type NanoBananaProResolution = '1K' | '2K' | '4K';
+export type NanoBananaProResolution = '0.5K' | '1K' | '2K' | '4K';
 export type NanoBananaProOutputFormat = 'jpg' | 'png';
 export type NanoBananaProSafetyLevel =
   | 'block_low_and_above'

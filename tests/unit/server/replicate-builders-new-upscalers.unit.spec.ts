@@ -51,4 +51,30 @@ describe('Replicate Builders: New Upscalers', () => {
       expect(input).not.toHaveProperty('creativity');
     });
   });
+
+  describe('NanoBanana2Builder', () => {
+    it('builds correct input schema with prompt, image_input, resolution, aspect_ratio, and output_format', () => {
+      const input = buildModelInput('nano-banana-2', baseInput);
+      expect(input).toHaveProperty('prompt');
+      expect(input).toHaveProperty('image_input');
+      expect(Array.isArray(input.image_input)).toBe(true);
+      expect(input).toHaveProperty('resolution');
+      expect(input).toHaveProperty('aspect_ratio');
+      expect(input).toHaveProperty('output_format');
+    });
+
+    it('maps scale 2 to 2K resolution and scale 4 to 4K resolution', () => {
+      const input2x = buildModelInput('nano-banana-2', {
+        ...baseInput,
+        config: { ...baseInput.config, scale: 2 },
+      });
+      expect(input2x).toHaveProperty('resolution', '2K');
+
+      const input4x = buildModelInput('nano-banana-2', {
+        ...baseInput,
+        config: { ...baseInput.config, scale: 4 },
+      });
+      expect(input4x).toHaveProperty('resolution', '4K');
+    });
+  });
 });

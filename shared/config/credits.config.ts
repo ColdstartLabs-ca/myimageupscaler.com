@@ -19,6 +19,7 @@ export const CREDIT_COSTS = {
   RECRAFT_CRISP_UPSCALE_MULTIPLIER: 1, // recraft-ai/recraft-crisp-upscale - fixed 2 credits
   FLUX_2_PRO_MULTIPLIER: 6, // black-forest-labs/flux-2-pro - premium face restoration
   NANO_BANANA_PRO_MULTIPLIER: 8,
+  NANO_BANANA_2_MULTIPLIER: 6, // google/nano-banana-2 - fast image generation
   QWEN_IMAGE_EDIT_MULTIPLIER: 3, // qwen/qwen-image-edit-2511 - budget image editing
   SEEDREAM_MULTIPLIER: 4, // bytedance/seedream-4.5 - image editing
   REALESRGAN_ANIME_MULTIPLIER: 1, // xinntao/realesrgan - anime upscaling
@@ -126,6 +127,12 @@ export const MODEL_CREDIT_COSTS = {
     enhance: CREDIT_COSTS.BASE_ENHANCE_COST * CREDIT_COSTS.RECRAFT_CRISP_UPSCALE_MULTIPLIER,
     both: CREDIT_COSTS.BASE_BOTH_COST * CREDIT_COSTS.RECRAFT_CRISP_UPSCALE_MULTIPLIER,
     custom: CREDIT_COSTS.BASE_CUSTOM_COST * CREDIT_COSTS.RECRAFT_CRISP_UPSCALE_MULTIPLIER,
+  },
+  'nano-banana-2': {
+    upscale: CREDIT_COSTS.BASE_UPSCALE_COST * CREDIT_COSTS.NANO_BANANA_2_MULTIPLIER,
+    enhance: CREDIT_COSTS.BASE_ENHANCE_COST * CREDIT_COSTS.NANO_BANANA_2_MULTIPLIER,
+    both: CREDIT_COSTS.BASE_BOTH_COST * CREDIT_COSTS.NANO_BANANA_2_MULTIPLIER,
+    custom: CREDIT_COSTS.BASE_CUSTOM_COST * CREDIT_COSTS.NANO_BANANA_2_MULTIPLIER,
   },
 } as const;
 

@@ -34,7 +34,7 @@ const DEFAULT_MODEL_VERSIONS: Record<string, string> = {
   'clarity-upscaler':
     'philz1337x/clarity-upscaler:dfad41707589d68ecdccd1dfa600d55a208f9310748e44bfe35b4a6291453d5e',
   'flux-2-pro': 'black-forest-labs/flux-2-pro',
-  'nano-banana-pro': 'google/nano-banana-2',
+  'nano-banana-pro': 'google/nano-banana-pro',
   'qwen-image-edit': 'qwen/qwen-image-edit-2511',
   seedream: 'bytedance/seedream-4.5',
   'realesrgan-anime':
@@ -43,6 +43,7 @@ const DEFAULT_MODEL_VERSIONS: Record<string, string> = {
   'flux-kontext-fast': 'prunaai/flux-kontext-fast',
   'clarity-pro-upscaler': 'philz1337x/clarity-pro-upscaler:8e33eb474936d75d3ceaa787f3e66f5ba16f35db0853a7697a4ca4e5fc14b6cd',
   'recraft-crisp-upscale': 'recraft-ai/recraft-crisp-upscale:2177c1e3a177f5a76c632e467c32b413e424c23d84e43f7b036a965e305f6557',
+  'nano-banana-2': 'google/nano-banana-2',
 };
 
 /**
@@ -62,6 +63,7 @@ const MODEL_COSTS: Record<string, number> = {
   'flux-kontext-fast': CONFIG_MODEL_COSTS.FLUX_KONTEXT_FAST_COST,
   'clarity-pro-upscaler': CONFIG_MODEL_COSTS.CLARITY_PRO_UPSCALER_COST,
   'recraft-crisp-upscale': CONFIG_MODEL_COSTS.RECRAFT_CRISP_UPSCALE_COST,
+  'nano-banana-2': CONFIG_MODEL_COSTS.NANO_BANANA_2_COST,
 };
 
 /**
@@ -81,6 +83,7 @@ const MODEL_CREDIT_MULTIPLIERS: Record<string, number> = {
   'flux-kontext-fast': CREDIT_COSTS.FLUX_KONTEXT_FAST_MULTIPLIER,
   'clarity-pro-upscaler': CREDIT_COSTS.CLARITY_PRO_UPSCALER_MULTIPLIER,
   'recraft-crisp-upscale': CREDIT_COSTS.RECRAFT_CRISP_UPSCALE_MULTIPLIER,
+  'nano-banana-2': CREDIT_COSTS.NANO_BANANA_2_MULTIPLIER,
 };
 
 /**
@@ -134,6 +137,7 @@ export class ModelRegistry {
       'flux-kontext-fast': serverEnv.MODEL_VERSION_FLUX_KONTEXT_FAST,
       'clarity-pro-upscaler': serverEnv.MODEL_VERSION_CLARITY_PRO_UPSCALER,
       'recraft-crisp-upscale': serverEnv.MODEL_VERSION_RECRAFT_CRISP_UPSCALE,
+      'nano-banana-2': serverEnv.MODEL_VERSION_NANO_BANANA_2,
     };
     return overrides[modelId] || DEFAULT_MODEL_VERSIONS[modelId];
   }
@@ -394,6 +398,25 @@ export class ModelRegistry {
         maxInputPixels: MODEL_MAX_INPUT_PIXELS['recraft-crisp-upscale'],
         maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
         supportedScales: [], // Enhancement-only, no scale support
+        isEnabled: serverEnv.ENABLE_PREMIUM_MODELS,
+        tierRestriction: 'hobby',
+      },
+      // Nano Banana 2 (Fast Image Generation and Editing)
+      // Google's fast model with conversational editing and multi-image fusion
+      {
+        id: 'nano-banana-2',
+        displayName: 'Nano Banana 2',
+        provider: 'replicate',
+        modelVersion: this.getModelVersion('nano-banana-2'),
+        capabilities: ['upscale', 'enhance', 'text-preservation', 'face-restoration', 'denoise'],
+        costPerRun: MODEL_COSTS['nano-banana-2'],
+        creditMultiplier: MODEL_CREDIT_MULTIPLIERS['nano-banana-2'],
+        qualityScore: 9.2,
+        processingTimeMs: TIMEOUTS.NANO_BANANA_2_PROCESSING_TIME,
+        maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
+        maxInputPixels: MODEL_MAX_INPUT_PIXELS['nano-banana-2'],
+        maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
+        supportedScales: [2, 4], // Resolution-based (0.5K/1K/2K/4K)
         isEnabled: serverEnv.ENABLE_PREMIUM_MODELS,
         tierRestriction: 'hobby',
       },
