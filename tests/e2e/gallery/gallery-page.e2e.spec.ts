@@ -1,5 +1,7 @@
-import { test, expect, Locator } from '@playwright/test';
+import type { Locator } from '@playwright/test';
+import { test, expect } from '../../test-fixtures';
 import { BasePage } from '../../pages/BasePage';
+import { setupAuthenticatedStateWithSupabase } from '../../helpers/auth-helpers';
 
 /**
  * Gallery Page Object
@@ -40,7 +42,7 @@ class GalleryPage extends BasePage {
    * Gets all image cards
    */
   get imageCards(): Locator {
-    return this.page.locator('[class*="group"][class*="relative"]');
+    return this.page.locator('[data-testid="gallery-image-card"]');
   }
 
   /**
@@ -54,7 +56,7 @@ class GalleryPage extends BasePage {
    * Gets the refresh button
    */
   get refreshButton(): Locator {
-    return this.page.getByRole('button', { name: 'Refresh' });
+    return this.page.getByRole('button', { name: 'Refresh', exact: true });
   }
 
   /**
@@ -137,7 +139,7 @@ class GalleryPage extends BasePage {
    * Waits for images to load
    */
   async waitForImages(): Promise<void> {
-    await this.page.waitForSelector('[class*="group"][class*="relative"]', {
+    await this.page.waitForSelector('[data-testid="gallery-image-card"]', {
       timeout: 10000,
     });
   }
@@ -193,6 +195,7 @@ test.describe('Gallery Page', () => {
 
   test.beforeEach(async ({ page }) => {
     galleryPage = new GalleryPage(page);
+    await setupAuthenticatedStateWithSupabase(page);
   });
 
   test.describe('Page Navigation', () => {
@@ -230,7 +233,6 @@ test.describe('Gallery Page', () => {
       });
 
       await page.goto('/en/dashboard');
-      await page.waitForLoadState('networkidle');
 
       // Click on Gallery in sidebar
       const galleryLink = page.getByRole('button', { name: 'Gallery' });
@@ -238,7 +240,7 @@ test.describe('Gallery Page', () => {
       await galleryLink.click();
 
       // Should be on gallery page
-      await page.waitForURL('/en/dashboard/gallery');
+      await page.waitForURL(/\/dashboard\/gallery$/);
       await expect(galleryPage.pageTitle).toBeVisible();
     });
 
@@ -693,10 +695,9 @@ test.describe('Gallery Page', () => {
       expect(callCount).toBeGreaterThanOrEqual(1);
 
       await galleryPage.refreshButton.click();
-      await page.waitForLoadState('networkidle');
 
       // Should have made additional API calls
-      expect(callCount).toBeGreaterThan(1);
+      await expect.poll(() => callCount).toBeGreaterThan(1);
     });
   });
 

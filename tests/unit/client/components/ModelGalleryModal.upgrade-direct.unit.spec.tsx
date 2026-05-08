@@ -36,6 +36,8 @@ vi.mock('@client/utils/abTest', () => ({
 }));
 
 vi.mock('lucide-react', () => ({
+  Check: () => null,
+  Image: () => null,
   Lock: () => null,
   Search: () => null,
   Sparkles: () => null,

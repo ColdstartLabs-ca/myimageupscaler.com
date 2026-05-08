@@ -214,10 +214,12 @@ test.describe('Landing Page SEO', () => {
 
     test('Verify schema contains WebApplication or SoftwareApplication', async ({ page }) => {
       await page.goto('/');
+      await page.waitForLoadState('domcontentloaded');
 
       // Get ALL JSON-LD scripts and check if any contains WebApplication or SoftwareApplication
-      const schemaElements = await page.locator('script[type="application/ld+json"]').all();
-      expect(schemaElements.length).toBeGreaterThan(0);
+      const schemaLocator = page.locator('script[type="application/ld+json"]');
+      await expect.poll(() => schemaLocator.count(), { timeout: 10000 }).toBeGreaterThan(0);
+      const schemaElements = await schemaLocator.all();
 
       // Check for @type containing application-related types
       const checkType = (obj: unknown): boolean => {

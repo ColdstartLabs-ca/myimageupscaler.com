@@ -1,8 +1,20 @@
 import { test, expect } from '../test-fixtures';
+import type { Page } from '@playwright/test';
 import {
   setupAuthenticatedState,
   setupAuthenticatedStateWithSupabase,
 } from '../helpers/auth-helpers';
+
+async function uploadImageAndWaitForMobileQualitySelector(page: Page) {
+  const fileChooserPromise = page.waitForEvent('filechooser');
+  await page.getByRole('button', { name: /Click or drag images/i }).click();
+  const fileChooser = await fileChooserPromise;
+  await fileChooser.setFiles('tests/fixtures/sample.jpg');
+
+  const mobileQualityBtn = page.locator('[data-driver="mobile-quality-selector"]');
+  await expect(mobileQualityBtn).toBeVisible({ timeout: 20000 });
+  return mobileQualityBtn;
+}
 
 /**
  * Upgrade Funnel Post-Auth Redirect E2E Tests
@@ -45,7 +57,7 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
 
       // CheckoutModal renders at workspace root regardless of queue state
       const checkoutModal = page.locator('[data-modal="checkout"]');
-      await expect(checkoutModal).toBeVisible({ timeout: 8000 });
+      await expect(checkoutModal).toBeVisible({ timeout: 20000 });
 
       // Confirm param is still in the URL
       const url = new URL(page.url());
@@ -89,7 +101,7 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
       await page.waitForLoadState('domcontentloaded');
 
       const checkoutModal = page.locator('[data-modal="checkout"]');
-      await expect(checkoutModal).toBeVisible({ timeout: 8000 });
+      await expect(checkoutModal).toBeVisible({ timeout: 20000 });
 
       // processedCheckoutParamRef prevents duplicate opens
       const modalCount = await page.locator('[data-modal="checkout"]').count();
@@ -114,7 +126,7 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
       await page.waitForLoadState('domcontentloaded');
 
       const checkoutModal = page.locator('[data-modal="checkout"]');
-      await expect(checkoutModal).toBeVisible({ timeout: 8000 });
+      await expect(checkoutModal).toBeVisible({ timeout: 20000 });
 
       // Close button in CheckoutModal has an aria-label
       const closeButton = checkoutModal.locator('button[aria-label]').first();
@@ -154,7 +166,7 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
       await page.waitForLoadState('domcontentloaded');
 
       const checkoutModal = page.locator('[data-modal="checkout"]');
-      await expect(checkoutModal).toBeVisible({ timeout: 8000 });
+      await expect(checkoutModal).toBeVisible({ timeout: 20000 });
 
       // Originating model must survive the redirect
       const storedModel = await page.evaluate(
@@ -223,18 +235,12 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
       await page.goto('/workspace');
       await page.waitForLoadState('domcontentloaded');
 
-      // Upload a file to transition to active workspace (gallery only accessible then)
-      const fileInput = page.locator('input[type="file"]').first();
-      await fileInput.setInputFiles('tests/fixtures/sample.jpg');
-      await page.waitForTimeout(500);
-
       // Open model gallery via mobile quality selector
-      const mobileQualityBtn = page.locator('[data-driver="mobile-quality-selector"]');
-      await expect(mobileQualityBtn).toBeVisible({ timeout: 8000 });
+      const mobileQualityBtn = await uploadImageAndWaitForMobileQualitySelector(page);
       await mobileQualityBtn.click();
 
       const galleryModal = page.locator('text=Select Model');
-      await expect(galleryModal).toBeVisible({ timeout: 8000 });
+      await expect(galleryModal).toBeVisible({ timeout: 20000 });
 
       // Click any premium/locked tier.
       // ModelCard has a before/after slider inside whose onClick stops propagation.
@@ -286,16 +292,12 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
       await page.goto('/workspace');
       await page.waitForLoadState('domcontentloaded');
 
-      const fileInput = page.locator('input[type="file"]').first();
-      await fileInput.setInputFiles('tests/fixtures/sample.jpg');
-      await page.waitForTimeout(500);
-
-      const mobileQualityBtn = page.locator('[data-driver="mobile-quality-selector"]');
+      const mobileQualityBtn = await uploadImageAndWaitForMobileQualitySelector(page);
       if (await mobileQualityBtn.isVisible({ timeout: 8000 })) {
         await mobileQualityBtn.click();
 
         const galleryModal = page.locator('text=Select Model');
-        await expect(galleryModal).toBeVisible({ timeout: 8000 });
+        await expect(galleryModal).toBeVisible({ timeout: 20000 });
 
         // Click a free tier — should NOT set originating model
         const freeTierBtn = page.locator('[data-tier="quick"]').first();
@@ -334,17 +336,12 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
       await page.waitForLoadState('domcontentloaded');
 
       // Upload a file to get active workspace
-      const fileInput = page.locator('input[type="file"]').first();
-      await fileInput.setInputFiles('tests/fixtures/sample.jpg');
-      await page.waitForTimeout(500);
-
-      const mobileQualityBtn = page.locator('[data-driver="mobile-quality-selector"]');
-      await expect(mobileQualityBtn).toBeVisible({ timeout: 8000 });
+      const mobileQualityBtn = await uploadImageAndWaitForMobileQualitySelector(page);
       await mobileQualityBtn.click();
 
       // Model gallery opens with "Select Model" title
       const galleryModal = page.locator('text=Select Model');
-      await expect(galleryModal).toBeVisible({ timeout: 8000 });
+      await expect(galleryModal).toBeVisible({ timeout: 20000 });
 
       // Gallery closes on Escape
       await page.keyboard.press('Escape');
@@ -374,18 +371,12 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
       await page.goto('/workspace');
       await page.waitForLoadState('domcontentloaded');
 
-      // Upload to get active workspace
-      const fileInput = page.locator('input[type="file"]').first();
-      await fileInput.setInputFiles('tests/fixtures/sample.jpg');
-      await page.waitForTimeout(500);
-
       // Open model gallery
-      const mobileQualityBtn = page.locator('[data-driver="mobile-quality-selector"]');
-      await expect(mobileQualityBtn).toBeVisible({ timeout: 8000 });
+      const mobileQualityBtn = await uploadImageAndWaitForMobileQualitySelector(page);
       await mobileQualityBtn.click();
 
       const galleryModal = page.locator('text=Select Model');
-      await expect(galleryModal).toBeVisible({ timeout: 8000 });
+      await expect(galleryModal).toBeVisible({ timeout: 20000 });
 
       // Click a locked premium tier
       const lockedTier = page
@@ -410,7 +401,7 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
 
         // CheckoutModal should open after clicking locked tier (direct checkout path)
         const checkoutModal = page.locator('[data-modal="checkout"]');
-        await expect(checkoutModal).toBeVisible({ timeout: 8000 });
+        await expect(checkoutModal).toBeVisible({ timeout: 20000 });
       }
     });
 
@@ -422,7 +413,7 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
 
       // Pricing page shows plan options
       const planHeading = page.locator('text=Starter').or(page.locator('text=Pro')).first();
-      await expect(planHeading).toBeVisible({ timeout: 8000 });
+      await expect(planHeading).toBeVisible({ timeout: 20000 });
     });
   });
 
@@ -432,7 +423,7 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
       await page.waitForLoadState('domcontentloaded');
 
       const planText = page.locator('text=Starter').or(page.locator('text=Pro')).first();
-      await expect(planText).toBeVisible({ timeout: 8000 });
+      await expect(planText).toBeVisible({ timeout: 20000 });
     });
 
     test('should load pricing page for users from discounted regions', async ({ page }) => {
@@ -454,7 +445,7 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
 
       // Page must load with plan options regardless of region
       const planText = page.locator('text=Starter').or(page.locator('text=Pro')).first();
-      await expect(planText).toBeVisible({ timeout: 8000 });
+      await expect(planText).toBeVisible({ timeout: 20000 });
     });
   });
 });

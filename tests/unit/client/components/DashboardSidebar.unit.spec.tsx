@@ -15,6 +15,7 @@ import { NextIntlClientProvider } from 'next-intl';
 // used by DashboardSidebar. Override with the full set this component needs.
 vi.mock('lucide-react', () => ({
   LayoutDashboard: () => null,
+  Image: () => null,
   CreditCard: () => null,
   Settings: () => null,
   HelpCircle: () => null,
