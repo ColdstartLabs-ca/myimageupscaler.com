@@ -215,8 +215,25 @@ export function useCheckoutSession({
         console.error('Failed to create checkout session:', err);
         const errorMessage = err instanceof Error ? err.message : 'Failed to load checkout';
         const code = (err as { code?: string })?.code ?? null;
+        const stripeErrorType = (err as { type?: string })?.type ?? null;
+        const stripeErrorParam = (err as { param?: string })?.param ?? null;
         setError(errorMessage);
         setErrorCode(code);
+
+        const checkoutContext = getCheckoutTrackingContext();
+        const uiMode = isMobileViewport() ? 'hosted' : 'embedded';
+        analytics.track('checkout_error', {
+          errorType: 'network_error',
+          errorMessage,
+          step: 'plan_selection',
+          priceId,
+          trigger: checkoutContext?.trigger || 'unknown',
+          source: 'checkout_modal',
+          uiMode,
+          errorCode: code,
+          stripeErrorType,
+          stripeErrorParam,
+        });
         trackError('network_error', errorMessage, 'plan_selection');
         showToast({
           message: errorMessage,

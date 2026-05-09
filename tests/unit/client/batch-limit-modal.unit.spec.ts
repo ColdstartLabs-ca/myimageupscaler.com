@@ -274,10 +274,34 @@ describe('BatchLimitModal', () => {
         limit: 1,
         attempted: 5,
         currentCount: 1,
+        availableSlots: 0,
         serverEnforced: false,
         userType: 'free',
         copyVariant: 'value',
         quickBuy: true,
+      });
+    });
+
+    it('quick buy emits canonical batch upgrade event', async () => {
+      mockGetVariant = vi.fn(() => 'value');
+      const { BatchLimitModal } =
+        await import('@/client/components/features/workspace/BatchLimitModal');
+      const { analytics } = await import('@client/analytics/analyticsClient');
+
+      render(React.createElement(BatchLimitModal, mockProps));
+
+      const quickBuyButton = screen.getByTestId('button-gradient');
+      fireEvent.click(quickBuyButton);
+
+      expect(analytics.track).toHaveBeenCalledWith('batch_limit_upgrade_clicked', {
+        limit: 1,
+        attempted: 5,
+        currentCount: 1,
+        availableSlots: 0,
+        serverEnforced: false,
+        userType: 'free',
+        copyVariant: 'value',
+        cta: 'quick_buy',
       });
     });
 
@@ -310,10 +334,34 @@ describe('BatchLimitModal', () => {
         limit: 1,
         attempted: 5,
         currentCount: 1,
+        availableSlots: 0,
         serverEnforced: false,
         userType: 'free',
         copyVariant: 'value',
         quickBuy: false,
+      });
+    });
+
+    it('see plans emits canonical batch upgrade event', async () => {
+      mockGetVariant = vi.fn(() => 'value');
+      const { BatchLimitModal } =
+        await import('@/client/components/features/workspace/BatchLimitModal');
+      const { analytics } = await import('@client/analytics/analyticsClient');
+
+      render(React.createElement(BatchLimitModal, mockProps));
+
+      const seePlansButton = screen.getByRole('button', { name: /See All Plans/i });
+      fireEvent.click(seePlansButton);
+
+      expect(analytics.track).toHaveBeenCalledWith('batch_limit_upgrade_clicked', {
+        limit: 1,
+        attempted: 5,
+        currentCount: 1,
+        availableSlots: 0,
+        serverEnforced: false,
+        userType: 'free',
+        copyVariant: 'value',
+        cta: 'see_plans',
       });
     });
   });

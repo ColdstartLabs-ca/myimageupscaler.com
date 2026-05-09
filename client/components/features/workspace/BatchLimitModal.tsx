@@ -64,13 +64,23 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
 
   const handleQuickBuyClick = () => {
     setCheckoutTrackingContext({ trigger: 'batch_limit' });
-    analytics.track('batch_limit_quick_buy_clicked', {
+    const baseProperties = {
       limit,
       attempted,
       currentCount,
+      availableSlots,
       serverEnforced,
       userType: limit <= 5 ? 'free' : 'paid',
       copyVariant,
+    };
+    // Canonical event for funnel reporting
+    analytics.track('batch_limit_upgrade_clicked', {
+      ...baseProperties,
+      cta: 'quick_buy',
+    });
+    // Legacy detail event for backward compatibility
+    analytics.track('batch_limit_quick_buy_clicked', {
+      ...baseProperties,
       quickBuy: true,
     });
     onClose();
@@ -80,13 +90,23 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
 
   const handleSeePlansClick = () => {
     setCheckoutTrackingContext({ trigger: 'batch_limit' });
-    analytics.track('batch_limit_see_plans_clicked', {
+    const baseProperties = {
       limit,
       attempted,
       currentCount,
+      availableSlots,
       serverEnforced,
       userType: limit <= 5 ? 'free' : 'paid',
       copyVariant,
+    };
+    // Canonical event for funnel reporting
+    analytics.track('batch_limit_upgrade_clicked', {
+      ...baseProperties,
+      cta: 'see_plans',
+    });
+    // Legacy detail event for backward compatibility
+    analytics.track('batch_limit_see_plans_clicked', {
+      ...baseProperties,
       quickBuy: false,
     });
     onClose();
