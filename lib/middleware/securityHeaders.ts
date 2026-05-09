@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 import { NextResponse, NextRequest } from 'next/server';
-import { getSecurityHeaders, buildCspHeader } from '@shared/config/security';
+import { getSecurityHeaders, buildCspHeader, EXTENSION_ORIGINS } from '@shared/config/security';
 import { serverEnv } from '@shared/config/env';
 
 /**
@@ -8,7 +8,12 @@ import { serverEnv } from '@shared/config/env';
  * In test mode, includes the test server port (random port like 3100-4000)
  */
 function getAllowedOrigins(): string[] {
-  const origins = ['http://localhost:3000', 'https://localhost:3000', serverEnv.BASE_URL];
+  const origins = [
+    'http://localhost:3000',
+    'https://localhost:3000',
+    serverEnv.BASE_URL,
+    ...EXTENSION_ORIGINS, // Extension origins from env var
+  ];
 
   // In test environment, add the test server port
   if (serverEnv.ENV === 'test' && process.env.TEST_PORT) {

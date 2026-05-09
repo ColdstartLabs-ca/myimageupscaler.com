@@ -73,6 +73,7 @@ export const PSEO_CATEGORIES = [
   'personas-expanded',
   'use-cases-expanded',
   'ai-photo-editor',
+  'extensions',
 ] as const;
 
 export type PSEOCategory = (typeof PSEO_CATEGORIES)[number];
@@ -113,6 +114,7 @@ export function getCategoryDisplayName(category: PSEOCategory): string {
     'personas-expanded': 'User Personas',
     'use-cases-expanded': 'Expanded Use Cases',
     'ai-photo-editor': 'AI Photo Editor',
+    extensions: 'Browser Extensions',
   };
   return names[category];
 }
@@ -152,6 +154,8 @@ export function getCategoryDescription(category: PSEOCategory): string {
     'use-cases-expanded': 'Expanded use cases for image enhancement across various scenarios',
     'ai-photo-editor':
       'Free AI photo editor — upscale, enhance, remove backgrounds, resize and compress photos online',
+    extensions:
+      'Browser extensions for Chrome, Edge, and Firefox - right-click to upscale any image from the web',
   };
   return descriptions[category];
 }
