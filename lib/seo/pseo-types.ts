@@ -226,11 +226,20 @@ export interface IFreePage extends IBasePSEOPage {
   toolName: string;
   description: string;
   features: IFeature[];
+  useCases?: IUseCase[];
+  benefits?: IBenefit[];
+  howItWorks?: IHowItWorksStep[];
   limitations: string[];
   upgradePoints: string[];
   faq: IFAQ[];
   relatedFree: string[];
   upgradePath: string;
+  // Interactive tool fields (optional)
+  isInteractive?: boolean;
+  toolComponent?: string;
+  toolConfig?: IToolConfig;
+  maxFileSizeMB?: number;
+  acceptedFormats?: string[];
 }
 
 /**
