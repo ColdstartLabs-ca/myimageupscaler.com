@@ -35,7 +35,10 @@ export type ModelId =
   | 'seedream'
   | 'realesrgan-anime'
   | 'p-image-edit'
-  | 'flux-kontext-fast';
+  | 'flux-kontext-fast'
+  | 'clarity-pro-upscaler'
+  | 'recraft-crisp-upscale'
+  | 'nano-banana-2';
 
 /**
  * Model configuration interface as defined in the PRD

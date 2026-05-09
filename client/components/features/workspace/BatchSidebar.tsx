@@ -4,13 +4,17 @@ import {
   IBatchItem,
   IUpscaleConfig,
   ProcessingStatus,
+  QUALITY_TIER_CONFIG,
   QUALITY_TIER_SCALES,
   QualityTier,
 } from '@/shared/types/coreflow.types';
 import { useUserData } from '@client/store/userStore';
 import { downloadBatch } from '@client/utils/download';
 import { generatePrompt } from '@client/utils/prompt-utils';
-import { getCreditsForTierAtScale } from '@shared/config/subscription.utils';
+import {
+  calculateFinalProviderAwareCredits,
+  getCreditsForTierAtScale,
+} from '@shared/config/subscription.utils';
 import { Settings } from 'lucide-react';
 import React, { useState } from 'react';
 import {
@@ -74,6 +78,18 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
     if (qualityTier === 'auto') {
       // Auto mode uses variable cost — use upper bound (ultra = 8 CR) to avoid understating
       return 8;
+    }
+
+    if (qualityTier === 'clarity-pro') {
+      const modelId = QUALITY_TIER_CONFIG[qualityTier].modelId;
+      if (modelId) {
+        return calculateFinalProviderAwareCredits({
+          modelId,
+          qualityTier,
+          scale,
+          smartAnalysis: additionalOptions?.smartAnalysis,
+        }).finalCredits;
+      }
     }
 
     // Use scale-aware credit calculation (applies model-specific multipliers)

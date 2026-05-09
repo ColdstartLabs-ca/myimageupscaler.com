@@ -86,6 +86,14 @@ describe('PromptBuilder — tier customPrompt priority', () => {
     expect(result).toContain('Custom tier prompt.');
   });
 
+  it('should provide a default prompt for nano-banana-2', () => {
+    const ctx = makeContext({ scale: 4 });
+    const result = buildPrompt('nano-banana-2', ctx);
+
+    expect(result).toContain('4x resolution');
+    expect(result.trim()).not.toBe('');
+  });
+
   it('should let basePrompt option override tier prompt', () => {
     const ctx = makeContext({ tierPrompt: 'Tier prompt.' });
     const result = builder.build('seedream', ctx, {

@@ -14,6 +14,9 @@ import {
   RealEsrganAnimeBuilder,
   PImageEditBuilder,
   FluxKontextFastBuilder,
+  ClarityProUpscalerBuilder,
+  RecraftCrispUpscaleBuilder,
+  NanoBanana2Builder,
 } from './models';
 
 /**
@@ -45,6 +48,9 @@ export class ModelInputBuilderOrchestrator {
     this.register(new RealEsrganAnimeBuilder());
     this.register(new PImageEditBuilder());
     this.register(new FluxKontextFastBuilder());
+    this.register(new ClarityProUpscalerBuilder());
+    this.register(new RecraftCrispUpscaleBuilder());
+    this.register(new NanoBanana2Builder());
   }
 
   /**

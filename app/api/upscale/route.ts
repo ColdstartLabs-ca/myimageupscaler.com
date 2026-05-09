@@ -16,11 +16,9 @@ import { ReplicateError } from '@server/services/replicate.service';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv, isProduction } from '@shared/config/env';
 import { MODEL_COSTS } from '@shared/config/model-costs.config';
-import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import {
-  getCreditsForTier,
+  calculateFinalProviderAwareCredits,
   getModelForTier,
-  getScaleCreditMultiplier,
 } from '@shared/config/subscription.utils';
 import { isFreeleaderBlocked } from '@/lib/anti-freeloader/check-freeloader';
 import { ErrorCodes, createErrorResponse, serializeError } from '@shared/utils/errors';
@@ -156,6 +154,8 @@ function modelIdToTier(modelId: string): QualityTier {
       return 'face-pro';
     case 'nano-banana-pro':
       return 'ultra';
+    case 'nano-banana-2':
+      return 'nano-banana-2';
     default:
       return 'quick';
   }
@@ -689,22 +689,18 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       }
     }
 
-    // Calculate credit cost using quality tier + model-specific scale multiplier
-    const baseCost = getCreditsForTier(resolvedTier);
+    // Calculate credit cost using provider-aware pricing for new models,
+    // falling back to tier-based scale multiplier for legacy models.
+    const providerAware = calculateFinalProviderAwareCredits({
+      modelId: resolvedModelId,
+      qualityTier: resolvedTier,
+      scale: config.scale,
+      inputWidth: inputDimensions?.width,
+      inputHeight: inputDimensions?.height,
+      smartAnalysis: config.additionalOptions.smartAnalysis,
+    });
 
-    // Get model-specific scale multiplier (e.g., clarity-upscaler 4x = 2.0x)
-    const modelScaleMultiplier = getScaleCreditMultiplier(resolvedModelId, config.scale);
-
-    // Smart analysis cost: +1 credit when enabled on explicit tier (not auto)
-    // Auto tier already includes smart analysis in its variable cost
-    const smartAnalysisCost =
-      config.qualityTier !== 'auto' && config.additionalOptions.smartAnalysis ? 1 : 0;
-
-    // Apply model-specific scale multiplier and bounds, then add smart analysis cost
-    const { creditCosts } = getSubscriptionConfig();
-    creditCost = Math.ceil(baseCost * modelScaleMultiplier) + smartAnalysisCost;
-    creditCost = Math.max(creditCost, creditCosts.minimumCost);
-    creditCost = Math.min(creditCost, creditCosts.maximumCost);
+    creditCost = providerAware.finalCredits;
 
     const effectiveTotalCredits =
       (profile?.subscription_credits_balance ?? 0) + (profile?.purchased_credits_balance ?? 0);
