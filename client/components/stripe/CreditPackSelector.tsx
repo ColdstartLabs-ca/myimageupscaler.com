@@ -172,7 +172,7 @@ export function CreditPackSelector({
         {packs.map(pack => (
           <div
             key={pack.key}
-            className={`relative bg-surface rounded-xl border flex flex-col transition-colors duration-150 cursor-pointer ${
+            className={`relative bg-surface rounded-xl border flex flex-col transition-all duration-150 cursor-pointer hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/10 ${
               selectedPack === pack.key
                 ? 'border-accent'
                 : pack.badge
@@ -256,13 +256,7 @@ export function CreditPackSelector({
               </ul>
 
               {/* CTA */}
-              <button
-                className={`w-full py-2 px-4 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-1.5 ${
-                  pack.badge
-                    ? 'bg-accent hover:bg-accent-hover text-white'
-                    : 'bg-surface-light hover:bg-surface-light/80 text-text-primary'
-                }`}
-              >
+              <button className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-accent px-4 py-2.5 text-sm font-bold text-white shadow-md shadow-accent/20 transition-all hover:-translate-y-0.5 hover:bg-accent-hover disabled:opacity-60">
                 <CreditCard className="h-3.5 w-3.5" />
                 <span>Purchase</span>
               </button>

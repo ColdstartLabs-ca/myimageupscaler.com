@@ -154,10 +154,12 @@ vi.mock('@client/components/ui/BottomSheet', () => ({
   BottomSheet: ({
     isOpen,
     children,
+    footer,
     title,
   }: {
     isOpen: boolean;
     children: React.ReactNode;
+    footer?: React.ReactNode;
     title?: string;
     onClose: () => void;
   }) =>
@@ -165,6 +167,7 @@ vi.mock('@client/components/ui/BottomSheet', () => ({
       <div data-testid="bottom-sheet">
         {title && <h2>{title}</h2>}
         {children}
+        {footer}
       </div>
     ) : null,
 }));
@@ -338,7 +341,7 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
     render(<ModelGalleryModal {...defaultProps} onUpgrade={onUpgrade} isFreeUser={true} />);
 
     // If there's locked content, clicking the banner upgrade button should fire analytics
-    const upgradeButton = screen.getByText('Unlock Premium Models');
+    const upgradeButton = screen.getByText('Unlock all models');
     fireEvent.click(upgradeButton);
 
     await waitFor(() => {
@@ -365,7 +368,7 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
     const onUpgrade = vi.fn();
     render(<ModelGalleryModal {...defaultProps} onUpgrade={onUpgrade} isFreeUser={true} />);
 
-    const upgradeButton = screen.getByText('Unlock Premium Models');
+    const upgradeButton = screen.getByText('Unlock all models');
     fireEvent.click(upgradeButton);
 
     await waitFor(() => {

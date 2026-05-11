@@ -588,6 +588,7 @@ export type IAnalyticsEventName =
   | 'model_gallery_opened'
   | 'model_selection_changed'
   | 'model_gallery_closed'
+  | 'first_time_model_picker_dismissed'
   // Upscale quality selection events
   | 'upscale_quality_selected'
   // pSEO-specific events

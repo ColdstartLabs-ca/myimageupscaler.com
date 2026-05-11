@@ -228,7 +228,14 @@ describe('ModelGalleryModal', () => {
       expect(lockBadge).toBeNull();
     });
 
-    it('should call onUpgrade when locked tier clicked', async () => {
+    it('should allow paid-credit users to use premium models without upgrade copy', async () => {
+      render(<ModelGalleryModal {...defaultProps} currentTier="budget-edit" isFreeUser={false} />);
+
+      expect(screen.queryByText('Upgrade to use')).not.toBeInTheDocument();
+      expect(screen.getAllByText('Use this model').length).toBeGreaterThan(0);
+    });
+
+    it('should open the upgrade flow when a locked tier is clicked', async () => {
       render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
 
       // Find a premium tier (Ultra) card and click it
@@ -241,11 +248,22 @@ describe('ModelGalleryModal', () => {
       });
     });
 
-    it('should show upgrade prompt for free users', async () => {
+    it('should show the blended upgrade CTA for free users', async () => {
+      render(<ModelGalleryModal {...defaultProps} currentTier="budget-edit" isFreeUser={true} />);
+
+      expect(screen.getByText('Unlock all models')).toBeInTheDocument();
+    });
+
+    it('should keep upgrade CTA visible while searching', async () => {
       render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
 
-      // Find upgrade prompt
-      expect(screen.getByText('Unlock Premium Models')).toBeInTheDocument();
+      fireEvent.change(screen.getByPlaceholderText('Search by name, use case, or feature...'), {
+        target: { value: 'portrait' },
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Unlock all models')).toBeInTheDocument();
+      });
     });
   });
 
@@ -263,13 +281,16 @@ describe('ModelGalleryModal', () => {
       });
     });
 
-    it('should close modal after selecting a tier', async () => {
+    it('should close modal after confirming the selected tier', async () => {
       render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
 
       // Click on Light Blur Fix tier card
       const quickCard = findCardByTierLabel('Light Blur Fix');
       expect(quickCard).not.toBeNull();
       fireEvent.click(quickCard!);
+
+      expect(mockOnClose).not.toHaveBeenCalled();
+      fireEvent.click(screen.getAllByRole('button', { name: /Use this model/i })[0]);
 
       await waitFor(() => {
         expect(mockOnClose).toHaveBeenCalled();
@@ -472,7 +493,7 @@ describe('Phase 2: ModelCard badge rendering', () => {
   });
 });
 
-describe('Phase 2: ModelGalleryModal tier sorting by popularity', () => {
+describe('Phase 2: ModelGalleryModal tier sorting by value', () => {
   const mockOnClose = vi.fn();
   const mockOnSelect = vi.fn();
   const mockOnUpgrade = vi.fn();
@@ -489,23 +510,22 @@ describe('Phase 2: ModelGalleryModal tier sorting by popularity', () => {
     vi.clearAllMocks();
   });
 
-  it('should sort free tiers by popularity with auto first, then quick, then face-restore', async () => {
-    render(<ModelGalleryModal {...defaultProps} />);
-
-    // The "Available" section heading should be present
-    expect(screen.getByText('Available')).toBeInTheDocument();
-
-    // Get all model card buttons — order in DOM reflects sort order
-    // free tiers: quick (popularity 90), face-restore (popularity 80), bg-removal (popularity 50)
-    // auto is in PREMIUM_TIERS (not FREE_TIERS) so it won't appear in the free section
+  function getTierLabelsInDomOrder(): string[] {
     const cardButtons = document.querySelectorAll('button[class*="rounded-xl"]');
     const cardLabels = Array.from(cardButtons).map(btn => {
       const labelEl = btn.querySelector('span.font-bold.text-xs');
       return labelEl?.textContent ?? '';
     });
 
-    // Filter to only tier label cards (non-empty labels that are tier names)
-    const tierLabels = cardLabels.filter(l => l.length > 0);
+    return cardLabels.filter(l => l.length > 0);
+  }
+
+  it('should sort free tiers by value with quick before face-restore', async () => {
+    render(<ModelGalleryModal {...defaultProps} />);
+
+    expect(screen.getByText('Popular starting points')).toBeInTheDocument();
+
+    const tierLabels = getTierLabelsInDomOrder();
 
     // quick (popularity 90) should appear before face-restore (popularity 80)
     const quickIndex = tierLabels.indexOf('Light Blur Fix');
@@ -514,6 +534,21 @@ describe('Phase 2: ModelGalleryModal tier sorting by popularity', () => {
     expect(quickIndex).toBeGreaterThanOrEqual(0);
     expect(faceRestoreIndex).toBeGreaterThanOrEqual(0);
     expect(quickIndex).toBeLessThan(faceRestoreIndex);
+  });
+
+  it('should put Auto and Amplitude-correlated value tiers first in the premium section', async () => {
+    render(<ModelGalleryModal {...defaultProps} />);
+
+    const tierLabels = getTierLabelsInDomOrder();
+    const autoIndex = tierLabels.indexOf('Auto');
+    const budgetEditIndex = tierLabels.indexOf('Standard Enhance');
+    const faceProIndex = tierLabels.indexOf('Portrait Pro');
+    const animeIndex = tierLabels.indexOf('Anime Upscale');
+
+    expect(autoIndex).toBeGreaterThanOrEqual(0);
+    expect(budgetEditIndex).toBeGreaterThan(autoIndex);
+    expect(faceProIndex).toBeGreaterThan(budgetEditIndex);
+    expect(animeIndex).toBeGreaterThan(faceProIndex);
   });
 });
 

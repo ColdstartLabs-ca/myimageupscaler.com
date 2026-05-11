@@ -41,6 +41,7 @@ vi.mock('lucide-react', () => ({
   Lock: () => null,
   Search: () => null,
   Sparkles: () => null,
+  X: () => null,
 }));
 
 vi.mock('@client/hooks/useRegionTier', () => ({
@@ -52,15 +53,22 @@ vi.mock('@client/components/ui/BottomSheet', () => ({
   BottomSheet: ({
     isOpen,
     children,
+    footer,
     title,
   }: {
     isOpen: boolean;
     children: React.ReactNode;
+    footer?: React.ReactNode;
     onClose: () => void;
     title: string;
   }) =>
     isOpen
-      ? React.createElement('div', { 'data-testid': 'bottom-sheet', 'data-title': title }, children)
+      ? React.createElement(
+          'div',
+          { 'data-testid': 'bottom-sheet', 'data-title': title },
+          children,
+          footer
+        )
       : null,
 }));
 
@@ -206,29 +214,26 @@ describe('ModelGalleryModal — upgrade direct flow', () => {
     });
   });
 
-  it('should call onUpgradeDirect with cheapest plan when premium model clicked', () => {
-    const { onUpgradeDirect } = renderModal();
-    fireEvent.click(screen.getByTestId('locked-hd-upscale'));
-
-    expect(onUpgradeDirect).toHaveBeenCalledWith({
-      trigger: 'model_gate',
-      planId: 'price_test_small',
-    });
-  });
-
-  it('should NOT call onUpgrade when onUpgradeDirect is provided', () => {
+  it('should open the upgrade plan modal when premium model clicked', () => {
     const { onUpgrade } = renderModal();
     fireEvent.click(screen.getByTestId('locked-hd-upscale'));
 
-    expect(onUpgrade).not.toHaveBeenCalled();
+    expect(onUpgrade).toHaveBeenCalledTimes(1);
   });
 
-  it('should pass region to plan resolver', () => {
+  it('should not call onUpgradeDirect when the model gate opens the plan picker', () => {
+    const { onUpgradeDirect } = renderModal();
+    fireEvent.click(screen.getByTestId('locked-hd-upscale'));
+
+    expect(onUpgradeDirect).not.toHaveBeenCalled();
+  });
+
+  it('should not pre-resolve a regional checkout plan from the model gate', () => {
     mockUseRegionTier.mockReturnValue({ pricingRegion: 'south_asia' });
     renderModal();
     fireEvent.click(screen.getByTestId('locked-hd-upscale'));
 
-    expect(mockResolveCheapestRegionalPlan).toHaveBeenCalledWith('south_asia');
+    expect(mockResolveCheapestRegionalPlan).not.toHaveBeenCalled();
   });
 
   it('should set checkoutTrackingContext with trigger="model_gate" when premium clicked', () => {
@@ -249,7 +254,7 @@ describe('ModelGalleryModal — upgrade direct flow', () => {
     );
   });
 
-  it('should track upgrade_prompt_clicked with destination=checkout_direct when direct enabled', () => {
+  it('should track upgrade_prompt_clicked with destination=upgrade_plan_modal', () => {
     renderModal();
     fireEvent.click(screen.getByTestId('locked-hd-upscale'));
 
@@ -257,12 +262,12 @@ describe('ModelGalleryModal — upgrade direct flow', () => {
       'upgrade_prompt_clicked',
       expect.objectContaining({
         trigger: 'model_gate',
-        destination: 'checkout_direct',
+        destination: 'upgrade_plan_modal',
       })
     );
   });
 
-  it('should fall back to onUpgrade when onUpgradeDirect is not provided', () => {
+  it('should still call onUpgrade when onUpgradeDirect is not provided', () => {
     const { onUpgrade } = renderModal({ onUpgradeDirect: undefined });
     fireEvent.click(screen.getByTestId('locked-hd-upscale'));
 
@@ -282,10 +287,10 @@ describe('ModelGalleryModal — upgrade direct flow', () => {
     );
   });
 
-  it('should call onClose before calling onUpgradeDirect', () => {
+  it('should call onClose before opening the upgrade modal', () => {
     const callOrder: string[] = [];
     const onClose = vi.fn(() => callOrder.push('close'));
-    const onUpgradeDirect = vi.fn(() => callOrder.push('direct'));
+    const onUpgrade = vi.fn(() => callOrder.push('upgrade'));
 
     render(
       React.createElement(ModelGalleryModal, {
@@ -294,13 +299,13 @@ describe('ModelGalleryModal — upgrade direct flow', () => {
         currentTier: 'quick' as any,
         isFreeUser: true,
         onSelect: vi.fn(),
-        onUpgrade: vi.fn(),
-        onUpgradeDirect,
+        onUpgrade,
+        onUpgradeDirect: vi.fn(),
       })
     );
 
     fireEvent.click(screen.getByTestId('locked-hd-upscale'));
 
-    expect(callOrder).toEqual(['close', 'direct']);
+    expect(callOrder).toEqual(['close', 'upgrade']);
   });
 });
