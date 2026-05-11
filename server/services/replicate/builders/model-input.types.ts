@@ -60,7 +60,10 @@ export type IModelInput =
   | ISeedreamInput
   | IRealEsrganAnimeInput
   | IPImageEditInput
-  | IFluxKontextFastInput;
+  | IFluxKontextFastInput
+  | IClarityProUpscalerInput
+  | IRecraftCrispUpscaleInput
+  | INanoBanana2Input;
 
 /**
  * Real-ESRGAN input
@@ -119,9 +122,20 @@ export interface INanoBananaProInput {
   prompt: string;
   image_input: string[];
   aspect_ratio: string;
-  resolution: '1K' | '2K' | '4K';
+  resolution: '0.5K' | '1K' | '2K' | '4K';
   output_format: string;
   safety_filter_level: string;
+}
+
+/**
+ * Nano Banana 2 input
+ */
+export interface INanoBanana2Input {
+  prompt: string;
+  image_input: string[];
+  aspect_ratio: string;
+  resolution: '0.5K' | '1K' | '2K' | '4K';
+  output_format: string;
 }
 
 /**
@@ -188,6 +202,25 @@ export interface IFluxKontextFastInput {
   output_format?: string;
   output_quality?: number;
   num_inference_steps?: number;
+}
+
+/**
+ * Clarity Pro Upscaler input
+ * Based on Replicate API schema for philz1337x/clarity-pro-upscaler
+ */
+export interface IClarityProUpscalerInput {
+  image: string;
+  scale_factor: number;
+  creativity: number;
+  output_format: string;
+}
+
+/**
+ * Recraft Crisp Upscale input
+ * Based on Replicate API schema for recraft-ai/recraft-crisp-upscale
+ */
+export interface IRecraftCrispUpscaleInput {
+  image: string;
 }
 
 /**

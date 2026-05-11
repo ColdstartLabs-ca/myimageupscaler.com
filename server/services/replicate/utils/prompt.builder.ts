@@ -23,6 +23,8 @@ const DEFAULT_PROMPTS = {
   'flux-2-pro': 'Restore this image exactly as it would look in higher resolution.',
   'nano-banana-pro': (scale: number) =>
     `Upscale this image to ${scale}x resolution with enhanced sharpness and detail.`,
+  'nano-banana-2': (scale: number) =>
+    `Upscale this image to ${scale}x resolution with natural detail, clean edges, and faithful composition.`,
   'qwen-image-edit': 'Improve this image while maintaining its original quality and sharpness.',
   'p-image-edit': 'Improve this image while maintaining its original quality and sharpness.',
   seedream: 'Improve this image quality while maintaining its original appearance.',

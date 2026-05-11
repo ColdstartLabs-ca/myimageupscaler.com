@@ -38,6 +38,9 @@ export const ModelCard: React.FC<IModelCardProps> = ({
 
   const formatCredits = (): string => {
     if (config.credits === 'variable') {
+      if (tier === 'clarity-pro') {
+        return 'Variable';
+      }
       return '1-8 CR';
     }
     const range = getCreditRangeForTier(tier);

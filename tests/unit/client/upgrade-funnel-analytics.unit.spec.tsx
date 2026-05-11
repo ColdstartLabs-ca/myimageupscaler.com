@@ -94,17 +94,26 @@ vi.mock('@client/components/ui/BottomSheet', () => ({
   BottomSheet: ({
     isOpen,
     children,
+    footer,
   }: {
     isOpen: boolean;
     children: React.ReactNode;
+    footer?: React.ReactNode;
     onClose: () => void;
     title: string;
     className?: string;
-  }) => (isOpen ? <div data-testid="bottom-sheet">{children}</div> : null),
+  }) =>
+    isOpen ? (
+      <div data-testid="bottom-sheet">
+        {children}
+        {footer}
+      </div>
+    ) : null,
 }));
 
 // Mock lucide-react icons used in the components under test
 vi.mock('lucide-react', () => ({
+  Check: () => <span data-testid="check-icon" />,
   Lock: () => <span data-testid="lock-icon" />,
   Search: () => <span data-testid="search-icon" />,
   Sparkles: () => <span data-testid="sparkles-icon" />,

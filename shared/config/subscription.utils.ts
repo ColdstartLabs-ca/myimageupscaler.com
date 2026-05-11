@@ -187,6 +187,143 @@ export function getCreditsForTier(tier: QualityTier): number {
 }
 
 /**
+ * Provider-aware credit pricing constants
+ */
+export const PROVIDER_COST_PER_CREDIT_TARGET_USD = 0.005;
+export const CLARITY_PRO_MAX_OUTPUT_MEGAPIXELS = 64;
+export const CLARITY_PRO_MINIMUM_PROVIDER_COST_USD = 0.03;
+export const CLARITY_PRO_OUTPUT_MEGAPIXEL_PRICE_USD = 0.03;
+export const RECRAFT_CRISP_CREDITS = 2;
+export const RECRAFT_CRISP_PROVIDER_COST_USD = 0.006;
+export const RESOLUTION_CREDIT_MULTIPLIERS: Record<'2k' | '4k' | '8k', number> = {
+  '2k': 1.0,
+  '4k': 1.5,
+  '8k': 2.0,
+};
+
+/**
+ * Calculate provider-aware credits for any model.
+ * Supports flat pricing, per-image fixed pricing, and output-megapixel dynamic pricing.
+ *
+ * For Clarity Pro: credits = ceil(max(0.03, outputMP * 0.03) / 0.005)
+ * For Recraft Crisp: fixed 2 credits
+ * For all others: falls back to existing tier-based scale multiplier logic
+ */
+export function calculateProviderAwareCredits(params: {
+  modelId: string;
+  qualityTier: QualityTier;
+  scale: number;
+  inputWidth?: number;
+  inputHeight?: number;
+  smartAnalysis?: boolean;
+}): {
+  credits: number;
+  providerCostUsd: number;
+  pricingModel: 'flat' | 'per-image' | 'output-megapixel';
+  outputMegapixels?: number;
+} {
+  const { modelId, qualityTier, scale, inputWidth, inputHeight, smartAnalysis } = params;
+
+  // Smart analysis adds +1 credit on explicit tiers (not auto)
+  const smartAnalysisCost = qualityTier !== 'auto' && smartAnalysis ? 1 : 0;
+
+  // --- Recraft Crisp Upscale: fixed per-image pricing ---
+  if (modelId === 'recraft-crisp-upscale') {
+    return {
+      credits: RECRAFT_CRISP_CREDITS + smartAnalysisCost,
+      providerCostUsd: RECRAFT_CRISP_PROVIDER_COST_USD,
+      pricingModel: 'per-image',
+    };
+  }
+
+  // --- Clarity Pro Upscaler: output-megapixel dynamic pricing ---
+  if (modelId === 'clarity-pro-upscaler') {
+    let outputMegapixels = 0;
+
+    if (inputWidth && inputHeight) {
+      const outputWidth = inputWidth * scale;
+      const outputHeight = inputHeight * scale;
+      outputMegapixels = (outputWidth * outputHeight) / 1_000_000;
+      // Cap at 64MP per Replicate model limit
+      outputMegapixels = Math.min(outputMegapixels, CLARITY_PRO_MAX_OUTPUT_MEGAPIXELS);
+    }
+
+    const providerCostUsd = Math.max(
+      CLARITY_PRO_MINIMUM_PROVIDER_COST_USD,
+      outputMegapixels * CLARITY_PRO_OUTPUT_MEGAPIXEL_PRICE_USD
+    );
+
+    const credits = Math.ceil(providerCostUsd / PROVIDER_COST_PER_CREDIT_TARGET_USD);
+
+    return {
+      credits: credits + smartAnalysisCost,
+      providerCostUsd,
+      pricingModel: 'output-megapixel',
+      outputMegapixels: outputMegapixels > 0 ? outputMegapixels : undefined,
+    };
+  }
+
+  // --- Default: flat tier-based pricing with scale multiplier ---
+  const baseCost = getCreditsForTier(qualityTier);
+  const scaleMultiplier = getScaleCreditMultiplier(modelId, scale);
+  const credits = Math.ceil(baseCost * scaleMultiplier);
+
+  return {
+    credits: credits + smartAnalysisCost,
+    providerCostUsd: 0, // Not tracked for flat-priced models
+    pricingModel: 'flat',
+  };
+}
+
+/**
+ * Finalize provider-aware credits for user-facing estimates and billing paths.
+ * This keeps flat-model resolution multipliers and subscription min/max bounds
+ * consistent across API routes, services, and client-side estimates.
+ */
+export function calculateFinalProviderAwareCredits(params: {
+  modelId: string;
+  qualityTier: QualityTier;
+  scale: number;
+  inputWidth?: number;
+  inputHeight?: number;
+  smartAnalysis?: boolean;
+  targetResolution?: '2k' | '4k' | '8k';
+}): ReturnType<typeof calculateProviderAwareCredits> & {
+  finalCredits: number;
+  scaleMultiplier: number;
+  resolutionMultiplier: number;
+} {
+  const providerAware = calculateProviderAwareCredits(params);
+  const scaleMultiplier = getScaleCreditMultiplier(params.modelId, params.scale);
+  const resolutionMultiplier =
+    providerAware.pricingModel === 'flat' && params.targetResolution
+      ? RESOLUTION_CREDIT_MULTIPLIERS[params.targetResolution]
+      : 1.0;
+
+  const smartAnalysisCost = params.qualityTier !== 'auto' && params.smartAnalysis ? 1 : 0;
+
+  let finalCredits = providerAware.credits;
+  if (providerAware.pricingModel === 'flat') {
+    finalCredits =
+      Math.ceil(getCreditsForTier(params.qualityTier) * scaleMultiplier * resolutionMultiplier) +
+      smartAnalysisCost;
+  }
+
+  const { creditCosts } = getSubscriptionConfig();
+  finalCredits = Math.max(finalCredits, creditCosts.minimumCost);
+  if (providerAware.pricingModel === 'flat') {
+    finalCredits = Math.min(finalCredits, creditCosts.maximumCost);
+  }
+
+  return {
+    ...providerAware,
+    finalCredits,
+    scaleMultiplier,
+    resolutionMultiplier,
+  };
+}
+
+/**
  * Get the scale-aware credit multiplier for a specific model + scale combination.
  * Returns 1.0 for models without scale-dependent costs.
  */
@@ -725,6 +862,12 @@ export function modelIdToTier(modelId: string): QualityTier {
       return 'fast-edit'; // 2 CR (also used by budget-old-photo at same 2 CR)
     case 'realesrgan-anime':
       return 'anime-upscale'; // 1 CR
+    case 'clarity-pro-upscaler':
+      return 'clarity-pro';
+    case 'recraft-crisp-upscale':
+      return 'crisp-upscale';
+    case 'nano-banana-2':
+      return 'nano-banana-2';
     // nano-banana (free Gemini tier) and flux-kontext-fast have no dedicated quality tier
     default:
       return 'quick';

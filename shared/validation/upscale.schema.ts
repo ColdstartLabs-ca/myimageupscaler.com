@@ -215,6 +215,9 @@ export const upscaleSchema = z.object({
         'lighting-fix',
         'resume-photo',
         'photo-repair',
+        'clarity-pro',
+        'crisp-upscale',
+        'nano-banana-2',
       ])
       .default('auto'),
     scale: z.union([z.literal(2), z.literal(4), z.literal(8)]).default(2),

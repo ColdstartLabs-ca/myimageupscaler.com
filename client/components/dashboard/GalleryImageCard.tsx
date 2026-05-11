@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Download, Eye, Trash2, Loader2, X } from 'lucide-react';
 import type { IGalleryImage } from '@shared/types/gallery.types';
 import { useTranslations } from 'next-intl';
+import { analytics } from '@client/analytics';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
@@ -172,6 +173,12 @@ export const GalleryImageCard: React.FC<IGalleryImageCardProps> = ({
   const handleDownload = async () => {
     if (!image.signed_url) return;
 
+    analytics.track('gallery_image_downloaded', {
+      imageId: image.id,
+      modelUsed: image.model_used,
+      source: 'gallery',
+    });
+
     let objectUrl: string | null = null;
     let anchor: HTMLAnchorElement | null = null;
 
@@ -194,6 +201,10 @@ export const GalleryImageCard: React.FC<IGalleryImageCardProps> = ({
   };
 
   const handleViewFullSize = () => {
+    analytics.track('gallery_image_viewed', {
+      imageId: image.id,
+      modelUsed: image.model_used,
+    });
     setShowPreviewModal(true);
   };
 

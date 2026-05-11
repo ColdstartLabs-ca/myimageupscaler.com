@@ -125,7 +125,7 @@ function getButtonClasses(
   loading: boolean
 ): string {
   const baseClasses =
-    'w-full py-2 px-4 rounded-md text-sm font-medium transition-all duration-150 flex items-center justify-center gap-1.5';
+    'w-full py-2.5 px-4 rounded-lg text-sm font-bold transition-all duration-150 flex items-center justify-center gap-1.5 shadow-md';
 
   if (scheduled) {
     return `${baseClasses} bg-warning/10 text-warning cursor-not-allowed`;
@@ -139,7 +139,7 @@ function getButtonClasses(
   if (isProcessing || loading) {
     return `${baseClasses} bg-surface-light text-text-muted cursor-not-allowed`;
   }
-  return `${baseClasses} bg-accent hover:bg-accent-hover text-white`;
+  return `${baseClasses} bg-accent text-white shadow-accent/20 hover:-translate-y-0.5 hover:bg-accent-hover`;
 }
 
 // --- Component ---

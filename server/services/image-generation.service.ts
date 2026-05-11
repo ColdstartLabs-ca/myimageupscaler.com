@@ -4,7 +4,7 @@ import { GoogleGenAI } from '@google/genai';
 import { serverEnv } from '@shared/config/env';
 import type { IUpscaleInput, IUpscaleConfig } from '@shared/validation/upscale.schema';
 import { QUALITY_TIER_CONFIG } from '@shared/types/coreflow.types';
-import { getCreditsForTier, getScaleCreditMultiplier } from '@shared/config/subscription.utils';
+import { calculateFinalProviderAwareCredits } from '@shared/config/subscription.utils';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import type {
   IImageProcessor,
@@ -127,30 +127,24 @@ export type IGenerationResult = IImageProcessorResult;
 
 /**
  * Calculate the credit cost for an image processing operation.
- * Updated to work with new quality tier system.
+ * Updated to work with new quality tier system and provider-aware pricing.
  *
  * @param config - The upscale configuration
  * @returns The number of credits required
  */
 export function calculateCreditCost(config: IUpscaleConfig): number {
-  // Get base cost from quality tier
-  const baseCost = getCreditsForTier(config.qualityTier);
-
-  // Get model-specific scale multiplier (e.g., clarity-upscaler 4x = 2.0x)
   const modelId = QUALITY_TIER_CONFIG[config.qualityTier].modelId;
-  const scaleMultiplier = modelId ? getScaleCreditMultiplier(modelId, config.scale) : 1.0;
 
-  // Smart analysis adds +1 credit on explicit tiers (not auto, which always has it built in)
-  const smartAnalysisCost =
-    config.qualityTier !== 'auto' && config.additionalOptions.smartAnalysis ? 1 : 0;
+  if (!modelId) {
+    return getSubscriptionConfig().creditCosts.minimumCost;
+  }
 
-  // Apply scale multiplier and bounds
-  const { creditCosts } = getSubscriptionConfig();
-  let creditCost = Math.ceil(baseCost * scaleMultiplier) + smartAnalysisCost;
-  creditCost = Math.max(creditCost, creditCosts.minimumCost);
-  creditCost = Math.min(creditCost, creditCosts.maximumCost);
-
-  return creditCost;
+  return calculateFinalProviderAwareCredits({
+    modelId,
+    qualityTier: config.qualityTier,
+    scale: config.scale,
+    smartAnalysis: config.additionalOptions.smartAnalysis,
+  }).finalCredits;
 }
 
 /**

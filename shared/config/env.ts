@@ -318,6 +318,9 @@ const serverEnvSchema = z.object({
   MODEL_VERSION_REALESRGAN_ANIME: z.string().optional(),
   MODEL_VERSION_P_IMAGE_EDIT: z.string().optional(),
   MODEL_VERSION_FLUX_KONTEXT_FAST: z.string().optional(),
+  MODEL_VERSION_CLARITY_PRO_UPSCALER: z.string().optional(),
+  MODEL_VERSION_RECRAFT_CRISP_UPSCALE: z.string().optional(),
+  MODEL_VERSION_NANO_BANANA_2: z.string().optional(),
 
   // ==========================================
   // GOOGLE SEARCH CONSOLE
@@ -452,6 +455,9 @@ function loadServerEnv(): IServerEnv {
     MODEL_VERSION_REALESRGAN_ANIME: process.env.MODEL_VERSION_REALESRGAN_ANIME,
     MODEL_VERSION_P_IMAGE_EDIT: process.env.MODEL_VERSION_P_IMAGE_EDIT,
     MODEL_VERSION_FLUX_KONTEXT_FAST: process.env.MODEL_VERSION_FLUX_KONTEXT_FAST,
+    MODEL_VERSION_CLARITY_PRO_UPSCALER: process.env.MODEL_VERSION_CLARITY_PRO_UPSCALER,
+    MODEL_VERSION_RECRAFT_CRISP_UPSCALE: process.env.MODEL_VERSION_RECRAFT_CRISP_UPSCALE,
+    MODEL_VERSION_NANO_BANANA_2: process.env.MODEL_VERSION_NANO_BANANA_2,
 
     // Subscription Configuration Override
     SUBSCRIPTION_CONFIG_OVERRIDE: process.env.SUBSCRIPTION_CONFIG_OVERRIDE,

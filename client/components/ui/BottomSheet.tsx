@@ -8,6 +8,8 @@ export interface IBottomSheetProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  /** Optional footer shown below the scrollable content */
+  footer?: React.ReactNode;
   /** Optional title shown in header on mobile */
   title?: string;
   /** Show close button in header */
@@ -24,6 +26,7 @@ export const BottomSheet: React.FC<IBottomSheetProps> = ({
   isOpen,
   onClose,
   children,
+  footer,
   title,
   showCloseButton = true,
   className,
@@ -128,6 +131,8 @@ export const BottomSheet: React.FC<IBottomSheetProps> = ({
 
         {/* Scrollable content area */}
         <div className="overflow-y-auto overscroll-contain flex-1">{children}</div>
+
+        {footer && <div className="shrink-0">{footer}</div>}
       </div>
     </div>
   );
