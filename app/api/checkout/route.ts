@@ -706,9 +706,12 @@ export async function POST(request: NextRequest) {
         engagementDiscountPercent,
         checkoutOfferDiscountPercent,
         uiMode,
-        stripeErrorCode: sessionError instanceof Stripe.errors.StripeError ? sessionError.code : null,
-        stripeErrorType: sessionError instanceof Stripe.errors.StripeError ? sessionError.type : null,
-        stripeErrorParam: sessionError instanceof Stripe.errors.StripeError ? sessionError.param : null,
+        stripeErrorCode:
+          sessionError instanceof Stripe.errors.StripeError ? sessionError.code : null,
+        stripeErrorType:
+          sessionError instanceof Stripe.errors.StripeError ? sessionError.type : null,
+        stripeErrorParam:
+          sessionError instanceof Stripe.errors.StripeError ? sessionError.param : null,
         stripeErrorMessage:
           sessionError instanceof Error ? sessionError.message : 'Unknown Stripe error',
       });

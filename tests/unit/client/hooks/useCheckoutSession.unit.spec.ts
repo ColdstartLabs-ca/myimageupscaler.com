@@ -230,19 +230,17 @@ describe('useCheckoutSession', () => {
     );
   });
 
-  it('tracks checkout error with price and ui mode on failure', async () => {
+  it('tracks checkout error with checkout context and ui mode on failure', async () => {
     mockCreateCheckoutSession.mockRejectedValue(new Error('Network failure'));
 
     renderHook(() => useCheckoutSession(buildParams()));
 
     await waitFor(() => {
-      expect(mockAnalyticsTrack).toHaveBeenCalledWith(
-        'checkout_error',
+      expect(mockTrackError).toHaveBeenCalledWith(
+        'network_error',
+        'Network failure',
+        'plan_selection',
         expect.objectContaining({
-          errorType: 'network_error',
-          errorMessage: 'Network failure',
-          step: 'plan_selection',
-          priceId: PRICE_ID,
           trigger: 'unknown',
           source: 'checkout_modal',
           uiMode: expect.any(String),

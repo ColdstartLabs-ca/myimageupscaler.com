@@ -57,7 +57,12 @@ interface IUseCheckoutSessionParams {
   regionLoading: boolean;
   appliedOfferToken: string | null;
   trackStepViewed: (step: TCheckoutStep, loadTimeMs?: number) => void;
-  trackError: (errorType: TCheckoutErrorType, errorMessage: string, step: TCheckoutStep) => void;
+  trackError: (
+    errorType: TCheckoutErrorType,
+    errorMessage: string,
+    step: TCheckoutStep,
+    properties?: Record<string, unknown>
+  ) => void;
   onComplete: () => void;
 }
 
@@ -222,11 +227,7 @@ export function useCheckoutSession({
 
         const checkoutContext = getCheckoutTrackingContext();
         const uiMode = isMobileViewport() ? 'hosted' : 'embedded';
-        analytics.track('checkout_error', {
-          errorType: 'network_error',
-          errorMessage,
-          step: 'plan_selection',
-          priceId,
+        trackError('network_error', errorMessage, 'plan_selection', {
           trigger: checkoutContext?.trigger || 'unknown',
           source: 'checkout_modal',
           uiMode,
@@ -234,7 +235,6 @@ export function useCheckoutSession({
           stripeErrorType,
           stripeErrorParam,
         });
-        trackError('network_error', errorMessage, 'plan_selection');
         showToast({
           message: errorMessage,
           type: 'error',
