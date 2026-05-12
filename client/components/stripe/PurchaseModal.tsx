@@ -5,17 +5,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { PlanChangeModal } from './PlanChangeModal';
 import { CheckoutModal } from './CheckoutModal';
-import {
-  X,
-  Infinity as InfinityIcon,
-  Shield,
-  ShoppingCart,
-  ArrowRight,
-  Star,
-  Check,
-  Coins,
-  Zap,
-} from 'lucide-react';
+import { X, ShoppingCart, ArrowRight, Star, Check, Coins, Zap } from 'lucide-react';
 import { analytics } from '@client/analytics';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useCurrentPlan } from '@client/hooks/useCurrentPlan';
@@ -59,7 +49,10 @@ function formatPriceRaw(cents: number) {
 }
 
 function getPricePerCredit(pack: ICreditPack, discountPercent = 0) {
-  const finalCents = discountPercent > 0 ? Math.round(pack.priceInCents * (1 - discountPercent / 100)) : pack.priceInCents;
+  const finalCents =
+    discountPercent > 0
+      ? Math.round(pack.priceInCents * (1 - discountPercent / 100))
+      : pack.priceInCents;
   return (finalCents / pack.credits / 100).toFixed(2);
 }
 
@@ -119,11 +112,7 @@ export function PurchaseModal({
   const { isAuthenticated } = useUserStore();
   const { openAuthRequiredModal } = useModalStore();
 
-  const {
-    planKey: currentPlan,
-    priceId: currentPriceId,
-    isPaidUser,
-  } = useCurrentPlan();
+  const { planKey: currentPlan, priceId: currentPriceId, isPaidUser } = useCurrentPlan();
 
   // Selection state
   const [selectedPack, setSelectedPack] = useState<ICreditPack | null>(null);
@@ -190,31 +179,25 @@ export function PurchaseModal({
     [trigger, purchaseMode, outOfCredits, pricingRegion, onClose]
   );
 
-  const handleSelectPack = useCallback(
-    (pack: ICreditPack) => {
-      setSelectedPack(pack);
-      setSelectedPlan(null);
-      setPurchaseMode('credits');
-      analytics.track('pricing_plan_viewed', {
-        planName: pack.key,
-        priceId: pack.stripePriceId,
-      });
-    },
-    []
-  );
+  const handleSelectPack = useCallback((pack: ICreditPack) => {
+    setSelectedPack(pack);
+    setSelectedPlan(null);
+    setPurchaseMode('credits');
+    analytics.track('pricing_plan_viewed', {
+      planName: pack.key,
+      priceId: pack.stripePriceId,
+    });
+  }, []);
 
-  const handleSelectPlan = useCallback(
-    (plan: IPlanConfig) => {
-      setSelectedPlan(plan);
-      setSelectedPack(null);
-      setPurchaseMode('subscribe');
-      analytics.track('pricing_plan_viewed', {
-        planName: plan.key,
-        priceId: plan.stripePriceId,
-      });
-    },
-    []
-  );
+  const handleSelectPlan = useCallback((plan: IPlanConfig) => {
+    setSelectedPlan(plan);
+    setSelectedPack(null);
+    setPurchaseMode('subscribe');
+    analytics.track('pricing_plan_viewed', {
+      planName: plan.key,
+      priceId: plan.stripePriceId,
+    });
+  }, []);
 
   const handleCheckoutSuccess = useCallback(() => {
     setShowCheckoutModal(false);
@@ -386,7 +369,9 @@ export function PurchaseModal({
                     <h2 className="text-xl sm:text-2xl font-bold text-text-primary leading-tight tracking-tight">
                       {title}
                     </h2>
-                    <p className="text-xs sm:text-sm text-text-secondary mt-1 leading-relaxed">{subtitle}</p>
+                    <p className="text-xs sm:text-sm text-text-secondary mt-1 leading-relaxed">
+                      {subtitle}
+                    </p>
                   </div>
                   <div className="flex-shrink-0 -mt-2 sm:-mt-3 -mr-1">
                     <Image
@@ -402,7 +387,9 @@ export function PurchaseModal({
                 {/* Trust badges */}
                 <div className="flex items-center justify-center gap-1.5 mt-3 text-text-muted">
                   <Check className="w-3.5 h-3.5" />
-                  <span className="text-[10px]">Instant delivery • Credits never expire • Secure checkout</span>
+                  <span className="text-[10px]">
+                    Instant delivery • Credits never expire • Secure checkout
+                  </span>
                 </div>
               </div>
 
@@ -480,10 +467,16 @@ export function PurchaseModal({
                           <div className="px-2 pb-2 sm:px-2.5 sm:pb-2.5 -mt-0.5">
                             <div className="border-t border-accent/10 pt-2">
                               <ul className="space-y-1">
-                                {['Credits never expire', 'Use on any tool', 'Stackable with subscriptions'].map((feature, idx) => (
+                                {[
+                                  'Credits never expire',
+                                  'Use on any tool',
+                                  'Stackable with subscriptions',
+                                ].map((feature, idx) => (
                                   <li key={idx} className="flex items-start gap-1.5">
                                     <Check className="w-3 h-3 text-success flex-shrink-0 mt-0.5" />
-                                    <span className="text-[11px] text-text-secondary leading-tight">{feature}</span>
+                                    <span className="text-[11px] text-text-secondary leading-tight">
+                                      {feature}
+                                    </span>
                                   </li>
                                 ))}
                               </ul>
@@ -500,7 +493,9 @@ export function PurchaseModal({
               <div className="px-4 sm:px-5 py-2">
                 <div className="flex items-center gap-2">
                   <div className="flex-grow h-px bg-surface-light/40" />
-                  <span className="text-[10px] text-text-muted/70 font-medium tracking-wide">or</span>
+                  <span className="text-[10px] text-text-muted/70 font-medium tracking-wide">
+                    or
+                  </span>
                   <div className="flex-grow h-px bg-surface-light/40" />
                 </div>
               </div>
@@ -609,7 +604,9 @@ export function PurchaseModal({
                                 {plan.features.map((feature, idx) => (
                                   <li key={idx} className="flex items-start gap-1.5">
                                     <Check className="w-3 h-3 text-success flex-shrink-0 mt-0.5" />
-                                    <span className="text-[11px] text-text-secondary leading-tight">{feature}</span>
+                                    <span className="text-[11px] text-text-secondary leading-tight">
+                                      {feature}
+                                    </span>
                                   </li>
                                 ))}
                               </ul>
@@ -644,7 +641,8 @@ export function PurchaseModal({
                 disabled={!selectedPack && !selectedPlan}
                 className="w-full py-3 px-5 rounded-xl font-bold text-white transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 shadow-lg shadow-secondary/25 hover:shadow-secondary/40"
                 style={{
-                  background: 'linear-gradient(135deg, rgb(59, 130, 246) 0%, rgb(139, 92, 246) 100%)',
+                  background:
+                    'linear-gradient(135deg, rgb(59, 130, 246) 0%, rgb(139, 92, 246) 100%)',
                 }}
               >
                 <div className="flex items-center justify-center gap-2 w-full">
@@ -655,8 +653,6 @@ export function PurchaseModal({
                   <ArrowRight className="w-4 h-4 flex-shrink-0" />
                 </div>
               </button>
-
-
             </div>
           </div>
         </div>
