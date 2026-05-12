@@ -37,6 +37,14 @@ export async function POST(
     // Already published - idempotent
     if (existingPost.status === 'published') {
       logger.info('Blog post already published', { slug, id: existingPost.id });
+      try {
+        revalidatePath('/blog');
+        revalidatePath(`/blog/${slug}`);
+        logger.info('Revalidated blog paths', { slug });
+      } catch (revalidateError) {
+        logger.warn('Failed to revalidate paths', { error: revalidateError });
+      }
+
       const response: ISingleResponse<typeof existingPost> = {
         success: true,
         data: existingPost,

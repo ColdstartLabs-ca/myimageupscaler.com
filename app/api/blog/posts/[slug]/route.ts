@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { verifyBlogApiAuth, blogApiErrorResponse } from '@lib/middleware/blogApiAuth';
 import { getBlogPostBySlug, updateBlogPost, deleteBlogPost } from '@server/services/blog.service';
 import {
@@ -84,6 +85,14 @@ export async function PATCH(
     const post = await updateBlogPost(slug, validatedData);
 
     logger.info('Blog post updated successfully', { slug, id: post.id });
+
+    try {
+      revalidatePath('/blog');
+      revalidatePath(`/blog/${slug}`);
+      logger.info('Revalidated blog paths', { slug });
+    } catch (revalidateError) {
+      logger.warn('Failed to revalidate blog paths', { slug, error: revalidateError });
+    }
 
     const response: ISingleResponse<typeof post> = {
       success: true,

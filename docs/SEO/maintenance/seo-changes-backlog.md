@@ -18,6 +18,21 @@ Maintenance rules:
 
 ## 2026-05-12
 
+### Blog Quality Monitor: Default 14-Day Visibility Check
+
+Source: [blog-performance-recovery-2026-05-12.md](../reports/blog-performance-recovery-2026-05-12.md)
+
+Changes:
+
+- Ran the blog performance monitor against GSC complete data through 2026-05-09.
+- Compared 2026-04-12 to 2026-04-25 against 2026-04-26 to 2026-05-09 for blog URLs only.
+- Confirmed the largest losses are concentrated in the best-free-upscaler, sharpener/enhancer, no-watermark, and upscaling-vs-sharpening clusters.
+- Deferred further same-day content edits because the top affected page was already refreshed on 2026-05-12 and GSC cannot measure that change yet.
+
+Follow-up:
+
+- Deploy the blog API revalidation patch, request indexing for the existing Priority 1 blog URLs, and rerun the monitor after 2026-05-16.
+
 ### Traffic Growth Plan: GA4 SEO Funnel Key Events
 
 Source: [traffic-growth-plan-2026-05-12.md](../reports/traffic-growth-plan-2026-05-12.md)

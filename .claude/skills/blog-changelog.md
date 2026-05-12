@@ -167,6 +167,15 @@ Intent mismatch fixes (seo_title only):
 
 ## 2026-05-12
 
+### Publish: 16x-upscaling-does-it-work
+
+**Why:** `blog-opportunities-publisher` found a distinct 16x upscaling opportunity in 90-day GSC data: 312 impressions, 36 clicks, and existing demand landing mostly on `/scale/upscale-16x`, with no dedicated blog guide in topic tracking.
+**Changes:**
+
+- Published `16x-upscaling-does-it-work` — guide explaining when 16x upscaling works, when it creates artifacts, and how to choose 4x, 8x, or 16x.
+- Generated and uploaded a unique featured image via Replicate because the blog API requires unique featured images.
+- Reused existing inline workflow/comparison images and added contextual links to `/scale/upscale-16x`, `/scale/upscale-8x`, `/scale/ai-upscaler-4x`, and `/tools/ai-image-upscaler`.
+
 ### SEO: May Traffic Growth Plan Refresh
 
 **Affected:** best-free-ai-image-upscaler-2026-tested-compared
