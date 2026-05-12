@@ -1,5 +1,6 @@
 import type { IAnalyticsEventName, IUserIdentity } from '@server/analytics/types';
 import type { IAnalyticsProvider } from '../types';
+import { GA4_EVENT_MAP } from '../types';
 
 type TGtag = (...args: unknown[]) => void;
 
@@ -99,22 +100,6 @@ export class GA4Provider implements IAnalyticsProvider {
   }
 
   private mapEventName(name: IAnalyticsEventName): string {
-    const map: Record<string, string> = {
-      purchase_confirmed: 'purchase',
-      subscription_created: 'purchase',
-      credit_pack_purchased: 'purchase',
-      checkout_started: 'begin_checkout',
-      checkout_completed: 'add_payment_info',
-      signup_completed: 'sign_up',
-      image_upscaled: 'generate_lead',
-      image_uploaded: 'select_content',
-      upscale_completed: 'generate_lead',
-      pricing_page_viewed: 'view_item_list',
-      page_view: 'page_view',
-      upgrade_prompt_clicked: 'select_item',
-      upgrade_prompt_shown: 'view_item',
-    };
-
-    return map[name] || name;
+    return GA4_EVENT_MAP[name] || name;
   }
 }

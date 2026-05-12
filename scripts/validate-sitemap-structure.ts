@@ -19,6 +19,8 @@
 import { parseStringPromise } from 'xml2js';
 import https from 'node:https';
 import http from 'node:http';
+import { isCategoryEnglishOnly } from '@/lib/seo/localization-config';
+import type { PSEOCategory } from '@/lib/seo/url-utils';
 
 // Types for xml2js parsed results
 interface IXml2JsSitemapIndex {
@@ -53,6 +55,31 @@ interface IXml2JsSitemap {
 const SUPPORTED_LOCALES = ['en', 'es', 'pt', 'de', 'fr', 'it', 'ja'] as const;
 const DEFAULT_LOCALE = 'en';
 type Locale = (typeof SUPPORTED_LOCALES)[number];
+
+function getCategoryFromSitemapName(sitemapName: string): PSEOCategory | null {
+  const filename = sitemapName.split('/').pop() || sitemapName;
+  const match = filename.match(/^sitemap-(.+)\.xml$/);
+  if (!match) return null;
+
+  const parts = match[1].split('-');
+  const maybeLocale = parts[parts.length - 1];
+  if (SUPPORTED_LOCALES.includes(maybeLocale as Locale) && maybeLocale !== DEFAULT_LOCALE) {
+    parts.pop();
+  }
+
+  const category = parts.join('-');
+  return category ? (category as PSEOCategory) : null;
+}
+
+function getRequiredHreflangLocales(sitemapName: string): string[] {
+  const category = getCategoryFromSitemapName(sitemapName);
+
+  if (category && isCategoryEnglishOnly(category)) {
+    return [DEFAULT_LOCALE, 'x-default'];
+  }
+
+  return [...SUPPORTED_LOCALES, 'x-default'];
+}
 
 interface IValidationIssue {
   sitemap: string;
@@ -280,8 +307,9 @@ class SitemapStructureValidator {
       }
     }
 
-    // Check for missing required locales
-    const requiredLocales = [...SUPPORTED_LOCALES, 'x-default'];
+    // Check for missing required locales. English-only pSEO sitemaps intentionally
+    // include only English + x-default; localized sitemaps need every locale.
+    const requiredLocales = getRequiredHreflangLocales(sitemapName);
     for (const locale of requiredLocales) {
       if (!seenLocales.has(locale)) {
         this.issues.push({

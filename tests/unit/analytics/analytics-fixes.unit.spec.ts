@@ -104,7 +104,34 @@ describe('Analytics Fixes - Structural Checks', () => {
       const providerSource = fs.readFileSync('shared/analytics/providers/ga4-provider.ts', 'utf-8');
 
       expect(GA4_EVENT_MAP.upscale_completed).toBe('generate_lead');
-      expect(providerSource).toContain("upscale_completed: 'generate_lead'");
+      expect(providerSource).toContain('GA4_EVENT_MAP[name] || name');
+    });
+
+    test('GA4 conversion events cover the SEO attribution funnel', async () => {
+      const { GA4_CONVERSION_EVENTS, GA4_EVENT_MAP } = await import('@shared/analytics/types');
+
+      const expectedKeyEvents = [
+        'image_uploaded',
+        'image_upscale_started',
+        'upscale_completed',
+        'signup_started',
+        'signup_completed',
+        'checkout_opened',
+        'checkout_started',
+        'checkout_completed',
+        'purchase_confirmed',
+      ] as const;
+
+      for (const eventName of expectedKeyEvents) {
+        expect(GA4_CONVERSION_EVENTS).toContain(eventName);
+      }
+
+      expect(GA4_EVENT_MAP.image_uploaded).toBe('select_content');
+      expect(GA4_EVENT_MAP.image_upscale_started).toBe('select_content');
+      expect(GA4_EVENT_MAP.upscale_completed).toBe('generate_lead');
+      expect(GA4_EVENT_MAP.signup_started).toBe('generate_lead');
+      expect(GA4_EVENT_MAP.signup_completed).toBe('sign_up');
+      expect(GA4_EVENT_MAP.checkout_opened).toBe('begin_checkout');
     });
   });
 

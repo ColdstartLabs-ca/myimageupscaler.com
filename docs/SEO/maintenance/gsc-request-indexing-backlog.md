@@ -25,6 +25,12 @@ Priority 1:
 Priority 2:
 
 - [ ] Request indexing: `https://myimageupscaler.com/it`
+- [ ] Request indexing: `https://myimageupscaler.com/blog/ai-upscaler-muryou-osusume`
+- [ ] Request indexing: `https://myimageupscaler.com/blog/old-damaged-photos`
+- [ ] Request indexing: `https://myimageupscaler.com/blog/photo-noise-reduce`
+- [ ] Request indexing: `https://myimageupscaler.com/blog/fixing-pixelated-photos`
+- [ ] Request indexing: `https://myimageupscaler.com/blog/how-to-enlarge-photo-without-losing-quality`
+- [ ] Request indexing: `https://myimageupscaler.com/blog/free-photo-restoration-app`
 
 Cleanup:
 
@@ -34,5 +40,6 @@ Cleanup:
 ## Notes
 
 - The 5 blog URLs are already `Submitted and indexed` in GSC, but the visible title/H1/body refresh should still be manually nudged after deploy.
+- The 6 metadata-refresh blog URLs were updated through the Supabase blog API on 2026-05-12 and should be manually nudged after the next deploy/content publish cycle.
 - `/it` is indexed and canonicalized correctly, but GSC showed no referring sitemap before deploy. Recheck after the `sitemap-static.xml` locale-homepage change is live.
 - After completing this backlog, mark the checkboxes and add the completion date here.

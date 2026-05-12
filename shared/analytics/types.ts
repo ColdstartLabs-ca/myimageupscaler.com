@@ -24,13 +24,18 @@ export const GA4_EVENT_MAP: Partial<Record<IAnalyticsEventName, string>> = {
   subscription_created: 'purchase',
   credit_pack_purchased: 'purchase',
   checkout_started: 'begin_checkout',
+  checkout_opened: 'begin_checkout',
   checkout_completed: 'add_payment_info',
+  signup_started: 'generate_lead',
   signup_completed: 'sign_up',
   image_upscaled: 'generate_lead',
   image_uploaded: 'select_content',
+  image_upscale_started: 'select_content',
   upscale_completed: 'generate_lead',
   pricing_page_viewed: 'view_item_list',
   page_view: 'page_view',
+  upgrade_prompt_clicked: 'select_item',
+  upgrade_prompt_shown: 'view_item',
 };
 
 /**
@@ -41,7 +46,12 @@ export const GA4_CONVERSION_EVENTS: readonly IAnalyticsEventName[] = [
   'purchase_confirmed',
   'subscription_created',
   'credit_pack_purchased',
+  'image_uploaded',
+  'image_upscale_started',
+  'upscale_completed',
+  'signup_started',
   'checkout_completed',
+  'checkout_opened',
   'checkout_started',
   'signup_completed',
 ];

@@ -164,3 +164,23 @@ Intent mismatch fixes (seo_title only):
 - `best-ai-image-quality-enhancer-free` — title, seo_title, H1, and first paragraph shifted to "Best Free AI Image Sharpener Online 2026".
 - `free-ai-upscaler-no-watermark` — title, seo_title, H1, and first paragraph aligned to "Best Free AI Image Upscaler ... No Watermark".
 - `upscale-image-for-print-300-dpi-guide` — title, seo_title, H1, and first paragraph aligned to "Upscale Image to 300 DPI for Print".
+
+## 2026-05-12
+
+### SEO: May Traffic Growth Plan Refresh
+
+**Affected:** best-free-ai-image-upscaler-2026-tested-compared
+**Why:** `docs/SEO/reports/traffic-growth-plan-2026-05-12.md` showed 25,448 impressions and 6 clicks for the canonical best-free-upscaler page, with missing snippet/modifier coverage for no signup, no watermark, online, 4K/8K, denoiser, sharpener, deblurrer, and enlarger queries.
+**Changes:**
+
+- `best-free-ai-image-upscaler-2026-tested-compared` — updated Supabase post via `/api/blog/posts/[slug]` with May 12 first sentence, short-answer block, expanded comparison table, modifier FAQs, and canonical sharpening guide link.
+- `best-free-ai-image-upscaler-2026-tested-compared` — updated description and SEO description to include no-signup, no-watermark, 4K/8K, speed, free limits, and realistic detail.
+
+### SEO: Metadata Backlog Cleanup
+
+**Affected:** sample-article-title-for-testing, ai-upscaler-muryou-osusume, old-damaged-photos, photo-noise-reduce, fixing-pixelated-photos, how-to-enlarge-photo-without-losing-quality, free-photo-restoration-app
+**Why:** `docs/SEO/reports/traffic-growth-plan-2026-05-12.md` Priority 8 flagged one test article and six short metadata records.
+**Changes:**
+
+- `sample-article-title-for-testing` — unpublished to draft because it is test/webhook content.
+- `ai-upscaler-muryou-osusume`, `old-damaged-photos`, `photo-noise-reduce`, `fixing-pixelated-photos`, `how-to-enlarge-photo-without-losing-quality`, `free-photo-restoration-app` — expanded Supabase SEO descriptions; `fixing-pixelated-photos` also received a fuller public description.
