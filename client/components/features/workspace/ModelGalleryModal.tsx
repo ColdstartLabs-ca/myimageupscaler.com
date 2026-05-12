@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { Check, Lock, Search, Sparkles, X } from 'lucide-react';
+import Image from 'next/image';
+import { Check, ChevronDown, Lock, Search, Sparkles, X } from 'lucide-react';
 import { QualityTier, QUALITY_TIER_CONFIG } from '@/shared/types/coreflow.types';
 import { MODEL_COSTS } from '@shared/config/model-costs.config';
 import { getCreditsForTierAtScale } from '@shared/config/subscription.utils';
@@ -126,7 +127,9 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<ModelFilter>('all');
+  const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
   const [activeTier, setActiveTier] = useState<QualityTier>(currentTier);
+  const filterMenuRef = useRef<HTMLDivElement>(null);
   const { pricingRegion } = useRegionTier();
   const copyVariant = getVariant('batch_limit_copy', ['value', 'outcome', 'urgency']);
 
@@ -155,6 +158,30 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
       }
     }
   }, [copyVariant, currentTier, isFreeUser, isOpen, pricingRegion, suppressUpgradeImpression]);
+
+  useEffect(() => {
+    if (!isFilterMenuOpen) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!filterMenuRef.current?.contains(event.target as Node)) {
+        setIsFilterMenuOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsFilterMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isFilterMenuOpen]);
 
   // All tier entries with their configs
   const allTiers = useMemo(() => {
@@ -213,6 +240,8 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
     () => visibleTiers.filter(tier => !featuredIds.has(tier.id)),
     [featuredIds, visibleTiers]
   );
+
+  const activeFilterLabel = MODEL_FILTERS.find(filter => filter.id === activeFilter)?.label ?? 'All';
 
   const selectedTier = useMemo(
     () => visibleTiers.find(tier => tier.id === activeTier) ?? visibleTiers[0] ?? allTiers[0],
@@ -333,20 +362,22 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
     <button
       type="button"
       onClick={() => handleLockedClick('banner')}
-      className="group flex w-full items-center justify-between gap-3 rounded-xl border border-violet-300/45 bg-gradient-to-r from-violet-500/34 via-indigo-500/24 to-blue-500/30 p-3.5 text-left shadow-[0_18px_42px_rgba(79,70,229,0.32),inset_0_1px_0_rgba(255,255,255,0.12)] transition-all hover:border-violet-200/70 hover:from-violet-500/42 hover:to-blue-500/38 focus:outline-none focus:ring-2 focus:ring-violet-300/70 md:p-4"
+      className="group flex w-full items-center justify-between gap-3 rounded-xl border border-violet-200/70 bg-gradient-to-r from-violet-500/70 via-indigo-500/58 to-blue-500/62 p-3.5 text-left shadow-[0_20px_46px_rgba(79,70,229,0.46),inset_0_1px_0_rgba(255,255,255,0.18)] transition-all hover:border-white/80 hover:from-violet-500/82 hover:to-blue-500/74 focus:outline-none focus:ring-2 focus:ring-violet-200/80 md:p-4"
     >
       <div className="flex min-w-0 items-center gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/14 text-white shadow-[0_0_24px_rgba(167,139,250,0.35)] transition-transform group-hover:scale-105">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-violet-700 shadow-[0_0_28px_rgba(255,255,255,0.28)] transition-transform group-hover:scale-105">
           <Sparkles className="h-5 w-5" />
         </div>
         <div className="min-w-0">
-          <span className="block truncate text-base font-black text-white">Unlock all models</span>
-          <span className="block truncate text-xs font-semibold text-white/78">
+          <span className="block truncate text-base font-black text-white drop-shadow-sm">
+            Unlock all models
+          </span>
+          <span className="block truncate text-xs font-bold text-white/88">
             From $4.99 - sharper premium results
           </span>
         </div>
       </div>
-      <span className="shrink-0 rounded-lg bg-white px-3.5 py-2 text-[11px] font-black uppercase tracking-wide text-violet-700 shadow-lg shadow-violet-950/25 transition-transform group-hover:scale-105">
+      <span className="shrink-0 rounded-lg bg-white px-4 py-2.5 text-[11px] font-black uppercase tracking-wide text-violet-700 shadow-lg shadow-violet-950/30 transition-transform group-hover:scale-105">
         Upgrade
       </span>
     </button>
@@ -357,61 +388,91 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
       isOpen={isOpen}
       onClose={handleClose}
       showCloseButton={false}
-      className="h-[90vh] pb-safe border border-white/15 bg-[#090d1c]/95 shadow-[0_24px_90px_rgba(0,0,0,0.65)] md:h-[min(90vh,720px)] md:max-w-[min(1040px,calc(100vw-48px))] lg:max-w-[min(1040px,calc(100vw-48px))]"
+      className="h-[90vh] pb-safe border border-white/15 bg-[#090d1c]/95 shadow-[0_24px_90px_rgba(0,0,0,0.65)] md:h-[min(90vh,720px)] md:max-w-[min(880px,calc(100vw-48px))] lg:max-w-[min(880px,calc(100vw-48px))]"
     >
       <div className="flex h-full min-h-0 flex-col overflow-hidden bg-[radial-gradient(circle_at_top_left,rgba(99,102,241,0.18),transparent_34%),linear-gradient(180deg,rgba(12,17,34,0.98),rgba(7,10,22,0.98))] p-4 md:p-5">
-        <div className="flex shrink-0 items-start justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-violet-500/20 text-violet-300 shadow-[0_0_28px_rgba(139,92,246,0.24)]">
-              <Sparkles className="h-5 w-5" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold leading-tight text-white">Choose a model</h2>
-              <p className="mt-0.5 text-sm text-white/58">
-                Pick the model that matches what you want to improve.
-              </p>
-            </div>
+        <div className="shrink-0">
+          <div className="mb-3 flex items-center justify-between">
+            <Image
+              src="/logo/horizontal-logo-compact.png"
+              alt="MyImageUpscaler"
+              width={88}
+              height={28}
+              className="h-6 w-auto object-contain"
+            />
+            <button
+              onClick={handleClose}
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-white/18 text-white/55 transition-colors hover:border-white/35 hover:text-white"
+              aria-label="Close modal"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
-          <button
-            onClick={handleClose}
-            className="rounded-lg p-2 text-white/55 transition-colors hover:bg-white/5 hover:text-white"
-            aria-label="Close modal"
-          >
-            <X className="h-5 w-5" />
-          </button>
+
+          <div>
+            <h2 className="text-2xl font-bold leading-tight tracking-tight text-white">
+              Choose a model
+            </h2>
+            <p className="mt-0.5 text-sm text-white/58">
+              Pick the model that matches what you want to improve.
+            </p>
+          </div>
         </div>
 
-        <div className="mt-6 grid min-h-0 flex-1 gap-5 overflow-y-auto pb-4 pr-1 lg:grid-cols-[minmax(0,1fr)_270px] lg:overflow-hidden lg:pb-0 lg:pr-0">
+        <div className="mt-6 grid min-h-0 flex-1 gap-5 overflow-y-auto pb-4 pr-1 lg:overflow-hidden lg:pb-0 lg:pr-0">
           <div className="flex min-h-0 min-w-0 flex-col">
-            <div className="shrink-0 space-y-3">
-              <div className="max-w-sm">
+            <div className="flex shrink-0 items-center gap-2">
+              <div className="min-w-0 flex-1">
                 <ModelGallerySearch
                   value={searchQuery}
                   onChange={setSearchQuery}
-                  placeholder="Search by name, use case, or feature..."
+                  placeholder="What do you want to fix?"
                 />
               </div>
-              <div className="flex flex-wrap gap-1.5">
-                {MODEL_FILTERS.map(filter => (
-                  <button
-                    key={filter.id}
-                    type="button"
-                    onClick={() => setActiveFilter(filter.id)}
-                    className={`shrink-0 rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold transition-all ${
-                      activeFilter === filter.id
-                        ? 'border-indigo-400/50 bg-indigo-500 text-white shadow-[0_0_22px_rgba(99,102,241,0.34)]'
-                        : 'border-white/10 bg-white/[0.035] text-white/70 hover:border-white/20 hover:text-white'
+              <div ref={filterMenuRef} className="relative w-32 shrink-0 sm:w-48">
+                <button
+                  type="button"
+                  onClick={() => setIsFilterMenuOpen(open => !open)}
+                  className="flex h-10 w-full items-center justify-between gap-2 rounded-lg border border-white/12 bg-white/[0.055] px-3 text-left text-sm font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] outline-none transition-colors hover:border-white/22 hover:bg-white/[0.075] focus:border-indigo-300/70 focus:ring-2 focus:ring-indigo-400/30"
+                  aria-haspopup="listbox"
+                  aria-expanded={isFilterMenuOpen}
+                >
+                  <span className="truncate">{activeFilterLabel}</span>
+                  <ChevronDown
+                    className={`h-4 w-4 shrink-0 text-white/62 transition-transform ${
+                      isFilterMenuOpen ? 'rotate-180' : ''
                     }`}
+                  />
+                </button>
+
+                {isFilterMenuOpen && (
+                  <div
+                    role="listbox"
+                    aria-label="Filter models"
+                    className="absolute right-0 top-12 z-20 w-48 overflow-hidden rounded-xl border border-white/12 bg-[#0c1124] p-1.5 shadow-[0_18px_42px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.08)]"
                   >
-                    {filter.id === 'pro' ? (
-                      <span className="inline-flex items-center gap-1">
-                        Pro <Lock className="h-3 w-3 text-amber-300" />
-                      </span>
-                    ) : (
-                      filter.label
-                    )}
-                  </button>
-                ))}
+                    {MODEL_FILTERS.map(filter => (
+                      <button
+                        key={filter.id}
+                        type="button"
+                        role="option"
+                        aria-selected={activeFilter === filter.id}
+                        onClick={() => {
+                          setActiveFilter(filter.id);
+                          setIsFilterMenuOpen(false);
+                        }}
+                        className={`flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-left text-xs font-bold transition-colors ${
+                          activeFilter === filter.id
+                            ? 'bg-indigo-500 text-white'
+                            : 'text-white/72 hover:bg-white/[0.07] hover:text-white'
+                        }`}
+                      >
+                        <span>{filter.label}</span>
+                        {activeFilter === filter.id && <Check className="h-3.5 w-3.5" />}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -484,44 +545,27 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
               </div>
             )}
           </div>
-
-          <ModelDetailPanel
-            tier={selectedTier.id}
-            isLocked={selectedTierIsLocked}
-            onPreview={() => handleSelect(selectedTier.id, true)}
-            onUpgrade={() => handleLockedClick(selectedTier.id)}
-          />
         </div>
 
         {upgradeCta && <div className="shrink-0 border-t border-white/10 pt-3">{upgradeCta}</div>}
 
-        <div className="flex shrink-0 flex-col gap-3 border-t border-white/10 pt-3 text-xs text-white/48 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2">
-            <Check className="h-4 w-4 text-white/48" />
-            <span>Select a model now. You can change it before processing.</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() =>
-                selectedTierIsLocked
-                  ? handleLockedClick(selectedTier.id)
-                  : handleSelect(selectedTier.id, true)
-              }
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-500 to-violet-600 px-3 py-2 text-xs font-bold text-white shadow-[0_10px_24px_rgba(79,70,229,0.24)] lg:hidden"
-            >
-              {selectedTierIsLocked ? (
-                <Lock className="h-3.5 w-3.5" />
-              ) : (
-                <Check className="h-3.5 w-3.5" />
-              )}
-              {selectedTierIsLocked ? 'Get credits' : 'Use this model'}
-            </button>
-            <div className="inline-flex w-fit items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 font-semibold text-indigo-300">
-              <span className="h-3 w-3 rounded-full border border-indigo-300/70" />
-              12 credits
-            </div>
-          </div>
+        <div className="shrink-0 border-t border-white/10 pt-3">
+          <button
+            type="button"
+            onClick={() =>
+              selectedTierIsLocked
+                ? handleLockedClick(selectedTier.id)
+                : handleSelect(selectedTier.id, true)
+            }
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-500 to-violet-600 px-4 py-3 text-sm font-black text-white shadow-[0_12px_28px_rgba(79,70,229,0.30)] transition-transform hover:translate-y-[-1px]"
+          >
+            {selectedTierIsLocked ? (
+              <Lock className="h-4 w-4" />
+            ) : (
+              <Check className="h-4 w-4" />
+            )}
+            {selectedTierIsLocked ? 'Get credits' : 'Use selected model'}
+          </button>
         </div>
       </div>
     </BottomSheet>
@@ -626,106 +670,6 @@ const GalleryModelCard: React.FC<IGalleryModelCardProps> = ({
         <p className="mt-1 line-clamp-1 text-[10px] font-medium text-white/58">{config.bestFor}</p>
       </div>
     </button>
-  );
-};
-
-interface IModelDetailPanelProps {
-  tier: QualityTier;
-  isLocked: boolean;
-  onPreview: () => void;
-  onUpgrade: () => void;
-}
-
-const ModelDetailPanel: React.FC<IModelDetailPanelProps> = ({
-  tier,
-  isLocked,
-  onPreview,
-  onUpgrade,
-}) => {
-  const config = QUALITY_TIER_CONFIG[tier];
-  const isPremium = PREMIUM_TIERS.includes(tier);
-  const preview = config.previewImages;
-  const useCaseTags = config.useCases.slice(0, 4);
-
-  return (
-    <aside className="hidden rounded-xl border border-white/10 bg-white/[0.045] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] lg:sticky lg:top-0 lg:block lg:self-start">
-      <span
-        className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-black uppercase tracking-wide text-white ${
-          isPremium ? 'bg-violet-600/90' : 'bg-emerald-500/90'
-        }`}
-      >
-        {isPremium ? (
-          <>
-            Pro <Lock className="h-3 w-3" />
-          </>
-        ) : (
-          'Included'
-        )}
-      </span>
-      <h3 className="mt-3 text-lg font-bold text-white">{config.label}</h3>
-      <ul className="mt-2 space-y-1.5 text-[11px] font-medium text-white/74">
-        <li className="flex gap-2">
-          <Check className="mt-0.5 h-3 w-3 shrink-0 text-violet-400" />
-          <span className="line-clamp-1">{config.description}</span>
-        </li>
-        <li className="flex gap-2">
-          <Check className="mt-0.5 h-3 w-3 shrink-0 text-violet-400" />
-          <span className="line-clamp-1">{config.bestFor}</span>
-        </li>
-        <li className="flex gap-2">
-          <Check className="mt-0.5 h-3 w-3 shrink-0 text-violet-400" />
-          {config.smartAnalysisAlwaysOn ? 'Automatic model choice' : 'Focused model'}
-        </li>
-      </ul>
-
-      <div className="relative mt-3 aspect-[2/0.72] overflow-hidden rounded-lg bg-black/30">
-        {preview ? (
-          <GalleryBeforeAfterSlider previewImages={preview} label={config.label} />
-        ) : (
-          <div className="flex h-full items-center justify-center text-xs text-white/50">
-            Preview unavailable
-          </div>
-        )}
-      </div>
-
-      <div className="mt-3 overflow-hidden rounded-lg border border-white/10 text-[10px] text-white/72">
-        {[
-          ['Access', isPremium ? 'Pro model' : 'Included model'],
-          ['Credits', formatCardCredits(tier)],
-          ['Model', config.modelId ?? 'Automatic selection'],
-        ].map(row => (
-          <div
-            key={row[0]}
-            className="grid grid-cols-[82px_1fr] border-b border-white/10 last:border-b-0"
-          >
-            <span className="px-2.5 py-1.5 font-semibold text-white/58">{row[0]}</span>
-            <span className="truncate border-l border-white/10 px-2.5 py-1.5 font-semibold text-white/82">
-              {row[1]}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-2 flex flex-wrap gap-1.5">
-        {useCaseTags.map(tag => (
-          <span
-            key={tag}
-            className="rounded-md border border-white/10 bg-white/[0.035] px-1.5 py-0.5 text-[9px] font-medium text-white/58"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-
-      <button
-        type="button"
-        onClick={isLocked ? onUpgrade : onPreview}
-        className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-500 to-violet-600 px-4 py-2.5 text-sm font-bold text-white shadow-[0_14px_30px_rgba(79,70,229,0.28)] transition-transform hover:translate-y-[-1px]"
-      >
-        {isLocked ? <Lock className="h-4 w-4" /> : <Check className="h-4 w-4" />}
-        {isLocked ? 'Get credits' : 'Use this model'}
-      </button>
-    </aside>
   );
 };
 

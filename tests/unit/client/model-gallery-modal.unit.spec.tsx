@@ -18,6 +18,7 @@ vi.mock('next/navigation', () => ({
 // Mock lucide-react icons
 vi.mock('lucide-react', () => ({
   Check: () => <span data-testid="check-icon">Check</span>,
+  ChevronDown: () => <span data-testid="chevron-down-icon">ChevronDown</span>,
   Lock: () => <span data-testid="lock-icon">Lock</span>,
   Image: () => <span data-testid="image-icon">Image</span>,
   Search: () => <span data-testid="search-icon">Search</span>,
@@ -128,7 +129,7 @@ describe('ModelGalleryModal', () => {
       render(<ModelGalleryModal {...defaultProps} />);
 
       // Find the search input
-      const searchInput = screen.getByPlaceholderText('Search by name, use case, or feature...');
+      const searchInput = screen.getByPlaceholderText('What do you want to fix?');
 
       // Type "anime" to filter
       fireEvent.change(searchInput, { target: { value: 'anime' } });
@@ -153,7 +154,7 @@ describe('ModelGalleryModal', () => {
     it('should show no results state when search has no matches', async () => {
       render(<ModelGalleryModal {...defaultProps} />);
 
-      const searchInput = screen.getByPlaceholderText('Search by name, use case, or feature...');
+      const searchInput = screen.getByPlaceholderText('What do you want to fix?');
 
       // Type something that won't match anything
       fireEvent.change(searchInput, { target: { value: 'xyznonexistent123' } });
@@ -170,7 +171,7 @@ describe('ModelGalleryModal', () => {
     it('should clear search when clear button clicked', async () => {
       render(<ModelGalleryModal {...defaultProps} />);
 
-      const searchInput = screen.getByPlaceholderText('Search by name, use case, or feature...');
+      const searchInput = screen.getByPlaceholderText('What do you want to fix?');
 
       // Type something
       fireEvent.change(searchInput, { target: { value: 'test' } });
@@ -232,7 +233,7 @@ describe('ModelGalleryModal', () => {
       render(<ModelGalleryModal {...defaultProps} currentTier="budget-edit" isFreeUser={false} />);
 
       expect(screen.queryByText('Upgrade to use')).not.toBeInTheDocument();
-      expect(screen.getAllByText('Use this model').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Use selected model').length).toBeGreaterThan(0);
     });
 
     it('should open the upgrade flow when a locked tier is clicked', async () => {
@@ -257,7 +258,7 @@ describe('ModelGalleryModal', () => {
     it('should keep upgrade CTA visible while searching', async () => {
       render(<ModelGalleryModal {...defaultProps} isFreeUser={true} />);
 
-      fireEvent.change(screen.getByPlaceholderText('Search by name, use case, or feature...'), {
+      fireEvent.change(screen.getByPlaceholderText('What do you want to fix?'), {
         target: { value: 'portrait' },
       });
 
@@ -290,7 +291,7 @@ describe('ModelGalleryModal', () => {
       fireEvent.click(quickCard!);
 
       expect(mockOnClose).not.toHaveBeenCalled();
-      fireEvent.click(screen.getAllByRole('button', { name: /Use this model/i })[0]);
+      fireEvent.click(screen.getAllByRole('button', { name: /Use selected model/i })[0]);
 
       await waitFor(() => {
         expect(mockOnClose).toHaveBeenCalled();
@@ -394,13 +395,13 @@ describe('ModelGallerySearch', () => {
 
   it('should render search input', () => {
     render(<ModelGallerySearch {...defaultSearchProps} />);
-    expect(screen.getByPlaceholderText('Search models...')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('What do you want to fix?')).toBeInTheDocument();
   });
 
   it('should call onChange with debounce', async () => {
     render(<ModelGallerySearch {...defaultSearchProps} />);
 
-    const input = screen.getByPlaceholderText('Search models...');
+    const input = screen.getByPlaceholderText('What do you want to fix?');
     fireEvent.change(input, { target: { value: 'test' } });
 
     // Should not call immediately
@@ -415,7 +416,7 @@ describe('ModelGallerySearch', () => {
   it('should clear input when X button clicked', () => {
     render(<ModelGallerySearch {...defaultSearchProps} value="test" />);
 
-    const input = screen.getByPlaceholderText('Search models...');
+    const input = screen.getByPlaceholderText('What do you want to fix?');
     expect(input).toHaveValue('test');
 
     // Find and click clear button
@@ -428,7 +429,7 @@ describe('ModelGallerySearch', () => {
   it('should clear on Escape key', () => {
     render(<ModelGallerySearch {...defaultSearchProps} value="test" />);
 
-    const input = screen.getByPlaceholderText('Search models...');
+    const input = screen.getByPlaceholderText('What do you want to fix?');
     fireEvent.keyDown(input, { key: 'Escape' });
 
     expect(mockOnChange).toHaveBeenCalledWith('');

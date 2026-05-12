@@ -17,7 +17,7 @@ export interface IModelGallerySearchProps {
 export const ModelGallerySearch: React.FC<IModelGallerySearchProps> = ({
   value,
   onChange,
-  placeholder = 'Search models...',
+  placeholder = 'What do you want to fix?',
 }) => {
   const [localValue, setLocalValue] = useState(value);
 

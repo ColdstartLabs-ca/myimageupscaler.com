@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 import { cn } from '@client/utils/cn';
 
@@ -33,20 +33,21 @@ export const BottomSheet: React.FC<IBottomSheetProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
+  const onCloseRef = useRef(onClose);
 
-  // Handle ESC key
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    },
-    [isOpen, onClose]
-  );
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   // Focus trap and body scroll lock
   useEffect(() => {
     if (isOpen) {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          onCloseRef.current();
+        }
+      };
+
       // Store the currently focused element
       previousActiveElement.current = document.activeElement as HTMLElement;
 
@@ -71,7 +72,7 @@ export const BottomSheet: React.FC<IBottomSheetProps> = ({
         }
       };
     }
-  }, [isOpen, handleKeyDown]);
+  }, [isOpen]);
 
   // Handle backdrop click
   const handleBackdropClick = (e: React.MouseEvent) => {
