@@ -239,7 +239,7 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
       const mobileQualityBtn = await uploadImageAndWaitForMobileQualitySelector(page);
       await mobileQualityBtn.click();
 
-      const galleryModal = page.locator('text=Select Model');
+      const galleryModal = page.getByRole('heading', { name: 'Choose a model' });
       await expect(galleryModal).toBeVisible({ timeout: 20000 });
 
       // Click any premium/locked tier.
@@ -296,7 +296,7 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
       if (await mobileQualityBtn.isVisible({ timeout: 8000 })) {
         await mobileQualityBtn.click();
 
-        const galleryModal = page.locator('text=Select Model');
+        const galleryModal = page.getByRole('heading', { name: 'Choose a model' });
         await expect(galleryModal).toBeVisible({ timeout: 20000 });
 
         // Click a free tier — should NOT set originating model
@@ -339,8 +339,8 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
       const mobileQualityBtn = await uploadImageAndWaitForMobileQualitySelector(page);
       await mobileQualityBtn.click();
 
-      // Model gallery opens with "Select Model" title
-      const galleryModal = page.locator('text=Select Model');
+      // Model gallery opens with the model picker title
+      const galleryModal = page.getByRole('heading', { name: 'Choose a model' });
       await expect(galleryModal).toBeVisible({ timeout: 20000 });
 
       // Gallery closes on Escape
@@ -375,7 +375,7 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
       const mobileQualityBtn = await uploadImageAndWaitForMobileQualitySelector(page);
       await mobileQualityBtn.click();
 
-      const galleryModal = page.locator('text=Select Model');
+      const galleryModal = page.getByRole('heading', { name: 'Choose a model' });
       await expect(galleryModal).toBeVisible({ timeout: 20000 });
 
       // Click a locked premium tier
@@ -399,9 +399,10 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
         );
         expect(storedModel).not.toBeNull();
 
-        // CheckoutModal should open after clicking locked tier (direct checkout path)
-        const checkoutModal = page.locator('[data-modal="checkout"]');
-        await expect(checkoutModal).toBeVisible({ timeout: 20000 });
+        // PurchaseModal should open after clicking a locked tier
+        await expect(page.locator('[data-testid="purchase-modal"]')).toBeVisible({
+          timeout: 20000,
+        });
       }
     });
 

@@ -340,7 +340,10 @@ export function PurchaseModal({
 
         {/* Modal */}
         <div className="flex min-h-full items-end sm:items-center justify-center p-0 sm:p-4">
-          <div className="relative w-full max-w-lg bg-surface rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col max-h-[92vh] sm:max-h-[85vh] overflow-hidden">
+          <div
+            data-testid="purchase-modal"
+            className="relative w-full max-w-lg bg-surface rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col max-h-[92vh] sm:max-h-[85vh] overflow-hidden"
+          >
             {/* Scrollable content */}
             <div className="overflow-y-auto flex-grow">
               {/* Header */}

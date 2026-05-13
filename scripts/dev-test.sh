@@ -32,9 +32,11 @@ if [ -f ".next/dev/lock" ]; then
   rm -f ".next/dev/lock"
 fi
 
-# Clear Next.js cache for clean test environment
+# Clear Next.js cache for clean test environment.
+# Next 16 dev keeps route manifests under .next/dev; stale manifests can make
+# newly added app routes return "Cannot find module for page" during E2E runs.
 echo "Clearing Next.js cache for clean test environment..."
-rm -rf .next/cache
+rm -rf .next/cache .next/dev
 
 # Check if port is already in use and kill the process if needed
 # This prevents "port already in use" errors when restarting tests
