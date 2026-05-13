@@ -16,6 +16,27 @@ Maintenance rules:
 - [ ] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap.
 - [ ] In GA4 Admin, confirm the SEO funnel events are marked as key events: `image_uploaded`, `image_upscale_started`, `upscale_completed`, `signup_started`, `signup_completed`, `checkout_opened`, `checkout_started`, `checkout_completed`, and `purchase_confirmed`.
 
+## 2026-05-13
+
+### Blog Growth Maintenance: Opportunities + Performance Monitor
+
+Source: [blog-opportunities-publisher-2026-05-13.md](../reports/blog-opportunities-publisher-2026-05-13.md), [blog-performance-recovery-2026-05-13.md](../reports/blog-performance-recovery-2026-05-13.md)
+
+Changes:
+
+- Ran the blog opportunities publisher against 90-day GSC data through 2026-05-10 and selected no new publish because candidates either duplicate existing canonical posts or lack enough evidence.
+- Ran the blog performance monitor against the default 14-day comparison window for blog URLs.
+- Confirmed performance alerts remain concentrated in best-free-upscaler, sharpener/enhancer, no-watermark, and upscaling-vs-sharpening clusters.
+
+Validation:
+
+- GSC exports completed for 90-day opportunity discovery and 14-day blog monitoring.
+- Anti-cannibalization gate prevented duplicate publishing for existing canonical blog intents.
+
+Follow-up:
+
+- Request indexing for the existing GSC backlog URLs and re-run after 2026-05-16 to 2026-05-19, when GSC can reflect May 12 blog changes.
+
 ## 2026-05-12
 
 ### Blog Quality Monitor: Default 14-Day Visibility Check
