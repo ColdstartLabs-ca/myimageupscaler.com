@@ -51,6 +51,12 @@ node ./.claude/skills/ga-analysis/scripts/ga-fetch.cjs --organic-channel="Organi
 
 # Larger landing-page sample
 node ./.claude/skills/ga-analysis/scripts/ga-fetch.cjs --landing-page-limit=2000 --output=/tmp/ga-miu.json
+
+# Check GA4 key-event setup for the SEO funnel
+node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs
+
+# Create missing key events when the service account has GA4 Editor access
+node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create
 ```
 
 Logs go to stderr. JSON goes to stdout unless `--output` is set.

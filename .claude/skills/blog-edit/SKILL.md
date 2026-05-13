@@ -27,11 +27,15 @@ Edit existing blog posts to improve quality, SEO, or fix issues.
 
 ## Changelog
 
-**Before starting:** Read recent entries to understand what has already been done.
+**Before starting:** Read recent entries and SEO backlogs to understand what has already been done.
 
 ```bash
 tail -60 .claude/skills/blog-changelog.md
+sed -n '1,140p' docs/SEO/maintenance/seo-changes-backlog.md
+sed -n '1,120p' docs/SEO/maintenance/gsc-request-indexing-backlog.md
 ```
+
+If the target post was recently refreshed, redirected, unpublished, queued for indexing, or is waiting for GSC data lag, do not rewrite it again unless the user explicitly asks. Treat the task as validation-only or request-indexing follow-up.
 
 **After finishing:** Append a brief entry.
 
@@ -53,7 +57,7 @@ EOF
 ## Workflow
 
 ```
-1. CHANGELOG → Read recent entries first
+1. CHANGELOG → Read recent blog changelog and SEO maintenance backlogs first
 2. FETCH     → GET /api/blog/posts/[slug]
 3. ANALYZE   → Review current content/SEO
 4. IMPROVE   → Generate new content/image if needed

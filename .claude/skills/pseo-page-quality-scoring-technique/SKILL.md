@@ -24,6 +24,15 @@ node ./.claude/skills/seo-growth-plan/scripts/seo-synthesize.cjs \
 
 Use `/tmp/pseo-inventory-miu.json` for family, CTA, FAQ, freshness, and unique-field signals. Use `/tmp/seo-plan-miu.json` for GSC + GA performance by URL. If the inventory has a family with many pages but few URLs in the joined plan, treat it as a discovery/indexation or low-demand family until proven otherwise.
 
+## Project Backlog Context
+
+Before recommending pSEO template, CTA, sitemap, indexation, or scaling changes in this repo, read:
+
+- `docs/SEO/maintenance/seo-changes-backlog.md`
+- `docs/SEO/maintenance/gsc-request-indexing-backlog.md`
+
+Use these Markdown backlogs to identify families that were recently added, redirected, sitemap-adjusted, refreshed, or queued for indexing. Skip duplicate template or CTA telemetry work when the current tree already implements it; prefer scorecard joins, production validation, or post-indexing measurement.
+
 ## Inputs
 
 - Page inventory grouped by template, page family, intent, data source, and canonical URL.
@@ -71,11 +80,12 @@ Score each page or family from 0-100. Use weighted averages for families, but al
 ## Workflow
 
 1. Build the page-family inventory, then segment pages by template and intent before scoring. Avoid mixing informational, comparison, local, directory, and transactional pages in one benchmark.
-2. Pull at least 90 days of GSC and GA4 data when available. For new pages, mark data confidence as low and rely more heavily on indexation, content depth, links, and CTA fit.
-3. Normalize metrics within comparable page families. Use percentiles or buckets instead of global site averages when page families have different demand ceilings.
-4. Score each component, then write the evidence in one short note per component. Missing data should reduce confidence, not automatically produce a zero.
-5. Assign one primary action and, when useful, one secondary action.
-6. Summarize family-level patterns: winners to scale, fixable pages, duplicates to consolidate, and pages that should leave the index.
+2. Check the SEO maintenance backlogs and recent git history for family-level work already done or queued.
+3. Pull at least 90 days of GSC and GA4 data when available. For new pages, mark data confidence as low and rely more heavily on indexation, content depth, links, and CTA fit.
+4. Normalize metrics within comparable page families. Use percentiles or buckets instead of global site averages when page families have different demand ceilings.
+5. Score each component, then write the evidence in one short note per component. Missing data should reduce confidence, not automatically produce a zero.
+6. Assign one primary action and, when useful, one secondary action.
+7. Summarize family-level patterns: winners to scale, fixable pages, duplicates to consolidate, and pages that should leave the index.
 
 ## Action Rules
 

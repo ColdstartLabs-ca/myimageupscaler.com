@@ -21,6 +21,15 @@ node ./.claude/skills/seo-growth-plan/scripts/seo-synthesize.cjs \
 
 Read `summary.ga`, `sourceMedium`, `opportunities.highTrafficLowConversion`, and `opportunities.trackingGaps` from those files. A high-priority symptom is total conversions under `(not set)` or another non-organic bucket while Organic Search has engaged sessions and zero conversions.
 
+## Project Backlog Context
+
+Before proposing analytics code changes in this repo, read:
+
+- `docs/SEO/maintenance/seo-changes-backlog.md`
+- `docs/SEO/maintenance/gsc-request-indexing-backlog.md`
+
+Use the backlog and recent git history to distinguish completed code/event mapping work from open GA4 Admin or live-validation tasks. If code already maps the funnel events or preserves attribution, skip duplicate implementation and focus on GA4 key-event setup, DebugView/live journey validation, source/medium checks, and residual `(not set)` or Unassigned conversions.
+
 ## Inputs
 
 Ask for the smallest useful set:
@@ -36,12 +45,13 @@ If direct GA4 access is unavailable, request a GA4 exploration/export by landing
 ## Diagnosis Workflow
 
 1. Establish the expected path for organic visitors: landing page, signup or login, dashboard redirect, upload, upscale, checkout, purchase.
-2. Compare organic landing-page sessions with downstream event counts and conversion counts by the same date range.
-3. Locate the first attribution break: missing event, changed source/medium, new session, domain referral, direct session, missing user stitching, or purchase arriving only from webhook.
-4. Check redirects and callbacks for dropped query parameters, missing referrer, cookie scope changes, cross-domain linker gaps, and server-side redirects that start fresh sessions.
-5. Check Stripe handoff for missing `client_reference_id`, missing user/customer mapping, missing transaction ID consistency, and purchase events that lack original acquisition context.
-6. Review consent behavior: denied or delayed consent can explain missing client-side events, but should not create inconsistent server-side purchase attribution without a documented fallback.
-7. Quantify impact: affected events, lost organic conversions, Unassigned share, Direct/referral inflation, revenue affected, and start date of regression.
+2. Check the SEO maintenance backlog and git history for already-applied analytics, attribution, checkout, webhook, or GA4 event-map changes.
+3. Compare organic landing-page sessions with downstream event counts and conversion counts by the same date range.
+4. Locate the first attribution break: missing event, changed source/medium, new session, domain referral, direct session, missing user stitching, or purchase arriving only from webhook.
+5. Check redirects and callbacks for dropped query parameters, missing referrer, cookie scope changes, cross-domain linker gaps, and server-side redirects that start fresh sessions.
+6. Check Stripe handoff for missing `client_reference_id`, missing user/customer mapping, missing transaction ID consistency, and purchase events that lack original acquisition context.
+7. Review consent behavior: denied or delayed consent can explain missing client-side events, but should not create inconsistent server-side purchase attribution without a documented fallback.
+8. Quantify impact: affected events, lost organic conversions, Unassigned share, Direct/referral inflation, revenue affected, and start date of regression.
 
 ## Common Failure Modes
 
@@ -112,6 +122,10 @@ When local code context matters, inspect `docs/technical/systems/analytics.md` f
 1. [highest leverage fix]
 2. [next fix]
 3. [GA4/admin or reporting fix]
+
+## Already Addressed / Skip
+
+[Backlog/git evidence for code or admin work already completed, plus what remains to validate]
 
 ## Validation
 

@@ -19,6 +19,15 @@ node ./.claude/skills/gsc-analysis/scripts/audit-blog-seo.cjs \
 
 Read `growthOverview.ctr`, `ctrOptimization`, `pageCtrOpportunities`, and `/tmp/blog-audit-miu.json`. A useful output must include exact title, meta, H1/direct-answer, FAQ, internal-link, and validation recommendations for each target URL.
 
+## Project Backlog Context
+
+Before writing CTR rewrite briefs for this repo, read:
+
+- `docs/SEO/maintenance/seo-changes-backlog.md`
+- `docs/SEO/maintenance/gsc-request-indexing-backlog.md`
+
+If a page was recently refreshed, revalidated, requested for indexing, or is waiting for GSC lag to clear, skip another rewrite and output a validation-only recommendation. Use recent git history or report links from the backlog when the current status is unclear.
+
 ## Inputs
 
 Use real Google Search Console exports/API data when available. Related skills may supply context:
@@ -55,11 +64,12 @@ When many queries map to one URL, cluster by intent before writing. Do not optim
 ## Rewrite Workflow
 
 1. Identify the primary query cluster for each URL by impressions, rank, and intent fit.
-2. Diagnose the likely CTR problem: vague title, missing benefit, wrong modifier, stale year, weak meta, no direct answer, no rich result eligibility, brand ambiguity, intent mismatch, or competing snippets out-promising the page.
-3. Write a brief with precise replacements, not general advice.
-4. Preserve rankings by keeping the core query and page intent aligned. Avoid clickbait that the page cannot satisfy.
-5. Add internal-link recommendations from relevant pages using anchors that reinforce the target query cluster.
-6. Define validation: annotate the change date, request indexing if appropriate, and compare CTR/clicks after GSC data has at least 14-28 days of post-change data.
+2. Check the SEO maintenance backlogs for recent changes to that URL or query cluster.
+3. Diagnose the likely CTR problem: vague title, missing benefit, wrong modifier, stale year, weak meta, no direct answer, no rich result eligibility, brand ambiguity, intent mismatch, or competing snippets out-promising the page.
+4. Write a brief with precise replacements, not general advice.
+5. Preserve rankings by keeping the core query and page intent aligned. Avoid clickbait that the page cannot satisfy.
+6. Add internal-link recommendations from relevant pages using anchors that reinforce the target query cluster.
+7. Define validation: annotate the change date, request indexing if appropriate, and compare CTR/clicks after GSC data has at least 14-28 days of post-change data.
 
 ## Brief Format
 
@@ -87,6 +97,7 @@ For each priority URL, output:
 - From: [source URL/page type] | Anchor: [anchor text] | Reason: [relevance]
 
 **Implementation notes**: [CMS fields/files/components if known]
+**Backlog check**: [recent change found, skip reason, or none found]
 **Validation**: [metric to watch and comparison window]
 ```
 

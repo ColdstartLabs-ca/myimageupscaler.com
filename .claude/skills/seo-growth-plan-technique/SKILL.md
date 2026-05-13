@@ -21,6 +21,15 @@ node ./.claude/skills/seo-growth-plan/scripts/seo-synthesize.cjs \
 
 Read `summary.crosscheck` first. If the GSC clicks to GA organic sessions ratio is outside 0.6-1.6, put tracking repair above SEO/content actions.
 
+## Project Backlog Context
+
+Before recommending or executing SEO work in this repo, read the recent entries in:
+
+- `docs/SEO/maintenance/seo-changes-backlog.md`
+- `docs/SEO/maintenance/gsc-request-indexing-backlog.md`
+
+Use these Markdown backlogs, plus recent git history when needed, to identify work that was already refreshed, redirected, indexed, or instrumented. Mark already-addressed items as skipped or validation-only instead of proposing duplicate rewrites, redirects, event mappings, or pSEO CTA work.
+
 ## Inputs
 
 Collect the smallest useful set:
@@ -35,9 +44,10 @@ If `.claude/product-marketing-context.md` exists, read it before asking for busi
 ## Workflow
 
 1. Establish the business goal: traffic, signups, paid conversions, activation, revenue, or recovery.
-2. Build a current baseline from GSC and GA4 for the same or clearly labeled periods.
-3. Segment pages by type: homepage, tool, pricing, blog, pSEO, comparison, free-tool, account/dashboard, support.
-4. Identify the bottleneck class for each major opportunity:
+2. Check the SEO maintenance backlogs and recent git history for matching prior work.
+3. Build a current baseline from GSC and GA4 for the same or clearly labeled periods.
+4. Segment pages by type: homepage, tool, pricing, blog, pSEO, comparison, free-tool, account/dashboard, support.
+5. Identify the bottleneck class for each major opportunity:
    - Discovery: low impressions or indexation.
    - Ranking: high impressions at positions 8-25.
    - CTR: strong positions with weak CTR or zero clicks.
@@ -45,7 +55,7 @@ If `.claude/product-marketing-context.md` exists, read it before asking for busi
    - CTA: engaged traffic without a direct intent-matched action.
    - Attribution: conversions lost to Unassigned, direct, auth callback, dashboard, or checkout return paths.
    - Cannibalization: multiple URLs splitting the same query intent.
-5. Apply the relevant specialized technique:
+6. Apply the relevant specialized technique:
    - `seo-content-3-kings-technique` for positions 5-15 title/H1/intro refreshes.
    - `serp-ctr-snippet-rewrite-technique` for weak CTR or zero-click rankings.
    - `search-intent-cta-mapping-technique` for page-level CTA and offer fit.
@@ -54,7 +64,7 @@ If `.claude/product-marketing-context.md` exists, read it before asking for busi
    - `organic-funnel-attribution-repair-technique` when organic conversions are zero, missing, or misattributed.
    - `internal-linking-optimizer` when authority or user routing is the likely constraint.
    - `schema-markup` and `ai-search-optimization` for snippet, rich-result, and AI-answer extraction opportunities.
-6. Rank actions by impact, confidence, effort, and time-to-signal.
+7. Rank actions by impact, confidence, effort, and time-to-signal.
 
 ## Project-Specific Priority Rules
 
@@ -99,6 +109,11 @@ Return a concise plan:
 
 | Priority | Page/Cluster | Evidence | Action | Owner/Skill | Success Metric |
 | -------: | ------------ | -------- | ------ | ----------- | -------------- |
+
+## Already Addressed / Skip For Now
+
+| Item | Evidence From Backlog/Git | Remaining Validation |
+| ---- | ------------------------- | -------------------- |
 
 ## 7-Day Plan
 

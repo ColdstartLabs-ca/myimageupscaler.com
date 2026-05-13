@@ -21,6 +21,15 @@ node ./.claude/skills/seo-growth-plan/scripts/seo-synthesize.cjs \
 
 Read `/tmp/seo-plan-miu.json` first. Use `summary.crosscheck.gscClicksVsGaSessions` to verify the join is trustworthy, then use `priorityActions`, `opportunities.conversionOpportunities`, `opportunities.trackingGaps`, and `joinedPagesTop` for page-level money decisions.
 
+## Project Backlog Context
+
+Before recommending money-page, CTA, attribution, or content changes in this repo, read:
+
+- `docs/SEO/maintenance/seo-changes-backlog.md`
+- `docs/SEO/maintenance/gsc-request-indexing-backlog.md`
+
+Use these Markdown backlogs and recent git history to separate work already shipped from work that still needs deploy, indexing, GA4 Admin setup, or live validation. Mark already-addressed actions as skipped instead of adding them to the execution queue again.
+
 ## Data Inputs
 
 Prefer real exports or API output. If data access is unclear, ask for the smallest useful exports.
@@ -70,10 +79,11 @@ node ./.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs --site=DOMAIN --days=28
 
 3. Ingest GA4 organic landing page data using `./.claude/skills/ga-analysis/scripts/ga-fetch.cjs`, an export, API, BigQuery, or user-provided tables.
 4. Join GSC and GA4 by normalized landing page. In this repo, use `./.claude/skills/seo-growth-plan/scripts/seo-synthesize.cjs`.
-5. Segment pages by intent and page type: homepage, tool, product, pricing, comparison, template, article, pSEO, docs, or support.
-6. Identify pages with demand, engagement, and funnel mismatch.
-7. Score opportunities by incremental business value and implementation effort.
-8. Return a prioritized lift plan with page-specific copy, UX, internal link, and measurement actions.
+5. Check SEO maintenance backlogs and recent git history for matching page/content/CTA/analytics work already done.
+6. Segment pages by intent and page type: homepage, tool, product, pricing, comparison, template, article, pSEO, docs, or support.
+7. Identify pages with demand, engagement, and funnel mismatch.
+8. Score opportunities by incremental business value and implementation effort.
+9. Return a prioritized lift plan with page-specific copy, UX, internal link, and measurement actions.
 
 ## Opportunity Patterns
 

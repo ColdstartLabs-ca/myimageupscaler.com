@@ -21,6 +21,15 @@ node ./.claude/skills/seo-growth-plan/scripts/seo-synthesize.cjs \
 
 Read `opportunities.cannibalization` from `/tmp/seo-plan-miu.json` first because it includes GA sessions for competing pages. Fall back to `growthOverview.cannibalization` in GSC when GA is unavailable.
 
+## Project Backlog Context
+
+Before recommending redirects, canonicals, noindex, or retargeting in this repo, read:
+
+- `docs/SEO/maintenance/seo-changes-backlog.md`
+- `docs/SEO/maintenance/gsc-request-indexing-backlog.md`
+
+Then check recent git history for matching redirect/canonical/sitemap/test work when needed. If a consolidation already exists, do not propose it again; recommend production verification, GSC lag monitoring, or internal-link cleanup only.
+
 ## Required Inputs
 
 - GSC query-page rows: query, page, clicks, impressions, CTR, average position, date range.
@@ -32,8 +41,9 @@ If data is missing, proceed with a labeled confidence level and state what must 
 ## Workflow
 
 1. Group rows by query and normalize URLs.
-2. Identify the intent behind each query: informational, commercial, transactional, navigational, local, support, comparison, or entity lookup.
-3. Classify each competing URL:
+2. Check SEO maintenance backlogs and git history for already-applied redirects, canonicals, sitemap exclusions, unpublishes, or internal-link changes.
+3. Identify the intent behind each query: informational, commercial, transactional, navigational, local, support, comparison, or entity lookup.
+4. Classify each competing URL:
    - `Primary`: best intent match and the URL that should rank.
    - `Support`: distinct sub-intent that should remain indexed and link to the primary.
    - `Merge`: overlapping content that should be folded into the primary.
@@ -41,9 +51,9 @@ If data is missing, proceed with a labeled confidence level and state what must 
    - `Noindex`: useful to users but not search-worthy, thin, faceted, filtered, internal, or low-value at scale.
    - `Canonical`: near-duplicate that must stay accessible but should consolidate signals to the primary.
    - `Retarget`: valid page aimed at the wrong query; adjust title/H1/body/internal anchors toward a different keyword.
-4. Choose one primary URL per query cluster unless intents are clearly different.
-5. Convert decisions into edit briefs with exact on-page, technical, and linking actions.
-6. Define validation: GSC query-page monitoring, crawl checks, indexation checks, and timing.
+5. Choose one primary URL per query cluster unless intents are clearly different.
+6. Convert decisions into edit briefs with exact on-page, technical, and linking actions.
+7. Define validation: GSC query-page monitoring, crawl checks, indexation checks, and timing.
 
 ## Decision Rules
 

@@ -21,6 +21,15 @@ node ./.claude/skills/seo-growth-plan/scripts/seo-synthesize.cjs \
 
 Use `opportunities.conversionOpportunities` for high-session CTA targets, `growthOverview.quickWins` for query intent, and `sourceMedium`/Organic conversion data to distinguish CTA problems from attribution problems.
 
+## Project Backlog Context
+
+Before recommending CTA or telemetry changes in this repo, read:
+
+- `docs/SEO/maintenance/seo-changes-backlog.md`
+- `docs/SEO/maintenance/gsc-request-indexing-backlog.md`
+
+Use these backlogs to avoid re-adding CTA/event work that was already shipped. If Organic Search conversions are zero but total conversions exist, check whether analytics/event mapping was already implemented and treat remaining work as GA4 Admin/live validation until proven otherwise.
+
 ## Workflow
 
 1. Classify the page and query intent:
@@ -30,18 +39,19 @@ Use `opportunities.conversionOpportunities` for high-session CTA targets, `growt
    - **Buy/upgrade**: visitor is evaluating price, limits, or paid value.
    - **Trust/risk**: visitor worries about watermark, signup, privacy, quality, or file handling.
 
-2. Pick the conversion promise:
+2. Check the maintenance backlog for recent CTA, content, analytics, or pSEO template changes affecting the page.
+3. Pick the conversion promise:
    - Match the exact query language where true.
    - Remove the biggest friction before adding feature claims.
    - Make the CTA outcome concrete: upload, preview, compare, enhance, price, or subscribe.
 
-3. Map CTA, offer, destination, and placement:
+4. Map CTA, offer, destination, and placement:
    - **Primary CTA**: the next action most aligned with intent.
    - **Offer**: free use, sample preview, side-by-side result, plan comparison, downloadable output, or alternative comparison.
    - **Destination**: tool route, pricing page, comparison page, account/signup, checkout, or article section.
    - **Placement**: first viewport, after diagnostic section, after examples, sticky mobile footer, table row, FAQ, or exit-intent module.
 
-4. Validate with telemetry:
+5. Validate with telemetry:
    - Use GA4 SEO analysis for landing page sessions, engaged sessions, scroll depth, CTA clicks, upload starts, upload completes, preview views, signups, checkout starts, purchases, and returning-user behavior.
    - Use Google Search Console queries/pages for impression intent, CTR gaps, and page-query mismatches.
    - Use funnel telemetry to find the weak step: SERP click, CTA click, upload, processing, preview, download, signup, upgrade.
