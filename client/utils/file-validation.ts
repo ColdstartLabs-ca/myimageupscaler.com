@@ -10,6 +10,8 @@ export interface IFileValidationResult {
   valid: boolean;
   reason?: 'type' | 'size' | 'dimensions';
   dimensions?: IDimensionInfo;
+  errorMessage?: string;
+  detectedMimeType?: string;
 }
 
 export interface IProcessFilesResult {
@@ -18,6 +20,53 @@ export interface IProcessFilesResult {
   oversizedDimensionFiles: Array<{ file: File; dimensions: IDimensionInfo }>;
   invalidTypeFiles: File[];
   errorMessage: string | null;
+}
+
+const MAGIC_BYTE_SIGNATURES: Record<string, number[]> = {
+  'image/jpeg': [0xff, 0xd8, 0xff],
+  'image/png': [0x89, 0x50, 0x4e, 0x47],
+  'image/webp': [0x52, 0x49, 0x46, 0x46],
+};
+
+function normalizeMimeType(mimeType: string): string {
+  return mimeType.toLowerCase() === 'image/jpg' ? 'image/jpeg' : mimeType.toLowerCase();
+}
+
+async function detectFileMimeType(file: File): Promise<string | null> {
+  const headerBlob = file.slice(0, 12);
+  const headerBuffer =
+    typeof headerBlob.arrayBuffer === 'function'
+      ? await headerBlob.arrayBuffer()
+      : await new Promise<ArrayBuffer>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as ArrayBuffer);
+          reader.onerror = () => reject(new Error(`Failed to read image header: ${file.name}`));
+          reader.readAsArrayBuffer(headerBlob);
+        });
+  const header = new Uint8Array(headerBuffer);
+
+  for (const [mimeType, signature] of Object.entries(MAGIC_BYTE_SIGNATURES)) {
+    if (signature.every((byte, index) => header[index] === byte)) {
+      if (mimeType === 'image/webp') {
+        const webpSignature = [0x57, 0x45, 0x42, 0x50]; // WEBP
+        if (!webpSignature.every((byte, index) => header[index + 8] === byte)) {
+          continue;
+        }
+      }
+      return mimeType;
+    }
+  }
+
+  if (
+    header[4] === 0x66 &&
+    header[5] === 0x74 &&
+    header[6] === 0x79 &&
+    header[7] === 0x70
+  ) {
+    return 'image/heic';
+  }
+
+  return null;
 }
 
 /**
@@ -95,6 +144,25 @@ export async function validateImageFileWithDimensions(
   const basicResult = validateImageFile(file, isPaidUser);
   if (!basicResult.valid) {
     return basicResult;
+  }
+
+  const claimedMimeType = normalizeMimeType(file.type);
+  const detectedMimeType = await detectFileMimeType(file);
+  if (!detectedMimeType) {
+    return {
+      valid: false,
+      reason: 'type',
+      errorMessage: 'Unrecognized image format',
+    };
+  }
+
+  if (claimedMimeType !== detectedMimeType) {
+    return {
+      valid: false,
+      reason: 'type',
+      detectedMimeType,
+      errorMessage: `MIME type mismatch: claimed ${claimedMimeType}, detected ${detectedMimeType}`,
+    };
   }
 
   // Then check dimensions

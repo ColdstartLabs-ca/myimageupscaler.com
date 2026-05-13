@@ -203,6 +203,23 @@ export function serializeError(error: unknown): string {
     return error.message;
   }
 
+  // Browser Event/ProgressEvent objects often stringify to {"isTrusted":true},
+  // which is not useful telemetry. Keep a stable diagnostic instead.
+  if (
+    error &&
+    typeof error === 'object' &&
+    'isTrusted' in error &&
+    !('message' in error) &&
+    !('error' in error)
+  ) {
+    const eventLike = error as { type?: unknown; target?: { constructor?: { name?: string } } };
+    const eventType = typeof eventLike.type === 'string' ? eventLike.type : 'unknown';
+    const targetName = eventLike.target?.constructor?.name;
+    return targetName
+      ? `Browser ${eventType} event from ${targetName}`
+      : `Browser ${eventType} event`;
+  }
+
   // Handle AppError with more context
   if (error && typeof error === 'object' && 'code' in error && 'message' in error) {
     const appError = error as { code: string; message: string; details?: Record<string, unknown> };

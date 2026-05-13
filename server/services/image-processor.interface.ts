@@ -11,12 +11,25 @@ export interface IImageProcessorResult {
   expiresAt?: number; // Timestamp when URL expires (for imageUrl)
 }
 
+export interface ICreditDeduction {
+  amount: number;
+  jobId: string;
+  newBalance: number;
+  subscriptionAmount: number;
+  purchasedAmount: number;
+}
+
 /**
  * Options passed to processImage
  */
 export interface IProcessImageOptions {
   /** Pre-calculated credit cost from the route. If provided, processor uses this instead of recalculating. */
   creditCost?: number;
+  /**
+   * Called immediately after credits are deducted. API routes use this to refund
+   * if a later route-level failure occurs after the provider has already charged.
+   */
+  onCreditsDeducted?: (deduction: ICreditDeduction) => void;
 }
 
 /**

@@ -29,6 +29,16 @@ describe('isFreeleaderBlocked', () => {
     expect(isFreeleaderBlocked(profile)).toBe(false);
   });
 
+  it('should allow flagged active subscriber even if tier has not synced yet', () => {
+    const profile = {
+      is_flagged_freeloader: true,
+      subscription_status: 'active',
+      subscription_tier: null,
+      purchased_credits_balance: 0,
+    };
+    expect(isFreeleaderBlocked(profile)).toBe(false);
+  });
+
   it('should allow flagged free user who purchased credits', () => {
     // A free-tier user who bought credits is a legitimate paying customer
     const profile = {

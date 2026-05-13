@@ -11,6 +11,23 @@ import {
   processFilesAsync,
 } from '@client/utils/file-validation';
 
+function imageBytes(type: string, size = 100): Uint8Array {
+  const bytes = new Uint8Array(Math.max(size, 12));
+  if (type === 'image/jpeg') {
+    bytes.set([0xff, 0xd8, 0xff]);
+  } else if (type === 'image/png') {
+    bytes.set([0x89, 0x50, 0x4e, 0x47]);
+  } else if (type === 'image/webp') {
+    bytes.set([0x52, 0x49, 0x46, 0x46], 0);
+    bytes.set([0x57, 0x45, 0x42, 0x50], 8);
+  }
+  return bytes;
+}
+
+function imageFile(name: string, type = 'image/jpeg', size = 100): File {
+  return new File([imageBytes(type, size)], name, { type });
+}
+
 describe('file-validation', () => {
   describe('exceedsMaxPixels', () => {
     it('should return false for images within limit', () => {
@@ -201,8 +218,8 @@ describe('processFilesAsync', () => {
     dimensionMap.set('big.jpg', { width: 3000, height: 2000 }); // 6MP > 1.5MP
     dimensionMap.set('small.jpg', { width: 800, height: 600 }); // 0.48MP
 
-    const smallFile = new File(['x'.repeat(100)], 'small.jpg', { type: 'image/jpeg' });
-    const bigFile = new File(['x'.repeat(100)], 'big.jpg', { type: 'image/jpeg' });
+    const smallFile = imageFile('small.jpg');
+    const bigFile = imageFile('big.jpg');
 
     const result = await processFilesAsync([smallFile, bigFile], false);
 
@@ -217,7 +234,7 @@ describe('processFilesAsync', () => {
   it('should return dimension-specific error message when only dimension files rejected', async () => {
     dimensionMap.set('big.jpg', { width: 2000, height: 2000 }); // 4MP > 1.5MP
 
-    const file = new File(['x'.repeat(100)], 'big.jpg', { type: 'image/jpeg' });
+    const file = imageFile('big.jpg');
     const result = await processFilesAsync([file], false);
 
     expect(result.errorMessage).toContain('pixel limit');
@@ -227,7 +244,7 @@ describe('processFilesAsync', () => {
   it('should use custom maxPixels parameter for dimension validation', async () => {
     dimensionMap.set('test.jpg', { width: 1500, height: 1500 }); // 2.25MP
 
-    const file = new File(['x'.repeat(100)], 'test.jpg', { type: 'image/jpeg' });
+    const file = imageFile('test.jpg');
 
     // With 4MP limit, 2.25MP should pass
     const resultHigh = await processFilesAsync([file], false, 4_000_000);
@@ -243,7 +260,7 @@ describe('processFilesAsync', () => {
   it('should skip dimension validation when maxPixels is null', async () => {
     dimensionMap.set('large.jpg', { width: 3000, height: 3000 }); // 9MP
 
-    const file = new File(['x'.repeat(100)], 'large.jpg', { type: 'image/jpeg' });
+    const file = imageFile('large.jpg');
     const result = await processFilesAsync([file], false, null);
 
     expect(result.validFiles).toHaveLength(1);
@@ -254,7 +271,7 @@ describe('processFilesAsync', () => {
   it('should let files through when dimension loading fails', async () => {
     errorFileNames.add('broken.jpg');
 
-    const file = new File(['x'.repeat(100)], 'broken.jpg', { type: 'image/jpeg' });
+    const file = imageFile('broken.jpg');
     const result = await processFilesAsync([file], false);
 
     expect(result.validFiles).toHaveLength(1);
@@ -266,13 +283,9 @@ describe('processFilesAsync', () => {
     dimensionMap.set('huge-dims.jpg', { width: 3000, height: 2000 }); // 6MP
     dimensionMap.set('ok.jpg', { width: 100, height: 100 });
 
-    const validFile = new File(['x'.repeat(100)], 'ok.jpg', { type: 'image/jpeg' });
-    const oversizedSizeFile = new File(['x'.repeat(6 * 1024 * 1024)], 'big-bytes.jpg', {
-      type: 'image/jpeg',
-    });
-    const oversizedDimFile = new File(['x'.repeat(100)], 'huge-dims.jpg', {
-      type: 'image/jpeg',
-    });
+    const validFile = imageFile('ok.jpg');
+    const oversizedSizeFile = imageFile('big-bytes.jpg', 'image/jpeg', 6 * 1024 * 1024);
+    const oversizedDimFile = imageFile('huge-dims.jpg');
     const invalidTypeFile = new File(['x'.repeat(100)], 'doc.pdf', {
       type: 'application/pdf',
     });
@@ -294,12 +307,22 @@ describe('processFilesAsync', () => {
     dimensionMap.set('a.jpg', { width: 800, height: 600 });
     dimensionMap.set('b.png', { width: 640, height: 480 });
 
-    const file1 = new File(['x'.repeat(100)], 'a.jpg', { type: 'image/jpeg' });
-    const file2 = new File(['x'.repeat(100)], 'b.png', { type: 'image/png' });
+    const file1 = imageFile('a.jpg');
+    const file2 = imageFile('b.png', 'image/png');
 
     const result = await processFilesAsync([file1, file2], false);
 
     expect(result.validFiles).toHaveLength(2);
     expect(result.errorMessage).toBeNull();
+  });
+
+  it('should reject MIME type mismatches before upload', async () => {
+    const file = new File([imageBytes('image/png')], 'actually-png.jpg', { type: 'image/jpeg' });
+
+    const result = await processFilesAsync([file], false);
+
+    expect(result.validFiles).toHaveLength(0);
+    expect(result.invalidTypeFiles).toEqual([file]);
+    expect(result.errorMessage).toContain('valid image formats');
   });
 });

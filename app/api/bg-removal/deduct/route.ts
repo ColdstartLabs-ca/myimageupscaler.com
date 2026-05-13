@@ -37,7 +37,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const { data: rawProfile } = await supabaseAdmin
       .from('profiles')
       .select(
-        'is_flagged_freeloader, subscription_tier, subscription_credits_balance, purchased_credits_balance, region_tier, signup_country, signup_ip, created_at'
+        'is_flagged_freeloader, subscription_status, subscription_tier, subscription_credits_balance, purchased_credits_balance, region_tier, signup_country, signup_ip, created_at'
       )
       .eq('id', userId)
       .single();

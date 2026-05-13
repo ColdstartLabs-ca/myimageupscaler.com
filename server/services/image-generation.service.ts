@@ -8,9 +8,11 @@ import { calculateFinalProviderAwareCredits } from '@shared/config/subscription.
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import type {
   IImageProcessor,
+  ICreditDeduction,
   IImageProcessorResult,
   IProcessImageOptions,
 } from './image-processor.interface';
+import { creditManager } from './replicate/utils/credit-manager';
 
 /**
  * Custom error class for insufficient credits
@@ -219,7 +221,16 @@ export class ImageGenerationService implements IImageProcessor {
     }
 
     // Extract total balance from result (returns array with single row)
-    const newBalance = balanceResult?.[0]?.new_total_balance ?? 0;
+    const result = balanceResult?.[0] ?? {};
+    const newBalance = result.new_total_balance ?? 0;
+    const deduction: ICreditDeduction = {
+      amount: creditCost,
+      jobId,
+      newBalance,
+      subscriptionAmount: result.consumed_subscription ?? creditCost,
+      purchasedAmount: result.consumed_purchased ?? 0,
+    };
+    options?.onCreditsDeducted?.(deduction);
 
     // Track credits deducted event
     await trackServerEvent(
@@ -242,28 +253,12 @@ export class ImageGenerationService implements IImageProcessor {
       };
     } catch (error) {
       // Step 3: Refund on failure
-      await this.refundCredits(userId, jobId, creditCost);
+      await creditManager.refundCredits(
+        userId,
+        deduction,
+        'Credit refund for failed Gemini processing'
+      );
       throw error;
-    }
-  }
-
-  /**
-   * Refund credits for a failed generation
-   *
-   * @param userId - The user to refund credits to
-   * @param jobId - The job ID for tracking
-   * @param amount - The number of credits to refund
-   */
-  private async refundCredits(userId: string, jobId: string, amount: number): Promise<void> {
-    const { error } = await supabaseAdmin.rpc('refund_credits', {
-      target_user_id: userId,
-      amount,
-      job_id: jobId,
-    });
-
-    if (error) {
-      // Log the error but don't throw - we don't want to mask the original error
-      console.error('Failed to refund credits:', error);
     }
   }
 

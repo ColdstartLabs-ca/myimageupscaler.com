@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { InsufficientCreditsError } from '../../image-generation.service';
+import type { ICreditDeduction } from '../../image-processor.interface';
 
 /**
  * Result of a credit operation
@@ -30,7 +31,7 @@ export class CreditManager {
     userId: string,
     amount: number,
     provider: string = 'Replicate'
-  ): Promise<{ newBalance: number; jobId: string }> {
+  ): Promise<ICreditDeduction> {
     const jobId = this.generateJobId(provider);
 
     const { data: balanceResult, error: creditError } = await supabaseAdmin.rpc(
@@ -51,9 +52,12 @@ export class CreditManager {
     }
 
     // Extract total balance from result (returns array with single row)
-    const newBalance = balanceResult?.[0]?.new_total_balance ?? 0;
+    const result = balanceResult?.[0] ?? {};
+    const newBalance = result.new_total_balance ?? 0;
+    const subscriptionAmount = result.consumed_subscription ?? amount;
+    const purchasedAmount = result.consumed_purchased ?? 0;
 
-    return { newBalance, jobId };
+    return { amount, newBalance, jobId, subscriptionAmount, purchasedAmount };
   }
 
   /**
@@ -63,16 +67,29 @@ export class CreditManager {
    * @param jobId - The job ID from credit deduction
    * @param amount - The amount of credits to refund
    */
-  async refundCredits(userId: string, jobId: string, amount: number): Promise<void> {
-    const { error } = await supabaseAdmin.rpc('refund_credits', {
-      target_user_id: userId,
-      amount,
-      job_id: jobId,
+  async refundCredits(
+    userId: string,
+    deduction: Pick<
+      ICreditDeduction,
+      'amount' | 'jobId' | 'subscriptionAmount' | 'purchasedAmount'
+    >,
+    description = 'Credit refund for failed processing'
+  ): Promise<boolean> {
+    const { error } = await supabaseAdmin.rpc('refund_consumed_credits', {
+      p_user_id: userId,
+      p_amount: deduction.amount,
+      p_job_id: deduction.jobId,
+      p_subscription_amount: deduction.subscriptionAmount,
+      p_purchased_amount: deduction.purchasedAmount,
+      p_description: description,
     });
 
     if (error) {
       console.error('Failed to refund credits:', error);
+      return false;
     }
+
+    return true;
   }
 
   /**

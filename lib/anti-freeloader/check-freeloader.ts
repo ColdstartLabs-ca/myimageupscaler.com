@@ -17,11 +17,15 @@ export function isFreeTierProfile(subscriptionTier: string | null | undefined): 
 export function isFreeleaderBlocked(
   profile: {
     is_flagged_freeloader?: boolean | null;
+    subscription_status?: string | null;
     subscription_tier?: string | null;
     purchased_credits_balance?: number | null;
   } | null
 ): boolean {
   if (!profile?.is_flagged_freeloader) return false;
+  if (profile.subscription_status === 'active' || profile.subscription_status === 'trialing') {
+    return false;
+  }
   if (
     profile.subscription_tier &&
     !isFreeTierProfile(profile.subscription_tier) &&

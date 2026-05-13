@@ -48,9 +48,13 @@ const fileToBase64 = (file: File): Promise<string> => {
       const result = reader.result as string;
       // Remove the data URL prefix (e.g., "data:image/jpeg;base64,")
       const base64 = result.split(',')[1];
+      if (!base64) {
+        reject(new Error(`Image input was empty or invalid before processing: ${file.name}`));
+        return;
+      }
       resolve(base64);
     };
-    reader.onerror = error => reject(error);
+    reader.onerror = () => reject(new Error(`Failed to read image file: ${file.name}`));
   });
 };
 

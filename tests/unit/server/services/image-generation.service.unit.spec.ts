@@ -499,10 +499,13 @@ describe('ImageGenerationService', () => {
 
       // Verify refund was called
       expect(mockSupabaseRpc).toHaveBeenCalledTimes(2);
-      expect(mockSupabaseRpc).toHaveBeenCalledWith('refund_credits', {
-        target_user_id: userId,
-        amount: creditCost,
-        job_id: expect.stringMatching(/^gen_\d+_[a-z0-9]+$/),
+      expect(mockSupabaseRpc).toHaveBeenCalledWith('refund_consumed_credits', {
+        p_user_id: userId,
+        p_amount: creditCost,
+        p_job_id: expect.stringMatching(/^gen_\d+_[a-z0-9]+$/),
+        p_subscription_amount: creditCost,
+        p_purchased_amount: 0,
+        p_description: 'Credit refund for failed Gemini processing',
       });
     });
 

@@ -9,10 +9,12 @@ import {
   InsufficientCreditsError,
 } from '@server/services/image-generation.service';
 import { ImageProcessorFactory } from '@server/services/image-processor.factory';
+import type { ICreditDeduction } from '@server/services/image-processor.interface';
 import { LLMImageAnalyzer } from '@server/services/llm-image-analyzer';
 import { ModelRegistry } from '@server/services/model-registry';
 import type { SubscriptionTier } from '@server/services/model-registry.types';
 import { ReplicateError } from '@server/services/replicate.service';
+import { creditManager } from '@server/services/replicate/utils/credit-manager';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv, isProduction } from '@shared/config/env';
 import { MODEL_COSTS } from '@shared/config/model-costs.config';
@@ -171,6 +173,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   let resolvedTier: QualityTier | undefined;
   let resolvedModelId: ModelId | undefined;
   let inputDimensions: { width: number; height: number } | null = null;
+  let creditDeduction: ICreditDeduction | undefined;
+  let routeRefundAttempted = false;
 
   const logFailure = (
     failureReason: string,
@@ -196,6 +200,35 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     logger.warn('Upscale rejected', payload);
+  };
+
+  const refundAfterRouteFailure = async (
+    failureReason: string,
+    errorDetails: Record<string, unknown> = {}
+  ): Promise<void> => {
+    if (!userId || !creditDeduction || routeRefundAttempted) {
+      return;
+    }
+
+    routeRefundAttempted = true;
+    const refunded = await creditManager.refundCredits(
+      userId,
+      creditDeduction,
+      `Route-level refund after upscale failure: ${failureReason}`
+    );
+
+    logFailure(
+      refunded ? 'credits_refunded_after_route_failure' : 'credit_refund_failed_after_route_failure',
+      {
+        originalFailureReason: failureReason,
+        jobId: creditDeduction.jobId,
+        amount: creditDeduction.amount,
+        subscriptionAmount: creditDeduction.subscriptionAmount,
+        purchasedAmount: creditDeduction.purchasedAmount,
+        ...errorDetails,
+      },
+      refunded ? 'warn' : 'error'
+    );
   };
 
   try {
@@ -783,6 +816,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const result = await Promise.race([
       processor.processImage(userId, legacyInputForProcessor as never, {
         creditCost,
+        onCreditsDeducted: deduction => {
+          creditDeduction = deduction;
+        },
       }),
       new Promise<never>((_, reject) =>
         setTimeout(
@@ -955,6 +991,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         },
         'error'
       );
+      await refundAfterRouteFailure(`replicate_${String(error.code).toLowerCase()}`, {
+        message: error.message,
+        replicateCode: error.code,
+      });
 
       // Track processing failed event for Replicate errors
       if (userId) {
@@ -998,6 +1038,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         },
         'error'
       );
+      await refundAfterRouteFailure(`ai_generation_${String(error.finishReason).toLowerCase()}`, {
+        message: error.message,
+        finishReason: error.finishReason,
+      });
 
       // Track processing failed event for AI generation errors
       if (userId) {
@@ -1038,6 +1082,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       },
       'error'
     );
+    await refundAfterRouteFailure('unexpected_internal_error', {
+      error: errorMessage,
+    });
 
     if (userId) {
       const durationMs = Date.now() - startTime;

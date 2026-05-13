@@ -1071,6 +1071,15 @@ describe('ReplicateService', () => {
       expect(mockReplicateRun).not.toHaveBeenCalled();
     });
 
+    test('should reject empty image input before deducting credits', async () => {
+      const input = createUpscaleInput({ imageData: '' });
+
+      await expect(service.processImage('user-123', input)).rejects.toThrow(ReplicateError);
+
+      expect(mockSupabaseRpc).not.toHaveBeenCalled();
+      expect(mockReplicateRun).not.toHaveBeenCalled();
+    });
+
     test('should refund credits when Replicate call fails', async () => {
       mockReplicateRun.mockRejectedValue(new Error('Replicate API error'));
       mockSupabaseRpc
@@ -1081,17 +1090,20 @@ describe('ReplicateService', () => {
         .mockResolvedValueOnce({
           data: null,
           error: null,
-        }); // refund_credits
+        }); // refund_consumed_credits
 
       const input = createUpscaleInput();
 
       await expect(service.processImage('user-123', input)).rejects.toThrow();
 
       // Verify refund was called
-      expect(mockSupabaseRpc).toHaveBeenCalledWith('refund_credits', {
-        target_user_id: 'user-123',
-        amount: 10,
-        job_id: expect.stringMatching(/^rep_\d+_[a-z0-9]+$/),
+      expect(mockSupabaseRpc).toHaveBeenCalledWith('refund_consumed_credits', {
+        p_user_id: 'user-123',
+        p_amount: 10,
+        p_job_id: expect.stringMatching(/^rep_\d+_[a-z0-9]+$/),
+        p_subscription_amount: 10,
+        p_purchased_amount: 0,
+        p_description: 'Credit refund for failed Replicate processing',
       });
     });
 
@@ -1289,7 +1301,10 @@ describe('ReplicateService', () => {
       );
 
       // Verify refund was called
-      expect(mockSupabaseRpc).toHaveBeenCalledWith('refund_credits', expect.any(Object));
+      expect(mockSupabaseRpc).toHaveBeenCalledWith(
+        'refund_consumed_credits',
+        expect.any(Object)
+      );
     });
 
     test('should throw ReplicateError for NSFW/safety violations', async () => {

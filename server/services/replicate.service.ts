@@ -91,12 +91,16 @@ export class ReplicateService implements IImageProcessor {
   ): Promise<IImageProcessorResult> {
     const creditCost = options?.creditCost ?? calculateCreditCost(input.config);
 
+    // Reject malformed image payloads before any credit-consuming operation.
+    this.ensureInputImageDataPresent(input);
+
     // Step 1: Deduct credits atomically using CreditManager
-    const { newBalance, jobId } = await creditManager.deductCredits(
+    const deduction = await creditManager.deductCredits(
       userId,
       creditCost,
       this.providerName
     );
+    options?.onCreditsDeducted?.(deduction);
 
     try {
       // Step 2: Call Replicate API
@@ -104,11 +108,15 @@ export class ReplicateService implements IImageProcessor {
 
       return {
         ...result,
-        creditsRemaining: newBalance,
+        creditsRemaining: deduction.newBalance,
       };
     } catch (error) {
       // Step 3: Refund on failure
-      await creditManager.refundCredits(userId, jobId, creditCost);
+      await creditManager.refundCredits(
+        userId,
+        deduction,
+        'Credit refund for failed Replicate processing'
+      );
       throw error;
     }
   }
@@ -202,6 +210,15 @@ export class ReplicateService implements IImageProcessor {
     }
   }
 
+  private ensureInputImageDataPresent(input: IUpscaleInput): void {
+    if (!isMeaningfulImageReference(input.imageData)) {
+      throw new ReplicateError(
+        'Image input is missing or empty before the Replicate call.',
+        'INVALID_INPUT'
+      );
+    }
+  }
+
   /**
    * Call the Replicate model (supports multiple models from registry)
    */
@@ -211,12 +228,7 @@ export class ReplicateService implements IImageProcessor {
     expiresAt: number;
   }> {
     // Prepare image data - ensure it's a data URL
-    if (!isMeaningfulImageReference(input.imageData)) {
-      throw new ReplicateError(
-        'Image input is missing or empty before the Replicate call.',
-        'INVALID_INPUT'
-      );
-    }
+    this.ensureInputImageDataPresent(input);
 
     let imageDataUrl = input.imageData.trim();
     if (!imageDataUrl.startsWith('data:')) {
