@@ -42,6 +42,14 @@ vi.mock('@/lib/seo/data-loader', () => ({
         relatedTools: ['ocr-online', 'pdf-to-jpg'],
       },
       {
+        slug: 'image-resizer',
+        toolName: 'Image Resizer',
+        description: 'Resize images online',
+        category: 'tools',
+        isInteractive: true,
+        relatedTools: ['ai-image-upscaler'],
+      },
+      {
         slug: 'ocr-online',
         toolName: 'OCR Online',
         description: 'Free online OCR tool',
@@ -83,6 +91,27 @@ vi.mock('@/lib/seo/data-loader', () => ({
       },
     ])
   ),
+  getToolData: vi.fn((slug: string) => {
+    const tools: Record<string, any> = {
+      'ai-image-upscaler': {
+        slug: 'ai-image-upscaler',
+        relatedTools: ['ai-photo-enhancer', 'image-resizer'],
+      },
+      'image-to-text': {
+        slug: 'image-to-text',
+        relatedTools: ['ocr-online', 'pdf-to-jpg'],
+      },
+      'ocr-online': {
+        slug: 'ocr-online',
+        relatedTools: ['image-to-text', 'pdf-to-png'],
+      },
+      'background-changer': {
+        slug: 'background-changer',
+        relatedTools: ['make-image-transparent'],
+      },
+    };
+    return Promise.resolve(tools[slug] || null);
+  }),
   getInteractiveToolData: vi.fn((slug: string) => {
     const tools: Record<string, any> = {
       'image-to-text': {
@@ -124,6 +153,13 @@ describe('QA: Related Pages - Tools Category', () => {
     const ocrPage = pages.find(p => p.slug === 'ocr-online');
     expect(ocrPage).toBeDefined();
     expect(ocrPage!.url).toBe('/tools/ocr-online');
+  });
+
+  it('should resolve relatedTools from static tool data', async () => {
+    const pages = await getRelatedPages('tools', 'ai-image-upscaler', 'en');
+
+    expect(pages.find(p => p.slug === 'ai-photo-enhancer')).toBeDefined();
+    expect(pages.find(p => p.slug === 'image-resizer')).toBeDefined();
   });
 
   it('should not include the current page in results', async () => {

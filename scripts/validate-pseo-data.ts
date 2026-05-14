@@ -128,6 +128,43 @@ const INTERACTIVE_TOOL_PATHS: Record<string, string> = {
   'bulk-image-compressor': '/tools/compress/bulk-image-compressor',
 };
 
+// Route policy: only resize, core compression, and core format conversion tools use
+// taxonomy subfolders. Long-tail converters, PDF tools, OCR/privacy tools, background
+// utilities, and cropper variants intentionally stay on /tools/:slug until GSC demand
+// justifies dedicated route groups and redirects.
+const INTENTIONAL_FALLBACK_TOOL_SLUGS = new Set([
+  'bmp-to-jpg',
+  'gif-to-jpg',
+  'svg-to-jpg',
+  'avif-to-jpg',
+  'heic-to-jpg',
+  'heic-to-png',
+  'photo-quality-enhancer',
+  'make-image-transparent',
+  'pdf-to-jpg',
+  'pdf-to-png',
+  'image-to-pdf',
+  'jpg-to-pdf',
+  'png-to-pdf',
+  'webp-to-pdf',
+  'background-changer',
+  'image-to-text',
+  'ocr-online',
+  'exif-remover',
+  'remove-metadata-from-photo',
+  'remove-gps-from-photo',
+  'strip-exif-data-online',
+  'image-cropper',
+  'crop-image-online-free',
+  'crop-image-to-circle',
+  'crop-image-for-instagram',
+  'crop-image-for-youtube-thumbnail',
+  'bmp-to-png',
+  'gif-to-png',
+  'gif-to-webp',
+  'bmp-to-webp',
+]);
+
 function log(message: string): void {
   console.log(message);
 }
@@ -346,6 +383,11 @@ function validateInteractiveTools(): void {
   for (const tool of interactiveToolsData.pages) {
     const expectedPath = INTERACTIVE_TOOL_PATHS[tool.slug];
     if (!expectedPath) {
+      if (INTENTIONAL_FALLBACK_TOOL_SLUGS.has(tool.slug)) {
+        logVerbose(`✓ ${tool.slug} intentionally uses fallback /tools/${tool.slug}`);
+        continue;
+      }
+
       addWarning({
         category: 'interactive-tools',
         message: `Tool "${tool.slug}" has no defined route path - will use fallback /tools/${tool.slug}`,

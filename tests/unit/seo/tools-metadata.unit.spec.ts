@@ -6,6 +6,7 @@
  *
  * Key invariants:
  * - metaTitle includes "Free" (CTR trigger word)
+ * - metaTitle is not pre-branded because the pSEO layout appends the site brand
  * - metaTitle is within Google's SERP title display limit (~70 chars)
  * - metaDescription is within Google's SERP description limit (160 chars)
  */
@@ -50,8 +51,8 @@ describe('Tools Metadata — ai-image-upscaler CTR optimization', () => {
     expect(page!.metaDescription.length).toBeLessThanOrEqual(160);
   });
 
-  it('metaTitle should mention the brand (MyImageUpscaler)', () => {
-    expect(page!.metaTitle).toContain('MyImageUpscaler');
+  it('metaTitle should not pre-include the brand because the layout appends it', () => {
+    expect(page!.metaTitle).not.toContain('MyImageUpscaler');
   });
 
   it('metaTitle should mention 8x upscaling capability', () => {

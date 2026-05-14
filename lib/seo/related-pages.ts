@@ -13,6 +13,7 @@ import {
   getAllDeviceUse,
   getAllTools,
   getAllInteractiveTools,
+  getToolData,
   getInteractiveToolData,
   getAllContentPages,
   getAllCameraRawPages,
@@ -666,8 +667,10 @@ export const getRelatedPages = cache(
       }
 
       case 'tools': {
-        // Use the relatedTools field from the page's JSON data
-        const currentPage = await getInteractiveToolData(slug);
+        // Use explicit relatedTools from either static tools.json or interactive-tools.json.
+        // Static AI tool pages carry the highest-value commercial links, so check both pools
+        // before falling back to generic interactive tools.
+        const currentPage = (await getToolData(slug)) ?? (await getInteractiveToolData(slug));
         const relatedToolSlugs = currentPage?.relatedTools ?? [];
 
         if (relatedToolSlugs.length > 0) {

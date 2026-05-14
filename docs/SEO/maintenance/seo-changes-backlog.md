@@ -18,6 +18,31 @@ Maintenance rules:
 
 ## 2026-05-13
 
+### Tool Pages CTR + Internal Linking Cleanup
+
+Source: [tool-pages-seo-analysis-2026-05-13.md](../reports/tool-pages-seo-analysis-2026-05-13.md)
+
+Changes:
+
+- Removed duplicate `MyImageUpscaler` branding from high-value pSEO tool metadata in base and localized tool data.
+- Strengthened static AI/background tool `relatedTools` clusters and updated related-page resolution so static `tools.json` relationships are honored before interactive fallback links.
+- Improved `/tools` hub discovery with a popular-tools block, clearer category descriptions, descriptive anchors, and mapped interactive tool URLs.
+- Documented intentional fallback `/tools/:slug` route policy in the pSEO validator and reduced noisy route warnings.
+- Removed the empty `sitemap-images.xml` entry from the sitemap index expectations.
+
+Validation:
+
+- `yarn validate:seo:pseo` passed with 6 unrelated long-title warnings remaining outside the touched tool pages.
+- `yarn validate:seo:pseo:verbose` passed and confirmed intentional fallback interactive tool routes.
+- `yarn validate:seo:internal-links` passed.
+- `yarn validate:seo:schema` passed.
+- `yarn test:unit tests/pseo/qa/qa-related-pages-tools.test.ts` passed.
+- `yarn verify` passed with existing lint warnings.
+
+Follow-up:
+
+- After deploy, monitor `/tools`, `/tools/ai-image-upscaler`, `/tools/ai-photo-enhancer`, and background-remover tool pages in GSC for CTR and internal-link routing improvements.
+
 ### GA4 SEO Funnel Key-Event Admin Check
 
 Source: [seo-growth-skills-report-2026-05-13.md](../reports/seo-growth-skills-report-2026-05-13.md)

@@ -126,6 +126,7 @@ vi.mock('@/lib/seo/data-loader', () => ({
       },
     ])
   ),
+  getToolData: vi.fn(() => Promise.resolve(null)),
   getInteractiveToolData: vi.fn(() => Promise.resolve(null)),
   getAllContentPages: vi.fn(() =>
     Promise.resolve([

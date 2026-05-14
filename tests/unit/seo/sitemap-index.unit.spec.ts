@@ -156,14 +156,14 @@ describe('Sitemap Index Route', () => {
     expect(xml).toContain('sitemap-ai-features.xml');
   });
 
-  it('should include 87 total sitemaps (17 English-only + 10×7 localized)', async () => {
+  it('should include 86 total sitemaps (16 English-only + 10×7 localized)', async () => {
     const { GET } = await import('@/app/sitemap.xml/route');
     const response = await GET();
     const xml = await response.text();
 
     const matches = xml.match(/<sitemap>/g);
-    // 17 English-only + (10 localized × 7 locales) = 17 + 70 = 87
-    expect(matches).toHaveLength(87);
+    // 16 English-only + (10 localized × 7 locales) = 16 + 70 = 86
+    expect(matches).toHaveLength(86);
   });
 });
 

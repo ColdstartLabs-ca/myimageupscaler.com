@@ -20,7 +20,6 @@ const ENGLISH_ONLY_SITEMAP_CATEGORIES = [
   'blog',
   'compare',
   'platforms',
-  'images',
   'content',
   'photo-restoration',
   'camera-raw',

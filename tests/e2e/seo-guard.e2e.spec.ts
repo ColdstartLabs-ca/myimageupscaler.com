@@ -58,9 +58,9 @@ const ENGLISH_ONLY_CATEGORIES = [
   'ai-photo-editor',
 ] as const;
 
-// Total sitemaps: 17 English-only + (10 localized × 7 locales) = 17 + 70 = 87
-// English-only: static + blog + images + 14 ENGLISH_ONLY_CATEGORIES = 17
-const TOTAL_SITEMAP_COUNT = 87;
+// Total sitemaps: 16 English-only + (10 localized × 7 locales) = 16 + 70 = 86
+// English-only: static + blog + 14 ENGLISH_ONLY_CATEGORIES = 16
+const TOTAL_SITEMAP_COUNT = 86;
 
 // Base URL for production checks (canonical URLs should always use this)
 const PRODUCTION_BASE_URL = 'https://myimageupscaler.com';
@@ -155,7 +155,7 @@ test.describe('SEO Guard - Deploy Blocker', () => {
       // Should contain core English-only sitemaps
       expect(sitemapUrls).toContain(`${PRODUCTION_BASE_URL}/sitemap-static.xml`);
       expect(sitemapUrls).toContain(`${PRODUCTION_BASE_URL}/sitemap-blog.xml`);
-      expect(sitemapUrls).toContain(`${PRODUCTION_BASE_URL}/sitemap-images.xml`);
+      expect(sitemapUrls).not.toContain(`${PRODUCTION_BASE_URL}/sitemap-images.xml`);
 
       // Should contain English-only category sitemaps
       for (const category of ENGLISH_ONLY_CATEGORIES) {

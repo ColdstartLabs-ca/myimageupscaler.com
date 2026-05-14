@@ -4,7 +4,7 @@
     {
       "slug": "ai-image-upscaler",
       "title": "AI Image Upscaler",
-      "metaTitle": "Free AI Image Upscaler \u2014 Enlarge to 8x, No Signup | MyImageUpscaler",
+      "metaTitle": "Free AI Image Upscaler \u2014 Enlarge to 8x, No Signup",
       "metaDescription": "Upscale images up to 8x with AI. Free online \u2014 no signup, no watermarks. Preserves text and details. Upload a photo and get instant HD results.",
       "h1": "AI Image Upscaler - Professional Image Enlargement Without Quality Loss",
       "intro": "Increase image resolution up to 8x while preserving sharpness. Our AI adds realistic detail instead of just stretching pixels. Transform your low-resolution photos into stunning high-definition visuals perfect for printing, web use, and professional projects.",
@@ -155,7 +155,13 @@
           "answer": "Yes, you retain full rights to your upscaled images. Use them for any purpose - personal, commercial, print, or web."
         }
       ],
-      "relatedTools": ["ai-photo-enhancer"],
+      "relatedTools": [
+        "ai-photo-enhancer",
+        "photo-quality-enhancer",
+        "image-resizer",
+        "image-compressor",
+        "ai-background-remover"
+      ],
       "relatedGuides": ["tiff-format-guide", "how-to-upscale-images"],
       "relatedBlogPosts": [
         "how-to-upscale-images-without-losing-quality",
@@ -197,7 +203,7 @@
     {
       "slug": "ai-photo-enhancer",
       "title": "AI Photo Enhancer",
-      "metaTitle": "AI Image Quality Enhancer Free \u2014 Fix Blur & Enhance Photos Online",
+      "metaTitle": "Free AI Image Quality Enhancer \u2014 Fix Blur Online",
       "metaDescription": "Free AI image quality enhancer. Fix blur, reduce noise, restore old photos, and enhance image quality online. No sign up. Instant HD results.",
       "h1": "AI Image Quality Enhancer \u2014 Fix Blur & Enhance Photos Free",
       "intro": "Improve photo quality without changing dimensions. Fix blur, enhance colors, reduce noise, and restore old or damaged photos. Transform your lackluster photos into stunning visuals with our intelligent enhancement system.",
@@ -352,7 +358,13 @@
           "answer": "Absolutely. Phone photos often have noise from small sensors and can benefit significantly from enhancement."
         }
       ],
-      "relatedTools": ["ai-image-upscaler"],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "photo-quality-enhancer",
+        "smart-ai-enhancement",
+        "image-resizer",
+        "ai-background-remover"
+      ],
       "relatedGuides": ["tiff-format-guide", "raw-photography-guide"],
       "relatedBlogPosts": [
         "restore-old-photos-ai-enhancement-guide",
@@ -512,7 +524,13 @@
           "answer": "Since processing happens in your browser, the limit depends on your device's memory. Most devices handle images up to 4096x4096 pixels smoothly."
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedTools": [
+        "remove-bg",
+        "transparent-background-maker",
+        "image-cutout-tool",
+        "ai-image-upscaler",
+        "ai-photo-enhancer"
+      ],
       "relatedGuides": [],
       "relatedBlogPosts": [
         "upscale-product-photos-amazon-etsy-guide",
@@ -650,7 +668,13 @@
           "answer": "Your image is processed entirely in your browser. Nothing is sent to our servers. The result is a transparent PNG you can download immediately."
         }
       ],
-      "relatedTools": ["ai-background-remover", "ai-image-upscaler"],
+      "relatedTools": [
+        "ai-background-remover",
+        "transparent-background-maker",
+        "image-cutout-tool",
+        "make-image-transparent",
+        "ai-image-upscaler"
+      ],
       "relatedGuides": [],
       "relatedBlogPosts": [
         "upscale-product-photos-amazon-etsy-guide",
@@ -754,7 +778,13 @@
           "answer": "Yes, the AI handles complex shapes, hair, and fine details while creating clean transparent edges."
         }
       ],
-      "relatedTools": ["ai-background-remover", "remove-bg"],
+      "relatedTools": [
+        "ai-background-remover",
+        "remove-bg",
+        "make-image-transparent",
+        "image-cutout-tool",
+        "background-changer"
+      ],
       "relatedGuides": [],
       "relatedBlogPosts": [
         "upscale-product-photos-amazon-etsy-guide",
@@ -870,7 +900,13 @@
           "answer": "For most cutout tasks, our AI produces results comparable to manual Photoshop work but in seconds instead of minutes or hours."
         }
       ],
-      "relatedTools": ["ai-background-remover", "transparent-background-maker"],
+      "relatedTools": [
+        "ai-background-remover",
+        "transparent-background-maker",
+        "remove-bg",
+        "make-image-transparent",
+        "background-changer"
+      ],
       "relatedGuides": [],
       "relatedBlogPosts": [
         "upscale-product-photos-amazon-etsy-guide",
@@ -1038,7 +1074,13 @@
           "answer": "The AI uses advanced neural networks trained on millions of images to recognize faces, text, products, landscapes, artwork, and other content types within your image."
         }
       ],
-      "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
+      "relatedTools": [
+        "ai-image-upscaler",
+        "ai-photo-enhancer",
+        "photo-quality-enhancer",
+        "image-resizer",
+        "image-compressor"
+      ],
       "relatedGuides": ["how-to-upscale-images"],
       "relatedBlogPosts": [
         "how-to-upscale-images-without-losing-quality",

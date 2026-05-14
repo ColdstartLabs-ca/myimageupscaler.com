@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getAllTools, getAllInteractiveTools } from '@/lib/seo/data-loader';
+import { TOOLS_INTERACTIVE_PATHS } from '@/lib/seo/locale-sitemap-handler';
 import { generateCategoryMetadata } from '@/lib/seo/metadata-factory';
 import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 import { HreflangLinks } from '@client/components/seo/HreflangLinks';
@@ -17,9 +18,18 @@ interface IToolCard {
   isInteractive?: boolean;
 }
 
-const CATEGORY_GROUPS: { label: string; slugs: string[] }[] = [
+const POPULAR_TOOL_SLUGS = [
+  'ai-image-upscaler',
+  'ai-photo-enhancer',
+  'ai-background-remover',
+  'image-resizer',
+  'image-compressor',
+] as const;
+
+const CATEGORY_GROUPS: { label: string; description: string; slugs: string[] }[] = [
   {
     label: 'AI Image Tools',
+    description: 'Upscale, sharpen, enhance, and clean up photos with AI-first tools.',
     slugs: [
       'ai-image-upscaler',
       'ai-photo-enhancer',
@@ -34,18 +44,23 @@ const CATEGORY_GROUPS: { label: string; slugs: string[] }[] = [
   },
   {
     label: 'Format Converters',
+    description:
+      'Convert common image formats in the browser before upload, sharing, or publishing.',
     slugs: ['bmp-to-jpg', 'gif-to-jpg', 'svg-to-jpg', 'avif-to-jpg', 'heic-to-jpg', 'heic-to-png'],
   },
   {
     label: 'PDF Tools',
+    description: 'Turn PDFs into images or package image files as PDFs for documents and delivery.',
     slugs: ['pdf-to-jpg', 'pdf-to-png', 'image-to-pdf', 'jpg-to-pdf'],
   },
   {
     label: 'Image Editing',
+    description: 'Make quick visual edits, extract text, and prepare images for the next step.',
     slugs: ['background-changer', 'image-to-text', 'ocr-online'],
   },
   {
     label: 'Image Cropper',
+    description: 'Crop photos for clean compositions, circles, thumbnails, and social platforms.',
     slugs: [
       'image-cropper',
       'crop-image-online-free',
@@ -55,6 +70,10 @@ const CATEGORY_GROUPS: { label: string; slugs: string[] }[] = [
     ],
   },
 ];
+
+function getToolHref(slug: string): string {
+  return TOOLS_INTERACTIVE_PATHS[slug] ?? `/tools/${slug}`;
+}
 
 export default async function ToolsHubPage() {
   const [staticTools, interactiveTools] = await Promise.all([
@@ -70,7 +89,7 @@ export default async function ToolsHubPage() {
         slug: t.slug,
         title: t.toolName || t.title,
         description: t.description,
-        href: `/tools/${t.slug}`,
+        href: getToolHref(t.slug),
         isInteractive: t.isInteractive,
       },
     ])
@@ -80,6 +99,7 @@ export default async function ToolsHubPage() {
   const groupedSlugs = new Set<string>();
   const groups = CATEGORY_GROUPS.map(g => ({
     label: g.label,
+    description: g.description,
     tools: g.slugs.flatMap(slug => {
       const tool = toolMap.get(slug);
       if (tool) {
@@ -97,13 +117,23 @@ export default async function ToolsHubPage() {
       slug: t.slug,
       title: t.toolName || t.title,
       description: t.description,
-      href: `/tools/${t.slug}`,
+      href: getToolHref(t.slug),
       isInteractive: t.isInteractive,
     }));
 
   if (otherTools.length > 0) {
-    groups.push({ label: 'More Tools', tools: otherTools });
+    groups.push({
+      label: 'More Tools',
+      description:
+        'Additional utility tools for privacy, metadata, file cleanup, and niche workflows.',
+      tools: otherTools,
+    });
   }
+
+  const popularTools = POPULAR_TOOL_SLUGS.flatMap(slug => {
+    const tool = toolMap.get(slug);
+    return tool ? [tool] : [];
+  });
 
   return (
     <>
@@ -116,11 +146,41 @@ export default async function ToolsHubPage() {
           No signup required.
         </p>
 
+        <section className="mb-14">
+          <div className="flex items-end justify-between gap-4 border-b border-border pb-2 mb-5">
+            <div>
+              <h2 className="text-xl font-semibold text-text-primary">Popular Tools</h2>
+              <p className="text-sm text-text-secondary mt-1">
+                Start with the tools people use most for upscaling, enhancement, backgrounds, and
+                file optimization.
+              </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            {popularTools.map(tool => (
+              <Link
+                key={tool.slug}
+                href={tool.href}
+                className="block p-4 glass-card rounded-lg border border-border hover:border-accent hover:shadow-lg transition-all group"
+              >
+                <h3 className="text-base font-semibold mb-2 text-text-primary group-hover:text-accent transition-colors">
+                  {tool.title}
+                </h3>
+                <p className="text-text-secondary text-sm line-clamp-2">{tool.description}</p>
+                <span className="inline-block mt-3 text-accent text-sm font-medium group-hover:text-accent-hover transition-colors">
+                  Open {tool.title} →
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
         {groups.map(group => (
           <section key={group.label} className="mb-14">
-            <h2 className="text-xl font-semibold mb-5 text-text-primary border-b border-border pb-2">
-              {group.label}
-            </h2>
+            <div className="border-b border-border pb-2 mb-5">
+              <h2 className="text-xl font-semibold text-text-primary">{group.label}</h2>
+              <p className="text-sm text-text-secondary mt-1">{group.description}</p>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {group.tools.map(tool => (
                 <Link
@@ -133,7 +193,7 @@ export default async function ToolsHubPage() {
                   </h3>
                   <p className="text-text-secondary text-sm line-clamp-2">{tool.description}</p>
                   <span className="inline-block mt-3 text-accent text-sm font-medium group-hover:text-accent-hover transition-colors">
-                    {tool.isInteractive ? 'Use free tool →' : 'Learn more →'}
+                    {tool.isInteractive ? `Open ${tool.title} →` : `Learn about ${tool.title} →`}
                   </span>
                 </Link>
               ))}
