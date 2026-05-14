@@ -29,7 +29,10 @@ export interface IClaimOfferDeps {
 }
 
 export interface IDismissOfferDeps {
-  trackCheckoutAbandoned: (step: TCheckoutStep) => void;
+  trackCheckoutAbandoned: (
+    step: TCheckoutStep,
+    context?: { method?: TCheckoutExitMethod | 'rescue_offer_dismissed' }
+  ) => void;
   onClose: () => void;
 }
 
@@ -118,7 +121,7 @@ export function useCheckoutRescueOffer(priceId: string): IUseCheckoutRescueOffer
 
   const dismissOffer = useCallback(({ trackCheckoutAbandoned, onClose }: IDismissOfferDeps) => {
     setShowRescueOffer(false);
-    trackCheckoutAbandoned('stripe_embed');
+    trackCheckoutAbandoned('stripe_embed', { method: 'rescue_offer_dismissed' });
     onClose();
   }, []);
 

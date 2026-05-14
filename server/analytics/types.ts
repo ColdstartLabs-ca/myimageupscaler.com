@@ -90,6 +90,13 @@ export interface ICheckoutAbandonedProperties {
   timeSpentMs: number;
   plan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
   pricingRegion: string;
+  source?: 'purchase_modal' | 'checkout_modal';
+  method?: TCheckoutExitMethod | 'backdrop' | 'not_now' | 'rescue_offer_dismissed';
+  activeTab?: 'credits' | 'subscribe';
+  selectedType?: 'subscription' | 'credit_pack';
+  selectedKey?: string;
+  checkoutOpened?: boolean;
+  outOfCredits?: boolean;
 }
 
 export type IUpgradePromptTrigger =
@@ -617,8 +624,11 @@ export type IAnalyticsEventName =
   // Regional pricing monitoring events (server-side only)
   | 'pricing_region_mismatch'
   // Checkout funnel events (Phase 1 - Checkout Friction Investigation)
+  | 'purchase_modal_opened'
   | 'checkout_opened' // Fires when CheckoutModal renders (bridges upgrade_prompt_clicked → checkout_step_viewed gap)
   | 'checkout_auth_required' // Fires when unauthenticated user tries to checkout (bridges upgrade_prompt_clicked → checkout_opened gap)
+  | 'checkout_session_requested'
+  | 'checkout_session_created'
   | 'checkout_step_viewed'
   | 'checkout_step_time'
   | 'checkout_error'

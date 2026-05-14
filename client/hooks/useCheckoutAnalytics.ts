@@ -16,7 +16,10 @@ export function useCheckoutAnalytics(
 ): {
   trackStepViewed: (step: TCheckoutStep, loadTimeMs?: number) => void;
   trackExitIntent: (step: TCheckoutStep, method: TCheckoutExitMethod) => void;
-  trackCheckoutAbandoned: (step: TCheckoutStep) => void;
+  trackCheckoutAbandoned: (
+    step: TCheckoutStep,
+    context?: { method?: TCheckoutExitMethod | 'rescue_offer_dismissed' }
+  ) => void;
   trackError: (errorType: TCheckoutErrorType, errorMessage: string, step: TCheckoutStep) => void;
   markCompleted: () => void;
   resetLoadStart: () => void;
@@ -61,13 +64,19 @@ export function useCheckoutAnalytics(
   );
 
   const trackCheckoutAbandoned = useCallback(
-    (step: TCheckoutStep) => {
+    (
+      step: TCheckoutStep,
+      context?: { method?: TCheckoutExitMethod | 'rescue_offer_dismissed' }
+    ) => {
       analytics.track('checkout_abandoned', {
         priceId,
         step,
         timeSpentMs: Date.now() - modalOpenedAtRef.current,
         plan: determinePlanFromPriceId(priceId),
         pricingRegion,
+        source: 'checkout_modal',
+        checkoutOpened: true,
+        ...(context?.method ? { method: context.method } : {}),
       });
     },
     [priceId, pricingRegion]

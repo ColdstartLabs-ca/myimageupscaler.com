@@ -145,6 +145,13 @@ export function PurchaseModal({
         setCheckoutTrackingContext({ trigger });
       }
 
+      analytics.track('purchase_modal_opened', {
+        trigger,
+        outOfCredits,
+        currentPlan,
+        pricingRegion: pricingRegion || 'standard',
+      });
+
       // Default to popular credit pack
       const popularPack = creditPacks.find(p => p.popular) || creditPacks[1] || creditPacks[0];
       if (popularPack) {
@@ -173,10 +180,39 @@ export function PurchaseModal({
         pricingRegion: pricingRegion || 'standard',
         timeOpenMs: Date.now() - openTimeRef.current,
       });
+
+      const selectedItem = selectedPlan || selectedPack;
+      if (!showCheckoutModal && selectedItem?.stripePriceId) {
+        analytics.track('checkout_abandoned', {
+          priceId: selectedItem.stripePriceId,
+          step: 'plan_selection',
+          timeSpentMs: Date.now() - openTimeRef.current,
+          plan: currentPlan,
+          pricingRegion: pricingRegion || 'standard',
+          source: 'purchase_modal',
+          method,
+          activeTab: purchaseMode,
+          selectedType: selectedPlan ? 'subscription' : 'credit_pack',
+          selectedKey: selectedItem.key,
+          checkoutOpened: false,
+          outOfCredits,
+        });
+      }
+
       clearCheckoutTrackingContext();
       onClose();
     },
-    [trigger, purchaseMode, outOfCredits, pricingRegion, onClose]
+    [
+      trigger,
+      purchaseMode,
+      outOfCredits,
+      pricingRegion,
+      onClose,
+      selectedPlan,
+      selectedPack,
+      showCheckoutModal,
+      currentPlan,
+    ]
   );
 
   const handleSelectPack = useCallback((pack: ICreditPack) => {

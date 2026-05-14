@@ -172,16 +172,33 @@ export function useCheckoutSession({
         if (amplitudeDeviceId) metadata.amplitude_device_id = amplitudeDeviceId;
         if (amplitudeSessionId !== null) metadata.amplitude_session_id = String(amplitudeSessionId);
 
+        const checkoutUiMode = isMobileViewport() ? 'hosted' : 'embedded';
+        analytics.track('checkout_session_requested', {
+          priceId,
+          trigger: checkoutTrigger,
+          uiMode: checkoutUiMode,
+          hasBanditArm: Boolean(banditArmId),
+          hasOfferToken: Boolean(appliedOfferToken),
+        });
+
         // On mobile viewports (<768px) the Stripe embedded form can be cramped
         // or fail to render correctly. Use the hosted redirect path instead so
         // mobile users land on Stripe's own mobile-optimised checkout page.
-        if (isMobileViewport()) {
+        if (checkoutUiMode === 'hosted') {
           const hostedResponse = await StripeService.createCheckoutSession(priceId, {
             uiMode: 'hosted',
             ...(Object.keys(metadata).length > 0 ? { metadata } : {}),
           });
 
           if (timedOut) return;
+
+          analytics.track('checkout_session_created', {
+            priceId,
+            trigger: checkoutTrigger,
+            uiMode: 'hosted',
+            loadTimeMs: Date.now() - sessionLoadStart,
+            hasUrl: Boolean(hostedResponse.url),
+          });
 
           if (hostedResponse.url) {
             window.location.href = hostedResponse.url;
@@ -199,6 +216,16 @@ export function useCheckoutSession({
         });
 
         if (timedOut) return; // Timeout already fired, discard result
+
+        analytics.track('checkout_session_created', {
+          priceId,
+          trigger: checkoutTrigger,
+          uiMode: 'embedded',
+          loadTimeMs: Date.now() - sessionLoadStart,
+          hasClientSecret: Boolean(response.clientSecret),
+          checkoutOfferApplied: Boolean(response.checkoutOfferApplied),
+          engagementDiscountApplied: Boolean(response.engagementDiscountApplied),
+        });
 
         if (response.clientSecret) {
           rescueOfferAppliedRef.current = Boolean(response.checkoutOfferApplied);

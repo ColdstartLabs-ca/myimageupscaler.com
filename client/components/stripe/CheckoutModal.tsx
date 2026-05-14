@@ -118,7 +118,7 @@ export function CheckoutModal({
 
       if (showRescueOffer) {
         hideRescueOffer();
-        trackCheckoutAbandoned('stripe_embed');
+        trackCheckoutAbandoned('stripe_embed', { method: 'rescue_offer_dismissed' });
         onClose();
         return;
       }
@@ -143,7 +143,7 @@ export function CheckoutModal({
         });
         if (shown) return;
 
-        trackCheckoutAbandoned(step);
+        trackCheckoutAbandoned(step, { method });
         exitIntentTrackedRef.current = true;
         trackExitIntent(step, method);
 

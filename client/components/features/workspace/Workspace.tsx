@@ -435,6 +435,7 @@ const Workspace: React.FC = () => {
       priceId: planId,
       source: 'direct_checkout',
       trigger,
+      ...(ctx?.originatingModel ? { originatingModel: ctx.originatingModel } : {}),
       ...(ctx?.originatingTrigger ? { originatingTrigger: ctx.originatingTrigger } : {}),
       ...(ctx?.attributionChain?.length ? { attributionChain: ctx.attributionChain } : {}),
     });

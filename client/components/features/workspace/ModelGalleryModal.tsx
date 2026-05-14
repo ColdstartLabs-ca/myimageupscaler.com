@@ -15,6 +15,8 @@ import {
   getCheckoutTrackingContext,
 } from '@client/utils/checkoutTrackingContext';
 import { getVariant } from '@client/utils/abTest';
+import { resolveCheapestRegionalPlan } from '@shared/config/subscription.config';
+import type { PricingRegion } from '@shared/config/pricing-regions';
 
 const MODEL_GATE_SESSION_KEY = 'upgrade_prompt_shown_model_gate';
 
@@ -122,6 +124,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
   isFreeUser,
   onSelect,
   onUpgrade,
+  onUpgradeDirect,
   suppressUpgradeImpression = false,
   source = 'manual',
 }) => {
@@ -241,7 +244,8 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
     [featuredIds, visibleTiers]
   );
 
-  const activeFilterLabel = MODEL_FILTERS.find(filter => filter.id === activeFilter)?.label ?? 'All';
+  const activeFilterLabel =
+    MODEL_FILTERS.find(filter => filter.id === activeFilter)?.label ?? 'All';
 
   const selectedTier = useMemo(
     () => visibleTiers.find(tier => tier.id === activeTier) ?? visibleTiers[0] ?? allTiers[0],
@@ -274,8 +278,8 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
     [onSelect, onClose, isFreeUser]
   );
 
-  // Handle locked tier click through the plan picker so users can choose credits or a plan
-  // before the embedded Stripe checkout opens.
+  // Handle locked tier click. Prefer direct checkout when the workspace provides it,
+  // keeping the model gate as a short path from premium-model intent to payment.
   const handleLockedClick = useCallback(
     (tier: QualityTier | 'banner') => {
       const existingContext = getCheckoutTrackingContext();
@@ -302,16 +306,23 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
       analytics.track('upgrade_prompt_clicked', {
         trigger: 'model_gate',
         imageVariant: tier,
-        destination: 'upgrade_plan_modal',
+        destination: onUpgradeDirect ? 'checkout_direct' : 'upgrade_plan_modal',
         currentPlan: 'free',
         pricingRegion: pricingRegion || 'standard',
         copyVariant,
         ...(originatingTrigger ? { originatingTrigger } : {}),
       });
       onClose();
+
+      if (onUpgradeDirect) {
+        const planId = resolveCheapestRegionalPlan((pricingRegion as PricingRegion) || 'standard');
+        onUpgradeDirect({ trigger: 'model_gate', planId });
+        return;
+      }
+
       onUpgrade();
     },
-    [onUpgrade, onClose, pricingRegion, copyVariant]
+    [onUpgrade, onUpgradeDirect, onClose, pricingRegion, copyVariant]
   );
 
   // Clear search when modal closes
@@ -559,11 +570,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
             }
             className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-500 to-violet-600 px-4 py-3 text-sm font-black text-white shadow-[0_12px_28px_rgba(79,70,229,0.30)] transition-transform hover:translate-y-[-1px]"
           >
-            {selectedTierIsLocked ? (
-              <Lock className="h-4 w-4" />
-            ) : (
-              <Check className="h-4 w-4" />
-            )}
+            {selectedTierIsLocked ? <Lock className="h-4 w-4" /> : <Check className="h-4 w-4" />}
             {selectedTierIsLocked ? 'Get credits' : 'Use selected model'}
           </button>
         </div>

@@ -73,6 +73,11 @@ const ALLOWED_EVENTS = [
   'pseo_faq_expanded',
   'pseo_internal_link_clicked',
   // Checkout funnel events (Phase 1 - Checkout Friction Investigation)
+  'purchase_modal_opened',
+  'checkout_opened',
+  'checkout_auth_required',
+  'checkout_session_requested',
+  'checkout_session_created',
   'checkout_step_viewed',
   'checkout_step_time',
   'checkout_error',
@@ -521,7 +526,16 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
     });
 
     test('should include checkout funnel events', () => {
-      const checkoutEvents = ['checkout_step_viewed', 'checkout_step_time', 'checkout_error'];
+      const checkoutEvents = [
+        'purchase_modal_opened',
+        'checkout_opened',
+        'checkout_auth_required',
+        'checkout_session_requested',
+        'checkout_session_created',
+        'checkout_step_viewed',
+        'checkout_step_time',
+        'checkout_error',
+      ];
       for (const eventName of checkoutEvents) {
         const result = eventSchema.safeParse({ eventName });
         expect(result.success).toBe(true);

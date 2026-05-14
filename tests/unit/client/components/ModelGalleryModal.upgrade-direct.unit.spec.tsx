@@ -36,6 +36,7 @@ vi.mock('@client/utils/abTest', () => ({
 }));
 
 vi.mock('lucide-react', () => ({
+  ChevronDown: () => null,
   Check: () => null,
   Image: () => null,
   Lock: () => null,
@@ -214,26 +215,29 @@ describe('ModelGalleryModal — upgrade direct flow', () => {
     });
   });
 
-  it('should open the upgrade plan modal when premium model clicked', () => {
-    const { onUpgrade } = renderModal();
-    fireEvent.click(screen.getByTestId('locked-hd-upscale'));
-
-    expect(onUpgrade).toHaveBeenCalledTimes(1);
-  });
-
-  it('should not call onUpgradeDirect when the model gate opens the plan picker', () => {
+  it('should open direct checkout when premium model clicked and direct handler exists', () => {
     const { onUpgradeDirect } = renderModal();
     fireEvent.click(screen.getByTestId('locked-hd-upscale'));
 
-    expect(onUpgradeDirect).not.toHaveBeenCalled();
+    expect(onUpgradeDirect).toHaveBeenCalledWith({
+      trigger: 'model_gate',
+      planId: 'price_test_small',
+    });
   });
 
-  it('should not pre-resolve a regional checkout plan from the model gate', () => {
+  it('should not call onUpgrade when direct checkout is available', () => {
+    const { onUpgrade } = renderModal();
+    fireEvent.click(screen.getByTestId('locked-hd-upscale'));
+
+    expect(onUpgrade).not.toHaveBeenCalled();
+  });
+
+  it('should resolve the regional checkout plan from the model gate', () => {
     mockUseRegionTier.mockReturnValue({ pricingRegion: 'south_asia' });
     renderModal();
     fireEvent.click(screen.getByTestId('locked-hd-upscale'));
 
-    expect(mockResolveCheapestRegionalPlan).not.toHaveBeenCalled();
+    expect(mockResolveCheapestRegionalPlan).toHaveBeenCalledWith('south_asia');
   });
 
   it('should set checkoutTrackingContext with trigger="model_gate" when premium clicked', () => {
@@ -254,7 +258,7 @@ describe('ModelGalleryModal — upgrade direct flow', () => {
     );
   });
 
-  it('should track upgrade_prompt_clicked with destination=upgrade_plan_modal', () => {
+  it('should track upgrade_prompt_clicked with destination=checkout_direct', () => {
     renderModal();
     fireEvent.click(screen.getByTestId('locked-hd-upscale'));
 
@@ -262,7 +266,7 @@ describe('ModelGalleryModal — upgrade direct flow', () => {
       'upgrade_prompt_clicked',
       expect.objectContaining({
         trigger: 'model_gate',
-        destination: 'upgrade_plan_modal',
+        destination: 'checkout_direct',
       })
     );
   });
@@ -287,10 +291,11 @@ describe('ModelGalleryModal — upgrade direct flow', () => {
     );
   });
 
-  it('should call onClose before opening the upgrade modal', () => {
+  it('should call onClose before opening direct checkout', () => {
     const callOrder: string[] = [];
     const onClose = vi.fn(() => callOrder.push('close'));
     const onUpgrade = vi.fn(() => callOrder.push('upgrade'));
+    const onUpgradeDirect = vi.fn(() => callOrder.push('direct'));
 
     render(
       React.createElement(ModelGalleryModal, {
@@ -300,12 +305,12 @@ describe('ModelGalleryModal — upgrade direct flow', () => {
         isFreeUser: true,
         onSelect: vi.fn(),
         onUpgrade,
-        onUpgradeDirect: vi.fn(),
+        onUpgradeDirect,
       })
     );
 
     fireEvent.click(screen.getByTestId('locked-hd-upscale'));
 
-    expect(callOrder).toEqual(['close', 'upgrade']);
+    expect(callOrder).toEqual(['close', 'direct']);
   });
 });

@@ -25,6 +25,8 @@ export const GA4_EVENT_MAP: Partial<Record<IAnalyticsEventName, string>> = {
   credit_pack_purchased: 'purchase',
   checkout_started: 'begin_checkout',
   checkout_opened: 'begin_checkout',
+  checkout_session_requested: 'begin_checkout',
+  checkout_session_created: 'begin_checkout',
   checkout_completed: 'add_payment_info',
   signup_started: 'generate_lead',
   signup_completed: 'sign_up',
@@ -52,6 +54,8 @@ export const GA4_CONVERSION_EVENTS: readonly IAnalyticsEventName[] = [
   'signup_started',
   'checkout_completed',
   'checkout_opened',
+  'checkout_session_requested',
+  'checkout_session_created',
   'checkout_started',
   'signup_completed',
 ];
