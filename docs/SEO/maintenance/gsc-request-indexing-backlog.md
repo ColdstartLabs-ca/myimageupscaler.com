@@ -19,6 +19,9 @@ Priority 1:
 - [ ] Request indexing: `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared`
 - [ ] Request indexing: `https://myimageupscaler.com/blog/ai-image-upscaling-vs-sharpening-explained`
 - [ ] Request indexing: `https://myimageupscaler.com/blog/best-ai-image-quality-enhancer-free`
+- [ ] Request indexing: `https://myimageupscaler.com/blog/best-ai-upscaler`
+- [ ] Request indexing: `https://myimageupscaler.com/blog/topaz-video-upscaler`
+- [ ] Request indexing: `https://myimageupscaler.com/blog/how-to-upscale-anime-images-with-ai`
 - [ ] Request indexing: `https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark`
 - [ ] Request indexing: `https://myimageupscaler.com/blog/upscale-image-for-print-300-dpi-guide`
 
