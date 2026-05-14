@@ -6,30 +6,8 @@ Created: 2026-05-06
 
 After the next production deploy, open Google Search Console URL Inspection for each URL below and click **Request indexing**. Use this file to track exactly what still needs to be requested, then clean up the backlog manually when all requests are complete.
 
-The API work already completed:
-
-- IndexNow accepted all 6 URLs on 2026-05-06.
-- `https://myimageupscaler.com/sitemap.xml` was resubmitted through the Search Console API on 2026-05-06.
-- URL Inspection API reported all 6 URLs as indexable and fetchable.
-
 ## Pending URLs
 
-Priority 1:
-
-- [ ] Request indexing: `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared`
-- [ ] Request indexing: `https://myimageupscaler.com/blog/ai-image-upscaling-vs-sharpening-explained`
-- [ ] Request indexing: `https://myimageupscaler.com/blog/best-ai-image-quality-enhancer-free`
-- [ ] Request indexing: `https://myimageupscaler.com/blog/best-ai-upscaler`
-- [ ] Request indexing: `https://myimageupscaler.com/blog/topaz-video-upscaler`
-- [ ] Request indexing: `https://myimageupscaler.com/blog/how-to-upscale-anime-images-with-ai`
-- [ ] Request indexing: `https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark`
-- [ ] Request indexing: `https://myimageupscaler.com/blog/upscale-image-for-print-300-dpi-guide`
-
-Priority 2:
-
-- [ ] Request indexing: `https://myimageupscaler.com/it`
-- [ ] Request indexing: `https://myimageupscaler.com/blog/ai-upscaler-muryou-osusume`
-- [ ] Request indexing: `https://myimageupscaler.com/blog/old-damaged-photos`
 - [ ] Request indexing: `https://myimageupscaler.com/blog/photo-noise-reduce`
 - [ ] Request indexing: `https://myimageupscaler.com/blog/fixing-pixelated-photos`
 - [ ] Request indexing: `https://myimageupscaler.com/blog/how-to-enlarge-photo-without-losing-quality`
@@ -42,7 +20,5 @@ Cleanup:
 
 ## Notes
 
-- The 5 blog URLs are already `Submitted and indexed` in GSC, but the visible title/H1/body refresh should still be manually nudged after deploy.
-- The 6 metadata-refresh blog URLs were updated through the Supabase blog API on 2026-05-12 and should be manually nudged after the next deploy/content publish cycle.
-- `/it` is indexed and canonicalized correctly, but GSC showed no referring sitemap before deploy. Recheck after the `sitemap-static.xml` locale-homepage change is live.
+- 2026-05-14: Stopped at the GSC daily quota after clicking request indexing for `https://myimageupscaler.com/blog/photo-noise-reduce`; not counted as submitted. Retry the remaining unchecked URLs tomorrow, 2026-05-15, once quota resets.
 - After completing this backlog, mark the checkboxes and add the completion date here.
