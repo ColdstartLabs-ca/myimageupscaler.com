@@ -17,25 +17,27 @@ When this skill activates: `Reddit SEO Response: combining GSC, GA4, SEO plan, R
 
 When the user says `use reddit-seo-response`, `run reddit-seo-response`, or asks for Reddit replies/traffic bumps without giving target URLs, do this automatically:
 
-1. Run `gsc-analysis` for the current site.
-2. Run `ga-analysis` for the current site.
-3. Run `seo-growth-plan` to produce a joined SEO opportunity file.
-4. Filter to blog/content URLs by default (`/blog` when present).
-5. Select low-hanging-fruit posts automatically:
+1. Read the Reddit post log at `docs/seo/reddit-post-log.md` if it exists. Use it to avoid duplicate threads, maintain the 9:1 participation ratio, and account for recently posted links.
+2. Run `gsc-analysis` for the current site.
+3. Run `ga-analysis` for the current site.
+4. Run `seo-growth-plan` to produce a joined SEO opportunity file.
+5. Filter to blog/content URLs by default (`/blog` when present).
+6. Select low-hanging-fruit posts automatically:
    - Position 4-10 first.
    - Position 11-20 second.
    - Position 21-40 only if Reddit relevance is very strong.
    - Position 1-3 only if CTR is weak.
-6. Run Reddit discovery/scoring for those targets.
-7. If Reddit native search is rate-limited or slow, immediately switch to hybrid discovery instead of waiting on repeated 429 retries:
+7. Run Reddit discovery/scoring for those targets.
+8. If Reddit native search is rate-limited or slow, immediately switch to hybrid discovery instead of waiting on repeated 429 retries:
    - Keep any candidates already found by the Reddit script.
    - Run web searches such as `site:reddit.com/r/ "[target query]" reddit`, `site:reddit.com/r/ "[pain point]"`, and `site:reddit.com/r/ "[tool category]"`.
    - Prefer exact problem threads over generic keyword matches.
    - Feed manually found candidates into scoring when practical, or manually score the top 5-10 threads.
-8. Inspect the top candidate threads for relevance and obvious rule/link risk.
-9. Draft custom replies for the best opportunities.
-10. Apply the `humanizer` skill to the final reply text.
-11. Write a Markdown action sheet to disk and return the file path. The `.md` must start with exact posting instructions: what thread to target, what order to post in, and the ready-to-paste comment.
+9. Inspect the top candidate threads for relevance and obvious rule/link risk.
+10. Draft custom replies for the best opportunities.
+11. Apply the `humanizer` skill to the final reply text.
+12. Write a Markdown action sheet to disk and return the file path. The `.md` must start with exact posting instructions: what thread to target, what order to post in, and the ready-to-paste comment.
+13. Append recommended actions to `docs/seo/reddit-post-log.md` with status `recommended`. If the user confirms they posted replies, update those rows to `posted`.
 
 Do not stop after loading the skill. Do not ask for target posts as the first response. Only ask the user for input if credentials are missing, the site cannot be inferred, or Reddit discovery is blocked and no candidate source is available.
 
@@ -234,6 +236,26 @@ Default to a 9:1 participation ratio:
 - Track the target domain, subreddit, thread URL, date, and whether a link was used.
 - If rules ban links, produce a no-link answer. Do not add a "DM me" workaround unless the user explicitly asks and the subreddit allows it.
 
+## Post Log Memory
+
+Use `docs/seo/reddit-post-log.md` as durable campaign memory.
+
+At the start of every run:
+
+- Read the log before selecting threads.
+- Exclude threads already marked `posted`.
+- Treat threads marked `recommended` as pending unless the user says they were skipped or posted.
+- Count recent linked posts vs no-link participation posts before recommending another self-link.
+- Avoid recommending the same subreddit repeatedly unless the new thread is clearly high intent.
+
+After every run:
+
+- Append each generated recommendation with status `recommended`.
+- Include `date`, `status`, `subreddit`, `thread URL`, `thread title`, `target page`, `link decision`, `link used`, and a short note.
+- When the user says they posted a reply, update the matching row to `posted` and set `posted date`.
+- When the user says they skipped one, update the row to `skipped`.
+- Keep the latest 100 rows in the main log. When it grows past 100 rows, move older rows into `docs/seo/reddit-post-log-archive.md` or summarize them by month, preserving linked-post counts.
+
 ## Output Format
 
 Create a Markdown file and return its path. The default path should be `/tmp/reddit-seo-response-[site]-[YYYY-MM-DD].md` unless the user gives another path. Also include the same high-level posting list in the chat response, but the `.md` is the source of truth.
@@ -335,3 +357,4 @@ Before telling the user to post:
 | Skill Doc               | `./.claude/skills/reddit-seo-response/SKILL.md`                    |
 | Reddit Discovery Script | `./.claude/skills/reddit-seo-response/scripts/reddit-discover.cjs` |
 | Default Markdown Output | `/tmp/reddit-seo-response-[site]-[YYYY-MM-DD].md`                  |
+| Reddit Post Log         | `docs/seo/reddit-post-log.md`                                      |
