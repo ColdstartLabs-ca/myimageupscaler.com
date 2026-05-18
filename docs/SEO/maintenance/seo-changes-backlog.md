@@ -16,6 +16,29 @@ Maintenance rules:
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
 
+## 2026-05-18
+
+### Blog Growth Maintenance: Opportunities + Performance Monitor
+
+Source: [blog-opportunities-publisher-2026-05-18.md](../reports/blog-opportunities-publisher-2026-05-18.md), [blog-performance-recovery-2026-05-18.md](../reports/blog-performance-recovery-2026-05-18.md)
+
+Changes:
+
+- Ran the blog opportunities publisher against 90-day GSC data through 2026-05-15 and selected no new publish because candidates were duplicate, recently refreshed, redirected/consolidated, navigational, or better handled by existing page refresh/indexing.
+- Ran the blog performance monitor against the default 28-day fetcher comparison for blog URLs.
+- Confirmed no immediate `blog-edit` handoff was warranted because top affected pages were recently refreshed, intentionally consolidated, or improved clicks/rank despite lower impressions.
+
+Validation:
+
+- GSC exports completed for 90-day opportunity discovery and 28-day blog monitoring.
+- Anti-cannibalization gate blocked duplicate publishing for existing canonical blog intents.
+- Redirect checks confirmed retired blog URLs return `308` to their canonical destinations.
+- Reports saved under `docs/SEO/reports/`.
+
+Follow-up:
+
+- Request indexing for unchecked URLs in [gsc-request-indexing-backlog.md](./gsc-request-indexing-backlog.md), then re-run after 2026-05-21 when more post-refresh data is available.
+
 ## 2026-05-15
 
 ### Blog Growth Maintenance: Opportunities + Performance Monitor
