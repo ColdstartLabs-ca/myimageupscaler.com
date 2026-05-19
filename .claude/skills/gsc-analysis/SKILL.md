@@ -1,6 +1,6 @@
 ---
 name: gsc-analysis
-description: Fetch and analyze Google Search Console growth data, including search-type splits, comparisons, indexing signals, and opportunity clusters.
+description: Fetch and analyze Google Search Console growth data, including search-type splits, comparisons, indexing signals, opportunity clusters, and focused URL visibility-drop investigations.
 ---
 
 # GSC Analysis Skill
@@ -107,6 +107,35 @@ Focus on:
 5. `ctrOptimization` and `pageCtrOpportunities` for snippet/title work
 6. `cannibalization` for duplicate intent collisions
 7. `indexing.summary` for non-passing or canonical-problem pages
+
+### Single-URL Visibility Drop
+
+When the user reports that a specific page's impressions or clicks dried up, use this skill as the GSC data source and pair it with `blog-performance-monitor` for diagnosis.
+
+1. Fetch at least 28 days, or 56-90 days when the suspected change date is unclear:
+
+```bash
+node ./.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs --site=myimageupscaler.com --days=56 --row-limit=25000 --output=/tmp/gsc-miu-url-incident.json
+```
+
+2. In the export, inspect both the original URL and any redirect/canonical destination:
+   - `searchTypes.web.pages`
+   - `searchTypes.web.queries`
+   - `searchTypes.web.cannibalization`
+   - top-level `comparison`
+   - `indexing.inspectedPages` when the page was inspected
+
+3. Separate causes before proposing edits:
+   - impressions down on the old URL but present on a redirect destination = likely migration/consolidation
+   - impressions down with worse position = ranking/content/indexing problem
+   - impressions stable with clicks down = CTR/snippet problem
+   - multiple URLs serving the same top query = cannibalization
+
+4. Always correlate the metric change with the SEO maintenance backlog before editing:
+   - `docs/SEO/maintenance/seo-changes-backlog.md`
+   - `docs/SEO/maintenance/gsc-request-indexing-backlog.md`
+   - `.claude/skills/blog-changelog.md`
+   - relevant `docs/SEO/reports/*.md`
 
 ### Step 3: Output
 

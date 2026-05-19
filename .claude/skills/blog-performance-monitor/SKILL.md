@@ -1,6 +1,6 @@
 ---
 name: blog-performance-monitor
-description: Blog quality monitor for recurring SEO health checks. Use when monitoring blog-only performance from Google Search Console, finding blog posts losing impressions, clicks, CTR, or rankings, correlating losses with recent markdown blog backlog/change-log items, preparing a recovery report, or handing off metadata/content fixes to blog-edit.
+description: Blog quality monitor for recurring SEO health checks and single-URL visibility incidents. Use when monitoring blog-only performance from Google Search Console, investigating a page whose impressions/clicks dried up, finding blog posts losing impressions, clicks, CTR, or rankings, correlating losses with recent markdown blog backlog/change-log items, preparing a recovery report, or handing off metadata/content fixes to blog-edit.
 ---
 
 # Blog Performance Monitor
@@ -9,6 +9,8 @@ description: Blog quality monitor for recurring SEO health checks. Use when moni
 
 Monitor blog-only GSC performance, explain drops, correlate them with recent blog backlog/change files, and hand off fixes to `blog-edit`. This skill is the monitoring and diagnosis layer, not the long-form editing layer.
 
+For incident-style prompts like "this page got fewer impressions than usual" or "impressions dried up out of nowhere", treat the requested URL as the primary subject. First determine whether the URL was redirected, canonicalized, unpublished, noindexed, consolidated, or recently edited before recommending content changes.
+
 Compose existing skills:
 
 - `google-search-console-analysis`: impressions, clicks, CTR, position, page/query deltas, cannibalization.
@@ -16,6 +18,42 @@ Compose existing skills:
 - `seo-audit`: canonical, indexability, internal links, schema, and page quality checks.
 - `pagespeed`: Core Web Vitals/Lighthouse checks when performance may explain losses.
 - Project-local `blog-edit` at `.claude/skills/blog-edit/SKILL.md`: perform blog metadata/content updates after this skill produces the edit brief.
+
+## Single-URL Incident Triage
+
+Use this path before the recurring-monitor workflow when the user gives one URL.
+
+1. **Normalize the URL**
+   - Record the exact URL, slug, canonical destination, and whether production returns `200`, `301`, `302`, `307`, `308`, `404`, or `noindex`.
+   - If the URL redirects, analyze the destination URL as the surviving page and mark the original URL's impression drop as expected unless GSC shows the destination also lost visibility.
+
+2. **Fetch focused GSC evidence**
+   - Use `.claude/skills/gsc-analysis` as the data source.
+   - Compare the latest complete 14 or 28 days against the prior equal window.
+   - Pull page, query, and query+page rows for both the original URL and any redirect/canonical destination.
+   - Identify whether loss is from impressions, ranking position, CTR, or URL migration.
+
+3. **Search change clues before editing**
+   - Read the latest entries in:
+     - `.claude/skills/blog-changelog.md`
+     - `docs/SEO/maintenance/seo-changes-backlog.md`
+     - `docs/SEO/maintenance/gsc-request-indexing-backlog.md`
+     - relevant `docs/SEO/reports/*.md`
+   - Search those files for the slug, old URL, destination URL, and top query terms.
+   - Inspect recent git history for the slug and blog rendering/redirect code if the markdown backlogs do not explain the change.
+
+4. **Classify the incident**
+   - `intentional-migration`: old URL redirects or canonicalizes to a replacement.
+   - `indexing-regression`: URL is noindexed, blocked, non-200, canonicalized incorrectly, or missing from sitemap unexpectedly.
+   - `content-change-regression`: a recent edit changed title, H1, intro, body, schema, internal links, or target intent before the drop.
+   - `serp-demand-shift`: impressions fell while position and destination health are stable.
+   - `ctr-regression`: impressions are stable but clicks/CTR fell.
+
+5. **Pick the next action**
+   - For intentional migrations, request indexing for the destination if not done, monitor destination queries, and avoid rewriting the old URL.
+   - For indexing regressions, fix the technical blocker before content work.
+   - For content-change regressions, prepare a narrow `blog-edit` brief tied to the lost query cluster.
+   - For SERP demand shifts, record the finding and avoid unnecessary edits unless the destination has an obvious stale-intent mismatch.
 
 ## Recurring Cadence
 
@@ -160,4 +198,33 @@ Data:
 ## Next Run
 
 [date and checks]
+```
+
+## Single-URL Incident Report Format
+
+```markdown
+# Blog Visibility Incident - [date]
+
+URL: [original URL]
+Destination/canonical: [URL or none]
+Production status: [status/canonical/noindex finding]
+GSC freshness: [latest complete date]
+
+## Finding
+
+[one-paragraph answer: why impressions changed]
+
+## Evidence
+
+- GSC: [before/after metrics for original URL and destination]
+- Backlog/changelog clues: [dated entries]
+- Technical check: [status, canonical, sitemap, indexing if checked]
+
+## Classification
+
+[intentional-migration | indexing-regression | content-change-regression | serp-demand-shift | ctr-regression]
+
+## Action
+
+[request indexing, monitor destination, fix blocker, or blog-edit brief]
 ```

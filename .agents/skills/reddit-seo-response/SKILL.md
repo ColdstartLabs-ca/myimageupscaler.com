@@ -39,6 +39,18 @@ When the user says `use reddit-seo-response`, `run reddit-seo-response`, or asks
 12. Write a Markdown action sheet to disk and return the file path. The `.md` must start with exact posting instructions: what thread to target, what order to post in, and the ready-to-paste comment.
 13. Append recommended actions to `docs/seo/reddit-post-log.md` with status `recommended`. If the user confirms they posted replies, update those rows to `posted`.
 
+Daily volume/link requirement:
+
+- Target **at least 10 post-ready Reddit replies per daily run** whenever enough qualified threads exist.
+- The action sheet must include enough no-link participation replies to make a link safe under the 9:1 participation ratio.
+- Aim for **9 no-link participation replies + 1 transparent self-link reply** per day when qualified threads and subreddit rules allow it.
+- A daily SEO action sheet should **not** come back with every `Target page: none`. Every recommendation must name the MIU URL it supports, even when the reply itself is no-link.
+- Include at least one linked candidate per run when any safe linked candidate exists. If the account still needs no-link participation first, keep the linked candidate in the action sheet but label it clearly: `include link after posting the no-link replies above`.
+- Do not let old `recommended` rows in the post log suppress today's linked candidate forever. Treat only rows with `Status: posted` as completed participation. Pending recommendations are reminders, not proof that links are unsafe.
+- If fewer than 10 qualified threads exist, keep expanding discovery with hybrid/web search before settling. Only return fewer than 10 when the remaining candidates are unsafe, irrelevant, duplicates, or blocked by rules.
+- Do not force a link. Include a linked recommendation only when the target page truly solves the thread and the subreddit/rules/risk check supports it. If no linked recommendation is safe, the action sheet must explicitly say `No safe linked candidate found today` and list the exact reason.
+- **Direct-solution exception:** when the OP is explicitly asking for a tool, service, workflow, or solution that MIU actually provides, do **not** default to no-link out of caution. Treat it as a primary linked candidate unless subreddit rules clearly forbid external links/self-promo or the product is a poor fit. The reply should still answer the question first, then disclose affiliation plainly, e.g. `I work on MyImageUpscaler, so obvious bias, but it might fit this case: [URL]`.
+
 Do not stop after loading the skill. Do not ask for target posts as the first response. Only ask the user for input if credentials are missing, the site cannot be inferred, or Reddit discovery is blocked and no candidate source is available.
 
 ## Related Skills
@@ -152,6 +164,7 @@ Optimize for getting to a usable posting plan quickly.
 - Do not let Reddit 429s dominate the run. If two or more searches get rate-limited, switch to hybrid discovery with web search.
 - Search fewer, better queries: use the top 1-2 GSC queries plus one plain-language pain-point query per target page.
 - Cap discovery at 5-10 promising threads per target, then manually qualify. More raw candidates are usually noise.
+- For the daily cron, do not stop at 1-3 good threads. Continue across targets/queries until you have **10 qualified post-ready replies** or have exhausted safe candidates.
 - Deduplicate by Reddit thread URL before drafting.
 - Reject false positives early: meme/news threads, competitor-owned subreddits, broad AI debates, and threads where the OP is not asking for help.
 - Prefer threads where the reply can be useful even without a link.
@@ -215,6 +228,8 @@ Reject the thread if:
 - The answer would require pretending to be an unrelated happy customer.
 - The page is not genuinely useful for the OP.
 - The reply would be mostly a link with filler around it.
+
+Do **not** reject or downgrade to no-link merely because the reply would mention MIU. If the OP directly asks for a tool/solution and MIU is a legitimate fit, a disclosed mention/link is the opportunity. Mark the link decision as `include link` or `include link after posting the no-link replies above`, not `no link`, unless a concrete subreddit rule or thread context makes it unsafe.
 
 ## Reply Construction
 
@@ -328,11 +343,17 @@ Reply:
 
 Rules for the posting section:
 
+- Target **10 post-ready recommendations per daily run** when possible.
+- Order them as 1-10 using plain labels: "Post first", "Post second", "Post third", then "Post fourth" through "Post tenth".
+- Every recommendation must name a real target MIU URL. Do not use `Target page: none` unless the thread is pure brand/community participation and intentionally not SEO-targeted.
+- Prefer 9 no-link community participation replies plus 1 linked reply when a link is safe and useful. This is how the daily run creates enough participation to support at least one link without looking spammy.
+- For threads where OP directly asks for a tool/solution MIU provides, prefer a disclosed MIU mention/link over a generic no-link answer, unless rules explicitly prohibit it. Do not waste direct demand threads.
+- Include at least one linked candidate when any safe candidate exists. If it should be posted only after no-link replies, label it `include link after posting the no-link replies above` rather than omitting the link candidate.
+- If every recommendation is no-link, add a top-level warning: `No safe linked candidate found today`, then give the concrete rule/relevance reason. Do not silently produce ten no-link items.
 - Always include at least one post-ready reply if any qualified thread exists.
 - Always write the final action sheet to a `.md` file.
 - Return the `.md` file path prominently in the chat response.
 - Put the best action first, even if it is a no-link reply.
-- Use plain labels: "Post first", "Post second", "Post third".
 - Include the thread URL directly under each instruction.
 - Put each reply in a `text` code block inside the `.md` so the user can paste it.
 - Keep the ready-to-paste reply free of meta commentary like "Suggested reply:" inside the code block.
