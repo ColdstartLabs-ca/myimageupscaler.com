@@ -122,6 +122,14 @@ interface IPageProps {
   params: Promise<{ slug: string; locale: string }>;
 }
 
+function getPostPublishedDate(post: {
+  published_at?: string;
+  created_at?: string;
+  date?: string;
+}): string {
+  return post.published_at || post.created_at || post.date || '1970-01-01T00:00:00.000Z';
+}
+
 export async function generateStaticParams() {
   const slugs = await getAllPublishedSlugs();
   return slugs.map(slug => ({ slug }));
@@ -141,7 +149,7 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
   const canonicalUrl = `${clientEnv.BASE_URL}/blog/${slug}`;
   const defaultOgImage = '/og-image.png';
 
-  const postDate = post.published_at || post.created_at;
+  const postDate = getPostPublishedDate(post);
 
   return {
     title: post.seo_title || post.title,
@@ -187,7 +195,7 @@ export default async function BlogPostPage({ params }: IPageProps) {
     .filter(p => p.slug !== slug && p.category === post.category)
     .slice(0, 3);
 
-  const postDate = post.published_at || post.created_at;
+  const postDate = getPostPublishedDate(post);
 
   // FAQ JSON-LD (auto-extracted from content if FAQ section exists)
   const faqJsonLd = extractFaqSchema(post.content);

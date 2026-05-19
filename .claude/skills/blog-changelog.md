@@ -193,3 +193,14 @@ Intent mismatch fixes (seo_title only):
 
 - `sample-article-title-for-testing` — unpublished to draft because it is test/webhook content.
 - `ai-upscaler-muryou-osusume`, `old-damaged-photos`, `photo-noise-reduce`, `fixing-pixelated-photos`, `how-to-enlarge-photo-without-losing-quality`, `free-photo-restoration-app` — expanded Supabase SEO descriptions; `fixing-pixelated-photos` also received a fuller public description.
+
+## 2026-05-19
+
+### SEO: CTR Links + Static Blog Sitemap Recovery
+**Affected:** best-free-ai-image-upscaler-2026-tested-compared, best-ai-image-quality-enhancer-free, free-ai-upscaler-no-watermark, static blog sitemap set
+**Why:** Fresh GSC showed click loss concentrated in high-impression blog clusters, plus live 200 static posts excluded from the sitemap by a stale blocklist.
+**Changes:**
+- `best-free-ai-image-upscaler-2026-tested-compared` — updated SEO title/description and changed homepage CTAs to `/tools/ai-image-upscaler`.
+- `best-ai-image-quality-enhancer-free` — updated SEO title/description and changed generic homepage CTAs to `/tools/ai-photo-enhancer`.
+- `free-ai-upscaler-no-watermark` — updated SEO title/description, changed the final CTA to `/tools/ai-image-upscaler`, and added a canonical support link to the complete 2026 comparison.
+- Static blog posts that now return 200 were removed from the sitemap blocklist; intentional cannibalization redirect slugs remain blocked.

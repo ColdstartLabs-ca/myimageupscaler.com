@@ -66,9 +66,9 @@ const DB_POST_2 = {
 };
 
 const BLOCKED_STATIC_POST = {
-  slug: 'anime-upscaling-4k-art-guide',
-  title: 'Anime Upscaling Guide',
-  description: 'A blocked post',
+  slug: 'photo-enhancement-upscaling-vs-quality',
+  title: 'Photo Enhancement vs Upscaling',
+  description: 'A redirected cannibalization post',
   date: '2024-11-01T00:00:00.000Z',
   author: 'MyImageUpscaler Team',
   category: 'Guides',
@@ -172,23 +172,25 @@ describe('Blog Sitemap', () => {
       });
     });
 
-    it('all known problematic static slugs are excluded from sitemap output', async () => {
-      const knownBlockedSlugs = [
+    it('old static blog slugs that now return 200 are included in sitemap output', async () => {
+      const restoredStaticSlugs = [
         'anime-upscaling-4k-art-guide',
         'dalle-3-image-enhancement-guide',
         'stable-diffusion-upscaling-complete-guide',
+        'how-ai-image-upscaling-works-guide',
+        'how-ai-image-upscaling-works-explained',
       ];
 
       mockGetAllPublishedPosts.mockResolvedValue(
-        knownBlockedSlugs.map(slug => ({ ...STATIC_POST, slug }))
+        restoredStaticSlugs.map(slug => ({ ...STATIC_POST, slug }))
       );
 
       const { GET } = await import('@/app/sitemap-blog.xml/route');
       const response = await GET();
       const xml = await response.text();
 
-      knownBlockedSlugs.forEach(slug => {
-        expect(xml).not.toContain(`/blog/${slug}`);
+      restoredStaticSlugs.forEach(slug => {
+        expect(xml).toContain(`/blog/${slug}`);
       });
     });
   });
