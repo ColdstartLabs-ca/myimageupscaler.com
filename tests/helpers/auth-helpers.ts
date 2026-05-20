@@ -32,6 +32,22 @@ function getUserCacheKey(): string {
 }
 
 /**
+ * Generate the Supabase auth storage key used by supabase-js in the browser.
+ * Without this, userStore can briefly hydrate from its own cache and then be
+ * reset by Supabase's INITIAL_SESSION event with a null session.
+ */
+function getSupabaseAuthStorageKey(): string {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://example.supabase.co';
+
+  try {
+    const projectRef = new URL(supabaseUrl).hostname.split('.')[0];
+    return `sb-${projectRef}-auth-token`;
+  } catch {
+    return 'sb-example-auth-token';
+  }
+}
+
+/**
  * Create test user data with default values
  */
 export function createTestUser(overrides?: Partial<ITestUserData>): ITestUserData {
@@ -62,11 +78,31 @@ export function getAuthInitScript(userData?: Partial<ITestUserData>): string {
   const user = createTestUser(userData);
 
   const cacheKey = getUserCacheKey();
+  const supabaseAuthKey = getSupabaseAuthStorageKey();
+  const expiresAt = Math.floor(Date.now() / 1000) + 60 * 60;
   const cacheValue = JSON.stringify({
     version: 1,
     timestamp: Date.now(),
     user: user,
   });
+  const supabaseAuthValue = JSON.stringify({
+    access_token: 'fake-test-token',
+    refresh_token: 'fake-test-refresh-token',
+    expires_in: 3600,
+    expires_at: expiresAt,
+    token_type: 'bearer',
+    user: {
+      id: user.id,
+      aud: 'authenticated',
+      role: 'authenticated',
+      email: user.email,
+      app_metadata: { provider: user.provider, providers: [user.provider] },
+      user_metadata: { name: user.name },
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+  });
+  const supabaseAuthCookieValue = `base64-${Buffer.from(supabaseAuthValue, 'utf8').toString('base64url')}`;
 
   return `
     // Inject test environment markers
@@ -76,6 +112,8 @@ export function getAuthInitScript(userData?: Partial<ITestUserData>): string {
     // Inject authenticated user into localStorage
     // This will be picked up by userStore.initialize() via loadUserCache()
     localStorage.setItem('${cacheKey}', ${JSON.stringify(cacheValue)});
+    localStorage.setItem('${supabaseAuthKey}', ${JSON.stringify(supabaseAuthValue)});
+    document.cookie = '${supabaseAuthKey}=${supabaseAuthCookieValue}; path=/; max-age=31536000; SameSite=Lax';
 
     // Store test marker for middleware to check
     localStorage.setItem('__test_mode__', 'true');
@@ -110,11 +148,9 @@ export async function setupAuthenticatedState(
   // Add the init script to inject auth state before page loads
   await page.addInitScript(getAuthInitScript(userData));
 
-  // Add test headers to all requests
-  await page.route('**/*', async route => {
-    const headers = { ...route.request().headers(), ...testHeaders };
-    await route.continue({ headers });
-  });
+  // Add test headers without installing a catch-all route that can shadow
+  // test-specific route mocks.
+  await page.setExtraHTTPHeaders(testHeaders);
 
   // Also set up route handlers for any API calls that might be made
   // Use the actual user ID from userData, not hardcoded
@@ -164,11 +200,9 @@ export async function setupAuthenticatedStateWithSupabase(
   // Add the init script to inject auth state before page loads
   await page.addInitScript(getAuthInitScript(userData));
 
-  // Add test headers to all requests
-  await page.route('**/*', async route => {
-    const headers = { ...route.request().headers(), ...testHeaders };
-    await route.continue({ headers });
-  });
+  // Add test headers without installing a catch-all route that can shadow
+  // test-specific route mocks.
+  await page.setExtraHTTPHeaders(testHeaders);
 
   // Import and use the Supabase mock helpers
   const {

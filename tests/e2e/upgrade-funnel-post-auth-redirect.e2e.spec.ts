@@ -241,12 +241,19 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
 
       const galleryModal = page.getByRole('heading', { name: 'Choose a model' });
       await expect(galleryModal).toBeVisible({ timeout: 20000 });
+      await page.setViewportSize({ width: 1024, height: 844 });
 
       // Click any premium/locked tier.
       // ModelCard has a before/after slider inside whose onClick stops propagation.
       // Click at 85% height (text area below image) to avoid the slider handle.
       const lockedTier = page
-        .locator('[data-tier="ultra"], [data-tier="hd-upscale"], [data-tier="auto"]')
+        .locator(
+          [
+            '[data-testid="locked-ultra"]',
+            '[data-testid="locked-hd-upscale"]',
+            '[data-testid="locked-face-pro"]',
+          ].join(', ')
+        )
         .first();
 
       if (await lockedTier.isVisible()) {
@@ -353,6 +360,17 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
     test('should complete full flow: locked model click → sessionStorage → direct checkout modal', async ({
       page,
     }) => {
+      await setupAuthenticatedStateWithSupabase(page, {
+        subscription: null, // Free user
+        profile: {
+          id: 'test-free-user-5',
+          email: 'test-free-5@example.com',
+          role: 'user',
+          subscription_credits_balance: 100,
+          purchased_credits_balance: 0,
+        },
+      });
+
       await page.route('**/api/checkout', async route => {
         await route.fulfill({
           status: 200,
@@ -370,17 +388,6 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
         });
       });
 
-      await setupAuthenticatedStateWithSupabase(page, {
-        subscription: null, // Free user
-        profile: {
-          id: 'test-free-user-5',
-          email: 'test-free-5@example.com',
-          role: 'user',
-          subscription_credits_balance: 100,
-          purchased_credits_balance: 0,
-        },
-      });
-
       const sessionStorageKey = 'checkout_originating_model';
 
       await page.setViewportSize({ width: 390, height: 844 });
@@ -394,10 +401,17 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
 
       const galleryModal = page.getByRole('heading', { name: 'Choose a model' });
       await expect(galleryModal).toBeVisible({ timeout: 20000 });
+      await page.setViewportSize({ width: 1024, height: 844 });
 
       // Click a locked premium tier
       const lockedTier = page
-        .locator('[data-tier="ultra"], [data-tier="hd-upscale"], [data-tier="auto"]')
+        .locator(
+          [
+            '[data-testid="locked-ultra"]',
+            '[data-testid="locked-hd-upscale"]',
+            '[data-testid="locked-face-pro"]',
+          ].join(', ')
+        )
         .first();
 
       if (await lockedTier.isVisible()) {
