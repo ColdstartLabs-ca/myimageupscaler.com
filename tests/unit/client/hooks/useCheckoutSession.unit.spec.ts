@@ -14,6 +14,7 @@ const {
   mockTrackStepViewed,
   mockTrackError,
   mockOnComplete,
+  mockAnalyticsTrack,
 } = vi.hoisted(() => ({
   mockCreateCheckoutSession: vi.fn(),
   mockClearCache: vi.fn(),
@@ -23,6 +24,7 @@ const {
   mockTrackStepViewed: vi.fn(),
   mockTrackError: vi.fn(),
   mockOnComplete: vi.fn(),
+  mockAnalyticsTrack: vi.fn(),
 }));
 
 // Stripe
@@ -70,6 +72,15 @@ vi.mock('next-intl', () => ({
       notConfigured: 'Stripe is not configured',
     };
     return map[key] ?? key;
+  },
+}));
+
+// Analytics
+vi.mock('@client/analytics', () => ({
+  analytics: {
+    track: mockAnalyticsTrack,
+    getDeviceId: vi.fn().mockReturnValue('mock-device-id'),
+    getAmplitudeSessionId: vi.fn().mockReturnValue(12345),
   },
 }));
 
@@ -217,6 +228,25 @@ describe('useCheckoutSession', () => {
       expect.any(String),
       'plan_selection'
     );
+  });
+
+  it('tracks checkout error with checkout context and ui mode on failure', async () => {
+    mockCreateCheckoutSession.mockRejectedValue(new Error('Network failure'));
+
+    renderHook(() => useCheckoutSession(buildParams()));
+
+    await waitFor(() => {
+      expect(mockTrackError).toHaveBeenCalledWith(
+        'network_error',
+        'Network failure',
+        'plan_selection',
+        expect.objectContaining({
+          trigger: 'unknown',
+          source: 'checkout_modal',
+          uiMode: expect.any(String),
+        })
+      );
+    });
   });
 
   // -------------------------------------------------------------------------

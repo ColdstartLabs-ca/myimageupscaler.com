@@ -15,7 +15,11 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { X, Clock, Sparkles } from 'lucide-react';
 import { useEngagementDiscountStore } from '@client/store/engagementDiscountStore';
 import { analytics } from '@client/analytics';
-import { DISCOUNT_TARGET_PACK, formatCountdown } from '@shared/config/engagement-discount';
+import {
+  DISCOUNT_TARGET_PACK,
+  formatCountdown,
+  ENGAGEMENT_DISCOUNT_CONFIG,
+} from '@shared/config/engagement-discount';
 import { cn } from '@client/utils/cn';
 import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 
@@ -109,6 +113,14 @@ export const EngagementDiscountBanner: React.FC<IEngagementDiscountBannerProps> 
   // Track impression once per session — guard prevents re-firing on remount or offer reference changes
   useEffect(() => {
     if (showToast && offer && !hasTrackedImpression) {
+      // Canonical event for banner/offer reporting
+      analytics.track('engagement_discount_offer_shown', {
+        discountPercent: offer.discountPercent,
+        originalPriceCents: offer.originalPriceCents,
+        discountedPriceCents: offer.discountedPriceCents,
+        engagement_discount_source: resolvedSource,
+      });
+      // Legacy toast event for backward compatibility with existing dashboards
       analytics.track('engagement_discount_toast_shown', {
         discountPercent: offer.discountPercent,
         originalPriceCents: offer.originalPriceCents,
@@ -124,19 +136,26 @@ export const EngagementDiscountBanner: React.FC<IEngagementDiscountBannerProps> 
     setTimeout(() => {
       dismissToast();
       setIsDismissed(true);
+      analytics.track('engagement_discount_offer_dismissed', {
+        timeRemainingSeconds: remainingSeconds,
+        engagement_discount_source: resolvedSource,
+      });
+      // Legacy toast event for backward compatibility with existing dashboards
       analytics.track('engagement_discount_toast_dismissed', {
         timeRemainingSeconds: remainingSeconds,
       });
     }, 300);
-  }, [dismissToast, remainingSeconds]);
+  }, [dismissToast, remainingSeconds, resolvedSource]);
 
   const handleClaimClick = useCallback(() => {
     analytics.track('engagement_discount_cta_clicked', {
       timeRemainingSeconds: remainingSeconds,
+      engagement_discount_source: resolvedSource,
+      targetPriceId: ENGAGEMENT_DISCOUNT_CONFIG.targetPackKey,
     });
     setCheckoutTrackingContext({ trigger: 'engagement_discount_banner' });
     onClaimDiscount();
-  }, [onClaimDiscount, remainingSeconds]);
+  }, [onClaimDiscount, remainingSeconds, resolvedSource]);
 
   if (!showToast || !offer || isDismissed) {
     return null;

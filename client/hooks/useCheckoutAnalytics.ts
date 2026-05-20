@@ -17,7 +17,12 @@ export function useCheckoutAnalytics(
   trackStepViewed: (step: TCheckoutStep, loadTimeMs?: number) => void;
   trackExitIntent: (step: TCheckoutStep, method: TCheckoutExitMethod) => void;
   trackCheckoutAbandoned: (step: TCheckoutStep) => void;
-  trackError: (errorType: TCheckoutErrorType, errorMessage: string, step: TCheckoutStep) => void;
+  trackError: (
+    errorType: TCheckoutErrorType,
+    errorMessage: string,
+    step: TCheckoutStep,
+    properties?: Record<string, unknown>
+  ) => void;
   markCompleted: () => void;
   resetLoadStart: () => void;
   checkoutCompletedRef: React.MutableRefObject<boolean>;
@@ -74,12 +79,18 @@ export function useCheckoutAnalytics(
   );
 
   const trackError = useCallback(
-    (errorType: TCheckoutErrorType, errorMessage: string, step: TCheckoutStep) => {
+    (
+      errorType: TCheckoutErrorType,
+      errorMessage: string,
+      step: TCheckoutStep,
+      properties?: Record<string, unknown>
+    ) => {
       const sanitizedMessage = errorMessage
         .replace(/\d{13,16}/g, '[CARD]')
         .replace(/cvc|cvv|cv2/gi, '[CVC]')
         .slice(0, 200);
       analytics.track('checkout_error', {
+        ...properties,
         errorType,
         errorMessage: sanitizedMessage,
         step,

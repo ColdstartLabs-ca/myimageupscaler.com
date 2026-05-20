@@ -57,7 +57,12 @@ interface IUseCheckoutSessionParams {
   regionLoading: boolean;
   appliedOfferToken: string | null;
   trackStepViewed: (step: TCheckoutStep, loadTimeMs?: number) => void;
-  trackError: (errorType: TCheckoutErrorType, errorMessage: string, step: TCheckoutStep) => void;
+  trackError: (
+    errorType: TCheckoutErrorType,
+    errorMessage: string,
+    step: TCheckoutStep,
+    properties?: Record<string, unknown>
+  ) => void;
   onComplete: () => void;
 }
 
@@ -215,9 +220,21 @@ export function useCheckoutSession({
         console.error('Failed to create checkout session:', err);
         const errorMessage = err instanceof Error ? err.message : 'Failed to load checkout';
         const code = (err as { code?: string })?.code ?? null;
+        const stripeErrorType = (err as { type?: string })?.type ?? null;
+        const stripeErrorParam = (err as { param?: string })?.param ?? null;
         setError(errorMessage);
         setErrorCode(code);
-        trackError('network_error', errorMessage, 'plan_selection');
+
+        const checkoutContext = getCheckoutTrackingContext();
+        const uiMode = isMobileViewport() ? 'hosted' : 'embedded';
+        trackError('network_error', errorMessage, 'plan_selection', {
+          trigger: checkoutContext?.trigger || 'unknown',
+          source: 'checkout_modal',
+          uiMode,
+          errorCode: code,
+          stripeErrorType,
+          stripeErrorParam,
+        });
         showToast({
           message: errorMessage,
           type: 'error',

@@ -69,6 +69,8 @@ const ALLOWED_EVENTS = [
   // Batch limit events
   'batch_limit_modal_shown',
   'batch_limit_upgrade_clicked',
+  'batch_limit_quick_buy_clicked',
+  'batch_limit_see_plans_clicked',
   'batch_limit_partial_add_clicked',
   'batch_limit_modal_closed',
 
@@ -103,6 +105,15 @@ const ALLOWED_EVENTS = [
   // Country paywall events
   'paywall_shown',
   'paywall_hit',
+  // Engagement-based first-purchase discount events
+  'engagement_discount_eligible',
+  'engagement_discount_toast_shown',
+  'engagement_discount_toast_dismissed',
+  'engagement_discount_offer_shown',
+  'engagement_discount_offer_dismissed',
+  'engagement_discount_cta_clicked',
+  'engagement_discount_checkout_started',
+  'engagement_discount_redeemed',
 ] as const;
 
 // Type for allowed events (excludes $identify which is server-side only)
