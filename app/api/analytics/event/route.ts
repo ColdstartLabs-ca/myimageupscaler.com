@@ -41,6 +41,7 @@ const ALLOWED_EVENTS = [
 
   // Pricing page events
   'pricing_page_viewed',
+  'pricing_page_abandoned',
 
   // Upgrade prompt events
   'upgrade_prompt_shown',
@@ -53,6 +54,7 @@ const ALLOWED_EVENTS = [
   'checkout_started',
   'checkout_completed',
   'checkout_abandoned',
+  'purchase_modal_abandoned',
   'success_page_viewed', // Client-side: user reached the success page (purchase_confirmed is server-side only)
 
   // Error/limit events (server-side only)
@@ -87,6 +89,9 @@ const ALLOWED_EVENTS = [
   'pseo_internal_link_clicked',
   // Checkout funnel events (Phase 1 - Checkout Friction Investigation)
   'purchase_modal_opened',
+  'checkout_direct_started',
+  'checkout_direct_unavailable',
+  'checkout_modal_mounted',
   'checkout_opened', // Fires when CheckoutModal renders (bridges upgrade_prompt_clicked → checkout_step_viewed gap)
   'checkout_auth_required', // Fires when unauthenticated user tries to checkout
   'checkout_session_requested',
@@ -260,13 +265,20 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // 4.5. Validate pricingRegion for pricing-related events
     const PRICING_EVENTS_REQUIRING_REGION = [
       'pricing_page_viewed',
+      'pricing_page_abandoned',
       'upgrade_prompt_shown',
       'upgrade_prompt_clicked',
       'upgrade_prompt_dismissed',
       'upgrade_prompt_tab_toggled',
+      'purchase_modal_opened',
+      'checkout_direct_started',
+      'checkout_auth_required',
       'checkout_started',
       'checkout_completed',
       'checkout_abandoned',
+      'purchase_modal_abandoned',
+      'checkout_direct_unavailable',
+      'checkout_modal_mounted',
     ] as const;
 
     if (

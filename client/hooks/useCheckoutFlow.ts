@@ -8,6 +8,7 @@ import {
   setCheckoutTrackingContext,
 } from '@client/utils/checkoutTrackingContext';
 import { analytics } from '@client/analytics';
+import { useRegionTier } from '@client/hooks/useRegionTier';
 
 interface IUseCheckoutFlowOptions {
   priceId: string;
@@ -45,6 +46,7 @@ export function useCheckoutFlow({
   const { isAuthenticated } = useUserStore();
   const { openAuthRequiredModal } = useModalStore();
   const { showToast } = useToastStore();
+  const { pricingRegion } = useRegionTier();
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -140,6 +142,7 @@ export function useCheckoutFlow({
         analytics.track('checkout_auth_required', {
           priceId,
           ...(effectiveTrigger ? { trigger: effectiveTrigger } : {}),
+          pricingRegion: pricingRegion || 'standard',
           originatingModel: effectiveOriginModel,
         });
 
@@ -251,6 +254,7 @@ export function useCheckoutFlow({
     openAuthRequiredModal,
     showToast,
     lastClickTime,
+    pricingRegion,
   ]);
 
   return {

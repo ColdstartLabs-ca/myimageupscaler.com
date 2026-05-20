@@ -9,11 +9,19 @@ export interface IAmplitudeDashboardAuthOptions {
   secretKey?: string;
 }
 
+export interface IAmplitudeEventFilter {
+  subprop_type: 'event' | 'user';
+  subprop_key: string;
+  subprop_op: string;
+  subprop_value: string[];
+}
+
 export interface IAmplitudeEventTotalsParams {
   eventType: string;
   startDate: Date | string;
   endDate: Date | string;
   metric?: TAmplitudeDashboardMetric;
+  filters?: IAmplitudeEventFilter[];
 }
 
 export interface IAmplitudeEventTotalsResult {
@@ -83,7 +91,13 @@ export function buildAmplitudeEventSegmentationUrl(params: IAmplitudeEventTotals
   url.searchParams.set('start', formatAmplitudeDate(params.startDate));
   url.searchParams.set('end', formatAmplitudeDate(params.endDate));
   url.searchParams.set('m', params.metric ?? 'totals');
-  url.searchParams.set('e', JSON.stringify({ event_type: params.eventType }));
+  url.searchParams.set(
+    'e',
+    JSON.stringify({
+      event_type: params.eventType,
+      ...(params.filters?.length ? { filters: params.filters } : {}),
+    })
+  );
   return url.toString();
 }
 

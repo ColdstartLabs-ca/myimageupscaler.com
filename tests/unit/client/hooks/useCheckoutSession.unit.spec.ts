@@ -11,6 +11,7 @@ const {
   mockShowToast,
   mockGetStoredOffer,
   mockGetTrackingContext,
+  mockTrack,
   mockTrackStepViewed,
   mockTrackError,
   mockOnComplete,
@@ -20,6 +21,7 @@ const {
   mockShowToast: vi.fn(),
   mockGetStoredOffer: vi.fn().mockReturnValue(null),
   mockGetTrackingContext: vi.fn().mockReturnValue(null),
+  mockTrack: vi.fn(),
   mockTrackStepViewed: vi.fn(),
   mockTrackError: vi.fn(),
   mockOnComplete: vi.fn(),
@@ -57,6 +59,14 @@ vi.mock('@client/utils/checkoutRescueOfferStorage', () => ({
 
 vi.mock('@client/utils/checkoutTrackingContext', () => ({
   getCheckoutTrackingContext: mockGetTrackingContext,
+}));
+
+vi.mock('@client/analytics', () => ({
+  analytics: {
+    track: mockTrack,
+    getDeviceId: () => null,
+    getAmplitudeSessionId: () => null,
+  },
 }));
 
 // next-intl
@@ -100,6 +110,7 @@ function buildParams(overrides: Partial<Parameters<typeof useCheckoutSession>[0]
     trackStepViewed: mockTrackStepViewed,
     trackError: mockTrackError,
     onComplete: mockOnComplete,
+    isAuthenticated: true,
     ...overrides,
   };
 }
@@ -111,6 +122,7 @@ function buildParams(overrides: Partial<Parameters<typeof useCheckoutSession>[0]
 describe('useCheckoutSession', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    Object.defineProperty(window, 'innerWidth', { value: 1024, configurable: true });
     mockCreateCheckoutSession.mockResolvedValue(SUCCESS_RESPONSE);
     mockGetStoredOffer.mockReturnValue(null);
     mockGetTrackingContext.mockReturnValue(null);
@@ -158,6 +170,94 @@ describe('useCheckoutSession', () => {
     await waitFor(() => {
       expect(result.current.stripeOptions.clientSecret).toBe('cs_test_secret');
     });
+  });
+
+  it('passes model-gate attribution through checkout session metadata', async () => {
+    mockGetTrackingContext.mockReturnValue({
+      trigger: 'model_gate',
+      originatingModel: 'hd-upscale',
+      originatingTrigger: 'post_download_explore',
+      attributionChain: ['post_download_explore', 'model_gate'],
+    });
+
+    renderHook(() => useCheckoutSession(buildParams({ banditArmId: 42 })));
+
+    await waitFor(() => {
+      expect(mockCreateCheckoutSession).toHaveBeenCalled();
+    });
+
+    expect(mockCreateCheckoutSession).toHaveBeenCalledWith(
+      PRICE_ID,
+      expect.objectContaining({
+        uiMode: 'embedded',
+        metadata: expect.objectContaining({
+          checkout_trigger: 'model_gate',
+          checkout_originating_model: 'hd-upscale',
+          checkout_originating_trigger: 'post_download_explore',
+          checkout_attribution_chain: 'post_download_explore,model_gate',
+          checkout_ui_mode: 'embedded',
+          checkout_authenticated: 'true',
+          bandit_arm_id: '42',
+        }),
+      })
+    );
+  });
+
+  it('tracks hosted checkout session creation on mobile viewports', async () => {
+    Object.defineProperty(window, 'innerWidth', { value: 390, configurable: true });
+    mockCreateCheckoutSession
+      .mockResolvedValueOnce({ url: '' })
+      .mockResolvedValueOnce(SUCCESS_RESPONSE);
+
+    const { result } = renderHook(() => useCheckoutSession(buildParams()));
+
+    await waitFor(() => {
+      expect(result.current.clientSecret).toBe('cs_test_secret');
+    });
+
+    expect(mockCreateCheckoutSession).toHaveBeenNthCalledWith(
+      1,
+      PRICE_ID,
+      expect.objectContaining({ uiMode: 'hosted' })
+    );
+    expect(mockTrack).toHaveBeenCalledWith(
+      'checkout_session_created',
+      expect.objectContaining({
+        priceId: PRICE_ID,
+        uiMode: 'hosted',
+        isAuthenticated: true,
+      })
+    );
+  });
+
+  it('tracks embedded checkout session creation with authentication and attribution context', async () => {
+    mockGetTrackingContext.mockReturnValue({
+      trigger: 'model_gate',
+      originatingModel: 'hd-upscale',
+      originatingTrigger: 'post_download_explore',
+      attributionChain: ['post_download_explore', 'model_gate'],
+    });
+
+    const { result } = renderHook(() =>
+      useCheckoutSession(buildParams({ isAuthenticated: false }))
+    );
+
+    await waitFor(() => {
+      expect(result.current.clientSecret).toBe('cs_test_secret');
+    });
+
+    expect(mockTrack).toHaveBeenCalledWith(
+      'checkout_session_created',
+      expect.objectContaining({
+        priceId: PRICE_ID,
+        uiMode: 'embedded',
+        isAuthenticated: false,
+        trigger: 'model_gate',
+        originatingModel: 'hd-upscale',
+        originatingTrigger: 'post_download_explore',
+        attributionChain: ['post_download_explore', 'model_gate'],
+      })
+    );
   });
 
   // -------------------------------------------------------------------------

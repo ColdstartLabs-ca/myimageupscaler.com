@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useCheckoutAnalytics } from '@client/hooks/useCheckoutAnalytics';
@@ -17,7 +17,10 @@ import {
 } from '@client/components/stripe/CheckoutExitSurvey';
 import { CheckoutRescueOffer } from '@client/components/stripe/CheckoutRescueOffer';
 import { getCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
+import { getCheckoutUiMode } from '@client/utils/checkoutUiMode';
 import { gaSendEvent } from '@client/components/analytics/GoogleAnalytics';
+import { analytics } from '@client/analytics';
+import { useUserStore } from '@client/store/userStore';
 
 interface ICheckoutModalProps {
   priceId: string;
@@ -45,6 +48,7 @@ export function CheckoutModal({
   const t = useTranslations('stripe.checkout');
   const { pricingRegion, banditArmId, isLoading: regionLoading } = useRegionTier();
   const rescueOfferEligible = isCheckoutRescueOfferEligiblePrice(priceId);
+  const { isAuthenticated } = useUserStore();
 
   // Analytics hook — owns all tracking state and callbacks
   const {
@@ -62,6 +66,27 @@ export function CheckoutModal({
   const exitMethodRef = useRef<TCheckoutExitMethod>('close_button');
   const [showSurvey, setShowSurvey] = useState(false);
   const [surveyTimeSpentMs, setSurveyTimeSpentMs] = useState(0);
+
+  useEffect(() => {
+    const checkoutContext = getCheckoutTrackingContext();
+    analytics.track('checkout_modal_mounted', {
+      priceId,
+      pricingRegion: pricingRegion || 'standard',
+      uiMode: getCheckoutUiMode(),
+      trigger: checkoutContext?.trigger,
+      source: prefillPlanId ? 'direct_checkout' : 'purchase_modal',
+      isAuthenticated,
+      ...(checkoutContext?.originatingModel
+        ? { originatingModel: checkoutContext.originatingModel }
+        : {}),
+      ...(checkoutContext?.originatingTrigger
+        ? { originatingTrigger: checkoutContext.originatingTrigger }
+        : {}),
+      ...(checkoutContext?.attributionChain?.length
+        ? { attributionChain: checkoutContext.attributionChain }
+        : {}),
+    });
+  }, [isAuthenticated, prefillPlanId, priceId, pricingRegion]);
 
   // Rescue offer hook — owns rescue offer state machine
   const {
@@ -105,6 +130,7 @@ export function CheckoutModal({
     trackStepViewed,
     trackError,
     onComplete: handleComplete,
+    isAuthenticated,
   });
 
   // Handle close — orchestrates rescue offer, survey, and tracking

@@ -108,6 +108,25 @@ describe('Analytics Types - pricingRegion Required Field', () => {
     });
   });
 
+  describe('IPricingPageAbandonedProperties', () => {
+    test('pricingRegion should be required and checkoutOpened should be false', async () => {
+      const types = await import('@server/analytics/types');
+
+      const validProperties: types.IPricingPageAbandonedProperties = {
+        step: 'plan_selection',
+        timeSpentMs: 5000,
+        plan: 'free',
+        pricingRegion: 'standard',
+        source: 'pricing_page',
+        checkoutOpened: false,
+      };
+
+      expect(validProperties.pricingRegion).toBe('standard');
+      expect(validProperties.source).toBe('pricing_page');
+      expect(validProperties.checkoutOpened).toBe(false);
+    });
+  });
+
   describe('IUpgradePromptShownProperties', () => {
     test('pricingRegion should be required (not optional)', async () => {
       const types = await import('@server/analytics/types');
@@ -133,6 +152,22 @@ describe('Analytics Types - pricingRegion Required Field', () => {
 
       expect(propsWithOptional.pricingRegion).toBe('africa');
       expect(propsWithOptional.imageVariant).toBe('comparison');
+    });
+
+    test('should support purchase modal initial selection metadata', async () => {
+      const types = await import('@server/analytics/types');
+
+      const props: types.IUpgradePromptShownProperties = {
+        trigger: 'model_gate',
+        currentPlan: 'free',
+        pricingRegion: 'standard',
+        outOfCredits: false,
+        initialTab: 'credits',
+        lockToCredits: true,
+      };
+
+      expect(props.initialTab).toBe('credits');
+      expect(props.lockToCredits).toBe(true);
     });
   });
 
@@ -162,6 +197,28 @@ describe('Analytics Types - pricingRegion Required Field', () => {
       };
 
       expect(validProperties.pricingRegion).toBe('south_asia');
+    });
+  });
+
+  describe('IPurchaseModalOpenedProperties', () => {
+    test('pricingRegion should be required and selection metadata should be supported', async () => {
+      const types = await import('@server/analytics/types');
+
+      const props: types.IPurchaseModalOpenedProperties = {
+        trigger: 'model_gate',
+        currentPlan: 'free',
+        pricingRegion: 'standard',
+        outOfCredits: false,
+        initialTab: 'credits',
+        selectedType: 'credit_pack',
+        selectedKey: 'small',
+        priceId: 'price_small',
+        lockToCredits: true,
+      };
+
+      expect(props.pricingRegion).toBe('standard');
+      expect(props.selectedKey).toBe('small');
+      expect(props.lockToCredits).toBe(true);
     });
   });
 });

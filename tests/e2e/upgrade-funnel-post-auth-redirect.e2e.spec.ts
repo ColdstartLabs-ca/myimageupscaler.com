@@ -350,9 +350,26 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
   });
 
   test.describe('End-to-End Upgrade Funnel Flow', () => {
-    test('should complete full flow: locked model click → sessionStorage → upgrade modal', async ({
+    test('should complete full flow: locked model click → sessionStorage → direct checkout modal', async ({
       page,
     }) => {
+      await page.route('**/api/checkout', async route => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            success: true,
+            data: {
+              url: '',
+              sessionId: 'cs_test_model_gate_direct',
+              clientSecret: 'cs_test_model_gate_direct_secret',
+              engagementDiscountApplied: false,
+              checkoutOfferApplied: false,
+            },
+          }),
+        });
+      });
+
       await setupAuthenticatedStateWithSupabase(page, {
         subscription: null, // Free user
         profile: {
@@ -399,10 +416,9 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
         );
         expect(storedModel).not.toBeNull();
 
-        // PurchaseModal should open after clicking a locked tier
-        await expect(page.locator('[data-testid="purchase-modal"]')).toBeVisible({
-          timeout: 20000,
-        });
+        // Locked model gates should skip PurchaseModal and open CheckoutModal directly.
+        await expect(page.locator('[data-modal="checkout"]')).toBeVisible({ timeout: 20000 });
+        await expect(page.locator('[data-testid="purchase-modal"]')).not.toBeVisible();
       }
     });
 

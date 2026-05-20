@@ -109,6 +109,10 @@ vi.mock('@client/store/toastStore', () => ({
   useToastStore: () => ({ showToast: vi.fn() }),
 }));
 
+vi.mock('@client/store/userStore', () => ({
+  useUserStore: () => ({ isAuthenticated: true }),
+}));
+
 // Hooks
 vi.mock('@client/hooks/useRegionTier', () => ({
   useRegionTier: () => ({
@@ -203,7 +207,11 @@ vi.mock('@client/components/stripe/CheckoutExitSurvey', () => ({
     React.createElement(
       'div',
       { 'data-testid': 'exit-survey', 'data-price-id': priceId },
-      React.createElement('button', { onClick: onClose, 'data-testid': 'survey-close' }, 'Close survey')
+      React.createElement(
+        'button',
+        { onClick: onClose, 'data-testid': 'survey-close' },
+        'Close survey'
+      )
     ),
   shouldShowExitSurvey: mockShouldShowExitSurvey,
   markExitSurveyShown: mockMarkExitSurveyShown,
@@ -222,8 +230,16 @@ vi.mock('@client/components/stripe/CheckoutRescueOffer', () => ({
     React.createElement(
       'div',
       { 'data-testid': 'rescue-offer' },
-      React.createElement('button', { onClick: onClaim, 'data-testid': 'rescue-claim' }, 'Claim offer'),
-      React.createElement('button', { onClick: onDismiss, 'data-testid': 'rescue-dismiss' }, 'Dismiss offer')
+      React.createElement(
+        'button',
+        { onClick: onClaim, 'data-testid': 'rescue-claim' },
+        'Claim offer'
+      ),
+      React.createElement(
+        'button',
+        { onClick: onDismiss, 'data-testid': 'rescue-dismiss' },
+        'Dismiss offer'
+      )
     ),
 }));
 

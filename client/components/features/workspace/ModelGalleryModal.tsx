@@ -247,12 +247,6 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
   const activeFilterLabel =
     MODEL_FILTERS.find(filter => filter.id === activeFilter)?.label ?? 'All';
 
-  const selectedTier = useMemo(
-    () => visibleTiers.find(tier => tier.id === activeTier) ?? visibleTiers[0] ?? allTiers[0],
-    [activeTier, allTiers, visibleTiers]
-  );
-  const selectedTierIsLocked = isFreeUser && PREMIUM_TIERS.includes(selectedTier.id);
-
   // Handle tier selection
   const handleSelect = useCallback(
     (tier: QualityTier, closeAfterSelect = false) => {
@@ -320,6 +314,14 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
         return;
       }
 
+      analytics.track('checkout_direct_unavailable', {
+        trigger: 'model_gate',
+        imageVariant: tier,
+        currentPlan: 'free',
+        pricingRegion: pricingRegion || 'standard',
+        fallbackDestination: 'upgrade_plan_modal',
+        ...(originatingTrigger ? { originatingTrigger } : {}),
+      });
       onUpgrade();
     },
     [onUpgrade, onUpgradeDirect, onClose, pricingRegion, copyVariant]
@@ -399,7 +401,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
       isOpen={isOpen}
       onClose={handleClose}
       showCloseButton={false}
-      className="h-[90vh] pb-safe border border-white/15 bg-[#090d1c]/95 shadow-[0_24px_90px_rgba(0,0,0,0.65)] md:h-[min(90vh,720px)] md:max-w-[min(880px,calc(100vw-48px))] lg:max-w-[min(880px,calc(100vw-48px))]"
+      className="model-gallery-modal h-[90vh] w-full max-w-none pb-safe border border-white/15 bg-[#090d1c]/95 shadow-[0_24px_90px_rgba(0,0,0,0.65)]"
     >
       <div className="flex h-full min-h-0 flex-col overflow-hidden bg-[radial-gradient(circle_at_top_left,rgba(99,102,241,0.18),transparent_34%),linear-gradient(180deg,rgba(12,17,34,0.98),rgba(7,10,22,0.98))] p-4 md:p-5">
         <div className="shrink-0">
@@ -430,7 +432,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
           </div>
         </div>
 
-        <div className="mt-6 grid min-h-0 flex-1 gap-5 overflow-y-auto pb-4 pr-1 lg:overflow-hidden lg:pb-0 lg:pr-0">
+        <div className="mt-5 grid min-h-0 flex-1 gap-5 overflow-y-auto pb-4 pr-1 lg:overflow-hidden lg:pb-0 lg:pr-0">
           <div className="flex min-h-0 min-w-0 flex-col">
             <div className="flex shrink-0 items-center gap-2">
               <div className="min-w-0 flex-1">
@@ -488,7 +490,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
             </div>
 
             {hasResults ? (
-              <div className="mt-5 min-h-0 space-y-5 lg:flex-1 lg:overflow-y-auto lg:pb-4 lg:pr-1">
+              <div className="mt-4 min-h-0 space-y-5 lg:flex-1 lg:overflow-y-auto lg:pb-4 lg:pr-1">
                 <section>
                   <div className="mb-3 flex flex-wrap items-center gap-2">
                     <div className="flex items-center gap-2 text-sm font-bold text-white">
@@ -500,14 +502,14 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
                     Start here if you are unsure, or use the category filters above for a specific
                     task.
                   </p>
-                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {featuredTiers.map(tier => (
                       <GalleryModelCard
                         key={tier.id}
                         tier={tier.id}
                         isSelected={activeTier === tier.id}
                         isLocked={isFreeUser && PREMIUM_TIERS.includes(tier.id)}
-                        onSelect={handleSelect}
+                        onSelect={tier => handleSelect(tier, true)}
                         onLockedClick={() => handleLockedClick(tier.id)}
                       />
                     ))}
@@ -520,14 +522,14 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
                       <Sparkles className="h-4 w-4 text-violet-400" />
                       More models
                     </div>
-                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                       {moreTiers.map(tier => (
                         <GalleryModelCard
                           key={tier.id}
                           tier={tier.id}
                           isSelected={activeTier === tier.id}
                           isLocked={isFreeUser && PREMIUM_TIERS.includes(tier.id)}
-                          onSelect={handleSelect}
+                          onSelect={tier => handleSelect(tier, true)}
                           onLockedClick={() => handleLockedClick(tier.id)}
                         />
                       ))}
@@ -559,21 +561,6 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
         </div>
 
         {upgradeCta && <div className="shrink-0 border-t border-white/10 pt-3">{upgradeCta}</div>}
-
-        <div className="shrink-0 border-t border-white/10 pt-3">
-          <button
-            type="button"
-            onClick={() =>
-              selectedTierIsLocked
-                ? handleLockedClick(selectedTier.id)
-                : handleSelect(selectedTier.id, true)
-            }
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-500 to-violet-600 px-4 py-3 text-sm font-black text-white shadow-[0_12px_28px_rgba(79,70,229,0.30)] transition-transform hover:translate-y-[-1px]"
-          >
-            {selectedTierIsLocked ? <Lock className="h-4 w-4" /> : <Check className="h-4 w-4" />}
-            {selectedTierIsLocked ? 'Get credits' : 'Use selected model'}
-          </button>
-        </div>
       </div>
     </BottomSheet>
   );

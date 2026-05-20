@@ -25,11 +25,14 @@ import { FEATURE_FLAGS } from '@shared/config/feature-flags';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useUpgradeAbandonmentDetector } from '@client/hooks/useUpgradeAbandonmentDetector';
 import { useUserData } from '@client/store/userStore';
+import { useModalStore } from '@client/store/modalStore';
 import { cn } from '@client/utils/cn';
 import { EngagementDiscountBanner } from '@client/components/engagement-discount';
 import { clientEnv } from '@shared/config/env';
 import { getMaxPixelsForQualityTier } from '@shared/validation/upscale.schema';
 import { downloadSingle } from '@client/utils/download';
+import { getCheckoutUiMode } from '@client/utils/checkoutUiMode';
+import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
 import {
   CheckCircle2,
   CreditCard,
@@ -82,11 +85,12 @@ const Workspace: React.FC = () => {
     clearBatchLimitError,
   } = useBatchQueue();
 
-  const { isFreeUser, profile } = useUserData();
+  const { isFreeUser, profile, isAuthenticated } = useUserData();
+  const { openAuthRequiredModal } = useModalStore();
   const searchParams = useSearchParams();
   const { trackUpscale, trackDownload, trackModelSwitch } = useEngagementTracker();
   const { saveImage: saveImageToGallery, isSaving: isSavingToGallery } = useGallery();
-  const { isPaywalled, country } = useRegionTier();
+  const { isPaywalled, country, pricingRegion } = useRegionTier();
 
   // Abandonment recovery: if user clicks upgrade but doesn't checkout within 10 min,
   // show the engagement discount toast (once per session, free users only).
@@ -431,13 +435,56 @@ const Workspace: React.FC = () => {
 
   const handleUpgradeDirect = ({ trigger, planId }: IUpgradeDirectParams) => {
     const ctx = getCheckoutTrackingContext();
+    const attributionProps = {
+      ...(ctx?.originatingModel ? { originatingModel: ctx.originatingModel } : {}),
+      ...(ctx?.originatingTrigger ? { originatingTrigger: ctx.originatingTrigger } : {}),
+      ...(ctx?.attributionChain?.length ? { attributionChain: ctx.attributionChain } : {}),
+    };
+
+    analytics.track('checkout_direct_started', {
+      priceId: planId,
+      source: 'model_gate',
+      trigger,
+      pricingRegion: pricingRegion || 'standard',
+      uiMode: getCheckoutUiMode(),
+      isAuthenticated,
+      ...attributionProps,
+    });
+
+    if (!isAuthenticated) {
+      const currentSearchParams = new URLSearchParams(window.location.search);
+      currentSearchParams.set('checkout', planId);
+      const returnTo = `${window.location.pathname}?${currentSearchParams.toString()}`;
+
+      prepareAuthRedirect('checkout', {
+        returnTo,
+        context: {
+          priceId: planId,
+          trigger,
+          ...(ctx?.originatingModel ? { originatingModel: ctx.originatingModel } : {}),
+          ...(ctx?.originatingTrigger ? { originatingTrigger: ctx.originatingTrigger } : {}),
+          ...(ctx?.attributionChain?.length ? { attributionChain: ctx.attributionChain } : {}),
+        },
+      });
+
+      analytics.track('checkout_auth_required', {
+        priceId: planId,
+        trigger,
+        source: 'direct_checkout',
+        pricingRegion: pricingRegion || 'standard',
+        ...attributionProps,
+      });
+
+      openAuthRequiredModal();
+      return;
+    }
+
     analytics.track('checkout_opened', {
       priceId: planId,
       source: 'direct_checkout',
       trigger,
-      ...(ctx?.originatingModel ? { originatingModel: ctx.originatingModel } : {}),
-      ...(ctx?.originatingTrigger ? { originatingTrigger: ctx.originatingTrigger } : {}),
-      ...(ctx?.attributionChain?.length ? { attributionChain: ctx.attributionChain } : {}),
+      pricingRegion: pricingRegion || 'standard',
+      ...attributionProps,
     });
     setDirectCheckoutPriceId(planId);
   };
@@ -513,6 +560,7 @@ const Workspace: React.FC = () => {
             priceId={postAuthCheckoutPriceId}
             onClose={() => setPostAuthCheckoutPriceId(null)}
             onSuccess={() => setPostAuthCheckoutPriceId(null)}
+            prefillPlanId={postAuthCheckoutPriceId}
           />
         )}
 
@@ -840,6 +888,7 @@ const Workspace: React.FC = () => {
           priceId={postAuthCheckoutPriceId}
           onClose={() => setPostAuthCheckoutPriceId(null)}
           onSuccess={() => setPostAuthCheckoutPriceId(null)}
+          prefillPlanId={postAuthCheckoutPriceId}
         />
       )}
 

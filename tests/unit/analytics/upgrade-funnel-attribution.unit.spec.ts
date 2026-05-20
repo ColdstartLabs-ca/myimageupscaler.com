@@ -87,6 +87,116 @@ describe('upgrade-funnel-attribution', () => {
     expect(props.attributionChain).toEqual(['celebration_explore', 'model_gate']);
   });
 
+  test('direct checkout marker schema accepts model-gate attribution', async () => {
+    const types = await import('@server/analytics/types');
+
+    const props: types.ICheckoutDirectStartedProperties = {
+      priceId: 'price_test_123',
+      source: 'model_gate',
+      trigger: 'model_gate',
+      pricingRegion: 'standard',
+      originatingModel: 'hd-upscale',
+      attributionChain: ['model_gate'],
+      uiMode: 'embedded',
+      isAuthenticated: true,
+    };
+
+    expect(props.originatingModel).toBe('hd-upscale');
+    expect(props.isAuthenticated).toBe(true);
+  });
+
+  test('direct checkout unavailable marker schema identifies modal fallback', async () => {
+    const types = await import('@server/analytics/types');
+
+    const props: types.ICheckoutDirectUnavailableProperties = {
+      trigger: 'model_gate',
+      imageVariant: 'hd-upscale',
+      currentPlan: 'free',
+      pricingRegion: 'standard',
+      fallbackDestination: 'upgrade_plan_modal',
+    };
+
+    expect(props.fallbackDestination).toBe('upgrade_plan_modal');
+  });
+
+  test('checkout session requested schema accepts direct-checkout attribution and auth state', async () => {
+    const types = await import('@server/analytics/types');
+
+    const props: types.ICheckoutSessionRequestedProperties = {
+      priceId: 'price_test_small',
+      uiMode: 'embedded',
+      hasBanditArm: false,
+      hasOfferToken: false,
+      isAuthenticated: true,
+      trigger: 'model_gate',
+      originatingModel: 'hd-upscale',
+      originatingTrigger: 'post_download_explore',
+      attributionChain: ['post_download_explore', 'model_gate'],
+    };
+
+    expect(props.trigger).toBe('model_gate');
+    expect(props.isAuthenticated).toBe(true);
+    expect(props.attributionChain).toEqual(['post_download_explore', 'model_gate']);
+  });
+
+  test('checkout auth-required schema accepts direct-checkout attribution', async () => {
+    const types = await import('@server/analytics/types');
+
+    const props: types.ICheckoutAuthRequiredProperties = {
+      priceId: 'price_test_small',
+      trigger: 'model_gate',
+      source: 'direct_checkout',
+      pricingRegion: 'standard',
+      originatingModel: 'hd-upscale',
+      originatingTrigger: 'post_download_explore',
+      attributionChain: ['post_download_explore', 'model_gate'],
+    };
+
+    expect(props.source).toBe('direct_checkout');
+    expect(props.pricingRegion).toBe('standard');
+    expect(props.originatingTrigger).toBe('post_download_explore');
+  });
+
+  test('checkout session created schema accepts direct-checkout attribution and auth state', async () => {
+    const types = await import('@server/analytics/types');
+
+    const props: types.ICheckoutSessionCreatedProperties = {
+      priceId: 'price_test_small',
+      uiMode: 'hosted',
+      loadTimeMs: 312,
+      isAuthenticated: false,
+      hasUrl: true,
+      trigger: 'model_gate',
+      originatingModel: 'hd-upscale',
+      originatingTrigger: 'post_download_explore',
+      attributionChain: ['post_download_explore', 'model_gate'],
+    };
+
+    expect(props.uiMode).toBe('hosted');
+    expect(props.isAuthenticated).toBe(false);
+    expect(props.hasUrl).toBe(true);
+  });
+
+  test('purchase_confirmed schema accepts checkout attribution from Stripe metadata', async () => {
+    const types = await import('@server/analytics/types');
+
+    const props: types.IPurchaseConfirmedProperties = {
+      purchaseType: 'credit_pack',
+      sessionId: 'cs_test_123',
+      pricingRegion: 'standard',
+      priceId: 'price_test_small',
+      uiMode: 'hosted',
+      trigger: 'model_gate',
+      originatingModel: 'hd-upscale',
+      originatingTrigger: 'post_download_explore',
+      attributionChain: ['post_download_explore', 'model_gate'],
+    };
+
+    expect(props.trigger).toBe('model_gate');
+    expect(props.uiMode).toBe('hosted');
+    expect(props.attributionChain).toEqual(['post_download_explore', 'model_gate']);
+  });
+
   test('upgrade_prompt_clicked event schema accepts originatingTrigger', async () => {
     const types = await import('@server/analytics/types');
 

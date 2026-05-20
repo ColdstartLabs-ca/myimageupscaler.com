@@ -79,6 +79,12 @@ vi.mock('@client/store/userStore', async importOriginal => {
   };
 });
 
+vi.mock('@client/hooks/useRegionTier', () => ({
+  useRegionTier: () => ({
+    pricingRegion: 'standard',
+  }),
+}));
+
 // Mock window.location
 const mockLocation = {
   origin: 'http://localhost:3000',
@@ -349,6 +355,7 @@ describe('PricingCard', () => {
     // Analytics should track auth required
     expect(mockAnalytics.track).toHaveBeenCalledWith('checkout_auth_required', {
       priceId: 'price_pro_monthly_123',
+      pricingRegion: 'standard',
       originatingModel: undefined,
     });
   });
@@ -384,6 +391,7 @@ describe('PricingCard', () => {
     expect(mockAnalytics.track).toHaveBeenCalledWith('checkout_auth_required', {
       priceId: 'price_pro_monthly_123',
       trigger: 'model_gate',
+      pricingRegion: 'standard',
       originatingModel: 'ultra',
     });
   });

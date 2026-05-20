@@ -23,7 +23,9 @@ import type {
   IAnalyticsEventName,
   IImageUploadedProperties,
   IPricingPageViewedProperties,
+  IPricingPageAbandonedProperties,
   ICheckoutAbandonedProperties,
+  IPurchaseModalAbandonedProperties,
 } from '@server/analytics/types';
 
 describe('Missing Funnel Events', () => {
@@ -46,9 +48,19 @@ describe('Missing Funnel Events', () => {
       expect(eventName).toBe('pricing_page_viewed');
     });
 
+    test('pricing_page_abandoned should be a valid event name', () => {
+      const eventName: IAnalyticsEventName = 'pricing_page_abandoned';
+      expect(eventName).toBe('pricing_page_abandoned');
+    });
+
     test('checkout_abandoned should be a valid event name', () => {
       const eventName: IAnalyticsEventName = 'checkout_abandoned';
       expect(eventName).toBe('checkout_abandoned');
+    });
+
+    test('purchase_modal_abandoned should be a valid event name', () => {
+      const eventName: IAnalyticsEventName = 'purchase_modal_abandoned';
+      expect(eventName).toBe('purchase_modal_abandoned');
     });
   });
 
@@ -113,11 +125,13 @@ describe('Missing Funnel Events', () => {
         entryPoint: 'navbar',
         currentPlan: 'free',
         referrer: 'https://google.com',
+        pricingRegion: 'standard',
       };
 
       expect(props.entryPoint).toBe('navbar');
       expect(props.currentPlan).toBe('free');
       expect(props.referrer).toBe('https://google.com');
+      expect(props.pricingRegion).toBe('standard');
     });
 
     test('should accept all valid entryPoint values', () => {
@@ -133,6 +147,7 @@ describe('Missing Funnel Events', () => {
         const props: IPricingPageViewedProperties = {
           entryPoint,
           currentPlan: 'free',
+          pricingRegion: 'standard',
         };
         expect(props.entryPoint).toBe(entryPoint);
       });
@@ -151,6 +166,7 @@ describe('Missing Funnel Events', () => {
         const props: IPricingPageViewedProperties = {
           entryPoint: 'direct',
           currentPlan,
+          pricingRegion: 'standard',
         };
         expect(props.currentPlan).toBe(currentPlan);
       });
@@ -160,6 +176,7 @@ describe('Missing Funnel Events', () => {
       const props: IPricingPageViewedProperties = {
         entryPoint: 'direct',
         currentPlan: 'hobby',
+        pricingRegion: 'standard',
       };
 
       expect(props.referrer).toBeUndefined();
@@ -167,18 +184,40 @@ describe('Missing Funnel Events', () => {
   });
 
   describe('checkout_abandoned Event Properties', () => {
+    test('should accept valid IPricingPageAbandonedProperties', () => {
+      const props: IPricingPageAbandonedProperties = {
+        step: 'plan_selection',
+        timeSpentMs: 12000,
+        plan: 'free',
+        pricingRegion: 'standard',
+        discountPercent: 0,
+        source: 'pricing_page',
+        checkoutOpened: false,
+      };
+
+      expect(props.source).toBe('pricing_page');
+      expect(props.checkoutOpened).toBe(false);
+      expect(props.step).toBe('plan_selection');
+    });
+
     test('should accept valid ICheckoutAbandonedProperties', () => {
       const props: ICheckoutAbandonedProperties = {
         priceId: 'price_123456',
         step: 'stripe_embed',
         timeSpentMs: 30000,
         plan: 'pro',
+        pricingRegion: 'standard',
+        source: 'checkout_modal',
+        checkoutOpened: true,
       };
 
       expect(props.priceId).toBe('price_123456');
       expect(props.step).toBe('stripe_embed');
       expect(props.timeSpentMs).toBe(30000);
       expect(props.plan).toBe('pro');
+      expect(props.pricingRegion).toBe('standard');
+      expect(props.source).toBe('checkout_modal');
+      expect(props.checkoutOpened).toBe(true);
     });
 
     test('should accept all valid step values', () => {
@@ -190,6 +229,9 @@ describe('Missing Funnel Events', () => {
           step,
           timeSpentMs: 1000,
           plan: 'hobby',
+          pricingRegion: 'standard',
+          source: step === 'stripe_embed' ? 'checkout_modal' : 'purchase_modal',
+          checkoutOpened: step === 'stripe_embed',
         };
         expect(props.step).toBe(step);
       });
@@ -206,12 +248,37 @@ describe('Missing Funnel Events', () => {
       plans.forEach(plan => {
         const props: ICheckoutAbandonedProperties = {
           priceId: 'price_123',
-          step: 'plan_selection',
+          step: 'stripe_embed',
           timeSpentMs: 5000,
           plan,
+          pricingRegion: 'standard',
+          source: 'checkout_modal',
+          checkoutOpened: true,
         };
         expect(props.plan).toBe(plan);
       });
+    });
+
+    test('should accept valid IPurchaseModalAbandonedProperties', () => {
+      const props: IPurchaseModalAbandonedProperties = {
+        priceId: 'price_pack_small',
+        step: 'plan_selection',
+        timeSpentMs: 7000,
+        plan: 'free',
+        pricingRegion: 'standard',
+        source: 'purchase_modal',
+        method: 'not_now',
+        activeTab: 'credits',
+        selectedType: 'credit_pack',
+        selectedKey: 'small_pack',
+        checkoutOpened: false,
+        outOfCredits: true,
+      };
+
+      expect(props.source).toBe('purchase_modal');
+      expect(props.checkoutOpened).toBe(false);
+      expect(props.step).toBe('plan_selection');
+      expect(props.selectedType).toBe('credit_pack');
     });
   });
 
@@ -245,6 +312,7 @@ describe('Missing Funnel Events', () => {
       analytics.track('pricing_page_viewed', {
         entryPoint: 'navbar',
         currentPlan: 'free',
+        pricingRegion: 'standard',
       });
 
       expect(mockTrack).toHaveBeenCalledWith(
@@ -252,6 +320,31 @@ describe('Missing Funnel Events', () => {
         expect.objectContaining({
           entryPoint: 'navbar',
           currentPlan: 'free',
+          pricingRegion: 'standard',
+        })
+      );
+    });
+
+    test('analytics.track should be callable with pricing_page_abandoned', async () => {
+      const { analytics } = await import('@client/analytics');
+
+      analytics.track('pricing_page_abandoned', {
+        step: 'plan_selection',
+        timeSpentMs: 12000,
+        plan: 'free',
+        pricingRegion: 'standard',
+        discountPercent: 0,
+        source: 'pricing_page',
+        checkoutOpened: false,
+      });
+
+      expect(mockTrack).toHaveBeenCalledWith(
+        'pricing_page_abandoned',
+        expect.objectContaining({
+          step: 'plan_selection',
+          pricingRegion: 'standard',
+          source: 'pricing_page',
+          checkoutOpened: false,
         })
       );
     });
@@ -264,6 +357,9 @@ describe('Missing Funnel Events', () => {
         step: 'stripe_embed',
         timeSpentMs: 15000,
         plan: 'pro',
+        pricingRegion: 'standard',
+        source: 'checkout_modal',
+        checkoutOpened: true,
       });
 
       expect(mockTrack).toHaveBeenCalledWith(
@@ -273,6 +369,39 @@ describe('Missing Funnel Events', () => {
           step: 'stripe_embed',
           timeSpentMs: 15000,
           plan: 'pro',
+          pricingRegion: 'standard',
+          source: 'checkout_modal',
+          checkoutOpened: true,
+        })
+      );
+    });
+
+    test('analytics.track should be callable with purchase_modal_abandoned', async () => {
+      const { analytics } = await import('@client/analytics');
+
+      analytics.track('purchase_modal_abandoned', {
+        priceId: 'price_pack_small',
+        step: 'plan_selection',
+        timeSpentMs: 9000,
+        plan: 'free',
+        pricingRegion: 'standard',
+        source: 'purchase_modal',
+        method: 'not_now',
+        activeTab: 'credits',
+        selectedType: 'credit_pack',
+        selectedKey: 'small_pack',
+        checkoutOpened: false,
+        outOfCredits: true,
+      });
+
+      expect(mockTrack).toHaveBeenCalledWith(
+        'purchase_modal_abandoned',
+        expect.objectContaining({
+          priceId: 'price_pack_small',
+          step: 'plan_selection',
+          pricingRegion: 'standard',
+          source: 'purchase_modal',
+          checkoutOpened: false,
         })
       );
     });

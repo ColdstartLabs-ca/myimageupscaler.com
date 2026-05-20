@@ -291,6 +291,21 @@ describe('ModelGalleryModal — upgrade direct flow', () => {
     );
   });
 
+  it('should track checkout_direct_unavailable before falling back to purchase modal', () => {
+    renderModal({ onUpgradeDirect: undefined });
+    fireEvent.click(screen.getByTestId('locked-hd-upscale'));
+
+    expect(mockTrack).toHaveBeenCalledWith(
+      'checkout_direct_unavailable',
+      expect.objectContaining({
+        trigger: 'model_gate',
+        imageVariant: 'hd-upscale',
+        currentPlan: 'free',
+        fallbackDestination: 'upgrade_plan_modal',
+      })
+    );
+  });
+
   it('should call onClose before opening direct checkout', () => {
     const callOrder: string[] = [];
     const onClose = vi.fn(() => callOrder.push('close'));

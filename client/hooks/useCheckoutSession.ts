@@ -8,20 +8,13 @@ import { StripeService, clearCheckoutSessionCache } from '@client/services/strip
 import { analytics } from '@client/analytics';
 import { useToastStore } from '@client/store/toastStore';
 import { getCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
+import { getCheckoutUiMode } from '@client/utils/checkoutUiMode';
 import { getStoredCheckoutRescueOffer } from '@client/utils/checkoutRescueOfferStorage';
 import type { TCheckoutStep, TCheckoutErrorType } from '@server/analytics/types';
 
 // ---------------------------------------------------------------------------
 // Mobile viewport detection
 // ---------------------------------------------------------------------------
-
-/**
- * Returns true when the viewport is narrower than 768px (mobile breakpoint).
- * Must only be called after hydration (typeof window !== 'undefined').
- */
-function isMobileViewport(): boolean {
-  return typeof window !== 'undefined' && window.innerWidth < 768;
-}
 
 // ---------------------------------------------------------------------------
 // Stripe initialisation (module-level, created once)
@@ -59,6 +52,7 @@ interface IUseCheckoutSessionParams {
   trackStepViewed: (step: TCheckoutStep, loadTimeMs?: number) => void;
   trackError: (errorType: TCheckoutErrorType, errorMessage: string, step: TCheckoutStep) => void;
   onComplete: () => void;
+  isAuthenticated: boolean;
 }
 
 interface IUseCheckoutSessionReturn {
@@ -86,6 +80,7 @@ export function useCheckoutSession({
   trackStepViewed,
   trackError,
   onComplete,
+  isAuthenticated,
 }: IUseCheckoutSessionParams): IUseCheckoutSessionReturn {
   const t = useTranslations('stripe.checkout');
   const { showToast } = useToastStore();
@@ -101,14 +96,50 @@ export function useCheckoutSession({
   const rescueOfferAppliedRef = useRef(false);
   const engagementDiscountAppliedRef = useRef(false);
 
+  const trackCheckoutFailure = useCallback(
+    (failurePoint: string, errorType: TCheckoutErrorType, errorMessage: string) => {
+      const checkoutContext = getCheckoutTrackingContext();
+      const checkoutUiMode = getCheckoutUiMode();
+      analytics.track('checkout_error', {
+        errorType,
+        errorMessage,
+        step: 'plan_selection',
+        priceId,
+        failurePoint,
+        uiMode: checkoutUiMode,
+        isAuthenticated,
+        trigger: checkoutContext?.trigger,
+        originatingModel: checkoutContext?.originatingModel,
+        originatingTrigger: checkoutContext?.originatingTrigger,
+        attributionChain: checkoutContext?.attributionChain,
+      });
+      trackError(errorType, errorMessage, 'plan_selection');
+    },
+    [isAuthenticated, priceId, trackError]
+  );
+
   // Check if Stripe is properly configured
   useEffect(() => {
     if (!stripePromise) {
       setError(t('notConfigured'));
       setLoading(false);
-      trackError('other', 'Stripe not configured', 'plan_selection');
+      trackCheckoutFailure('stripe_not_configured', 'other', 'Stripe not configured');
     }
-  }, [t, trackError]);
+  }, [t, trackCheckoutFailure]);
+
+  useEffect(() => {
+    if (!regionLoading || !loading) return;
+
+    const regionLoadingTimer = setTimeout(() => {
+      trackCheckoutFailure(
+        'pricing_region_loading_timeout',
+        'network_error',
+        'Pricing region is still loading after 10s'
+      );
+    }, 10000);
+
+    return () => clearTimeout(regionLoadingTimer);
+  }, [loading, regionLoading, trackCheckoutFailure]);
 
   // Track slow loading — show additional message if loading takes >2s
   useEffect(() => {
@@ -147,7 +178,11 @@ export function useCheckoutSession({
         const timeoutMessage = 'Checkout is taking too long. Please try again.';
         setError(timeoutMessage);
         setLoading(false);
-        trackError('network_error', 'Checkout session creation timeout (30s)', 'plan_selection');
+        trackCheckoutFailure(
+          'checkout_session_timeout',
+          'network_error',
+          'Checkout session creation timeout (30s)'
+        );
       }, CHECKOUT_TIMEOUT_MS);
 
       try {
@@ -156,11 +191,21 @@ export function useCheckoutSession({
         rescueOfferAppliedRef.current = false;
         engagementDiscountAppliedRef.current = false;
         getStoredCheckoutRescueOffer(priceId); // side-effect: hydrate storage check
-        const checkoutTrigger = getCheckoutTrackingContext()?.trigger;
+        const checkoutContext = getCheckoutTrackingContext();
+        const checkoutTrigger = checkoutContext?.trigger;
         const metadata: Record<string, string> = {};
 
         if (checkoutTrigger) {
           metadata.checkout_trigger = checkoutTrigger;
+        }
+        if (checkoutContext?.originatingModel) {
+          metadata.checkout_originating_model = checkoutContext.originatingModel;
+        }
+        if (checkoutContext?.originatingTrigger) {
+          metadata.checkout_originating_trigger = checkoutContext.originatingTrigger;
+        }
+        if (checkoutContext?.attributionChain?.length) {
+          metadata.checkout_attribution_chain = checkoutContext.attributionChain.join(',');
         }
         if (banditArmId) {
           metadata.bandit_arm_id = String(banditArmId);
@@ -172,13 +217,30 @@ export function useCheckoutSession({
         if (amplitudeDeviceId) metadata.amplitude_device_id = amplitudeDeviceId;
         if (amplitudeSessionId !== null) metadata.amplitude_session_id = String(amplitudeSessionId);
 
-        const checkoutUiMode = isMobileViewport() ? 'hosted' : 'embedded';
+        const checkoutUiMode = getCheckoutUiMode();
+        metadata.checkout_ui_mode = checkoutUiMode;
+        metadata.checkout_authenticated = String(isAuthenticated);
+
+        const attributionProps = {
+          trigger: checkoutTrigger,
+          ...(checkoutContext?.originatingModel
+            ? { originatingModel: checkoutContext.originatingModel }
+            : {}),
+          ...(checkoutContext?.originatingTrigger
+            ? { originatingTrigger: checkoutContext.originatingTrigger }
+            : {}),
+          ...(checkoutContext?.attributionChain?.length
+            ? { attributionChain: checkoutContext.attributionChain }
+            : {}),
+        };
+
         analytics.track('checkout_session_requested', {
           priceId,
-          trigger: checkoutTrigger,
           uiMode: checkoutUiMode,
           hasBanditArm: Boolean(banditArmId),
           hasOfferToken: Boolean(appliedOfferToken),
+          isAuthenticated,
+          ...attributionProps,
         });
 
         // On mobile viewports (<768px) the Stripe embedded form can be cramped
@@ -194,10 +256,11 @@ export function useCheckoutSession({
 
           analytics.track('checkout_session_created', {
             priceId,
-            trigger: checkoutTrigger,
             uiMode: 'hosted',
             loadTimeMs: Date.now() - sessionLoadStart,
+            isAuthenticated,
             hasUrl: Boolean(hostedResponse.url),
+            ...attributionProps,
           });
 
           if (hostedResponse.url) {
@@ -205,7 +268,13 @@ export function useCheckoutSession({
             // Keep loading state until navigation completes
             return;
           }
+          trackCheckoutFailure(
+            'hosted_checkout_url_missing',
+            'network_error',
+            'No hosted checkout URL returned from checkout session'
+          );
           // Fall through to embedded if hosted URL is not returned
+          metadata.checkout_ui_mode = 'embedded';
         }
 
         // Don't pass successUrl - let the server construct it with proper type & credits params
@@ -219,12 +288,13 @@ export function useCheckoutSession({
 
         analytics.track('checkout_session_created', {
           priceId,
-          trigger: checkoutTrigger,
           uiMode: 'embedded',
           loadTimeMs: Date.now() - sessionLoadStart,
+          isAuthenticated,
           hasClientSecret: Boolean(response.clientSecret),
           checkoutOfferApplied: Boolean(response.checkoutOfferApplied),
           engagementDiscountApplied: Boolean(response.engagementDiscountApplied),
+          ...attributionProps,
         });
 
         if (response.clientSecret) {
@@ -235,7 +305,17 @@ export function useCheckoutSession({
           const loadTimeMs = Date.now() - sessionLoadStart;
           trackStepViewed('stripe_embed', loadTimeMs);
         } else {
-          throw new Error('No client secret returned from checkout session');
+          const missingSecretMessage = 'No client secret returned from checkout session';
+          setError(missingSecretMessage);
+          trackCheckoutFailure(
+            'embedded_client_secret_missing',
+            'network_error',
+            missingSecretMessage
+          );
+          showToast({
+            message: missingSecretMessage,
+            type: 'error',
+          });
         }
       } catch (err) {
         if (timedOut) return; // Timeout already handled the error state
@@ -244,7 +324,7 @@ export function useCheckoutSession({
         const code = (err as { code?: string })?.code ?? null;
         setError(errorMessage);
         setErrorCode(code);
-        trackError('network_error', errorMessage, 'plan_selection');
+        trackCheckoutFailure('checkout_session_create_failed', 'network_error', errorMessage);
         showToast({
           message: errorMessage,
           type: 'error',
@@ -264,10 +344,11 @@ export function useCheckoutSession({
     retryKey,
     showToast,
     trackStepViewed,
-    trackError,
+    trackCheckoutFailure,
     banditArmId,
     regionLoading,
     appliedOfferToken,
+    isAuthenticated,
   ]);
 
   const retry = useCallback(() => {

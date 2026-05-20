@@ -122,6 +122,10 @@ vi.mock('@client/store/toastStore', () => ({
   useToastStore: () => ({ showToast: mockShowToast }),
 }));
 
+vi.mock('@client/store/userStore', () => ({
+  useUserStore: () => ({ isAuthenticated: true }),
+}));
+
 // Hooks
 vi.mock('@client/hooks/useRegionTier', () => ({
   useRegionTier: () => ({

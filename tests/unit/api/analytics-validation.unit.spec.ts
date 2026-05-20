@@ -65,13 +65,20 @@ describe('Analytics API - Pricing Region Validation', () => {
   describe('pricing events requiring region', () => {
     const pricingEvents = [
       'pricing_page_viewed',
+      'pricing_page_abandoned',
       'upgrade_prompt_shown',
       'upgrade_prompt_clicked',
       'upgrade_prompt_dismissed',
       'upgrade_prompt_tab_toggled',
+      'purchase_modal_opened',
+      'checkout_direct_started',
+      'checkout_auth_required',
       'checkout_started',
       'checkout_completed',
       'checkout_abandoned',
+      'purchase_modal_abandoned',
+      'checkout_direct_unavailable',
+      'checkout_modal_mounted',
     ];
 
     test.each(pricingEvents)('accepts %s event with pricingRegion', async eventName => {

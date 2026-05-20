@@ -17,6 +17,7 @@ import {
   getCheckoutTrackingContext,
   setCheckoutTrackingContext,
 } from '@client/utils/checkoutTrackingContext';
+import { getPurchaseModalInitialSelection } from '@client/utils/purchaseModalDefaults';
 import { getEnabledCreditPacks, getEnabledPlans } from '@shared/config/subscription.utils';
 import type { ICreditPack, IPlanConfig } from '@shared/config/subscription.types';
 
@@ -145,30 +146,42 @@ export function PurchaseModal({
         setCheckoutTrackingContext({ trigger });
       }
 
+      const initialSelection = getPurchaseModalInitialSelection({
+        trigger,
+        outOfCredits,
+        creditPacks,
+        subscriptionPlans,
+      });
+      setSelectedPack(initialSelection.selectedPack);
+      setSelectedPlan(initialSelection.selectedPlan);
+      setPurchaseMode(initialSelection.purchaseMode);
+
+      const initialItem = initialSelection.selectedPlan || initialSelection.selectedPack;
+
       analytics.track('purchase_modal_opened', {
         trigger,
         outOfCredits,
         currentPlan,
         pricingRegion: pricingRegion || 'standard',
+        initialTab: initialSelection.purchaseMode,
+        selectedType: initialSelection.selectedPlan ? 'subscription' : 'credit_pack',
+        selectedKey: initialItem?.key,
+        priceId: initialItem?.stripePriceId,
+        lockToCredits: initialSelection.lockToCredits,
       });
-
-      // Default to popular credit pack
-      const popularPack = creditPacks.find(p => p.popular) || creditPacks[1] || creditPacks[0];
-      if (popularPack) {
-        setSelectedPack(popularPack);
-        setSelectedPlan(null);
-        setPurchaseMode('credits');
-      }
 
       analytics.track('upgrade_prompt_shown', {
         trigger,
         outOfCredits,
         currentPlan,
         pricingRegion: pricingRegion || 'standard',
-        initialTab: 'credits',
+        initialTab: initialSelection.purchaseMode,
+        lockToCredits: initialSelection.lockToCredits,
       });
     }
-  }, [isOpen, trigger, outOfCredits, pricingRegion, currentPlan, creditPacks]);
+  }, [isOpen, trigger, outOfCredits, pricingRegion, currentPlan, creditPacks, subscriptionPlans]);
+
+  const lockToCredits = trigger === 'model_gate';
 
   const handleDismiss = useCallback(
     (method: 'backdrop' | 'close_button' | 'not_now') => {
@@ -183,7 +196,7 @@ export function PurchaseModal({
 
       const selectedItem = selectedPlan || selectedPack;
       if (!showCheckoutModal && selectedItem?.stripePriceId) {
-        analytics.track('checkout_abandoned', {
+        analytics.track('purchase_modal_abandoned', {
           priceId: selectedItem.stripePriceId,
           step: 'plan_selection',
           timeSpentMs: Date.now() - openTimeRef.current,
@@ -213,6 +226,38 @@ export function PurchaseModal({
       showCheckoutModal,
       currentPlan,
     ]
+  );
+
+  const handleModeChange = useCallback(
+    (mode: 'credits' | 'subscribe') => {
+      if (lockToCredits && mode === 'subscribe') return;
+      if (mode === purchaseMode) return;
+
+      analytics.track('upgrade_prompt_tab_toggled', {
+        trigger,
+        from: purchaseMode,
+        to: mode,
+        pricingRegion: pricingRegion || 'standard',
+        timeOpenMs: Date.now() - openTimeRef.current,
+      });
+
+      setPurchaseMode(mode);
+
+      if (mode === 'credits') {
+        setSelectedPack(
+          current => current || creditPacks.find(p => p.key === 'small') || creditPacks[0] || null
+        );
+        setSelectedPlan(null);
+        return;
+      }
+
+      setSelectedPlan(
+        current =>
+          current || subscriptionPlans.find(p => p.recommended) || subscriptionPlans[0] || null
+      );
+      setSelectedPack(null);
+    },
+    [creditPacks, lockToCredits, purchaseMode, pricingRegion, subscriptionPlans, trigger]
   );
 
   const handleSelectPack = useCallback((pack: ICreditPack) => {
@@ -304,6 +349,7 @@ export function PurchaseModal({
       analytics.track('checkout_auth_required', {
         priceId,
         ...(effectiveTrigger ? { trigger: effectiveTrigger } : {}),
+        pricingRegion: pricingRegion || 'standard',
         originatingModel: effectiveOriginModel,
       });
       openAuthRequiredModal();
@@ -360,10 +406,12 @@ export function PurchaseModal({
 
   if (!isOpen) return null;
 
-  const title = outOfCredits ? "You're Out of Credits" : 'Get More Credits';
+  const title = outOfCredits
+    ? 'Get credits to finish this image'
+    : 'Get credits for premium models';
   const subtitle = outOfCredits
-    ? 'Purchase credits to continue, or subscribe for better value.'
-    : 'Most users buy credits. Subscribe to save if you use premium models often.';
+    ? 'Credits pay for each upscale or edit. Start with 50 credits, or switch to monthly credits if you process images often.'
+    : 'Credits unlock premium models and pay for each upscale or edit. Start with 50 credits for $4.99.';
 
   return (
     <>
@@ -430,233 +478,256 @@ export function PurchaseModal({
                     Instant delivery • Credits never expire • Secure checkout
                   </span>
                 </div>
-              </div>
 
-              {/* ─── Credits Section ─── */}
-              <div className="mx-4 sm:mx-5 rounded-xl border border-amber-500/20 bg-amber-500/[0.03] overflow-hidden">
-                {/* Section header */}
-                <div className="flex items-center gap-2 px-3 py-2 border-b border-amber-500/10 bg-amber-500/[0.04]">
-                  <Coins className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                  <h3 className="text-sm font-bold text-text-primary">Credit Packs</h3>
-                  <span className="ml-auto text-[10px] text-amber-600/80 bg-amber-500/10 px-2 py-0.5 rounded-full font-medium">
-                    Buy once, use anytime
-                  </span>
-                </div>
-
-                {/* Credit pack rows */}
-                <div className="px-3 py-2 space-y-1.5">
-                  {creditPacks.map(pack => {
-                    const isSelected = selectedPack?.key === pack.key;
-                    const savings = getSavingsPercent(pack, basePack);
-                    return (
-                      <div
-                        key={pack.key}
-                        onClick={() => handleSelectPack(pack)}
-                        className={`relative flex flex-col rounded-xl border cursor-pointer transition-all duration-150 ${
-                          isSelected
-                            ? 'border-accent bg-accent/[0.04] ring-1 ring-accent/15'
-                            : 'border-transparent bg-surface hover:border-surface-light/60'
+                {!lockToCredits && (
+                  <div className="mt-4 flex justify-center">
+                    <div className="grid w-full max-w-xs grid-cols-2 gap-1 rounded-xl border border-surface-light bg-surface-light/50 p-1">
+                      <button
+                        type="button"
+                        onClick={() => handleModeChange('credits')}
+                        className={`flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold transition-all ${
+                          purchaseMode === 'credits'
+                            ? 'bg-accent text-white shadow-md'
+                            : 'text-text-muted hover:bg-surface hover:text-text-primary'
                         }`}
                       >
-                        {/* Main row */}
-                        <div className="flex items-center gap-2 sm:gap-2.5 p-2 sm:p-2.5">
-                          <RadioCircle checked={isSelected} />
-
-                          <CoinStackIcon className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
-
-                          {/* Credits info */}
-                          <div className="min-w-0 flex-grow">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-base sm:text-lg font-bold text-text-primary leading-none">
-                                {pack.credits}
-                              </span>
-                              <span className="text-xs text-text-secondary">credits</span>
-                              {pack.badge && (
-                                <span
-                                  className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
-                                    pack.badge === 'Best Value'
-                                      ? 'bg-success/15 text-success'
-                                      : 'bg-secondary/15 text-secondary-light'
-                                  }`}
-                                >
-                                  {pack.badge}
-                                </span>
-                              )}
-                            </div>
-                            {savings > 0 && (
-                              <p className="text-[10px] text-success mt-0.5 font-medium whitespace-nowrap">
-                                Save {savings}%
-                              </p>
-                            )}
-                          </div>
-
-                          {/* Pricing */}
-                          <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-                            <span className="text-[10px] text-text-muted whitespace-nowrap hidden sm:inline">
-                              ${getPricePerCredit(pack, discountPercent)}/cr
-                            </span>
-                            <span className="text-base sm:text-lg font-bold text-text-primary tabular-nums whitespace-nowrap min-w-[3rem] text-right">
-                              {formatPrice(pack.priceInCents, discountPercent)}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Expanded metadata */}
-                        {isSelected && (
-                          <div className="px-2 pb-2 sm:px-2.5 sm:pb-2.5 -mt-0.5">
-                            <div className="border-t border-accent/10 pt-2">
-                              <ul className="space-y-1">
-                                {[
-                                  'Credits never expire',
-                                  'Use on any tool',
-                                  'Stackable with subscriptions',
-                                ].map((feature, idx) => (
-                                  <li key={idx} className="flex items-start gap-1.5">
-                                    <Check className="w-3 h-3 text-success flex-shrink-0 mt-0.5" />
-                                    <span className="text-[11px] text-text-secondary leading-tight">
-                                      {feature}
-                                    </span>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Divider */}
-              <div className="px-4 sm:px-5 py-2">
-                <div className="flex items-center gap-2">
-                  <div className="flex-grow h-px bg-surface-light/40" />
-                  <span className="text-[10px] text-text-muted/70 font-medium tracking-wide">
-                    or
-                  </span>
-                  <div className="flex-grow h-px bg-surface-light/40" />
-                </div>
-              </div>
-
-              {/* ─── Subscription Section ─── */}
-              <div className="mx-4 sm:mx-5 mb-3 rounded-xl border border-violet-500/20 bg-violet-500/[0.03] overflow-hidden">
-                {/* Section header */}
-                <div className="flex items-center gap-2 px-3 py-2 border-b border-violet-500/10 bg-violet-500/[0.04]">
-                  <Zap className="w-4 h-4 text-violet-400 flex-shrink-0" />
-                  <h3 className="text-sm font-bold text-text-primary">Monthly Subscription</h3>
-                  <span className="ml-auto text-[10px] text-violet-300/80 bg-violet-500/10 px-2 py-0.5 rounded-full font-medium">
-                    Save more
-                  </span>
-                </div>
-
-                <p className="px-3 pt-2 text-[11px] text-text-secondary">
-                  Get monthly credits + lower cost per credit.
-                </p>
-
-                {/* Subscription plan rows */}
-                <div className="px-3 py-2 space-y-1.5">
-                  {subscriptionPlans.map(plan => {
-                    const isSelected = selectedPlan?.key === plan.key;
-                    const isCurrentPlan = currentPriceId === plan.stripePriceId;
-                    const displayPrice =
-                      discountPercent > 0
-                        ? Math.round(plan.priceInCents * (1 - discountPercent / 100))
-                        : plan.priceInCents;
-
-                    return (
-                      <div
-                        key={plan.key}
-                        onClick={() => !isCurrentPlan && handleSelectPlan(plan)}
-                        className={`relative flex flex-col rounded-xl border transition-all duration-150 ${
-                          isCurrentPlan
-                            ? 'border-success/25 bg-success/[0.03] opacity-70 cursor-default'
-                            : isSelected
-                              ? 'border-accent bg-accent/[0.04] ring-1 ring-accent/15 cursor-pointer'
-                              : 'border-transparent bg-surface hover:border-surface-light/60 cursor-pointer'
+                        <Coins className="h-3.5 w-3.5" />
+                        Credits
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleModeChange('subscribe')}
+                        className={`relative flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold transition-all ${
+                          purchaseMode === 'subscribe'
+                            ? 'bg-accent text-white shadow-md'
+                            : 'text-text-muted hover:bg-surface hover:text-text-primary'
                         }`}
                       >
-                        {/* Main row */}
-                        <div className="flex items-center gap-2 sm:gap-2.5 p-2 sm:p-2.5">
-                          <RadioCircle checked={isSelected || isCurrentPlan} />
-
-                          <div
-                            className={`flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center ${
-                              isCurrentPlan ? 'bg-success/15' : 'bg-yellow-500/10'
-                            }`}
-                          >
-                            <Star
-                              className={`w-3.5 h-3.5 ${isCurrentPlan ? 'text-success' : 'text-yellow-400'}`}
-                              fill="none"
-                              strokeWidth={2}
-                            />
-                          </div>
-
-                          {/* Plan info */}
-                          <div className="flex-grow min-w-0">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-sm font-bold text-text-primary">
-                                {plan.name}
-                              </span>
-                              <span className="text-[11px] text-text-secondary">
-                                {plan.creditsPerCycle.toLocaleString()} cr/mo
-                              </span>
-                              {discountPercent > 0 && (
-                                <span className="text-[9px] font-bold text-white bg-error/70 px-1 py-0.5 rounded">
-                                  -{discountPercent}%
-                                </span>
-                              )}
-                              {plan.recommended && !isCurrentPlan && (
-                                <span className="text-[9px] font-bold uppercase tracking-wider px-1 py-0.5 rounded bg-success/15 text-success border border-success/20">
-                                  Best value
-                                </span>
-                              )}
-                              {isCurrentPlan && (
-                                <span className="text-[9px] font-bold uppercase tracking-wider px-1 py-0.5 rounded bg-success/15 text-success border border-success/20">
-                                  Current
-                                </span>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Price */}
-                          <div className="text-right flex-shrink-0">
-                            <div className="flex items-baseline justify-end gap-1">
-                              <span className="text-base sm:text-lg font-bold text-text-primary tabular-nums leading-none">
-                                {formatPriceRaw(displayPrice)}
-                              </span>
-                              <span className="text-[10px] text-text-muted">/mo</span>
-                              {discountPercent > 0 && (
-                                <span className="text-[10px] text-text-muted line-through ml-0.5">
-                                  {formatPriceRaw(plan.priceInCents)}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Expanded metadata */}
-                        {isSelected && (
-                          <div className="px-2 pb-2 sm:px-2.5 sm:pb-2.5 -mt-0.5">
-                            <div className="border-t border-accent/10 pt-2">
-                              <ul className="space-y-1">
-                                {plan.features.map((feature, idx) => (
-                                  <li key={idx} className="flex items-start gap-1.5">
-                                    <Check className="w-3 h-3 text-success flex-shrink-0 mt-0.5" />
-                                    <span className="text-[11px] text-text-secondary leading-tight">
-                                      {feature}
-                                    </span>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+                        <span
+                          className={`absolute -right-1.5 -top-2 rounded-full px-1.5 py-0.5 text-[9px] font-black uppercase leading-none shadow-sm ${
+                            purchaseMode === 'subscribe'
+                              ? 'bg-success text-white shadow-[0_0_16px_rgba(34,197,94,0.65)]'
+                              : 'bg-success/15 text-success shadow-[0_0_14px_rgba(34,197,94,0.35)] ring-1 ring-success/25'
+                          }`}
+                        >
+                          Save
+                        </span>
+                        <Zap className="h-3.5 w-3.5" />
+                        Subscription
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
+
+              {purchaseMode === 'credits' ? (
+                <div className="mx-4 overflow-hidden rounded-xl border border-amber-500/20 bg-amber-500/[0.03] sm:mx-5">
+                  <div className="flex items-center gap-2 border-b border-amber-500/10 bg-amber-500/[0.04] px-3 py-2">
+                    <Coins className="h-4 w-4 flex-shrink-0 text-amber-500" />
+                    <h3 className="text-sm font-bold text-text-primary">
+                      Credits for image processing
+                    </h3>
+                    <span className="ml-auto rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-600/80">
+                      Buy once, use anytime
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5 px-3 py-2">
+                    {creditPacks.map(pack => {
+                      const isSelected = selectedPack?.key === pack.key;
+                      const savings = getSavingsPercent(pack, basePack);
+                      return (
+                        <div
+                          key={pack.key}
+                          onClick={() => handleSelectPack(pack)}
+                          className={`relative flex cursor-pointer flex-col rounded-xl border transition-all duration-150 ${
+                            isSelected
+                              ? 'border-accent bg-accent/[0.04] ring-1 ring-accent/15'
+                              : 'border-transparent bg-surface hover:border-surface-light/60'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 p-2 sm:gap-2.5 sm:p-2.5">
+                            <RadioCircle checked={isSelected} />
+                            <CoinStackIcon className="h-5 w-5 flex-shrink-0 sm:h-6 sm:w-6" />
+
+                            <div className="min-w-0 flex-grow">
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                <span className="text-base font-bold leading-none text-text-primary sm:text-lg">
+                                  {pack.credits}
+                                </span>
+                                <span className="text-xs text-text-secondary">credits</span>
+                                {pack.key === 'small' && (
+                                  <span className="rounded bg-accent/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-accent">
+                                    Starter
+                                  </span>
+                                )}
+                                {pack.badge && (
+                                  <span
+                                    className={`rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${
+                                      pack.badge === 'Best Value'
+                                        ? 'bg-success/15 text-success'
+                                        : 'bg-secondary/15 text-secondary-light'
+                                    }`}
+                                  >
+                                    {pack.badge}
+                                  </span>
+                                )}
+                              </div>
+                              {savings > 0 && (
+                                <p className="mt-0.5 whitespace-nowrap text-[10px] font-medium text-success">
+                                  Save {savings}%
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="flex flex-shrink-0 items-center gap-1.5 sm:gap-2">
+                              <span className="hidden whitespace-nowrap text-[10px] text-text-muted sm:inline">
+                                ${getPricePerCredit(pack, discountPercent)}/cr
+                              </span>
+                              <span className="min-w-[3rem] whitespace-nowrap text-right text-base font-bold tabular-nums text-text-primary sm:text-lg">
+                                {formatPrice(pack.priceInCents, discountPercent)}
+                              </span>
+                            </div>
+                          </div>
+
+                          {isSelected && (
+                            <div className="-mt-0.5 px-2 pb-2 sm:px-2.5 sm:pb-2.5">
+                              <div className="border-t border-accent/10 pt-2">
+                                <ul className="space-y-1">
+                                  {[
+                                    'Credits never expire',
+                                    'Use on any tool',
+                                    'Stackable with subscriptions',
+                                  ].map((feature, idx) => (
+                                    <li key={idx} className="flex items-start gap-1.5">
+                                      <Check className="mt-0.5 h-3 w-3 flex-shrink-0 text-success" />
+                                      <span className="text-[11px] leading-tight text-text-secondary">
+                                        {feature}
+                                      </span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                <div className="mx-4 mb-3 overflow-hidden rounded-xl border border-violet-500/20 bg-violet-500/[0.03] sm:mx-5">
+                  <div className="flex items-center gap-2 border-b border-violet-500/10 bg-violet-500/[0.04] px-3 py-2">
+                    <Zap className="h-4 w-4 flex-shrink-0 text-violet-400" />
+                    <h3 className="text-sm font-bold text-text-primary">Monthly Subscription</h3>
+                    <span className="ml-auto rounded-full bg-violet-500/10 px-2 py-0.5 text-[10px] font-medium text-violet-300/80">
+                      Save more
+                    </span>
+                  </div>
+
+                  <p className="px-3 pt-2 text-[11px] text-text-secondary">
+                    Monthly credits renew automatically and lower your cost per image.
+                  </p>
+
+                  <div className="space-y-1.5 px-3 py-2">
+                    {subscriptionPlans.map(plan => {
+                      const isSelected = selectedPlan?.key === plan.key;
+                      const isCurrentPlan = currentPriceId === plan.stripePriceId;
+                      const displayPrice =
+                        discountPercent > 0
+                          ? Math.round(plan.priceInCents * (1 - discountPercent / 100))
+                          : plan.priceInCents;
+
+                      return (
+                        <div
+                          key={plan.key}
+                          onClick={() => !isCurrentPlan && handleSelectPlan(plan)}
+                          className={`relative flex flex-col rounded-xl border transition-all duration-150 ${
+                            isCurrentPlan
+                              ? 'cursor-default border-success/25 bg-success/[0.03] opacity-70'
+                              : isSelected
+                                ? 'cursor-pointer border-accent bg-accent/[0.04] ring-1 ring-accent/15'
+                                : 'cursor-pointer border-transparent bg-surface hover:border-surface-light/60'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 p-2 sm:gap-2.5 sm:p-2.5">
+                            <RadioCircle checked={isSelected || isCurrentPlan} />
+
+                            <div
+                              className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full sm:h-7 sm:w-7 ${
+                                isCurrentPlan ? 'bg-success/15' : 'bg-yellow-500/10'
+                              }`}
+                            >
+                              <Star
+                                className={`h-3.5 w-3.5 ${isCurrentPlan ? 'text-success' : 'text-yellow-400'}`}
+                                fill="none"
+                                strokeWidth={2}
+                              />
+                            </div>
+
+                            <div className="min-w-0 flex-grow">
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                <span className="text-sm font-bold text-text-primary">
+                                  {plan.name}
+                                </span>
+                                <span className="text-[11px] text-text-secondary">
+                                  {plan.creditsPerCycle.toLocaleString()} cr/mo
+                                </span>
+                                {discountPercent > 0 && (
+                                  <span className="rounded bg-error/70 px-1 py-0.5 text-[9px] font-bold text-white">
+                                    -{discountPercent}%
+                                  </span>
+                                )}
+                                {plan.recommended && !isCurrentPlan && (
+                                  <span className="rounded border border-success/20 bg-success/15 px-1 py-0.5 text-[9px] font-bold uppercase tracking-wider text-success">
+                                    Best value
+                                  </span>
+                                )}
+                                {isCurrentPlan && (
+                                  <span className="rounded border border-success/20 bg-success/15 px-1 py-0.5 text-[9px] font-bold uppercase tracking-wider text-success">
+                                    Current
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="flex-shrink-0 text-right">
+                              <div className="flex items-baseline justify-end gap-1">
+                                <span className="text-base font-bold leading-none tabular-nums text-text-primary sm:text-lg">
+                                  {formatPriceRaw(displayPrice)}
+                                </span>
+                                <span className="text-[10px] text-text-muted">/mo</span>
+                                {discountPercent > 0 && (
+                                  <span className="ml-0.5 text-[10px] text-text-muted line-through">
+                                    {formatPriceRaw(plan.priceInCents)}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {isSelected && (
+                            <div className="-mt-0.5 px-2 pb-2 sm:px-2.5 sm:pb-2.5">
+                              <div className="border-t border-accent/10 pt-2">
+                                <ul className="space-y-1">
+                                  {plan.features.map((feature, idx) => (
+                                    <li key={idx} className="flex items-start gap-1.5">
+                                      <Check className="mt-0.5 h-3 w-3 flex-shrink-0 text-success" />
+                                      <span className="text-[11px] leading-tight text-text-secondary">
+                                        {feature}
+                                      </span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               {/* Footer */}
               <div className="px-4 sm:px-5 pt-1 pb-1 text-right">
@@ -687,7 +758,7 @@ export function PurchaseModal({
                 <div className="flex items-center justify-center gap-2 w-full">
                   <ShoppingCart className="w-4 h-4 flex-shrink-0" />
                   <span className="text-sm font-bold">
-                    {getCTALabel()} — {getCTAPrice()}
+                    {getCTALabel()} - {getCTAPrice()}
                   </span>
                   <ArrowRight className="w-4 h-4 flex-shrink-0" />
                 </div>

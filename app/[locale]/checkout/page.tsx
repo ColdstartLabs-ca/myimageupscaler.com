@@ -49,7 +49,13 @@ function CheckoutContent() {
   const router = useRouter();
   const { showToast } = useToastStore();
   const { isAuthenticated, isLoading: authLoading } = useUserStore();
-  const { banditArmId, isLoading: regionLoading, isPaywalled, country } = useRegionTier();
+  const {
+    banditArmId,
+    isLoading: regionLoading,
+    isPaywalled,
+    country,
+    pricingRegion,
+  } = useRegionTier();
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -98,12 +104,13 @@ function CheckoutContent() {
     analytics.track('checkout_auth_required', {
       priceId,
       ...(checkoutContext?.trigger ? { trigger: checkoutContext.trigger } : {}),
+      pricingRegion: pricingRegion || 'standard',
       ...(checkoutContext?.originatingModel
         ? { originatingModel: checkoutContext.originatingModel }
         : {}),
     });
     hasTrackedAuthRequiredRef.current = true;
-  }, [authLoading, country, isAuthenticated, isPaywalled, priceId, regionLoading]);
+  }, [authLoading, country, isAuthenticated, isPaywalled, priceId, pricingRegion, regionLoading]);
 
   useEffect(() => {
     if (!priceId) {

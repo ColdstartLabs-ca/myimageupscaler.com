@@ -85,6 +85,56 @@ describe('Amplitude dashboard API helper', () => {
     expect(result.total).toBe(9);
   });
 
+  test('builds event property filters into segmentation query', async () => {
+    vi.doMock('@shared/config/env', () => ({
+      serverEnv: {
+        AMPLITUDE_API_KEY: 'dashboard-api-key',
+        AMPLITUDE_SECRET_KEY: 'dashboard-secret-key',
+      },
+    }));
+
+    const { buildAmplitudeEventSegmentationUrl } = await import('@server/analytics/dashboardApi');
+    const url = buildAmplitudeEventSegmentationUrl({
+      eventType: 'checkout_opened',
+      startDate: '20260409',
+      endDate: '20260409',
+      filters: [
+        {
+          subprop_type: 'event',
+          subprop_key: 'trigger',
+          subprop_op: 'is',
+          subprop_value: ['model_gate'],
+        },
+        {
+          subprop_type: 'event',
+          subprop_key: 'source',
+          subprop_op: 'is',
+          subprop_value: ['direct_checkout'],
+        },
+      ],
+    });
+
+    const eventParam = new URL(url).searchParams.get('e');
+    expect(eventParam).toBeTruthy();
+    expect(JSON.parse(eventParam!)).toEqual({
+      event_type: 'checkout_opened',
+      filters: [
+        {
+          subprop_type: 'event',
+          subprop_key: 'trigger',
+          subprop_op: 'is',
+          subprop_value: ['model_gate'],
+        },
+        {
+          subprop_type: 'event',
+          subprop_key: 'source',
+          subprop_op: 'is',
+          subprop_value: ['direct_checkout'],
+        },
+      ],
+    });
+  });
+
   test('throws a clear error when the dashboard secret key is missing', async () => {
     vi.doMock('@shared/config/env', () => ({
       serverEnv: {

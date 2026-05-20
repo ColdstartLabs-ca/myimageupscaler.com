@@ -34,11 +34,13 @@ const ALLOWED_EVENTS = [
 
   // Pricing page events
   'pricing_page_viewed',
+  'pricing_page_abandoned',
 
   // Checkout events
   'checkout_started',
   'checkout_completed',
   'checkout_abandoned',
+  'purchase_modal_abandoned',
   'success_page_viewed', // Client-side: user reached the success page (purchase_confirmed is server-side only)
 
   // Error/limit events (server-side only)
@@ -74,6 +76,9 @@ const ALLOWED_EVENTS = [
   'pseo_internal_link_clicked',
   // Checkout funnel events (Phase 1 - Checkout Friction Investigation)
   'purchase_modal_opened',
+  'checkout_direct_started',
+  'checkout_direct_unavailable',
+  'checkout_modal_mounted',
   'checkout_opened',
   'checkout_auth_required',
   'checkout_session_requested',
@@ -264,8 +269,25 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
       expect(result.success).toBe(true);
     });
 
+    test('should include pricing_page_abandoned event', () => {
+      const result = eventSchema.safeParse({
+        eventName: 'pricing_page_abandoned',
+        properties: {
+          step: 'plan_selection',
+          source: 'pricing_page',
+          checkoutOpened: false,
+        },
+      });
+      expect(result.success).toBe(true);
+    });
+
     test('should include checkout events', () => {
-      const checkoutEvents = ['checkout_started', 'checkout_completed', 'checkout_abandoned'];
+      const checkoutEvents = [
+        'checkout_started',
+        'checkout_completed',
+        'checkout_abandoned',
+        'purchase_modal_abandoned',
+      ];
       for (const eventName of checkoutEvents) {
         const result = eventSchema.safeParse({ eventName });
         expect(result.success).toBe(true);
@@ -436,6 +458,7 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
         'upscale_completed',
         'image_download',
         'pricing_page_viewed',
+        'pricing_page_abandoned',
         'checkout_started',
         'checkout_completed',
         'checkout_abandoned',

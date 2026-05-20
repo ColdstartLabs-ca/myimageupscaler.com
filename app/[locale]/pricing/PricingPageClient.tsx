@@ -156,14 +156,14 @@ export default function PricingPageClient({ initialGeo }: IPricingPageClientProp
       if (!hasTrackedPageView.current) return;
       if (hasCheckoutStartedRef.current) return;
 
-      analytics.track('checkout_abandoned', {
-        priceId: 'none',
+      analytics.track('pricing_page_abandoned', {
         step: 'plan_selection',
         timeSpentMs: Date.now() - pricingPageOpenedAt,
         plan: currentPlanRef.current,
-        context: 'pricing_page_exit_without_checkout',
         pricingRegion: pricingRegionRef.current || 'standard',
         discountPercent: discountPercentRef.current || 0,
+        source: 'pricing_page',
+        checkoutOpened: false,
       });
     };
   }, []);

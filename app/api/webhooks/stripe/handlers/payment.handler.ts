@@ -449,6 +449,13 @@ export class PaymentHandler {
           stripeCustomerId:
             typeof session.customer === 'string' ? session.customer : session.customer?.id || null,
           priceId: session.metadata?.price_id || null,
+          uiMode: session.metadata?.checkout_ui_mode || null,
+          trigger: session.metadata?.checkout_trigger || null,
+          originatingModel: session.metadata?.checkout_originating_model || null,
+          originatingTrigger: session.metadata?.checkout_originating_trigger || null,
+          attributionChain: session.metadata?.checkout_attribution_chain
+            ? session.metadata.checkout_attribution_chain.split(',').filter(Boolean)
+            : undefined,
         },
         amplitudeOpts
       );
@@ -598,6 +605,13 @@ export class PaymentHandler {
         stripeCustomerId:
           typeof session.customer === 'string' ? session.customer : session.customer?.id || null,
         priceId: session.metadata?.price_id || null,
+        uiMode: session.metadata?.checkout_ui_mode || null,
+        trigger: session.metadata?.checkout_trigger || null,
+        originatingModel: session.metadata?.checkout_originating_model || null,
+        originatingTrigger: session.metadata?.checkout_originating_trigger || null,
+        attributionChain: session.metadata?.checkout_attribution_chain
+          ? session.metadata.checkout_attribution_chain.split(',').filter(Boolean)
+          : undefined,
       },
       amplitudeOpts
     );

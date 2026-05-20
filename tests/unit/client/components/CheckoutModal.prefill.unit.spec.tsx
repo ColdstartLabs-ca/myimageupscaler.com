@@ -83,6 +83,10 @@ vi.mock('@client/store/toastStore', () => ({
   useToastStore: () => ({ showToast: vi.fn() }),
 }));
 
+vi.mock('@client/store/userStore', () => ({
+  useUserStore: () => ({ isAuthenticated: true }),
+}));
+
 vi.mock('@client/hooks/useRegionTier', () => ({
   useRegionTier: () => ({ pricingRegion: 'standard', banditArmId: null, isLoading: false }),
 }));
@@ -205,6 +209,31 @@ describe('CheckoutModal — prefillPlanId behavior', () => {
           ),
         { timeout: 3000 }
       );
+    });
+
+    it('tracks checkout_modal_mounted with direct checkout attribution', async () => {
+      mockGetTrackingContext.mockReturnValue({
+        trigger: 'model_gate',
+        originatingModel: 'hd-upscale',
+        attributionChain: ['model_gate'],
+      });
+
+      renderModal({ prefillPlanId: PRICE_ID });
+
+      await waitFor(() => {
+        expect(mockTrack).toHaveBeenCalledWith(
+          'checkout_modal_mounted',
+          expect.objectContaining({
+            priceId: PRICE_ID,
+            source: 'direct_checkout',
+            uiMode: 'embedded',
+            trigger: 'model_gate',
+            originatingModel: 'hd-upscale',
+            attributionChain: ['model_gate'],
+            isAuthenticated: true,
+          })
+        );
+      });
     });
   });
 

@@ -1,7 +1,12 @@
 import { describe, test, expect, vi, beforeEach } from 'vitest';
-import { render, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { ProcessingStatus } from '@/shared/types/coreflow.types';
+
+const { mockOpenAuthRequiredModal, mockPrepareAuthRedirect } = vi.hoisted(() => ({
+  mockOpenAuthRequiredModal: vi.fn(),
+  mockPrepareAuthRedirect: vi.fn(),
+}));
 
 // Mock useBatchQueue hook
 const mockAddFiles = vi.fn();
@@ -10,7 +15,7 @@ const mockAddSampleItem = vi.fn();
 const mockBatchQueueState = {
   queue: [] as Array<Record<string, unknown>>,
   activeId: null as string | null,
-  activeItem: null,
+  activeItem: null as Record<string, unknown> | null,
   isProcessingBatch: false,
   batchProgress: null,
   completedCount: 0,
@@ -32,17 +37,29 @@ vi.mock('@/client/hooks/useBatchQueue', () => ({
 // Mock userStore with configurable subscription state
 let mockSubscription: { price_id: string } | null = null;
 let mockIsFreeUser = true; // Default to free user
+let mockProfile: { id: string } | null = { id: 'user-123' };
+let mockIsAuthenticated = true;
 vi.mock('@client/store/userStore', () => ({
   useUserData: () => ({
     totalCredits: 100,
-    profile: { id: 'user-123' },
+    profile: mockProfile,
     subscription: mockSubscription,
-    isAuthenticated: true,
+    isAuthenticated: mockIsAuthenticated,
     isFreeUser: mockIsFreeUser,
   }),
-  useUserStore: vi.fn(() => ({ user: { id: 'user-123' } })),
-  useProfile: vi.fn(() => ({ id: 'user-123' })),
+  useUserStore: vi.fn(() => ({ user: mockProfile })),
+  useProfile: vi.fn(() => mockProfile),
   useSubscription: vi.fn(() => mockSubscription),
+}));
+
+vi.mock('@client/store/modalStore', () => ({
+  useModalStore: () => ({
+    openAuthRequiredModal: mockOpenAuthRequiredModal,
+  }),
+}));
+
+vi.mock('@client/utils/authRedirectManager', () => ({
+  prepareAuthRedirect: mockPrepareAuthRedirect,
 }));
 
 // Mock next-intl
@@ -84,7 +101,18 @@ vi.mock('../QueueStrip', () => ({
 }));
 
 vi.mock('../BatchSidebar', () => ({
-  BatchSidebar: () => null,
+  BatchSidebar: ({
+    onUpgradeDirect,
+  }: {
+    onUpgradeDirect?: (params: { trigger: string; planId: string }) => void;
+  }) => (
+    <button
+      data-testid="batch-sidebar-direct-checkout"
+      onClick={() => onUpgradeDirect?.({ trigger: 'model_gate', planId: 'price_test_small' })}
+    >
+      Sidebar locked model
+    </button>
+  ),
 }));
 
 vi.mock('../AfterUpscaleBanner', () => ({
@@ -92,7 +120,21 @@ vi.mock('../AfterUpscaleBanner', () => ({
 }));
 
 vi.mock('../ModelGalleryModal', () => ({
-  ModelGalleryModal: () => null,
+  ModelGalleryModal: ({
+    isOpen,
+    onUpgradeDirect,
+  }: {
+    isOpen: boolean;
+    onUpgradeDirect?: (params: { trigger: string; planId: string }) => void;
+  }) =>
+    isOpen ? (
+      <button
+        data-testid="model-gallery-direct-checkout"
+        onClick={() => onUpgradeDirect?.({ trigger: 'model_gate', planId: 'price_test_small' })}
+      >
+        Locked model
+      </button>
+    ) : null,
 }));
 
 vi.mock('../PremiumUpsellModal', () => ({
@@ -104,11 +146,35 @@ vi.mock('../SampleImageSelector', () => ({
 }));
 
 vi.mock('../PostDownloadPrompt', () => ({
-  PostDownloadPrompt: () => null,
+  PostDownloadPrompt: ({ onExploreModels }: { onExploreModels: () => void }) => (
+    <button data-testid="post-download-explore-models" onClick={onExploreModels}>
+      Explore models
+    </button>
+  ),
 }));
 
 vi.mock('../FirstDownloadCelebration', () => ({
   FirstDownloadCelebration: () => null,
+}));
+
+vi.mock('../MobileUpgradePrompt', () => ({
+  MobileUpgradePrompt: ({
+    isVisible,
+    onUpgradeDirect,
+  }: {
+    isVisible: boolean;
+    onUpgradeDirect?: (params: { trigger: string; planId: string }) => void;
+  }) =>
+    isVisible ? (
+      <button
+        data-testid="mobile-preview-direct-checkout"
+        onClick={() =>
+          onUpgradeDirect?.({ trigger: 'mobile_preview_prompt', planId: 'price_test_small' })
+        }
+      >
+        Mobile preview upgrade
+      </button>
+    ) : null,
 }));
 
 vi.mock('@client/components/stripe/PurchaseModal', () => ({
@@ -116,7 +182,9 @@ vi.mock('@client/components/stripe/PurchaseModal', () => ({
 }));
 
 vi.mock('@client/components/stripe/CheckoutModal', () => ({
-  CheckoutModal: () => null,
+  CheckoutModal: ({ priceId }: { priceId: string }) => (
+    <div data-modal="checkout" data-price-id={priceId} />
+  ),
 }));
 
 vi.mock('@client/components/engagement-discount', () => ({
@@ -140,7 +208,9 @@ vi.mock('@client/components/stripe/ErrorAlert', () => ({
 
 // Mock TabButton
 vi.mock('@client/components/ui/TabButton', () => ({
-  TabButton: ({ children }: { children: React.ReactNode }) => <button>{children}</button>,
+  TabButton: ({ children, onClick }: { children: React.ReactNode; onClick: () => void }) => (
+    <button onClick={onClick}>{children}</button>
+  ),
 }));
 
 // Mock analytics
@@ -181,6 +251,8 @@ describe('Workspace Quality Tier Defaults', () => {
     localStorage.clear();
     mockSubscription = null;
     mockIsFreeUser = true;
+    mockProfile = { id: 'user-123' };
+    mockIsAuthenticated = true;
     mockBatchQueueState.queue = [];
     mockBatchQueueState.activeId = null;
     mockBatchQueueState.activeItem = null;
@@ -227,6 +299,8 @@ describe('Workspace Quality Tier Logic', () => {
     localStorage.clear();
     mockSubscription = null;
     mockIsFreeUser = true;
+    mockProfile = { id: 'user-123' };
+    mockIsAuthenticated = true;
     mockBatchQueueState.queue = [];
     mockBatchQueueState.activeId = null;
     mockBatchQueueState.activeItem = null;
@@ -261,6 +335,170 @@ describe('Workspace Quality Tier Logic', () => {
       },
       { timeout: 100 }
     );
+  });
+
+  test('renders CheckoutModal after desktop/sidebar model-gate direct checkout starts', async () => {
+    mockBatchQueueState.queue = [
+      {
+        id: 'item-1',
+        status: ProcessingStatus.COMPLETED,
+        file: new File(['test'], 'test.png', { type: 'image/png' }),
+      },
+    ];
+    mockBatchQueueState.activeId = 'item-1';
+    mockBatchQueueState.activeItem = mockBatchQueueState.queue[0];
+
+    const { container } = render(<Workspace />);
+
+    fireEvent.click(screen.getByTestId('batch-sidebar-direct-checkout'));
+
+    await waitFor(() => {
+      expect(
+        container.querySelector('[data-modal="checkout"][data-price-id="price_test_small"]')
+      ).toBeInTheDocument();
+    });
+  });
+
+  test('routes unauthenticated model-gate direct checkout through auth wall', async () => {
+    mockProfile = null;
+    mockIsAuthenticated = false;
+    mockBatchQueueState.queue = [
+      {
+        id: 'item-1',
+        status: ProcessingStatus.COMPLETED,
+        file: new File(['test'], 'test.png', { type: 'image/png' }),
+      },
+    ];
+    mockBatchQueueState.activeId = 'item-1';
+    mockBatchQueueState.activeItem = mockBatchQueueState.queue[0];
+
+    const analyticsTrack = await getAnalyticsMock();
+    const { container } = render(<Workspace />);
+
+    fireEvent.click(screen.getByTestId('batch-sidebar-direct-checkout'));
+
+    expect(mockPrepareAuthRedirect).toHaveBeenCalledWith(
+      'checkout',
+      expect.objectContaining({
+        context: expect.objectContaining({
+          priceId: 'price_test_small',
+          trigger: 'model_gate',
+        }),
+      })
+    );
+    expect(mockOpenAuthRequiredModal).toHaveBeenCalledTimes(1);
+    expect(analyticsTrack).toHaveBeenCalledWith(
+      'checkout_auth_required',
+      expect.objectContaining({
+        priceId: 'price_test_small',
+        trigger: 'model_gate',
+        source: 'direct_checkout',
+        pricingRegion: 'standard',
+      })
+    );
+    expect(
+      container.querySelector('[data-modal="checkout"][data-price-id="price_test_small"]')
+    ).not.toBeInTheDocument();
+  });
+
+  test('opens direct checkout when authenticated before profile has loaded', async () => {
+    mockProfile = null;
+    mockIsAuthenticated = true;
+    mockBatchQueueState.queue = [
+      {
+        id: 'item-1',
+        status: ProcessingStatus.COMPLETED,
+        file: new File(['test'], 'test.png', { type: 'image/png' }),
+      },
+    ];
+    mockBatchQueueState.activeId = 'item-1';
+    mockBatchQueueState.activeItem = mockBatchQueueState.queue[0];
+
+    const { container } = render(<Workspace />);
+
+    fireEvent.click(screen.getByTestId('batch-sidebar-direct-checkout'));
+
+    expect(mockOpenAuthRequiredModal).not.toHaveBeenCalled();
+    await waitFor(() => {
+      expect(
+        container.querySelector('[data-modal="checkout"][data-price-id="price_test_small"]')
+      ).toBeInTheDocument();
+    });
+  });
+
+  test('renders CheckoutModal after post-download explore gallery model gate', async () => {
+    mockBatchQueueState.queue = [
+      {
+        id: 'item-1',
+        status: ProcessingStatus.COMPLETED,
+        file: new File(['test'], 'test.png', { type: 'image/png' }),
+      },
+    ];
+    mockBatchQueueState.activeId = 'item-1';
+    mockBatchQueueState.activeItem = mockBatchQueueState.queue[0];
+
+    const { container } = render(<Workspace />);
+
+    fireEvent.click(screen.getByTestId('post-download-explore-models'));
+    fireEvent.click(screen.getByTestId('model-gallery-direct-checkout'));
+
+    await waitFor(() => {
+      expect(
+        container.querySelector('[data-modal="checkout"][data-price-id="price_test_small"]')
+      ).toBeInTheDocument();
+    });
+  });
+
+  test('renders CheckoutModal after mobile quality selector model gate', async () => {
+    mockBatchQueueState.queue = [
+      {
+        id: 'item-1',
+        status: ProcessingStatus.COMPLETED,
+        file: new File(['test'], 'test.png', { type: 'image/png' }),
+      },
+    ];
+    mockBatchQueueState.activeId = 'item-1';
+    mockBatchQueueState.activeItem = mockBatchQueueState.queue[0];
+
+    const { container } = render(<Workspace />);
+    const mobileQualitySelector = container.querySelector(
+      '[data-driver="mobile-quality-selector"]'
+    );
+
+    expect(mobileQualitySelector).toBeInTheDocument();
+
+    fireEvent.click(mobileQualitySelector as Element);
+    fireEvent.click(screen.getByTestId('model-gallery-direct-checkout'));
+
+    await waitFor(() => {
+      expect(
+        container.querySelector('[data-modal="checkout"][data-price-id="price_test_small"]')
+      ).toBeInTheDocument();
+    });
+  });
+
+  test('renders CheckoutModal after mobile preview direct upgrade', async () => {
+    mockBatchQueueState.queue = [
+      {
+        id: 'item-1',
+        status: ProcessingStatus.COMPLETED,
+        file: new File(['test'], 'test.png', { type: 'image/png' }),
+      },
+    ];
+    mockBatchQueueState.activeId = 'item-1';
+    mockBatchQueueState.activeItem = mockBatchQueueState.queue[0];
+    mockBatchQueueState.completedCount = 1;
+
+    const { container } = render(<Workspace />);
+
+    fireEvent.click(screen.getByText('Preview'));
+    fireEvent.click(screen.getByTestId('mobile-preview-direct-checkout'));
+
+    await waitFor(() => {
+      expect(
+        container.querySelector('[data-modal="checkout"][data-price-id="price_test_small"]')
+      ).toBeInTheDocument();
+    });
   });
 });
 

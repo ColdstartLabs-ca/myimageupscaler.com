@@ -84,6 +84,16 @@ export interface IPricingPageViewedProperties {
   discountPercent?: number;
 }
 
+export interface IPricingPageAbandonedProperties {
+  step: 'plan_selection';
+  timeSpentMs: number;
+  plan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
+  pricingRegion: string;
+  discountPercent?: number;
+  source: 'pricing_page';
+  checkoutOpened: false;
+}
+
 export interface ICheckoutAbandonedProperties {
   priceId: string;
   step: 'plan_selection' | 'stripe_embed';
@@ -97,6 +107,23 @@ export interface ICheckoutAbandonedProperties {
   selectedKey?: string;
   checkoutOpened?: boolean;
   outOfCredits?: boolean;
+}
+
+export interface IPurchaseModalAbandonedProperties extends ICheckoutAbandonedProperties {
+  source: 'purchase_modal';
+  checkoutOpened: false;
+}
+
+export interface IPurchaseModalOpenedProperties {
+  trigger: string;
+  outOfCredits?: boolean;
+  currentPlan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
+  pricingRegion: string;
+  initialTab?: 'credits' | 'subscribe';
+  selectedType?: 'subscription' | 'credit_pack';
+  selectedKey?: string;
+  priceId?: string;
+  lockToCredits?: boolean;
 }
 
 export type IUpgradePromptTrigger =
@@ -117,6 +144,9 @@ export interface IUpgradePromptShownProperties {
   currentPlan: 'free' | 'starter' | 'hobby' | 'pro' | 'business';
   pricingRegion: string;
   copyVariant?: string; // A/B test variant assignment (e.g., 'control', 'variant_a')
+  outOfCredits?: boolean;
+  initialTab?: 'credits' | 'subscribe';
+  lockToCredits?: boolean;
 }
 
 export interface IUpgradePromptClickedProperties {
@@ -141,6 +171,56 @@ export interface ICheckoutOpenedProperties {
   priceId: string;
   source: string;
   trigger?: string;
+  pricingRegion?: string;
+  originatingModel?: string;
+  originatingTrigger?: IUpgradePromptTrigger;
+  attributionChain?: IUpgradePromptTrigger[];
+}
+
+export interface ICheckoutDirectStartedProperties extends ICheckoutOpenedProperties {
+  source: 'model_gate';
+  pricingRegion: string;
+  uiMode: 'hosted' | 'embedded';
+  isAuthenticated: boolean;
+}
+
+export interface ICheckoutModalMountedProperties extends ICheckoutOpenedProperties {
+  pricingRegion: string;
+  uiMode: 'hosted' | 'embedded';
+  isAuthenticated: boolean;
+}
+
+export interface ICheckoutDirectUnavailableProperties {
+  trigger: 'model_gate';
+  imageVariant: string;
+  currentPlan: 'free';
+  pricingRegion: string;
+  fallbackDestination: 'upgrade_plan_modal';
+  originatingTrigger?: IUpgradePromptTrigger;
+}
+
+export interface ICheckoutSessionRequestedProperties {
+  priceId: string;
+  uiMode: 'hosted' | 'embedded';
+  hasBanditArm: boolean;
+  hasOfferToken: boolean;
+  isAuthenticated: boolean;
+  trigger?: string;
+  originatingModel?: string;
+  originatingTrigger?: IUpgradePromptTrigger;
+  attributionChain?: IUpgradePromptTrigger[];
+}
+
+export interface ICheckoutSessionCreatedProperties {
+  priceId: string;
+  uiMode: 'hosted' | 'embedded';
+  loadTimeMs: number;
+  isAuthenticated: boolean;
+  hasUrl?: boolean;
+  hasClientSecret?: boolean;
+  checkoutOfferApplied?: boolean;
+  engagementDiscountApplied?: boolean;
+  trigger?: string;
   originatingModel?: string;
   originatingTrigger?: IUpgradePromptTrigger;
   attributionChain?: IUpgradePromptTrigger[];
@@ -149,7 +229,11 @@ export interface ICheckoutOpenedProperties {
 export interface ICheckoutAuthRequiredProperties {
   priceId: string;
   trigger?: string;
+  source?: string;
+  pricingRegion?: string;
   originatingModel?: string;
+  originatingTrigger?: IUpgradePromptTrigger;
+  attributionChain?: IUpgradePromptTrigger[];
 }
 
 export interface ICheckoutLoadedProperties {
@@ -193,6 +277,12 @@ export interface IPurchaseConfirmedProperties {
   pack?: string;
   amount?: number;
   currency?: string;
+  priceId?: string;
+  uiMode?: 'hosted' | 'embedded' | null;
+  trigger?: string | null;
+  originatingModel?: string | null;
+  originatingTrigger?: IUpgradePromptTrigger | string | null;
+  attributionChain?: string[];
 }
 
 export interface ISuccessPageViewedProperties {
@@ -460,6 +550,13 @@ export interface ICheckoutErrorProperties {
   errorMessage: string;
   step: TCheckoutStep;
   priceId: string;
+  failurePoint?: string;
+  uiMode?: 'hosted' | 'embedded';
+  isAuthenticated?: boolean;
+  trigger?: string;
+  originatingModel?: string;
+  originatingTrigger?: IUpgradePromptTrigger;
+  attributionChain?: IUpgradePromptTrigger[];
 }
 
 export interface ICheckoutExitIntentProperties {
@@ -560,10 +657,12 @@ export type IAnalyticsEventName =
   | 'image_preview_viewed'
   // Pricing page events
   | 'pricing_page_viewed'
+  | 'pricing_page_abandoned'
   // Checkout events
   | 'checkout_started'
   | 'checkout_completed'
   | 'checkout_abandoned'
+  | 'purchase_modal_abandoned'
   | 'checkout_async_payment_failed' // PIX / async payment method failed after checkout
   | 'purchase_confirmed' // Server-side confirmation fired from Stripe webhook
   | 'success_page_viewed' // Client-side: user actually reached the success page
@@ -625,6 +724,9 @@ export type IAnalyticsEventName =
   | 'pricing_region_mismatch'
   // Checkout funnel events (Phase 1 - Checkout Friction Investigation)
   | 'purchase_modal_opened'
+  | 'checkout_direct_started'
+  | 'checkout_direct_unavailable'
+  | 'checkout_modal_mounted'
   | 'checkout_opened' // Fires when CheckoutModal renders (bridges upgrade_prompt_clicked → checkout_step_viewed gap)
   | 'checkout_auth_required' // Fires when unauthenticated user tries to checkout (bridges upgrade_prompt_clicked → checkout_opened gap)
   | 'checkout_session_requested'

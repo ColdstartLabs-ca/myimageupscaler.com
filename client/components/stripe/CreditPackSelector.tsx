@@ -13,6 +13,7 @@ import {
   getCheckoutTrackingContext,
   setCheckoutTrackingContext,
 } from '@client/utils/checkoutTrackingContext';
+import { useRegionTier } from '@client/hooks/useRegionTier';
 
 interface ICreditPackSelectorProps {
   onPurchaseStart?: () => void;
@@ -32,6 +33,7 @@ export function CreditPackSelector({
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const { isAuthenticated } = useUserStore();
   const { openAuthRequiredModal } = useModalStore();
+  const { pricingRegion } = useRegionTier();
 
   // Track initial vs final pack selection
   const initialPackRef = useRef<string | null>(null);
@@ -105,6 +107,7 @@ export function CreditPackSelector({
         analytics.track('checkout_auth_required', {
           priceId: pack.stripePriceId,
           ...(checkoutContext?.trigger ? { trigger: checkoutContext.trigger } : {}),
+          pricingRegion: pricingRegion || 'standard',
           ...(checkoutContext?.originatingModel
             ? { originatingModel: checkoutContext.originatingModel }
             : {}),
