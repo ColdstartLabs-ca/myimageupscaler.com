@@ -35,7 +35,7 @@ sed -n '1,140p' docs/SEO/maintenance/seo-changes-backlog.md
 sed -n '1,120p' docs/SEO/maintenance/gsc-request-indexing-backlog.md
 ```
 
-If the target post was recently refreshed, redirected, unpublished, queued for indexing, or is waiting for GSC data lag, do not rewrite it again unless the user explicitly asks. Treat the task as validation-only or request-indexing follow-up.
+If the target post was recently refreshed, redirected, unpublished, queued for indexing, or is waiting for GSC data lag, do not rewrite it again unless the user explicitly asks or `blog-performance-monitor` has produced an `edit-now` escalation with its action threshold met. Treat non-escalated recent-refresh tasks as validation-only or request-indexing follow-up.
 
 **After finishing:** Append a brief entry.
 

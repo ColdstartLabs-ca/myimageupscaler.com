@@ -9,6 +9,8 @@ description: Find new blog topic opportunities from Google Search Console and SE
 
 Find new blog topics that can realistically win organic traffic, validate them against existing coverage and backlog files, run an anti-cannibalization gate, then use `.claude/skills/blog-publish/SKILL.md` only when a candidate is worth publishing. This skill is the opportunity discovery and selection layer; `blog-publish` is the writing and publishing layer.
 
+The publisher must protect the site from duplicate/cannibalizing posts, but a no-publish run still has to produce useful work. When candidates fail because existing pages already own the intent, convert the finding into a concrete maintenance action for the existing URL.
+
 Compose existing project/local skills:
 
 - `google-search-console-analysis`: discover query gaps, rising queries, pages ranking for terms they do not fully satisfy, and low-hanging fruit.
@@ -62,12 +64,19 @@ Optional:
    - If an existing page is close but weak, prefer refreshing it over publishing a near-duplicate.
    - Only create a new post when the search intent is meaningfully distinct.
    - Treat this as a hard gate: a candidate that fails anti-cannibalization cannot be published in this run.
+   - For every rejected candidate with 100+ impressions and zero clicks at average position 3-15, identify the canonical URL that should own the intent and assign one of:
+     - `blog-edit brief`
+     - `internal-link cleanup`
+     - `redirect/canonical verification`
+     - `indexing backlog`
+     - `defer-with-deadline`
 
 5. **Decide whether to publish**
    - Publish nothing if no candidate passes the anti-cannibalization gate and scoring threshold.
    - Publish nothing if the best action is to refresh an existing blog post, tool page, or pSEO page.
    - Publish nothing if the evidence is too weak, e.g. low impressions, unclear intent, volatile/trivial query, or no business fit.
    - When publishing nothing, still produce a report explaining candidates reviewed, rejection reasons, and recommended non-publishing actions.
+   - Do not use vague actions like "monitor existing post" for high-impression zero-click candidates unless a recent edit is still inside GSC lag. If deferring due to lag, give the exact next-run date and the metric threshold that will trigger `blog-edit`.
 
 6. **Score candidates**
    - Score each candidate with:
@@ -103,6 +112,7 @@ Optional:
 
 - Include candidates considered, selected topics, topics rejected as duplicates, posts published, and follow-up checks.
   - If nothing was published, make that the headline outcome and list the better actions.
+  - Count unchecked `Request indexing` items in `docs/SEO/maintenance/gsc-request-indexing-backlog.md`. If there are more than 10 unchecked URLs, explicitly alert the user in the final response and in the report's `Open Actions`.
 
 ## GSC Pattern
 
@@ -181,10 +191,19 @@ Data:
 | Keyword | Reason | Better action |
 | ------- | ------ | ------------- |
 
+## Maintenance Handoffs
+
+| Existing URL | Trigger | Action | Deadline |
+| ------------ | ------- | ------ | -------- |
+
 ## Published
 
 | Slug | Target keyword | Verification |
 | ---- | -------------- | ------------ |
+
+## Open Actions
+
+[indexing backlog, edit briefs, redirect checks, or user/manual actions. If unchecked indexing backlog exceeds 10 URLs, start with "User attention required: indexing backlog has [N] unchecked URLs."]
 
 ## Next Run
 

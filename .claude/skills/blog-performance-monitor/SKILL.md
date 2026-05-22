@@ -9,6 +9,8 @@ description: Blog quality monitor for recurring SEO health checks and single-URL
 
 Monitor blog-only GSC performance, explain drops, correlate them with recent blog backlog/change files, and hand off fixes to `blog-edit`. This skill is the monitoring and diagnosis layer, not the long-form editing layer.
 
+The monitor must be operational, not merely descriptive. If the same page/query problem appears in repeated runs, escalate to a concrete action instead of writing another "monitor one more run" recommendation.
+
 For incident-style prompts like "this page got fewer impressions than usual" or "impressions dried up out of nowhere", treat the requested URL as the primary subject. First determine whether the URL was redirected, canonicalized, unpublished, noindexed, consolidated, or recently edited before recommending content changes.
 
 Compose existing skills:
@@ -67,6 +69,42 @@ Always note data freshness:
 
 - GSC commonly lags 2-3 days.
 
+## Measurement Rules
+
+Be precise about comparison direction. Every table must label metrics as `previous -> current`; never use `current -> previous` while calling the row a loss.
+
+When using a helper script or fetcher, verify its window labels before interpreting the results:
+
+- `previous`: older comparison window.
+- `current`: newer comparison window ending on the latest complete GSC date.
+- A visibility loss means `current < previous` for clicks, impressions, or CTR, or `current average position` is numerically higher than `previous average position`.
+
+If the fetcher emits windows in the opposite order, normalize them before writing the report. If the direction cannot be verified, state that the trend confidence is low and do not recommend content changes from that comparison alone.
+
+Daily-normalize unequal windows before ranking losses. Use raw totals only when the windows have the same number of days.
+
+Report both page-level and query-level evidence for major alerts. A page-level position drop without the affected query cluster can be misleading when query mix changes.
+
+## Action Thresholds
+
+Use these rules to decide when monitoring is no longer enough:
+
+- **Critical position regression:** current average position worsens by 10+ positions and current impressions are down 50%+ on a canonical, indexable `200` blog URL with at least 100 previous-window impressions. Prepare a `blog-edit` brief now unless the page was edited less than 7 complete GSC days ago.
+- **Persistent zero-click CTR leak:** a query/page has 300+ impressions, average position 3-10, and zero clicks for two consecutive monitoring runs. Prepare a SERP title/meta/internal-link edit brief; do not keep saying only "monitor."
+- **Post-refresh failure:** if a page was refreshed recently, wait for 7 complete GSC days before judging severe regressions and 14 complete GSC days before broad rewrites. After 14 complete GSC days, persistent zero clicks, CTR below 0.2% at positions 3-10, or a 30%+ click drop must trigger a narrow edit brief.
+- **Indexing backlog blocker:** if a report recommends request indexing and the URL is not already checked off in `docs/SEO/maintenance/gsc-request-indexing-backlog.md`, add or update that URL in the backlog. Do not repeat "request indexing" across reports without changing the backlog state.
+- **Indexing backlog alert:** count unchecked `Request indexing` items in `docs/SEO/maintenance/gsc-request-indexing-backlog.md` during every run. If the backlog has more than 10 unchecked URLs after this run, prominently ping the user in the final response and report `Open Actions` with the exact count and the oldest pending date.
+- **Intentional migration:** if an old URL loses impressions because it redirects, do not edit the old URL. Validate the destination page; if the destination also loses impressions or clicks after 14 complete GSC days, escalate on the destination.
+
+Allowed deferrals:
+
+- The affected canonical page was edited less than 7 complete GSC days ago.
+- GSC data does not yet include the deploy/indexing date.
+- The drop is entirely an intentional redirect/unpublish migration and the destination is healthy.
+- The URL has fewer than 100 previous-window impressions and no click loss.
+
+When deferring, name the exact date when the next run must act and define the trigger, e.g. "On 2026-05-26, if position remains worse than 20 or clicks remain zero, run `blog-edit` for the sharpener/unblur cluster."
+
 ## Inputs
 
 Minimum:
@@ -108,8 +146,10 @@ Optional:
    - Impressions down, position worse: content quality, cannibalization, indexation, or intent mismatch.
    - Clicks down, impressions stable: CTR/snippet issue.
    - Multiple blog URLs share the same query: cannibalization or unclear target page.
+   - Mark each row with an action state: `edit-now`, `indexing-follow-up`, `technical-fix`, `migration-monitor`, or `defer-with-deadline`.
 
 4. **Prepare edit brief**
+   - Prepare an edit brief for every `edit-now` row. Do not leave these as prose-only recommendations.
    - For each page, specify target query, new SEO title, new meta description, H1/title, first paragraph adjustment, internal links to add, and any content modules needed.
    - Keep SEO titles roughly 30-60 characters and descriptions 120-160 characters.
    - Use query modifiers only when supported by GSC: `free`, `online`, `2026`, `tested`, `no signup`, `no watermark`, `unblur`, `sharpener`, etc.
@@ -119,11 +159,14 @@ Optional:
    - Use `blog-edit`'s API-based update path: read the blog changelog, fetch the current post, PATCH only changed fields, verify, then append a changelog entry.
    - Use `x-api-key` with `BLOG_API_KEY` from `.env.api`, as documented in `blog-edit`.
    - Ensure generated/static pages are revalidated or redeployed after updates.
+   - If the task is a scheduled autonomous maintenance run and the edit brief meets an action threshold, apply the narrow update in the same run. If credentials, server, or deploy state block the edit, record the blocker and create a concrete backlog item.
 
 6. **Report and follow-up**
    - Save a dated report in the repo's SEO reports directory when available.
    - Include applied fixes, open actions, and the next monitoring date.
-   - Recommend Search Console indexing requests for important updated URLs.
+   - Add important updated URLs to `docs/SEO/maintenance/gsc-request-indexing-backlog.md` if they are not already present.
+   - Recommend manual Search Console indexing requests for important updated URLs, but do not imply the URL Inspection API can request indexing.
+   - Append a concise entry to `docs/SEO/maintenance/seo-changes-backlog.md` for every monitor run that changes content, metadata, redirects, sitemap state, or indexing backlog state.
 
 ## GSC Pattern
 
@@ -191,13 +234,26 @@ Data:
 
 [recent edits/publishes/template changes that line up with drops]
 
+## Escalations
+
+| URL | Trigger | Deadline | Required next action |
+| --- | ------- | -------- | -------------------- |
+
+## Edit Briefs
+
+[include every edit-now brief; say "None" only when all deferrals are justified by the rules above]
+
 ## Fixes Applied
 
 [metadata/content/internal links/revalidation]
 
+## Open Actions
+
+[indexing backlog items, technical blockers, or user/manual actions. If unchecked indexing backlog exceeds 10 URLs, start this section with "User attention required: indexing backlog has [N] unchecked URLs."]
+
 ## Next Run
 
-[date and checks]
+[date and exact triggers that will cause edits rather than another monitor-only report]
 ```
 
 ## Single-URL Incident Report Format
