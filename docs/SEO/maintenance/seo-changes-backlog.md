@@ -16,6 +16,31 @@ Maintenance rules:
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
 
+## 2026-05-24
+
+### GSC Click Recovery: Blog SERP CTR Metadata Pass
+
+Source: [gsc-click-recovery-2026-05-24.md](../reports/gsc-click-recovery-2026-05-24.md)
+
+Changes:
+
+- Pulled fresh 56-day, 28-day, and 14-day GSC exports plus 56-day GA4 organic data.
+- Confirmed the latest 14-day click loss is mainly a blog SERP CTR/ranking problem: clicks -40.89%, impressions -1.35%, CTR -40.08%, average position weaker by 4.42.
+- Confirmed GA4/GSC tracking cross-check is sane for the 56-day window: GSC clicks to GA organic sessions ratio 0.85.
+- Updated production Supabase blog SEO titles and descriptions for `/blog/best-free-ai-image-upscaler-2026-tested-compared`, `/blog/ai-image-upscaling-vs-sharpening-explained`, `/blog/best-ai-upscaler`, `/blog/free-ai-upscaler-no-watermark`, and `/blog/how-to-upscale-anime-images-with-ai`.
+- Kept the pass metadata-only because the backlog shows those pages received recent May body-content refreshes.
+
+Validation:
+
+- Blog API PATCH calls succeeded for all five posts.
+- Blog API verification confirmed updated `seo_title`, `seo_description`, and `updated_at` values.
+- Public frontend checks returned HTTP 200 for all five changed blog URLs.
+
+Follow-up:
+
+- Request indexing for the five changed URLs in [gsc-request-indexing-backlog.md](./gsc-request-indexing-backlog.md).
+- Re-run CTR tracking after 2026-06-07 when 14 complete GSC days can reflect the new SERP snippets.
+
 ## 2026-05-22
 
 ### Blog Growth Maintenance: Opportunities + Performance Monitor

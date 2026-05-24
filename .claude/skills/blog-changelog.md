@@ -204,3 +204,15 @@ Intent mismatch fixes (seo_title only):
 - `best-ai-image-quality-enhancer-free` — updated SEO title/description and changed generic homepage CTAs to `/tools/ai-photo-enhancer`.
 - `free-ai-upscaler-no-watermark` — updated SEO title/description, changed the final CTA to `/tools/ai-image-upscaler`, and added a canonical support link to the complete 2026 comparison.
 - Static blog posts that now return 200 were removed from the sitemap blocklist; intentional cannibalization redirect slugs remain blocked.
+
+## 2026-05-24
+
+### SEO: CTR Recovery Metadata Pass
+**Affected:** best-free-ai-image-upscaler-2026-tested-compared, ai-image-upscaling-vs-sharpening-explained, best-ai-upscaler, free-ai-upscaler-no-watermark, how-to-upscale-anime-images-with-ai
+**Why:** Fresh GSC showed the latest click loss concentrated in blog SERP CTR: 2026-05-07 to 2026-05-20 clicks -40.89%, impressions -1.35%, CTR -40.08%, with blog pages at 0.48% CTR.
+**Changes:**
+- `best-free-ai-image-upscaler-2026-tested-compared` — SEO title/description changed to a tighter real-test SERP promise.
+- `ai-image-upscaling-vs-sharpening-explained` — SEO title/description changed to match the exact "what is the difference" query.
+- `best-ai-upscaler` — SEO title/description changed from tested-sites language to comparison intent.
+- `free-ai-upscaler-no-watermark` — SEO title/description changed to emphasize no watermark and no signup.
+- `how-to-upscale-anime-images-with-ai` — SEO title/description changed to lead with anime-specific best-free/tool-test intent.
