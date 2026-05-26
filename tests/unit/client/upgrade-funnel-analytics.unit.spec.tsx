@@ -115,6 +115,7 @@ vi.mock('@client/components/ui/BottomSheet', () => ({
 vi.mock('lucide-react', () => ({
   Check: () => <span data-testid="check-icon" />,
   Lock: () => <span data-testid="lock-icon" />,
+  ChevronDown: () => <span data-testid="chevron-down-icon" />,
   Search: () => <span data-testid="search-icon" />,
   Sparkles: () => <span data-testid="sparkles-icon" />,
   X: () => <span data-testid="x-icon" />,

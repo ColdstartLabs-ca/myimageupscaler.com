@@ -145,6 +145,7 @@ describe('BatchLimitModal', () => {
     currentCount: 1,
     onAddPartial: vi.fn(),
     onUpgrade: vi.fn(),
+    onQuickBuy: vi.fn(),
     serverEnforced: false,
   };
 
@@ -255,7 +256,7 @@ describe('BatchLimitModal', () => {
       const quickBuyButton = screen.getByTestId('button-gradient');
       fireEvent.click(quickBuyButton);
 
-      expect(mockRouter.push).toHaveBeenCalledWith('/checkout?priceId=price_test_small_123');
+      expect(mockProps.onQuickBuy).toHaveBeenCalled();
       expect(mockProps.onClose).toHaveBeenCalled();
     });
 

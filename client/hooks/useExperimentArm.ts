@@ -112,20 +112,22 @@ export function useExperimentArm(options: IUseExperimentArmOptions): IUseExperim
     let cancelled = false;
     setIsLoading(true);
 
-    fetch('/api/experiments/assign', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        experimentKey,
-        contextKey,
-        assignmentScope,
-        assignmentKey,
-        surface,
-        metadata: metadata ? JSON.parse(metadataKey) : undefined,
-      }),
-    })
+    Promise.resolve(
+      fetch('/api/experiments/assign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          experimentKey,
+          contextKey,
+          assignmentScope,
+          assignmentKey,
+          surface,
+          metadata: metadata ? JSON.parse(metadataKey) : undefined,
+        }),
+      })
+    )
       .then(async response => {
-        if (!response.ok) throw new Error('Experiment assignment failed');
+        if (!response?.ok) throw new Error('Experiment assignment failed');
         return (await response.json()) as { assignment: IExperimentAssignment | null };
       })
       .then(({ assignment: nextAssignment }) => {

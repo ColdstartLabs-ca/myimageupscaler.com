@@ -138,6 +138,7 @@ vi.mock('lucide-react', async importOriginal => {
   return {
     ...actual,
     Lock: iconStub,
+    ChevronDown: iconStub,
     Search: iconStub,
     Sparkles: iconStub,
     ArrowLeftRight: iconStub,

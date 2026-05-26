@@ -20,7 +20,7 @@ export interface IBatchLimitModalProps {
   currentCount: number;
   onAddPartial: () => void;
   onUpgrade: () => void;
-  onQuickBuy: () => void;
+  onQuickBuy?: () => void;
   serverEnforced?: boolean;
 }
 
@@ -83,7 +83,7 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
       quickBuy: true,
     });
     onClose();
-    onQuickBuy();
+    onQuickBuy?.();
   };
 
   const handleSeePlansClick = () => {

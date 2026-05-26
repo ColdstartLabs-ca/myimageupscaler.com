@@ -233,7 +233,7 @@ describe('ModelGalleryModal', () => {
       render(<ModelGalleryModal {...defaultProps} currentTier="budget-edit" isFreeUser={false} />);
 
       expect(screen.queryByText('Upgrade to use')).not.toBeInTheDocument();
-      expect(screen.getAllByText('Use selected model').length).toBeGreaterThan(0);
+      expect(findCardByTierLabel('Ultra Upscale')).not.toBeNull();
     });
 
     it('should open the upgrade flow when a locked tier is clicked', async () => {
@@ -289,9 +289,6 @@ describe('ModelGalleryModal', () => {
       const quickCard = findCardByTierLabel('Light Blur Fix');
       expect(quickCard).not.toBeNull();
       fireEvent.click(quickCard!);
-
-      expect(mockOnClose).not.toHaveBeenCalled();
-      fireEvent.click(screen.getAllByRole('button', { name: /Use selected model/i })[0]);
 
       await waitFor(() => {
         expect(mockOnClose).toHaveBeenCalled();

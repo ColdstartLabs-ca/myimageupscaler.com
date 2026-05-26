@@ -94,7 +94,9 @@ describe('useCheckoutRescueOffer', () => {
       result.current.dismissOffer({ trackCheckoutAbandoned, onClose });
     });
 
-    expect(trackCheckoutAbandoned).toHaveBeenCalledWith('stripe_embed');
+    expect(trackCheckoutAbandoned).toHaveBeenCalledWith('stripe_embed', {
+      method: 'rescue_offer_dismissed',
+    });
     expect(onClose).toHaveBeenCalled();
   });
 

@@ -70,6 +70,7 @@ vi.mock('next-intl', () => ({
 vi.mock('lucide-react', () => ({
   Check: () => null,
   CheckCircle2: () => null,
+  ChevronDown: () => null,
   CreditCard: () => null,
   HelpCircle: () => null,
   Image: () => null,
@@ -392,7 +393,7 @@ describe('Workspace Quality Tier Logic', () => {
       expect.objectContaining({
         priceId: 'price_test_small',
         trigger: 'model_gate',
-        source: 'direct_checkout',
+        source: 'model_gate',
         pricingRegion: 'standard',
       })
     );

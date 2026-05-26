@@ -10,9 +10,15 @@ import React from 'react';
 // Mock lucide-react icons
 vi.mock('lucide-react', () => ({
   ArrowLeftRight: () => null,
+  Check: () => null,
   Download: () => null,
+  ImagePlus: () => null,
   ZoomIn: () => null,
   ZoomOut: () => null,
+}));
+
+vi.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => key,
 }));
 
 // Mock Button component

@@ -1,10 +1,10 @@
 # PRD: Shared Bandit Experiment Platform
 
-**Date:** 2026-05-26  
-**Status:** Draft  
-**Owner:** Growth / Platform  
-**Depends on:** Existing regional pricing bandit  
-**Enables:** Purchase conversion bandits, onboarding restoration bandit, post-download retention bandit, discount/rescue bandits  
+**Date:** 2026-05-26
+**Status:** Draft
+**Owner:** Growth / Platform
+**Depends on:** Existing regional pricing bandit
+**Enables:** Purchase conversion bandits, onboarding restoration bandit, post-download retention bandit, discount/rescue bandits
 **Complexity:** 11 -> HIGH mode
 
 ---

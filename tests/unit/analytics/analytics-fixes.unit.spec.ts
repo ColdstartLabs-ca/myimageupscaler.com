@@ -164,7 +164,7 @@ describe('Analytics Fixes - Structural Checks', () => {
       expect(checkoutSource).toContain('hasTrackedPaywallHitRef.current = true');
       expect(checkoutSource).toContain('!regionLoading');
       expect(checkoutSource).toContain(
-        '[authLoading, country, isAuthenticated, isPaywalled, priceId, regionLoading]'
+        '[authLoading, country, isAuthenticated, isPaywalled, priceId, pricingRegion, regionLoading]'
       );
     });
 

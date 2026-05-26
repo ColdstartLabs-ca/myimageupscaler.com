@@ -4,7 +4,13 @@ import type { IGscPageRow, IGscQueryPageRow } from '@server/services/three-kings
 
 const BASE_URL = 'https://myimageupscaler.com';
 
-function makePageRow(slug: string, position: number, impressions = 1000, clicks = 50, ctr = 0.05): IGscPageRow {
+function makePageRow(
+  slug: string,
+  position: number,
+  impressions = 1000,
+  clicks = 50,
+  ctr = 0.05
+): IGscPageRow {
   return {
     keys: [`${BASE_URL}/blog/${slug}`],
     position,
@@ -64,7 +70,7 @@ describe('scoreBlogPages', () => {
   });
 
   it('filters blocked blog slugs via shared constant', () => {
-    const blockedSlug = 'dalle-3-image-enhancement-guide';
+    const blockedSlug = 'photo-enhancement-upscaling-vs-quality';
     const pageRows: IGscPageRow[] = [
       makePageRow(blockedSlug, 8, 2000, 100, 0.05),
       makePageRow('valid-post', 10, 1000, 50, 0.05),
@@ -78,9 +84,7 @@ describe('scoreBlogPages', () => {
   });
 
   it('extracts a blog slug from a blog URL', () => {
-    const pageRows: IGscPageRow[] = [
-      makePageRow('my-post', 8, 1000, 50, 0.05),
-    ];
+    const pageRows: IGscPageRow[] = [makePageRow('my-post', 8, 1000, 50, 0.05)];
 
     const results = scoreBlogPages(pageRows, []);
 
@@ -90,9 +94,7 @@ describe('scoreBlogPages', () => {
 
   it('assigns topQuery from queryPageRows', () => {
     const slug = 'upscale-images-guide';
-    const pageRows: IGscPageRow[] = [
-      makePageRow(slug, 8, 1000, 50, 0.05),
-    ];
+    const pageRows: IGscPageRow[] = [makePageRow(slug, 8, 1000, 50, 0.05)];
     const queryPageRows: IGscQueryPageRow[] = [
       makeQueryPageRow('how to upscale images', slug, 800),
       makeQueryPageRow('image upscaler free', slug, 400),
@@ -106,9 +108,7 @@ describe('scoreBlogPages', () => {
   });
 
   it('returns null topQuery when no queryPageRows exist for a page', () => {
-    const pageRows: IGscPageRow[] = [
-      makePageRow('no-queries-post', 10, 1000, 50, 0.05),
-    ];
+    const pageRows: IGscPageRow[] = [makePageRow('no-queries-post', 10, 1000, 50, 0.05)];
 
     const results = scoreBlogPages(pageRows, []);
 
@@ -141,9 +141,7 @@ describe('scoreBlogPages', () => {
   });
 
   it('sets title to null for all entries', () => {
-    const pageRows: IGscPageRow[] = [
-      makePageRow('some-post', 10, 1000, 50, 0.05),
-    ];
+    const pageRows: IGscPageRow[] = [makePageRow('some-post', 10, 1000, 50, 0.05)];
 
     const results = scoreBlogPages(pageRows, []);
 
@@ -152,9 +150,7 @@ describe('scoreBlogPages', () => {
 
   it('calculates queryIntentScore as 1.0 when topQuery contains an intent keyword', () => {
     const slug = 'free-upscaler';
-    const pageRows: IGscPageRow[] = [
-      makePageRow(slug, 8, 1000, 50, 0.05),
-    ];
+    const pageRows: IGscPageRow[] = [makePageRow(slug, 8, 1000, 50, 0.05)];
     const queryPageRows: IGscQueryPageRow[] = [
       makeQueryPageRow('best free image upscaler', slug, 1000),
     ];
@@ -166,9 +162,7 @@ describe('scoreBlogPages', () => {
 
   it('calculates queryIntentScore as 0 when topQuery has no intent keywords', () => {
     const slug = 'photography-tips';
-    const pageRows: IGscPageRow[] = [
-      makePageRow(slug, 8, 1000, 50, 0.05),
-    ];
+    const pageRows: IGscPageRow[] = [makePageRow(slug, 8, 1000, 50, 0.05)];
     const queryPageRows: IGscQueryPageRow[] = [
       makeQueryPageRow('photography golden hour', slug, 1000),
     ];

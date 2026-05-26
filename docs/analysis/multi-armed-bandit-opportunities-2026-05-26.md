@@ -1,7 +1,7 @@
 # Multi-Armed Bandit Opportunities for Retention and Purchase Conversion
 
-Date: 2026-05-26  
-Scope: MyImageUpscaler product, checkout, onboarding, pricing, and post-result flows  
+Date: 2026-05-26
+Scope: MyImageUpscaler product, checkout, onboarding, pricing, and post-result flows
 Goal: identify additional adaptive experiments beyond the existing regional pricing bandit.
 
 ## Executive Summary
@@ -108,8 +108,8 @@ Reward model:
 
 ## Opportunity 1: Model-Gate Purchase Path Bandit
 
-Priority: P0  
-Primary goal: purchase conversion from locked-model intent  
+Priority: P0
+Primary goal: purchase conversion from locked-model intent
 Current surface: `ModelGalleryModal.handleLockedClick()` and `Workspace.handleUpgradeDirect()`
 
 ### Why this is a strong bandit
@@ -138,8 +138,8 @@ Locked premium-model clicks are one of the highest-intent moments in the product
 
 ### Reward
 
-Primary: `purchase_confirmed` within 24 hours, revenue-weighted.  
-Secondary: `checkout_opened`, `checkout_session_created`, `checkout_auth_required` completion after auth, `image_download` after purchase.  
+Primary: `purchase_confirmed` within 24 hours, revenue-weighted.
+Secondary: `checkout_opened`, `checkout_session_created`, `checkout_auth_required` completion after auth, `image_download` after purchase.
 Guardrails: `purchase_modal_abandoned`, `checkout_abandoned`, `checkout_error`, payment declines, refund rate.
 
 ### Implementation notes
@@ -151,8 +151,8 @@ Guardrails: `purchase_modal_abandoned`, `checkout_abandoned`, `checkout_error`, 
 
 ## Opportunity 2: Engagement Discount Bandit
 
-Priority: P0  
-Primary goal: first purchase among highly engaged free users  
+Priority: P0
+Primary goal: first purchase among highly engaged free users
 Current surface: `useEngagementTracker()`, `ENGAGEMENT_DISCOUNT_CONFIG`, `engagement-discount.service.ts`
 
 ### Why this is a strong bandit
@@ -180,9 +180,9 @@ The current offer is fixed: 20% off the medium pack, shown after 2 of 3 engageme
 
 ### Reward
 
-Primary: first `purchase_confirmed` within 24 hours and 7 days.  
-Secondary: `engagement_discount_cta_clicked`, `engagement_discount_checkout_started`, `checkout_session_created`.  
-Retention reward: return visit within 7 days and second processing session.  
+Primary: first `purchase_confirmed` within 24 hours and 7 days.
+Secondary: `engagement_discount_cta_clicked`, `engagement_discount_checkout_started`, `checkout_session_created`.
+Retention reward: return visit within 7 days and second processing session.
 Guardrails: margin after regional discount stacking, refunds, support complaints, offer dismissal rate.
 
 ### Implementation notes
@@ -193,8 +193,8 @@ Guardrails: margin after regional discount stacking, refunds, support complaints
 
 ## Opportunity 3: Checkout Rescue Bandit
 
-Priority: P1  
-Primary goal: recover high-intent checkout abandonment  
+Priority: P1
+Primary goal: recover high-intent checkout abandonment
 Current surface: `CheckoutModal`, `useCheckoutRescueOffer()`, `CHECKOUT_RESCUE_OFFER_CONFIG`
 
 ### Candidate arms
@@ -219,8 +219,8 @@ Current surface: `CheckoutModal`, `useCheckoutRescueOffer()`, `CHECKOUT_RESCUE_O
 
 ### Reward
 
-Primary: `purchase_confirmed` after rescue impression, revenue-weighted.  
-Secondary: rescue claim rate and `checkout_session_created`.  
+Primary: `purchase_confirmed` after rescue impression, revenue-weighted.
+Secondary: rescue claim rate and `checkout_session_created`.
 Guardrails: discount leakage to users who would have purchased anyway, lower AOV, refund rate.
 
 ### Implementation notes
@@ -231,8 +231,8 @@ Guardrails: discount leakage to users who would have purchased anyway, lower AOV
 
 ## Opportunity 4: Post-Download Next-Action Bandit
 
-Priority: P1  
-Primary goal: retention after first successful value moment  
+Priority: P1
+Primary goal: retention after first successful value moment
 Current surface: `FirstDownloadCelebration`, `PostDownloadPrompt`, `openExploreGallery()`, gallery save
 
 ### Why this matters
@@ -260,8 +260,8 @@ The first download is the clearest activation milestone. The user has received v
 
 ### Reward
 
-Primary retention: second upload, second processing completion, return visit in 1 or 7 days.  
-Primary purchase: `upgrade_prompt_clicked` -> `purchase_confirmed` from post-download source.  
+Primary retention: second upload, second processing completion, return visit in 1 or 7 days.
+Primary purchase: `upgrade_prompt_clicked` -> `purchase_confirmed` from post-download source.
 Guardrails: modal dismissal, lower download completion, support contacts, slower time-to-second-upload.
 
 ### Implementation notes
@@ -272,8 +272,8 @@ Guardrails: modal dismissal, lower download completion, support contacts, slower
 
 ## Opportunity 5: Onboarding Activation Bandit
 
-Priority: P1  
-Primary goal: first upload, first process, first download  
+Priority: P1
+Primary goal: first upload, first process, first download
 Current surface: `ProgressSteps`, `SampleImageSelector`, `useOnboardingDriver()`, onboarding analytics events
 
 ### Why restore onboarding as a bandit
@@ -304,9 +304,9 @@ Use `no_onboarding` as an explicit control arm, not as the product default forev
 
 ### Reward
 
-Primary: `first_upload_completed`, `upscale_completed`, `image_download`, and second upload/process within 7 days.  
-Secondary: `sample_image_selected`, upload-to-download duration, day-1 return, day-7 return.  
-Do not use `onboarding_completed` as the primary reward until `onboarding_started` and completion tracking are repaired.  
+Primary: `first_upload_completed`, `upscale_completed`, `image_download`, and second upload/process within 7 days.
+Secondary: `sample_image_selected`, upload-to-download duration, day-1 return, day-7 return.
+Do not use `onboarding_completed` as the primary reward until `onboarding_started` and completion tracking are repaired.
 Guardrails: upload rate, tour skip rate, modal close rate, time-to-upload getting slower, reduced first-download rate.
 
 ### Implementation notes
@@ -319,8 +319,8 @@ Guardrails: upload rate, tour skip rate, modal close rate, time-to-upload gettin
 
 ## Opportunity 6: Pricing Page Layout and Default Selection Bandit
 
-Priority: P1  
-Primary goal: pricing-page visitor to checkout and purchase  
+Priority: P1
+Primary goal: pricing-page visitor to checkout and purchase
 Current surface: `app/[locale]/pricing/PricingPageClient.tsx`, `SubscriptionPlanGrid`, `CreditPackSelector`, `PurchaseModal`
 
 ### Candidate arms
@@ -344,8 +344,8 @@ Current surface: `app/[locale]/pricing/PricingPageClient.tsx`, `SubscriptionPlan
 
 ### Reward
 
-Primary: `purchase_confirmed` revenue per pricing-page impression.  
-Secondary: `checkout_opened`, `checkout_session_created`, selected plan/pack.  
+Primary: `purchase_confirmed` revenue per pricing-page impression.
+Secondary: `checkout_opened`, `checkout_session_created`, selected plan/pack.
 Guardrails: lower AOV, increased refund/cancel rate, subscription downgrades.
 
 ### Implementation notes
@@ -355,8 +355,8 @@ Guardrails: lower AOV, increased refund/cancel rate, subscription downgrades.
 
 ## Opportunity 7: Free-Credit and Paywall Threshold Bandit
 
-Priority: P2  
-Primary goal: balance activation, abuse, and purchase pressure  
+Priority: P2
+Primary goal: balance activation, abuse, and purchase pressure
 Current surface: free credits, regional free credit adjustments, guest limits, anti-freeloader/paywall code
 
 ### Candidate arms
@@ -379,8 +379,8 @@ Current surface: free credits, regional free credit adjustments, guest limits, a
 
 ### Reward
 
-Primary: activated users who later purchase, revenue per visitor.  
-Secondary: first upload/download, signup rate.  
+Primary: activated users who later purchase, revenue per visitor.
+Secondary: first upload/download, signup rate.
 Guardrails: processing COGS per visitor, repeated free-account abuse, provider cost spikes.
 
 ### Implementation notes
@@ -391,8 +391,8 @@ Guardrails: processing COGS per visitor, repeated free-account abuse, provider c
 
 ## Opportunity 8: Model Gallery Ordering and Recommendation Bandit
 
-Priority: P2  
-Primary goal: model selection success, retention, and premium interest  
+Priority: P2
+Primary goal: model selection success, retention, and premium interest
 Current surface: `ModelGalleryModal` sorting, featured tiers, filters, search
 
 ### Candidate arms
@@ -415,8 +415,8 @@ Current surface: `ModelGalleryModal` sorting, featured tiers, filters, search
 
 ### Reward
 
-Primary: process completion after model selection, download, purchase after premium click.  
-Secondary: model switch, time in gallery, search usage.  
+Primary: process completion after model selection, download, purchase after premium click.
+Secondary: model switch, time in gallery, search usage.
 Guardrails: gallery close without selection, slower task completion, premium click without checkout.
 
 ### Implementation notes
@@ -426,8 +426,8 @@ Guardrails: gallery close without selection, slower task completion, premium cli
 
 ## Opportunity 9: Auth Timing Bandit
 
-Priority: P2  
-Primary goal: reduce auth friction while preserving account-linked value  
+Priority: P2
+Primary goal: reduce auth friction while preserving account-linked value
 Current surface: auth-required modal, post-auth checkout redirect, gallery save, signup CTAs
 
 ### Candidate arms
@@ -441,8 +441,8 @@ Current surface: auth-required modal, post-auth checkout redirect, gallery save,
 
 ### Reward
 
-Primary: completed checkout or account creation followed by activation.  
-Secondary: successful post-auth return and continuation of intended flow.  
+Primary: completed checkout or account creation followed by activation.
+Secondary: successful post-auth return and continuation of intended flow.
 Guardrails: auth modal abandonment, lost checkout context, lower first download.
 
 ### Implementation notes
@@ -452,8 +452,8 @@ Guardrails: auth modal abandonment, lost checkout context, lower first download.
 
 ## Opportunity 10: Lifecycle Email/Reactivation Bandit
 
-Priority: P3  
-Primary goal: bring activated non-buyers back  
+Priority: P3
+Primary goal: bring activated non-buyers back
 Current surface: email service/provider infrastructure, engagement and purchase telemetry
 
 ### Candidate arms
@@ -468,8 +468,8 @@ Current surface: email service/provider infrastructure, engagement and purchase 
 
 ### Reward
 
-Primary: return visit, second processing session, first purchase within 7 days.  
-Secondary: click-through.  
+Primary: return visit, second processing session, first purchase within 7 days.
+Secondary: click-through.
 Guardrails: unsubscribe, spam complaint, discount cannibalization.
 
 ### Implementation notes

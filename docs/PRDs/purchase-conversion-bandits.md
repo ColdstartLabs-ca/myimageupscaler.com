@@ -1,10 +1,10 @@
 # PRD: Purchase Conversion Bandits
 
-**Date:** 2026-05-26  
-**Status:** Draft  
-**Owner:** Growth / Billing  
-**Depends on:** `docs/PRDs/shared-bandit-experiment-platform.md`  
-**Related:** `docs/analysis/multi-armed-bandit-opportunities-2026-05-26.md`, `docs/PRDs/revenue-funnel-telemetry-and-checkout-repair.md`, `docs/PRDs/click-to-checkout-conversion-fix.md`  
+**Date:** 2026-05-26
+**Status:** Draft
+**Owner:** Growth / Billing
+**Depends on:** `docs/PRDs/shared-bandit-experiment-platform.md`
+**Related:** `docs/analysis/multi-armed-bandit-opportunities-2026-05-26.md`, `docs/PRDs/revenue-funnel-telemetry-and-checkout-repair.md`, `docs/PRDs/click-to-checkout-conversion-fix.md`
 **Complexity:** 10 -> HIGH mode
 
 ---

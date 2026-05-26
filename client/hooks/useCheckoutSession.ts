@@ -69,6 +69,13 @@ interface IUseCheckoutSessionReturn {
   stripeOptions: StripeEmbeddedCheckoutOptions;
 }
 
+function sanitizeCheckoutErrorMessage(errorMessage: string): string {
+  return errorMessage
+    .replace(/\d{13,16}/g, '[CARD]')
+    .replace(/cvc|cvv|cv2/gi, '[CVC]')
+    .slice(0, 200);
+}
+
 // ---------------------------------------------------------------------------
 // Hook
 // ---------------------------------------------------------------------------
@@ -101,9 +108,10 @@ export function useCheckoutSession({
     (failurePoint: string, errorType: TCheckoutErrorType, errorMessage: string) => {
       const checkoutContext = getCheckoutTrackingContext();
       const checkoutUiMode = getCheckoutUiMode();
+      const sanitizedMessage = sanitizeCheckoutErrorMessage(errorMessage);
       analytics.track('checkout_error', {
         errorType,
-        errorMessage,
+        errorMessage: sanitizedMessage,
         step: 'plan_selection',
         priceId,
         failurePoint,
@@ -114,7 +122,7 @@ export function useCheckoutSession({
         originatingTrigger: checkoutContext?.originatingTrigger,
         attributionChain: checkoutContext?.attributionChain,
       });
-      trackError(errorType, errorMessage, 'plan_selection');
+      trackError(errorType, sanitizedMessage, 'plan_selection');
     },
     [isAuthenticated, priceId, trackError]
   );
