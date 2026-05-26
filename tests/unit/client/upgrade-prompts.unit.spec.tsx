@@ -647,6 +647,7 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
       currentPlan: 'free',
       pricingRegion: 'standard',
       copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
+      dismissCount: 1,
     });
 
     await waitFor(() => {
@@ -711,6 +712,36 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
     await waitFor(() => {
       expect(screen.getByText(/See what other models can do/i)).toBeInTheDocument();
     });
+  });
+
+  it('should stop showing after two dismissals', async () => {
+    const onExploreModels = vi.fn();
+    const { rerender } = render(
+      <PostDownloadPrompt isFreeUser={true} downloadCount={0} onExploreModels={onExploreModels} />
+    );
+
+    rerender(
+      <PostDownloadPrompt isFreeUser={true} downloadCount={1} onExploreModels={onExploreModels} />
+    );
+    await waitFor(() => {
+      expect(screen.getByLabelText('Dismiss prompt')).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByLabelText('Dismiss prompt'));
+
+    rerender(
+      <PostDownloadPrompt isFreeUser={true} downloadCount={2} onExploreModels={onExploreModels} />
+    );
+    await waitFor(() => {
+      expect(screen.getByLabelText('Dismiss prompt')).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByLabelText('Dismiss prompt'));
+
+    rerender(
+      <PostDownloadPrompt isFreeUser={true} downloadCount={3} onExploreModels={onExploreModels} />
+    );
+
+    await new Promise(r => setTimeout(r, 10));
+    expect(screen.queryByText(/See what other models can do/i)).not.toBeInTheDocument();
   });
 });
 
@@ -800,6 +831,7 @@ describe('Phase 3: BatchLimitModal improvements', () => {
     currentCount: 1,
     onAddPartial: vi.fn(),
     onUpgrade: vi.fn(),
+    onQuickBuy: vi.fn(),
     serverEnforced: false,
   };
 

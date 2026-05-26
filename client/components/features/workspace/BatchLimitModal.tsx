@@ -4,13 +4,11 @@ import React from 'react';
 import { Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
 import { Modal } from '@client/components/ui/Modal';
 import { Button } from '@client/components/ui/Button';
 import { analytics } from '@client/analytics/analyticsClient';
 import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import { getVariant } from '@client/utils/abTest';
-import { clientEnv } from '@shared/config/env';
 
 type TCopyVariant = 'value' | 'outcome' | 'urgency';
 
@@ -22,6 +20,7 @@ export interface IBatchLimitModalProps {
   currentCount: number;
   onAddPartial: () => void;
   onUpgrade: () => void;
+  onQuickBuy: () => void;
   serverEnforced?: boolean;
 }
 
@@ -33,11 +32,11 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
   currentCount,
   onAddPartial,
   onUpgrade,
+  onQuickBuy,
   serverEnforced = false,
 }) => {
   const t = useTranslations('workspace.batchLimit');
   const tCommon = useTranslations('common');
-  const router = useRouter();
   const availableSlots = Math.max(0, limit - currentCount);
 
   // A/B test: assign copy variant
@@ -64,6 +63,16 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
 
   const handleQuickBuyClick = () => {
     setCheckoutTrackingContext({ trigger: 'batch_limit' });
+    analytics.track('batch_limit_upgrade_clicked', {
+      limit,
+      attempted,
+      currentCount,
+      serverEnforced,
+      userType: limit <= 5 ? 'free' : 'paid',
+      copyVariant,
+      destination: 'checkout_direct',
+      quickBuy: true,
+    });
     analytics.track('batch_limit_quick_buy_clicked', {
       limit,
       attempted,
@@ -74,12 +83,21 @@ export const BatchLimitModal: React.FC<IBatchLimitModalProps> = ({
       quickBuy: true,
     });
     onClose();
-    // Navigate directly to checkout with price ID
-    router.push(`/checkout?priceId=${clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL}`);
+    onQuickBuy();
   };
 
   const handleSeePlansClick = () => {
     setCheckoutTrackingContext({ trigger: 'batch_limit' });
+    analytics.track('batch_limit_upgrade_clicked', {
+      limit,
+      attempted,
+      currentCount,
+      serverEnforced,
+      userType: limit <= 5 ? 'free' : 'paid',
+      copyVariant,
+      destination: 'purchase_modal',
+      quickBuy: false,
+    });
     analytics.track('batch_limit_see_plans_clicked', {
       limit,
       attempted,

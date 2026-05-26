@@ -48,7 +48,10 @@ import {
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { getCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
+import {
+  getCheckoutTrackingContext,
+  setCheckoutTrackingContext,
+} from '@client/utils/checkoutTrackingContext';
 import type { IUpgradeDirectParams } from './ModelGalleryModal';
 import { AfterUpscaleBanner } from './AfterUpscaleBanner';
 import { BatchLimitModal } from './BatchLimitModal';
@@ -426,14 +429,12 @@ const Workspace: React.FC = () => {
     setExploreGalleryOpen(false);
   };
 
-  const handleModelGalleryUpgrade = () => {
-    openUpgradeModal(
-      false,
-      exploreGalleryOpen ? 'post_download_explore' : 'workspace_model_gallery'
-    );
-  };
-
-  const handleUpgradeDirect = ({ trigger, planId }: IUpgradeDirectParams) => {
+  const startDirectCheckout = (
+    planId: string,
+    trigger: string,
+    source: 'model_gate' | 'batch_limit' | 'engagement_discount_banner'
+  ) => {
+    setCheckoutTrackingContext({ trigger });
     const ctx = getCheckoutTrackingContext();
     const attributionProps = {
       ...(ctx?.originatingModel ? { originatingModel: ctx.originatingModel } : {}),
@@ -443,7 +444,7 @@ const Workspace: React.FC = () => {
 
     analytics.track('checkout_direct_started', {
       priceId: planId,
-      source: 'model_gate',
+      source,
       trigger,
       pricingRegion: pricingRegion || 'standard',
       uiMode: getCheckoutUiMode(),
@@ -470,7 +471,7 @@ const Workspace: React.FC = () => {
       analytics.track('checkout_auth_required', {
         priceId: planId,
         trigger,
-        source: 'direct_checkout',
+        source,
         pricingRegion: pricingRegion || 'standard',
         ...attributionProps,
       });
@@ -487,6 +488,33 @@ const Workspace: React.FC = () => {
       ...attributionProps,
     });
     setDirectCheckoutPriceId(planId);
+  };
+
+  const handleModelGalleryUpgrade = () => {
+    openUpgradeModal(
+      false,
+      exploreGalleryOpen ? 'post_download_explore' : 'workspace_model_gallery'
+    );
+  };
+
+  const handleUpgradeDirect = ({ trigger, planId }: IUpgradeDirectParams) => {
+    startDirectCheckout(planId, trigger, 'model_gate');
+  };
+
+  const handleBatchLimitQuickBuy = () => {
+    startDirectCheckout(
+      clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL,
+      'batch_limit',
+      'batch_limit'
+    );
+  };
+
+  const handleEngagementDiscountClaim = () => {
+    startDirectCheckout(
+      clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM,
+      'engagement_discount_banner',
+      'engagement_discount_banner'
+    );
   };
 
   // Empty State
@@ -572,6 +600,8 @@ const Workspace: React.FC = () => {
             prefillPlanId={directCheckoutPriceId}
           />
         )}
+
+        <EngagementDiscountBanner onClaimDiscount={handleEngagementDiscountClaim} />
       </div>
     );
   }
@@ -860,6 +890,7 @@ const Workspace: React.FC = () => {
         currentCount={queue.length}
         onAddPartial={handleAddPartial}
         onUpgrade={() => openUpgradeModal(false, 'workspace_batch_limit')}
+        onQuickBuy={handleBatchLimitQuickBuy}
         serverEnforced={batchLimitExceeded?.serverEnforced}
       />
 
@@ -902,11 +933,7 @@ const Workspace: React.FC = () => {
       )}
 
       {/* Engagement discount banner — shown to eligible free users */}
-      <EngagementDiscountBanner
-        onClaimDiscount={() =>
-          setPostAuthCheckoutPriceId(clientEnv.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM)
-        }
-      />
+      <EngagementDiscountBanner onClaimDiscount={handleEngagementDiscountClaim} />
 
       {/* Samples modal — triggered by help button */}
       {showSamplesModal && (

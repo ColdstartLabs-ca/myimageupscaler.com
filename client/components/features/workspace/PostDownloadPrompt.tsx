@@ -16,9 +16,28 @@ export interface IPostDownloadPromptProps {
   onExploreModels: () => void;
 }
 
+const POST_DOWNLOAD_DISMISS_KEY = 'post_download_explore_dismiss_count';
+const POST_DOWNLOAD_MAX_DISMISSES = 2;
+
+function getDismissCount(): number {
+  if (typeof window === 'undefined') return 0;
+
+  const raw = localStorage.getItem(POST_DOWNLOAD_DISMISS_KEY);
+  const parsed = raw ? Number.parseInt(raw, 10) : 0;
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function incrementDismissCount(): number {
+  if (typeof window === 'undefined') return 0;
+
+  const next = getDismissCount() + 1;
+  localStorage.setItem(POST_DOWNLOAD_DISMISS_KEY, String(next));
+  return next;
+}
+
 /**
  * A dismissible modal shown to free users after download clicks.
- * Shows on every successful download for free users.
+ * Shows after successful downloads for free users, capped after repeated dismissals.
  * Fires upgrade_prompt_shown/clicked/dismissed with trigger: 'post_download_explore'.
  */
 export const PostDownloadPrompt = ({
@@ -42,6 +61,7 @@ export const PostDownloadPrompt = ({
     if (!isFreeUser) return;
     if (downloadCount < 1) return;
     if (downloadCount <= previousDownloadCount) return;
+    if (getDismissCount() >= POST_DOWNLOAD_MAX_DISMISSES) return;
 
     setVisible(true);
     analytics.track('upgrade_prompt_shown', {
@@ -56,12 +76,14 @@ export const PostDownloadPrompt = ({
   if (!visible) return null;
 
   const handleDismiss = () => {
+    const dismissCount = incrementDismissCount();
     analytics.track('upgrade_prompt_dismissed', {
       trigger: 'post_download_explore',
       imageVariant: currentModel,
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
       copyVariant,
+      dismissCount,
     });
     setVisible(false);
   };

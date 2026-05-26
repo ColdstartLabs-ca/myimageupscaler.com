@@ -57,6 +57,8 @@ const ALLOWED_EVENTS = [
   // Batch limit events
   'batch_limit_modal_shown',
   'batch_limit_upgrade_clicked',
+  'batch_limit_quick_buy_clicked',
+  'batch_limit_see_plans_clicked',
   'batch_limit_partial_add_clicked',
   'batch_limit_modal_closed',
 
@@ -306,6 +308,8 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
       const batchEvents = [
         'batch_limit_modal_shown',
         'batch_limit_upgrade_clicked',
+        'batch_limit_quick_buy_clicked',
+        'batch_limit_see_plans_clicked',
         'batch_limit_partial_add_clicked',
         'batch_limit_modal_closed',
       ];
@@ -469,6 +473,8 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
         'guest_upscale_completed',
         'batch_limit_modal_shown',
         'batch_limit_upgrade_clicked',
+        'batch_limit_quick_buy_clicked',
+        'batch_limit_see_plans_clicked',
         'batch_limit_partial_add_clicked',
         'batch_limit_modal_closed',
         'model_gallery_opened',
