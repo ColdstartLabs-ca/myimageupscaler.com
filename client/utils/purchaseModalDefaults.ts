@@ -9,6 +9,15 @@ export interface IPurchaseModalInitialSelection {
   lockToCredits: boolean;
 }
 
+export interface IPurchaseModalBanditConfig {
+  defaultType?: 'credit_pack' | 'subscription';
+  defaultKey?: string;
+  visiblePacks?: string[];
+  hideSubscriptionsInitially?: boolean;
+  layout?: string;
+  copy?: string;
+}
+
 function getStarterPack(creditPacks: ICreditPack[]): ICreditPack | null {
   return creditPacks.find(pack => pack.key === 'small') || creditPacks[0] || null;
 }
@@ -26,13 +35,40 @@ export function getPurchaseModalInitialSelection({
   outOfCredits,
   creditPacks,
   subscriptionPlans,
+  banditConfig,
 }: {
   trigger: string;
   outOfCredits: boolean;
   creditPacks: ICreditPack[];
   subscriptionPlans: IPlanConfig[];
+  banditConfig?: IPurchaseModalBanditConfig;
 }): IPurchaseModalInitialSelection {
   const starterPack = getStarterPack(creditPacks);
+
+  if (banditConfig?.defaultType === 'credit_pack' || banditConfig?.defaultKey) {
+    const selectedPack =
+      creditPacks.find(pack => pack.key === banditConfig.defaultKey) || starterPack;
+
+    return {
+      purchaseMode: 'credits',
+      selectedPack,
+      selectedPlan: null,
+      lockToCredits: false,
+    };
+  }
+
+  if (banditConfig?.defaultType === 'subscription') {
+    const selectedPlan =
+      subscriptionPlans.find(plan => plan.key === banditConfig.defaultKey) ||
+      getRecommendedPlan(subscriptionPlans);
+
+    return {
+      purchaseMode: 'subscribe',
+      selectedPack: null,
+      selectedPlan,
+      lockToCredits: false,
+    };
+  }
 
   if (trigger === 'model_gate') {
     return {

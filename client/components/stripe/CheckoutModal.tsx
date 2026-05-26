@@ -85,6 +85,14 @@ export function CheckoutModal({
       ...(checkoutContext?.attributionChain?.length
         ? { attributionChain: checkoutContext.attributionChain }
         : {}),
+      ...(checkoutContext?.experimentKey
+        ? {
+            experimentKey: checkoutContext.experimentKey,
+            experimentContextKey: checkoutContext.experimentContextKey,
+            experimentArmId: checkoutContext.experimentArmId,
+            experimentArmKey: checkoutContext.experimentArmKey,
+          }
+        : {}),
     });
   }, [isAuthenticated, prefillPlanId, priceId, pricingRegion]);
 

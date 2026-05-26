@@ -11,11 +11,13 @@ const {
   mockSetCheckoutTrackingContext,
   mockResolveCheapestRegionalPlan,
   mockUseRegionTier,
+  mockUseExperimentArm,
 } = vi.hoisted(() => ({
   mockTrack: vi.fn(),
   mockSetCheckoutTrackingContext: vi.fn(),
   mockResolveCheapestRegionalPlan: vi.fn().mockReturnValue('price_test_small'),
   mockUseRegionTier: vi.fn(),
+  mockUseExperimentArm: vi.fn(),
 }));
 
 vi.mock('@client/analytics/analyticsClient', () => ({
@@ -47,6 +49,19 @@ vi.mock('lucide-react', () => ({
 
 vi.mock('@client/hooks/useRegionTier', () => ({
   useRegionTier: mockUseRegionTier,
+}));
+
+vi.mock('@client/hooks/useExperimentArm', () => ({
+  useExperimentArm: mockUseExperimentArm,
+}));
+
+vi.mock('@shared/config/subscription.utils', () => ({
+  getCreditsForTierAtScale: vi.fn(() => 3),
+  getEnabledCreditPacks: vi.fn(() => [
+    { key: 'small', credits: 50, stripePriceId: 'price_test_small' },
+    { key: 'medium', credits: 200, stripePriceId: 'price_test_medium' },
+  ]),
+  getEnabledPlans: vi.fn(() => [{ key: 'starter', stripePriceId: 'price_test_starter' }]),
 }));
 
 // BottomSheet just renders its children when isOpen=true
@@ -207,6 +222,21 @@ describe('ModelGalleryModal — upgrade direct flow', () => {
     vi.clearAllMocks();
     mockUseRegionTier.mockReturnValue({ pricingRegion: STANDARD_REGION });
     mockResolveCheapestRegionalPlan.mockReturnValue('price_test_small');
+    mockUseExperimentArm.mockReturnValue({
+      assignment: {
+        experimentKey: 'model_gate_purchase_path',
+        contextKey: 'global',
+        armId: 20,
+        armKey: 'direct_small_pack_control',
+        armConfig: { path: 'direct_checkout', defaultKey: 'small' },
+        assignmentKey: 'session:test',
+        surface: 'model_gallery',
+      },
+      armKey: 'direct_small_pack_control',
+      armConfig: { path: 'direct_checkout', defaultKey: 'small' },
+      isLoading: false,
+      isFallback: false,
+    });
     // Suppress sessionStorage calls in test env
     vi.stubGlobal('sessionStorage', {
       getItem: vi.fn().mockReturnValue(null),
@@ -232,6 +262,29 @@ describe('ModelGalleryModal — upgrade direct flow', () => {
     expect(onUpgrade).not.toHaveBeenCalled();
   });
 
+  it('compact arm opens purchase modal path', () => {
+    mockUseExperimentArm.mockReturnValue({
+      assignment: {
+        experimentKey: 'model_gate_purchase_path',
+        contextKey: 'global',
+        armId: 21,
+        armKey: 'compact_credit_picker',
+        armConfig: { path: 'compact_picker', visiblePacks: ['small', 'medium'] },
+        assignmentKey: 'session:test',
+        surface: 'model_gallery',
+      },
+      armKey: 'compact_credit_picker',
+      armConfig: { path: 'compact_picker', visiblePacks: ['small', 'medium'] },
+      isLoading: false,
+      isFallback: false,
+    });
+    const { onUpgrade, onUpgradeDirect } = renderModal();
+    fireEvent.click(screen.getByTestId('locked-hd-upscale'));
+
+    expect(onUpgrade).toHaveBeenCalled();
+    expect(onUpgradeDirect).not.toHaveBeenCalled();
+  });
+
   it('should resolve the regional checkout plan from the model gate', () => {
     mockUseRegionTier.mockReturnValue({ pricingRegion: 'south_asia' });
     renderModal();
@@ -245,7 +298,11 @@ describe('ModelGalleryModal — upgrade direct flow', () => {
     fireEvent.click(screen.getByTestId('locked-hd-upscale'));
 
     expect(mockSetCheckoutTrackingContext).toHaveBeenCalledWith(
-      expect.objectContaining({ trigger: 'model_gate' })
+      expect.objectContaining({
+        trigger: 'model_gate',
+        experimentKey: 'model_gate_purchase_path',
+        experimentArmKey: 'direct_small_pack_control',
+      })
     );
   });
 

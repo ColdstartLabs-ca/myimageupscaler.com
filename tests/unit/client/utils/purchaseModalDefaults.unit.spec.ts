@@ -112,4 +112,21 @@ describe('getPurchaseModalInitialSelection', () => {
     expect(selection.selectedPlan?.key).toBe('hobby');
     expect(selection.lockToCredits).toBe(false);
   });
+
+  test('starter anchor selects small pack', () => {
+    const selection = getPurchaseModalInitialSelection({
+      trigger: 'workspace',
+      outOfCredits: false,
+      creditPacks,
+      subscriptionPlans,
+      banditConfig: {
+        defaultType: 'credit_pack',
+        defaultKey: 'small',
+      },
+    });
+
+    expect(selection.purchaseMode).toBe('credits');
+    expect(selection.selectedPack?.key).toBe('small');
+    expect(selection.selectedPlan).toBeNull();
+  });
 });

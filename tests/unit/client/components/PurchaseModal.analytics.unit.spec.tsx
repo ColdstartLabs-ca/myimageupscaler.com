@@ -4,11 +4,13 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { PurchaseModal } from '@client/components/stripe/PurchaseModal';
 import type { ICreditPack, IPlanConfig } from '@shared/config/subscription.types';
 
-const { mockTrack, mockGetTrackingContext, mockSetTrackingContext } = vi.hoisted(() => ({
-  mockTrack: vi.fn(),
-  mockGetTrackingContext: vi.fn(),
-  mockSetTrackingContext: vi.fn(),
-}));
+const { mockTrack, mockGetTrackingContext, mockSetTrackingContext, mockUseExperimentArm } =
+  vi.hoisted(() => ({
+    mockTrack: vi.fn(),
+    mockGetTrackingContext: vi.fn(),
+    mockSetTrackingContext: vi.fn(),
+    mockUseExperimentArm: vi.fn(),
+  }));
 
 const creditPacks: ICreditPack[] = [
   {
@@ -93,6 +95,10 @@ vi.mock('@client/hooks/useRegionTier', () => ({
   }),
 }));
 
+vi.mock('@client/hooks/useExperimentArm', () => ({
+  useExperimentArm: mockUseExperimentArm,
+}));
+
 vi.mock('@client/hooks/useCurrentPlan', () => ({
   useCurrentPlan: () => ({
     planKey: 'free',
@@ -159,6 +165,21 @@ describe('PurchaseModal analytics', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockGetTrackingContext.mockReturnValue(null);
+    mockUseExperimentArm.mockReturnValue({
+      assignment: {
+        experimentKey: 'purchase_modal_default_selection',
+        contextKey: 'global',
+        armId: 10,
+        armKey: 'current_modal_control',
+        armConfig: {},
+        assignmentKey: 'session:test',
+        surface: 'purchase_modal',
+      },
+      armKey: 'current_modal_control',
+      armConfig: {},
+      isLoading: false,
+      isFallback: false,
+    });
   });
 
   test('tracks purchase_modal_opened with initial small credit-pack selection for model gates', async () => {
@@ -181,6 +202,8 @@ describe('PurchaseModal analytics', () => {
           selectedKey: 'small',
           priceId: 'price_small',
           lockToCredits: true,
+          experimentKey: 'purchase_modal_default_selection',
+          experimentArmKey: 'current_modal_control',
         })
       );
     });
@@ -206,8 +229,58 @@ describe('PurchaseModal analytics', () => {
           selectedKey: 'hobby',
           priceId: 'price_hobby',
           lockToCredits: false,
+          experimentKey: 'purchase_modal_default_selection',
+          experimentArmKey: 'current_modal_control',
         })
       );
     });
+  });
+
+  test('renders compact credit picker arm', async () => {
+    mockUseExperimentArm.mockReturnValue({
+      assignment: {
+        experimentKey: 'purchase_modal_default_selection',
+        contextKey: 'global',
+        armId: 12,
+        armKey: 'compact_credit_picker',
+        armConfig: {
+          defaultType: 'credit_pack',
+          defaultKey: 'small',
+          visiblePacks: ['small'],
+          hideSubscriptionsInitially: true,
+        },
+        assignmentKey: 'session:test',
+        surface: 'purchase_modal',
+      },
+      armKey: 'compact_credit_picker',
+      armConfig: {
+        defaultType: 'credit_pack',
+        defaultKey: 'small',
+        visiblePacks: ['small'],
+        hideSubscriptionsInitially: true,
+      },
+      isLoading: false,
+      isFallback: false,
+    });
+
+    const { queryByText } = render(
+      <PurchaseModal
+        isOpen={true}
+        onClose={vi.fn()}
+        onPurchaseComplete={vi.fn()}
+        trigger="workspace"
+      />
+    );
+
+    await waitFor(() => {
+      expect(mockTrack).toHaveBeenCalledWith(
+        'purchase_modal_opened',
+        expect.objectContaining({
+          selectedKey: 'small',
+          experimentArmKey: 'compact_credit_picker',
+        })
+      );
+    });
+    expect(queryByText('150')).toBeNull();
   });
 });

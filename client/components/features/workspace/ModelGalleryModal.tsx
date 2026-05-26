@@ -9,6 +9,7 @@ import { getCreditsForTierAtScale } from '@shared/config/subscription.utils';
 import { BottomSheet } from '@client/components/ui/BottomSheet';
 import { ModelGallerySearch } from './ModelGallerySearch';
 import { analytics } from '@client/analytics/analyticsClient';
+import { useExperimentArm } from '@client/hooks/useExperimentArm';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import {
   setCheckoutTrackingContext,
@@ -16,7 +17,9 @@ import {
 } from '@client/utils/checkoutTrackingContext';
 import { getVariant } from '@client/utils/abTest';
 import { resolveCheapestRegionalPlan } from '@shared/config/subscription.config';
+import { getEnabledCreditPacks, getEnabledPlans } from '@shared/config/subscription.utils';
 import type { PricingRegion } from '@shared/config/pricing-regions';
+import type { IExperimentAssignment } from '@shared/types/experiments.types';
 
 const MODEL_GATE_SESSION_KEY = 'upgrade_prompt_shown_model_gate';
 
@@ -37,6 +40,7 @@ export interface IModelGalleryModalProps {
   /** Prevents auto-opened educational views from being counted as upgrade prompt impressions. */
   suppressUpgradeImpression?: boolean;
   source?: 'manual' | 'mobile' | 'post_download_explore' | 'first_time_auto';
+  selectedScale?: 2 | 4 | 8;
 }
 
 // Use centralized config for tier categorization
@@ -60,6 +64,42 @@ const MODEL_FILTERS = [
   { id: 'creative', label: 'Creative Edits' },
 ] as const;
 type ModelFilter = (typeof MODEL_FILTERS)[number]['id'];
+
+interface IModelGateBanditConfig {
+  path?: 'direct_checkout' | 'compact_picker';
+  defaultKey?: string;
+  defaultType?: 'credit_pack' | 'subscription';
+  selection?: 'model_cost_based';
+  visiblePacks?: string[];
+}
+
+function getExperimentAnalyticsProps(assignment: IExperimentAssignment | null) {
+  if (!assignment) return {};
+
+  return {
+    experimentKey: assignment.experimentKey,
+    experimentContextKey: assignment.contextKey,
+    experimentArmId: assignment.armId,
+    experimentArmKey: assignment.armKey,
+    experimentAssignmentKey: assignment.assignmentKey,
+  };
+}
+
+function resolveUsageBasedPackPriceId(tier: QualityTier | 'banner', selectedScale: 2 | 4 | 8) {
+  const packs = getEnabledCreditPacks();
+  if (tier === 'banner') return packs.find(pack => pack.key === 'small')?.stripePriceId;
+
+  const requiredCredits = getCreditsForTierAtScale(tier, selectedScale);
+  const sortedPacks = [...packs].sort((a, b) => a.credits - b.credits);
+  return (
+    sortedPacks.find(pack => pack.credits >= requiredCredits)?.stripePriceId ||
+    sortedPacks[sortedPacks.length - 1]?.stripePriceId
+  );
+}
+
+function resolveStarterSubscriptionPriceId() {
+  return getEnabledPlans().find(plan => plan.key === 'starter')?.stripePriceId;
+}
 
 const FILTER_TIER_MAP: Record<
   Exclude<ModelFilter, 'all' | 'free' | 'pro'>,
@@ -127,6 +167,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
   onUpgradeDirect,
   suppressUpgradeImpression = false,
   source = 'manual',
+  selectedScale = 2,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<ModelFilter>('all');
@@ -135,6 +176,22 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
   const filterMenuRef = useRef<HTMLDivElement>(null);
   const { pricingRegion } = useRegionTier();
   const copyVariant = getVariant('batch_limit_copy', ['value', 'outcome', 'urgency']);
+  const modelGateExperiment = useExperimentArm({
+    experimentKey: 'model_gate_purchase_path',
+    contextKey: 'global',
+    assignmentScope: 'session',
+    surface: 'model_gallery',
+    enabled: isOpen && isFreeUser,
+    metadata: {
+      source,
+      pricingRegion: pricingRegion || 'standard',
+    },
+    fallbackArm: {
+      armKey: 'direct_small_pack_control',
+      armConfig: { path: 'direct_checkout', defaultKey: 'small' },
+    },
+  });
+  const modelGateBanditConfig = modelGateExperiment.armConfig as IModelGateBanditConfig;
 
   // Track gallery session for analytics
   const galleryOpenedAtRef = useRef<number>(0);
@@ -295,21 +352,42 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
         originatingModel: tier !== 'banner' ? tier : undefined,
         ...(originatingTrigger ? { originatingTrigger } : {}),
         attributionChain: attributionChain.slice(-5),
+        ...getExperimentAnalyticsProps(modelGateExperiment.assignment),
       });
 
+      const experimentProps = getExperimentAnalyticsProps(modelGateExperiment.assignment);
+      const purchasePath = modelGateBanditConfig.path || 'direct_checkout';
       analytics.track('upgrade_prompt_clicked', {
         trigger: 'model_gate',
         imageVariant: tier,
-        destination: onUpgradeDirect ? 'checkout_direct' : 'upgrade_plan_modal',
+        destination:
+          purchasePath === 'compact_picker' || !onUpgradeDirect
+            ? 'upgrade_plan_modal'
+            : 'checkout_direct',
         currentPlan: 'free',
         pricingRegion: pricingRegion || 'standard',
         copyVariant,
         ...(originatingTrigger ? { originatingTrigger } : {}),
+        ...experimentProps,
       });
       onClose();
 
+      if (purchasePath === 'compact_picker') {
+        onUpgrade();
+        return;
+      }
+
       if (onUpgradeDirect) {
-        const planId = resolveCheapestRegionalPlan((pricingRegion as PricingRegion) || 'standard');
+        const planId =
+          modelGateBanditConfig.defaultType === 'subscription'
+            ? resolveStarterSubscriptionPriceId()
+            : modelGateBanditConfig.selection === 'model_cost_based'
+              ? resolveUsageBasedPackPriceId(tier, selectedScale)
+              : resolveCheapestRegionalPlan((pricingRegion as PricingRegion) || 'standard');
+        if (!planId) {
+          onUpgrade();
+          return;
+        }
         onUpgradeDirect({ trigger: 'model_gate', planId });
         return;
       }
@@ -321,10 +399,20 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
         pricingRegion: pricingRegion || 'standard',
         fallbackDestination: 'upgrade_plan_modal',
         ...(originatingTrigger ? { originatingTrigger } : {}),
+        ...experimentProps,
       });
       onUpgrade();
     },
-    [onUpgrade, onUpgradeDirect, onClose, pricingRegion, copyVariant]
+    [
+      onUpgrade,
+      onUpgradeDirect,
+      onClose,
+      pricingRegion,
+      copyVariant,
+      modelGateBanditConfig,
+      modelGateExperiment.assignment,
+      selectedScale,
+    ]
   );
 
   // Clear search when modal closes

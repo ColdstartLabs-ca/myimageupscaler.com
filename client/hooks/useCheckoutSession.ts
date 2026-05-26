@@ -10,6 +10,7 @@ import { useToastStore } from '@client/store/toastStore';
 import { getCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import { getCheckoutUiMode } from '@client/utils/checkoutUiMode';
 import { getStoredCheckoutRescueOffer } from '@client/utils/checkoutRescueOfferStorage';
+import { EXPERIMENT_CHECKOUT_METADATA_KEYS } from '@shared/types/experiments.types';
 import type { TCheckoutStep, TCheckoutErrorType } from '@server/analytics/types';
 
 // ---------------------------------------------------------------------------
@@ -207,6 +208,26 @@ export function useCheckoutSession({
         if (checkoutContext?.attributionChain?.length) {
           metadata.checkout_attribution_chain = checkoutContext.attributionChain.join(',');
         }
+        if (checkoutContext?.experimentKey) {
+          metadata[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentKey] = checkoutContext.experimentKey;
+        }
+        if (checkoutContext?.experimentContextKey) {
+          metadata[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentContextKey] =
+            checkoutContext.experimentContextKey;
+        }
+        if (checkoutContext?.experimentArmId) {
+          metadata[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmId] = String(
+            checkoutContext.experimentArmId
+          );
+        }
+        if (checkoutContext?.experimentArmKey) {
+          metadata[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmKey] =
+            checkoutContext.experimentArmKey;
+        }
+        if (checkoutContext?.experimentAssignmentKey) {
+          metadata[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentAssignmentKey] =
+            checkoutContext.experimentAssignmentKey;
+        }
         if (banditArmId) {
           metadata.bandit_arm_id = String(banditArmId);
         }
@@ -231,6 +252,14 @@ export function useCheckoutSession({
             : {}),
           ...(checkoutContext?.attributionChain?.length
             ? { attributionChain: checkoutContext.attributionChain }
+            : {}),
+          ...(checkoutContext?.experimentKey
+            ? {
+                experimentKey: checkoutContext.experimentKey,
+                experimentContextKey: checkoutContext.experimentContextKey,
+                experimentArmId: checkoutContext.experimentArmId,
+                experimentArmKey: checkoutContext.experimentArmKey,
+              }
             : {}),
         };
 

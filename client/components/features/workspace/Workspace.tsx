@@ -440,6 +440,14 @@ const Workspace: React.FC = () => {
       ...(ctx?.originatingModel ? { originatingModel: ctx.originatingModel } : {}),
       ...(ctx?.originatingTrigger ? { originatingTrigger: ctx.originatingTrigger } : {}),
       ...(ctx?.attributionChain?.length ? { attributionChain: ctx.attributionChain } : {}),
+      ...(ctx?.experimentKey
+        ? {
+            experimentKey: ctx.experimentKey,
+            experimentContextKey: ctx.experimentContextKey,
+            experimentArmId: ctx.experimentArmId,
+            experimentArmKey: ctx.experimentArmKey,
+          }
+        : {}),
     };
 
     analytics.track('checkout_direct_started', {
@@ -851,6 +859,7 @@ const Workspace: React.FC = () => {
         onSelect={tier => setConfig(prev => ({ ...prev, qualityTier: tier }))}
         onUpgrade={handleModelGalleryUpgrade}
         onUpgradeDirect={handleUpgradeDirect}
+        selectedScale={config.scale}
       />
 
       {/* Mobile Tab Bar */}

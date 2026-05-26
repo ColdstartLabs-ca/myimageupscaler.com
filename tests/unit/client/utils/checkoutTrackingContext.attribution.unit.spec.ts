@@ -91,4 +91,26 @@ describe('checkoutTrackingContext — attribution chain', () => {
     const ctx = getCheckoutTrackingContext();
     expect(ctx).toBeNull();
   });
+
+  test('should preserve experiment metadata', () => {
+    setCheckoutTrackingContext({
+      trigger: 'model_gate',
+      experimentKey: 'model_gate_purchase_path',
+      experimentContextKey: 'global',
+      experimentArmId: 20,
+      experimentArmKey: 'direct_small_pack_control',
+      experimentAssignmentKey: 'session:abc',
+    });
+
+    const ctx = getCheckoutTrackingContext();
+    expect(ctx).toEqual(
+      expect.objectContaining({
+        experimentKey: 'model_gate_purchase_path',
+        experimentContextKey: 'global',
+        experimentArmId: 20,
+        experimentArmKey: 'direct_small_pack_control',
+        experimentAssignmentKey: 'session:abc',
+      })
+    );
+  });
 });

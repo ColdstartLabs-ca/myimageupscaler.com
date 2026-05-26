@@ -7,6 +7,7 @@ import { PlanChangeModal } from './PlanChangeModal';
 import { CheckoutModal } from './CheckoutModal';
 import { X, ShoppingCart, ArrowRight, Star, Check, Coins, Zap } from 'lucide-react';
 import { analytics } from '@client/analytics';
+import { useExperimentArm } from '@client/hooks/useExperimentArm';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useCurrentPlan } from '@client/hooks/useCurrentPlan';
 import { useUserStore } from '@client/store/userStore';
@@ -18,7 +19,9 @@ import {
   setCheckoutTrackingContext,
 } from '@client/utils/checkoutTrackingContext';
 import { getPurchaseModalInitialSelection } from '@client/utils/purchaseModalDefaults';
+import type { IPurchaseModalBanditConfig } from '@client/utils/purchaseModalDefaults';
 import { getEnabledCreditPacks, getEnabledPlans } from '@shared/config/subscription.utils';
+import type { IExperimentAssignment } from '@shared/types/experiments.types';
 import type { ICreditPack, IPlanConfig } from '@shared/config/subscription.types';
 
 export interface IPurchaseModalProps {
@@ -62,6 +65,18 @@ function getSavingsPercent(pack: ICreditPack, basePack: ICreditPack | undefined)
   const basePerCredit = basePack.priceInCents / basePack.credits;
   const packPerCredit = pack.priceInCents / pack.credits;
   return Math.round(((basePerCredit - packPerCredit) / basePerCredit) * 100);
+}
+
+function getExperimentAnalyticsProps(assignment: IExperimentAssignment | null) {
+  if (!assignment) return {};
+
+  return {
+    experimentKey: assignment.experimentKey,
+    experimentContextKey: assignment.contextKey,
+    experimentArmId: assignment.armId,
+    experimentArmKey: assignment.armKey,
+    experimentAssignmentKey: assignment.assignmentKey,
+  };
 }
 
 // ------------------------------------------------------------------------------
@@ -114,6 +129,23 @@ export function PurchaseModal({
   const { openAuthRequiredModal } = useModalStore();
 
   const { planKey: currentPlan, priceId: currentPriceId, isPaidUser } = useCurrentPlan();
+  const purchaseExperiment = useExperimentArm({
+    experimentKey: 'purchase_modal_default_selection',
+    contextKey: 'global',
+    assignmentScope: 'session',
+    surface: 'purchase_modal',
+    enabled: isOpen,
+    metadata: {
+      trigger,
+      pricingRegion: pricingRegion || 'standard',
+      outOfCredits,
+    },
+    fallbackArm: {
+      armKey: 'current_modal_control',
+      armConfig: { description: 'Current purchase modal behavior' },
+    },
+  });
+  const purchaseBanditConfig = purchaseExperiment.armConfig as IPurchaseModalBanditConfig;
 
   // Selection state
   const [selectedPack, setSelectedPack] = useState<ICreditPack | null>(null);
@@ -136,14 +168,27 @@ export function PurchaseModal({
     []
   );
 
+  const visibleCreditPacks = useMemo(() => {
+    if (!purchaseBanditConfig.visiblePacks?.length) return creditPacks;
+
+    const allowedKeys = new Set(purchaseBanditConfig.visiblePacks);
+    const filtered = creditPacks.filter(pack => allowedKeys.has(pack.key));
+    return filtered.length > 0 ? filtered : creditPacks;
+  }, [creditPacks, purchaseBanditConfig.visiblePacks]);
+
   const basePack = creditPacks[0];
 
   // Default selection on open
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !purchaseExperiment.isLoading) {
       openTimeRef.current = Date.now();
-      if (!getCheckoutTrackingContext()?.trigger) {
-        setCheckoutTrackingContext({ trigger });
+      const existingContext = getCheckoutTrackingContext();
+      const experimentProps = getExperimentAnalyticsProps(purchaseExperiment.assignment);
+      if (!existingContext?.trigger || !existingContext.experimentKey) {
+        setCheckoutTrackingContext({
+          ...(existingContext?.trigger ? {} : { trigger }),
+          ...(!existingContext?.experimentKey ? experimentProps : {}),
+        });
       }
 
       const initialSelection = getPurchaseModalInitialSelection({
@@ -151,6 +196,7 @@ export function PurchaseModal({
         outOfCredits,
         creditPacks,
         subscriptionPlans,
+        banditConfig: purchaseBanditConfig,
       });
       setSelectedPack(initialSelection.selectedPack);
       setSelectedPlan(initialSelection.selectedPlan);
@@ -168,6 +214,7 @@ export function PurchaseModal({
         selectedKey: initialItem?.key,
         priceId: initialItem?.stripePriceId,
         lockToCredits: initialSelection.lockToCredits,
+        ...experimentProps,
       });
 
       analytics.track('upgrade_prompt_shown', {
@@ -177,9 +224,21 @@ export function PurchaseModal({
         pricingRegion: pricingRegion || 'standard',
         initialTab: initialSelection.purchaseMode,
         lockToCredits: initialSelection.lockToCredits,
+        ...experimentProps,
       });
     }
-  }, [isOpen, trigger, outOfCredits, pricingRegion, currentPlan, creditPacks, subscriptionPlans]);
+  }, [
+    isOpen,
+    trigger,
+    outOfCredits,
+    pricingRegion,
+    currentPlan,
+    creditPacks,
+    subscriptionPlans,
+    purchaseBanditConfig,
+    purchaseExperiment.assignment,
+    purchaseExperiment.isLoading,
+  ]);
 
   const lockToCredits = trigger === 'model_gate';
 
@@ -192,6 +251,7 @@ export function PurchaseModal({
         outOfCredits,
         pricingRegion: pricingRegion || 'standard',
         timeOpenMs: Date.now() - openTimeRef.current,
+        ...getExperimentAnalyticsProps(purchaseExperiment.assignment),
       });
 
       const selectedItem = selectedPlan || selectedPack;
@@ -209,6 +269,7 @@ export function PurchaseModal({
           selectedKey: selectedItem.key,
           checkoutOpened: false,
           outOfCredits,
+          ...getExperimentAnalyticsProps(purchaseExperiment.assignment),
         });
       }
 
@@ -220,6 +281,7 @@ export function PurchaseModal({
       purchaseMode,
       outOfCredits,
       pricingRegion,
+      purchaseExperiment.assignment,
       onClose,
       selectedPlan,
       selectedPack,
@@ -239,6 +301,7 @@ export function PurchaseModal({
         to: mode,
         pricingRegion: pricingRegion || 'standard',
         timeOpenMs: Date.now() - openTimeRef.current,
+        ...getExperimentAnalyticsProps(purchaseExperiment.assignment),
       });
 
       setPurchaseMode(mode);
@@ -257,7 +320,15 @@ export function PurchaseModal({
       );
       setSelectedPack(null);
     },
-    [creditPacks, lockToCredits, purchaseMode, pricingRegion, subscriptionPlans, trigger]
+    [
+      creditPacks,
+      lockToCredits,
+      purchaseMode,
+      pricingRegion,
+      purchaseExperiment.assignment,
+      subscriptionPlans,
+      trigger,
+    ]
   );
 
   const handleSelectPack = useCallback((pack: ICreditPack) => {
@@ -308,6 +379,7 @@ export function PurchaseModal({
       outOfCredits,
       pricingRegion: pricingRegion || 'standard',
       timeOpenMs: Date.now() - openTimeRef.current,
+      ...getExperimentAnalyticsProps(purchaseExperiment.assignment),
     });
 
     // Existing subscriber changing plans
@@ -334,6 +406,9 @@ export function PurchaseModal({
       setCheckoutTrackingContext({
         trigger: effectiveTrigger,
         originatingModel: effectiveOriginModel,
+        ...(!checkoutContext?.experimentKey
+          ? getExperimentAnalyticsProps(purchaseExperiment.assignment)
+          : {}),
       });
     }
 
@@ -351,6 +426,7 @@ export function PurchaseModal({
         ...(effectiveTrigger ? { trigger: effectiveTrigger } : {}),
         pricingRegion: pricingRegion || 'standard',
         originatingModel: effectiveOriginModel,
+        ...getExperimentAnalyticsProps(purchaseExperiment.assignment),
       });
       openAuthRequiredModal();
       return;
@@ -367,6 +443,7 @@ export function PurchaseModal({
       ...(checkoutContext?.attributionChain?.length
         ? { attributionChain: checkoutContext.attributionChain }
         : {}),
+      ...getExperimentAnalyticsProps(purchaseExperiment.assignment),
     });
 
     setCheckoutPriceId(priceId);
@@ -382,6 +459,7 @@ export function PurchaseModal({
     currentPriceId,
     isAuthenticated,
     openAuthRequiredModal,
+    purchaseExperiment.assignment,
   ]);
 
   const getCTALabel = useCallback(() => {
@@ -533,7 +611,7 @@ export function PurchaseModal({
                   </div>
 
                   <div className="space-y-1.5 px-3 py-2">
-                    {creditPacks.map(pack => {
+                    {visibleCreditPacks.map(pack => {
                       const isSelected = selectedPack?.key === pack.key;
                       const savings = getSavingsPercent(pack, basePack);
                       return (
