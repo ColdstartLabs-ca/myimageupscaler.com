@@ -10,6 +10,66 @@
 import type { ISubscription, IUserProfile } from '@/shared/types/stripe.types';
 import type { ITestUserData } from './auth-helpers';
 
+function inferTierFromPriceId(priceId?: string | null): string | null {
+  if (!priceId) return null;
+
+  const normalized = priceId.toLowerCase();
+  if (normalized.includes('business')) return 'business';
+  if (normalized.includes('pro')) return 'pro';
+  if (normalized.includes('hobby')) return 'hobby';
+  if (normalized.includes('starter')) return 'starter';
+  return null;
+}
+
+function normalizeProfile(
+  userData: Partial<ITestUserData>,
+  userId: string,
+  email: string,
+  tier: string | null
+): IUserProfile | null {
+  if (!userData.profile) return null;
+
+  const now = new Date().toISOString();
+  return {
+    id: userId,
+    email,
+    role: userData.role || userData.profile.role || 'user',
+    stripe_customer_id:
+      userData.profile.stripe_customer_id ??
+      (userData.subscription ? `cus_test_${userId}` : null),
+    subscription_credits_balance: userData.profile.subscription_credits_balance ?? 0,
+    purchased_credits_balance: userData.profile.purchased_credits_balance ?? 0,
+    subscription_status:
+      userData.profile.subscription_status ?? userData.subscription?.status ?? null,
+    subscription_tier: userData.profile.subscription_tier ?? tier,
+    created_at: userData.profile.created_at ?? now,
+    updated_at: userData.profile.updated_at ?? now,
+  } as IUserProfile;
+}
+
+function normalizeSubscription(
+  userData: Partial<ITestUserData>,
+  userId: string
+): ISubscription | null {
+  if (!userData.subscription) return null;
+
+  const now = new Date();
+  const periodStart = new Date(now.getTime() - 15 * 24 * 60 * 60 * 1000).toISOString();
+  const periodEnd = new Date(now.getTime() + 15 * 24 * 60 * 60 * 1000).toISOString();
+
+  return {
+    user_id: userId,
+    current_period_start: periodStart,
+    current_period_end: periodEnd,
+    trial_end: null,
+    cancel_at_period_end: false,
+    canceled_at: null,
+    created_at: periodStart,
+    updated_at: now.toISOString(),
+    ...userData.subscription,
+  } as ISubscription;
+}
+
 /**
  * Mock Supabase REST calls for profiles and subscriptions
  * This handles the billing page's direct Supabase calls
@@ -19,8 +79,10 @@ export async function mockSupabaseBillingData(
   userData: Partial<ITestUserData>
 ): Promise<void> {
   const userId = userData.id || 'test-user-id';
-  const profile = userData.profile;
-  const subscription = userData.subscription;
+  const email = userData.email || userData.profile?.email || 'test@example.com';
+  const subscription = normalizeSubscription(userData, userId);
+  const tier = userData.profile?.subscription_tier ?? inferTierFromPriceId(subscription?.price_id);
+  const profile = normalizeProfile(userData, userId, email, tier);
 
   // Mock profiles REST call - handle various URL patterns that Supabase generates
   await page.route(`**/rest/v1/profiles**`, async route => {
@@ -76,8 +138,10 @@ export async function mockSupabaseRpc(
   userData: Partial<ITestUserData>
 ): Promise<void> {
   const userId = userData.id || 'test-user-id';
-  const profile = userData.profile;
-  const subscription = userData.subscription;
+  const email = userData.email || userData.profile?.email || 'test@example.com';
+  const subscription = normalizeSubscription(userData, userId);
+  const tier = userData.profile?.subscription_tier ?? inferTierFromPriceId(subscription?.price_id);
+  const profile = normalizeProfile(userData, userId, email, tier);
 
   // Mock RPC call: /rest/v1/rpc/get_user_data with various parameter formats
   await page.route(`**/rest/v1/rpc/get_user_data**`, async route => {

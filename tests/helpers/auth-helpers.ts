@@ -17,8 +17,27 @@ export interface ITestUserData {
     role: 'user' | 'admin';
     subscription_credits_balance: number;
     purchased_credits_balance: number;
+    subscription_status?: string | null;
+    subscription_tier?: string | null;
+    stripe_customer_id?: string | null;
+    created_at?: string;
+    updated_at?: string;
   } | null;
-  subscription: null;
+  subscription: {
+    id: string;
+    user_id?: string;
+    status: string;
+    price_id: string;
+    current_period_start?: string;
+    current_period_end?: string;
+    trial_end?: string | null;
+    cancel_at_period_end?: boolean;
+    canceled_at?: string | null;
+    created_at?: string;
+    updated_at?: string;
+    scheduled_price_id?: string | null;
+    scheduled_change_date?: string | null;
+  } | null;
 }
 
 /**

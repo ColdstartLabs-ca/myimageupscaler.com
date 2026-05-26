@@ -24,11 +24,16 @@ import { setupAuthenticatedStateWithSupabase, type ITestUserData } from '../help
 async function assertVisiblePlan(page: import('@playwright/test').Page, expectedPlan: string): Promise<void> {
   // The billing page shows plan name in the subscription section
   // Use multiple fallback strategies for reliability
+  const planPattern = new RegExp(`^${expectedPlan}( Plan)?$`);
   const planLocators = [
     // Billing page current plan section - look for the plan name in the subscription card
-    page.locator('.bg-surface.rounded-xl.border').filter({ hasText: 'Current Plan' }).locator(`p:text-is("${expectedPlan}")`),
+    page
+      .locator('.bg-surface.rounded-xl.border')
+      .filter({ hasText: 'Current Plan' })
+      .locator('p')
+      .filter({ hasText: planPattern }),
     // Fallback: any element with exact text match for plan name
-    page.getByText(expectedPlan, { exact: true }),
+    page.getByText(planPattern),
   ];
 
   // Try each locator in sequence
