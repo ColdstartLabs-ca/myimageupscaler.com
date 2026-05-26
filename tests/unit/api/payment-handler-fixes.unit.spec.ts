@@ -53,10 +53,15 @@ vi.mock('@server/services/engagement-discount.service', () => ({
   redeemDiscount: vi.fn(),
 }));
 
+vi.mock('@lib/experiments', () => ({
+  recordExperimentReward: vi.fn(() => Promise.resolve()),
+}));
+
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { stripe } from '@server/stripe/config';
 import { assertKnownPriceId, getPlanForPriceId, resolvePlanOrPack } from '@shared/config/stripe';
 import { getBasePriceIdByPlanKey } from '@shared/config/pricing-regions';
+import { recordExperimentReward } from '@lib/experiments';
 
 // Cast mocks
 const MockedSupabaseAdmin = supabaseAdmin as {
@@ -64,6 +69,7 @@ const MockedSupabaseAdmin = supabaseAdmin as {
   rpc: ReturnType<typeof vi.fn>;
 };
 const MockedResolvePlanOrPack = resolvePlanOrPack as ReturnType<typeof vi.fn>;
+const MockedRecordExperimentReward = recordExperimentReward as ReturnType<typeof vi.fn>;
 
 describe('PaymentHandler - MEDIUM-14: Verify credits from price config', () => {
   let consoleSpy: {
@@ -168,6 +174,108 @@ describe('PaymentHandler - MEDIUM-14: Verify credits from price config', () => {
       expect(consoleSpy.log).toHaveBeenCalledWith(
         expect.stringContaining('[CREDIT_PACK] Verified credits from price config: 100')
       );
+    });
+
+    test('records experiment reward on purchase', async () => {
+      const session = {
+        id: mockSessionId,
+        mode: 'payment' as const,
+        payment_status: 'paid',
+        customer: mockCustomerId as string | Stripe.Customer,
+        payment_intent: 'pi_test_123' as string | Stripe.PaymentIntent,
+        amount_total: 2000,
+        currency: 'usd',
+        payment_method_types: ['card'],
+        metadata: {
+          user_id: mockUserId,
+          pack_key: 'standard_100',
+          credits: '100',
+          exp_key: 'purchase_modal_default_selection',
+          exp_ctx: 'global',
+          exp_arm_id: '10',
+          exp_arm_key: 'compact_credit_picker',
+          exp_assign_key: 'session:abc',
+        },
+        line_items: {
+          data: [
+            {
+              price: {
+                id: 'price_pack_100',
+              },
+            },
+          ],
+        },
+      } as Stripe.Checkout.Session;
+
+      MockedSupabaseAdmin.from.mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            maybeSingle: vi.fn().mockResolvedValue({
+              data: { id: mockUserId },
+              error: null,
+            }),
+          }),
+        }),
+      } as never);
+
+      await PaymentHandler.handleCheckoutSessionCompleted(session);
+
+      expect(MockedRecordExperimentReward).toHaveBeenCalledWith(
+        expect.objectContaining({
+          experimentKey: 'purchase_modal_default_selection',
+          contextKey: 'global',
+          armId: 10,
+          assignmentKey: 'session:abc',
+          rewardType: 'purchase_confirmed',
+          revenueCents: 2000,
+          sourceEvent: 'purchase_confirmed',
+        })
+      );
+    });
+
+    test('ignores invalid experiment arm metadata', async () => {
+      const session = {
+        id: mockSessionId,
+        mode: 'payment' as const,
+        payment_status: 'paid',
+        customer: mockCustomerId as string | Stripe.Customer,
+        payment_intent: 'pi_test_123' as string | Stripe.PaymentIntent,
+        amount_total: 2000,
+        currency: 'usd',
+        payment_method_types: ['card'],
+        metadata: {
+          user_id: mockUserId,
+          pack_key: 'standard_100',
+          credits: '100',
+          exp_key: 'purchase_modal_default_selection',
+          exp_ctx: 'global',
+          exp_arm_id: 'not-a-number',
+        },
+        line_items: {
+          data: [
+            {
+              price: {
+                id: 'price_pack_100',
+              },
+            },
+          ],
+        },
+      } as Stripe.Checkout.Session;
+
+      MockedSupabaseAdmin.from.mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            maybeSingle: vi.fn().mockResolvedValue({
+              data: { id: mockUserId },
+              error: null,
+            }),
+          }),
+        }),
+      } as never);
+
+      await PaymentHandler.handleCheckoutSessionCompleted(session);
+
+      expect(MockedRecordExperimentReward).not.toHaveBeenCalled();
     });
 
     test('should fall back to metadata when price ID not found in config', async () => {

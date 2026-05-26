@@ -113,6 +113,9 @@ const ALLOWED_EVENTS = [
   // Country paywall events
   'paywall_shown',
   'paywall_hit',
+  // Shared experiment platform events
+  'experiment_arm_assigned',
+  'experiment_reward_recorded',
 ] as const;
 
 // Type for allowed events (excludes $identify which is server-side only)

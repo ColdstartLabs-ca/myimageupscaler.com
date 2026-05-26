@@ -100,6 +100,15 @@ export const analytics = {
 
 ## Event Tracking
 
+### Experiment Bandit Events
+
+Shared bandit experiments use two standard events:
+
+- `experiment_arm_assigned`: fired once per stable assignment with `experimentKey`, `contextKey`, `armId`, `armKey`, `assignmentKey`, and `surface`.
+- `experiment_reward_recorded`: reserved for server-side reward reporting with `experimentKey`, `contextKey`, `armId`, `rewardType`, `rewardValue`, `revenueCents`, and `sourceEvent`.
+
+Checkout attribution uses compact Stripe metadata keys: `exp_key`, `exp_ctx`, `exp_arm_id`, `exp_arm_key`, and `exp_assign_key`. Stripe webhook purchase rewards use `purchase_confirmed` as the source event and update `experiment_rewards` plus the matching `experiment_arms` counters.
+
 ### Client-Side Events
 
 #### User Lifecycle Events

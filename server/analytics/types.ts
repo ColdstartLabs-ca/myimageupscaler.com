@@ -722,6 +722,9 @@ export type IAnalyticsEventName =
   | 'first_upload_completed'
   // Regional pricing monitoring events (server-side only)
   | 'pricing_region_mismatch'
+  // Shared experiment platform events
+  | 'experiment_arm_assigned'
+  | 'experiment_reward_recorded'
   // Checkout funnel events (Phase 1 - Checkout Friction Investigation)
   | 'purchase_modal_opened'
   | 'checkout_direct_started'

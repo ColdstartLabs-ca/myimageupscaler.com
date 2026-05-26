@@ -207,4 +207,32 @@ describe('POST /api/checkout price alignment', () => {
       expect.objectContaining({ userId: 'user_checkout_alignment' })
     );
   });
+
+  test('preserves experiment metadata', async () => {
+    const response = await POST(
+      createRequest({
+        priceId: STRIPE_PRICES.MEDIUM_CREDITS,
+        metadata: {
+          exp_key: 'purchase_modal_default_selection',
+          exp_ctx: 'global',
+          exp_arm_id: '10',
+          exp_arm_key: 'compact_credit_picker',
+          exp_assign_key: 'session:abc',
+        },
+      })
+    );
+
+    expect(response.status).toBe(200);
+
+    const sessionParams = getCreatedSessionParams();
+    expect(sessionParams.metadata).toEqual(
+      expect.objectContaining({
+        exp_key: 'purchase_modal_default_selection',
+        exp_ctx: 'global',
+        exp_arm_id: '10',
+        exp_arm_key: 'compact_credit_picker',
+        exp_assign_key: 'session:abc',
+      })
+    );
+  });
 });

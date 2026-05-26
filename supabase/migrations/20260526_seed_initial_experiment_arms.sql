@@ -1,0 +1,52 @@
+INSERT INTO experiment_arms (experiment_key, context_key, arm_key, arm_config, is_active)
+VALUES
+  (
+    'purchase_modal_default_selection',
+    'global',
+    'current_modal_control',
+    '{"description":"Current purchase modal behavior"}',
+    false
+  ),
+  (
+    'purchase_modal_default_selection',
+    'global',
+    'starter_anchor',
+    '{"defaultType":"credit_pack","defaultKey":"small","layout":"credits_first","copy":"starter_anchor"}',
+    false
+  ),
+  (
+    'purchase_modal_default_selection',
+    'global',
+    'compact_credit_picker',
+    '{"defaultType":"credit_pack","visiblePacks":["small","medium"],"hideSubscriptionsInitially":true}',
+    false
+  ),
+  (
+    'model_gate_purchase_path',
+    'global',
+    'direct_small_pack_control',
+    '{"path":"direct_checkout","defaultKey":"small"}',
+    false
+  ),
+  (
+    'model_gate_purchase_path',
+    'global',
+    'compact_credit_picker',
+    '{"path":"compact_picker","visiblePacks":["small","medium"]}',
+    false
+  ),
+  (
+    'model_gate_purchase_path',
+    'global',
+    'usage_based_pack',
+    '{"path":"direct_checkout","selection":"model_cost_based"}',
+    false
+  ),
+  (
+    'model_gate_purchase_path',
+    'global',
+    'subscription_unlock',
+    '{"path":"direct_checkout","defaultType":"subscription","defaultKey":"starter"}',
+    false
+  )
+ON CONFLICT (experiment_key, context_key, arm_key) DO NOTHING;

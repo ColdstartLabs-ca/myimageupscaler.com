@@ -7,6 +7,8 @@ import { getBasePriceIdByPlanKey } from '@shared/config/pricing-regions';
 import { getEmailService } from '@server/services/email.service';
 import { redeemDiscount } from '@server/services/engagement-discount.service';
 import { recordBanditConversion } from '@/lib/pricing-bandit';
+import { recordExperimentReward } from '@lib/experiments';
+import { EXPERIMENT_CHECKOUT_METADATA_KEYS } from '@shared/types/experiments.types';
 import Stripe from 'stripe';
 
 // Charge interface for accessing invoice property
@@ -157,6 +159,55 @@ export class PaymentHandler {
       });
       throw new Error(`Failed to sync checkout subscription state: ${subscriptionError.message}`);
     }
+  }
+
+  private static getExperimentRewardMetadata(session: Stripe.Checkout.Session): {
+    experimentKey: string;
+    contextKey: string;
+    armId: number;
+    armKey?: string;
+    assignmentKey?: string;
+  } | null {
+    const metadata = session.metadata;
+    if (!metadata) return null;
+
+    const experimentKey = metadata[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentKey];
+    const contextKey = metadata[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentContextKey] || 'global';
+    const armIdRaw = metadata[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmId];
+    const armId = armIdRaw ? parseInt(armIdRaw, 10) : NaN;
+
+    if (!experimentKey || isNaN(armId) || armId <= 0) return null;
+
+    return {
+      experimentKey,
+      contextKey,
+      armId,
+      armKey: metadata[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmKey],
+      assignmentKey: metadata[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentAssignmentKey],
+    };
+  }
+
+  private static async recordCheckoutExperimentReward(
+    session: Stripe.Checkout.Session,
+    amountCents: number
+  ): Promise<void> {
+    const experiment = this.getExperimentRewardMetadata(session);
+    if (!experiment) return;
+
+    await recordExperimentReward({
+      experimentKey: experiment.experimentKey,
+      contextKey: experiment.contextKey,
+      armId: experiment.armId,
+      assignmentKey: experiment.assignmentKey,
+      rewardType: 'purchase_confirmed',
+      rewardValue: 1,
+      revenueCents: amountCents,
+      sourceEvent: 'purchase_confirmed',
+      metadata: {
+        stripeCheckoutSessionId: session.id,
+        armKey: experiment.armKey,
+      },
+    });
   }
 
   /**
@@ -456,9 +507,16 @@ export class PaymentHandler {
           attributionChain: session.metadata?.checkout_attribution_chain
             ? session.metadata.checkout_attribution_chain.split(',').filter(Boolean)
             : undefined,
+          experimentKey: session.metadata?.[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentKey],
+          experimentContextKey:
+            session.metadata?.[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentContextKey],
+          experimentArmId: session.metadata?.[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmId],
+          experimentArmKey: session.metadata?.[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmKey],
         },
         amplitudeOpts
       );
+
+      await this.recordCheckoutExperimentReward(session, amountCents);
 
       // Update user properties in Amplitude for subscription purchases
       // Note: subscription.handler.ts handles the primary $identify for subscriptions,
@@ -612,9 +670,16 @@ export class PaymentHandler {
         attributionChain: session.metadata?.checkout_attribution_chain
           ? session.metadata.checkout_attribution_chain.split(',').filter(Boolean)
           : undefined,
+        experimentKey: session.metadata?.[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentKey],
+        experimentContextKey:
+          session.metadata?.[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentContextKey],
+        experimentArmId: session.metadata?.[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmId],
+        experimentArmKey: session.metadata?.[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmKey],
       },
       amplitudeOpts
     );
+
+    await this.recordCheckoutExperimentReward(session, amountCents);
 
     await trackRevenue(
       {

@@ -100,6 +100,9 @@ const ALLOWED_EVENTS = [
   // Country paywall events
   'paywall_shown',
   'paywall_hit',
+  // Shared experiment platform events
+  'experiment_arm_assigned',
+  'experiment_reward_recorded',
 ] as const;
 
 const eventSchema = z.object({
@@ -574,6 +577,14 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
     test('should include country paywall events', () => {
       const paywallEvents = ['paywall_shown', 'paywall_hit'];
       for (const eventName of paywallEvents) {
+        const result = eventSchema.safeParse({ eventName });
+        expect(result.success).toBe(true);
+      }
+    });
+
+    test('allows experiment events', () => {
+      const experimentEvents = ['experiment_arm_assigned', 'experiment_reward_recorded'];
+      for (const eventName of experimentEvents) {
         const result = eventSchema.safeParse({ eventName });
         expect(result.success).toBe(true);
       }
