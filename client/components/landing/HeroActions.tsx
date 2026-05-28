@@ -1,5 +1,6 @@
 'use client';
 
+import { analytics } from '@client/analytics';
 import { useModalStore } from '@client/store/modalStore';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { ArrowRight, Sparkles } from 'lucide-react';
@@ -11,11 +12,28 @@ export function HeroActions(): JSX.Element {
 
   const config = getSubscriptionConfig();
   const hasTrialEnabled = config.plans.some(plan => plan.trial.enabled);
+  const handlePrimaryClick = () => {
+    analytics.track('hero_upload_cta_clicked', {
+      location: 'homepage_hero',
+      destination: 'register_modal',
+      copyVariant: hasTrialEnabled ? 'fix_images_free' : 'upscale_first_image',
+    });
+    openAuthModal('register');
+  };
+
+  const handleSignInClick = () => {
+    analytics.track('hero_upload_cta_clicked', {
+      location: 'homepage_hero',
+      destination: 'login_modal',
+      copyVariant: 'sign_in',
+    });
+    openAuthModal('login');
+  };
 
   return (
     <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
       <button
-        onClick={() => openAuthModal('register')}
+        onClick={handlePrimaryClick}
         className="group inline-flex items-center gap-2 px-8 py-4 text-white font-semibold rounded-xl transition-all duration-200 gradient-cta shine-effect hover:scale-[1.02] active:scale-[0.98]"
       >
         <Sparkles size={20} className="group-hover:rotate-12 transition-transform" />
@@ -23,7 +41,7 @@ export function HeroActions(): JSX.Element {
         <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
       </button>
       <button
-        onClick={() => openAuthModal('login')}
+        onClick={handleSignInClick}
         className="inline-flex items-center gap-2 px-8 py-4 glass-strong hover:bg-white/5 text-white font-semibold rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
       >
         {t('ctaSignIn')}

@@ -16,6 +16,58 @@ Maintenance rules:
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
 
+## 2026-05-26
+
+### Fix-Before-Pushing Six Ranking Pages
+
+Source: [fix-before-pushing-pages-deep-dive-2026-05-26.md](../reports/fix-before-pushing-pages-deep-dive-2026-05-26.md)
+
+Changes:
+
+- Repaired `/comparisons-expanded/ai-models-comparison` local pSEO metadata for 2026, fixed the broken meta description, added a top technical answer, and added a rendered model comparison table/technical model-family section.
+- Updated Supabase blog content and SERP metadata for `/blog/photoshop-upscale-image`, `/blog/sharpen-a-video`, `/blog/topaz-denoise-ai`, and `/blog/best-ai-image-enhancer` to match the report's first-screen intent fixes.
+- Updated Supabase blog content and SERP metadata for the report's non-2026-05-24 CTR rewrite candidates: `/blog/topaz-video-upscaler` and `/blog/upscale-image-for-print-300-dpi-guide`.
+- Added permanent redirects from `/blog/best-ai-image-quality-enhancer` to `/blog/best-ai-image-enhancer`, including locale-prefixed variants, to resolve the broad enhancer cluster without disturbing the free sharpener page.
+- Added homepage, tool-page, and relevant high-traffic blog internal links to the striking-distance pages from the report.
+- Added homepage analytics improvements: hero CTA click tracking plus `acquisition_page_type` and `is_acquisition_landing_page` page-view dimensions to separate auth/dashboard app-flow traffic from acquisition landing-page reporting.
+- Added CTR baseline tracking in [ctr-baselines-2026-05-26.md](../monitoring/ctr-baselines-2026-05-26.md) and queued changed URLs in the GSC request-indexing backlog.
+- Did not touch `/blog/best-free-ai-image-upscaler-2026-tested-compared`, per the report guardrail and newer positive CTR data.
+
+Validation:
+
+- Supabase SQL verification returned updated metadata and top-of-content blocks for the four edited blog posts.
+- Supabase SQL verification returned updated metadata and top-of-content blocks for the two additional CTR rewrite candidates.
+- Local code/data changes passed TypeScript, pSEO data validation, schema validation, formatting check, and production build.
+
+Follow-up:
+
+- After deploy, verify the new `/blog/best-ai-image-quality-enhancer` redirects in production.
+- After deploy, request indexing for the changed URLs listed in [gsc-request-indexing-backlog.md](./gsc-request-indexing-backlog.md).
+- Recheck CTR against [ctr-baselines-2026-05-26.md](../monitoring/ctr-baselines-2026-05-26.md) after the listed dates.
+- Monitor these repaired pages before adding new internal-link pushes; the report recommends waiting for CTR/engagement improvement.
+
+### GSC Growth Opportunity Report
+
+Source: [gsc-growth-opportunity-report-2026-05-26.md](../reports/gsc-growth-opportunity-report-2026-05-26.md)
+
+Changes:
+
+- Pulled fresh 28-day GSC data through 2026-05-23 and GA4 organic data through 2026-05-25.
+- Ran SEO growth synthesis and blog SEO audit to identify current GSC drivers, CTR leaks, conversion/tracking issues, and ranking opportunities.
+- Added a backlog-aware report note that the 2026-05-24 metadata pass is not yet measurable in the current GSC window.
+- Added focused deep-dive report for fix-before-pushing pages: [fix-before-pushing-pages-deep-dive-2026-05-26.md](../reports/fix-before-pushing-pages-deep-dive-2026-05-26.md).
+- Rechecked the free AI upscaler cluster against production redirects and GSC query/page splits; softened the report from "consolidate now" to "maintain existing consolidation and avoid touching the winning canonical page."
+
+Validation:
+
+- GSC export, GA4 export, SEO synthesis, and blog audit completed successfully.
+- Cross-checked recent SEO changes backlog, GSC request-indexing backlog, and blog changelog before finalizing the report.
+- Production redirect checks confirmed retired URLs redirect as expected.
+
+Follow-up:
+
+- Re-run CTR tracking after 2026-06-07 for the 2026-05-24 metadata batch before making another metadata pass on the same URLs.
+
 ## 2026-05-25
 
 ### Blog Growth Maintenance: Opportunities + Performance Monitor

@@ -18,6 +18,13 @@ const VALID_ROUTES = new Set([
   '/dashboard',
 ]);
 
+// These canonical blog URLs are rendered from Supabase content instead of content/blog/*.mdx.
+const SUPABASE_BLOG_SLUGS = new Set([
+  'best-ai-upscaler',
+  'best-ai-image-quality-enhancer-free',
+  'upscale-image-for-print-300-dpi-guide',
+]);
+
 function getAppRoutes(): Set<string> {
   const routes = new Set(VALID_ROUTES);
   const appDir = path.join(process.cwd(), 'app');
@@ -136,7 +143,7 @@ function validateInternalLinks(markdown: string, slug: string, allSlugs: string[
     // Check blog post links
     if (cleanUrl.startsWith('/blog/')) {
       const linkedSlug = cleanUrl.replace('/blog/', '');
-      if (linkedSlug && !allSlugs.includes(linkedSlug)) {
+      if (linkedSlug && !allSlugs.includes(linkedSlug) && !SUPABASE_BLOG_SLUGS.has(linkedSlug)) {
         errors.push(`Broken blog link: [${linkText}](${url}) → post "${linkedSlug}" not found`);
       }
       continue;

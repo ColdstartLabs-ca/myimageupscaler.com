@@ -63,6 +63,44 @@ export const POPULAR_TOOLS: ReadonlyArray<{ href: string; label: string; desc: s
   },
 ] as const;
 
+const STRIKING_DISTANCE_GUIDES: ReadonlyArray<{ href: string; label: string; desc: string }> = [
+  {
+    href: '/blog/best-ai-upscaler',
+    label: 'Top AI image upscaler websites',
+    desc: 'Compare quality, speed, limits, and artifacts before choosing a tool.',
+  },
+  {
+    href: '/blog/topaz-video-upscaler',
+    label: 'Topaz Video AI 2026 update',
+    desc: 'See Topaz video upscaling features, pricing, and alternatives.',
+  },
+  {
+    href: '/blog/free-ai-upscaler-no-watermark',
+    label: 'Free AI upscaler with no watermark',
+    desc: 'Find clean export options without hidden watermark friction.',
+  },
+  {
+    href: '/blog/fix-blurry-photos-ai-methods-guide',
+    label: 'Fix blurry photos with AI',
+    desc: 'Choose the right blur, sharpness, and enhancement workflow.',
+  },
+  {
+    href: '/blog/best-ai-image-quality-enhancer-free',
+    label: 'Best free AI image sharpener',
+    desc: 'Compare free sharpeners for blur, noise, and realistic detail.',
+  },
+  {
+    href: '/blog/upscale-image-for-print-300-dpi-guide',
+    label: 'Upscale images to 300 DPI for print',
+    desc: 'Calculate print pixels and avoid blurry posters or photos.',
+  },
+  {
+    href: '/scale/upscale-16x',
+    label: 'Upscale images 16x',
+    desc: 'Use high-scale enlargement when your source image is very small.',
+  },
+] as const;
+
 // Lazy load below-the-fold sections to reduce initial JS bundle
 // These sections will only load when user scrolls near them
 const Features = lazy(() => import('@client/components/features/landing/Features'));
@@ -150,6 +188,43 @@ export function HomePageClient(): JSX.Element {
                   </p>
                   <p className="text-sm text-text-secondary mt-1 font-light leading-snug">
                     {tool.desc}
+                  </p>
+                </div>
+                <ChevronRight
+                  size={18}
+                  className="text-text-muted shrink-0 mt-0.5 group-hover:text-accent group-hover:translate-x-1 transition-all duration-200"
+                />
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 relative">
+        <AmbientBackground variant="section" />
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="mb-8">
+            <h2 className="text-2xl sm:text-3xl font-black text-white mb-3">
+              Popular Image Upscaling Guides
+            </h2>
+            <p className="text-text-secondary max-w-3xl font-light">
+              Practical comparisons and workflows for choosing the right upscaling, sharpening, and
+              print-prep path.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {STRIKING_DISTANCE_GUIDES.map(guide => (
+              <Link
+                key={guide.href}
+                href={guide.href}
+                className="group glass-card-2025 p-5 flex items-start gap-4 hover:border-accent/40 transition-all duration-300"
+              >
+                <div className="flex-1 min-w-0">
+                  <p className="text-base font-bold text-white group-hover:text-accent transition-colors">
+                    {guide.label}
+                  </p>
+                  <p className="text-sm text-text-secondary mt-1 font-light leading-snug">
+                    {guide.desc}
                   </p>
                 </div>
                 <ChevronRight

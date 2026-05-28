@@ -89,6 +89,8 @@ const ALLOWED_EVENTS = [
   'pseo_scroll_depth',
   'pseo_faq_expanded',
   'pseo_internal_link_clicked',
+  // Homepage activation events
+  'hero_upload_cta_clicked',
   // Checkout funnel events (Phase 1 - Checkout Friction Investigation)
   'purchase_modal_opened',
   'checkout_direct_started',

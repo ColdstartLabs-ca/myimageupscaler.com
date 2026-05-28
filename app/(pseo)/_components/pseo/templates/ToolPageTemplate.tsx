@@ -11,6 +11,7 @@ import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
 import type { IToolPage } from '@/lib/seo/pseo-types';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
 import { BeforeAfterSlider } from '@client/components/ui/BeforeAfterSlider';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { ReactElement } from 'react';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
@@ -32,6 +33,16 @@ interface IToolPageTemplateProps {
   locale?: string;
   relatedPages?: IRelatedPage[];
 }
+
+const HIGH_OPPORTUNITY_GUIDES: ReadonlyArray<{ href: string; label: string }> = [
+  { href: '/blog/best-ai-upscaler', label: 'Top AI image upscaler websites' },
+  { href: '/blog/free-ai-upscaler-no-watermark', label: 'Free AI upscaler with no watermark' },
+  { href: '/blog/best-ai-image-quality-enhancer-free', label: 'Free AI image sharpener' },
+  { href: '/blog/fix-blurry-photos-ai-methods-guide', label: 'Fix blurry photos with AI' },
+  { href: '/blog/upscale-image-for-print-300-dpi-guide', label: 'Upscale to 300 DPI for print' },
+  { href: '/blog/topaz-video-upscaler', label: 'Topaz Video AI 2026 update' },
+  { href: '/scale/upscale-16x', label: 'Upscale images 16x' },
+] as const;
 
 export function ToolPageTemplate({
   data,
@@ -207,6 +218,23 @@ export function ToolPageTemplate({
               />
             </div>
           )}
+
+          <div className="py-8">
+            <section className="rounded-lg border border-border bg-surface/60 p-6">
+              <h2 className="text-xl font-bold text-primary mb-4">More Upscaling Guides</h2>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {HIGH_OPPORTUNITY_GUIDES.map(guide => (
+                  <Link
+                    key={guide.href}
+                    href={guide.href}
+                    className="text-sm font-medium text-accent hover:underline"
+                  >
+                    {guide.label}
+                  </Link>
+                ))}
+              </div>
+            </section>
+          </div>
 
           {/* FAQ */}
           <div className="py-12">

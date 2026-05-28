@@ -6,10 +6,10 @@ Keep the latest 100 rows here. Move older rows to `docs/seo/reddit-post-log-arch
 
 ## Summary
 
-- Last updated: 2026-05-26
+- Last updated: 2026-05-27
 - Recent self-links posted: 1
 - Recent no-link participation posts: 2
-- Pending recommended self-links: 11
+- Pending recommended self-links: 12
 - Pending recommended no-link participation posts: 105
 - Next recommended action: post no-link recommendations first; only use the recommended link reply after enough no-link participation is posted.
 
@@ -116,7 +116,8 @@ Keep the latest 100 rows here. Move older rows to `docs/seo/reddit-post-log-arch
 | 2026-05-26 |             | recommended | r/photography           | https://www.reddit.com/r/photography/comments/1nb3xdh/how_come_photoshop_is_generally_considered_more/            | How come Photoshop is generally considered more “real” than AI upscaling?                                                                            | https://myimageupscaler.com/blog/how-to-upscale-images-without-losing-quality     | no link                                  | no        | AI detail-preservation discussion; helpful no-link conceptual reply.                                       |
 | 2026-05-26 |             | recommended | r/AskPhotography        | https://www.reddit.com/r/AskPhotography/comments/1pd110i/ai_denoise_what_are_your_non_cloud_based/                 | AI denoise - what are your non cloud based recommendations?                                                                                          | https://myimageupscaler.com/blog/topaz-denoise-ai                                 | no link                                  | no        | OP requires non-cloud/local; MIU is not a fit for a link.                                                  |
 | 2026-05-26 |             | recommended | r/Vivo                  | https://www.reddit.com/r/Vivo/comments/1toa12y/ai_image_upscaling/                                                  | Ai Image Upscaling                                                                                                                                   | https://myimageupscaler.com/blog/how-to-upscale-images-without-losing-quality     | no link                                  | no        | Participation reply about AI detector unreliability and phone camera processing.                           |
-| 2026-05-26 |             | recommended | r/UpscaleHub            | https://www.reddit.com/r/UpscaleHub/comments/1tnzvb2/whats_your_goto_software_for_upscaling_photos_for/            | What’s your go-to software for upscaling photos for printing?                                                                                        | https://myimageupscaler.com/blog/best-ai-upscaler                                 | include link after no-link replies above | yes       | Direct upscaling software discussion; transparent MIU disclosure included after no-link participation.      |
+|| 2026-05-26 |             | recommended | r/UpscaleHub            | https://www.reddit.com/r/UpscaleHub/comments/1tnzvb2/whats_your_goto_software_for_upscaling_photos_for/            | What's your go-to software for upscaling photos for printing?                                                                                        | https://myimageupscaler.com/blog/best-ai-upscaler                                 | include link after no-link replies above | yes       | Direct upscaling software discussion; transparent MIU disclosure included after no-link participation.      |
+|| 2026-05-27 |             | recommended | r/midjourney            | https://www.reddit.com/r/midjourney/comments/1q65mda/best_ai_image_upscaler_for_midjourney/                         | Best AI Image Upscaler for Midjourney?                                                                                                               | https://myimageupscaler.com/blog/how-to-upscale-midjourney-images-for-print      | include link                             | yes       | Direct-demand: OP explicitly asks for upscaler for Midjourney renders. Transparent MIU disclosure.          |
 
 ## Recent Posted Copy
 

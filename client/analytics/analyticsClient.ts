@@ -320,11 +320,21 @@ function buildPageViewProperties(
   properties?: Record<string, unknown>,
   referralSource?: IReferralSource | null
 ): Record<string, unknown> {
+  const pathname = path.split('?')[0] || '/';
+  const isAuthOrDashboard =
+    pathname === '/auth/callback' ||
+    pathname.endsWith('/auth/callback') ||
+    pathname === '/dashboard' ||
+    pathname.includes('/dashboard/');
+  const acquisitionPageType = isAuthOrDashboard ? 'app_flow' : 'acquisition';
+
   return {
     path,
     referrer: typeof document === 'undefined' ? undefined : document.referrer || undefined,
     referral_source: referralSource || undefined,
     entry_page: getEntryPage() || path,
+    acquisition_page_type: acquisitionPageType,
+    is_acquisition_landing_page: acquisitionPageType === 'acquisition',
     ...getCurrentUtmProperties(),
     ...properties,
   };

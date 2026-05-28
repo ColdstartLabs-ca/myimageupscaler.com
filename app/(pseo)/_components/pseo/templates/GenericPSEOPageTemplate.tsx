@@ -41,6 +41,159 @@ interface IGenericPSEOPageTemplateProps {
 
 const BASE_URL = clientEnv.BASE_URL;
 
+interface ITechnicalComparisonRow {
+  model: string;
+  bestUseCase: string;
+  speed: string;
+  artifactRisk: string;
+  availability: string;
+}
+
+interface IModelCategory {
+  category: string;
+  description?: string;
+  models?: Array<{
+    name?: string;
+    year?: string;
+    architecture?: string;
+    focus?: string;
+    strengths?: string[];
+    weaknesses?: string[];
+    bestUseCases?: string[];
+    bestFor?: string[];
+  }>;
+}
+
+function hasTechnicalComparisonRows(data: PSEOPage): data is PSEOPage & {
+  technicalComparisonRows: ITechnicalComparisonRow[];
+} {
+  return (
+    'technicalComparisonRows' in data &&
+    Array.isArray(data.technicalComparisonRows) &&
+    data.technicalComparisonRows.length > 0
+  );
+}
+
+function hasModelCategories(data: PSEOPage): data is PSEOPage & {
+  modelCategories: IModelCategory[];
+} {
+  return (
+    'modelCategories' in data &&
+    Array.isArray(data.modelCategories) &&
+    data.modelCategories.length > 0
+  );
+}
+
+function TechnicalComparisonSection({ data }: { data: PSEOPage }): React.ReactElement | null {
+  const answer =
+    'technicalAnswer' in data ? (data.technicalAnswer as string | undefined) : undefined;
+  const ctaText =
+    'technicalCtaText' in data ? (data.technicalCtaText as string | undefined) : undefined;
+  const ctaUrl =
+    'technicalCtaUrl' in data ? (data.technicalCtaUrl as string | undefined) : undefined;
+
+  if (!answer && !hasTechnicalComparisonRows(data) && !hasModelCategories(data)) {
+    return null;
+  }
+
+  return (
+    <section className="py-12 space-y-8">
+      {answer && (
+        <div className="rounded-lg border border-accent/30 bg-accent/10 p-6">
+          <h2 className="font-display text-2xl font-bold text-white mb-3">
+            ESRGAN vs Real-ESRGAN vs SwinIR vs Diffusion Upscalers
+          </h2>
+          <p className="text-text-secondary leading-relaxed">{answer}</p>
+        </div>
+      )}
+
+      {hasTechnicalComparisonRows(data) && (
+        <div>
+          <h2 className="font-display text-2xl font-bold text-white mb-4">
+            Model Comparison at a Glance
+          </h2>
+          <div className="overflow-x-auto rounded-lg border border-border">
+            <table className="min-w-full border-collapse">
+              <thead className="bg-surface-light">
+                <tr>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-primary">Model</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-primary">
+                    Best Use Case
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-primary">Speed</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-primary">
+                    Artifact Risk
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-primary">
+                    Availability
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.technicalComparisonRows.map(row => (
+                  <tr key={row.model} className="border-t border-border">
+                    <td className="px-4 py-3 text-sm font-medium text-white">{row.model}</td>
+                    <td className="px-4 py-3 text-sm text-text-secondary">{row.bestUseCase}</td>
+                    <td className="px-4 py-3 text-sm text-text-secondary">{row.speed}</td>
+                    <td className="px-4 py-3 text-sm text-text-secondary">{row.artifactRisk}</td>
+                    <td className="px-4 py-3 text-sm text-text-secondary">{row.availability}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {hasModelCategories(data) && (
+        <div>
+          <h2 className="font-display text-2xl font-bold text-white mb-4">Model Families</h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            {data.modelCategories.slice(0, 4).map(category => (
+              <section key={category.category} className="rounded-lg border border-border p-5">
+                <h3 className="font-display text-xl font-semibold text-white mb-2">
+                  {category.category}
+                </h3>
+                {category.description && (
+                  <p className="text-sm text-text-secondary mb-4">{category.description}</p>
+                )}
+                <ul className="space-y-3">
+                  {(category.models || []).slice(0, 3).map(model => (
+                    <li key={model.name} className="text-sm text-text-secondary">
+                      <strong className="text-primary">{model.name}</strong>
+                      {model.architecture && ` - ${model.architecture}`}
+                      {model.focus && ` - ${model.focus}`}
+                      {(model.bestUseCases || model.bestFor) && (
+                        <span className="block mt-1">
+                          Best for: {(model.bestUseCases || model.bestFor || []).join(', ')}
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {ctaText && ctaUrl && (
+        <div className="rounded-lg border border-border bg-surface-light p-6">
+          <p className="text-text-secondary mb-4">
+            If you do not want to choose a model manually, use the automatic image upscaler.
+          </p>
+          <a
+            href={ctaUrl}
+            className="inline-flex items-center justify-center rounded-lg bg-accent px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent/90"
+          >
+            {ctaText}
+          </a>
+        </div>
+      )}
+    </section>
+  );
+}
+
 export function GenericPSEOPageTemplate({
   data,
   relatedPages = [],
@@ -75,7 +228,7 @@ export function GenericPSEOPageTemplate({
   ];
 
   return (
-    <main className="min-h-screen bg-main relative overflow-x-hidden">
+    <main className="min-h-screen bg-main relative overflow-x-clip">
       <PSEOPageTracker
         pageType={category as unknown as Parameters<typeof PSEOPageTracker>[0]['pageType']}
         slug={data.slug}
@@ -108,6 +261,8 @@ export function GenericPSEOPageTemplate({
 
       <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
         <article>
+          <TechnicalComparisonSection data={data} />
+
           {hasFeatures && (
             <div className="py-12">
               <FeaturesSection features={(data as { features: IFeature[] }).features} />

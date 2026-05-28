@@ -164,6 +164,11 @@ const nextConfig = {
         destination: '/blog/ai-image-upscaling-vs-sharpening-explained',
         permanent: true,
       },
+      {
+        source: '/blog/best-ai-image-quality-enhancer',
+        destination: '/blog/best-ai-image-enhancer',
+        permanent: true,
+      },
       // Locale-prefixed variants for the same redirects
       {
         source: '/:locale(en|fr|de|es|it|ja|pt)/blog/best-free-ai-image-upscaler-tools-2026',
@@ -193,6 +198,11 @@ const nextConfig = {
       {
         source: '/:locale(en|fr|de|es|it|ja|pt)/blog/ai-vs-traditional-image-upscaling',
         destination: '/:locale/blog/ai-image-upscaling-vs-sharpening-explained',
+        permanent: true,
+      },
+      {
+        source: '/:locale(en|fr|de|es|it|ja|pt)/blog/best-ai-image-quality-enhancer',
+        destination: '/:locale/blog/best-ai-image-enhancer',
         permanent: true,
       },
     ];

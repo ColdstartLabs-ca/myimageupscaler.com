@@ -34,6 +34,7 @@ export const GA4_EVENT_MAP: Partial<Record<IAnalyticsEventName, string>> = {
   image_uploaded: 'select_content',
   image_upscale_started: 'select_content',
   upscale_completed: 'generate_lead',
+  hero_upload_cta_clicked: 'select_content',
   pricing_page_viewed: 'view_item_list',
   page_view: 'page_view',
   upgrade_prompt_clicked: 'select_item',
