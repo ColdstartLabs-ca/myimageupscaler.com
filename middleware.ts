@@ -473,6 +473,7 @@ async function handleLocaleRouting(req: NextRequest): Promise<NextResponse | nul
     pathname.startsWith('/content') ||
     pathname.startsWith('/ai-features') ||
     // Expanded categories
+    pathname === '/comparisons-expanded' ||
     pathname.startsWith('/comparisons-expanded/') ||
     pathname.startsWith('/personas-expanded/') ||
     pathname.startsWith('/technical-guides/') ||
