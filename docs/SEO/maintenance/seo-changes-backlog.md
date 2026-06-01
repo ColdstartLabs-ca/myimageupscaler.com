@@ -16,6 +16,31 @@ Maintenance rules:
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
 
+## 2026-06-01
+
+### Blog Growth Maintenance: Opportunities + Performance Monitor
+
+Source: [blog-opportunities-publisher-2026-06-01.md](../reports/blog-opportunities-publisher-2026-06-01.md), [blog-performance-recovery-2026-06-01.md](../reports/blog-performance-recovery-2026-06-01.md)
+
+Changes:
+
+- Ran the blog opportunities publisher against 90-day GSC query+page data through 2026-05-29 and selected no new publish because the strongest candidates duplicate existing canonical blog/tool ownership or recent metadata tests.
+- Ran the blog performance monitor against 14-day blog GSC comparison windows: previous 2026-05-02–2026-05-15 and current 2026-05-16–2026-05-29.
+- Confirmed no immediate `blog-edit` handoff was warranted because the main action candidates were updated on 2026-05-24 and/or 2026-05-26 and are still inside GSC lag.
+
+Validation:
+
+- GSC exports completed for 90-day opportunity discovery and 14-day blog monitoring.
+- Anti-cannibalization gate blocked duplicate publishing for best-free-upscaler, AI upscaling vs sharpening, sharpener/enhancer, Topaz, print/DPI, and pixelated-photo intents.
+- Production redirect checks confirmed retired blog URLs still return `308` to their canonical destinations.
+- Reports saved under `docs/SEO/reports/`.
+
+Follow-up:
+
+- Re-run after 2026-06-07 for the best-free-upscaler and AI-upscaling-vs-sharpening zero-click rows.
+- Recheck Topaz/fix-blurry rows after 2026-06-10, once 2026-05-26 changes have more complete GSC days.
+- Complete the 10 unchecked manual request-indexing items in [gsc-request-indexing-backlog.md](./gsc-request-indexing-backlog.md).
+
 ## 2026-05-26
 
 ### Fix-Before-Pushing Six Ranking Pages
