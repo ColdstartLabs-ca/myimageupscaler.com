@@ -6,6 +6,26 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 PROJECT_ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd -P)"
 
 cd "$PROJECT_ROOT"
+
+if [[ -f "$PROJECT_ROOT/.nvmrc" ]]; then
+  export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+  if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+    # Ensure Next runs on the repo's supported Node version even if the
+    # invoking shell is still on an older default.
+    # shellcheck source=/dev/null
+    source "$NVM_DIR/nvm.sh"
+    nvm use --silent
+  fi
+fi
+
+if command -v nvm >/dev/null 2>&1 && [[ -f "$PROJECT_ROOT/.nvmrc" ]]; then
+  NODE_BIN="$(nvm which "$(cat "$PROJECT_ROOT/.nvmrc")")"
+  export PATH="$(dirname "$NODE_BIN"):$PATH"
+else
+  NODE_BIN="$(command -v node)"
+fi
+NEXT_BIN="$PROJECT_ROOT/node_modules/next/dist/bin/next"
+
 source ./scripts/load-env.sh
 
 WITH_WEBHOOKS=true
@@ -17,7 +37,7 @@ PREFERRED_PORT="${PORT:-${NEXT_DEV_PORT:-3000}}"
 
 find_free_port() {
   local start_port="$1"
-  node - "$start_port" <<'EOF'
+  "$NODE_BIN" - "$start_port" <<'EOF'
 const net = require('net');
 
 const startPort = Number(process.argv[2]);
@@ -75,8 +95,8 @@ if [[ "$WITH_WEBHOOKS" == true ]]; then
   concurrently \
     -n next,stripe \
     -c cyan,yellow \
-    "next dev --port $DEV_PORT" \
+    "$NODE_BIN $NEXT_BIN dev --port $DEV_PORT" \
     "stripe listen --api-key $STRIPE_SECRET_KEY --forward-to localhost:$DEV_PORT/api/webhooks/stripe"
 else
-  exec next dev --port "$DEV_PORT"
+  exec "$NODE_BIN" "$NEXT_BIN" dev --port "$DEV_PORT"
 fi

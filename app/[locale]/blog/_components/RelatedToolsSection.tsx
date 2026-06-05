@@ -10,9 +10,13 @@ import Link from 'next/link';
 
 interface IRelatedToolsSectionProps {
   blogSlug: string;
+  className?: string;
 }
 
-export async function CompactToolsBanner({ blogSlug }: IRelatedToolsSectionProps) {
+export async function CompactToolsBanner({
+  blogSlug,
+  className = 'mb-10',
+}: IRelatedToolsSectionProps) {
   const tools = await getToolsForBlogPost(blogSlug);
   if (tools.length === 0) return null;
   const tool = tools[0];
@@ -20,7 +24,7 @@ export async function CompactToolsBanner({ blogSlug }: IRelatedToolsSectionProps
   return (
     <Link
       href={`/tools/${tool.slug}`}
-      className="group not-prose mb-10 flex items-center justify-between gap-4 rounded-2xl border border-accent/40 bg-gradient-to-r from-accent/15 via-accent/5 to-transparent p-4 shadow-lg shadow-accent/10 hover:border-accent/70 hover:shadow-accent/20 transition-all duration-300"
+      className={`group not-prose flex items-center justify-between gap-4 rounded-2xl border border-accent/40 bg-gradient-to-r from-accent/15 via-accent/5 to-transparent p-4 shadow-lg shadow-accent/10 hover:border-accent/70 hover:shadow-accent/20 transition-all duration-300 ${className}`}
     >
       <div className="flex items-center gap-3 min-w-0">
         <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-secondary flex items-center justify-center shadow-md shadow-accent/30">

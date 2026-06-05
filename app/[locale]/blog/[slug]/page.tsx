@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
+import { getTranslations } from 'next-intl/server';
 import {
   getPublishedPostBySlug,
   getAllPublishedPosts,
@@ -185,6 +186,7 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
 export default async function BlogPostPage({ params }: IPageProps) {
   const { slug } = await params;
   const post = await getPublishedPostBySlug(slug);
+  const ctaT = await getTranslations('blog.cta');
 
   if (!post) {
     notFound();
@@ -277,6 +279,24 @@ export default async function BlogPostPage({ params }: IPageProps) {
               {post.description}
             </p>
 
+            {/* Above-the-fold CTAs */}
+            <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Link
+                href="/?signup=1"
+                className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-bold text-white shadow-lg shadow-accent/25 gradient-cta hover:opacity-90 transition-all hover:scale-[1.02] active:scale-[0.98] group"
+              >
+                <Sparkles className="h-5 w-5" />
+                {ctaT('try.button')}
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+              <Link
+                href="/pricing"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-accent/40 bg-accent/10 px-6 py-3 text-sm font-semibold text-accent transition-all hover:border-accent/70 hover:bg-accent/15"
+              >
+                {ctaT('secondaryButton')}
+              </Link>
+            </div>
+
             {/* Author & Date */}
             <p className="text-sm text-text-secondary">
               {clientEnv.APP_NAME} Team &middot;{' '}
@@ -300,6 +320,8 @@ export default async function BlogPostPage({ params }: IPageProps) {
                 ))}
               </div>
             )}
+
+            <CompactToolsBanner blogSlug={slug} className="mt-8 mb-0" />
           </div>
         </header>
 
