@@ -2,15 +2,21 @@
 
 import React from 'react';
 import { BeforeAfterSlider } from '../ui/BeforeAfterSlider';
+import { HERO_COMPARISON_IMAGES } from './heroAssets';
 
 export const HeroBeforeAfter: React.FC = () => {
   return (
     <BeforeAfterSlider
-      beforeUrl="/before-after/bird-before-v2.webp"
-      afterUrl="/before-after/bird-after-v2.webp"
-      beforeLabel="Original"
-      afterLabel="Enhanced"
-      className="aspect-[16/10] rounded-xl h-full"
+      beforeUrl={HERO_COMPARISON_IMAGES.before}
+      afterUrl={HERO_COMPARISON_IMAGES.after}
+      beforeLabel="Before"
+      afterLabel="After"
+      beforeMeta="800 x 600"
+      afterMeta="3200 x 2400"
+      badgeLabel="4x Upscale"
+      labelPosition="top"
+      className="aspect-[4/3] rounded-xl h-full"
+      aspectRatio="4/3"
     />
   );
 };

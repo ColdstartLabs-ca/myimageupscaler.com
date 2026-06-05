@@ -9,6 +9,10 @@ export interface IBeforeAfterSliderProps {
   afterUrl: string;
   beforeLabel?: string;
   afterLabel?: string;
+  beforeMeta?: string;
+  afterMeta?: string;
+  badgeLabel?: string;
+  labelPosition?: 'top' | 'bottom';
   className?: string;
   aspectRatio?: string;
 }
@@ -18,6 +22,10 @@ export const BeforeAfterSlider: React.FC<IBeforeAfterSliderProps> = ({
   afterUrl,
   beforeLabel = 'Before',
   afterLabel = 'After',
+  beforeMeta,
+  afterMeta,
+  badgeLabel,
+  labelPosition = 'bottom',
   className = '',
   aspectRatio = '16/9',
 }) => {
@@ -118,12 +126,27 @@ export const BeforeAfterSlider: React.FC<IBeforeAfterSliderProps> = ({
       </div>
 
       {/* Labels */}
-      <div className="absolute bottom-3 left-3 glass-strong text-white text-xs px-3 py-1.5 rounded-lg pointer-events-none font-medium">
-        {beforeLabel}
+      <div
+        className={`absolute left-3 glass-strong text-white text-xs px-3 py-1.5 rounded-lg pointer-events-none font-medium ${
+          labelPosition === 'top' ? 'top-3' : 'bottom-3'
+        }`}
+      >
+        <div>{beforeLabel}</div>
+        {beforeMeta && <div className="mt-1 font-normal text-white/90">{beforeMeta}</div>}
       </div>
-      <div className="absolute bottom-3 right-3 gradient-cta text-white text-xs px-3 py-1.5 rounded-lg pointer-events-none font-medium shadow-lg shadow-accent/20">
-        {afterLabel}
+      <div
+        className={`absolute right-3 text-white text-xs px-3 py-1.5 rounded-lg pointer-events-none font-medium shadow-lg ${
+          labelPosition === 'top' ? 'top-3 glass-strong' : 'bottom-3 gradient-cta shadow-accent/20'
+        }`}
+      >
+        <div>{afterLabel}</div>
+        {afterMeta && <div className="mt-1 font-normal text-white/90">{afterMeta}</div>}
       </div>
+      {badgeLabel && (
+        <div className="absolute bottom-4 right-4 glass-strong text-white text-xs px-3 py-1.5 rounded-lg pointer-events-none font-semibold">
+          {badgeLabel}
+        </div>
+      )}
     </div>
   );
 };

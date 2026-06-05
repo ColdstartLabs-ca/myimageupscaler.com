@@ -2,10 +2,11 @@ import { AmbientBackground } from '@client/components/landing/AmbientBackground'
 import { ChatGPTBadge } from '@client/components/landing/ChatGPTBadge';
 import { HeroActions } from '@client/components/landing/HeroActions';
 import { HeroBeforeAfter } from '@client/components/landing/HeroBeforeAfter';
+import { HERO_COMPARISON_IMAGES } from '@client/components/landing/heroAssets';
 import { getFreeCreditsForTier, getRegionTier } from '@/lib/anti-freeloader/region-classifier';
 import { clientEnv } from '@shared/config/env';
 import type { IReferralSource } from '@server/analytics/types';
-import { Layers, Maximize2, Sparkles, User, Wand2 } from 'lucide-react';
+import { Check, Layers, Maximize2, Sparkles, User, Wand2 } from 'lucide-react';
 import { headers } from 'next/headers';
 import { getTranslations } from 'next-intl/server';
 
@@ -30,82 +31,100 @@ export async function HeroSection(): Promise<JSX.Element> {
   // Get referral source from middleware header (server-rendered, zero CLS)
   const referralSource = headersList.get('x-referral-source') as IReferralSource | null;
   const showAiBadge = isBadgeSource(referralSource);
+  const heroTrustItems = [
+    { label: 'Free to start', icon: <Check size={18} /> },
+    { label: 'No watermarks', icon: <Check size={18} /> },
+    { label: 'Instant results', icon: <Check size={18} /> },
+  ];
 
   return (
-    <section className="relative pt-20 pb-16 lg:pt-32 lg:pb-24 hero-gradient-2025 z-20 animate-hero-fade-in">
+    <section className="relative overflow-hidden pt-12 pb-12 lg:pt-12 lg:pb-16 hero-gradient-2025 z-20 animate-hero-fade-in">
       <AmbientBackground variant="hero" />
 
-      <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8 relative z-10">
+      <div className="mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-8 relative z-10">
         {/* AI Search Badge - shown for ChatGPT/Perplexity/Claude/SGE referrals */}
         {showAiBadge && (
-          <div className="mb-4">
+          <div className="mb-5 lg:ml-1">
             <ChatGPTBadge source={referralSource} />
           </div>
         )}
 
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-strong text-xs font-semibold text-accent mb-8 cursor-default group">
-          <Sparkles size={14} className="text-secondary animate-pulse" />
-          <span>{t('badge')}</span>
-          <span className="w-px h-3 bg-white/10 mx-1"></span>
-          <span className="text-muted-foreground">
-            {t('badgeVersion', { year: new Date().getFullYear() })}
-          </span>
-        </div>
-
-        <h1 className="text-6xl font-black tracking-tight text-white sm:text-7xl md:text-8xl mb-6 max-w-5xl mx-auto leading-[1.05]">
-          {t('heroTitle')} <span className="gradient-text-primary">{t('heroTitleHighlight')}</span>
-        </h1>
-
-        <h2 className="mx-auto mt-6 max-w-2xl text-2xl sm:text-3xl text-text-secondary leading-relaxed font-semibold">
-          {t('heroSubtitle')}
-          <br />
-          <span className="text-white">{t('heroSubtitleHighlight')}</span>
-        </h2>
-
-        <p className="mx-auto mt-6 max-w-2xl text-xl sm:text-2xl text-text-secondary leading-relaxed font-light">
-          {t('heroDescription')}{' '}
-          <span className="text-white font-medium">{t('heroDescriptionHighlight')}</span>
-          {t('heroDescriptionMiddle')}{' '}
-          <span className="relative text-white font-bold decoration-secondary underline decoration-2 underline-offset-4">
-            {t('heroDescriptionTextSharp')}
-          </span>
-          .
-        </p>
-
-        {/* CTA Buttons — client boundary */}
-        <HeroActions />
-
-        <p className="mt-4 text-sm text-text-muted-aa">{t('ctaSubtext', { freeCredits })}</p>
-
-        {/* Before/After Slider — LCP-optimized loading */}
-        <div className="mt-16">
-          {/*
-            Server renders a static "after" image so the LCP element is in the initial HTML.
-            The client-side interactive slider overlays this image after hydration.
-            Without this, the slider (client component) only renders after JS runs → LCP 8s.
-            With this, the LCP element is visible immediately → LCP target <3s.
-          */}
-          <div className="glass-card-2025 p-2 animated-border-violet rounded-2xl max-w-3xl mx-auto relative">
-            {/* Static "after" image: server-rendered LCP anchor */}
-            <div className="aspect-[16/10] rounded-xl overflow-hidden">
-              <img
-                src="/before-after/bird-after-v2.webp"
-                alt="AI-enhanced bird photo after upscaling"
-                fetchPriority="high"
-                decoding="async"
-                className="w-full h-full object-cover rounded-xl"
-              />
+        <div className="grid items-center gap-10 lg:grid-cols-[590px_minmax(0,1fr)] lg:gap-16">
+          <div className="text-left">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-strong text-xs font-semibold text-accent mb-8 cursor-default group">
+              <Sparkles size={14} className="text-secondary animate-pulse" />
+              <span>{t('badge')}</span>
+              <span className="w-px h-3 bg-white/10 mx-1"></span>
+              <span className="text-muted-foreground">
+                {t('badgeVersion', { year: new Date().getFullYear() })}
+              </span>
             </div>
-            {/* Interactive slider: absolutely overlays the static image after hydration */}
-            <div className="absolute inset-0 p-2">
-              <HeroBeforeAfter />
+
+            <h1 className="text-[2.75rem] font-black tracking-tight text-white sm:text-6xl lg:text-[3.8rem] leading-[1.08]">
+              {t('heroTitle')}{' '}
+              <span className="mt-3 block gradient-text-primary">{t('heroTitleHighlight')}</span>
+            </h1>
+
+            <h2 className="mt-6 max-w-xl text-2xl sm:text-3xl text-text-secondary leading-relaxed font-semibold">
+              {t('heroSubtitle')}
+              <br />
+              <span className="text-white">{t('heroSubtitleHighlight')}</span>
+            </h2>
+
+            <p className="mt-7 max-w-xl text-lg sm:text-xl text-text-secondary leading-relaxed font-light">
+              {t('heroDescription')}{' '}
+              <span className="text-white font-medium">{t('heroDescriptionHighlight')}</span>
+              {t('heroDescriptionMiddle')}{' '}
+              <span className="relative text-white font-bold decoration-secondary underline decoration-2 underline-offset-4">
+                {t('heroDescriptionTextSharp')}
+              </span>
+              .
+            </p>
+
+            <div className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-3 text-sm sm:text-base text-text-secondary">
+              {heroTrustItems.map(item => (
+                <div key={item.label} className="flex items-center gap-2">
+                  <span className="text-accent">{item.icon}</span>
+                  <span>{item.label}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="[&>div]:justify-start">
+              <HeroActions />
+            </div>
+
+            <p className="mt-4 flex items-center gap-2 text-sm text-text-muted-aa">
+              <Check size={17} className="text-accent" />
+              {t('ctaSubtext', { freeCredits })}
+            </p>
+          </div>
+
+          {/* Before/After Slider - LCP-optimized loading */}
+          <div className="relative">
+            {/*
+              Server renders a static "after" image so the LCP element is in the initial HTML.
+              The client-side interactive slider overlays this image after hydration.
+            */}
+            <div className="relative overflow-hidden rounded-2xl border border-white/25 bg-white/[0.04] shadow-2xl shadow-accent/10">
+              <div className="aspect-[4/3] rounded-2xl overflow-hidden">
+                <img
+                  src={HERO_COMPARISON_IMAGES.after}
+                  alt="AI-enhanced mountain photo after upscaling"
+                  fetchPriority="high"
+                  decoding="async"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="absolute inset-0">
+                <HeroBeforeAfter />
+              </div>
             </div>
           </div>
         </div>
 
         {/* Definition Section */}
-        <div className="mt-24 max-w-5xl mx-auto px-4">
+        <div className="mt-20 max-w-5xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">
               What is <span className="gradient-text-primary">{clientEnv.APP_NAME}</span>?
