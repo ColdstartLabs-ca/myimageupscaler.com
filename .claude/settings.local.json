@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(git rm *)",
+      "Bash(git checkout *)",
+      "Bash(rm -f .claude/skills/ga-analysis/scripts/ga-fetch.cjs)",
+      "mcp__supabase__execute_sql"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": ["supabase"]
+}

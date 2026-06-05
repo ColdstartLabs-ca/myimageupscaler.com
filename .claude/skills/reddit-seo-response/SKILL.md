@@ -28,11 +28,13 @@ When the user says `use reddit-seo-response`, `run reddit-seo-response`, or asks
    - Position 21-40 only if Reddit relevance is very strong.
    - Position 1-3 only if CTR is weak.
 7. Run Reddit discovery/scoring for those targets.
-8. If Reddit native search is rate-limited or slow, immediately switch to hybrid discovery instead of waiting on repeated 429 retries:
+8. If Reddit native JSON search is blocked, rate-limited, or slow, immediately switch to RSS + old Reddit fallback before giving up:
    - Keep any candidates already found by the Reddit script.
+   - Use Reddit Atom feeds for discovery: `https://www.reddit.com/r/<subreddit>/search.rss?q=<query>&restrict_sr=1&sort=relevance&t=year`, `https://www.reddit.com/search.rss?q=<query>&sort=relevance&t=year`, and subreddit `.rss` feeds when fresh community posts matter.
+   - Use `old.reddit.com` thread HTML and thread `.rss` feeds for context inspection when `.json` endpoints return 403.
    - Run web searches such as `site:reddit.com/r/ "[target query]" reddit`, `site:reddit.com/r/ "[pain point]"`, and `site:reddit.com/r/ "[tool category]"`.
    - Prefer exact problem threads over generic keyword matches.
-   - Feed manually found candidates into scoring when practical, or manually score the top 5-10 threads.
+   - Feed manually found/RSS candidates into scoring when practical, or manually score the top 5-10 threads.
 9. Inspect the top candidate threads for relevance and obvious rule/link risk.
 10. Draft custom replies for the best opportunities.
 11. Apply the `humanizer` skill to the final reply text.
@@ -203,11 +205,14 @@ Before writing a reply, inspect the thread and subreddit:
 - Existing replies do not already answer the question completely.
 - Account fit is plausible. Do not recommend posting from a new or brand-only account into strict communities.
 
-If direct Reddit search returns rate limits, do not abandon the task. Use one of these fallback paths:
+If direct Reddit JSON search returns 403s or rate limits, do not abandon the task. Use these fallback paths in order:
 
+- Run the bundled `reddit-discover.cjs` script first; it falls back from blocked JSON search to Reddit RSS automatically.
+- If manually discovering, use Reddit Atom feeds: subreddit search RSS, global `search.rss`, and subreddit `.rss` feeds.
+- Use `old.reddit.com` thread HTML and thread `.rss` feeds to inspect candidate context when `*.json` thread endpoints are blocked.
 - Score any existing candidate export with `--candidates=...`.
 - Use web search to find Reddit threads for the selected queries, then feed them as candidates.
-- Return the selected target posts and exact Reddit search queries as a blocked discovery report only if no candidate source can be accessed.
+- Return the selected target posts and exact Reddit search queries as a blocked discovery report only if JSON, RSS, old Reddit HTML, and web-search candidate sources are all inaccessible or inadequate.
 
 Reject the thread if:
 

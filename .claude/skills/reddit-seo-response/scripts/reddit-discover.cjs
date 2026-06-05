@@ -334,6 +334,88 @@ function buildQueries(target, limit) {
   return uniq(queries).slice(0, limit);
 }
 
+function decodeXml(text) {
+  return String(text || "")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'");
+}
+
+function stripHtml(text) {
+  return decodeXml(String(text || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim());
+}
+
+function extractTag(entry, tag) {
+  const match = entry.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i"));
+  return match ? decodeXml(match[1].trim()) : "";
+}
+
+function extractLink(entry) {
+  const hrefMatch = entry.match(/<link[^>]+href=["']([^"']+)["'][^>]*>/i);
+  return hrefMatch ? decodeXml(hrefMatch[1]) : "";
+}
+
+function subredditFromUrl(url) {
+  const match = String(url || "").match(/reddit\.com\/r\/([^/]+)/i);
+  return match ? `r/${match[1]}` : null;
+}
+
+function createdUtcFromAtom(updated) {
+  const ms = Date.parse(updated || "");
+  return Number.isFinite(ms) ? Math.floor(ms / 1000) : null;
+}
+
+async function fetchRedditSearchRss(query, path, args) {
+  const params = new URLSearchParams({
+    q: query,
+    sort: "relevance",
+    t: "year",
+    restrict_sr: path.startsWith("/r/") ? "1" : "0",
+  });
+  const rssPath = path.replace(/\.json$/, ".rss");
+  const url = `https://www.reddit.com${rssPath}?${params.toString()}`;
+  if (args.delayMs > 0) await sleep(args.delayMs);
+
+  const res = await fetch(url, {
+    headers: {
+      "User-Agent": process.env.REDDIT_USER_AGENT || DEFAULT_USER_AGENT,
+      "Accept": "application/atom+xml, application/xml, text/xml",
+    },
+  });
+  if (!res.ok) {
+    console.error(`[reddit] RSS fallback ${res.status} for ${url}`);
+    return [];
+  }
+
+  const xml = await res.text();
+  return [...xml.matchAll(/<entry[\s\S]*?<\/entry>/gi)]
+    .slice(0, Math.max(args.threadsPerQuery, 10))
+    .map(match => {
+      const entry = match[0];
+      const link = extractLink(entry);
+      const title = stripHtml(extractTag(entry, "title"));
+      const content = stripHtml(extractTag(entry, "content"));
+      const updated = extractTag(entry, "updated");
+      return {
+        query,
+        subreddit: subredditFromUrl(link),
+        title,
+        url: link,
+        score: 0,
+        comments: 0,
+        createdUtc: createdUtcFromAtom(updated),
+        over18: false,
+        locked: false,
+        archived: false,
+        selftextPreview: content.slice(0, 500),
+        source: "reddit_rss",
+      };
+    })
+    .filter(row => row.url && row.title);
+}
+
 async function fetchRedditSearch(query, args) {
   const { subreddits, threadsPerQuery, delayMs, maxRetries } = args;
   const targets = subreddits.length ? subreddits.map(s => `/r/${s}/search.json`) : ["/search.json"];
@@ -349,6 +431,7 @@ async function fetchRedditSearch(query, args) {
       type: "link",
     });
     const url = `https://www.reddit.com${path}?${params.toString()}`;
+    let shouldTryRss = false;
 
     for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
       let res;
@@ -368,6 +451,7 @@ async function fetchRedditSearch(query, args) {
           continue;
         }
         console.error(`[reddit] fetch failed for "${query}": ${err.message}`);
+        shouldTryRss = true;
         break;
       }
 
@@ -380,6 +464,7 @@ async function fetchRedditSearch(query, args) {
           continue;
         }
         console.error(`[reddit] ${res.status} for ${url}`);
+        shouldTryRss = true;
         break;
       }
       const json = await res.json();
@@ -398,9 +483,15 @@ async function fetchRedditSearch(query, args) {
           locked: !!d.locked,
           archived: !!d.archived,
           selftextPreview: String(d.selftext || "").slice(0, 500),
+          source: "reddit_json",
         });
       }
       break;
+    }
+
+    if (shouldTryRss) {
+      const rssRows = await fetchRedditSearchRss(query, path, args);
+      rows.push(...rssRows);
     }
   }
 
