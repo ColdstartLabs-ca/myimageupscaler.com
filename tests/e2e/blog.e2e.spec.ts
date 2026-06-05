@@ -5,7 +5,7 @@ test.describe('Blog Page', () => {
     await page.goto('/blog', { waitUntil: 'domcontentloaded' });
 
     // Wait for the H1 to be visible (indicates page is loaded)
-    const title = page.locator('h1:has-text("Image Enhancement")');
+    const title = page.locator('h1:has-text("Fix image quality problems faster")');
     await expect(title).toBeVisible({ timeout: 10000 });
 
     // Check for error elements that might indicate a crash
@@ -17,7 +17,7 @@ test.describe('Blog Page', () => {
     await page.goto('/blog', { waitUntil: 'domcontentloaded' });
 
     // Wait for the page H1 to be loaded
-    const blogContent = page.locator('h1:has-text("Image Enhancement")');
+    const blogContent = page.locator('h1:has-text("Fix image quality problems faster")');
     await expect(blogContent).toBeVisible({ timeout: 10000 });
 
     // When the blog_posts table doesn't exist or is empty,

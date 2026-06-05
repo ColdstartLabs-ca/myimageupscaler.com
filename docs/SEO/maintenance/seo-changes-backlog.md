@@ -16,6 +16,27 @@ Maintenance rules:
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
 
+## 2026-06-05
+
+### Blog Template CTR and Conversion Restructure
+
+Changes:
+
+- Restructured `/blog` around problem-led CTR capture: stronger SERP metadata, upload/tool CTAs above the fold, problem search paths, curated topic filters, and high-intent internal-link cards.
+- Added Blog and ItemList JSON-LD to the blog index for clearer collection-level search signals.
+- Restructured `/blog/[slug]` with a stronger article hero, quick answer/CTA panel, linked topic tags, sticky desktop table of contents, BreadcrumbList JSON-LD, and article `keywords`/`about` topic entities.
+- Replaced the all-pages pagination strip with bounded pagination plus ellipses to avoid mobile overflow and reduce crawl/UI clutter.
+
+Validation:
+
+- Added `tests/unit/seo/blog-template-signals.unit.spec.ts` for Blog, ItemList, BreadcrumbList, and article topical entity schema helpers.
+- Updated blog E2E H1 expectations for the new CTR-focused heading.
+- Local Playwright screenshots captured for `/blog` and `/blog/image-size-for-web` at 1440px desktop and 390px mobile.
+
+Follow-up:
+
+- After deploy, inspect `/blog` and a representative `/blog/*` URL in GSC URL Inspection and monitor blog page CTR, organic signups, and upload CTA clicks after the usual GSC lag.
+
 ## 2026-06-02
 
 ### Blog Growth Maintenance: Opportunities + Performance Monitor

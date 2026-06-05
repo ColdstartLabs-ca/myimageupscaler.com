@@ -255,3 +255,17 @@ Quick path:
 
 If they're still fuzzy after that, it's probably focus, shutter speed, or lens softness rather than RAW vs JPEG. But don't reshoot until you've tried a proper RAW conversion. The camera-back preview is a terrible judge of sharpness.
 ```
+
+### 2026-06-05 - r/graphic_design - Free Image Upscaling Tool - recommended linked candidate
+
+Status: recommended
+
+Thread: https://www.reddit.com/r/graphic_design/comments/1t92x1r/free_image_upscaling_tool/
+
+Target page: https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark
+
+```text
+If you want a quick web option, I work on MyImageUpscaler, so obvious bias, but this page may help: https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark
+
+For accuracy, I’d test any upscaler on one image first and zoom in before trusting it. Logos, small text, thin lines, and faces are where bad upscalers usually fall apart. If the image is for print, check the final pixel dimensions too, not just the DPI label.
+```

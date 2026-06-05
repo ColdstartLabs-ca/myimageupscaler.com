@@ -2,13 +2,24 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getAllPublishedPosts } from '@server/services/blog.service';
-import { Calendar, Clock, ArrowRight, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  Calendar,
+  Clock,
+  ArrowRight,
+  Sparkles,
+  ChevronLeft,
+  ChevronRight,
+  CheckCircle2,
+  Search,
+  Wand2,
+} from 'lucide-react';
 import { clientEnv } from '@shared/config/env';
 import { AmbientBackground } from '@client/components/landing/AmbientBackground';
 import { BlogSearch } from '@client/components/blog/BlogSearch';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Locale } from '@/i18n/config';
 import { getOpenGraphMetadata, getCanonicalUrl } from '@lib/seo/hreflang-generator';
+import { buildBlogIndexJsonLd, buildBlogItemListJsonLd } from '@lib/seo/blog-template-signals';
 
 interface IBlogPageProps {
   params: Promise<{ locale: Locale }>;
@@ -17,8 +28,8 @@ interface IBlogPageProps {
 
 export async function generateMetadata({ params }: IBlogPageProps): Promise<Metadata> {
   const { locale } = await params;
-  const title = 'Blog - Image Enhancement Tips & Guides';
-  const description = `Learn about AI image upscaling, photo enhancement techniques, and tips for e-commerce product photography. Expert guides from ${clientEnv.APP_NAME}.`;
+  const title = 'AI Image Upscaling Blog: Guides, Tests & Photo Enhancement Tips';
+  const description = `Practical AI image upscaling guides, tool comparisons, print DPI advice, and photo enhancement workflows from ${clientEnv.APP_NAME}.`;
   const openGraph = getOpenGraphMetadata(
     '/blog',
     `${title} | ${clientEnv.APP_NAME}`,
@@ -42,6 +53,72 @@ export async function generateMetadata({ params }: IBlogPageProps): Promise<Meta
 }
 
 const POSTS_PER_PAGE = 6;
+
+const INTENT_PATHS = [
+  {
+    label: 'Fix blurry photos',
+    description: 'Sharpen soft, low-resolution, or compressed images.',
+    query: 'blurry photos',
+  },
+  {
+    label: 'Prepare for print',
+    description: 'Choose DPI, pixels, and upscale settings for clean prints.',
+    query: 'print dpi',
+  },
+  {
+    label: 'Compare AI tools',
+    description: 'Find the best upscaler for free, paid, and pro workflows.',
+    query: 'best ai upscaler',
+  },
+  {
+    label: 'E-commerce images',
+    description: 'Improve product photos for listings and conversion.',
+    query: 'e-commerce',
+  },
+] as const;
+
+const TRUST_SIGNALS = [
+  'Guides tied to real image workflows',
+  'Free AI upscaling paths included',
+  'Print, product, anime, and photo repair coverage',
+] as const;
+
+const TOPIC_FILTERS = [
+  'AI enhancement',
+  'image upscaling',
+  'print DPI',
+  'photo restoration',
+  'e-commerce',
+  'anime',
+] as const;
+
+function getPaginationItems(
+  currentPage: number,
+  totalPages: number
+): (number | 'ellipsis-start' | 'ellipsis-end')[] {
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  }
+
+  const items: (number | 'ellipsis-start' | 'ellipsis-end')[] = [1];
+  const windowStart = Math.max(2, currentPage - 1);
+  const windowEnd = Math.min(totalPages - 1, currentPage + 1);
+
+  if (windowStart > 2) {
+    items.push('ellipsis-start');
+  }
+
+  for (let page = windowStart; page <= windowEnd; page++) {
+    items.push(page);
+  }
+
+  if (windowEnd < totalPages - 1) {
+    items.push('ellipsis-end');
+  }
+
+  items.push(totalPages);
+  return items;
+}
 
 export default async function BlogPage({ params, searchParams }: IBlogPageProps) {
   const { locale } = await params;
@@ -70,27 +147,113 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
   const endIndex = startIndex + POSTS_PER_PAGE;
   const displayedPosts = otherPosts.slice(startIndex, endIndex);
+  const paginationItems = getPaginationItems(currentPage, totalPages);
+  const schemaOrg = { appName: clientEnv.APP_NAME, baseUrl: clientEnv.BASE_URL };
+  const blogJsonLd = buildBlogIndexJsonLd(allPosts, schemaOrg);
+  const itemListJsonLd = buildBlogItemListJsonLd(allPosts, schemaOrg);
 
   return (
     <div className="min-h-screen bg-main">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
+
       {/* Hero Section */}
-      <section className="relative py-20 md:py-32 overflow-hidden">
+      <section className="relative overflow-hidden pb-12 pt-14 md:pb-20 md:pt-24">
         <AmbientBackground variant="subtle" />
-        <div className="container mx-auto px-4 max-w-5xl text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-6">
-            <Sparkles className="w-4 h-4" />
-            {t('page.badge')}
+        <div className="container relative z-10 mx-auto max-w-6xl px-4">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.95fr)] lg:items-center">
+            <div>
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/10 px-4 py-2 text-sm font-medium text-accent">
+                <Sparkles className="h-4 w-4" />
+                AI image upscaling guides, tests, and workflows
+              </div>
+              <h1 className="mb-5 font-display text-4xl font-bold leading-tight tracking-tight text-white md:text-6xl">
+                Fix image quality problems faster
+                <span className="block bg-gradient-to-r from-accent via-secondary to-tertiary bg-clip-text text-transparent">
+                  with practical AI guides
+                </span>
+              </h1>
+              <p className="mb-6 max-w-2xl text-lg leading-relaxed text-text-secondary md:text-xl">
+                Find the right guide for blurry photos, print resolution, product images, anime art,
+                and AI upscaler comparisons, then try the matching workflow in {clientEnv.APP_NAME}.
+              </p>
+              <div className="mb-6 flex flex-col gap-3 sm:flex-row">
+                <Link
+                  href="/?signup=1"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-bold text-white shadow-lg shadow-accent/25 gradient-cta transition-all hover:scale-[1.02] hover:opacity-90 active:scale-[0.98]"
+                >
+                  <Wand2 className="h-5 w-5" />
+                  Upload an Image Free
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  href="/tools"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-surface/80 px-6 py-3 text-sm font-semibold text-primary transition-all hover:border-accent/50 hover:bg-accent/10"
+                >
+                  Browse AI Tools
+                </Link>
+              </div>
+              <div className="grid gap-3 text-sm text-text-secondary sm:grid-cols-3">
+                {TRUST_SIGNALS.map(signal => (
+                  <div key={signal} className="flex items-start gap-2">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-success" />
+                    <span>{signal}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-surface/80 p-5 shadow-card backdrop-blur">
+              <div className="mb-4 flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm font-semibold text-accent">Find your next fix</p>
+                  <h2 className="font-display text-2xl font-bold text-primary">
+                    Search by problem
+                  </h2>
+                </div>
+                <Search className="h-5 w-5 text-text-secondary" />
+              </div>
+              <BlogSearch />
+              <div className="mt-5 grid gap-3">
+                {INTENT_PATHS.map(path => (
+                  <Link
+                    key={path.label}
+                    href={`/blog?q=${encodeURIComponent(path.query)}`}
+                    className="group rounded-xl border border-border bg-main/40 p-4 transition-all hover:border-accent/50 hover:bg-accent/10"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <h3 className="font-semibold text-primary transition-colors group-hover:text-accent">
+                        {path.label}
+                      </h3>
+                      <ArrowRight className="h-4 w-4 flex-shrink-0 text-accent transition-transform group-hover:translate-x-0.5" />
+                    </div>
+                    <p className="mt-1 text-sm leading-relaxed text-text-secondary">
+                      {path.description}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
-          <h1 className="font-display text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight">
-            {t('page.title')}
-            <span className="block bg-gradient-to-r from-accent via-secondary to-tertiary bg-clip-text text-transparent">
-              {t('page.titleHighlight')}
-            </span>
-          </h1>
-          <p className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto leading-relaxed mb-8">
-            {t('page.subtitle')}
-          </p>
-          <BlogSearch />
+
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <span className="text-sm font-semibold text-text-secondary">Popular topics</span>
+            {TOPIC_FILTERS.map(topic => (
+              <Link
+                key={topic}
+                href={`/blog?q=${encodeURIComponent(topic)}`}
+                className="rounded-full border border-border bg-surface/70 px-3 py-1.5 text-sm text-text-secondary transition-all hover:border-accent/50 hover:text-accent"
+              >
+                {topic}
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -99,7 +262,7 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
         <section className="pb-12">
           <div className="container mx-auto px-4 max-w-6xl">
             <Link href={`/blog/${featuredPost.slug}`} className="group block">
-              <article className="relative bg-gradient-to-br from-surface via-surface to-surface-light rounded-3xl border border-border overflow-hidden hover:border-accent/50 transition-all duration-500 hover:shadow-card-hover">
+              <article className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-surface via-surface to-surface-light transition-all duration-500 hover:border-accent/50 hover:shadow-card-hover">
                 <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative grid md:grid-cols-5 gap-0">
                   {/* Cover Image */}
@@ -162,6 +325,42 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
           </div>
         </section>
       )}
+
+      <section className="pb-12">
+        <div className="container mx-auto max-w-6xl px-4">
+          <div className="grid gap-4 md:grid-cols-3">
+            {[
+              {
+                label: 'Best AI upscaler picks',
+                query: 'best ai upscaler',
+                description: 'Compare free and paid options before choosing a workflow.',
+              },
+              {
+                label: 'Image size and DPI',
+                query: 'image resolution print',
+                description: 'Match pixels, dimensions, and DPI for web or print output.',
+              },
+              {
+                label: 'Photo repair workflows',
+                query: 'restore blurry photos',
+                description: 'Recover detail in soft, compressed, old, or damaged photos.',
+              },
+            ].map(path => (
+              <Link
+                key={path.label}
+                href={`/blog?q=${encodeURIComponent(path.query)}`}
+                className="group rounded-2xl border border-border bg-surface p-5 transition-all hover:border-accent/50 hover:bg-accent/10"
+              >
+                <p className="text-sm font-medium text-accent">Start here</p>
+                <h2 className="mt-1 font-display text-xl font-bold text-primary transition-colors group-hover:text-accent">
+                  {path.label}
+                </h2>
+                <p className="mt-2 text-sm text-text-secondary">{path.description}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Blog Posts Grid */}
       <section className="pb-24">
@@ -268,21 +467,30 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
                   )}
 
                   {/* Page Numbers */}
-                  <div className="flex items-center gap-2">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
-                      <Link
-                        key={pageNum}
-                        href={`/${locale}/blog?page=${pageNum}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
-                        scroll={false}
-                        className={`min-w-[2.5rem] h-10 flex items-center justify-center rounded-lg font-medium transition-all ${
-                          currentPage === pageNum
-                            ? 'bg-accent text-white shadow-md'
-                            : 'bg-surface border border-border hover:border-accent/50 hover:bg-accent/5'
-                        }`}
-                      >
-                        {pageNum}
-                      </Link>
-                    ))}
+                  <div className="flex flex-wrap items-center justify-center gap-2">
+                    {paginationItems.map(item =>
+                      typeof item === 'number' ? (
+                        <Link
+                          key={item}
+                          href={`/${locale}/blog?page=${item}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
+                          scroll={false}
+                          className={`flex h-10 min-w-[2.5rem] items-center justify-center rounded-lg font-medium transition-all ${
+                            currentPage === item
+                              ? 'bg-accent text-white shadow-md'
+                              : 'bg-surface border border-border hover:border-accent/50 hover:bg-accent/5'
+                          }`}
+                        >
+                          {item}
+                        </Link>
+                      ) : (
+                        <span
+                          key={item}
+                          className="flex h-10 min-w-[2rem] items-center justify-center text-text-secondary"
+                        >
+                          ...
+                        </span>
+                      )
+                    )}
                   </div>
 
                   {/* Next Button */}
