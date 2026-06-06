@@ -1,5 +1,6 @@
 'use client';
 
+import { SectionSignupCTA } from '@client/components/landing/SectionSignupCTA';
 import { FadeIn, StaggerContainer, StaggerItem } from '@client/components/ui/MotionWrappers';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Cpu, Image as ImageIcon, Lock, Sparkles, Type, Zap } from 'lucide-react';
@@ -44,7 +45,7 @@ const Features: React.FC = () => {
   ];
 
   return (
-    <section id="features" className="py-32 bg-main relative">
+    <section id="features" className="py-20 bg-main relative">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <FadeIn className="mx-auto max-w-2xl lg:text-center mb-16">
           <h3 className="text-sm font-bold uppercase tracking-widest text-secondary mb-3">
@@ -103,6 +104,8 @@ const Features: React.FC = () => {
             ))}
           </div>
         </FadeIn>
+
+        <SectionSignupCTA location="homepage_features" className="mt-16" />
       </div>
     </section>
   );

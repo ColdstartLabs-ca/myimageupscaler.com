@@ -1,5 +1,6 @@
 'use client';
 
+import { SectionSignupCTA } from '@client/components/landing/SectionSignupCTA';
 import { FadeIn, StaggerContainer, StaggerItem } from '@client/components/ui/MotionWrappers';
 import { motion } from 'framer-motion';
 import { ArrowRight, Download, UploadCloud, Wand2 } from 'lucide-react';
@@ -33,7 +34,7 @@ const HowItWorks: React.FC = () => {
   return (
     <section
       id="how-it-works"
-      className="py-32 bg-main border-y border-border relative overflow-hidden"
+      className="py-20 bg-main border-y border-border relative overflow-hidden"
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <FadeIn className="text-center mb-24">
@@ -111,6 +112,8 @@ const HowItWorks: React.FC = () => {
             ))}
           </StaggerContainer>
         </div>
+
+        <SectionSignupCTA location="homepage_how_it_works" className="mt-16" />
       </div>
     </section>
   );

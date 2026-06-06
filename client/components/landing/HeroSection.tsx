@@ -4,9 +4,8 @@ import { HeroActions } from '@client/components/landing/HeroActions';
 import { HeroBeforeAfter } from '@client/components/landing/HeroBeforeAfter';
 import { HERO_COMPARISON_IMAGES } from '@client/components/landing/heroAssets';
 import { getFreeCreditsForTier, getRegionTier } from '@/lib/anti-freeloader/region-classifier';
-import { clientEnv } from '@shared/config/env';
 import type { IReferralSource } from '@server/analytics/types';
-import { Check, Layers, Maximize2, Sparkles, User, Wand2 } from 'lucide-react';
+import { Check, Sparkles } from 'lucide-react';
 import { headers } from 'next/headers';
 import { getTranslations } from 'next-intl/server';
 
@@ -120,62 +119,6 @@ export async function HeroSection(): Promise<JSX.Element> {
                 <HeroBeforeAfter />
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* Definition Section */}
-        <div className="mt-20 max-w-5xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">
-              What is <span className="gradient-text-primary">{clientEnv.APP_NAME}</span>?
-            </h2>
-            <p className="text-lg sm:text-xl text-text-secondary leading-relaxed max-w-3xl mx-auto font-light">
-              Professional AI image enhancement that preserves real detail. No blur, no
-              artifacts—just crisp, high-quality results.
-            </p>
-          </div>
-
-          {/* Features List */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            {[
-              {
-                title: 'Image Upscaling',
-                subtitle:
-                  'Increase resolution up to 4x while maintaining quality. Perfect for printing, web display, and professional use.',
-                icon: <Maximize2 className="text-accent" size={20} />,
-              },
-              {
-                title: 'Photo Enhancement',
-                subtitle:
-                  'Automatically improve photo quality with AI. Fix blur, adjust colors, and restore details in seconds.',
-                icon: <Wand2 className="text-secondary" size={20} />,
-              },
-              {
-                title: 'Face Restoration',
-                subtitle:
-                  'Bring old or damaged photos back to life with AI-powered restoration technology.',
-                icon: <User className="text-accent" size={20} />,
-              },
-              {
-                title: 'Batch Processing',
-                subtitle:
-                  'Process multiple images at once with bulk tools. Save time on large projects.',
-                icon: <Layers className="text-secondary" size={20} />,
-              },
-            ].map(feature => (
-              <div
-                key={feature.title}
-                className="glass-card-2025 p-8 text-left h-full flex flex-col items-start gap-4 animated-border-violet"
-              >
-                <div className="p-3 bg-white/5 rounded-xl">{feature.icon}</div>
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
-                  <p className="text-text-secondary leading-relaxed font-light">
-                    {feature.subtitle}
-                  </p>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </div>

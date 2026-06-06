@@ -67,7 +67,7 @@ test.describe('First-Time User Activation', () => {
       await page.goto('/');
 
       // Primary CTA: "Upscale My First Image" or "Fix My Images Free" (depending on trial config)
-      const heroSection = page.locator('section:has-text("What is")').first();
+      const heroSection = page.locator('section.animate-hero-fade-in').first();
       const primaryButton = heroSection
         .getByRole('button')
         .filter({ hasText: /upscale|fix|image|first/i })
@@ -80,7 +80,7 @@ test.describe('First-Time User Activation', () => {
       await page.goto('/');
 
       // Secondary CTA: "Sign In" button
-      const heroSection = page.locator('section:has-text("What is")').first();
+      const heroSection = page.locator('section.animate-hero-fade-in').first();
       const signInButton = heroSection
         .getByRole('button')
         .filter({ hasText: /sign in|log in/i })
@@ -92,7 +92,7 @@ test.describe('First-Time User Activation', () => {
     test('Clicking primary CTA opens auth modal', async ({ page }) => {
       await page.goto('/');
 
-      const heroSection = page.locator('section:has-text("What is")').first();
+      const heroSection = page.locator('section.animate-hero-fade-in').first();
       const primaryButton = heroSection
         .getByRole('button')
         .filter({ hasText: /upscale|fix|image|first/i })
@@ -108,7 +108,7 @@ test.describe('First-Time User Activation', () => {
     test('Clicking secondary CTA opens login modal', async ({ page }) => {
       await page.goto('/');
 
-      const heroSection = page.locator('section:has-text("What is")').first();
+      const heroSection = page.locator('section.animate-hero-fade-in').first();
       const signInButton = heroSection
         .getByRole('button')
         .filter({ hasText: /sign in|log in/i })

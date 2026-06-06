@@ -1,19 +1,26 @@
 'use client';
 
 import { JsonLd } from '@client/components/seo/JsonLd';
-import { CheckoutModal } from '@client/components/stripe/CheckoutModal';
-import { Button } from '@client/components/ui/Button';
-import { useCheckoutStore } from '@client/store/checkoutStore';
-import { useModalStore } from '@client/store/modalStore';
-import { useToastStore } from '@client/store/toastStore';
+import { CreditPackSelector, SubscriptionPlanGrid, TrustBadges } from '@client/components/stripe';
 import { useRegionTier } from '@client/hooks/useRegionTier';
-import { useUserStore } from '@client/store/userStore';
-import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
+import { useModalStore } from '@client/store/modalStore';
+import { getFreeCreditsForTier } from '@/lib/anti-freeloader/region-classifier';
+import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { clientEnv } from '@shared/config/env';
-import { HOMEPAGE_TIERS, isStripePricesConfigured } from '@shared/config/stripe';
-import { Check } from 'lucide-react';
-import React, { useMemo } from 'react';
-import { AmbientBackground } from '../../landing/AmbientBackground';
+import { getEnabledPlans } from '@shared/config/subscription.utils';
+import { ArrowRight, Check, ShoppingCart } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import { useLocale, useTranslations } from 'next-intl';
+import { DEFAULT_LOCALE } from '@/i18n/config';
+import { useMemo, useState } from 'react';
+
+type TPricingTab = 'credits' | 'subscribe';
+
+const AmbientBackground = dynamic(
+  () => import('@client/components/landing/AmbientBackground').then(m => m.AmbientBackground),
+  { ssr: false }
+);
 
 /** Calculate discounted price for a tier, rounding to 2 decimal places. */
 export function calculateDiscountedPrice(priceValue: number, discountPercent: number): number {
@@ -21,197 +28,221 @@ export function calculateDiscountedPrice(priceValue: number, discountPercent: nu
   return Math.round(priceValue * (1 - discountPercent / 100) * 100) / 100;
 }
 
-/** Format a numeric price as a USD string (e.g., 17.15 -> "$17.15"). */
-function formatPrice(value: number): string {
-  if (value === 0) return '$0';
-  // Use Number to strip trailing zeros: 7.60 → "7.6", but keep "$7.60" via toFixed
-  const formatted = value.toFixed(2).replace(/\.?0+$/, '');
-  return `$${formatted}`;
+function generatePlanJsonLd(plan: ReturnType<typeof getEnabledPlans>[number], priceUsd: number) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: `${clientEnv.APP_NAME} ${plan.name}`,
+    description: plan.description,
+    brand: {
+      '@type': 'Brand',
+      name: clientEnv.APP_NAME,
+    },
+    offers: {
+      '@type': 'Offer',
+      price: priceUsd,
+      priceCurrency: 'USD',
+      availability: 'https://schema.org/InStock',
+      priceValidUntil: new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+        .toISOString()
+        .split('T')[0],
+    },
+  };
 }
 
-// Generate Product structured data for SEO
-const generateProductJsonLd = (tier: (typeof HOMEPAGE_TIERS)[number], overridePrice?: number) => ({
-  '@context': 'https://schema.org',
-  '@type': 'Product',
-  name: `${clientEnv.APP_NAME} ${tier.name}`,
-  description: tier.description,
-  brand: {
-    '@type': 'Brand',
-    name: clientEnv.APP_NAME,
-  },
-  offers: {
-    '@type': 'Offer',
-    price: overridePrice ?? tier.priceValue,
-    priceCurrency: 'USD',
-    availability: 'https://schema.org/InStock',
-    priceValidUntil: new Date(new Date().setFullYear(new Date().getFullYear() + 1))
-      .toISOString()
-      .split('T')[0],
-  },
-});
-
-export const Pricing: React.FC = () => {
-  const { openAuthModal } = useModalStore();
-  const { showToast } = useToastStore();
-  const { user } = useUserStore();
-  const { isCheckoutModalOpen, activePriceId, openCheckoutModal, closeCheckoutModal } =
-    useCheckoutStore();
-  const { discountPercent } = useRegionTier();
-
-  // Pre-compute regional prices for all homepage tiers
-  const regionalTiers = useMemo(
-    () =>
-      HOMEPAGE_TIERS.map(tier => {
-        const regionalPrice = calculateDiscountedPrice(tier.priceValue, discountPercent);
-        return {
-          ...tier,
-          displayPrice: formatPrice(regionalPrice),
-          displayPriceValue: regionalPrice,
-        };
-      }),
-    [discountPercent]
-  );
-
-  const handlePricingClick = (tier: (typeof HOMEPAGE_TIERS)[number]) => {
-    // Free tier - just open registration
-    if (tier.priceId === null) {
-      prepareAuthRedirect('register');
-      openAuthModal('register');
-      return;
-    }
-
-    // Check if Stripe is configured
-    if (!isStripePricesConfigured()) {
-      showToast({
-        message: 'Payment system is not configured. Please try again later.',
-        type: 'error',
-      });
-      return;
-    }
-
-    // Check if user is authenticated
-    if (!user) {
-      // Store checkout intent with price context
-      const searchParams = new URLSearchParams(window.location.search);
-      searchParams.set('checkout', tier.priceId);
-      prepareAuthRedirect('checkout', {
-        returnTo: `${window.location.pathname}?${searchParams.toString()}`,
-        context: { priceId: tier.priceId, planName: tier.name },
-      });
-      openAuthModal('login');
-      showToast({
-        message: 'Please sign in to complete your purchase',
-        type: 'info',
-      });
-      return;
-    }
-
-    // User is authenticated, open checkout modal
-    openCheckoutModal(tier.priceId);
-  };
-
-  const handleCheckoutClose = () => {
-    closeCheckoutModal();
-  };
-
-  const handleCheckoutSuccess = () => {
-    showToast({
-      message: 'Subscription activated successfully!',
-      type: 'success',
-    });
-  };
+function FreeTierCard({
+  freeCredits,
+  onStartFree,
+}: {
+  freeCredits: number;
+  onStartFree: () => void;
+}): JSX.Element {
+  const features = [
+    `${freeCredits} free credits to start`,
+    '2x & 4x upscaling',
+    'Basic enhancement',
+    'No watermark',
+  ];
 
   return (
-    <section id="pricing" className="py-32 bg-main relative overflow-hidden">
-      <AmbientBackground variant="section" />
-      {/* Product structured data for SEO */}
-      {regionalTiers
-        .filter(tier => tier.priceValue > 0)
-        .map(tier => (
-          <JsonLd
-            key={`jsonld-${tier.name}`}
-            data={generateProductJsonLd(tier, tier.displayPriceValue)}
-          />
-        ))}
+    <div className="relative flex h-full flex-col rounded-xl border border-surface-light bg-surface">
+      <div className="flex h-full flex-col p-4">
+        <div className="mb-3 text-center">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-text-secondary">
+            Free
+          </p>
+          <p className="mt-0.5 text-[11px] text-text-secondary/60">For testing and personal use</p>
+        </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-24">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-secondary mb-3">
-            Pricing
-          </h2>
-          <h2 className="text-4xl font-black text-white sm:text-6xl">
+        <div className="mb-3 text-center">
+          <div className="flex items-baseline justify-center gap-0.5">
+            <span className="text-sm font-medium text-text-primary">$</span>
+            <span className="text-3xl font-bold tabular-nums text-text-primary">0</span>
+          </div>
+          <p className="mt-0.5 text-[11px] text-text-secondary">/ month</p>
+        </div>
+
+        <div className="mb-3 border-t border-surface-light" />
+
+        <ul className="mb-4 flex-grow space-y-1.5">
+          {features.map(feature => (
+            <li key={feature} className="flex items-start gap-2">
+              <Check className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-success" strokeWidth={2.5} />
+              <span className="text-xs leading-tight text-text-primary/80">{feature}</span>
+            </li>
+          ))}
+        </ul>
+
+        <button
+          type="button"
+          onClick={onStartFree}
+          className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-surface-light bg-surface-light/50 px-4 py-2.5 text-sm font-bold text-text-primary transition-all duration-150 hover:-translate-y-0.5 hover:bg-surface-light"
+        >
+          Start for Free
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export function Pricing(): JSX.Element {
+  const t = useTranslations('homepage');
+  const tPricing = useTranslations('pricing');
+  const locale = useLocale();
+  const { openAuthModal } = useModalStore();
+  const { discountPercent, tier } = useRegionTier();
+  const freeCredits = getFreeCreditsForTier(tier ?? 'standard');
+  const hasTrialEnabled = getSubscriptionConfig().plans.some(plan => plan.trial.enabled);
+  const pricingPath = locale === DEFAULT_LOCALE ? '/pricing' : `/${locale}/pricing`;
+  const [activeTab, setActiveTab] = useState<TPricingTab>('credits');
+
+  const subscriptionPlans = useMemo(
+    () =>
+      getEnabledPlans()
+        .filter(plan => plan.interval === 'month')
+        .sort((a, b) => a.displayOrder - b.displayOrder),
+    []
+  );
+
+  const productSchemas = useMemo(
+    () =>
+      subscriptionPlans.map(plan => {
+        const priceUsd = calculateDiscountedPrice(plan.priceInCents / 100, discountPercent);
+        return generatePlanJsonLd(plan, priceUsd);
+      }),
+    [discountPercent, subscriptionPlans]
+  );
+
+  return (
+    <section id="pricing" className="pricing-section relative overflow-hidden py-24">
+      <AmbientBackground variant="section" />
+
+      {productSchemas.map((schema, index) => (
+        <JsonLd key={`pricing-jsonld-${index}`} data={schema} />
+      ))}
+
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-12 text-center">
+          <p className="mb-3 text-sm font-bold uppercase tracking-widest text-secondary">Pricing</p>
+          <h2 className="text-3xl font-black text-white sm:text-5xl">
             Simple, <span className="gradient-text-primary">transparent</span> pricing
           </h2>
-          <p className="mt-6 text-xl text-text-secondary font-light max-w-2xl mx-auto">
-            Professional quality enhancement at prosumer prices.
+          <p className="mx-auto mt-4 max-w-2xl text-lg font-light text-text-secondary">
+            {t('pricingCtaDescription')}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-3 items-center">
-          {regionalTiers.map(tier => (
-            <div
-              key={tier.name}
-              className={`
-                relative flex flex-col p-8 glass-card-2025 transition-all duration-500
-                ${tier.recommended ? 'border-secondary/50 ring-4 ring-secondary/20 lg:scale-110 z-10 bg-white/5' : 'bg-white/[0.02]'}
-              `}
+        <div className="mb-10 flex justify-center">
+          <div className="flex gap-1 rounded-xl border border-surface-light bg-surface-light/50 p-1">
+            <button
+              type="button"
+              onClick={() => setActiveTab('credits')}
+              className={`rounded-lg px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                activeTab === 'credits'
+                  ? 'scale-[1.02] bg-accent text-white shadow-md'
+                  : 'text-text-secondary hover:bg-surface-light hover:text-white'
+              }`}
             >
-              {tier.recommended && (
-                <>
-                  <div className="absolute inset-0 -z-10 bg-gradient-to-b from-secondary/10 to-transparent blur-2xl opacity-50" />
-                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-accent to-secondary text-white px-6 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-lg shadow-accent/20 border border-border">
-                    Most Popular
-                  </div>
-                </>
-              )}
+              Buy Credits
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('subscribe')}
+              className={`rounded-lg px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                activeTab === 'subscribe'
+                  ? 'scale-[1.02] bg-accent text-white shadow-md'
+                  : 'text-text-secondary hover:bg-surface-light hover:text-white'
+              }`}
+            >
+              Subscribe
+              <span className="ml-1.5 rounded-full bg-white/20 px-1.5 py-0.5 text-[10px] uppercase tracking-wider">
+                Best Value
+              </span>
+            </button>
+          </div>
+        </div>
 
-              <div className="mb-8">
-                <h3 className="text-2xl font-black text-white tracking-tight">{tier.name}</h3>
-                <p className="text-text-secondary text-sm mt-3 font-light leading-relaxed">
-                  {tier.description}
-                </p>
-              </div>
-
-              <div className="mb-8 flex items-baseline gap-1">
-                <span className="text-5xl font-black text-white tracking-tight">
-                  {tier.displayPrice}
-                </span>
-                <span className="text-text-muted font-medium">{tier.period}</span>
-              </div>
-
-              <ul className="space-y-4 mb-10 flex-1">
-                {tier.features.map(feature => (
-                  <li key={feature} className="flex items-start text-text-secondary group/item">
-                    <div className="h-5 w-5 rounded-full bg-emerald-500/10 flex items-center justify-center mr-3 mt-0.5 group-hover/item:bg-emerald-500/20 transition-colors">
-                      <Check className="h-3 w-3 text-emerald-400" strokeWidth={3} />
-                    </div>
-                    <span className="text-sm font-light group-hover/item:text-white transition-colors">
-                      {feature}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              <Button
-                variant={tier.variant}
-                className={`w-full py-6 rounded-xl font-bold text-lg shadow-xl transition-all duration-300 ${tier.recommended ? 'shadow-accent/20' : ''}`}
-                onClick={() => handlePricingClick(tier)}
+        {activeTab === 'credits' ? (
+          <div className="mx-auto max-w-5xl" data-testid="landing-credit-packs">
+            <p className="mb-8 text-center text-lg font-light text-text-secondary">
+              {tPricing('creditPacks.subtitle')}
+            </p>
+            <CreditPackSelector discountPercent={discountPercent} />
+            <div className="mt-8 text-center">
+              <button
+                type="button"
+                onClick={() => setActiveTab('subscribe')}
+                className="text-sm text-accent underline transition-colors hover:text-accent-hover"
               >
-                {tier.cta}
-              </Button>
+                {tPricing('creditPacks.comparePlans')}
+              </button>
             </div>
-          ))}
+          </div>
+        ) : (
+          <div
+            className="mx-auto grid max-w-6xl grid-cols-1 gap-4 lg:grid-cols-4"
+            data-testid="landing-subscriptions"
+          >
+            <FreeTierCard freeCredits={freeCredits} onStartFree={() => openAuthModal('register')} />
+            <div className="lg:col-span-3">
+              <SubscriptionPlanGrid
+                discountPercent={discountPercent}
+                className="grid h-full gap-4 md:grid-cols-3"
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="mx-auto mt-10 max-w-3xl">
+          <TrustBadges className="border border-surface-light/60 bg-surface/40" />
+        </div>
+
+        <div className="mx-auto mt-10 max-w-2xl text-center">
+          <Link
+            href={pricingPath}
+            className="group inline-flex w-full items-center justify-center gap-2 rounded-xl px-8 py-4 text-sm font-bold text-white shadow-lg shadow-secondary/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-secondary/40 active:translate-y-0 sm:text-base"
+            style={{
+              background: 'linear-gradient(135deg, rgb(59, 130, 246) 0%, rgb(139, 92, 246) 100%)',
+            }}
+          >
+            <ShoppingCart className="h-4 w-4 flex-shrink-0" />
+            <span>{t('ctaSeeWhatItCosts')}</span>
+            <ArrowRight className="h-4 w-4 flex-shrink-0 transition-transform group-hover:translate-x-1" />
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => openAuthModal('register')}
+            className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl px-8 py-4 text-sm font-semibold text-white transition-all duration-200 glass-strong hover:bg-white/5 sm:text-base"
+          >
+            {hasTrialEnabled
+              ? t('ctaTryFreeCredits', { freeCredits })
+              : t('ctaGetFreeCredits', { freeCredits })}
+          </button>
+
+          <p className="mt-4 text-sm text-text-muted">{t('pricingCtaSubtext', { freeCredits })}</p>
         </div>
       </div>
-
-      {/* Embedded Checkout Modal */}
-      {isCheckoutModalOpen && activePriceId && (
-        <CheckoutModal
-          priceId={activePriceId}
-          onClose={handleCheckoutClose}
-          onSuccess={handleCheckoutSuccess}
-        />
-      )}
     </section>
   );
-};
+}

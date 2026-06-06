@@ -1,6 +1,7 @@
 'use client';
 
 import { AmbientBackground } from '@client/components/landing/AmbientBackground';
+import { SectionSignupCTA } from '@client/components/landing/SectionSignupCTA';
 import { FadeIn, StaggerContainer, StaggerItem } from '@client/components/ui/MotionWrappers';
 import { motion } from 'framer-motion';
 import { Camera, Pencil, ShoppingCart } from 'lucide-react';
@@ -78,7 +79,7 @@ function CreatorCard({
 
 export function CreatorsSection(): JSX.Element {
   return (
-    <section className="relative overflow-hidden py-20 sm:py-24">
+    <section className="relative overflow-hidden py-16 sm:py-20">
       <AmbientBackground variant="section" />
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <FadeIn className="mb-10 text-center sm:mb-12">
@@ -94,6 +95,7 @@ export function CreatorsSection(): JSX.Element {
             </StaggerItem>
           ))}
         </StaggerContainer>
+        <SectionSignupCTA location="homepage_creators" className="mt-12" />
       </div>
     </section>
   );

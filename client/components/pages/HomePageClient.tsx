@@ -3,6 +3,7 @@
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useModalStore } from '@client/store/modalStore';
 import { useToastStore } from '@client/store/toastStore';
+import { SectionSignupCTA } from '@client/components/landing/SectionSignupCTA';
 import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
 import { getFreeCreditsForTier } from '@/lib/anti-freeloader/region-classifier';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
@@ -63,48 +64,13 @@ export const POPULAR_TOOLS: ReadonlyArray<{ href: string; label: string; desc: s
   },
 ] as const;
 
-const STRIKING_DISTANCE_GUIDES: ReadonlyArray<{ href: string; label: string; desc: string }> = [
-  {
-    href: '/blog/best-ai-upscaler',
-    label: 'Top AI image upscaler websites',
-    desc: 'Compare quality, speed, limits, and artifacts before choosing a tool.',
-  },
-  {
-    href: '/blog/topaz-video-upscaler',
-    label: 'Topaz Video AI 2026 update',
-    desc: 'See Topaz video upscaling features, pricing, and alternatives.',
-  },
-  {
-    href: '/blog/free-ai-upscaler-no-watermark',
-    label: 'Free AI upscaler with no watermark',
-    desc: 'Find clean export options without hidden watermark friction.',
-  },
-  {
-    href: '/blog/fix-blurry-photos-ai-methods-guide',
-    label: 'Fix blurry photos with AI',
-    desc: 'Choose the right blur, sharpness, and enhancement workflow.',
-  },
-  {
-    href: '/blog/best-ai-image-quality-enhancer-free',
-    label: 'Best free AI image sharpener',
-    desc: 'Compare free sharpeners for blur, noise, and realistic detail.',
-  },
-  {
-    href: '/blog/upscale-image-for-print-300-dpi-guide',
-    label: 'Upscale images to 300 DPI for print',
-    desc: 'Calculate print pixels and avoid blurry posters or photos.',
-  },
-  {
-    href: '/scale/upscale-16x',
-    label: 'Upscale images 16x',
-    desc: 'Use high-scale enlargement when your source image is very small.',
-  },
-] as const;
-
 // Lazy load below-the-fold sections to reduce initial JS bundle
 // These sections will only load when user scrolls near them
 const Features = lazy(() => import('@client/components/features/landing/Features'));
 const HowItWorks = lazy(() => import('@client/components/features/landing/HowItWorks'));
+const Pricing = lazy(() =>
+  import('@client/components/features/landing/Pricing').then(m => ({ default: m.Pricing }))
+);
 const FAQ = lazy(() => import('@client/components/ui/FAQ').then(m => ({ default: m.FAQ })));
 
 export function HomePageClient(): JSX.Element {
@@ -164,7 +130,7 @@ export function HomePageClient(): JSX.Element {
   return (
     <>
       {/* Popular Tools Section — Internal linking for link equity distribution */}
-      <section className="py-20 relative">
+      <section className="py-16 relative">
         <AmbientBackground variant="section" />
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-12">
@@ -197,43 +163,7 @@ export function HomePageClient(): JSX.Element {
               </Link>
             ))}
           </div>
-        </div>
-      </section>
-
-      <section className="py-16 relative">
-        <AmbientBackground variant="section" />
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="mb-8">
-            <h2 className="text-2xl sm:text-3xl font-black text-white mb-3">
-              Popular Image Upscaling Guides
-            </h2>
-            <p className="text-text-secondary max-w-3xl font-light">
-              Practical comparisons and workflows for choosing the right upscaling, sharpening, and
-              print-prep path.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {STRIKING_DISTANCE_GUIDES.map(guide => (
-              <Link
-                key={guide.href}
-                href={guide.href}
-                className="group glass-card-2025 p-5 flex items-start gap-4 hover:border-accent/40 transition-all duration-300"
-              >
-                <div className="flex-1 min-w-0">
-                  <p className="text-base font-bold text-white group-hover:text-accent transition-colors">
-                    {guide.label}
-                  </p>
-                  <p className="text-sm text-text-secondary mt-1 font-light leading-snug">
-                    {guide.desc}
-                  </p>
-                </div>
-                <ChevronRight
-                  size={18}
-                  className="text-text-muted shrink-0 mt-0.5 group-hover:text-accent group-hover:translate-x-1 transition-all duration-200"
-                />
-              </Link>
-            ))}
-          </div>
+          <SectionSignupCTA location="homepage_popular_tools" className="mt-12" />
         </div>
       </section>
 
@@ -246,7 +176,7 @@ export function HomePageClient(): JSX.Element {
       </Suspense>
 
       {/* FAQ Section */}
-      <section id="faq" className="py-24 relative">
+      <section id="faq" className="py-20 relative">
         <AmbientBackground variant="section" />
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
@@ -275,40 +205,16 @@ export function HomePageClient(): JSX.Element {
               ]}
             />
           </Suspense>
+          <SectionSignupCTA location="homepage_faq" className="mt-12" />
         </div>
       </section>
 
-      {/* Pricing CTA Section */}
-      <section className="py-24 relative">
-        <AmbientBackground variant="section" />
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <h2 className="text-3xl sm:text-5xl font-bold text-white mb-6">{t('pricingCtaTitle')}</h2>
-          <p className="text-lg sm:text-xl text-text-secondary mb-10 max-w-2xl mx-auto font-light">
-            {t('pricingCtaDescription')}
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <a
-              href="/pricing"
-              className="group inline-flex items-center gap-2 px-8 py-4 text-white font-semibold rounded-xl transition-all duration-200 gradient-cta shine-effect hover:scale-[1.02] active:scale-[0.98]"
-            >
-              {t('ctaSeeWhatItCosts')}
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </a>
-            <button
-              onClick={() => openAuthModal('register')}
-              className="inline-flex items-center gap-2 px-8 py-4 glass-strong hover:bg-white/5 text-white font-semibold rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              {hasTrialEnabled
-                ? t('ctaTryFreeCredits', { freeCredits })
-                : t('ctaGetFreeCredits', { freeCredits })}
-            </button>
-          </div>
-          <p className="mt-6 text-sm text-text-muted">{t('pricingCtaSubtext', { freeCredits })}</p>
-        </div>
-      </section>
+      <Suspense fallback={<div className="h-[720px] animate-pulse bg-white/5" />}>
+        <Pricing />
+      </Suspense>
 
       {/* Final CTA Section */}
-      <section className="relative py-32 section-glow-top overflow-hidden">
+      <section className="relative py-24 section-glow-top overflow-hidden">
         {/* Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-main to-accent/10"></div>
         <AmbientBackground variant="section" />

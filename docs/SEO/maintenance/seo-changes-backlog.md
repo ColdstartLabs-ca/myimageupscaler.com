@@ -18,6 +18,25 @@ Maintenance rules:
 
 ## 2026-06-05
 
+### Homepage trim + distributed signup CTAs
+
+Changes:
+
+- Removed redundant hero "What is MyImageUpscaler?" feature grid (duplicated the `#features` section).
+- Removed the "Popular Image Upscaling Guides" link block (overlapped with the crawlable "From the Blog" section and Popular Tools internal links).
+- Added reusable signup CTAs after creators, popular tools, features, how-it-works, and FAQ sections.
+- Kept SEO-critical surfaces: hero `h1`, Popular Tools internal links, FAQ (visible + JSON-LD), locale links, pricing, and blog module.
+
+Validation:
+
+- `yarn test tests/unit/seo/homepage-internal-links.unit.spec.ts`
+- `yarn test tests/unit/seo/homepage-performance.unit.spec.ts`
+- `yarn test tests/unit/client/components/homepage-cta.unit.spec.ts`
+
+Follow-up:
+
+- None. Homepage canonical and schema unchanged; no reindex needed beyond normal deploy crawl.
+
 ### Blog Template CTR and Conversion Restructure
 
 Changes:

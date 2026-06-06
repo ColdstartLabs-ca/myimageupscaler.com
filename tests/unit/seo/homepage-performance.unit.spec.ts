@@ -353,12 +353,15 @@ describe('Homepage Performance — Post-Audit Fixes', () => {
   describe('LCP anchor — server-rendered hero image', () => {
     it('should have a server-rendered img tag with the hero after image in HeroSection', () => {
       const heroPath = join(ROOT, 'client/components/landing/HeroSection.tsx');
+      const heroAssetsPath = join(ROOT, 'client/components/landing/heroAssets.ts');
       const source = readFileSync(heroPath, 'utf-8');
+      const heroAssetsSource = readFileSync(heroAssetsPath, 'utf-8');
 
       // Native <img> (not Next.js Image) must be in server HTML for LCP
       expect(source).toContain('<img');
-      expect(source).toContain('bird-after-v2.webp');
+      expect(source).toContain('src={HERO_COMPARISON_IMAGES.after}');
       expect(source).toContain('fetchPriority="high"');
+      expect(heroAssetsSource).toMatch(/after:\s*['"]\/before-after\/hero\/.+\.webp['"]/);
     });
 
     it('should disable Next.js DevTools in production (removes 223KB unused JS chunk)', () => {
