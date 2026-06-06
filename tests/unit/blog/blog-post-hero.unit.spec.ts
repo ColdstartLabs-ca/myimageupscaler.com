@@ -40,3 +40,16 @@ describe('blog post hero section', () => {
     expect(heroSource).toContain('specialist.role');
   });
 });
+
+describe('blog post fallback FAQ section', () => {
+  it('renders generated FAQ items as expandable answers', () => {
+    const faqSource = fs.readFileSync(
+      path.resolve(process.cwd(), 'client/components/blog/BlogFaqSection.tsx'),
+      'utf8'
+    );
+
+    expect(faqSource).toContain('Frequently Asked Questions');
+    expect(faqSource).toContain('<details');
+    expect(faqSource).toContain('Quick answers for this guide');
+  });
+});

@@ -25,18 +25,28 @@ describe('BlogPostTags', () => {
     expect(screen.getByRole('link', { name: 'photo to line art' })).toBeInTheDocument();
     expect(screen.queryByText('#convert picture to outline')).not.toBeInTheDocument();
   });
+
+  it('uses nav semantics when placed at the top of the article', () => {
+    render(
+      React.createElement(BlogPostTags, {
+        tags: ['image upscaling'],
+        placement: 'top',
+      })
+    );
+
+    expect(screen.getByRole('navigation', { name: 'Topics' })).toBeInTheDocument();
+  });
 });
 
 describe('blog post tag placement', () => {
-  it('renders tags after article content instead of in the header hero', () => {
+  it('renders topics after the hero and before article content', () => {
     const pageSource = fs.readFileSync(
       path.resolve(process.cwd(), 'app/[locale]/blog/[slug]/page.tsx'),
       'utf8'
     );
 
     expect(pageSource).toContain('BlogPostTags');
-    expect(pageSource).toContain('<BlogPostTags tags={post.tags}');
-    expect(pageSource).not.toContain('#{tag}');
-    expect(pageSource).not.toMatch(/header[\s\S]*post\.tags\.map/);
+    expect(pageSource).toMatch(/<BlogPostTags tags=\{post\.tags\} placement="top" \/>/);
+    expect(pageSource).not.toMatch(/<BlogPostTags tags=\{post\.tags\} className=/);
   });
 });

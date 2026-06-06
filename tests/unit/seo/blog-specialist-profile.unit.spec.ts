@@ -10,6 +10,8 @@ describe('blog specialist profile', () => {
       role: 'AI Image Upscaling Specialist',
       image: '/authors/joao-furtado.webp',
       url: '/about',
+      xHandle: 'joaocoldstart',
+      xUrl: 'https://x.com/joaocoldstart',
     });
   });
 
@@ -19,7 +21,7 @@ describe('blog specialist profile', () => {
     expect(fs.statSync(imagePath).size).toBeGreaterThan(0);
   });
 
-  it('adds reviewedBy structured data to blog posts', () => {
+  it('adds reviewedBy structured data with sameAs to blog posts', () => {
     const pageSource = fs.readFileSync(
       path.resolve(process.cwd(), 'app/[locale]/blog/[slug]/page.tsx'),
       'utf8'
@@ -28,5 +30,6 @@ describe('blog specialist profile', () => {
     expect(pageSource).toContain('reviewedBy');
     expect(pageSource).toContain('BLOG_SPECIALIST_PROFILE.name');
     expect(pageSource).toContain('BLOG_SPECIALIST_PROFILE.image');
+    expect(pageSource).toContain('BLOG_SPECIALIST_PROFILE.sameAs');
   });
 });

@@ -4,15 +4,30 @@ import { blogTagLinkClass } from '@client/components/blog/blog-ui';
 interface IBlogPostTagsProps {
   tags: string[];
   className?: string;
+  placement?: 'top' | 'bottom';
 }
 
-export function BlogPostTags({ tags, className = '' }: IBlogPostTagsProps): JSX.Element | null {
+const PLACEMENT_CLASS: Record<NonNullable<IBlogPostTagsProps['placement']>, string> = {
+  top: 'mb-6 lg:mb-8',
+  bottom: 'mt-10 border-t border-border/50 pt-5',
+};
+
+export function BlogPostTags({
+  tags,
+  className = '',
+  placement = 'bottom',
+}: IBlogPostTagsProps): JSX.Element | null {
   if (tags.length === 0) {
     return null;
   }
 
+  const Wrapper = placement === 'top' ? 'nav' : 'footer';
+
   return (
-    <footer className={`not-prose border-t border-border/50 pt-5 ${className}`.trim()}>
+    <Wrapper
+      aria-label="Topics"
+      className={`not-prose ${PLACEMENT_CLASS[placement]} ${className}`.trim()}
+    >
       <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-text-muted">
         Topics
       </p>
@@ -30,6 +45,6 @@ export function BlogPostTags({ tags, className = '' }: IBlogPostTagsProps): JSX.
           </span>
         ))}
       </p>
-    </footer>
+    </Wrapper>
   );
 }

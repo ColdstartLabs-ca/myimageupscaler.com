@@ -18,6 +18,32 @@ Maintenance rules:
 
 ## 2026-06-05
 
+### Blog specialist author section (E-E-A-T)
+
+Changes:
+
+- Added `BlogSpecialistSection` at the bottom of blog post articles with expanded Joao Furtado bio, expertise tags, About link, and X profile (`@joaocoldstart`).
+- Extended `BLOG_SPECIALIST_PROFILE` with bio, expertise, and `sameAs` for schema.
+
+Why it mattered:
+
+- Strengthens reviewer attribution and E-E-A-T signals on blog posts with visible credentials and a personal social profile link.
+
+Files:
+
+- `client/components/blog/BlogSpecialistSection.tsx`
+- `lib/blog/specialist-profile.ts`
+- `app/[locale]/blog/[slug]/page.tsx`
+
+Validation:
+
+- `tests/unit/blog/blog-specialist-section.unit.spec.ts`
+- `tests/unit/seo/blog-specialist-profile.unit.spec.ts`
+
+Follow-up:
+
+- None. Schema `reviewedBy.sameAs` updated; no reindex needed beyond normal deploy crawl.
+
 ### Blog post footer layout consistency
 
 Changes:

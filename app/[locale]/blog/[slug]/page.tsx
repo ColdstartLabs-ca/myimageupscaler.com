@@ -18,10 +18,13 @@ import { ReadingProgress } from '@client/components/blog/ReadingProgress';
 import { BlogGuideSidebar } from '@client/components/blog/BlogGuideSidebar';
 import { BlogPostHeroSection } from '@client/components/blog/BlogPostHeroSection';
 import { BlogPostTags } from '@client/components/blog/BlogPostTags';
+import { BlogSpecialistSection } from '@client/components/blog/BlogSpecialistSection';
 import { BlogPostFooter } from '../_components/BlogPostFooter';
 import { BlogCTA, parseCTAMarker } from '@client/components/blog/BlogCTA';
 import { buildBlogAboutEntities, buildBlogBreadcrumbJsonLd } from '@lib/seo/blog-template-signals';
 import { BLOG_SPECIALIST_PROFILE } from '@lib/blog/specialist-profile';
+import { BlogFaqSection } from '@client/components/blog/BlogFaqSection';
+import { buildFallbackBlogFaq, buildFaqJsonLd } from '@lib/blog/blog-faq';
 
 // Convert MDX Callout components to blockquotes with type markers
 function preprocessContent(content: string): string {
@@ -237,12 +240,19 @@ export default async function BlogPostPage({ params }: IPageProps) {
 
   const postDate = getPostPublishedDate(post);
   const readingTime = post.readingTime ?? '5 min read';
-  const tableOfContents = extractTableOfContents(post.content);
   const schemaOrg = { appName: clientEnv.APP_NAME, baseUrl: clientEnv.BASE_URL };
   const quickVerdict = getQuickVerdict(post);
 
   // FAQ JSON-LD (auto-extracted from content if FAQ section exists)
-  const faqJsonLd = extractFaqSchema(post.content);
+  const extractedFaqJsonLd = extractFaqSchema(post.content);
+  const fallbackFaqItems = extractedFaqJsonLd ? [] : buildFallbackBlogFaq(post);
+  const faqJsonLd = extractedFaqJsonLd || buildFaqJsonLd(fallbackFaqItems);
+  const tableOfContents = [
+    ...extractTableOfContents(post.content),
+    ...(fallbackFaqItems.length > 0
+      ? [{ id: 'frequently-asked-questions', title: 'Frequently Asked Questions' }]
+      : []),
+  ];
 
   // Article JSON-LD
   const articleJsonLd = {
@@ -266,6 +276,7 @@ export default async function BlogPostPage({ params }: IPageProps) {
       description: BLOG_SPECIALIST_PROFILE.description,
       image: `${clientEnv.BASE_URL}${BLOG_SPECIALIST_PROFILE.image}`,
       url: `${clientEnv.BASE_URL}${BLOG_SPECIALIST_PROFILE.url}`,
+      sameAs: BLOG_SPECIALIST_PROFILE.sameAs,
     },
     publisher: {
       '@type': 'Organization',
@@ -336,6 +347,8 @@ export default async function BlogPostPage({ params }: IPageProps) {
               tableOfContents={tableOfContents}
               specialist={BLOG_SPECIALIST_PROFILE}
             />
+
+            <BlogPostTags tags={post.tags} placement="top" />
 
             <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
               <div id="article-content" className="min-w-0">
@@ -485,7 +498,8 @@ export default async function BlogPostPage({ params }: IPageProps) {
                     {preprocessContent(post.content)}
                   </Markdown>
                 </div>
-                <BlogPostTags tags={post.tags} className="mt-10" />
+                <BlogFaqSection items={fallbackFaqItems} />
+                <BlogSpecialistSection specialist={BLOG_SPECIALIST_PROFILE} />
               </div>
 
               <aside className="hidden lg:sticky lg:top-20 lg:block">
