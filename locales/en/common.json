@@ -95,6 +95,7 @@
     "trustBar": {
       "ariaLabel": "Trust and usage statistics",
       "heading": "Trusted by creators, designers and businesses",
+      "qualityLabel": "Quality focused",
       "usersValue": "1K+",
       "usersLabel": "Users served",
       "imagesValue": "10K+",

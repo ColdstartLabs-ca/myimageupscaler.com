@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Lock } from 'lucide-react';
+import { Lock, Star } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 function TrustDivider(): JSX.Element {
@@ -10,6 +10,19 @@ function TrustStat({ value, label }: { value: ReactNode; label: string }): JSX.E
   return (
     <div className="flex min-w-0 flex-col items-center justify-center text-center sm:min-w-[7rem]">
       <div className="text-base font-bold text-white sm:text-xl">{value}</div>
+      <div className="mt-0.5 text-[11px] text-text-muted sm:mt-1 sm:text-sm">{label}</div>
+    </div>
+  );
+}
+
+function StarBlock({ label }: { label: string }): JSX.Element {
+  return (
+    <div className="flex min-w-0 flex-col items-center justify-center text-center sm:min-w-[7rem]">
+      <div className="flex items-center justify-center gap-0.5" aria-hidden="true">
+        {Array.from({ length: 5 }).map((_, index) => (
+          <Star key={index} size={14} className="fill-warning text-warning sm:h-4 sm:w-4" />
+        ))}
+      </div>
       <div className="mt-0.5 text-[11px] text-text-muted sm:mt-1 sm:text-sm">{label}</div>
     </div>
   );
@@ -40,7 +53,9 @@ export async function HeroTrustBar(): Promise<JSX.Element> {
       <p className="mb-4 text-center text-xs text-text-muted sm:mb-6 sm:text-sm">{t('heading')}</p>
 
       <div className="mx-auto flex max-w-5xl flex-col items-center gap-5 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-10 sm:gap-y-6 lg:gap-x-12">
-        <div className="grid w-full grid-cols-3 gap-2 sm:contents">
+        <div className="grid w-full grid-cols-4 gap-2 sm:contents">
+          <StarBlock label={t('qualityLabel')} />
+          <TrustDivider />
           <TrustStat value={t('usersValue')} label={t('usersLabel')} />
           <TrustDivider />
           <TrustStat value={t('imagesValue')} label={t('imagesLabel')} />

@@ -23,12 +23,11 @@ import {
   Calendar,
   ListChecks,
   ChevronRight,
-  CheckCircle2,
 } from 'lucide-react';
 import { clientEnv } from '@shared/config/env';
-import { CREDIT_COSTS } from '@shared/config/credits.config';
 import { ReadingProgress } from '@client/components/blog/ReadingProgress';
-import { RelatedToolsSection, CompactToolsBanner } from '../_components/RelatedToolsSection';
+import { CompactToolsBanner } from '../_components/RelatedToolsSection';
+import { BlogPostFooter } from '../_components/BlogPostFooter';
 import { BlogCTA, parseCTAMarker } from '@client/components/blog/BlogCTA';
 import { buildBlogAboutEntities, buildBlogBreadcrumbJsonLd } from '@lib/seo/blog-template-signals';
 
@@ -668,103 +667,7 @@ export default async function BlogPostPage({ params }: IPageProps) {
           </div>
         </div>
 
-        {/* Related Tools */}
-        <RelatedToolsSection blogSlug={slug} />
-
-        <section className="bg-main px-4 pb-16">
-          <div className="container mx-auto max-w-4xl rounded-2xl border border-border bg-surface/80 p-6 shadow-card">
-            <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-success/40 bg-success/10">
-                <CheckCircle2 className="h-5 w-5 text-success" />
-              </div>
-              <h2 className="font-display text-xl font-bold text-primary">Quick Verdict</h2>
-            </div>
-            <p className="text-base leading-relaxed text-text-secondary">
-              <Link href="/?signup=1" className="font-semibold text-accent hover:underline">
-                {clientEnv.APP_NAME}
-              </Link>{' '}
-              is the fastest path when you want to improve image quality without installing
-              software. {quickVerdict}
-            </p>
-            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/?signup=1"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white shadow-md shadow-accent/25 transition-all hover:bg-accent/90"
-              >
-                Try the Fix Free
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                href="/pricing"
-                className="inline-flex items-center justify-center rounded-xl border border-border bg-main/40 px-5 py-3 text-sm font-semibold text-accent transition-all hover:border-accent/50 hover:bg-accent/10"
-              >
-                View Pricing
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Related Posts */}
-        {relatedPosts.length > 0 && (
-          <section className="py-20 bg-surface border-t border-border">
-            <div className="container mx-auto px-4 max-w-6xl">
-              <div className="flex items-center gap-3 mb-10">
-                <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-accent" />
-                </div>
-                <h2 className="font-display text-2xl font-bold text-white">Continue Reading</h2>
-              </div>
-              <div className="grid md:grid-cols-3 gap-6">
-                {relatedPosts.map(related => (
-                  <Link
-                    key={related.slug}
-                    href={`/blog/${related.slug}`}
-                    className="group bg-surface-light rounded-2xl p-6 border border-border hover:border-accent/50 hover:-translate-y-1 transition-all duration-300"
-                  >
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-accent/10 text-accent mb-4">
-                      {related.category}
-                    </span>
-                    <h3 className="font-display font-semibold text-white mb-3 line-clamp-2 group-hover:text-accent transition-colors leading-snug">
-                      {related.title}
-                    </h3>
-                    <div className="flex items-center justify-between text-sm text-text-secondary">
-                      <span className="flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5" />
-                        {related.readingTime}
-                      </span>
-                      <span className="text-accent flex items-center gap-1 group-hover:gap-2 transition-all">
-                        Read
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* CTA */}
-        <section className="relative py-20 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-accent via-tertiary to-accent" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.1),transparent_50%)]" />
-          <div className="container mx-auto px-4 max-w-4xl text-center relative z-10">
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-4">
-              Ready to Try AI Image Enhancement?
-            </h2>
-            <p className="text-white/80 mb-8 text-lg max-w-xl mx-auto">
-              Upload your image and see the results in seconds. Start with{' '}
-              {CREDIT_COSTS.DEFAULT_FREE_CREDITS} free credits.
-            </p>
-            <Link
-              href="/?signup=1"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-accent font-semibold rounded-xl hover:bg-white/90 hover:shadow-lg transition-all duration-300"
-            >
-              Try {clientEnv.APP_NAME} Free
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-          </div>
-        </section>
+        <BlogPostFooter blogSlug={slug} relatedPosts={relatedPosts} quickVerdict={quickVerdict} />
       </article>
     </>
   );

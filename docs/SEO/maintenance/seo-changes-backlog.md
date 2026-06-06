@@ -18,6 +18,28 @@ Maintenance rules:
 
 ## 2026-06-05
 
+### Blog post footer layout consistency
+
+Changes:
+
+- Consolidated blog post footer sections (Try It Yourself, Quick Verdict, Continue Reading, final CTA) into `BlogPostFooter` with shared `BlogSectionHeader` styling.
+- Replaced the full-bleed cyan gradient bottom banner with a dark-theme card CTA aligned to the rest of the blog template.
+
+Why it mattered:
+
+- Footer sections had mismatched widths, spacing, iconography, and a jarring bright gradient that broke visual continuity on blog posts.
+
+Files:
+
+- `app/[locale]/blog/_components/BlogPostFooter.tsx`
+- `client/components/blog/BlogSectionHeader.tsx`
+- `app/[locale]/blog/[slug]/page.tsx`
+- `client/components/blog/RelatedPosts.tsx`
+
+Validation:
+
+- `tests/unit/seo/blog-post-footer.unit.spec.ts`
+
 ### Homepage trim + distributed signup CTAs
 
 Changes:
