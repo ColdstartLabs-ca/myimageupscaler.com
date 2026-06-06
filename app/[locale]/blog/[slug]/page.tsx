@@ -14,18 +14,17 @@ import {
 } from '@server/services/blog.service';
 import {
   Clock,
-  ArrowLeft,
   Lightbulb,
   Info,
   AlertTriangle,
   ArrowRight,
   Sparkles,
   Calendar,
-  ListChecks,
   ChevronRight,
 } from 'lucide-react';
 import { clientEnv } from '@shared/config/env';
 import { ReadingProgress } from '@client/components/blog/ReadingProgress';
+import { BlogGuideSidebar } from '@client/components/blog/BlogGuideSidebar';
 import { CompactToolsBanner } from '../_components/RelatedToolsSection';
 import { BlogPostFooter } from '../_components/BlogPostFooter';
 import { BlogCTA, parseCTAMarker } from '@client/components/blog/BlogCTA';
@@ -305,18 +304,9 @@ export default async function BlogPostPage({ params }: IPageProps) {
           <div className="absolute inset-0 bg-gradient-to-b from-accent/5 via-transparent to-transparent pointer-events-none" />
 
           <div className="container relative z-10 mx-auto max-w-6xl px-4">
-            {/* Back Link */}
-            <Link
-              href="/blog"
-              className="inline-flex items-center gap-2 text-text-secondary hover:text-accent transition-colors mb-8 group"
-            >
-              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-              Back to Blog
-            </Link>
-
             <nav
               aria-label="Breadcrumb"
-              className="mb-6 flex flex-wrap items-center gap-2 text-sm text-text-secondary"
+              className="mb-8 flex flex-wrap items-center gap-2 text-sm text-text-secondary"
             >
               <Link href="/blog" className="transition-colors hover:text-accent">
                 Blog
@@ -332,40 +322,42 @@ export default async function BlogPostPage({ params }: IPageProps) {
               <span className="max-w-[42rem] truncate text-text-muted">{post.title}</span>
             </nav>
 
-            <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
-              <div>
-                {/* Category & Reading Time */}
-                <div className="mb-6 flex flex-wrap items-center gap-3">
-                  <span className="inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-3 py-1.5 text-sm font-medium text-accent">
-                    {post.category}
+            <div className="max-w-4xl">
+                <span className="mb-5 inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-3 py-1.5 text-sm font-medium text-accent">
+                  {post.category}
+                </span>
+
+                <h1 className="mb-5 font-display text-3xl font-bold leading-[1.15] tracking-tight text-primary md:text-4xl lg:text-5xl">
+                  {post.title}
+                </h1>
+
+                <p className="mb-5 text-lg leading-relaxed text-text-secondary md:text-xl">
+                  {post.description}
+                </p>
+
+                <p className="mb-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-text-secondary">
+                  <span>By {clientEnv.APP_NAME} Team</span>
+                  <span className="text-text-muted" aria-hidden="true">
+                    ·
                   </span>
-                  <span className="flex items-center gap-1.5 text-sm text-text-secondary">
-                    <Clock className="h-4 w-4" />
+                  <span className="inline-flex items-center gap-1.5">
+                    <Clock className="h-3.5 w-3.5" />
                     {post.readingTime}
                   </span>
-                  <span className="flex items-center gap-1.5 text-sm text-text-secondary">
-                    <Calendar className="h-4 w-4" />
-                    Updated{' '}
+                  <span className="text-text-muted" aria-hidden="true">
+                    ·
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <Calendar className="h-3.5 w-3.5" />
                     {new Date(postDate).toLocaleDateString('en-US', {
-                      month: 'short',
+                      month: 'long',
                       day: 'numeric',
                       year: 'numeric',
                     })}
                   </span>
-                </div>
-
-                {/* Title - H1 tag */}
-                <h1 className="mb-6 font-display text-3xl font-bold leading-[1.15] tracking-tight text-white md:text-4xl lg:text-5xl">
-                  {post.title}
-                </h1>
-
-                {/* Description */}
-                <p className="mb-8 max-w-3xl text-xl leading-relaxed text-text-secondary">
-                  {post.description}
                 </p>
 
-                {/* Above-the-fold CTAs */}
-                <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                   <Link
                     href="/?signup=1"
                     className="group inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-bold text-white shadow-lg shadow-accent/25 gradient-cta transition-all hover:scale-[1.02] hover:opacity-90 active:scale-[0.98]"
@@ -376,76 +368,20 @@ export default async function BlogPostPage({ params }: IPageProps) {
                   </Link>
                   <Link
                     href="/pricing"
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-accent/40 bg-accent/10 px-6 py-3 text-sm font-semibold text-accent transition-all hover:border-accent/70 hover:bg-accent/15"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-main/40 px-6 py-3 text-sm font-semibold text-accent transition-all hover:border-accent/50 hover:bg-accent/10"
                   >
                     {ctaT('secondaryButton')}
                   </Link>
                 </div>
-
-                {/* Author & Date */}
-                <p className="text-sm text-text-secondary">
-                  By {clientEnv.APP_NAME} Team &middot;{' '}
-                  {new Date(postDate).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </p>
-              </div>
-
-              <aside className="rounded-2xl border border-border bg-surface/90 p-4 shadow-card backdrop-blur">
-                <div className="mb-3 flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-accent/10">
-                      <ListChecks className="h-4 w-4 text-accent" />
-                    </div>
-                    <h2 className="font-display text-lg font-bold text-primary">In This Guide</h2>
-                  </div>
-                  <span className="flex-shrink-0 rounded-full border border-border bg-main/40 px-3 py-1 text-xs font-semibold text-text-secondary">
-                    {post.readingTime}
-                  </span>
-                </div>
-                <div className="grid gap-1.5 text-sm text-text-secondary">
-                  {tableOfContents.length > 0 ? (
-                    tableOfContents.slice(0, 4).map((item, index) => (
-                      <Link
-                        key={item.id}
-                        href={`#${item.id}`}
-                        className="group flex items-start gap-2 rounded-lg px-2 py-2 transition-all hover:bg-accent/10"
-                      >
-                        <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-md bg-accent/10 text-xs font-semibold text-accent">
-                          {index + 1}
-                        </span>
-                        <span className="leading-snug text-primary transition-colors group-hover:text-accent">
-                          {item.title}
-                        </span>
-                      </Link>
-                    ))
-                  ) : (
-                    <p className="rounded-lg bg-main/40 px-3 py-2 leading-relaxed">
-                      Start with the practical steps, then compare the result with your original
-                      image.
-                    </p>
-                  )}
-                  <Link
-                    href="/?signup=1"
-                    className="mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-5 py-2.5 font-semibold text-white shadow-md shadow-accent/25 transition-all hover:bg-accent/90"
-                  >
-                    Try the Fix Free
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </div>
-              </aside>
             </div>
 
-            {/* Tags */}
             {post.tags.length > 0 && (
               <div className="mt-8 flex flex-wrap gap-2 border-t border-border pt-8">
                 {post.tags.map(tag => (
                   <Link
                     key={tag}
                     href={`/blog?q=${encodeURIComponent(tag)}`}
-                    className="inline-flex items-center rounded-lg border border-border/50 bg-surface-light px-3 py-1.5 text-sm text-text-secondary transition-colors hover:border-accent/30 hover:text-accent"
+                    className="inline-flex items-center rounded-lg border border-border bg-surface-light px-3 py-1.5 text-sm text-text-secondary transition-colors hover:border-accent/30 hover:text-accent"
                   >
                     #{tag}
                   </Link>
@@ -476,6 +412,12 @@ export default async function BlogPostPage({ params }: IPageProps) {
         <div className="pb-20">
           <div className="container mx-auto grid max-w-6xl gap-8 px-4 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
             <div id="article-content" className="min-w-0">
+              <BlogGuideSidebar
+                items={tableOfContents}
+                readingTime={post.readingTime}
+                ctaLabel={ctaT('try.button')}
+                className="mb-8 lg:hidden"
+              />
               <CompactToolsBanner blogSlug={slug} />
               <div className="prose prose-lg prose-invert max-w-none prose-headings:scroll-mt-28 prose-headings:font-display prose-headings:tracking-tight prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-8 prose-p:leading-relaxed prose-li:leading-relaxed prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-strong:text-primary prose-img:rounded-2xl prose-img:shadow-lg">
                 <Markdown
@@ -625,44 +567,11 @@ export default async function BlogPostPage({ params }: IPageProps) {
               </div>
             </div>
             <aside className="hidden lg:sticky lg:top-24 lg:block">
-              <div className="rounded-2xl border border-border bg-surface p-5 shadow-card">
-                <div className="mb-4 flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10">
-                    <ListChecks className="h-4 w-4 text-accent" />
-                  </div>
-                  <h2 className="font-display text-lg font-bold text-primary">On this page</h2>
-                </div>
-                {tableOfContents.length > 0 ? (
-                  <nav className="grid gap-2">
-                    {tableOfContents.map(item => (
-                      <Link
-                        key={item.id}
-                        href={`#${item.id}`}
-                        className="rounded-lg px-3 py-2 text-sm leading-snug text-text-secondary transition-all hover:bg-accent/10 hover:text-accent"
-                      >
-                        {item.title}
-                      </Link>
-                    ))}
-                  </nav>
-                ) : (
-                  <p className="text-sm leading-relaxed text-text-secondary">
-                    Follow the guide from setup through the final image check.
-                  </p>
-                )}
-                <div className="mt-5 border-t border-border pt-5">
-                  <p className="text-sm font-semibold text-primary">Need the shortcut?</p>
-                  <p className="mt-1 text-sm leading-relaxed text-text-secondary">
-                    Upload an image and compare the result before applying the guide manually.
-                  </p>
-                  <Link
-                    href="/?signup=1"
-                    className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent/90"
-                  >
-                    Try Free
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </div>
-              </div>
+              <BlogGuideSidebar
+                items={tableOfContents}
+                readingTime={post.readingTime}
+                ctaLabel={ctaT('try.button')}
+              />
             </aside>
           </div>
         </div>

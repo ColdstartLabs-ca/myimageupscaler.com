@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { ArrowRight, BookOpen, CheckCircle2, Clock, Sparkles, Wand2 } from 'lucide-react';
+import { ArrowRight, BookOpen, CheckCircle2, Sparkles, Wand2 } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { BlogSectionHeader } from '@client/components/blog/BlogSectionHeader';
+import { BlogPostCard } from '@client/components/blog/BlogPostCard';
 import { getToolsForBlogPost } from '@/lib/seo/data-loader';
 import type { IToolPage } from '@/lib/seo/pseo-types';
 import { clientEnv } from '@shared/config/env';
@@ -10,8 +11,11 @@ import { CREDIT_COSTS } from '@shared/config/credits.config';
 interface IBlogPostMeta {
   slug: string;
   title: string;
+  description: string;
   category: string;
   readingTime: string;
+  image?: string;
+  date: string;
 }
 
 interface IBlogPostFooterProps {
@@ -83,28 +87,16 @@ export async function BlogPostFooter({
             </div>
             <div className="grid gap-6 md:grid-cols-3">
               {relatedPosts.map(related => (
-                <Link
+                <BlogPostCard
                   key={related.slug}
-                  href={`/blog/${related.slug}`}
-                  className="group rounded-2xl border border-border bg-surface-light p-6 transition-all duration-300 hover:-translate-y-1 hover:border-accent/50"
-                >
-                  <span className="mb-4 inline-flex items-center rounded-full bg-accent/10 px-2.5 py-1 text-xs font-medium text-accent">
-                    {related.category}
-                  </span>
-                  <h3 className="mb-3 line-clamp-2 font-display font-semibold leading-snug text-primary transition-colors group-hover:text-accent">
-                    {related.title}
-                  </h3>
-                  <div className="flex items-center justify-between text-sm text-text-secondary">
-                    <span className="flex items-center gap-1.5">
-                      <Clock className="h-3.5 w-3.5" />
-                      {related.readingTime}
-                    </span>
-                    <span className="flex items-center gap-1 text-accent transition-all group-hover:gap-2">
-                      Read
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </span>
-                  </div>
-                </Link>
+                  slug={related.slug}
+                  title={related.title}
+                  category={related.category}
+                  readingTime={related.readingTime}
+                  description={related.description}
+                  image={related.image}
+                  date={related.date}
+                />
               ))}
             </div>
           </div>
