@@ -714,6 +714,7 @@ export type IAnalyticsEventName =
   // Hero activation events (PRD: first-time-user-activation)
   | 'hero_upload_cta_clicked'
   | 'hero_upload_zone_visible'
+  | 'section_signup_cta_clicked'
   // Sample image events (PRD: first-time-user-activation)
   | 'sample_image_selector_viewed'
   | 'sample_image_selected'

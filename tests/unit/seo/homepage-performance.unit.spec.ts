@@ -134,6 +134,25 @@ describe('Homepage Performance — Phase 1', () => {
 
       expect(source).toContain('animate-hero-fade-in');
     });
+
+    it('HeroSection should render HeroTrustBar as a full-width row below the hero grid', () => {
+      const heroPath = join(ROOT, 'client/components/landing/HeroSection.tsx');
+      const source = readFileSync(heroPath, 'utf-8');
+
+      expect(source).toContain('HeroTrustBar');
+      expect(source).toMatch(/<\/div>\s*<HeroTrustBar \/>/);
+      expect(source).not.toMatch(/HeroBeforeAfter[\s\S]*<HeroTrustBar \/>/);
+    });
+
+    it('HeroTrustBar should be a server component without a section divider', () => {
+      const trustBarPath = join(ROOT, 'client/components/landing/HeroTrustBar.tsx');
+      const source = readFileSync(trustBarPath, 'utf-8');
+
+      expect(source).not.toMatch(/^['"]use client['"]/m);
+      expect(source).toContain("getTranslations('homepage.trustBar')");
+      expect(source).not.toContain('border-t');
+      expect(source).toContain('fill-warning');
+    });
   });
 });
 
@@ -387,18 +406,16 @@ describe('Homepage Performance — Post-Audit Fixes', () => {
 
 describe('Homepage Performance — Phase 2', () => {
   describe('Code-split heavy components', () => {
-    it('should lazy-load AmbientBackground with next/dynamic', () => {
-      const clientPath = join(ROOT, 'client/components/pages/HomePageClient.tsx');
-      const source = readFileSync(clientPath, 'utf-8');
+    it('should lazy-load AmbientBackground via LandingSection', () => {
+      const sectionPath = join(ROOT, 'client/components/landing/LandingSection.tsx');
+      const source = readFileSync(sectionPath, 'utf-8');
 
-      // Must use next/dynamic, not a static import
       expect(source).not.toMatch(
         /^import\s*\{[^}]*AmbientBackground[^}]*\}\s*from\s*['"]@client\/components\/landing\/AmbientBackground['"]/m
       );
       expect(source).toContain("import dynamic from 'next/dynamic'");
       expect(source).toContain('AmbientBackground');
       expect(source).toMatch(/dynamic\s*\(/);
-      // Must be loaded with ssr: false (purely decorative, no SSR value)
       expect(source).toContain('ssr: false');
     });
   });
@@ -417,6 +434,48 @@ describe('Homepage Performance — Phase 2', () => {
       const framerIdx = source.indexOf("'framer-motion'", optimizeIdx);
       expect(framerIdx).toBeGreaterThan(optimizeIdx);
     });
+  });
+});
+
+describe('Homepage — hero section blend', () => {
+  it('should fade hero glow at the bottom edge', () => {
+    const cssPath = join(ROOT, 'client/styles/index.css');
+    const source = readFileSync(cssPath, 'utf-8');
+
+    expect(source).toMatch(/\.hero-gradient-2025::after\s*\{[^}]*linear-gradient/);
+  });
+
+  it('should wrap hero and creators in a shared landing shell', () => {
+    const pagePath = join(ROOT, 'app/[locale]/page.tsx');
+    const source = readFileSync(pagePath, 'utf-8');
+
+    expect(source).toContain('LandingHeroShell');
+    expect(source).toMatch(/<LandingHeroShell>[\s\S]*<HeroSection \/>[\s\S]*<CreatorsSection \/>/);
+  });
+
+  it('should blend the creators section from the hero background', () => {
+    const shellPath = join(ROOT, 'client/components/landing/LandingHeroShell.tsx');
+    const source = readFileSync(shellPath, 'utf-8');
+
+    expect(source).toContain('hero-gradient-2025');
+    expect(source).toContain('AmbientBackground');
+  });
+
+  it('should define shared landing section fade utilities', () => {
+    const cssPath = join(ROOT, 'client/styles/index.css');
+    const source = readFileSync(cssPath, 'utf-8');
+
+    expect(source).toContain('.landing-section-fade-top::before');
+    expect(source).toContain('.landing-section-fade-bottom::after');
+  });
+
+  it('should use LandingSection for homepage blocks without hard borders', () => {
+    const howItWorksPath = join(ROOT, 'client/components/features/landing/HowItWorks.tsx');
+    const clientPath = join(ROOT, 'client/components/pages/HomePageClient.tsx');
+
+    expect(readFileSync(howItWorksPath, 'utf-8')).not.toContain('border-y border-border');
+    expect(readFileSync(clientPath, 'utf-8')).toContain('LandingSection');
+    expect(readFileSync(clientPath, 'utf-8')).not.toContain('section-glow-top');
   });
 });
 

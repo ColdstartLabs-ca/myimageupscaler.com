@@ -1,7 +1,7 @@
-import { AmbientBackground } from '@client/components/landing/AmbientBackground';
 import { ChatGPTBadge } from '@client/components/landing/ChatGPTBadge';
 import { HeroActions } from '@client/components/landing/HeroActions';
 import { HeroBeforeAfter } from '@client/components/landing/HeroBeforeAfter';
+import { HeroTrustBar } from '@client/components/landing/HeroTrustBar';
 import { HERO_COMPARISON_IMAGES } from '@client/components/landing/heroAssets';
 import { getFreeCreditsForTier, getRegionTier } from '@/lib/anti-freeloader/region-classifier';
 import type { IReferralSource } from '@server/analytics/types';
@@ -37,10 +37,8 @@ export async function HeroSection(): Promise<JSX.Element> {
   ];
 
   return (
-    <section className="relative overflow-hidden pt-12 pb-12 lg:pt-12 lg:pb-16 hero-gradient-2025 z-20 animate-hero-fade-in">
-      <AmbientBackground variant="hero" />
-
-      <div className="mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-8 relative z-10">
+    <section className="relative pb-12 pt-12 animate-hero-fade-in lg:pb-16 lg:pt-12">
+      <div className="relative z-10 mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-8">
         {/* AI Search Badge - shown for ChatGPT/Perplexity/Claude/SGE referrals */}
         {showAiBadge && (
           <div className="mb-5 lg:ml-1">
@@ -121,6 +119,8 @@ export async function HeroSection(): Promise<JSX.Element> {
             </div>
           </div>
         </div>
+
+        <HeroTrustBar />
       </div>
     </section>
   );

@@ -262,6 +262,60 @@
     position: relative;
   }
 
+  /* Fade ambient glow into the page background at shell bottom */
+  .hero-gradient-2025::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 14rem;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgb(var(--color-bg-base) / 0.2) 30%,
+      rgb(var(--color-bg-base) / 0.72) 62%,
+      rgb(var(--color-bg-base)) 100%
+    );
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  /* Landing sections — smooth handoffs between stacked blocks */
+  .landing-section-fade-top::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 7rem;
+    pointer-events: none;
+    z-index: 4;
+    background: linear-gradient(
+      to bottom,
+      rgb(var(--color-bg-base)) 0%,
+      rgb(var(--color-bg-base) / 0.92) 40%,
+      transparent 100%
+    );
+  }
+
+  .landing-section-fade-bottom::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 7rem;
+    pointer-events: none;
+    z-index: 4;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgb(var(--color-bg-base) / 0.55) 55%,
+      rgb(var(--color-bg-base)) 100%
+    );
+  }
+
   .hero-gradient {
     background:
       radial-gradient(ellipse at top, rgba(45, 129, 255, 0.15) 0%, transparent 50%),

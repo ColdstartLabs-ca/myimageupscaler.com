@@ -4,23 +4,16 @@ import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useModalStore } from '@client/store/modalStore';
 import { useToastStore } from '@client/store/toastStore';
 import { SectionSignupCTA } from '@client/components/landing/SectionSignupCTA';
+import { LandingSection } from '@client/components/landing/LandingSection';
 import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
 import { getFreeCreditsForTier } from '@/lib/anti-freeloader/region-classifier';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { ArrowRight, ChevronRight, Sparkles } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { DEFAULT_LOCALE } from '@/i18n/config';
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, lazy, useEffect } from 'react';
-
-// AmbientBackground is purely decorative (animated orbs) — no SSR value.
-// Lazy-loading it removes it from the critical JS path and reduces TBT.
-const AmbientBackground = dynamic(
-  () => import('@client/components/landing/AmbientBackground').then(m => m.AmbientBackground),
-  { ssr: false }
-);
 
 export const LOCALE_LINKS: ReadonlyArray<{ href: string; label: string; flag: string }> = [
   { href: '/de', label: 'Deutsch', flag: '🇩🇪' },
@@ -129,43 +122,45 @@ export function HomePageClient(): JSX.Element {
 
   return (
     <>
-      {/* Popular Tools Section — Internal linking for link equity distribution */}
-      <section className="py-16 relative">
-        <AmbientBackground variant="section" />
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">
-              Start Enhancing — <span className="gradient-text-primary">Pick a Tool</span>
-            </h2>
-            <p className="text-lg text-text-secondary max-w-2xl mx-auto font-light">
-              Professional AI tools for every image task. Try free with {freeCredits} credits.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {POPULAR_TOOLS.map(tool => (
-              <Link
-                key={tool.href}
-                href={localizeHref(tool.href)}
-                className="group glass-card-2025 p-6 flex items-start gap-4 hover:border-accent/40 transition-all duration-300 animated-border-violet"
-              >
-                <div className="flex-1 min-w-0">
-                  <p className="text-base font-bold text-white group-hover:text-accent transition-colors truncate">
-                    {tool.label}
-                  </p>
-                  <p className="text-sm text-text-secondary mt-1 font-light leading-snug">
-                    {tool.desc}
-                  </p>
-                </div>
-                <ChevronRight
-                  size={18}
-                  className="text-text-muted shrink-0 mt-0.5 group-hover:text-accent group-hover:translate-x-1 transition-all duration-200"
-                />
-              </Link>
-            ))}
-          </div>
-          <SectionSignupCTA location="homepage_popular_tools" className="mt-12" />
+      <LandingSection
+        ambient
+        fadeTop
+        fadeBottom
+        className="py-16"
+        innerClassName="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
+      >
+        <div className="text-center mb-12">
+          <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">
+            Start Enhancing — <span className="gradient-text-primary">Pick a Tool</span>
+          </h2>
+          <p className="text-lg text-text-secondary max-w-2xl mx-auto font-light">
+            Professional AI tools for every image task. Try free with {freeCredits} credits.
+          </p>
         </div>
-      </section>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {POPULAR_TOOLS.map(tool => (
+            <Link
+              key={tool.href}
+              href={localizeHref(tool.href)}
+              className="group glass-card-2025 p-6 flex items-start gap-4 hover:border-accent/40 transition-all duration-300 animated-border-violet"
+            >
+              <div className="flex-1 min-w-0">
+                <p className="text-base font-bold text-white group-hover:text-accent transition-colors truncate">
+                  {tool.label}
+                </p>
+                <p className="text-sm text-text-secondary mt-1 font-light leading-snug">
+                  {tool.desc}
+                </p>
+              </div>
+              <ChevronRight
+                size={18}
+                className="text-text-muted shrink-0 mt-0.5 group-hover:text-accent group-hover:translate-x-1 transition-all duration-200"
+              />
+            </Link>
+          ))}
+        </div>
+        <SectionSignupCTA location="homepage_popular_tools" className="mt-12" />
+      </LandingSection>
 
       {/* Landing Page Sections - Lazy loaded for performance */}
       <Suspense fallback={<div className="h-screen" />}>
@@ -175,81 +170,84 @@ export function HomePageClient(): JSX.Element {
         <HowItWorks />
       </Suspense>
 
-      {/* FAQ Section */}
-      <section id="faq" className="py-20 relative">
-        <AmbientBackground variant="section" />
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-5xl font-bold text-white mb-6">{t('faqTitle')}</h2>
-            <p className="text-lg text-text-secondary">{t('faqSubtitle')}</p>
-          </div>
-          <Suspense fallback={<div className="animate-pulse h-64 bg-white/5 rounded-xl" />}>
-            <FAQ
-              items={[
-                {
-                  question: t('faq1Question'),
-                  answer: t('faq1Answer'),
-                },
-                {
-                  question: t('faq2Question'),
-                  answer: t('faq2Answer'),
-                },
-                {
-                  question: t('faq3Question'),
-                  answer: t('faq3Answer', { freeCredits }),
-                },
-                {
-                  question: t('faq4Question'),
-                  answer: t('faq4Answer'),
-                },
-              ]}
-            />
-          </Suspense>
-          <SectionSignupCTA location="homepage_faq" className="mt-12" />
+      <LandingSection
+        id="faq"
+        ambient
+        fadeTop
+        className="py-20"
+        innerClassName="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8"
+      >
+        <div className="text-center mb-16">
+          <h2 className="text-3xl sm:text-5xl font-bold text-white mb-6">{t('faqTitle')}</h2>
+          <p className="text-lg text-text-secondary">{t('faqSubtitle')}</p>
         </div>
-      </section>
+        <Suspense fallback={<div className="animate-pulse h-64 bg-white/5 rounded-xl" />}>
+          <FAQ
+            items={[
+              {
+                question: t('faq1Question'),
+                answer: t('faq1Answer'),
+              },
+              {
+                question: t('faq2Question'),
+                answer: t('faq2Answer'),
+              },
+              {
+                question: t('faq3Question'),
+                answer: t('faq3Answer', { freeCredits }),
+              },
+              {
+                question: t('faq4Question'),
+                answer: t('faq4Answer'),
+              },
+            ]}
+          />
+        </Suspense>
+        <SectionSignupCTA location="homepage_faq" className="mt-12" />
+      </LandingSection>
 
       <Suspense fallback={<div className="h-[720px] animate-pulse bg-white/5" />}>
         <Pricing />
       </Suspense>
 
-      {/* Final CTA Section */}
-      <section className="relative py-24 section-glow-top overflow-hidden">
-        {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-main to-accent/10"></div>
-        <AmbientBackground variant="section" />
-
-        <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl sm:text-6xl font-black text-white mb-6">
-            {t('finalCtaTitle')}
-            <br />
-            <span className="gradient-text-primary">{t('finalCtaTitleHighlight')}</span>
-          </h2>
-          <p className="text-xl text-text-secondary mb-12 max-w-2xl mx-auto font-light">
-            {t('finalCtaDescription')}
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <button
-              onClick={() => openAuthModal('register')}
-              className="group inline-flex items-center gap-2 px-10 py-5 text-white font-bold rounded-xl transition-all duration-200 gradient-cta shine-effect text-lg shadow-xl shadow-accent/20 hover:scale-[1.05] active:scale-[0.95]"
-            >
-              <Sparkles size={22} className="group-hover:rotate-12 transition-transform" />
-              {hasTrialEnabled ? t('ctaFixImagesNow') : t('ctaStartUpscaling')}
-              <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-            </button>
-            <a
-              href="/pricing"
-              className="inline-flex items-center gap-2 px-10 py-5 glass-strong hover:bg-white/5 text-white font-semibold rounded-xl transition-all duration-200 text-lg hover:scale-[1.05] active:scale-[0.95]"
-            >
-              {t('ctaComparePlans')}
-            </a>
-          </div>
-          <p className="mt-8 text-sm text-text-muted">{t('finalCtaSubtext', { freeCredits })}</p>
+      <LandingSection
+        fadeTop
+        ambient
+        className="py-24"
+        overlay={
+          <div className="h-full w-full bg-gradient-to-br from-secondary/10 via-main to-accent/10" />
+        }
+        innerClassName="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center"
+      >
+        <h2 className="text-4xl sm:text-6xl font-black text-white mb-6">
+          {t('finalCtaTitle')}
+          <br />
+          <span className="gradient-text-primary">{t('finalCtaTitleHighlight')}</span>
+        </h2>
+        <p className="text-xl text-text-secondary mb-12 max-w-2xl mx-auto font-light">
+          {t('finalCtaDescription')}
+        </p>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+          <button
+            onClick={() => openAuthModal('register')}
+            className="group inline-flex items-center gap-2 px-10 py-5 text-white font-bold rounded-xl transition-all duration-200 gradient-cta shine-effect text-lg shadow-xl shadow-accent/20 hover:scale-[1.05] active:scale-[0.95]"
+          >
+            <Sparkles size={22} className="group-hover:rotate-12 transition-transform" />
+            {hasTrialEnabled ? t('ctaFixImagesNow') : t('ctaStartUpscaling')}
+            <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+          </button>
+          <a
+            href="/pricing"
+            className="inline-flex items-center gap-2 px-10 py-5 glass-strong hover:bg-white/5 text-white font-semibold rounded-xl transition-all duration-200 text-lg hover:scale-[1.05] active:scale-[0.95]"
+          >
+            {t('ctaComparePlans')}
+          </a>
         </div>
-      </section>
+        <p className="mt-8 text-sm text-text-muted">{t('finalCtaSubtext', { freeCredits })}</p>
+      </LandingSection>
 
       {/* Locale links — crawlable equity distribution */}
-      <section className="py-8 text-center">
+      <LandingSection fadeTop className="py-8 text-center">
         <p className="text-text-muted text-sm mb-3">Available in your language:</p>
         <div className="flex flex-wrap justify-center gap-4">
           {LOCALE_LINKS.map(({ href, label, flag }) => (
@@ -262,7 +260,7 @@ export function HomePageClient(): JSX.Element {
             </Link>
           ))}
         </div>
-      </section>
+      </LandingSection>
     </>
   );
 }

@@ -1,26 +1,18 @@
 'use client';
 
 import { JsonLd } from '@client/components/seo/JsonLd';
+import { LandingSection } from '@client/components/landing/LandingSection';
 import { CreditPackSelector, SubscriptionPlanGrid, TrustBadges } from '@client/components/stripe';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useModalStore } from '@client/store/modalStore';
 import { getFreeCreditsForTier } from '@/lib/anti-freeloader/region-classifier';
-import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { clientEnv } from '@shared/config/env';
 import { getEnabledPlans } from '@shared/config/subscription.utils';
-import { ArrowRight, Check, ShoppingCart } from 'lucide-react';
-import dynamic from 'next/dynamic';
-import Link from 'next/link';
-import { useLocale, useTranslations } from 'next-intl';
-import { DEFAULT_LOCALE } from '@/i18n/config';
+import { Check } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 
 type TPricingTab = 'credits' | 'subscribe';
-
-const AmbientBackground = dynamic(
-  () => import('@client/components/landing/AmbientBackground').then(m => m.AmbientBackground),
-  { ssr: false }
-);
 
 /** Calculate discounted price for a tier, rounding to 2 decimal places. */
 export function calculateDiscountedPrice(priceValue: number, discountPercent: number): number {
@@ -108,12 +100,9 @@ function FreeTierCard({
 export function Pricing(): JSX.Element {
   const t = useTranslations('homepage');
   const tPricing = useTranslations('pricing');
-  const locale = useLocale();
   const { openAuthModal } = useModalStore();
   const { discountPercent, tier } = useRegionTier();
   const freeCredits = getFreeCreditsForTier(tier ?? 'standard');
-  const hasTrialEnabled = getSubscriptionConfig().plans.some(plan => plan.trial.enabled);
-  const pricingPath = locale === DEFAULT_LOCALE ? '/pricing' : `/${locale}/pricing`;
   const [activeTab, setActiveTab] = useState<TPricingTab>('credits');
 
   const subscriptionPlans = useMemo(
@@ -134,115 +123,92 @@ export function Pricing(): JSX.Element {
   );
 
   return (
-    <section id="pricing" className="pricing-section relative overflow-hidden py-24">
-      <AmbientBackground variant="section" />
-
+    <LandingSection
+      id="pricing"
+      ambient
+      fadeTop
+      fadeBottom
+      className="pricing-section py-24"
+      innerClassName="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
+    >
       {productSchemas.map((schema, index) => (
         <JsonLd key={`pricing-jsonld-${index}`} data={schema} />
       ))}
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 text-center">
-          <p className="mb-3 text-sm font-bold uppercase tracking-widest text-secondary">Pricing</p>
-          <h2 className="text-3xl font-black text-white sm:text-5xl">
-            Simple, <span className="gradient-text-primary">transparent</span> pricing
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg font-light text-text-secondary">
-            {t('pricingCtaDescription')}
-          </p>
-        </div>
+      <div className="mb-12 text-center">
+        <p className="mb-3 text-sm font-bold uppercase tracking-widest text-secondary">Pricing</p>
+        <h2 className="text-3xl font-black text-white sm:text-5xl">
+          Simple, <span className="gradient-text-primary">transparent</span> pricing
+        </h2>
+        <p className="mx-auto mt-4 max-w-2xl text-lg font-light text-text-secondary">
+          {t('pricingCtaDescription')}
+        </p>
+      </div>
 
-        <div className="mb-10 flex justify-center">
-          <div className="flex gap-1 rounded-xl border border-surface-light bg-surface-light/50 p-1">
-            <button
-              type="button"
-              onClick={() => setActiveTab('credits')}
-              className={`rounded-lg px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                activeTab === 'credits'
-                  ? 'scale-[1.02] bg-accent text-white shadow-md'
-                  : 'text-text-secondary hover:bg-surface-light hover:text-white'
-              }`}
-            >
-              Buy Credits
-            </button>
+      <div className="mb-10 flex justify-center">
+        <div className="flex gap-1 rounded-xl border border-surface-light bg-surface-light/50 p-1">
+          <button
+            type="button"
+            onClick={() => setActiveTab('credits')}
+            className={`rounded-lg px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
+              activeTab === 'credits'
+                ? 'scale-[1.02] bg-accent text-white shadow-md'
+                : 'text-text-secondary hover:bg-surface-light hover:text-white'
+            }`}
+          >
+            Buy Credits
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('subscribe')}
+            className={`rounded-lg px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
+              activeTab === 'subscribe'
+                ? 'scale-[1.02] bg-accent text-white shadow-md'
+                : 'text-text-secondary hover:bg-surface-light hover:text-white'
+            }`}
+          >
+            Subscribe
+            <span className="ml-1.5 rounded-full bg-white/20 px-1.5 py-0.5 text-[10px] uppercase tracking-wider">
+              Best Value
+            </span>
+          </button>
+        </div>
+      </div>
+
+      {activeTab === 'credits' ? (
+        <div className="mx-auto max-w-5xl" data-testid="landing-credit-packs">
+          <p className="mb-8 text-center text-lg font-light text-text-secondary">
+            {tPricing('creditPacks.subtitle')}
+          </p>
+          <CreditPackSelector discountPercent={discountPercent} />
+          <div className="mt-8 text-center">
             <button
               type="button"
               onClick={() => setActiveTab('subscribe')}
-              className={`rounded-lg px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                activeTab === 'subscribe'
-                  ? 'scale-[1.02] bg-accent text-white shadow-md'
-                  : 'text-text-secondary hover:bg-surface-light hover:text-white'
-              }`}
+              className="text-sm text-accent underline transition-colors hover:text-accent-hover"
             >
-              Subscribe
-              <span className="ml-1.5 rounded-full bg-white/20 px-1.5 py-0.5 text-[10px] uppercase tracking-wider">
-                Best Value
-              </span>
+              {tPricing('creditPacks.comparePlans')}
             </button>
           </div>
         </div>
-
-        {activeTab === 'credits' ? (
-          <div className="mx-auto max-w-5xl" data-testid="landing-credit-packs">
-            <p className="mb-8 text-center text-lg font-light text-text-secondary">
-              {tPricing('creditPacks.subtitle')}
-            </p>
-            <CreditPackSelector discountPercent={discountPercent} />
-            <div className="mt-8 text-center">
-              <button
-                type="button"
-                onClick={() => setActiveTab('subscribe')}
-                className="text-sm text-accent underline transition-colors hover:text-accent-hover"
-              >
-                {tPricing('creditPacks.comparePlans')}
-              </button>
-            </div>
+      ) : (
+        <div
+          className="mx-auto grid max-w-6xl grid-cols-1 gap-4 lg:grid-cols-4"
+          data-testid="landing-subscriptions"
+        >
+          <FreeTierCard freeCredits={freeCredits} onStartFree={() => openAuthModal('register')} />
+          <div className="lg:col-span-3">
+            <SubscriptionPlanGrid
+              discountPercent={discountPercent}
+              className="grid h-full gap-4 md:grid-cols-3"
+            />
           </div>
-        ) : (
-          <div
-            className="mx-auto grid max-w-6xl grid-cols-1 gap-4 lg:grid-cols-4"
-            data-testid="landing-subscriptions"
-          >
-            <FreeTierCard freeCredits={freeCredits} onStartFree={() => openAuthModal('register')} />
-            <div className="lg:col-span-3">
-              <SubscriptionPlanGrid
-                discountPercent={discountPercent}
-                className="grid h-full gap-4 md:grid-cols-3"
-              />
-            </div>
-          </div>
-        )}
-
-        <div className="mx-auto mt-10 max-w-3xl">
-          <TrustBadges className="border border-surface-light/60 bg-surface/40" />
         </div>
+      )}
 
-        <div className="mx-auto mt-10 max-w-2xl text-center">
-          <Link
-            href={pricingPath}
-            className="group inline-flex w-full items-center justify-center gap-2 rounded-xl px-8 py-4 text-sm font-bold text-white shadow-lg shadow-secondary/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-secondary/40 active:translate-y-0 sm:text-base"
-            style={{
-              background: 'linear-gradient(135deg, rgb(59, 130, 246) 0%, rgb(139, 92, 246) 100%)',
-            }}
-          >
-            <ShoppingCart className="h-4 w-4 flex-shrink-0" />
-            <span>{t('ctaSeeWhatItCosts')}</span>
-            <ArrowRight className="h-4 w-4 flex-shrink-0 transition-transform group-hover:translate-x-1" />
-          </Link>
-
-          <button
-            type="button"
-            onClick={() => openAuthModal('register')}
-            className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl px-8 py-4 text-sm font-semibold text-white transition-all duration-200 glass-strong hover:bg-white/5 sm:text-base"
-          >
-            {hasTrialEnabled
-              ? t('ctaTryFreeCredits', { freeCredits })
-              : t('ctaGetFreeCredits', { freeCredits })}
-          </button>
-
-          <p className="mt-4 text-sm text-text-muted">{t('pricingCtaSubtext', { freeCredits })}</p>
-        </div>
+      <div className="mx-auto mt-10 max-w-3xl">
+        <TrustBadges className="border border-surface-light/60 bg-surface/40" />
       </div>
-    </section>
+    </LandingSection>
   );
 }

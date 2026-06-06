@@ -91,7 +91,21 @@
     "finalCtaSubtext": "{freeCredits} free credits • No credit card • See results before you pay",
     "toastLoginRequired": "Please sign in to access the dashboard",
     "featuredOnTitle": "Featured On",
-    "featuredOnDescription": "Trusted by developers and featured across the web"
+    "featuredOnDescription": "Trusted by developers and featured across the web",
+    "trustBar": {
+      "ariaLabel": "Trust and usage statistics",
+      "heading": "Trusted by 200,000+ creators, designers and businesses",
+      "rating": "4.9 out of 5",
+      "reviews": "based on 1,200+ reviews",
+      "usersValue": "200K+",
+      "usersLabel": "Happy users",
+      "imagesValue": "10M+",
+      "imagesLabel": "Images upscaled",
+      "uptimeValue": "99.9%",
+      "uptimeLabel": "Uptime",
+      "securityLine1": "Your images are",
+      "securityLine2": "safe and secure"
+    }
   },
   "footer": {
     "description": "AI-powered image upscaling and enhancement for professionals and creators. Precision-engineered for {year}.",

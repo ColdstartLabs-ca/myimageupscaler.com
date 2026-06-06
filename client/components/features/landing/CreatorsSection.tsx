@@ -1,6 +1,5 @@
 'use client';
 
-import { AmbientBackground } from '@client/components/landing/AmbientBackground';
 import { SectionSignupCTA } from '@client/components/landing/SectionSignupCTA';
 import { FadeIn, StaggerContainer, StaggerItem } from '@client/components/ui/MotionWrappers';
 import { motion } from 'framer-motion';
@@ -79,8 +78,7 @@ function CreatorCard({
 
 export function CreatorsSection(): JSX.Element {
   return (
-    <section className="relative overflow-hidden py-16 sm:py-20">
-      <AmbientBackground variant="section" />
+    <section className="relative pb-16 pt-4 sm:pb-20 sm:pt-6">
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <FadeIn className="mb-10 text-center sm:mb-12">
           <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">

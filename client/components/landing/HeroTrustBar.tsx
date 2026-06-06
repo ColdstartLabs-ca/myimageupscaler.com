@@ -1,0 +1,66 @@
+import type { ReactNode } from 'react';
+import { Lock, Star } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
+
+function TrustDivider(): JSX.Element {
+  return <div aria-hidden="true" className="hidden h-10 w-px shrink-0 bg-white/10 sm:block" />;
+}
+
+function TrustStat({ value, label }: { value: ReactNode; label: string }): JSX.Element {
+  return (
+    <div className="flex min-w-[7rem] flex-col items-center justify-center text-center">
+      <div className="text-lg font-bold text-white sm:text-xl">{value}</div>
+      <div className="mt-1 text-xs text-text-muted sm:text-sm">{label}</div>
+    </div>
+  );
+}
+
+function RatingBlock({ rating, reviews }: { rating: string; reviews: string }): JSX.Element {
+  return (
+    <div className="flex min-w-[8.5rem] flex-col items-center justify-center text-center">
+      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-0.5" aria-hidden="true">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <Star key={index} size={14} className="fill-warning text-warning" />
+          ))}
+        </div>
+        <span className="text-sm font-semibold text-white sm:text-base">{rating}</span>
+      </div>
+      <p className="mt-1 text-xs text-text-muted sm:text-sm">{reviews}</p>
+    </div>
+  );
+}
+
+function SecurityBlock({ line1, line2 }: { line1: string; line2: string }): JSX.Element {
+  return (
+    <div className="flex min-w-[8.5rem] items-center gap-3">
+      <Lock size={18} className="shrink-0 text-white/90" strokeWidth={1.75} aria-hidden="true" />
+      <div className="text-left text-xs leading-snug text-text-muted sm:text-sm">
+        <span className="block">{line1}</span>
+        <span className="block">{line2}</span>
+      </div>
+    </div>
+  );
+}
+
+export async function HeroTrustBar(): Promise<JSX.Element> {
+  const t = await getTranslations('homepage.trustBar');
+
+  return (
+    <div className="mt-10 lg:mt-12" aria-label={t('ariaLabel')}>
+      <p className="mb-6 text-center text-xs text-text-muted sm:text-sm">{t('heading')}</p>
+
+      <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-8 sm:gap-y-5 lg:gap-x-10">
+        <RatingBlock rating={t('rating')} reviews={t('reviews')} />
+        <TrustDivider />
+        <TrustStat value={t('usersValue')} label={t('usersLabel')} />
+        <TrustDivider />
+        <TrustStat value={t('imagesValue')} label={t('imagesLabel')} />
+        <TrustDivider />
+        <TrustStat value={t('uptimeValue')} label={t('uptimeLabel')} />
+        <TrustDivider />
+        <SecurityBlock line1={t('securityLine1')} line2={t('securityLine2')} />
+      </div>
+    </div>
+  );
+}

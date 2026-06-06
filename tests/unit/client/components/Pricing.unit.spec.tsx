@@ -57,6 +57,12 @@ vi.mock('@client/components/seo/JsonLd', () => ({
   JsonLd: () => null,
 }));
 
+vi.mock('@client/components/landing/LandingSection', () => ({
+  LandingSection: ({ children, id }: { children: React.ReactNode; id?: string }) => (
+    <section id={id}>{children}</section>
+  ),
+}));
+
 vi.mock('@client/components/stripe', () => ({
   CreditPackSelector: ({ discountPercent }: { discountPercent: number }) => (
     <div data-testid="credit-pack-selector">discount:{discountPercent}</div>
@@ -99,13 +105,6 @@ describe('Pricing landing section', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Start for Free' }));
 
     expect(mockOpenAuthModal).toHaveBeenCalledWith('register');
-  });
-
-  it('links to full pricing page from gradient CTA', () => {
-    render(<Pricing />);
-
-    const pricingLink = screen.getByRole('link', { name: /See What It Costs/i });
-    expect(pricingLink).toHaveAttribute('href', '/pricing');
   });
 
   it('exports calculateDiscountedPrice helper', () => {
