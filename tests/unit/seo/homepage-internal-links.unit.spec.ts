@@ -138,18 +138,18 @@ describe('Homepage "From the Blog" section', () => {
   const homePagePath = path.resolve(ROOT, 'app/[locale]/page.tsx');
   const homePageSource = fs.readFileSync(homePagePath, 'utf-8');
 
-  it('imports RelatedBlogPostsSection', () => {
-    expect(homePageSource).toContain('RelatedBlogPostsSection');
-    expect(homePageSource).toMatch(/import.*RelatedBlogPostsSection.*from/);
+  it('imports LandingBlogSection', () => {
+    expect(homePageSource).toContain('LandingBlogSection');
+    expect(homePageSource).toMatch(/import.*LandingBlogSection.*from/);
   });
 
   it('defines HOMEPAGE_BLOG_SLUGS constant', () => {
     expect(homePageSource).toContain('HOMEPAGE_BLOG_SLUGS');
   });
 
-  it('renders RelatedBlogPostsSection with "From the Blog" title', () => {
-    expect(homePageSource).toContain('<RelatedBlogPostsSection');
-    expect(homePageSource).toContain('"From the Blog"');
+  it('renders LandingBlogSection with homepage blog slugs', () => {
+    expect(homePageSource).toContain('<LandingBlogSection');
+    expect(homePageSource).toContain('blogPostSlugs={HOMEPAGE_BLOG_SLUGS}');
   });
 
   it('all HOMEPAGE_BLOG_SLUGS are valid blog post files', () => {

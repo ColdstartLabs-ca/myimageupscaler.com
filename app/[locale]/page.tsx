@@ -6,7 +6,7 @@ import { HeroSection } from '@client/components/landing/HeroSection';
 import { LandingHeroShell } from '@client/components/landing/LandingHeroShell';
 import { JsonLd } from '@client/components/seo/JsonLd';
 import { HreflangLinks } from '@client/components/seo/HreflangLinks';
-import { RelatedBlogPostsSection } from '@/app/(pseo)/_components/pseo/sections/RelatedBlogPostsSection';
+import { LandingBlogSection } from '@client/components/landing/LandingBlogSection';
 import { generateHomepageSchema } from '@lib/seo/schema-generator';
 import {
   getCanonicalUrl,
@@ -112,17 +112,7 @@ export default async function LocaleHomePage({ params }: ILocaleHomePageProps) {
         <Suspense fallback={<div className="h-screen" />}>
           <HomePageClient />
         </Suspense>
-      </div>
-      <div className="bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <RelatedBlogPostsSection
-            blogPostSlugs={HOMEPAGE_BLOG_SLUGS}
-            title="From the Blog"
-            subtitle="Guides and tutorials to get the most from AI image tools"
-            maxPosts={4}
-            locale={locale}
-          />
-        </div>
+        <LandingBlogSection blogPostSlugs={HOMEPAGE_BLOG_SLUGS} maxPosts={4} />
       </div>
     </>
   );

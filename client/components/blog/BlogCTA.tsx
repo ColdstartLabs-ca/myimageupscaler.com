@@ -195,7 +195,7 @@ function DemoCTA({
   );
 }
 
-/** Full CTA - High impact with logo, use at end of articles */
+/** Full CTA - Centered card for pricing CTAs, matches blog dark theme */
 function FullCTA({
   title,
   description,
@@ -210,43 +210,35 @@ function FullCTA({
   trustIndicators: string[];
 }): ReactElement {
   return (
-    <div className="not-prose my-12 rounded-2xl overflow-hidden relative">
-      {/* Gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-accent via-tertiary to-accent opacity-95" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.15),transparent_50%)]" />
-
-      <div className="relative p-8 sm:p-10">
-        {/* Logo */}
+    <div className="not-prose my-12 rounded-2xl overflow-hidden border border-border bg-surface">
+      <div className="p-8 sm:p-10">
         <div className="flex justify-center mb-6">
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2">
-            <Image
-              src="/logo/horizontal-logo-compact.png"
-              alt="MyImageUpscaler"
-              width={120}
-              height={48}
-              className="h-10 w-auto brightness-0 invert"
-            />
-          </div>
+          <Image
+            src="/logo/horizontal-logo-compact.png"
+            alt="MyImageUpscaler"
+            width={120}
+            height={48}
+            className="h-10 w-auto"
+          />
         </div>
 
         <div className="text-center">
-          <h3 className="font-bold text-white text-2xl sm:text-3xl mb-4">{title}</h3>
-          <p className="text-white/80 mb-8 max-w-lg mx-auto">{description}</p>
+          <h3 className="font-bold text-primary text-2xl sm:text-3xl mb-4">{title}</h3>
+          <p className="text-muted-foreground mb-8 max-w-lg mx-auto">{description}</p>
 
           <Link
             href={href}
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-accent font-bold rounded-xl hover:bg-white/90 hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg group"
+            className="inline-flex items-center gap-2 px-8 py-4 gradient-cta text-white font-bold rounded-xl hover:opacity-90 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-accent/25 group"
           >
             <Zap className="w-5 h-5" />
             {buttonText}
             <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
           </Link>
 
-          {/* Trust indicators */}
-          <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-white/70">
+          <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
             {trustIndicators.map(indicator => (
               <div key={indicator} className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-white/80" />
+                <Check className="w-4 h-4 text-success" />
                 <span>{indicator}</span>
               </div>
             ))}
