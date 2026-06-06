@@ -23,13 +23,20 @@ const validBlogSlugs = new Set(
 
 // Import the exported constant directly — avoids React rendering complexity
 // while still verifying the actual runtime data used by the component.
-import { POPULAR_TOOLS } from '../../../client/components/pages/HomePageClient';
+import { POPULAR_TOOLS } from '../../../client/components/landing/popularTools.data';
 
 const componentPath = path.resolve(
+  __dirname,
+  '../../../client/components/landing/PopularToolsSection.tsx'
+);
+const dataPath = path.resolve(__dirname, '../../../client/components/landing/popularTools.data.ts');
+const homePageClientPath = path.resolve(
   __dirname,
   '../../../client/components/pages/HomePageClient.tsx'
 );
 const componentSource = fs.readFileSync(componentPath, 'utf-8');
+const dataSource = fs.readFileSync(dataPath, 'utf-8');
+const homePageClientSource = fs.readFileSync(homePageClientPath, 'utf-8');
 
 // ============================================================================
 // A) POPULAR_TOOLS data integrity
@@ -103,11 +110,12 @@ describe('Homepage Internal Links — component structure', () => {
   });
 
   it('POPULAR_TOOLS is exported so tests can import it', () => {
-    expect(componentSource).toMatch(/export const POPULAR_TOOLS/);
+    expect(dataSource).toMatch(/export const POPULAR_TOOLS/);
+    expect(homePageClientSource).toMatch(/export \{ POPULAR_TOOLS \}/);
   });
 
   it('component renders a section with the Popular Tools heading', () => {
-    expect(componentSource).toContain('Pick a Tool');
+    expect(componentSource).toContain('pick a tool');
   });
 
   it('component maps POPULAR_TOOLS to Link elements', () => {
@@ -116,14 +124,9 @@ describe('Homepage Internal Links — component structure', () => {
   });
 
   it('no hardcoded hex or rgb colors are used in the new section', () => {
-    // Scan only the popular tools section between the section comment and the next section comment
-    const popularSection = componentSource.slice(
-      componentSource.indexOf('Popular Tools Section'),
-      componentSource.indexOf('Landing Page Sections')
-    );
-    expect(popularSection).not.toMatch(/#[0-9a-fA-F]{3,6}\b/);
-    expect(popularSection).not.toMatch(/rgb\(/);
-    expect(popularSection).not.toMatch(/rgba\(/);
+    expect(componentSource).not.toMatch(/#[0-9a-fA-F]{3,6}\b/);
+    expect(componentSource).not.toMatch(/rgb\(/);
+    expect(componentSource).not.toMatch(/rgba\(/);
   });
 });
 

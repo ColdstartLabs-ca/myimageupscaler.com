@@ -471,7 +471,7 @@ export default function PricingPageClient({ initialGeo }: IPricingPageClientProp
               onClick={() => setActiveTab('credits')}
               className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
                 activeTab === 'credits'
-                  ? 'bg-accent text-white shadow-md scale-[1.02]'
+                  ? 'gradient-cta text-white shadow-md scale-[1.02]'
                   : 'text-muted-foreground hover:text-primary hover:bg-surface-light'
               }`}
             >
@@ -481,7 +481,7 @@ export default function PricingPageClient({ initialGeo }: IPricingPageClientProp
               onClick={() => setActiveTab('subscribe')}
               className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
                 activeTab === 'subscribe'
-                  ? 'bg-accent text-white shadow-md scale-[1.02]'
+                  ? 'gradient-cta text-white shadow-md scale-[1.02]'
                   : 'text-muted-foreground hover:text-primary hover:bg-surface-light'
               }`}
             >

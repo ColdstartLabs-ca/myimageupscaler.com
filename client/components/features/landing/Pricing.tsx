@@ -152,7 +152,7 @@ export function Pricing(): JSX.Element {
             onClick={() => setActiveTab('credits')}
             className={`rounded-lg px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
               activeTab === 'credits'
-                ? 'scale-[1.02] bg-accent text-white shadow-md'
+                ? 'scale-[1.02] gradient-cta text-white shadow-md'
                 : 'text-text-secondary hover:bg-surface-light hover:text-white'
             }`}
           >
@@ -163,7 +163,7 @@ export function Pricing(): JSX.Element {
             onClick={() => setActiveTab('subscribe')}
             className={`rounded-lg px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
               activeTab === 'subscribe'
-                ? 'scale-[1.02] bg-accent text-white shadow-md'
+                ? 'scale-[1.02] gradient-cta text-white shadow-md'
                 : 'text-text-secondary hover:bg-surface-light hover:text-white'
             }`}
           >

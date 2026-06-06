@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { getEnabledCreditPacks } from '@shared/config/subscription.utils';
 import type { ICreditPack } from '@shared/config/subscription.types';
-import { CreditCard } from 'lucide-react';
+import { Check, CreditCard } from 'lucide-react';
 import { CheckoutModal } from './CheckoutModal';
 import { analytics } from '@client/analytics';
 import { useUserStore } from '@client/store/userStore';
@@ -21,6 +21,25 @@ interface ICreditPackSelectorProps {
   onError?: (error: Error) => void;
   /** Regional discount percentage (0-100). When > 0, displays adjusted prices. */
   discountPercent?: number;
+}
+
+const PACK_FEATURES = ['Credits never expire', 'Use on any tool', 'Stackable with plans'] as const;
+
+function getBadgeColorClass(badge: string): string {
+  return badge === 'Best Value' ? 'bg-secondary' : 'bg-accent';
+}
+
+function getCardBorderClasses(badge: string | undefined, isSelected: boolean): string {
+  if (isSelected) {
+    return 'border-accent ring-1 ring-accent/20';
+  }
+  if (badge === 'Most Popular') {
+    return 'border-accent/60 ring-1 ring-accent/20';
+  }
+  if (badge === 'Best Value') {
+    return 'border-secondary/60 ring-1 ring-secondary/20';
+  }
+  return 'border-surface-light';
 }
 
 export function CreditPackSelector({
@@ -158,114 +177,102 @@ export function CreditPackSelector({
     return Math.round(cents * (1 - discountPercent / 100));
   };
 
-  const formatPrice = (cents: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(applyDiscount(cents) / 100);
-  };
-
   const getPricePerCredit = (pack: ICreditPack) => {
     return (applyDiscount(pack.priceInCents) / pack.credits / 100).toFixed(3);
   };
 
+  const getDisplayPrice = (cents: number) => applyDiscount(cents) / 100;
+
   return (
     <>
-      <div className="grid gap-3 grid-cols-1 md:grid-cols-3">
-        {packs.map(pack => (
-          <div
-            key={pack.key}
-            className={`relative bg-surface rounded-xl border flex flex-col transition-all duration-150 cursor-pointer hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/10 ${
-              selectedPack === pack.key
-                ? 'border-accent'
-                : pack.badge
-                  ? 'border-accent/40 hover:border-accent/60'
-                  : 'border-surface-light hover:border-surface-light/80'
-            }`}
-            onClick={() => handlePurchase(pack)}
-          >
-            {pack.badge && (
-              <div
-                className={`absolute -top-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 text-white text-[10px] font-semibold rounded-full z-10 uppercase tracking-wide ${
-                  pack.badge === 'Best Value' ? 'bg-success' : 'bg-accent'
-                }`}
-              >
-                {pack.badge}
-              </div>
-            )}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        {packs.map(pack => {
+          const displayPrice = getDisplayPrice(pack.priceInCents);
+          const formattedPrice = Number.isInteger(displayPrice)
+            ? String(displayPrice)
+            : displayPrice.toFixed(2);
 
-            {discountPercent > 0 && (
-              <div className="absolute top-2 right-2 bg-error text-white text-[10px] font-bold px-1.5 py-0.5 rounded z-10 leading-tight">
-                {discountPercent}% OFF
-              </div>
-            )}
+          return (
+            <div
+              key={pack.key}
+              className={`relative flex cursor-pointer flex-col rounded-xl border bg-surface transition-colors duration-150 ${getCardBorderClasses(
+                pack.badge,
+                selectedPack === pack.key
+              )}`}
+              onClick={() => handlePurchase(pack)}
+            >
+              {pack.badge && (
+                <div
+                  className={`absolute -top-2.5 left-1/2 z-10 -translate-x-1/2 rounded-full px-3 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white ${getBadgeColorClass(
+                    pack.badge
+                  )}`}
+                >
+                  {pack.badge}
+                </div>
+              )}
 
-            <div className="p-4 flex flex-col h-full">
-              {/* Pack name */}
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-text-secondary text-center mb-3">
-                {pack.name}
-              </p>
+              {discountPercent > 0 && (
+                <div className="absolute top-2 right-2 bg-error text-white text-[10px] font-bold px-1.5 py-0.5 rounded z-10 leading-tight">
+                  {discountPercent}% OFF
+                </div>
+              )}
 
-              {/* Price */}
-              <div className="text-center mb-2">
-                {discountPercent > 0 && (
-                  <p className="text-[11px] text-text-muted line-through mb-0.5">
-                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
-                      pack.priceInCents / 100
-                    )}
-                  </p>
-                )}
-                <span className="text-2xl font-bold text-text-primary tabular-nums">
-                  {formatPrice(pack.priceInCents)}
-                </span>
-              </div>
-
-              {/* Credits */}
-              <div className="text-center mb-3">
-                <span className="text-sm font-semibold text-accent">
-                  {pack.credits.toLocaleString()} credits
-                </span>
-                <p className="text-[11px] text-text-secondary mt-0.5">
-                  ${getPricePerCredit(pack)} per credit
+              <div className="flex h-full flex-col p-4">
+                <p className="mb-3 text-center text-[11px] font-semibold uppercase tracking-widest text-text-secondary">
+                  {pack.name}
                 </p>
-              </div>
 
-              {/* Divider */}
-              <div className="border-t border-surface-light mb-3" />
+                <div className="mb-3 text-center">
+                  {discountPercent > 0 && (
+                    <p className="mb-0.5 text-[11px] text-text-muted line-through">
+                      {new Intl.NumberFormat('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                      }).format(pack.priceInCents / 100)}
+                    </p>
+                  )}
+                  <div className="flex items-baseline justify-center gap-0.5">
+                    <span className="text-sm font-medium text-text-primary">$</span>
+                    <span className="text-3xl font-bold tabular-nums text-text-primary">
+                      {formattedPrice}
+                    </span>
+                  </div>
+                </div>
 
-              {/* Features */}
-              <ul className="space-y-1.5 mb-4 flex-grow">
-                {['Credits never expire', 'Use on any tool', 'Stackable with plans'].map(
-                  (feature, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-3.5 w-3.5 text-success flex-shrink-0 mt-0.5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2.5}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span className="text-xs text-text-primary/80 leading-tight">{feature}</span>
+                <div className="mb-3 text-center">
+                  <span className="text-sm font-semibold gradient-text-primary">
+                    {pack.credits.toLocaleString()} credits
+                  </span>
+                  <p className="mt-0.5 text-[11px] text-text-secondary">
+                    ${getPricePerCredit(pack)} per credit
+                  </p>
+                </div>
+
+                <div className="mb-3 border-t border-surface-light" />
+
+                <ul className="mb-4 flex-grow space-y-1.5">
+                  {PACK_FEATURES.map(feature => (
+                    <li key={feature} className="flex items-start gap-2">
+                      <Check
+                        className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-success"
+                        strokeWidth={2.5}
+                      />
+                      <span className="text-xs leading-tight text-text-primary/80">{feature}</span>
                     </li>
-                  )
-                )}
-              </ul>
+                  ))}
+                </ul>
 
-              {/* CTA */}
-              <button className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-accent px-4 py-2.5 text-sm font-bold text-white shadow-md shadow-accent/20 transition-all hover:-translate-y-0.5 hover:bg-accent-hover disabled:opacity-60">
-                <CreditCard className="h-3.5 w-3.5" />
-                <span>Purchase</span>
-              </button>
+                <button
+                  type="button"
+                  className="gradient-cta shine-effect flex w-full items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-bold text-white transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60"
+                >
+                  <CreditCard className="h-3.5 w-3.5" />
+                  <span>Purchase</span>
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {showCheckoutModal && selectedPriceId && (

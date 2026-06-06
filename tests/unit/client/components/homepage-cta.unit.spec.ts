@@ -24,7 +24,6 @@ describe('Homepage CTA distribution', () => {
   });
 
   it('should place signup CTAs across homepage sections', () => {
-    expect(homePageClient).toContain('homepage_popular_tools');
     expect(homePageClient).toContain('homepage_faq');
     expect(
       readFileSync(join(ROOT, 'client/components/features/landing/CreatorsSection.tsx'), 'utf-8')

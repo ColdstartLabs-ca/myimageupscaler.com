@@ -6,7 +6,12 @@ import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-export function HeroActions(): JSX.Element {
+interface IHeroActionsProps {
+  className?: string;
+  compact?: boolean;
+}
+
+export function HeroActions({ className, compact = false }: IHeroActionsProps = {}): JSX.Element {
   const { openAuthModal } = useModalStore();
   const t = useTranslations('homepage');
 
@@ -30,19 +35,28 @@ export function HeroActions(): JSX.Element {
     openAuthModal('login');
   };
 
+  const buttonSize = compact
+    ? 'w-full px-5 py-3 text-sm sm:w-auto lg:px-8 lg:py-4 lg:text-base'
+    : 'px-8 py-4';
+
   return (
-    <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+    <div
+      className={`flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center ${className ?? 'mt-10'}`}
+    >
       <button
         onClick={handlePrimaryClick}
-        className="group inline-flex items-center gap-2 px-8 py-4 text-white font-semibold rounded-xl transition-all duration-200 gradient-cta shine-effect hover:scale-[1.02] active:scale-[0.98]"
+        className={`group inline-flex items-center justify-center gap-2 font-semibold text-white rounded-xl transition-all duration-200 gradient-cta shine-effect hover:scale-[1.02] active:scale-[0.98] ${buttonSize}`}
       >
-        <Sparkles size={20} className="group-hover:rotate-12 transition-transform" />
+        <Sparkles size={compact ? 18 : 20} className="group-hover:rotate-12 transition-transform" />
         {hasTrialEnabled ? t('ctaFixImages') : t('ctaUpscaleFirst')}
-        <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+        <ArrowRight
+          size={compact ? 16 : 18}
+          className="group-hover:translate-x-1 transition-transform"
+        />
       </button>
       <button
         onClick={handleSignInClick}
-        className="inline-flex items-center gap-2 px-8 py-4 glass-strong hover:bg-white/5 text-white font-semibold rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+        className={`hidden items-center justify-center gap-2 glass-strong font-semibold text-white rounded-xl transition-all duration-200 hover:bg-white/5 hover:scale-[1.02] active:scale-[0.98] sm:inline-flex ${buttonSize}`}
       >
         {t('ctaSignIn')}
       </button>

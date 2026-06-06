@@ -15,8 +15,8 @@ export const HeroBeforeAfter: React.FC = () => {
       afterMeta="3200 x 2400"
       badgeLabel="4x Upscale"
       labelPosition="top"
-      className="aspect-[4/3] rounded-xl h-full"
-      aspectRatio="4/3"
+      className="h-full w-full rounded-xl"
+      aspectRatio={null}
     />
   );
 };

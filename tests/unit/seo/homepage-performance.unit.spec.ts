@@ -15,8 +15,8 @@ const ROOT = join(process.cwd());
 describe('Homepage Performance — Phase 1', () => {
   describe('Image preloads', () => {
     // The logo is the LCP element on all pages — it appears in the sticky navbar above the fold.
-    // On mobile (375px), the hero bird image is pushed below the fold by the h1/h2/CTA content,
-    // so the logo is what Chrome measures as LCP. We preload it with media queries matching the
+    // On mobile (375px), the hero slider sits directly under the headline so it stays above the fold.
+    // The navbar logo may still compete for LCP; we preload it with media queries matching the
     // xs: 475px breakpoint in tailwind.config.js so each device downloads only what it renders.
 
     it('should preload the compact logo for mobile viewports (<475px)', () => {
@@ -135,7 +135,31 @@ describe('Homepage Performance — Phase 1', () => {
       expect(source).toContain('animate-hero-fade-in');
     });
 
-    it('HeroSection should render HeroTrustBar as a full-width row below the hero grid', () => {
+    it('HeroSection should place the slider between headline and details on mobile only', () => {
+      const heroPath = join(ROOT, 'client/components/landing/HeroSection.tsx');
+      const source = readFileSync(heroPath, 'utf-8');
+
+      expect(source).toContain('contents lg:col-start-1 lg:row-start-1 lg:block');
+      expect(source).toContain('order-1 text-left lg:order-none');
+      expect(source).toContain('order-2 lg:order-none');
+      expect(source).toContain('order-3 text-left lg:order-none');
+      expect(source).toContain('aspect-[3/2]');
+      expect(source).toContain('lg:aspect-[4/3]');
+    });
+
+    it('HeroSection should place the slider between headline and details on mobile only', () => {
+      const heroPath = join(ROOT, 'client/components/landing/HeroSection.tsx');
+      const source = readFileSync(heroPath, 'utf-8');
+
+      expect(source).toContain('contents lg:col-start-1 lg:row-start-1 lg:block');
+      expect(source).toContain('order-1 text-left lg:order-none');
+      expect(source).toContain('order-2 lg:order-none');
+      expect(source).toContain('order-3 text-left lg:order-none');
+      expect(source).toContain('aspect-[3/2]');
+      expect(source).toContain('lg:aspect-[4/3]');
+    });
+
+    it('HeroSection should render HeroTrustBar below the hero grid on all viewports', () => {
       const heroPath = join(ROOT, 'client/components/landing/HeroSection.tsx');
       const source = readFileSync(heroPath, 'utf-8');
 

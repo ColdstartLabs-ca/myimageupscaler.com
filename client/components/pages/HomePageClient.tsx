@@ -4,13 +4,13 @@ import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useModalStore } from '@client/store/modalStore';
 import { useToastStore } from '@client/store/toastStore';
 import { SectionSignupCTA } from '@client/components/landing/SectionSignupCTA';
+import { PopularToolsSection } from '@client/components/landing/PopularToolsSection';
 import { LandingSection } from '@client/components/landing/LandingSection';
 import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
 import { getFreeCreditsForTier } from '@/lib/anti-freeloader/region-classifier';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
-import { ArrowRight, ChevronRight, Sparkles } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
-import { DEFAULT_LOCALE } from '@/i18n/config';
+import { ArrowRight, Sparkles } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, lazy, useEffect } from 'react';
@@ -24,38 +24,7 @@ export const LOCALE_LINKS: ReadonlyArray<{ href: string; label: string; flag: st
   { href: '/pt', label: 'Português', flag: '🇧🇷' },
 ] as const;
 
-export const POPULAR_TOOLS: ReadonlyArray<{ href: string; label: string; desc: string }> = [
-  {
-    href: '/tools/ai-image-upscaler',
-    label: 'AI Image Upscaler',
-    desc: 'Enlarge to 4K without quality loss',
-  },
-  {
-    href: '/tools/ai-photo-enhancer',
-    label: 'Image Quality Enhancer',
-    desc: 'Fix blur, noise & restore photos free',
-  },
-  {
-    href: '/tools/transparent-background-maker',
-    label: 'Transparent Background Maker',
-    desc: 'Remove backgrounds, create PNG',
-  },
-  {
-    href: '/formats/upscale-avif-images',
-    label: 'AVIF Upscaler',
-    desc: 'Upscale next-gen AVIF format images',
-  },
-  {
-    href: '/free',
-    label: 'Free Tools',
-    desc: 'Start with free credits — no credit card needed',
-  },
-  {
-    href: '/tools/ai-background-remover',
-    label: 'AI Background Remover',
-    desc: 'Remove image backgrounds instantly',
-  },
-] as const;
+export { POPULAR_TOOLS } from '@client/components/landing/popularTools.data';
 
 // Lazy load below-the-fold sections to reduce initial JS bundle
 // These sections will only load when user scrolls near them
@@ -71,10 +40,8 @@ export function HomePageClient(): JSX.Element {
   const { showToast } = useToastStore();
   const searchParams = useSearchParams();
   const t = useTranslations('homepage');
-  const locale = useLocale();
   const { tier } = useRegionTier();
   const freeCredits = getFreeCreditsForTier(tier ?? 'standard');
-  const localizeHref = (href: string) => (locale === DEFAULT_LOCALE ? href : `/${locale}${href}`);
 
   // Check if any plan has trial enabled
   const config = getSubscriptionConfig();
@@ -122,45 +89,7 @@ export function HomePageClient(): JSX.Element {
 
   return (
     <>
-      <LandingSection
-        ambient
-        fadeTop
-        fadeBottom
-        className="py-16"
-        innerClassName="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
-      >
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">
-            Start Enhancing — <span className="gradient-text-primary">Pick a Tool</span>
-          </h2>
-          <p className="text-lg text-text-secondary max-w-2xl mx-auto font-light">
-            Professional AI tools for every image task. Try free with {freeCredits} credits.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {POPULAR_TOOLS.map(tool => (
-            <Link
-              key={tool.href}
-              href={localizeHref(tool.href)}
-              className="group glass-card-2025 p-6 flex items-start gap-4 hover:border-accent/40 transition-all duration-300 animated-border-violet"
-            >
-              <div className="flex-1 min-w-0">
-                <p className="text-base font-bold text-white group-hover:text-accent transition-colors truncate">
-                  {tool.label}
-                </p>
-                <p className="text-sm text-text-secondary mt-1 font-light leading-snug">
-                  {tool.desc}
-                </p>
-              </div>
-              <ChevronRight
-                size={18}
-                className="text-text-muted shrink-0 mt-0.5 group-hover:text-accent group-hover:translate-x-1 transition-all duration-200"
-              />
-            </Link>
-          ))}
-        </div>
-        <SectionSignupCTA location="homepage_popular_tools" className="mt-12" />
-      </LandingSection>
+      <PopularToolsSection freeCredits={freeCredits} />
 
       {/* Landing Page Sections - Lazy loaded for performance */}
       <Suspense fallback={<div className="h-screen" />}>

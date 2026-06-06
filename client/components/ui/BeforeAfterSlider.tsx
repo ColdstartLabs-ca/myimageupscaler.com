@@ -14,7 +14,8 @@ export interface IBeforeAfterSliderProps {
   badgeLabel?: string;
   labelPosition?: 'top' | 'bottom';
   className?: string;
-  aspectRatio?: string;
+  /** Pass `null` when the slider fills a pre-sized parent (e.g. hero overlay). */
+  aspectRatio?: string | null;
 }
 
 export const BeforeAfterSlider: React.FC<IBeforeAfterSliderProps> = ({
@@ -84,7 +85,7 @@ export const BeforeAfterSlider: React.FC<IBeforeAfterSliderProps> = ({
     <div
       ref={containerRef}
       className={`relative w-full overflow-hidden cursor-col-resize select-none rounded-lg ${className}`}
-      style={{ aspectRatio }}
+      style={aspectRatio === null ? undefined : { aspectRatio }}
       onMouseDown={handleMouseDown}
       onTouchStart={handleMouseDown}
     >
