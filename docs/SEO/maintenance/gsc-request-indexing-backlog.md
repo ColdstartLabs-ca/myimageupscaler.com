@@ -26,3 +26,22 @@ After the next production deploy, open Google Search Console URL Inspection for 
 - [ ] `https://myimageupscaler.com/blog/photoshop-upscale-image`
 - [ ] `https://myimageupscaler.com/blog/best-ai-image-enhancer`
 - [ ] `https://myimageupscaler.com/blog/sharpen-a-video`
+
+## 2026-06-05 Blog Thin Content Refresh - Primary
+
+- [ ] `https://myimageupscaler.com/blog/poster-size-dimensions-pixels`
+- [ ] `https://myimageupscaler.com/blog/best-image-upscaler`
+- [ ] `https://myimageupscaler.com/blog/what-resolution-for-print`
+- [ ] `https://myimageupscaler.com/blog/how-to-upscale-midjourney-images-for-print`
+- [ ] `https://myimageupscaler.com/blog/photoshop-upscaler-vs-ai-tools`
+- [ ] `https://myimageupscaler.com/blog/best-free-ai-photo-enhancer-online`
+- [ ] `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails`
+
+## 2026-06-05 Blog Thin Content Refresh - Secondary
+
+- [ ] `https://myimageupscaler.com/blog/topaz-video-upscaler`
+- [ ] `https://myimageupscaler.com/blog/best-ai-upscaler`
+- [ ] `https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark`
+- [ ] `https://myimageupscaler.com/blog/fix-blurry-photos-ai-methods-guide`
+- [ ] `https://myimageupscaler.com/comparisons-expanded/ai-models-comparison`
+- [ ] `https://myimageupscaler.com/blog/upscale-image-for-print-300-dpi-guide`

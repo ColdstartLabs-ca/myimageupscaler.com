@@ -197,9 +197,11 @@ Intent mismatch fixes (seo_title only):
 ## 2026-05-19
 
 ### SEO: CTR Links + Static Blog Sitemap Recovery
+
 **Affected:** best-free-ai-image-upscaler-2026-tested-compared, best-ai-image-quality-enhancer-free, free-ai-upscaler-no-watermark, static blog sitemap set
 **Why:** Fresh GSC showed click loss concentrated in high-impression blog clusters, plus live 200 static posts excluded from the sitemap by a stale blocklist.
 **Changes:**
+
 - `best-free-ai-image-upscaler-2026-tested-compared` — updated SEO title/description and changed homepage CTAs to `/tools/ai-image-upscaler`.
 - `best-ai-image-quality-enhancer-free` — updated SEO title/description and changed generic homepage CTAs to `/tools/ai-photo-enhancer`.
 - `free-ai-upscaler-no-watermark` — updated SEO title/description, changed the final CTA to `/tools/ai-image-upscaler`, and added a canonical support link to the complete 2026 comparison.
@@ -208,11 +210,29 @@ Intent mismatch fixes (seo_title only):
 ## 2026-05-24
 
 ### SEO: CTR Recovery Metadata Pass
+
 **Affected:** best-free-ai-image-upscaler-2026-tested-compared, ai-image-upscaling-vs-sharpening-explained, best-ai-upscaler, free-ai-upscaler-no-watermark, how-to-upscale-anime-images-with-ai
 **Why:** Fresh GSC showed the latest click loss concentrated in blog SERP CTR: 2026-05-07 to 2026-05-20 clicks -40.89%, impressions -1.35%, CTR -40.08%, with blog pages at 0.48% CTR.
 **Changes:**
+
 - `best-free-ai-image-upscaler-2026-tested-compared` — SEO title/description changed to a tighter real-test SERP promise.
 - `ai-image-upscaling-vs-sharpening-explained` — SEO title/description changed to match the exact "what is the difference" query.
 - `best-ai-upscaler` — SEO title/description changed from tested-sites language to comparison intent.
 - `free-ai-upscaler-no-watermark` — SEO title/description changed to emphasize no watermark and no signup.
 - `how-to-upscale-anime-images-with-ai` — SEO title/description changed to lead with anime-specific best-free/tool-test intent.
+
+## 2026-06-05
+
+### SEO: Blog Thin Content Refresh
+
+**Affected:** poster-size-dimensions-pixels, what-resolution-for-print, best-image-upscaler, best-free-ai-photo-enhancer-online, how-to-upscale-midjourney-images-for-print, photoshop-upscaler-vs-ai-tools, how-to-upscale-youtube-thumbnails
+**Why:** `docs/SEO/reports/blog-thin-content-scan-2026-06-05.md` found P2/P3 pages with GSC demand, weak CTR or weak engagement, and clearer query intent than the current content served.
+**Changes:**
+
+- `poster-size-dimensions-pixels` — retitled around 24x36 poster pixels, added first-screen 150/200/300 DPI table, and strengthened print-readiness/upscaler CTA.
+- `what-resolution-for-print` — retitled around 8x10 print resolution, added above-fold 2400 x 3000 answer block, and linked to the poster chart plus 300 DPI print guide.
+- `best-image-upscaler` — retargeted as a free-vs-pro support comparison and added one-way support links to the canonical 2026 free-upscaler comparison.
+- `best-free-ai-photo-enhancer-online` — added enhancer-vs-upscaler-vs-sharpener clarification, proof/test modules, and CTA alignment to `/tools/ai-photo-enhancer`.
+- `how-to-upscale-midjourney-images-for-print` — retitled around Midjourney max resolution, refreshed the answer block for June 2026 Midjourney V7/V8.1 dimensions, and updated print-size upscale mapping.
+- `photoshop-upscaler-vs-ai-tools` — retitled around Photoshop Super Resolution vs AI upscalers and added direct-answer plus RAW/JPEG/product/AI-art test matrix.
+- `how-to-upscale-youtube-thumbnails` — retitled around blurry thumbnail fixes and added low-quality-thumbnail troubleshooting.

@@ -18,6 +18,32 @@ Maintenance rules:
 
 ## 2026-06-05
 
+### Blog Thin Content Refresh
+
+Source: [blog-thin-content-scan-2026-06-05.md](../reports/blog-thin-content-scan-2026-06-05.md)
+
+Changes:
+
+- Updated `/blog/poster-size-dimensions-pixels` around 24x36 poster pixel intent with a first-screen 150/200/300 DPI table, print-readiness rule, and upscaler CTA.
+- Updated `/blog/what-resolution-for-print` around 8x10 print resolution with an above-fold `2400 x 3000 pixels at 300 DPI` answer, calculator-style table support, and links to the poster chart plus 300 DPI guide.
+- Retargeted `/blog/best-image-upscaler` as a free-vs-pro support comparison and added canonical support links to `/blog/best-free-ai-image-upscaler-2026-tested-compared`.
+- Strengthened `/blog/best-free-ai-photo-enhancer-online` with enhancer-vs-upscaler-vs-sharpener clarification, proof/test modules, and `/tools/ai-photo-enhancer` CTA alignment.
+- Updated `/blog/how-to-upscale-midjourney-images-for-print` around Midjourney max resolution and print upscaling, using current Midjourney V7/V8.1 dimension notes checked against official docs.
+- Updated `/blog/photoshop-upscaler-vs-ai-tools` around Photoshop Super Resolution vs AI upscaler comparison intent, with a direct answer and file-type test matrix.
+- Updated `/blog/how-to-upscale-youtube-thumbnails` around blurry/low-quality thumbnail troubleshooting.
+
+Validation:
+
+- Blog API `PATCH` succeeded for all seven posts and returned updated `updated_at` timestamps plus recalculated reading-time values.
+- Blog API `GET` verified updated titles, SEO descriptions, and inserted intent sections for all seven posts.
+- Local frontend blog routes currently return a Next/Turbopack dev manifest `ENOENT` for the shared blog route, including unrelated blog URLs; API/content verification is clean.
+
+Follow-up:
+
+- After deploy, request indexing for the seven refreshed blog URLs and monitor GSC CTR/GA engagement after 14 complete days.
+
+## 2026-06-05
+
 ### Tool Page Three Kings Pass: AI Image Upscaler
 
 Changes:
