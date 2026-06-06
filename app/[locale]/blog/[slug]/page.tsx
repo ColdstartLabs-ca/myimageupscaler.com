@@ -12,20 +12,12 @@ import {
   getAllPublishedPosts,
   getAllPublishedSlugs,
 } from '@server/services/blog.service';
-import {
-  Clock,
-  Lightbulb,
-  Info,
-  AlertTriangle,
-  ArrowRight,
-  Sparkles,
-  Calendar,
-  ChevronRight,
-} from 'lucide-react';
+import { Lightbulb, Info, AlertTriangle, ChevronRight } from 'lucide-react';
 import { clientEnv } from '@shared/config/env';
 import { ReadingProgress } from '@client/components/blog/ReadingProgress';
 import { BlogGuideSidebar } from '@client/components/blog/BlogGuideSidebar';
-import { CompactToolsBanner } from '../_components/RelatedToolsSection';
+import { BlogPostHeroSection } from '@client/components/blog/BlogPostHeroSection';
+import { BlogPostTags } from '@client/components/blog/BlogPostTags';
 import { BlogPostFooter } from '../_components/BlogPostFooter';
 import { BlogCTA, parseCTAMarker } from '@client/components/blog/BlogCTA';
 import { buildBlogAboutEntities, buildBlogBreadcrumbJsonLd } from '@lib/seo/blog-template-signals';
@@ -243,6 +235,7 @@ export default async function BlogPostPage({ params }: IPageProps) {
     .slice(0, 3);
 
   const postDate = getPostPublishedDate(post);
+  const readingTime = post.readingTime ?? '5 min read';
   const tableOfContents = extractTableOfContents(post.content);
   const schemaOrg = { appName: clientEnv.APP_NAME, baseUrl: clientEnv.BASE_URL };
   const quickVerdict = getQuickVerdict(post);
@@ -298,281 +291,201 @@ export default async function BlogPostPage({ params }: IPageProps) {
       <ReadingProgress />
 
       <article className="min-h-screen bg-main">
-        {/* Header */}
-        <header className="relative overflow-hidden pb-12 pt-8 md:pb-16 md:pt-12">
-          {/* Subtle gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-b from-accent/5 via-transparent to-transparent pointer-events-none" />
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-accent/5 to-transparent" />
 
-          <div className="container relative z-10 mx-auto max-w-6xl px-4">
+          <div className="container relative mx-auto max-w-6xl px-4 pb-20 pt-4 lg:pt-6">
             <nav
               aria-label="Breadcrumb"
-              className="mb-8 flex flex-wrap items-center gap-2 text-sm text-text-secondary"
+              className="mb-4 flex items-center gap-1.5 text-xs text-text-muted"
             >
               <Link href="/blog" className="transition-colors hover:text-accent">
                 Blog
               </Link>
-              <ChevronRight className="h-4 w-4 text-text-muted" />
+              <ChevronRight className="h-3 w-3 shrink-0" aria-hidden="true" />
               <Link
                 href={`/blog?q=${encodeURIComponent(post.category)}`}
                 className="transition-colors hover:text-accent"
               >
                 {post.category}
               </Link>
-              <ChevronRight className="h-4 w-4 text-text-muted" />
-              <span className="max-w-[42rem] truncate text-text-muted">{post.title}</span>
             </nav>
 
-            <div className="max-w-4xl">
-                <span className="mb-5 inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-3 py-1.5 text-sm font-medium text-accent">
-                  {post.category}
-                </span>
+            <BlogPostHeroSection
+              title={post.title}
+              description={post.description}
+              category={post.category}
+              readingTime={readingTime}
+              publishedDate={new Date(postDate).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+              })}
+              tryLabel={ctaT('try.button')}
+              pricingLabel={ctaT('secondaryButton')}
+              image={post.image}
+              tableOfContents={tableOfContents}
+            />
 
-                <h1 className="mb-5 font-display text-3xl font-bold leading-[1.15] tracking-tight text-primary md:text-4xl lg:text-5xl">
-                  {post.title}
-                </h1>
-
-                <p className="mb-5 text-lg leading-relaxed text-text-secondary md:text-xl">
-                  {post.description}
-                </p>
-
-                <p className="mb-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-text-secondary">
-                  <span>By {clientEnv.APP_NAME} Team</span>
-                  <span className="text-text-muted" aria-hidden="true">
-                    ·
-                  </span>
-                  <span className="inline-flex items-center gap-1.5">
-                    <Clock className="h-3.5 w-3.5" />
-                    {post.readingTime}
-                  </span>
-                  <span className="text-text-muted" aria-hidden="true">
-                    ·
-                  </span>
-                  <span className="inline-flex items-center gap-1.5">
-                    <Calendar className="h-3.5 w-3.5" />
-                    {new Date(postDate).toLocaleDateString('en-US', {
-                      month: 'long',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })}
-                  </span>
-                </p>
-
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <Link
-                    href="/?signup=1"
-                    className="group inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-bold text-white shadow-lg shadow-accent/25 gradient-cta transition-all hover:scale-[1.02] hover:opacity-90 active:scale-[0.98]"
-                  >
-                    <Sparkles className="h-5 w-5" />
-                    {ctaT('try.button')}
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                  </Link>
-                  <Link
-                    href="/pricing"
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-main/40 px-6 py-3 text-sm font-semibold text-accent transition-all hover:border-accent/50 hover:bg-accent/10"
-                  >
-                    {ctaT('secondaryButton')}
-                  </Link>
-                </div>
-            </div>
-
-            {post.tags.length > 0 && (
-              <div className="mt-8 flex flex-wrap gap-2 border-t border-border pt-8">
-                {post.tags.map(tag => (
-                  <Link
-                    key={tag}
-                    href={`/blog?q=${encodeURIComponent(tag)}`}
-                    className="inline-flex items-center rounded-lg border border-border bg-surface-light px-3 py-1.5 text-sm text-text-secondary transition-colors hover:border-accent/30 hover:text-accent"
-                  >
-                    #{tag}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        </header>
-
-        {/* Cover Image */}
-        {post.image && (
-          <div className="container mx-auto mb-8 max-w-4xl px-4">
-            <div className="relative aspect-[2/1] rounded-3xl overflow-hidden shadow-2xl">
-              <Image
-                src={post.image}
-                alt={post.title}
-                fill
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 896px"
-                priority
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-main/20 via-transparent to-transparent" />
-            </div>
-          </div>
-        )}
-
-        {/* Content */}
-        <div className="pb-20">
-          <div className="container mx-auto grid max-w-6xl gap-8 px-4 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
-            <div id="article-content" className="min-w-0">
-              <BlogGuideSidebar
-                items={tableOfContents}
-                readingTime={post.readingTime}
-                ctaLabel={ctaT('try.button')}
-                className="mb-8 lg:hidden"
-              />
-              <CompactToolsBanner blogSlug={slug} />
-              <div className="prose prose-lg prose-invert max-w-none prose-headings:scroll-mt-28 prose-headings:font-display prose-headings:tracking-tight prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-8 prose-p:leading-relaxed prose-li:leading-relaxed prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-strong:text-primary prose-img:rounded-2xl prose-img:shadow-lg">
-                <Markdown
-                  remarkPlugins={[remarkGfm]}
-                  rehypePlugins={[rehypeRaw]}
-                  components={{
-                    img: ({ src, alt }) => (
-                      <span className="block my-8">
-                        <Image
-                          src={src || ''}
-                          alt={alt || ''}
-                          width={800}
-                          height={450}
-                          className="rounded-lg w-full h-auto"
-                        />
-                      </span>
-                    ),
-                    a: ({ href, children }) => (
-                      <Link
-                        href={href || '#'}
-                        className="text-accent hover:underline"
-                        target={href?.startsWith('http') ? '_blank' : undefined}
-                        rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
-                      >
-                        {children}
-                      </Link>
-                    ),
-                    code: ({ children, className }) => {
-                      const isInline = !className;
-                      return isInline ? (
-                        <code className="bg-surface-light px-1.5 py-0.5 rounded text-sm text-accent">
+            <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
+              <div id="article-content" className="min-w-0">
+                <div className="prose prose-base prose-invert max-w-none lg:prose-lg prose-headings:scroll-mt-24 prose-headings:font-display prose-headings:tracking-tight prose-h2:text-xl prose-h2:mt-10 prose-h2:mb-3 lg:prose-h2:text-2xl lg:prose-h2:mt-12 lg:prose-h2:mb-4 prose-h3:text-lg prose-h3:mt-6 lg:prose-h3:text-xl lg:prose-h3:mt-8 prose-p:leading-relaxed prose-li:leading-relaxed prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-strong:text-primary prose-img:rounded-2xl prose-img:shadow-lg">
+                  <Markdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeRaw]}
+                    components={{
+                      img: ({ src, alt }) => (
+                        <span className="block my-8">
+                          <Image
+                            src={src || ''}
+                            alt={alt || ''}
+                            width={800}
+                            height={450}
+                            className="rounded-lg w-full h-auto"
+                          />
+                        </span>
+                      ),
+                      a: ({ href, children }) => (
+                        <Link
+                          href={href || '#'}
+                          className="text-accent hover:underline"
+                          target={href?.startsWith('http') ? '_blank' : undefined}
+                          rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
+                        >
                           {children}
-                        </code>
-                      ) : (
-                        <code className={className}>{children}</code>
-                      );
-                    },
-                    pre: ({ children }) => (
-                      <pre className="bg-surface-light p-4 rounded-lg overflow-x-auto border border-border">
-                        {children}
-                      </pre>
-                    ),
-                    blockquote: ({ children }) => {
-                      // Safely extract text from React children for pattern matching
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      const extractText = (node: any): string => {
-                        if (typeof node === 'string') return node;
-                        if (typeof node === 'number') return String(node);
-                        if (!node) return '';
-                        if (Array.isArray(node)) return node.map(extractText).join('');
-                        if (node?.props?.children) return extractText(node.props.children);
-                        return '';
-                      };
-                      const childrenAsString = extractText(children);
-
-                      // Check for CTA markers first
-                      const ctaResult = parseCTAMarker(childrenAsString);
-                      if (ctaResult) {
-                        return <BlogCTA type={ctaResult.type} toolSlug={ctaResult.toolSlug} />;
-                      }
-
-                      const tipMatch = childrenAsString.match(/\[!TIP\]\s*/);
-                      const infoMatch = childrenAsString.match(/\[!INFO\]\s*/);
-                      const warningMatch = childrenAsString.match(/\[!WARNING\]\s*/);
-
-                      if (tipMatch || infoMatch || warningMatch) {
-                        const type = tipMatch ? 'tip' : infoMatch ? 'info' : 'warning';
-                        const Icon =
-                          type === 'tip' ? Lightbulb : type === 'info' ? Info : AlertTriangle;
-                        const colors = {
-                          tip: 'border-emerald-500/50 bg-emerald-500/10',
-                          info: 'border-accent/50 bg-accent/10',
-                          warning: 'border-amber-500/50 bg-amber-500/10',
-                        };
-                        const iconColors = {
-                          tip: 'text-emerald-400',
-                          info: 'text-accent',
-                          warning: 'text-amber-400',
-                        };
-
-                        // Strip the marker and render clean text
-                        const cleanedContent = childrenAsString.replace(
-                          /\[!(TIP|INFO|WARNING)\]\s*/,
-                          ''
+                        </Link>
+                      ),
+                      code: ({ children, className }) => {
+                        const isInline = !className;
+                        return isInline ? (
+                          <code className="bg-surface-light px-1.5 py-0.5 rounded text-sm text-accent">
+                            {children}
+                          </code>
+                        ) : (
+                          <code className={className}>{children}</code>
                         );
+                      },
+                      pre: ({ children }) => (
+                        <pre className="bg-surface-light p-4 rounded-lg overflow-x-auto border border-border">
+                          {children}
+                        </pre>
+                      ),
+                      blockquote: ({ children }) => {
+                        // Safely extract text from React children for pattern matching
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        const extractText = (node: any): string => {
+                          if (typeof node === 'string') return node;
+                          if (typeof node === 'number') return String(node);
+                          if (!node) return '';
+                          if (Array.isArray(node)) return node.map(extractText).join('');
+                          if (node?.props?.children) return extractText(node.props.children);
+                          return '';
+                        };
+                        const childrenAsString = extractText(children);
+
+                        // Check for CTA markers first
+                        const ctaResult = parseCTAMarker(childrenAsString);
+                        if (ctaResult) {
+                          return <BlogCTA type={ctaResult.type} toolSlug={ctaResult.toolSlug} />;
+                        }
+
+                        const tipMatch = childrenAsString.match(/\[!TIP\]\s*/);
+                        const infoMatch = childrenAsString.match(/\[!INFO\]\s*/);
+                        const warningMatch = childrenAsString.match(/\[!WARNING\]\s*/);
+
+                        if (tipMatch || infoMatch || warningMatch) {
+                          const type = tipMatch ? 'tip' : infoMatch ? 'info' : 'warning';
+                          const Icon =
+                            type === 'tip' ? Lightbulb : type === 'info' ? Info : AlertTriangle;
+                          const colors = {
+                            tip: 'border-emerald-500/50 bg-emerald-500/10',
+                            info: 'border-accent/50 bg-accent/10',
+                            warning: 'border-amber-500/50 bg-amber-500/10',
+                          };
+                          const iconColors = {
+                            tip: 'text-emerald-400',
+                            info: 'text-accent',
+                            warning: 'text-amber-400',
+                          };
+
+                          // Strip the marker and render clean text
+                          const cleanedContent = childrenAsString.replace(
+                            /\[!(TIP|INFO|WARNING)\]\s*/,
+                            ''
+                          );
+
+                          return (
+                            <div
+                              className={`not-prose my-6 p-4 rounded-lg border-l-4 ${colors[type]}`}
+                            >
+                              <div className="flex gap-3">
+                                <Icon
+                                  className={`w-5 h-5 mt-0.5 flex-shrink-0 ${iconColors[type]}`}
+                                />
+                                <div className="text-muted-foreground">{cleanedContent}</div>
+                              </div>
+                            </div>
+                          );
+                        }
 
                         return (
-                          <div
-                            className={`not-prose my-6 p-4 rounded-lg border-l-4 ${colors[type]}`}
-                          >
-                            <div className="flex gap-3">
-                              <Icon
-                                className={`w-5 h-5 mt-0.5 flex-shrink-0 ${iconColors[type]}`}
-                              />
-                              <div className="text-muted-foreground">{cleanedContent}</div>
-                            </div>
-                          </div>
+                          <blockquote className="border-l-4 border-accent/50 pl-4 italic text-muted-foreground">
+                            {children}
+                          </blockquote>
                         );
-                      }
-
-                      return (
-                        <blockquote className="border-l-4 border-accent/50 pl-4 italic text-muted-foreground">
+                      },
+                      h1: ({ children }) => (
+                        <h2 className="text-3xl font-bold text-white mt-12 mb-4">{children}</h2>
+                      ),
+                      h2: ({ children }) => {
+                        const headingText = extractTextFromNode(children);
+                        return (
+                          <h2 id={slugifyHeading(headingText)} className="group">
+                            {children}
+                          </h2>
+                        );
+                      },
+                      table: ({ children }) => (
+                        <div className="overflow-x-auto my-6">
+                          <table className="min-w-full border-collapse">{children}</table>
+                        </div>
+                      ),
+                      th: ({ children }) => (
+                        <th className="border border-border bg-surface-light px-4 py-2 text-left font-semibold text-primary">
                           {children}
-                        </blockquote>
-                      );
-                    },
-                    h1: ({ children }) => (
-                      <h2 className="text-3xl font-bold text-white mt-12 mb-4">{children}</h2>
-                    ),
-                    h2: ({ children }) => {
-                      const headingText = extractTextFromNode(children);
-                      return (
-                        <h2 id={slugifyHeading(headingText)} className="group">
+                        </th>
+                      ),
+                      td: ({ children }) => (
+                        <td className="border border-border px-4 py-2 text-muted-foreground">
                           {children}
-                        </h2>
-                      );
-                    },
-                    table: ({ children }) => (
-                      <div className="overflow-x-auto my-6">
-                        <table className="min-w-full border-collapse">{children}</table>
-                      </div>
-                    ),
-                    th: ({ children }) => (
-                      <th className="border border-border bg-surface-light px-4 py-2 text-left font-semibold text-primary">
-                        {children}
-                      </th>
-                    ),
-                    td: ({ children }) => (
-                      <td className="border border-border px-4 py-2 text-muted-foreground">
-                        {children}
-                      </td>
-                    ),
-                    iframe: ({ src, ...props }) => (
-                      <span className="block my-8 rounded-xl overflow-hidden">
-                        <iframe
-                          src={src}
-                          {...props}
-                          className="w-full"
-                          style={{ aspectRatio: '16 / 9' }}
-                        />
-                      </span>
-                    ),
-                  }}
-                >
-                  {preprocessContent(post.content)}
-                </Markdown>
+                        </td>
+                      ),
+                      iframe: ({ src, ...props }) => (
+                        <span className="block my-8 rounded-xl overflow-hidden">
+                          <iframe
+                            src={src}
+                            {...props}
+                            className="w-full"
+                            style={{ aspectRatio: '16 / 9' }}
+                          />
+                        </span>
+                      ),
+                    }}
+                  >
+                    {preprocessContent(post.content)}
+                  </Markdown>
+                </div>
+                <BlogPostTags tags={post.tags} className="mt-10" />
               </div>
+
+              <aside className="hidden lg:sticky lg:top-20 lg:block">
+                <BlogGuideSidebar
+                  items={tableOfContents}
+                  readingTime={readingTime}
+                  ctaLabel={ctaT('try.button')}
+                />
+              </aside>
             </div>
-            <aside className="hidden lg:sticky lg:top-24 lg:block">
-              <BlogGuideSidebar
-                items={tableOfContents}
-                readingTime={post.readingTime}
-                ctaLabel={ctaT('try.button')}
-              />
-            </aside>
           </div>
         </div>
 

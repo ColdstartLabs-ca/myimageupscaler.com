@@ -22,16 +22,19 @@ export function BlogGuideSidebar({
   className = '',
 }: IBlogGuideSidebarProps): JSX.Element {
   return (
-    <div className={`${blogCardClass} p-6 ${className}`.trim()}>
+    <div className={`${blogCardClass} p-5 ${className}`.trim()}>
       <BlogSectionHeader icon={ListChecks} title="In This Guide" subtitle={readingTime} />
 
       {items.length > 0 ? (
-        <nav className="mt-5 grid gap-1" aria-label="Table of contents">
+        <nav
+          className="mt-4 grid max-h-[min(50vh,20rem)] gap-0.5 overflow-y-auto pr-1"
+          aria-label="Table of contents"
+        >
           {items.map((item, index) => (
             <Link
               key={item.id}
               href={`#${item.id}`}
-              className="group flex items-start gap-3 rounded-lg px-2 py-2 transition-all hover:bg-accent/10"
+              className="group flex items-start gap-2.5 rounded-lg px-2 py-1.5 transition-all hover:bg-accent/10"
             >
               <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-md bg-accent/10 text-xs font-semibold text-accent">
                 {index + 1}
@@ -48,7 +51,7 @@ export function BlogGuideSidebar({
         </p>
       )}
 
-      <div className="mt-5 border-t border-border pt-5">
+      <div className="mt-4 border-t border-border pt-4">
         <Link href="/?signup=1" className={`w-full ${blogCompactPrimaryButtonClass}`}>
           {ctaLabel}
           <ArrowRight className="h-4 w-4" />
