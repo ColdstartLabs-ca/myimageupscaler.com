@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
+import CreatorsSection from '@client/components/features/landing/CreatorsSection';
 import { HomePageClient } from '@client/components/pages/HomePageClient';
 import { HeroSection } from '@client/components/landing/HeroSection';
 import { JsonLd } from '@client/components/seo/JsonLd';
@@ -104,6 +105,7 @@ export default async function LocaleHomePage({ params }: ILocaleHomePageProps) {
       <div className="flex-grow bg-main font-sans selection:bg-accent/20 selection:text-white">
         {/* Hero section — server-rendered for fast LCP */}
         <HeroSection />
+        <CreatorsSection />
         {/* Below-fold interactive content */}
         <Suspense fallback={<div className="h-screen" />}>
           <HomePageClient />
