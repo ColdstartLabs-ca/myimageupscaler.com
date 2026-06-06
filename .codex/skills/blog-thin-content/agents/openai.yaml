@@ -1,0 +1,4 @@
+interface:
+  display_name: "Blog Thin Content"
+  short_description: "Find and refresh thin blog pages"
+  default_prompt: "Use $blog-thin-content to audit thin blog content and produce a refresh strategy."

@@ -18,6 +18,27 @@ Maintenance rules:
 
 ## 2026-06-05
 
+### Tool Page Three Kings Pass: AI Image Upscaler
+
+Changes:
+
+- Updated `/tools/ai-image-upscaler` H1 and first paragraph to front-load "free AI image upscaler", "up to 8x", "online", "no signup", and "no watermarks".
+- Synced `locales/en/tools.json` metadata/copy with the canonical English tool-page copy so localized data loading does not use the older 4K title.
+
+Why it mattered:
+
+- Fresh GSC showed `/tools/ai-image-upscaler` clicks improved from 17 to 61 and CTR from 1.10% to 4.52%, but average position slipped from 2.52 to 6.30. The strongest query/page candidates were "image upscaler 8x free" and "image upscaler 8x gratis" at positions 8.97 and 10.14.
+
+Validation:
+
+- `npx vitest run tests/unit/seo/tools-metadata.unit.spec.ts tests/unit/seo/tool-data-loader.unit.spec.ts`
+
+Follow-up:
+
+- After deploy, request indexing for `/tools/ai-image-upscaler` and recheck after 14 complete GSC days.
+
+## 2026-06-05
+
 ### Blog specialist author section (E-E-A-T)
 
 Changes:
