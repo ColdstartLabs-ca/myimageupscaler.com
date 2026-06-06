@@ -54,6 +54,14 @@ export async function generateMetadata({ params }: IBlogPageProps): Promise<Meta
 
 const POSTS_PER_PAGE = 6;
 
+const FEATURED_POST_PRIORITY = [
+  'best-free-ai-image-upscaler-2026-tested-compared',
+  'free-ai-upscaler-no-watermark',
+  'upscale-image-for-print-300-dpi-guide',
+  'best-free-ai-photo-enhancer-online',
+  'fix-blurry-photos-ai-methods-guide',
+] as const;
+
 const INTENT_PATHS = [
   {
     label: 'Fix blurry photos',
@@ -90,6 +98,24 @@ const TOPIC_FILTERS = [
   'photo restoration',
   'e-commerce',
   'anime',
+] as const;
+
+const START_HERE_LINKS = [
+  {
+    label: 'Best AI upscaler picks',
+    href: '/blog/best-free-ai-image-upscaler-2026-tested-compared',
+    description: 'Compare free and paid options before choosing a workflow.',
+  },
+  {
+    label: 'Image size and DPI',
+    href: '/blog/upscale-image-for-print-300-dpi-guide',
+    description: 'Match pixels, dimensions, and DPI for web or print output.',
+  },
+  {
+    label: 'Photo repair workflows',
+    href: '/blog/fix-blurry-photos-ai-methods-guide',
+    description: 'Recover detail in soft, compressed, old, or damaged photos.',
+  },
 ] as const;
 
 function getPaginationItems(
@@ -139,7 +165,13 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
       )
     : allPosts;
 
-  const [featuredPost, ...otherPosts] = filteredPosts;
+  const featuredPost =
+    !searchQuery &&
+    FEATURED_POST_PRIORITY.map(slug => filteredPosts.find(post => post.slug === slug)).find(
+      (post): post is (typeof filteredPosts)[number] => Boolean(post)
+    );
+  const effectiveFeaturedPost = featuredPost || filteredPosts[0];
+  const otherPosts = filteredPosts.filter(post => post.slug !== effectiveFeaturedPost?.slug);
 
   // Calculate pagination
   const currentPage = Number(searchQueryParams.page) || 1;
@@ -258,19 +290,19 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
       </section>
 
       {/* Featured Post */}
-      {featuredPost && (
+      {effectiveFeaturedPost && (
         <section className="pb-12">
           <div className="container mx-auto px-4 max-w-6xl">
-            <Link href={`/blog/${featuredPost.slug}`} className="group block">
+            <Link href={`/blog/${effectiveFeaturedPost.slug}`} className="group block">
               <article className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-surface via-surface to-surface-light transition-all duration-500 hover:border-accent/50 hover:shadow-card-hover">
                 <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative grid md:grid-cols-5 gap-0">
                   {/* Cover Image */}
                   <div className="md:col-span-2 aspect-[4/3] md:aspect-auto min-h-[280px] relative overflow-hidden">
-                    {featuredPost.image ? (
+                    {effectiveFeaturedPost.image ? (
                       <Image
-                        src={featuredPost.image}
-                        alt={featuredPost.title}
+                        src={effectiveFeaturedPost.image}
+                        alt={effectiveFeaturedPost.title}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                         sizes="(max-width: 768px) 100vw, 40vw"
@@ -291,23 +323,23 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
                   <div className="md:col-span-3 p-8 md:p-10 flex flex-col justify-center">
                     <div className="flex items-center gap-3 mb-4">
                       <span className="px-3 py-1 rounded-full text-xs font-medium bg-accent/10 text-accent border border-accent/20">
-                        {featuredPost.category}
+                        {effectiveFeaturedPost.category}
                       </span>
                       <span className="text-sm text-muted-foreground flex items-center gap-1.5">
                         <Clock className="w-3.5 h-3.5" />
-                        {featuredPost.readingTime}
+                        {effectiveFeaturedPost.readingTime}
                       </span>
                     </div>
                     <h2 className="font-display text-2xl md:text-3xl font-bold text-white mb-4 group-hover:text-accent transition-colors leading-tight">
-                      {featuredPost.title}
+                      {effectiveFeaturedPost.title}
                     </h2>
                     <p className="text-text-secondary mb-6 line-clamp-2 text-lg leading-relaxed">
-                      {featuredPost.description}
+                      {effectiveFeaturedPost.description}
                     </p>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-text-secondary flex items-center gap-1.5">
                         <Calendar className="w-4 h-4" />
-                        {new Date(featuredPost.date).toLocaleDateString('en-US', {
+                        {new Date(effectiveFeaturedPost.date).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric',
@@ -329,26 +361,10 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
       <section className="pb-12">
         <div className="container mx-auto max-w-6xl px-4">
           <div className="grid gap-4 md:grid-cols-3">
-            {[
-              {
-                label: 'Best AI upscaler picks',
-                query: 'best ai upscaler',
-                description: 'Compare free and paid options before choosing a workflow.',
-              },
-              {
-                label: 'Image size and DPI',
-                query: 'image resolution print',
-                description: 'Match pixels, dimensions, and DPI for web or print output.',
-              },
-              {
-                label: 'Photo repair workflows',
-                query: 'restore blurry photos',
-                description: 'Recover detail in soft, compressed, old, or damaged photos.',
-              },
-            ].map(path => (
+            {START_HERE_LINKS.map(path => (
               <Link
                 key={path.label}
-                href={`/blog?q=${encodeURIComponent(path.query)}`}
+                href={path.href}
                 className="group rounded-2xl border border-border bg-surface p-5 transition-all hover:border-accent/50 hover:bg-accent/10"
               >
                 <p className="text-sm font-medium text-accent">Start here</p>
@@ -365,7 +381,7 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
       {/* Blog Posts Grid */}
       <section className="pb-24">
         <div className="container mx-auto px-4 max-w-6xl">
-          {otherPosts.length === 0 && !featuredPost ? (
+          {otherPosts.length === 0 && !effectiveFeaturedPost ? (
             <div className="text-center py-20 bg-surface rounded-3xl border border-border">
               <Sparkles className="w-12 h-12 text-accent/50 mx-auto mb-4" />
               <p className="text-text-secondary text-lg">{t('listing.noPosts')}</p>

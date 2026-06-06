@@ -88,10 +88,10 @@ export async function generateMetadata({ params }: ILocaleHomePageProps): Promis
 }
 
 const HOMEPAGE_BLOG_SLUGS = [
-  'how-to-upscale-images-without-losing-quality',
+  'best-free-ai-image-upscaler-2026-tested-compared',
+  'free-ai-upscaler-no-watermark',
+  'upscale-image-for-print-300-dpi-guide',
   'fix-blurry-photos-ai-methods-guide',
-  'restore-old-photos-ai-enhancement-guide',
-  'image-resolution-for-printing-complete-guide',
 ];
 
 export default async function LocaleHomePage({ params }: ILocaleHomePageProps) {

@@ -1,5 +1,6 @@
 import { LandingSection } from '@client/components/landing/LandingSection';
-import { getPostsBySlugs, type IBlogPostMeta } from '@server/blog';
+import { getPostsBySlugs } from '@server/services/blog.service';
+import type { IBlogPostMeta } from '@shared/validation/blog.schema';
 import { ArrowRight, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { ReactElement } from 'react';
@@ -12,18 +13,24 @@ interface ILandingBlogSectionProps {
   maxPosts?: number;
 }
 
-export function LandingBlogSection({
+export async function LandingBlogSection({
   blogPostSlugs,
   title = 'From the',
   titleHighlight = 'Blog',
   subtitle = 'Guides and tutorials to get the most from AI image tools',
   maxPosts = 4,
-}: ILandingBlogSectionProps): ReactElement | null {
+}: ILandingBlogSectionProps): Promise<ReactElement | null> {
   if (!blogPostSlugs?.length) {
     return null;
   }
 
-  const posts = getPostsBySlugs(blogPostSlugs).slice(0, maxPosts);
+  const postsBySlug = new Map(
+    (await getPostsBySlugs(blogPostSlugs)).map(post => [post.slug, post])
+  );
+  const posts = blogPostSlugs
+    .map(slug => postsBySlug.get(slug))
+    .filter((post): post is IBlogPostMeta => Boolean(post))
+    .slice(0, maxPosts);
 
   if (posts.length === 0) {
     return null;
