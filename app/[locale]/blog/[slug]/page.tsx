@@ -21,6 +21,7 @@ import { BlogPostTags } from '@client/components/blog/BlogPostTags';
 import { BlogPostFooter } from '../_components/BlogPostFooter';
 import { BlogCTA, parseCTAMarker } from '@client/components/blog/BlogCTA';
 import { buildBlogAboutEntities, buildBlogBreadcrumbJsonLd } from '@lib/seo/blog-template-signals';
+import { BLOG_SPECIALIST_PROFILE } from '@lib/blog/specialist-profile';
 
 // Convert MDX Callout components to blockquotes with type markers
 function preprocessContent(content: string): string {
@@ -258,6 +259,14 @@ export default async function BlogPostPage({ params }: IPageProps) {
     },
     datePublished: postDate,
     dateModified: postDate,
+    reviewedBy: {
+      '@type': 'Person',
+      name: BLOG_SPECIALIST_PROFILE.name,
+      jobTitle: BLOG_SPECIALIST_PROFILE.role,
+      description: BLOG_SPECIALIST_PROFILE.description,
+      image: `${clientEnv.BASE_URL}${BLOG_SPECIALIST_PROFILE.image}`,
+      url: `${clientEnv.BASE_URL}${BLOG_SPECIALIST_PROFILE.url}`,
+    },
     publisher: {
       '@type': 'Organization',
       name: clientEnv.APP_NAME,
@@ -325,6 +334,7 @@ export default async function BlogPostPage({ params }: IPageProps) {
               pricingLabel={ctaT('secondaryButton')}
               image={post.image}
               tableOfContents={tableOfContents}
+              specialist={BLOG_SPECIALIST_PROFILE}
             />
 
             <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">

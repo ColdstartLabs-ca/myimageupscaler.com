@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Blog E-E-A-T'
+  short_description: 'Improve blog trust and authority signals'
+  default_prompt: 'Use $blog-eeat to audit this blog post or template for E-E-A-T improvements.'

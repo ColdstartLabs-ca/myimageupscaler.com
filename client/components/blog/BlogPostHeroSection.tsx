@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import { ArrowRight, Calendar, Clock, Sparkles } from 'lucide-react';
+import Image from 'next/image';
 import { BlogFeaturedImage } from '@client/components/blog/BlogFeaturedImage';
 import { BlogGuideNav } from '@client/components/blog/BlogGuideNav';
 import type { ITableOfContentsItem } from '@client/components/blog/BlogGuideSidebar';
+import type { IBlogSpecialistProfile } from '@lib/blog/specialist-profile';
 import {
   blogCategoryBadgeClass,
   blogPrimaryButtonClass,
@@ -20,6 +22,7 @@ interface IBlogPostHeroSectionProps {
   pricingLabel: string;
   image?: string;
   tableOfContents: ITableOfContentsItem[];
+  specialist?: IBlogSpecialistProfile;
 }
 
 export function BlogPostHeroSection({
@@ -32,6 +35,7 @@ export function BlogPostHeroSection({
   pricingLabel,
   image,
   tableOfContents,
+  specialist,
 }: IBlogPostHeroSectionProps): JSX.Element {
   const { lead, highlight } = splitBlogHeroTitle(title);
 
@@ -66,6 +70,27 @@ export function BlogPostHeroSection({
                 {publishedDate}
               </span>
             </p>
+
+            {specialist ? (
+              <div className="flex max-w-xl items-center gap-3 rounded-xl border border-border bg-surface/70 p-3">
+                <Image
+                  src={specialist.image}
+                  alt={`${specialist.name}, ${specialist.role}`}
+                  width={44}
+                  height={44}
+                  className="h-11 w-11 rounded-full object-cover"
+                />
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-primary">
+                    Reviewed by{' '}
+                    <Link href={specialist.url} className="text-accent hover:underline">
+                      {specialist.name}
+                    </Link>
+                  </p>
+                  <p className="text-xs leading-relaxed text-text-secondary">{specialist.role}</p>
+                </div>
+              </div>
+            ) : null}
 
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link href="/?signup=1" className={`group ${blogPrimaryButtonClass}`}>

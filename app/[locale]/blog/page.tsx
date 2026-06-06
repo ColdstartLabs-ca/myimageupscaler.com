@@ -20,6 +20,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Locale } from '@/i18n/config';
 import { getOpenGraphMetadata, getCanonicalUrl } from '@lib/seo/hreflang-generator';
 import { buildBlogIndexJsonLd, buildBlogItemListJsonLd } from '@lib/seo/blog-template-signals';
+import { BLOG_SPECIALIST_PROFILE } from '@lib/blog/specialist-profile';
 
 interface IBlogPageProps {
   params: Promise<{ locale: Locale }>;
@@ -238,6 +239,29 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
                     <span>{signal}</span>
                   </div>
                 ))}
+              </div>
+              <div className="mt-5 flex max-w-xl items-center gap-3 rounded-xl border border-border bg-surface/70 p-3">
+                <Image
+                  src={BLOG_SPECIALIST_PROFILE.image}
+                  alt={`${BLOG_SPECIALIST_PROFILE.name}, ${BLOG_SPECIALIST_PROFILE.role}`}
+                  width={44}
+                  height={44}
+                  className="h-11 w-11 rounded-full object-cover"
+                />
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-primary">
+                    Guides reviewed by{' '}
+                    <Link
+                      href={BLOG_SPECIALIST_PROFILE.url}
+                      className="text-accent hover:underline"
+                    >
+                      {BLOG_SPECIALIST_PROFILE.name}
+                    </Link>
+                  </p>
+                  <p className="text-xs leading-relaxed text-text-secondary">
+                    {BLOG_SPECIALIST_PROFILE.role}
+                  </p>
+                </div>
               </div>
             </div>
 

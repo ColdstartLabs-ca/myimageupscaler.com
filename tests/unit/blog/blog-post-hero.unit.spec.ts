@@ -36,5 +36,7 @@ describe('blog post hero section', () => {
     expect(heroSource).toContain('text-white');
     expect(heroSource).toContain('block gradient-text-primary');
     expect(heroSource).toContain('blogPrimaryButtonClass');
+    expect(heroSource).toContain('Reviewed by');
+    expect(heroSource).toContain('specialist.role');
   });
 });
