@@ -16,6 +16,31 @@ Maintenance rules:
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
 
+## 2026-06-07
+
+### Blog SERP CTR Test: Best Free AI Image Upscaler
+
+Changes:
+
+- Updated Supabase blog metadata for `/blog/best-free-ai-image-upscaler-2026-tested-compared`.
+- New SEO title: `Best Free AI Image Upscaler Online 2026: 12 Tested`.
+- New SEO description: `Compare 12 free online AI image upscalers for 2026: no signup, no watermark, 4K/8K output, limits, speed, and realistic detail.`
+
+Why it mattered:
+
+- GSC 90-day web data showed 77,603 impressions, 238 clicks, 0.31% CTR, and average position 7.08.
+- Top exact-match query rows such as `best free ai image upscaler 2026` and `best free ai image upscaler online 2026` remained zero-click despite page-one rankings.
+
+Validation:
+
+- Blog API `PATCH` returned 200 and revalidated `/blog` plus `/blog/best-free-ai-image-upscaler-2026-tested-compared`.
+- Live HTML verified title and meta description after revalidation.
+- CTR baseline saved at `/tmp/ctr-best-free-ai-upscaler-baseline-2026-06-07.json`.
+
+Follow-up:
+
+- Recheck CTR after 14-28 complete GSC days before making another snippet or content change.
+
 ## 2026-06-05
 
 ### Blog Thin Content Refresh
