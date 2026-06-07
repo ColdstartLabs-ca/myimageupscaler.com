@@ -414,7 +414,7 @@ export class EmailLifecycleService {
     const { data, error } = await supabaseAdmin
       .from('profiles')
       .select(
-        'id, created_at, subscription_status, subscription_tier, credits_balance, subscription_credits_balance, purchased_credits_balance'
+        'id, created_at, subscription_status, subscription_tier, subscription_credits_balance, purchased_credits_balance'
       )
       .order('created_at', { ascending: true })
       .limit(limit);
@@ -437,8 +437,7 @@ export class EmailLifecycleService {
       const lastJobAt = lastJob?.completedAt ?? null;
       const totalCredits =
         Number(profile.subscription_credits_balance ?? 0) +
-        Number(profile.purchased_credits_balance ?? 0) +
-        Number(profile.credits_balance ?? 0);
+        Number(profile.purchased_credits_balance ?? 0);
       const purchasedCredits = Number(profile.purchased_credits_balance ?? 0);
 
       const candidates: IQueueLifecycleEmailInput[] = [];
