@@ -226,8 +226,10 @@ vi.mock('@/store/loadingStore', () => ({
   },
 }));
 
-// Mock lucide-react with all common icons
-vi.mock('lucide-react', async () => {
+// Mock lucide-react: use real exports and auto-mock any icons added later
+vi.mock('lucide-react', async importOriginal => {
+  const actual = await importOriginal<typeof import('lucide-react')>();
+
   const createMockIcon = (name: string) => {
     return function MockIcon(props: Record<string, unknown>) {
       return React.createElement('div', {
@@ -240,67 +242,19 @@ vi.mock('lucide-react', async () => {
     };
   };
 
-  return {
-    AlertCircle: createMockIcon('AlertCircle'),
-    AlertTriangle: createMockIcon('AlertTriangle'),
-    ArrowLeft: createMockIcon('ArrowLeft'),
-    ArrowRight: createMockIcon('ArrowRight'),
-    Check: createMockIcon('Check'),
-    CheckCircle: createMockIcon('CheckCircle'),
-    CheckCircle2: createMockIcon('CheckCircle2'),
-    ChevronDown: createMockIcon('ChevronDown'),
-    ChevronLeft: createMockIcon('ChevronLeft'),
-    ChevronRight: createMockIcon('ChevronRight'),
-    ChevronUp: createMockIcon('ChevronUp'),
-    Circle: createMockIcon('Circle'),
-    Clock: createMockIcon('Clock'),
-    Copy: createMockIcon('Copy'),
-    Download: createMockIcon('Download'),
-    Edit: createMockIcon('Edit'),
-    Eye: createMockIcon('Eye'),
-    EyeOff: createMockIcon('EyeOff'),
-    File: createMockIcon('File'),
-    FileUp: createMockIcon('FileUp'),
-    Filter: createMockIcon('Filter'),
-    Folder: createMockIcon('Folder'),
-    Heart: createMockIcon('Heart'),
-    HelpCircle: createMockIcon('HelpCircle'),
-    Home: createMockIcon('Home'),
-    Image: createMockIcon('Image'),
-    Info: createMockIcon('Info'),
-    Layers: createMockIcon('Layers'),
-    Loader: createMockIcon('Loader'),
-    Loader2: createMockIcon('Loader2'),
-    LogIn: createMockIcon('LogIn'),
-    LogOut: createMockIcon('LogOut'),
-    Mail: createMockIcon('Mail'),
-    Menu: createMockIcon('Menu'),
-    Minus: createMockIcon('Minus'),
-    Moon: createMockIcon('Moon'),
-    MoreHorizontal: createMockIcon('MoreHorizontal'),
-    MoreVertical: createMockIcon('MoreVertical'),
-    Plus: createMockIcon('Plus'),
-    RefreshCw: createMockIcon('RefreshCw'),
-    RotateCcw: createMockIcon('RotateCcw'),
-    Save: createMockIcon('Save'),
-    Search: createMockIcon('Search'),
-    Settings: createMockIcon('Settings'),
-    Share: createMockIcon('Share'),
-    Sliders: createMockIcon('Sliders'),
-    Sparkles: createMockIcon('Sparkles'),
-    Star: createMockIcon('Star'),
-    Sun: createMockIcon('Sun'),
-    Trash: createMockIcon('Trash'),
-    Trash2: createMockIcon('Trash2'),
-    Upload: createMockIcon('Upload'),
-    UploadCloud: createMockIcon('UploadCloud'),
-    User: createMockIcon('User'),
-    X: createMockIcon('X'),
-    XCircle: createMockIcon('XCircle'),
-    Zap: createMockIcon('Zap'),
-    ZoomIn: createMockIcon('ZoomIn'),
-    ZoomOut: createMockIcon('ZoomOut'),
-  };
+  return new Proxy(actual, {
+    get(target, prop, receiver) {
+      if (typeof prop === 'string' && prop in target) {
+        return Reflect.get(target, prop, receiver);
+      }
+
+      if (typeof prop === 'string' && prop !== 'then') {
+        return createMockIcon(prop);
+      }
+
+      return Reflect.get(target, prop, receiver);
+    },
+  });
 });
 
 // Mock localStorage

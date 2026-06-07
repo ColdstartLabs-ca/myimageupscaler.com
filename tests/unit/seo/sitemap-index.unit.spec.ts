@@ -80,7 +80,7 @@ describe('Sitemap Index Localization', () => {
 
     it('should calculate correct total sitemap index count', () => {
       // English-only sitemap categories (not in LOCALIZED or ENGLISH_ONLY arrays)
-      const EXTRA_ENGLISH_ONLY = ['static', 'blog', 'images'];
+      const EXTRA_ENGLISH_ONLY = ['static', 'blog'];
       const englishOnlySitemapCount = ENGLISH_ONLY_CATEGORIES.length + EXTRA_ENGLISH_ONLY.length;
 
       // Localized: 1 English + 6 non-English per category
@@ -89,8 +89,8 @@ describe('Sitemap Index Localization', () => {
 
       const totalSitemaps = englishOnlySitemapCount + localizedEnglishCount + localeSpecificCount;
 
-      // 14 + 3 + 10 + 60 = 87 (14 English-only + 3 extra + 10 localized English + 60 locale-specific)
-      expect(totalSitemaps).toBe(87);
+      // 14 + 2 + 10 + 60 = 86 (14 English-only + 2 extra + 10 localized English + 60 locale-specific)
+      expect(totalSitemaps).toBe(86);
     });
 
     it('should have correct locale count', () => {

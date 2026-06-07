@@ -296,20 +296,16 @@ authenticatedTest.describe('API: Protected Example - Error Handling', () => {
     'should handle malformed JSON in POST requests',
     async ({ request, testUser }) => {
       const response = await request.post(ENDPOINT, {
-        data: 'invalid json {{{',
+        // Raw bytes — Playwright JSON-stringifies plain strings when Content-Type is application/json
+        data: Buffer.from('invalid json {{{'),
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${testUser.token}`,
         },
       });
 
-      // Next.js handles malformed JSON gracefully - it gets treated as a string
-      // The route processes it successfully instead of throwing a parse error
-      expect(response.status()).toBe(200);
-
-      const data = await response.json();
-      expect(data).toHaveProperty('message', 'Resource created successfully');
-      expect(data.data).toBe('invalid json {{{');
+      // Unguarded req.json() — invalid JSON body yields a server error, not 200
+      expect([400, 500]).toContain(response.status());
     }
   );
 

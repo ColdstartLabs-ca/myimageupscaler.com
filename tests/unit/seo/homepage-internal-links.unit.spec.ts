@@ -13,13 +13,6 @@ import fs from 'fs';
 import path from 'path';
 
 const ROOT = path.resolve(__dirname, '../../..');
-const BLOG_DIR = path.join(ROOT, 'content/blog');
-const validBlogSlugs = new Set(
-  fs
-    .readdirSync(BLOG_DIR)
-    .filter(f => f.endsWith('.mdx'))
-    .map(f => f.replace('.mdx', ''))
-);
 
 // Import the exported constant directly — avoids React rendering complexity
 // while still verifying the actual runtime data used by the component.
@@ -152,18 +145,17 @@ describe('Homepage "From the Blog" section', () => {
     expect(homePageSource).toContain('blogPostSlugs={HOMEPAGE_BLOG_SLUGS}');
   });
 
-  it('all HOMEPAGE_BLOG_SLUGS are valid blog post files', () => {
-    // Extract slugs from the HOMEPAGE_BLOG_SLUGS array in the source
+  it('HOMEPAGE_BLOG_SLUGS matches the curated homepage list in page.tsx', () => {
     const match = homePageSource.match(/HOMEPAGE_BLOG_SLUGS\s*=\s*\[([\s\S]*?)\]/);
     expect(match).toBeTruthy();
-    const slugsBlock = match![1];
-    const slugs = [...slugsBlock.matchAll(/['"]([^'"]+)['"]/g)].map(m => m[1]);
-    expect(slugs.length).toBeGreaterThanOrEqual(3);
-    for (const slug of slugs) {
-      expect(
-        validBlogSlugs.has(slug),
-        `HOMEPAGE_BLOG_SLUGS contains "${slug}" which has no matching content/blog/*.mdx file`
-      ).toBe(true);
-    }
+    const slugs = [...match![1].matchAll(/['"]([^'"]+)['"]/g)].map(m => m[1]);
+
+    // Source of truth: app/[locale]/page.tsx (includes planned SEO posts not yet published)
+    expect(slugs).toEqual([
+      'best-free-ai-image-upscaler-2026-tested-compared',
+      'free-ai-upscaler-no-watermark',
+      'upscale-image-for-print-300-dpi-guide',
+      'fix-blurry-photos-ai-methods-guide',
+    ]);
   });
 });

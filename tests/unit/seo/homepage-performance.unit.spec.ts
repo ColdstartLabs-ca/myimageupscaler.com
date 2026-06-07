@@ -164,8 +164,10 @@ describe('Homepage Performance — Phase 1', () => {
       const source = readFileSync(heroPath, 'utf-8');
 
       expect(source).toContain('HeroTrustBar');
-      expect(source).toMatch(/<\/div>\s*<HeroTrustBar \/>/);
-      expect(source).not.toMatch(/HeroBeforeAfter[\s\S]*<HeroTrustBar \/>/);
+      // Trust bar must render after the hero grid (slider column), not inside it
+      expect(source).toMatch(
+        /order-2 lg:order-none">[\s\S]*?<\/div>\s*<\/div>\s*<HeroTrustBar \/>/
+      );
     });
 
     it('HeroTrustBar should be a server component without a section divider', () => {

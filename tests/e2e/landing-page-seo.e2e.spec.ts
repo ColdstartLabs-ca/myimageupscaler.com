@@ -4,9 +4,9 @@ import { test, expect } from '../test-fixtures';
  * Landing Page SEO E2E Tests
  *
  * Tests the actual SEO metadata from the landing page:
- * - Meta title: "AI Image Upscaler & Photo Enhancer | Enhance Quality Free Online"
- * - Meta description contains "image enhancer" and "upscales photos"
- * - H1: "AI Image Upscaler & Photo Enhancer"
+ * - Meta title from locales/en/common.json meta.homepage.title
+ * - Meta description contains enhance/upscale/ai/free keywords
+ * - H1: "AI Image Upscaler & Photo Enhancer" (heroTitle + heroTitleHighlight)
  * - H2 subheadline exists
  */
 
