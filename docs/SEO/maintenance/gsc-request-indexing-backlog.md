@@ -18,6 +18,14 @@ After the next production deploy, open Google Search Console URL Inspection for 
 
 - [ ] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared`
 
+## 2026-06-07 3 Kings Opportunities Execution
+
+- [ ] `https://myimageupscaler.com/blog/fixing-pixelated-photos`
+- [ ] `https://myimageupscaler.com/blog/topaz-video-upscaler`
+- [ ] `https://myimageupscaler.com/blog/how-ai-image-upscaling-works-guide`
+- [ ] `https://myimageupscaler.com/blog/topaz-labs-free-trial`
+- [ ] `https://myimageupscaler.com/alternatives/vs-adobe-express`
+
 ## 2026-05-26 GSC Growth Execution
 
 - [ ] `https://myimageupscaler.com/comparisons-expanded/ai-models-comparison`

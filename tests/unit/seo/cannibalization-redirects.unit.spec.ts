@@ -11,6 +11,7 @@
  *   /blog/free-upscaler-no-sign-up → /blog/free-ai-upscaler-no-watermark
  *   /blog/upscale-image-online-free → /blog/free-ai-upscaler-no-watermark
  *   /blog/ai-vs-traditional-image-upscaling → /blog/ai-image-upscaling-vs-sharpening-explained
+ *   /blog/how-ai-image-upscaling-works-explained → /blog/how-ai-image-upscaling-works-guide
  */
 
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -66,6 +67,10 @@ const CANNIBALIZATION_REDIRECTS = [
   {
     from: '/blog/ai-vs-traditional-image-upscaling',
     to: '/blog/ai-image-upscaling-vs-sharpening-explained',
+  },
+  {
+    from: '/blog/how-ai-image-upscaling-works-explained',
+    to: '/blog/how-ai-image-upscaling-works-guide',
   },
 ];
 

@@ -10,4 +10,5 @@ export const BLOCKED_BLOG_SLUGS = new Set([
   'free-upscaler-no-sign-up',
   'upscale-image-online-free',
   'ai-vs-traditional-image-upscaling',
+  'how-ai-image-upscaling-works-explained',
 ]);

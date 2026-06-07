@@ -165,6 +165,11 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/blog/how-ai-image-upscaling-works-explained',
+        destination: '/blog/how-ai-image-upscaling-works-guide',
+        permanent: true,
+      },
+      {
         source: '/blog/best-ai-image-quality-enhancer',
         destination: '/blog/best-ai-image-enhancer',
         permanent: true,
@@ -198,6 +203,11 @@ const nextConfig = {
       {
         source: '/:locale(en|fr|de|es|it|ja|pt)/blog/ai-vs-traditional-image-upscaling',
         destination: '/:locale/blog/ai-image-upscaling-vs-sharpening-explained',
+        permanent: true,
+      },
+      {
+        source: '/:locale(en|fr|de|es|it|ja|pt)/blog/how-ai-image-upscaling-works-explained',
+        destination: '/:locale/blog/how-ai-image-upscaling-works-guide',
         permanent: true,
       },
       {

@@ -18,6 +18,28 @@ Maintenance rules:
 
 ## 2026-06-07
 
+### 3 Kings Opportunities Execution
+
+Source: [3-kings-opportunities-2026-06-07.md](../reports/3-kings-opportunities-2026-06-07.md)
+
+Changes:
+
+- Updated Supabase blog metadata and first-screen content for `/blog/fixing-pixelated-photos`, including the new H1/title, immediate answer, and cause/fix/tool-path table.
+- Updated Supabase blog metadata and first-screen comparison table for `/blog/topaz-video-upscaler`.
+- Updated Supabase blog metadata and opening answer for `/blog/topaz-labs-free-trial`, fixing the truncated SEO description.
+- Added contextual internal links into `/blog/fixing-pixelated-photos` from `how-to-sharpen-blurry-images`, `restore-old-photos-service`, and `photo-restoration-near-me`.
+- Consolidated `/blog/how-ai-image-upscaling-works-explained` into `/blog/how-ai-image-upscaling-works-guide` with redirects, sitemap exclusion, and internal PSEO reference cleanup.
+- Refreshed English Adobe Express alternatives metadata, H1, intro, differentiators, and comparison rows.
+
+Validation:
+
+- Supabase SQL readback verified the updated titles, SEO descriptions, inserted first-screen copy, and internal links.
+- Local JSON/redirect files passed targeted metadata/reference checks.
+
+Follow-up:
+
+- After deploy, request indexing for the dated 2026-06-07 backlog URLs and recheck GSC after 14 complete days.
+
 ### Blog SERP CTR Test: Best Free AI Image Upscaler
 
 Changes:

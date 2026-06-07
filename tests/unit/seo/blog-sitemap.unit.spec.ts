@@ -157,6 +157,7 @@ describe('Blog Sitemap', () => {
         'free-upscaler-no-sign-up',
         'upscale-image-online-free',
         'ai-vs-traditional-image-upscaling',
+        'how-ai-image-upscaling-works-explained',
       ];
 
       mockGetAllPublishedPosts.mockResolvedValue(
@@ -178,7 +179,6 @@ describe('Blog Sitemap', () => {
         'dalle-3-image-enhancement-guide',
         'stable-diffusion-upscaling-complete-guide',
         'how-ai-image-upscaling-works-guide',
-        'how-ai-image-upscaling-works-explained',
       ];
 
       mockGetAllPublishedPosts.mockResolvedValue(
