@@ -14,6 +14,10 @@ After the next production deploy, open Google Search Console URL Inspection for 
 - [x] `https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark`
 - [x] `https://myimageupscaler.com/blog/how-to-upscale-anime-images-with-ai`
 
+## 2026-05-31 Best-Free Upscaler CTR Title Test
+
+- [ ] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared`
+
 ## 2026-05-26 GSC Growth Execution
 
 - [ ] `https://myimageupscaler.com/comparisons-expanded/ai-models-comparison`

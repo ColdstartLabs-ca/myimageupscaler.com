@@ -19,6 +19,16 @@ cat >> .claude/skills/blog-changelog.md << 'EOF'
 EOF
 ```
 
+## 2026-05-31
+
+### SEO: Best-Free Upscaler CTR Title Test
+
+**Affected:** best-free-ai-image-upscaler-2026-tested-compared
+**Why:** 2026-05-31 GSC follow-up showed the page ranking around positions 5–6 for `best free ai image upscaler 2026` variants with 0% CTR, making it the strongest narrow title-test candidate.
+**Changes:**
+
+- `best-free-ai-image-upscaler-2026-tested-compared` — changed `seo_title` to `Best Free AI Image Upscaler 2026: 12 Tested` and tightened `seo_description` around no signup, no watermark, 4K output, speed, limits, and realistic detail.
+
 ---
 
 ## 2026-04-06

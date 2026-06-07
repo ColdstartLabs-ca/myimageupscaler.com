@@ -201,6 +201,28 @@ Follow-up:
 - Recheck Topaz/fix-blurry rows after 2026-06-10, once 2026-05-26 changes have more complete GSC days.
 - Complete the 10 unchecked manual request-indexing items in [gsc-request-indexing-backlog.md](./gsc-request-indexing-backlog.md).
 
+## 2026-05-31
+
+### Best-Free Upscaler CTR Title Test
+
+Source: [3-kings-follow-up-2026-05-31.md](../reports/3-kings-follow-up-2026-05-31.md)
+
+Changes:
+
+- Updated Supabase blog SERP metadata for `/blog/best-free-ai-image-upscaler-2026-tested-compared` to front-load the exact `best free ai image upscaler 2026` query after GSC showed positions ~5–6 with 0% CTR.
+- Kept the change metadata-only and narrow; did not rerun a broad Three Kings rewrite because `/blog/best-ai-upscaler` and `/blog/how-to-upscale-anime-images-with-ai` are waiting for another GSC window, and `/blog/topaz-video-upscaler` already received proof/content depth work on 2026-05-26.
+- Added the changed URL to the GSC request-indexing backlog.
+
+Validation:
+
+- Supabase SQL update returned the expected `seo_title`, `seo_description`, and `updated_at` for the target post.
+- Public URL check returned HTTP 200 after the update.
+
+Follow-up:
+
+- After deploy/cache refresh, request indexing for the URL listed in [gsc-request-indexing-backlog.md](./gsc-request-indexing-backlog.md).
+- Recheck GSC after 14–28 complete post-change days; watch CTR/clicks for the `best free ai image upscaler 2026`, `online`, and `4K` query variants.
+
 ## 2026-05-26
 
 ### Fix-Before-Pushing Six Ranking Pages
