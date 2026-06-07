@@ -28,6 +28,7 @@ export enum AIProvider {
  * Supported email providers
  */
 export enum EmailProvider {
+  CLOUDFLARE = 'cloudflare',
   BREVO = 'brevo',
   RESEND = 'resend',
 }

@@ -52,6 +52,12 @@ const AI_PROVIDER_FREE_TIERS: Record<AIProvider, IProviderFreeTier> = {
  * Default free tier limits for email providers
  */
 const EMAIL_PROVIDER_FREE_TIERS: Record<EmailProvider, IProviderFreeTier> = {
+  [EmailProvider.CLOUDFLARE]: {
+    dailyRequests: 0, // Cloudflare daily limits vary by account; let API 429s trigger fallback.
+    monthlyCredits: 3000,
+    hardLimit: true,
+    resetTimezone: 'UTC',
+  },
   [EmailProvider.BREVO]: {
     dailyRequests: 300, // 300 free emails/day
     monthlyCredits: 9000, // ~300/day * 30 days

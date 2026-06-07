@@ -274,9 +274,11 @@ const serverEnvSchema = z.object({
   // ==========================================
   // EMAIL PROVIDERS
   // ==========================================
-  // Brevo (Primary) - 9,000 free emails/month
+  // Cloudflare Email Service (Primary) - 3,000 included emails/month on Workers Paid
+  CLOUDFLARE_EMAIL_API_TOKEN: z.string().default(''),
+  // Brevo (Fallback) - 9,000 free emails/month
   BREVO_API_KEY: z.string().default(''),
-  // Resend (Fallback) - 3,000 free emails/month
+  // Resend (Final fallback) - 3,000 free emails/month
   RESEND_API_KEY: z.string().default(''),
   // Common email settings
   EMAIL_FROM_ADDRESS: z.string().email().default('noreply@myimageupscaler.com'),
@@ -422,6 +424,7 @@ function loadServerEnv(): IServerEnv {
     ENABLE_PREMIUM_MODELS: process.env.ENABLE_PREMIUM_MODELS ?? 'true',
 
     // Email Providers
+    CLOUDFLARE_EMAIL_API_TOKEN: process.env.CLOUDFLARE_EMAIL_API_TOKEN || '',
     BREVO_API_KEY: process.env.BREVO_API_KEY || '',
     RESEND_API_KEY: process.env.RESEND_API_KEY || '',
     EMAIL_FROM_ADDRESS: process.env.EMAIL_FROM_ADDRESS || 'noreply@myimageupscaler.com',

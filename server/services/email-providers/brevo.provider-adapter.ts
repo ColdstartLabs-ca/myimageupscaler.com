@@ -35,7 +35,7 @@ interface IBrevoErrorResponse {
 const BREVO_CONFIG: IEmailProviderConfig = {
   provider: EmailProvider.BREVO,
   tier: ProviderTier.HYBRID, // Free tier with paid overage
-  priority: 1, // Primary provider - 300 free emails/day
+  priority: 2, // First fallback provider - 300 free emails/day
   enabled: true,
   freeTier: {
     dailyRequests: 300, // 300 free emails/day

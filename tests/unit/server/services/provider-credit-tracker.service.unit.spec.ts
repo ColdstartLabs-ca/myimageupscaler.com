@@ -157,6 +157,17 @@ describe('ProviderCreditTracker', () => {
       });
     });
 
+    it('tracks cloudflare email usage limits', () => {
+      const limits = tracker.getProviderLimits(EmailProvider.CLOUDFLARE);
+
+      expect(limits).toEqual({
+        dailyRequests: 0,
+        monthlyCredits: 3000,
+        hardLimit: true,
+        resetTimezone: 'UTC',
+      });
+    });
+
     it('should return correct limits for RESEND email provider', () => {
       const limits = tracker.getProviderLimits(EmailProvider.RESEND);
 

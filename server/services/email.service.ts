@@ -20,8 +20,9 @@ export class EmailError extends Error {
  * Email service for sending transactional and marketing emails via provider manager.
  *
  * Provider priority:
- * 1. Brevo (primary) - 300 free emails/day
- * 2. Resend (fallback) - 3,000 free emails/month
+ * 1. Cloudflare Email Service (primary) - 3,000 included emails/month
+ * 2. Brevo (fallback) - 300 free emails/day
+ * 3. Resend (final fallback) - 3,000 free emails/month
  *
  * The service automatically handles:
  * - Provider selection and fallback

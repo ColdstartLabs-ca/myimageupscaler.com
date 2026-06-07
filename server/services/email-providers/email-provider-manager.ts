@@ -5,8 +5,9 @@
  * and fallback support when providers hit their free tier limits.
  *
  * Provider priority:
- * 1. Brevo (primary) - 9,000 free emails/month
- * 2. Resend (fallback) - 3,000 free emails/month
+ * 1. Cloudflare Email Service (primary) - 3,000 included emails/month
+ * 2. Brevo (fallback) - 9,000 free emails/month
+ * 3. Resend (final fallback) - 3,000 free emails/month
  */
 
 import type {
@@ -17,6 +18,7 @@ import type {
   ISendEmailResult,
 } from '@shared/types/provider-adapter.types';
 import { EmailProvider } from '@shared/types/provider-adapter.types';
+import { createCloudflareEmailAdapter } from './cloudflare.provider-adapter';
 import { createBrevoAdapter } from './brevo.provider-adapter';
 import { createResendAdapter } from './resend.provider-adapter';
 
@@ -30,6 +32,7 @@ export class EmailProviderManager implements IEmailProviderManager {
     this.providers = new Map();
 
     // Register default providers
+    this.registerProvider(createCloudflareEmailAdapter());
     this.registerProvider(createBrevoAdapter());
     this.registerProvider(createResendAdapter());
   }

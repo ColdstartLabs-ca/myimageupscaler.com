@@ -39,6 +39,11 @@ step_secrets() {
         STRIPE_WEBHOOK_SECRET
         GEMINI_API_KEY
         REPLICATE_API_TOKEN
+        CLOUDFLARE_ACCOUNT_ID
+        CLOUDFLARE_EMAIL_API_TOKEN
+        EMAIL_FROM_ADDRESS
+        BREVO_API_KEY
+        RESEND_API_KEY
         CRON_SECRET
     )
 

@@ -11,11 +11,36 @@
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { EmailProviderManager } from '../email-provider-manager';
 import { EmailProvider } from '@shared/types/provider-adapter.types';
-import { BrevoProviderAdapter } from '../brevo.provider-adapter';
-import { ResendProviderAdapter } from '../resend.provider-adapter';
+import type { IEmailProviderAdapter } from '@shared/types/provider-adapter.types';
+import { CloudflareEmailProviderAdapter } from '../cloudflare.provider-adapter';
+
+vi.mock('@shared/config/env', () => ({
+  clientEnv: {
+    SUPABASE_URL: 'https://example.supabase.co',
+    SUPABASE_ANON_KEY: 'test-anon-key',
+    BASE_URL: 'https://example.com',
+    APP_NAME: 'TestApp',
+    ENV: 'test',
+  },
+  serverEnv: {
+    CLOUDFLARE_EMAIL_API_TOKEN: 'test-cloudflare-token',
+    CLOUDFLARE_ACCOUNT_ID: 'test-account-id',
+    BREVO_API_KEY: 'test-brevo-key',
+    RESEND_API_KEY: 'test-resend-key',
+    SUPABASE_SERVICE_ROLE_KEY: 'test-service-role-key',
+    EMAIL_FROM_ADDRESS: 'test@example.com',
+    BASE_URL: 'https://example.com',
+    SUPPORT_EMAIL: 'support@example.com',
+    APP_NAME: 'TestApp',
+    ENV: 'test',
+    ALLOW_TRANSACTIONAL_EMAILS_IN_DEV: false,
+  },
+  isTest: vi.fn(() => true),
+  isDevelopment: vi.fn(() => false),
+}));
 
 // Mock the provider credit tracker
-vi.mock('../provider-credit-tracker.service', () => ({
+vi.mock('@server/services/provider-credit-tracker.service', () => ({
   getProviderCreditTracker: () => ({
     incrementUsage: vi.fn().mockResolvedValue({
       success: true,
@@ -54,8 +79,9 @@ describe('EmailProviderManager', () => {
     test('should register all default providers', () => {
       const providers = manager.getAllProviders();
 
-      expect(providers).toHaveLength(2);
+      expect(providers).toHaveLength(3);
       expect(providers.map(p => p.getProviderName())).toEqual([
+        EmailProvider.CLOUDFLARE,
         EmailProvider.BREVO,
         EmailProvider.RESEND,
       ]);
@@ -77,32 +103,33 @@ describe('EmailProviderManager', () => {
         resetCounters: vi.fn(),
       };
 
-      manager.registerProvider(mockAdapter as any);
+      manager.registerProvider(mockAdapter as unknown as IEmailProviderAdapter);
       const providers = manager.getAllProviders();
 
-      expect(providers).toHaveLength(3);
+      expect(providers).toHaveLength(4);
     });
   });
 
   describe('Provider Selection', () => {
-    test('should get Brevo as primary provider', async () => {
+    test('should get Cloudflare as primary provider', async () => {
       const provider = await manager.getProvider();
 
-      expect(provider.getProviderName()).toBe(EmailProvider.BREVO);
+      expect(provider.getProviderName()).toBe(EmailProvider.CLOUDFLARE);
       expect(provider.getConfig().priority).toBe(1);
     });
 
-    test('should switch to Resend when Brevo is unavailable', async () => {
-      // Disable Brevo to simulate hitting limits
-      manager.updateProviderConfig(EmailProvider.BREVO, { enabled: false });
+    test('should switch to Brevo when Cloudflare is unavailable', async () => {
+      // Disable Cloudflare to simulate missing credentials or hitting limits
+      manager.updateProviderConfig(EmailProvider.CLOUDFLARE, { enabled: false });
 
       const provider = await manager.getProvider();
-      expect(provider.getProviderName()).toBe(EmailProvider.RESEND);
-      expect(provider.getConfig().priority).toBe(3);
+      expect(provider.getProviderName()).toBe(EmailProvider.BREVO);
+      expect(provider.getConfig().priority).toBe(2);
     });
 
     test('should throw error when all providers are unavailable', async () => {
       // Disable all providers to simulate hitting all limits
+      manager.updateProviderConfig(EmailProvider.CLOUDFLARE, { enabled: false });
       manager.updateProviderConfig(EmailProvider.BREVO, { enabled: false });
       manager.updateProviderConfig(EmailProvider.RESEND, { enabled: false });
 
@@ -110,12 +137,15 @@ describe('EmailProviderManager', () => {
     });
 
     test('should get provider by type', () => {
+      const cloudflare = manager.getProviderByType(EmailProvider.CLOUDFLARE);
       const brevo = manager.getProviderByType(EmailProvider.BREVO);
       const resend = manager.getProviderByType(EmailProvider.RESEND);
 
+      expect(cloudflare).toBeDefined();
       expect(brevo).toBeDefined();
       expect(resend).toBeDefined();
 
+      expect(cloudflare?.getProviderName()).toBe(EmailProvider.CLOUDFLARE);
       expect(brevo?.getProviderName()).toBe(EmailProvider.BREVO);
       expect(resend?.getProviderName()).toBe(EmailProvider.RESEND);
     });
@@ -127,12 +157,23 @@ describe('EmailProviderManager', () => {
   });
 
   describe('Provider Configuration', () => {
+    test('should have correct Cloudflare config', () => {
+      const cloudflare = manager.getProviderByType(EmailProvider.CLOUDFLARE);
+      const config = cloudflare?.getConfig();
+
+      expect(config?.provider).toBe(EmailProvider.CLOUDFLARE);
+      expect(config?.priority).toBe(1);
+      expect(config?.enabled).toBe(true);
+      expect(config?.freeTier?.monthlyCredits).toBe(3000);
+      expect(config?.fallbackProvider).toBe(EmailProvider.BREVO);
+    });
+
     test('should have correct Brevo config', () => {
       const brevo = manager.getProviderByType(EmailProvider.BREVO);
       const config = brevo?.getConfig();
 
       expect(config?.provider).toBe(EmailProvider.BREVO);
-      expect(config?.priority).toBe(1);
+      expect(config?.priority).toBe(2);
       expect(config?.enabled).toBe(true);
       expect(config?.freeTier?.monthlyCredits).toBe(9000);
       expect(config?.fallbackProvider).toBe(EmailProvider.RESEND);
@@ -166,15 +207,18 @@ describe('EmailProviderManager', () => {
         .filter(p => p.getConfig().enabled)
         .sort((a, b) => a.getConfig().priority - b.getConfig().priority);
 
-      expect(providers[0].getProviderName()).toBe(EmailProvider.BREVO);
-      expect(providers[1].getProviderName()).toBe(EmailProvider.RESEND);
+      expect(providers[0].getProviderName()).toBe(EmailProvider.CLOUDFLARE);
+      expect(providers[1].getProviderName()).toBe(EmailProvider.BREVO);
+      expect(providers[2].getProviderName()).toBe(EmailProvider.RESEND);
     });
 
     test('should have correct fallback chain', () => {
+      const cloudflare = manager.getProviderByType(EmailProvider.CLOUDFLARE);
       const brevo = manager.getProviderByType(EmailProvider.BREVO);
       const resend = manager.getProviderByType(EmailProvider.RESEND);
 
-      // Brevo -> Resend
+      // Cloudflare -> Brevo -> Resend
+      expect(cloudflare?.getConfig().fallbackProvider).toBe(EmailProvider.BREVO);
       expect(brevo?.getConfig().fallbackProvider).toBe(EmailProvider.RESEND);
       expect(resend?.getConfig().fallbackProvider).toBeUndefined();
     });
@@ -185,7 +229,8 @@ describe('EmailProviderManager', () => {
       const usage = await manager.getAllProvidersUsage();
 
       expect(usage).toBeDefined();
-      expect(Object.keys(usage)).toHaveLength(2);
+      expect(Object.keys(usage)).toHaveLength(3);
+      expect(usage[EmailProvider.CLOUDFLARE]).toBeDefined();
       expect(usage[EmailProvider.BREVO]).toBeDefined();
       expect(usage[EmailProvider.RESEND]).toBeDefined();
     });
@@ -195,7 +240,6 @@ describe('EmailProviderManager', () => {
 describe('BaseEmailProviderAdapter', () => {
   describe('Template Loading', () => {
     test('should have all required templates defined', async () => {
-      const brevo = new BrevoProviderAdapter();
       const templates = [
         'welcome',
         'payment-success',
@@ -217,11 +261,11 @@ describe('BaseEmailProviderAdapter', () => {
 
   describe('Subject Lines', () => {
     test('should generate correct subjects', async () => {
-      const brevo = new BrevoProviderAdapter();
+      const cloudflare = new CloudflareEmailProviderAdapter();
 
       // Subjects are generated internally, we just verify the adapter exists
-      expect(brevo.getProviderName()).toBe(EmailProvider.BREVO);
-      expect(brevo.getConfig().provider).toBe(EmailProvider.BREVO);
+      expect(cloudflare.getProviderName()).toBe(EmailProvider.CLOUDFLARE);
+      expect(cloudflare.getConfig().provider).toBe(EmailProvider.CLOUDFLARE);
     });
   });
 });
