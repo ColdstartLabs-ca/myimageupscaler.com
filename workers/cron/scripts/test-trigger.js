@@ -11,6 +11,7 @@
  *   node scripts/test-trigger.js reconciliation
  *   node scripts/test-trigger.js refresh-3kings-sitemap
  *   node scripts/test-trigger.js gallery-cleanup
+ *   node scripts/test-trigger.js email-lifecycle
  */
 
 const JOBS = {
@@ -19,6 +20,7 @@ const JOBS = {
   reconciliation: '5 3 * * *',
   'refresh-3kings-sitemap': '30 4 * * *',
   'gallery-cleanup': '0 0 * * *',
+  'email-lifecycle': '15 5 * * *',
 };
 
 async function triggerCron(jobName, workerUrl = 'http://localhost:8787') {
