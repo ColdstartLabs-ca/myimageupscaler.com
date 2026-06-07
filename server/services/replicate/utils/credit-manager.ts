@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { InsufficientCreditsError } from '../../image-generation.service';
 import type { ICreditDeduction } from '../../image-processor.interface';
+import { getEmailLifecycleService } from '@server/services/email-lifecycle.service';
 
 /**
  * Result of a credit operation
@@ -46,6 +47,7 @@ export class CreditManager {
 
     if (creditError) {
       if (creditError.message?.includes('Insufficient credits')) {
+        await this.queueInsufficientCreditAlert(userId, amount);
         throw new InsufficientCreditsError(creditError.message);
       }
       throw new Error(`Failed to deduct credits: ${creditError.message}`);
@@ -56,6 +58,7 @@ export class CreditManager {
     const newBalance = result.new_total_balance ?? 0;
     const subscriptionAmount = result.consumed_subscription ?? amount;
     const purchasedAmount = result.consumed_purchased ?? 0;
+    await this.queueLowBalanceAlert(userId, newBalance);
 
     return { amount, newBalance, jobId, subscriptionAmount, purchasedAmount };
   }
@@ -101,6 +104,44 @@ export class CreditManager {
   private generateJobId(provider: string): string {
     const prefix = provider.toLowerCase().slice(0, 3); // First 3 chars of provider
     return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+  }
+
+  private async queueLowBalanceAlert(userId: string, newBalance: number): Promise<void> {
+    if (newBalance > 3) return;
+    try {
+      await getEmailLifecycleService().queueLowCreditAlert({
+        userId,
+        creditsRemaining: newBalance,
+        reason: newBalance <= 0 ? 'zero' : 'low',
+      });
+    } catch (error) {
+      console.error('Failed to queue low credit lifecycle email:', error);
+    }
+  }
+
+  private async queueInsufficientCreditAlert(
+    userId: string,
+    requiredCredits: number
+  ): Promise<void> {
+    try {
+      const { data } = await supabaseAdmin
+        .from('profiles')
+        .select('credits_balance, subscription_credits_balance, purchased_credits_balance')
+        .eq('id', userId)
+        .maybeSingle();
+      const creditsRemaining =
+        Number(data?.credits_balance ?? 0) +
+        Number(data?.subscription_credits_balance ?? 0) +
+        Number(data?.purchased_credits_balance ?? 0);
+      await getEmailLifecycleService().queueLowCreditAlert({
+        userId,
+        creditsRemaining,
+        requiredCredits,
+        reason: 'insufficient',
+      });
+    } catch (error) {
+      console.error('Failed to queue insufficient credit lifecycle email:', error);
+    }
   }
 }
 

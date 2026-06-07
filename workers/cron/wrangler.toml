@@ -18,7 +18,9 @@ crons = [
   # 3-Kings sitemap refresh - daily at 4:30 AM UTC
   "30 4 * * *",
   # Gallery cleanup - daily at midnight UTC
-  "0 0 * * *"
+  "0 0 * * *",
+  # Email lifecycle retention drips - daily at 5:15 AM UTC
+  "15 5 * * *"
 ]
 
 # Environment Variables (non-sensitive defaults)

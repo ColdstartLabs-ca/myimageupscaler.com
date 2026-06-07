@@ -56,6 +56,9 @@ export default {
     } else if (cronPattern === '0 0 * * *') {
       endpoint = '/api/cron/gallery-cleanup';
       jobName = 'Gallery Cleanup';
+    } else if (cronPattern === '15 5 * * *') {
+      endpoint = '/api/cron/email-lifecycle';
+      jobName = 'Email Lifecycle';
     } else {
       console.error(`[CRON] Unknown cron pattern: ${cronPattern}`);
       return;

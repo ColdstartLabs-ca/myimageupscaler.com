@@ -14,6 +14,7 @@ import { ModelRegistry } from './model-registry';
 // Refactored utilities
 import { buildModelInput, type IModelInput } from './replicate/builders';
 import { creditManager } from './replicate/utils/credit-manager';
+import { getEmailLifecycleService } from '@server/services/email-lifecycle.service';
 import { replicateErrorMapper } from './replicate/utils/error-mapper';
 import { ReplicateError } from './replicate/utils/error-mapper';
 import { parseReplicateResponse } from './replicate/utils/output-parser';
@@ -95,16 +96,13 @@ export class ReplicateService implements IImageProcessor {
     this.ensureInputImageDataPresent(input);
 
     // Step 1: Deduct credits atomically using CreditManager
-    const deduction = await creditManager.deductCredits(
-      userId,
-      creditCost,
-      this.providerName
-    );
+    const deduction = await creditManager.deductCredits(userId, creditCost, this.providerName);
     options?.onCreditsDeducted?.(deduction);
 
     try {
       // Step 2: Call Replicate API
       const result = await this.callReplicate(input);
+      await this.recordLifecycleActivation(userId);
 
       return {
         ...result,
@@ -118,6 +116,21 @@ export class ReplicateService implements IImageProcessor {
         'Credit refund for failed Replicate processing'
       );
       throw error;
+    }
+  }
+
+  private async recordLifecycleActivation(userId: string): Promise<void> {
+    try {
+      const lifecycleService = getEmailLifecycleService();
+      await lifecycleService.cancelPendingForUser(userId, 'user_processed_image', [
+        'signup-no-upload-2h',
+        'signup-no-upload-24h',
+        'signup-no-upload-3d-blog',
+        'winback-never-uploaded-14d',
+      ]);
+      await lifecycleService.queueFirstResultFollowup(userId);
+    } catch (error) {
+      console.error('Failed to record lifecycle activation:', error);
     }
   }
 

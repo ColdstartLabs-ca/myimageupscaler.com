@@ -222,6 +222,12 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
       'low-credits': 'LowCreditsEmail',
       'password-reset': 'PasswordResetEmail',
       'support-request': 'SupportRequestEmail',
+      'lifecycle-welcome': 'LifecycleWelcomeEmail',
+      'feature-reminder': 'FeatureReminderEmail',
+      'blog-education': 'BlogEducationEmail',
+      'unused-credits': 'UnusedCreditsEmail',
+      'finish-image': 'FinishImageEmail',
+      'win-back': 'WinBackEmail',
     };
 
     const exportName = templateExportNames[templateName];
@@ -238,6 +244,12 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
       'low-credits': () => import('@/emails/templates/LowCreditsEmail'),
       'password-reset': () => import('@/emails/templates/PasswordResetEmail'),
       'support-request': () => import('@/emails/templates/SupportRequestEmail'),
+      'lifecycle-welcome': () => import('@/emails/templates/LifecycleWelcomeEmail'),
+      'feature-reminder': () => import('@/emails/templates/FeatureReminderEmail'),
+      'blog-education': () => import('@/emails/templates/BlogEducationEmail'),
+      'unused-credits': () => import('@/emails/templates/UnusedCreditsEmail'),
+      'finish-image': () => import('@/emails/templates/FinishImageEmail'),
+      'win-back': () => import('@/emails/templates/WinBackEmail'),
     };
     /* eslint-enable no-restricted-syntax */
 
@@ -263,6 +275,12 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
       'payment-success': d => `Payment confirmed - ${d.amount || 'Receipt'}`,
       'subscription-update': 'Your subscription has been updated',
       'low-credits': 'Running low on credits',
+      'lifecycle-welcome': 'Your first 10 credits are ready',
+      'feature-reminder': d => String(d.subject || d.headline || 'Try your next image workflow'),
+      'blog-education': d => `Guide: ${d.articleTitle || 'Get better image results'}`,
+      'unused-credits': 'You still have credits waiting',
+      'finish-image': 'Finish this image',
+      'win-back': 'Still need cleaner images?',
       'password-reset': 'Reset your password',
       'support-request': d =>
         `[Support] [${String(d.category || 'GENERAL').toUpperCase()}] ${d.subject || 'Support Request'}`,

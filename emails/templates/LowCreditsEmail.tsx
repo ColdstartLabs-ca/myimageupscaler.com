@@ -14,6 +14,11 @@ import {
 interface ILowCreditsEmailProps {
   userName?: string;
   creditsRemaining?: number;
+  requiredCredits?: number;
+  returnUrl?: string;
+  ctaUrl?: string;
+  preferenceUrl?: string;
+  variant?: 'low' | 'zero' | 'insufficient';
   upgradeUrl?: string;
   baseUrl: string;
   supportEmail: string;
@@ -23,12 +28,30 @@ interface ILowCreditsEmailProps {
 export function LowCreditsEmail({
   userName = 'there',
   creditsRemaining,
+  requiredCredits,
+  returnUrl,
+  ctaUrl,
+  preferenceUrl,
+  variant = 'low',
   upgradeUrl,
   baseUrl,
   supportEmail,
   appName = 'MyImageUpscaler',
 }: ILowCreditsEmailProps): React.JSX.Element {
   const pricingUrl = `${baseUrl}/pricing`;
+  const finalCtaUrl = ctaUrl || returnUrl || upgradeUrl || pricingUrl;
+  const headingText =
+    variant === 'insufficient'
+      ? 'Finish This Image'
+      : creditsRemaining === 0 || variant === 'zero'
+        ? 'You Are Out of Credits'
+        : 'Running Low on Credits';
+  const ctaLabel =
+    variant === 'insufficient'
+      ? 'Finish this image'
+      : creditsRemaining === 0
+        ? 'Add credits'
+        : 'Get more credits';
 
   return (
     <Html>
@@ -40,20 +63,23 @@ export function LowCreditsEmail({
           </Section>
 
           <Section style={content}>
-            <Text style={heading}>Running Low on Credits</Text>
+            <Text style={heading}>{headingText}</Text>
             <Text style={paragraph}>Hi {userName},</Text>
             <Text style={paragraph}>
-              {creditsRemaining !== undefined
-                ? `You have ${creditsRemaining} credits remaining.`
-                : 'Your credit balance is getting low.'}
+              {variant === 'insufficient' && requiredCredits !== undefined
+                ? `That image needs ${requiredCredits} credits. You currently have ${creditsRemaining ?? 0}.`
+                : creditsRemaining !== undefined
+                  ? `You have ${creditsRemaining} credits remaining.`
+                  : 'Your credit balance is getting low.'}
             </Text>
             <Text style={paragraph}>
-              Don&apos;t let your work stop! Top up your credits to continue upscaling images at the
-              highest quality.
+              {variant === 'insufficient'
+                ? 'Top up and come straight back to the image you were working on.'
+                : 'Top up your credits before the next upscale so your workflow does not stop.'}
             </Text>
 
-            <Button href={upgradeUrl || pricingUrl} style={button}>
-              Get More Credits
+            <Button href={finalCtaUrl} style={button}>
+              {ctaLabel}
             </Button>
           </Section>
 
@@ -66,6 +92,13 @@ export function LowCreditsEmail({
                 Contact us
               </Link>
             </Text>
+            {preferenceUrl && (
+              <Text style={footerText}>
+                <Link href={preferenceUrl} style={footerLink}>
+                  Manage low-credit alerts
+                </Link>
+              </Text>
+            )}
             <Text style={footerText}>
               &copy; {new Date().getFullYear()} {appName}. All rights reserved.
             </Text>

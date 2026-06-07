@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { getAuthenticatedUser } from '@server/middleware/getAuthenticatedUser';
 import { updatePreferencesSchema } from '@shared/validation/email.schema';
+import { getEmailLifecycleService } from '@server/services/email-lifecycle.service';
+import { trackServerEvent } from '@server/analytics';
+import { serverEnv } from '@shared/config/env';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -79,6 +82,33 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
       .single();
 
     if (error) throw error;
+
+    if (
+      validated.data.marketing_emails === false ||
+      validated.data.product_updates === false ||
+      validated.data.low_credit_alerts === false
+    ) {
+      const lifecycleService = getEmailLifecycleService();
+      await lifecycleService.recordLifecycleEvent({
+        userId: user.id,
+        eventType: 'unsubscribed',
+        metadata: {
+          marketing_emails: validated.data.marketing_emails,
+          product_updates: validated.data.product_updates,
+          low_credit_alerts: validated.data.low_credit_alerts,
+        },
+      });
+      await lifecycleService.cancelPendingForUser(user.id, 'email_preference_opt_out');
+      await trackServerEvent(
+        'email_lifecycle_unsubscribed',
+        {
+          marketing_emails: validated.data.marketing_emails,
+          product_updates: validated.data.product_updates,
+          low_credit_alerts: validated.data.low_credit_alerts,
+        },
+        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId: user.id }
+      );
+    }
 
     return NextResponse.json({ success: true, data });
   } catch (error) {

@@ -39,7 +39,7 @@ describe('Cron Worker Router', () => {
       expect.objectContaining({
         method: 'POST',
         headers: expect.objectContaining({ 'x-cron-secret': 'test-secret' }),
-      }),
+      })
     );
   });
 
@@ -53,7 +53,21 @@ describe('Cron Worker Router', () => {
 
     expect(fetchMock).toHaveBeenCalledWith(
       'https://myimageupscaler.com/api/cron/recover-webhooks',
-      expect.any(Object),
+      expect.any(Object)
+    );
+  });
+
+  it('maps 15 5 * * * to the email lifecycle endpoint', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve({}) });
+    global.fetch = fetchMock;
+
+    const ctx = makeCtx();
+    await worker.scheduled({ cron: '15 5 * * *', scheduledTime: Date.now() }, mockEnv, ctx);
+    await ctx.flush();
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://myimageupscaler.com/api/cron/email-lifecycle',
+      expect.any(Object)
     );
   });
 

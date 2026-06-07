@@ -756,6 +756,13 @@ export type IAnalyticsEventName =
   // User lifecycle events (PRD: analytics-tracking-enhancement - Phase 2)
   | 'account_created'
   | 'email_captured'
+  | 'email_lifecycle_queued'
+  | 'email_lifecycle_sent'
+  | 'email_lifecycle_skipped'
+  | 'email_lifecycle_clicked'
+  | 'email_lifecycle_returned'
+  | 'email_lifecycle_purchase_attributed'
+  | 'email_lifecycle_unsubscribed'
   // Feature depth events (PRD: analytics-tracking-enhancement - Phase 3)
   | 'comparison_viewed'
   // Gallery events

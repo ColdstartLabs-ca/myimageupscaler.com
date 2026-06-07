@@ -5,6 +5,7 @@ import { serverEnv } from '@shared/config/env';
 import { assertKnownPriceId, getPlanForPriceId, resolvePlanOrPack } from '@shared/config/stripe';
 import { getBasePriceIdByPlanKey } from '@shared/config/pricing-regions';
 import { getEmailService } from '@server/services/email.service';
+import { getEmailLifecycleService } from '@server/services/email-lifecycle.service';
 import { redeemDiscount } from '@server/services/engagement-discount.service';
 import { recordBanditConversion } from '@/lib/pricing-bandit';
 import { recordExperimentReward } from '@lib/experiments';
@@ -561,6 +562,14 @@ export class PaymentHandler {
         },
         amplitudeOpts
       );
+
+      await getEmailLifecycleService().recordPurchaseAttribution(userId, {
+        purchaseType,
+        sessionId: session.id,
+        amountCents,
+        planKey,
+        packKey,
+      });
 
       // Record bandit conversion so Thompson Sampling can update arm stats
       const banditArmIdRaw = session.metadata?.bandit_arm_id;
