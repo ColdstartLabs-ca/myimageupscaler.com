@@ -193,6 +193,13 @@ export const META_PATTERNS: Record<PSEOCategory, IMetaPattern> = {
     titleMaxLength: 60,
     descriptionMaxLength: 160,
   },
+  extensions: {
+    title: `{Browser} Extension — AI Image Upscaling | ${APP_NAME}`,
+    description:
+      'Install the {APP_NAME} {Browser} extension. Upscale images from any webpage with right-click. AI-powered upscaling, drag & drop, and side panel preview.',
+    titleMaxLength: 60,
+    descriptionMaxLength: 160,
+  },
 };
 
 /**

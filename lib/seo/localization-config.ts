@@ -27,6 +27,7 @@ export const LOCALIZED_CATEGORIES: PSEOCategory[] = [
 /**
  * Categories that are English-only (no translations available)
  * Updated: 2026-02-11 - Added ai-features, comparisons-expanded, personas-expanded, technical-guides, use-cases-expanded as English-only categories
+ * Updated: 2026-04-23 - Added extensions category (PRD #100: Browser Extension)
  * These categories only exist in English and should not generate hreflang links
  */
 export const ENGLISH_ONLY_CATEGORIES: PSEOCategory[] = [
@@ -44,6 +45,7 @@ export const ENGLISH_ONLY_CATEGORIES: PSEOCategory[] = [
   'personas-expanded',
   'use-cases-expanded',
   'ai-photo-editor',
+  'extensions',
 ];
 
 /**

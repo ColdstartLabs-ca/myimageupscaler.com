@@ -304,12 +304,12 @@ describe('SEO Safeguards — Localization Config', () => {
     expect(categoryCount).toBe(10);
   });
 
-  it('ENGLISH_ONLY_CATEGORIES must have exactly 14 entries', () => {
+  it('ENGLISH_ONLY_CATEGORIES must have exactly 15 entries', () => {
     expect(ENGLISH_ONLY_CATEGORIES_MATCH).toBeTruthy();
     const categories = ENGLISH_ONLY_CATEGORIES_MATCH![1];
     // Count the number of array entries
     const categoryCount = (categories.match(/'[^']+'/g) || []).length;
-    expect(categoryCount).toBe(14);
+    expect(categoryCount).toBe(15);
   });
 
   it('ALL_CATEGORIES must be union of LOCALIZED and ENGLISH_ONLY', () => {

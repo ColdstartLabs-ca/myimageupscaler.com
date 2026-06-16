@@ -426,6 +426,11 @@ async function handleLocaleRouting(req: NextRequest): Promise<NextResponse | nul
     return null;
   }
 
+  // Skip extension auth bridge page (not localized, used by browser extension)
+  if (pathname === '/extension-auth') {
+    return null;
+  }
+
   // Skip static files and Next.js internals
   if (
     pathname.startsWith('/_next/') ||
