@@ -1,9 +1,9 @@
 ---
-name: blog-ctr-body-cta
+name: seo-blog-ctr-body-cta
 description: Find high-impression, zero/near-zero CTR blog pages from GSC data and add mid-body CTA blocks using the MyImageUpscaler blog API or static blog-data fallback. Use for blog CTR recovery passes where pages rank or get impressions but do not earn clicks.
 ---
 
-# Blog CTR Body CTA Pass
+# SEO Blog CTR Body CTA Pass
 
 Use this skill when GSC shows blog pages with high impressions and 0% or very low CTR, especially pages near positions 4-15. The goal is to add in-body click-confirmation and CTA blocks, not rewrite the whole article.
 
@@ -63,7 +63,7 @@ sed -n '1,120p' docs/SEO/maintenance/gsc-request-indexing-backlog.md
 Run the helper with dry-run first:
 
 ```bash
-node .agents/skills/blog-ctr-body-cta/scripts/ctr-body-cta-pass.cjs \
+node .agents/skills/seo-blog-ctr-body-cta/scripts/ctr-body-cta-pass.cjs \
   --gsc=/tmp/ctr-miu.json \
   --dry-run
 ```
@@ -71,7 +71,7 @@ node .agents/skills/blog-ctr-body-cta/scripts/ctr-body-cta-pass.cjs \
 Apply:
 
 ```bash
-node .agents/skills/blog-ctr-body-cta/scripts/ctr-body-cta-pass.cjs \
+node .agents/skills/seo-blog-ctr-body-cta/scripts/ctr-body-cta-pass.cjs \
   --gsc=/tmp/ctr-miu.json \
   --apply
 ```

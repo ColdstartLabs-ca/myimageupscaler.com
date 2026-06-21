@@ -45,6 +45,34 @@ Output a ranked table:
 | ----- | ---- | -------- | ----------- | ------ | --- | -------- |
 | ...   | ...  | ...      | ...         | ...    | ... | ...      |
 
+#### Zero-CTR Blog Discovery Lane
+
+When the request is specifically about blog pages with high impressions and zero or near-zero CTR, run the CTR tracker before choosing an edit path:
+
+```bash
+node ./.agents/skills/gsc-analysis/scripts/ctr-tracker.cjs \
+  --site=DOMAIN \
+  --all-ctr-deficit \
+  --min-impressions=1000 \
+  --output=/tmp/ctr-DOMAIN.json
+```
+
+Filter candidates to `/blog/` URLs with:
+
+- `impressions >= 1000`
+- strict zero CTR: `ctr === 0`
+- near-zero CTR recovery: `ctr <= 0.0025`
+- average position 4-15 unless the user asks to include all positions
+
+Route each page by diagnosis:
+
+- Three Kings weakness: continue with this workflow.
+- SERP/title/meta click-promise weakness: use `serp-ctr-snippet-rewrite-technique`.
+- Article has acceptable SERP fit but lacks a useful in-body tool path or CTA: use `seo-blog-ctr-body-cta`.
+- Intent mismatch, content gap, or cannibalization: use the appropriate specialist skill before editing.
+
+Do not classify body CTA insertion as a Three Kings edit. This workflow can discover and triage those pages, but the CTA skill performs that fix.
+
 ### Phase 2 — Keyword-to-Page Validation
 
 For each high-impression query/page pair:

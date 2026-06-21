@@ -10,12 +10,12 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 
 ## 2026-06-20 Blog Thin Content Scan
 
-- [ ] `https://myimageupscaler.com/blog/video-upscaling-software`
+- [x] `https://myimageupscaler.com/blog/video-upscaling-software`
 
 ## 2026-06-21 Low-CTR Body CTA Pass
 
-- [ ] `https://myimageupscaler.com/blog/photo-restoration-program`
-- [ ] `https://myimageupscaler.com/blog/image-resolution-guide-everything-you-need-to-know`
+- [x] `https://myimageupscaler.com/blog/photo-restoration-program`
+- [x] `https://myimageupscaler.com/blog/image-resolution-guide-everything-you-need-to-know`
 
 ## 2026-05-24 Metadata CTR Pass
 
@@ -27,21 +27,21 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 
 ## 2026-05-31 Best-Free Upscaler CTR Title Test
 
-- [ ] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared`
+- [x] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared`
 
 ## 2026-06-07 3 Kings Opportunities Execution
 
-- [ ] `https://myimageupscaler.com/blog/fixing-pixelated-photos`
-- [ ] `https://myimageupscaler.com/blog/topaz-video-upscaler`
-- [ ] `https://myimageupscaler.com/blog/how-ai-image-upscaling-works-guide`
-- [ ] `https://myimageupscaler.com/blog/topaz-labs-free-trial`
-- [ ] `https://myimageupscaler.com/alternatives/vs-adobe-express`
+- [x] `https://myimageupscaler.com/blog/fixing-pixelated-photos`
+- [x] `https://myimageupscaler.com/blog/topaz-video-upscaler`
+- [x] `https://myimageupscaler.com/blog/how-ai-image-upscaling-works-guide`
+- [x] `https://myimageupscaler.com/blog/topaz-labs-free-trial`
+- [x] `https://myimageupscaler.com/alternatives/vs-adobe-express`
 
 ## 2026-05-26 GSC Growth Execution
 
-- [ ] `https://myimageupscaler.com/comparisons-expanded/ai-models-comparison`
-- [ ] `https://myimageupscaler.com/blog/topaz-video-upscaler`
-- [ ] `https://myimageupscaler.com/blog/upscale-image-for-print-300-dpi-guide`
+- [x] `https://myimageupscaler.com/comparisons-expanded/ai-models-comparison`
+- [x] `https://myimageupscaler.com/blog/topaz-video-upscaler`
+- [x] `https://myimageupscaler.com/blog/upscale-image-for-print-300-dpi-guide`
 - [ ] `https://myimageupscaler.com/blog/best-ai-upscaler`
 - [ ] `https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark`
 - [ ] `https://myimageupscaler.com/blog/fix-blurry-photos-ai-methods-guide`

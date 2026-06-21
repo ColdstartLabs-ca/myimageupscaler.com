@@ -18,6 +18,24 @@ Maintenance rules:
 
 ## 2026-06-21
 
+### SEO Blog CTR Body CTA Skill Rename
+
+Changes:
+
+- Renamed the reusable blog CTR body CTA workflow from `.agents/skills/blog-ctr-body-cta/` to `.agents/skills/seo-blog-ctr-body-cta/` so it is easier to find with other SEO skills.
+- Updated the Three Kings zero-CTR routing notes to reference `seo-blog-ctr-body-cta`.
+
+Validation:
+
+- Skill validation passed with `python /home/joao/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/seo-blog-ctr-body-cta`.
+- Fresh GSC CTR export for 2026-05-22 to 2026-06-18 found two strict zero-CTR blog candidates; the renamed helper reported both as `unchanged` because both already contain `[!CTA_TRY]` and `[!CTA_DEMO]`.
+- API readback confirmed both CTA markers on `/blog/best-free-ai-image-upscaler-2026-tested-compared` and `/blog/video-upscaling-software`.
+- `yarn verify` passed.
+
+Follow-up:
+
+- No body CTA follow-up needed from this pass; both remaining zero-CTR candidates are already patched for this issue.
+
 ### Blog Body CTA Pass for High-Impression Low-CTR Pages
 
 Changes:

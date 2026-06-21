@@ -29,6 +29,35 @@ Two modes:
 7. **Adds** missing semantic/NLP terms only where they naturally improve completeness.
 8. **Requests indexing manually** after publishing and sets a 14-day performance loop.
 
+## Zero-CTR Blog Discovery Lane
+
+Use this as a sub-workflow when the goal is to find blog pages with strong impressions but no clicks.
+
+Run the CTR tracker first:
+
+```bash
+node ./.agents/skills/gsc-analysis/scripts/ctr-tracker.cjs \
+  --site=myimageupscaler.com \
+  --all-ctr-deficit \
+  --min-impressions=1000 \
+  --output=/tmp/ctr-miu.json
+```
+
+Then filter for `/blog/` URLs with:
+
+- `impressions >= 1000`
+- `ctr === 0` for strict zero-CTR scans, or `ctr <= 0.0025` for near-zero CTR recovery
+- average position 4-15 unless the user asks for all high-impression misses
+
+Route each candidate by diagnosis:
+
+- Weak title, H1, or first paragraph: continue with this Three Kings workflow.
+- Weak SERP promise or meta/title click appeal: use `serp-ctr-snippet-rewrite-technique`.
+- Good SERP fit but weak in-article tool path or no body CTA: use `seo-blog-ctr-body-cta`.
+- Query/page intent mismatch: use `content-gap`, `blog-edit`, or `cannibalization-consolidation-technique` depending on the cause.
+
+Do not treat body CTA insertion as a Three Kings edit. This skill owns discovery and diagnosis; specialized skills own the fix when the fix is outside title, H1, first paragraph, meta, or intent/content fit.
+
 ## The Three Kings
 
 | King   | Element                 | Rule                                                              |
@@ -121,7 +150,7 @@ Based on: https://www.youtube.com/watch?v=Zn3i5ac9ydw
 
 ## Files
 
-| Item       | Path                                                     |
-| ---------- | -------------------------------------------------------- |
+| Item       | Path                                                    |
+| ---------- | ------------------------------------------------------- |
 | Prompt     | `.Codex/skills/seo-content-3-kings-technique/prompt.md` |
 | Skill info | `.Codex/skills/seo-content-3-kings-technique/SKILL.md`  |

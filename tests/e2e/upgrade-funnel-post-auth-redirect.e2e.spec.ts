@@ -16,6 +16,27 @@ async function uploadImageAndWaitForMobileQualitySelector(page: Page) {
   return mobileQualityBtn;
 }
 
+async function pinModelGateDirectCheckoutArm(page: Page) {
+  await page.addInitScript(() => {
+    const sessionKey = 'e2e-model-gate-direct-checkout';
+    const assignmentKey = `session:${sessionKey}`;
+    sessionStorage.setItem('miu_experiment_session_key', sessionKey);
+    sessionStorage.setItem(
+      `miu_experiment_assignment:model_gate_purchase_path:global:${assignmentKey}`,
+      JSON.stringify({
+        experimentKey: 'model_gate_purchase_path',
+        contextKey: 'global',
+        armId: 0,
+        armKey: 'direct_small_pack_control',
+        armConfig: { path: 'direct_checkout', defaultKey: 'small' },
+        assignmentKey,
+        surface: 'model_gallery',
+        timestamp: Date.now(),
+      })
+    );
+  });
+}
+
 /**
  * Upgrade Funnel Post-Auth Redirect E2E Tests
  *
@@ -387,6 +408,7 @@ test.describe('Upgrade Funnel - Post-Auth Redirect', () => {
           }),
         });
       });
+      await pinModelGateDirectCheckoutArm(page);
 
       const sessionStorageKey = 'checkout_originating_model';
 
