@@ -8,6 +8,7 @@ import { JsonLd } from '@client/components/seo/JsonLd';
 import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 import { LandingBlogSection } from '@client/components/landing/LandingBlogSection';
 import { generateHomepageSchema } from '@lib/seo/schema-generator';
+import { getHomepageBlogPicks } from '@lib/seo/seo-equity';
 import {
   getCanonicalUrl,
   getOpenGraphLocale,
@@ -87,16 +88,10 @@ export async function generateMetadata({ params }: ILocaleHomePageProps): Promis
   };
 }
 
-const HOMEPAGE_BLOG_SLUGS = [
-  'best-free-ai-image-upscaler-2026-tested-compared',
-  'free-ai-upscaler-no-watermark',
-  'upscale-image-for-print-300-dpi-guide',
-  'fix-blurry-photos-ai-methods-guide',
-];
-
 export default async function LocaleHomePage({ params }: ILocaleHomePageProps) {
   const { locale } = await params;
   const homepageSchema = generateHomepageSchema(locale);
+  const homepageBlogSlugs = getHomepageBlogPicks(undefined, 4);
 
   return (
     <>
@@ -112,7 +107,7 @@ export default async function LocaleHomePage({ params }: ILocaleHomePageProps) {
         <Suspense fallback={<div className="h-screen" />}>
           <HomePageClient />
         </Suspense>
-        <LandingBlogSection blogPostSlugs={HOMEPAGE_BLOG_SLUGS} maxPosts={4} />
+        <LandingBlogSection blogPostSlugs={homepageBlogSlugs} maxPosts={4} />
       </div>
     </>
   );

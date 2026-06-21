@@ -103,10 +103,10 @@ export function HomePageClient(): JSX.Element {
         id="faq"
         ambient
         fadeTop
-        className="py-20"
+        className="py-12 sm:py-16 lg:py-20"
         innerClassName="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8"
       >
-        <div className="text-center mb-16">
+        <div className="mb-10 text-center sm:mb-16">
           <h2 className="text-3xl sm:text-5xl font-bold text-white mb-6">{t('faqTitle')}</h2>
           <p className="text-lg text-text-secondary">{t('faqSubtitle')}</p>
         </div>

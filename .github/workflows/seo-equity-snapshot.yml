@@ -1,0 +1,109 @@
+name: SEO Equity Snapshot
+
+on:
+  schedule:
+    # Daily offline calculation. The material-change gate prevents daily link churn.
+    - cron: '22 9 * * *'
+  workflow_dispatch:
+    inputs:
+      generated_at:
+        description: 'Optional deterministic generatedAt timestamp for dry runs'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  refresh:
+    name: Refresh static SEO equity snapshot
+    runs-on: ubuntu-latest
+    env:
+      # Optional saved export payload. This workflow deliberately does not call GSC live.
+      SEO_EQUITY_GSC_EXPORT_B64: ${{ secrets.SEO_EQUITY_GSC_EXPORT_B64 }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Prepare saved GSC export
+        id: prepare-export
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p tmp/gsc
+          if [ -z "${SEO_EQUITY_GSC_EXPORT_B64:-}" ]; then
+            echo "No SEO_EQUITY_GSC_EXPORT_B64 secret configured; skipping snapshot refresh without making GSC requests."
+            echo "has_export=false" >> "$GITHUB_OUTPUT"
+            npx tsx scripts/seo/fetch-gsc-seo-equity-export.ts --out=tmp/gsc/seo-equity-latest.json
+            exit 0
+          fi
+          printf '%s' "$SEO_EQUITY_GSC_EXPORT_B64" | base64 -d > tmp/gsc/seo-equity-latest.json
+          echo "has_export=true" >> "$GITHUB_OUTPUT"
+
+      - name: Generate candidate snapshot
+        if: steps.prepare-export.outputs.has_export == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          GENERATED_AT="${{ inputs.generated_at }}"
+          if [ -z "$GENERATED_AT" ]; then
+            GENERATED_AT="$(date -u +'%Y-%m-%dT%H:%M:%S.000Z')"
+          fi
+          npx tsx scripts/seo/generate-seo-equity-snapshot.ts \
+            --gsc=tmp/gsc/seo-equity-latest.json \
+            --out=tmp/gsc/seo-equity-candidate.json \
+            --generated-at="$GENERATED_AT"
+
+      - name: Material-change gate
+        id: material
+        if: steps.prepare-export.outputs.has_export == 'true'
+        shell: bash
+        run: |
+          set +e
+          npx tsx scripts/seo/diff-seo-equity-snapshot.ts \
+            --before=content/seo-equity.json \
+            --after=tmp/gsc/seo-equity-candidate.json
+          code=$?
+          set -e
+          if [ "$code" -eq 0 ]; then
+            echo "material=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "material=true" >> "$GITHUB_OUTPUT"
+          cp tmp/gsc/seo-equity-candidate.json content/seo-equity.json
+
+      - name: Verify candidate snapshot
+        if: steps.material.outputs.material == 'true'
+        run: |
+          npx vitest run tests/unit/seo/seo-equity-schema.unit.spec.ts tests/unit/seo/seo-equity-scoring.unit.spec.ts tests/unit/seo/seo-equity-loader.unit.spec.ts
+          yarn tsc
+
+      - name: Open review PR for material snapshot changes
+        if: steps.material.outputs.material == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: chore/seo-equity-snapshot-refresh
+          delete-branch: true
+          title: 'chore(seo): refresh static SEO equity snapshot'
+          commit-message: 'chore(seo): refresh SEO equity snapshot'
+          body: |
+            Automated offline SEO equity snapshot refresh.
+
+            Safety model:
+            - Uses a saved GSC export secret/artifact, not request-time GSC calls.
+            - Runtime continues to consume only `content/seo-equity.json`.
+            - Material-change gate suppresses timestamp-only/no-op/below-threshold changes.
+            - This PR is review-only; it does not auto-merge.
+          labels: seo, automation
+          add-paths: |
+            content/seo-equity.json

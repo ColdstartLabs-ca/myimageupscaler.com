@@ -21,6 +21,7 @@ import { Locale } from '@/i18n/config';
 import { getOpenGraphMetadata, getCanonicalUrl } from '@lib/seo/hreflang-generator';
 import { buildBlogIndexJsonLd, buildBlogItemListJsonLd } from '@lib/seo/blog-template-signals';
 import { BLOG_SPECIALIST_PROFILE } from '@lib/blog/specialist-profile';
+import { getBlogIndexFeatured, getBlogStartHere } from '@lib/seo/seo-equity';
 
 interface IBlogPageProps {
   params: Promise<{ locale: Locale }>;
@@ -154,6 +155,8 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
   const t = await getTranslations('blog');
   const allPosts = await getAllPublishedPosts();
   const searchQuery = searchQueryParams.q?.toLowerCase().trim();
+  const featuredPostPriority = getBlogIndexFeatured(undefined, 1);
+  const startHereLinks = getBlogStartHere(undefined, 3);
 
   // Filter posts by search query
   const filteredPosts = searchQuery
@@ -168,9 +171,9 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
 
   const featuredPost =
     !searchQuery &&
-    FEATURED_POST_PRIORITY.map(slug => filteredPosts.find(post => post.slug === slug)).find(
-      (post): post is (typeof filteredPosts)[number] => Boolean(post)
-    );
+    [...featuredPostPriority, ...FEATURED_POST_PRIORITY]
+      .map(slug => filteredPosts.find(post => post.slug === slug))
+      .find((post): post is (typeof filteredPosts)[number] => Boolean(post));
   const effectiveFeaturedPost = featuredPost || filteredPosts[0];
   const otherPosts = filteredPosts.filter(post => post.slug !== effectiveFeaturedPost?.slug);
 
@@ -385,7 +388,7 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
       <section className="pb-12">
         <div className="container mx-auto max-w-6xl px-4">
           <div className="grid gap-4 md:grid-cols-3">
-            {START_HERE_LINKS.map(path => (
+            {(startHereLinks.length > 0 ? startHereLinks : START_HERE_LINKS).map(path => (
               <Link
                 key={path.label}
                 href={path.href}

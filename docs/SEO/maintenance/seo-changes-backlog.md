@@ -18,6 +18,39 @@ Maintenance rules:
 
 ## 2026-06-21
 
+### Blog Body CTA Pass for High-Impression Low-CTR Pages
+
+Changes:
+
+- Used the 28-day CTR deficit export to identify blog URLs with 1,000+ impressions and CTR <= 0.25%.
+- Added mid-body `[!CTA_TRY]` and `[!CTA_DEMO]` blocks to high-impact API-backed posts missing the pattern, including `/blog/fixing-pixelated-photos`, `/blog/topaz-video-upscaler`, `/blog/poster-size-dimensions-pixels`, `/blog/best-ai-upscaler`, `/blog/topaz-denoise-ai`, `/blog/best-ai-image-enhancer`, `/blog/video-upscaling-software`, `/blog/photo-restoration-program`, and `/blog/image-resolution-guide-everything-you-need-to-know`.
+- Confirmed static legacy candidates already contained both CTA markers in `content/blog-data.json`.
+- Added the reusable `.agents/skills/blog-ctr-body-cta/` workflow and script for future CTR body CTA passes.
+
+Validation:
+
+- Blog API readback confirmed both CTA markers on all API-backed candidates.
+- Static JSON readback confirmed both CTA markers on legacy candidates.
+- Public URL spot checks returned 200 and exposed CTA/tool-link text in rendered HTML for representative API and static posts.
+- Skill validation passed with `python /home/joao/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/blog-ctr-body-cta`.
+
+Follow-up:
+
+- Request indexing for touched URLs already present in the GSC request-indexing backlog; add any missing touched URLs before the next deploy/indexing pass.
+
+### Fixing Pixelated Photos Featured Image Refresh
+
+Changes:
+
+- Generated a less generic featured image for `/blog/fixing-pixelated-photos` with Replicate, showing a before/after pixelated-to-restored photo concept.
+- Uploaded the compressed WebP to Supabase Storage and updated `featured_image_url` and `featured_image_alt` on the Supabase blog post.
+
+Validation:
+
+- Blog API readback confirmed the new Supabase WebP URL and alt text.
+- New image URL returned `200` with `content-type: image/webp`.
+- Public page HTML with a cache-busting query referenced the new image filename.
+
 ### Cloudflare Worker 1102 pSEO Middleware CPU Guard
 
 Changes:
@@ -35,7 +68,64 @@ Follow-up:
 
 - After deploy, monitor Cloudflare Workers CPU/1102 rates and request zone HTTP analytics access if exact Ray-to-URL mapping is needed.
 
+## 2026-06-20
+
+### Blog Thin Content Scan — Video Upscaling Software
+
+Source: [blog-thin-content-scan-2026-06-20.md](../reports/blog-thin-content-scan-2026-06-20.md)
+
+Changes:
+
+- Pulled fresh 90-day GSC and GA4 organic data for the recurring blog thin-content scan.
+- Updated Supabase blog content for `/blog/video-upscaling-software`: title, SEO title, description, SEO description, first-screen direct answer/use-case matrix, and contextual link to `/blog/topaz-video-upscaler`.
+- Skipped high-impression recent-refresh URLs that remain in the GSC request-indexing backlog.
+
+Validation:
+
+- Blog API `PATCH` and `GET` returned `200` and verified the updated fields/content.
+- Local frontend route `/blog/video-upscaling-software` returned `200` and rendered the new title/meta/quick-answer content.
+- Re-ran the blog SEO audit; the historical CTR flag remains, but title-length/keyword-overlap issues for the edited post are cleared.
+
+Follow-up:
+
+- Manually request indexing in GSC for `https://myimageupscaler.com/blog/video-upscaling-software`, then recheck after 14-28 complete GSC days.
+
+## 2026-06-12
+
+### GSC Zero-Click Opportunity Follow-Up
+
+Source: [zero-click-3-kings-follow-up-2026-06-12.md](../reports/zero-click-3-kings-follow-up-2026-06-12.md)
+
+Changes:
+
+- Pulled fresh 90-day GSC data through 2026-06-09 and GA4 organic data through 2026-06-11 for `/blog/fixing-pixelated-photos` and similar zero-click opportunities.
+- Verified `/blog/fixing-pixelated-photos` is indexed, canonical, mobile-crawled, and has FAQ rich results, but Google last crawled it on 2026-05-22, before the 2026-06-07 Three Kings refresh.
+- Resubmitted `https://myimageupscaler.com/sitemap.xml` and `https://myimageupscaler.com/sitemap-static.xml` through the Search Console Sitemaps API; both returned `204 No Content`.
+- Attempted browser-based GSC request indexing, but the local browser connector was not logged into Search Console and Chrome installation requires sudo. Manual request indexing remains pending in [gsc-request-indexing-backlog.md](./gsc-request-indexing-backlog.md).
+
+Follow-up:
+
+- Manually request indexing in GSC for the unchecked 2026-06-07 and related high-priority URLs, then recheck after 14 complete GSC days.
+- Do not rewrite `/blog/fixing-pixelated-photos` again until Google has recrawled the June 7 refresh and at least 14 complete post-recrawl GSC days are available.
+
 ## 2026-06-07
+
+### SEO Equity Flywheel Snapshot + Read-Only Consumers
+
+Changes:
+
+- Added static SEO equity editorial config, generated snapshot, scoring/schema/loader helpers, saved-export generator, diff gate, no-op guarded GSC fetch stub, and scheduled offline snapshot workflow.
+- Wired homepage blog picks, blog index featured/start-here cards, and blog footer related-post selection to static snapshot selectors with existing fallbacks.
+- Added SEO unit coverage for schema validation, canonical-winner enforcement, scoring/filtering, diff materiality, and loader selectors.
+
+Validation:
+
+- `npx vitest run tests/unit/seo/seo-equity-schema.unit.spec.ts tests/unit/seo/seo-equity-scoring.unit.spec.ts tests/unit/seo/seo-equity-loader.unit.spec.ts`
+- Generator rerun twice from `/tmp/gsc-miu-seo-equity-prd.json` produced a stable `content/seo-equity.json`; diff gate reported no material change.
+
+Follow-up:
+
+- After deployment/review, monitor promoted blog URLs after 14 complete GSC days and keep GSC fetching as an explicit offline/scheduled action only.
 
 ### 3 Kings Opportunities Execution
 

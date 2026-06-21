@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "siteUrl": "https://myimageupscaler.com",
+  "settings": {
+    "refreshCadence": "weekly-or-monthly",
+    "minStableDaysAfterEdit": 14,
+    "minMaterialScoreDelta": 3
+  },
+  "maxSurfaceSlots": {
+    "homepageBlogPicks": 4,
+    "blogIndexFeatured": 1,
+    "blogStartHere": 3,
+    "blogFooterRelated": 3,
+    "pseoRelatedBlogPosts": 3,
+    "hubSpokeLinks": 5
+  },
+  "allowlist": [
+    "/blog/best-free-ai-image-upscaler-2026-tested-compared",
+    "/blog/free-ai-upscaler-no-watermark",
+    "/blog/upscale-image-for-print-300-dpi-guide",
+    "/blog/fix-blurry-photos-ai-methods-guide",
+    "/blog/best-ai-upscaler",
+    "/blog/fixing-pixelated-photos"
+  ],
+  "blocklist": [
+    "/blog/how-ai-image-upscaling-works-explained"
+  ],
+  "pinnedBySurface": {
+    "homepageBlogPicks": [
+      "/blog/best-free-ai-image-upscaler-2026-tested-compared"
+    ],
+    "blogIndexFeatured": [
+      "/blog/best-free-ai-image-upscaler-2026-tested-compared"
+    ]
+  },
+  "canonicalClusters": [
+    {
+      "id": "best-free-ai-image-upscaler-2026",
+      "intent": "Best free AI image upscaler comparison",
+      "members": [
+        { "url": "/blog/best-free-ai-image-upscaler-2026-tested-compared", "winner": true },
+        { "url": "/blog/best-ai-upscaler", "winner": false },
+        { "url": "/blog/free-ai-upscaler-no-watermark", "winner": false }
+      ]
+    },
+    {
+      "id": "fix-blurry-photos",
+      "intent": "Fix blurry or damaged photos with AI",
+      "members": [
+        { "url": "/blog/fix-blurry-photos-ai-methods-guide", "winner": true },
+        { "url": "/blog/fixing-pixelated-photos", "winner": false }
+      ]
+    },
+    {
+      "id": "print-dpi-upscaling",
+      "intent": "Prepare upscaled images for print and DPI requirements",
+      "members": [
+        { "url": "/blog/upscale-image-for-print-300-dpi-guide", "winner": true }
+      ]
+    },
+    {
+      "id": "topaz-video-upscaler",
+      "intent": "Topaz video upscaler evaluation and alternatives",
+      "members": [
+        { "url": "/blog/topaz-video-upscaler", "winner": true }
+      ]
+    },
+    {
+      "id": "ai-upscaling-vs-sharpening",
+      "intent": "AI upscaling versus sharpening explanation",
+      "members": [
+        { "url": "/blog/ai-image-upscaling-vs-sharpening-explained", "winner": true },
+        { "url": "/blog/photo-enhancement-upscaling-vs-quality", "winner": false }
+      ]
+    }
+  ],
+  "businessValueWeights": {
+    "/blog/best-free-ai-image-upscaler-2026-tested-compared": 1.6,
+    "/blog/free-ai-upscaler-no-watermark": 1.4,
+    "/blog/upscale-image-for-print-300-dpi-guide": 1.2,
+    "/blog/fix-blurry-photos-ai-methods-guide": 1.2,
+    "/blog/best-ai-upscaler": 1.1,
+    "/blog/topaz-video-upscaler": 1.1
+  },
+  "recentlyEditedUntil": {
+    "/blog/best-free-ai-image-upscaler-2026-tested-compared": "2026-06-21",
+    "/blog/topaz-video-upscaler": "2026-06-21",
+    "/blog/fixing-pixelated-photos": "2026-06-21"
+  },
+  "localePolicy": {
+    "default": "english-only",
+    "overrides": {}
+  },
+  "pseoRelatedTargets": {
+    "/tools/ai-image-upscaler": [
+      "/blog/best-free-ai-image-upscaler-2026-tested-compared",
+      "/blog/upscale-image-for-print-300-dpi-guide",
+      "/blog/fix-blurry-photos-ai-methods-guide"
+    ],
+    "/free/ai-image-upscaler": [
+      "/blog/best-free-ai-image-upscaler-2026-tested-compared",
+      "/blog/free-ai-upscaler-no-watermark"
+    ]
+  }
+}

@@ -1,5 +1,13 @@
 # Blog Changelog
 
+## 2026-06-20
+
+### SEO: Blog Thin Content Scan — Video Upscaling Software
+**Affected:** video-upscaling-software
+**Why:** Fresh 90-day GSC+GA scan found 1,989 impressions, 0 clicks, avg position 13.6, no recent-edit/indexing blocker, and clear SERP demand for `best video upscaling software 2026` / `video upscaling software`.
+**Changes:**
+- `video-upscaling-software` — retitled around best video upscaling software 2026, tightened SEO description, added an above-fold direct answer/use-case matrix, and linked to the Topaz Video AI support guide.
+
 Track all blog changes made via skills. **Read the last 30 lines before starting. Append an entry when done.**
 
 ```bash
@@ -246,3 +254,24 @@ Intent mismatch fixes (seo_title only):
 - `how-to-upscale-midjourney-images-for-print` — retitled around Midjourney max resolution, refreshed the answer block for June 2026 Midjourney V7/V8.1 dimensions, and updated print-size upscale mapping.
 - `photoshop-upscaler-vs-ai-tools` — retitled around Photoshop Super Resolution vs AI upscalers and added direct-answer plus RAW/JPEG/product/AI-art test matrix.
 - `how-to-upscale-youtube-thumbnails` — retitled around blurry thumbnail fixes and added low-quality-thumbnail troubleshooting.
+
+## 2026-06-21
+
+### SEO: High-Impression Low-CTR Body CTA Pass
+
+**Affected:** fixing-pixelated-photos, poster-size-dimensions-pixels, topaz-video-upscaler, best-ai-upscaler, topaz-denoise-ai, best-ai-image-enhancer, video-upscaling-software, photo-restoration-program, image-resolution-guide-everything-you-need-to-know
+**Why:** GSC CTR export showed blog pages with 1,000+ impressions and 0% or near-0% CTR, including `/blog/fixing-pixelated-photos` and `/blog/topaz-video-upscaler`.
+**Changes:**
+
+- Added mid-body `[!CTA_TRY]` and `[!CTA_DEMO]` blocks to API-backed candidate posts that lacked the pattern.
+- Verified static legacy candidates already had both CTA markers in `content/blog-data.json`.
+- Added `.agents/skills/blog-ctr-body-cta/` so the GSC-to-body-CTA workflow can be repeated.
+
+### SEO: Fixing Pixelated Photos Featured Image Refresh
+
+**Affected:** fixing-pixelated-photos
+**Why:** The existing featured image was generic and did not strongly communicate the pixelated-photo repair outcome.
+**Changes:**
+
+- Generated a new Replicate image showing a printed photo with a pixelated half and restored AI-upscaled half.
+- Uploaded the compressed WebP to Supabase Storage and updated the post `featured_image_url` plus alt text through the blog API.

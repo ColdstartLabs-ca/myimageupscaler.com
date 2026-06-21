@@ -23,6 +23,7 @@ import { BlogPostFooter } from '../_components/BlogPostFooter';
 import { BlogCTA, parseCTAMarker } from '@client/components/blog/BlogCTA';
 import { buildBlogAboutEntities, buildBlogBreadcrumbJsonLd } from '@lib/seo/blog-template-signals';
 import { BLOG_SPECIALIST_PROFILE } from '@lib/blog/specialist-profile';
+import { getRelatedPostsForSlug } from '@lib/seo/seo-equity';
 import { BlogFaqSection } from '@client/components/blog/BlogFaqSection';
 import { buildFallbackBlogFaq, buildFaqJsonLd } from '@lib/blog/blog-faq';
 
@@ -234,9 +235,12 @@ export default async function BlogPostPage({ params }: IPageProps) {
   }
 
   const allPosts = await getAllPublishedPosts();
-  const relatedPosts = allPosts
-    .filter(p => p.slug !== slug && p.category === post.category)
-    .slice(0, 3);
+  const snapshotRelatedSlugs = getRelatedPostsForSlug(slug, undefined, 3);
+  const snapshotRelated = snapshotRelatedSlugs
+    .map(relatedSlug => allPosts.find(p => p.slug === relatedSlug))
+    .filter((relatedPost): relatedPost is (typeof allPosts)[number] => Boolean(relatedPost));
+  const fallbackRelated = allPosts.filter(p => p.slug !== slug && p.category === post.category).slice(0, 3);
+  const relatedPosts = snapshotRelated.length > 0 ? snapshotRelated : fallbackRelated;
 
   const postDate = getPostPublishedDate(post);
   const readingTime = post.readingTime ?? '5 min read';
