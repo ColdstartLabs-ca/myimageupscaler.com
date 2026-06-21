@@ -16,6 +16,25 @@ Maintenance rules:
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
 
+## 2026-06-21
+
+### Cloudflare Worker 1102 pSEO Middleware CPU Guard
+
+Changes:
+
+- Investigated production Worker 1102 at `2026-06-21 20:59:05 UTC`; Worker analytics showed CPU-heavy invocations around the failing minute without application exceptions.
+- Stopped public unlocalized pSEO pages from refreshing Supabase sessions in middleware.
+- Ensured dashboard routes continue through page auth before locale rewrites.
+
+Validation:
+
+- Added `tests/unit/seo/middleware-public-page-auth.unit.spec.ts` to assert public pSEO pages bypass session refresh while dashboard routes still refresh auth.
+- Added `tests/e2e/middleware-auth-routing.e2e.spec.ts` to cover public pSEO rendering plus default and localized dashboard routing.
+
+Follow-up:
+
+- After deploy, monitor Cloudflare Workers CPU/1102 rates and request zone HTTP analytics access if exact Ray-to-URL mapping is needed.
+
 ## 2026-06-07
 
 ### 3 Kings Opportunities Execution

@@ -447,10 +447,16 @@ async function handleLocaleRouting(req: NextRequest): Promise<NextResponse | nul
   // Extract path segments to check for locale prefix
   const segments = pathname.split('/').filter(Boolean);
 
+  // Locale-prefixed dashboard routes need page auth handling before generic
+  // locale responses; unprefixed /dashboard still uses the existing /en rewrite.
+  const hasLocalePrefix = segments.length > 0 && isValidLocale(segments[0]);
+  if (hasLocalePrefix && isDashboardPath(pathname)) {
+    return null;
+  }
+
   // Skip pSEO (programmatic SEO) paths WITHOUT locale prefix
   // These serve default English content from app/(pseo)/ without locale prefix for SEO purposes
   // Localized versions (e.g., /es/tools/) are handled by app/[locale]/(pseo)/
-  const hasLocalePrefix = segments.length > 0 && isValidLocale(segments[0]);
   const isPSEOPath =
     pathname.startsWith('/tools/') ||
     pathname.startsWith('/formats/') ||
@@ -770,6 +776,16 @@ async function handleApiRoute(req: NextRequest, pathname: string): Promise<NextR
  * Handle page route authentication redirects
  */
 async function handlePageRoute(req: NextRequest, pathname: string): Promise<NextResponse> {
+  const pathLocale = getLocaleFromPath(pathname);
+  const pathWithoutLocale = getPathWithoutLocale(pathname);
+  const shouldCheckAuth = isDashboardPath(pathname) || pathname === '/' || !!pathLocale;
+
+  if (!shouldCheckAuth) {
+    const response = NextResponse.next();
+    applySecurityHeaders(response);
+    return response;
+  }
+
   const { user, response } = await handlePageAuth(req);
 
   // Apply security headers
@@ -782,10 +798,6 @@ async function handlePageRoute(req: NextRequest, pathname: string): Promise<Next
   // Check for test headers sent by Playwright tests
   const hasTestHeader =
     req.headers.get('x-test-env') === 'true' || req.headers.get('x-playwright-test') === 'true';
-
-  // Extract locale info for locale-aware redirects
-  const pathLocale = getLocaleFromPath(pathname);
-  const pathWithoutLocale = getPathWithoutLocale(pathname);
 
   // For locale-prefixed dashboard paths, ensure locale cookie is set
   // (handleLocaleRouting skips early return for dashboard to allow auth checks)
