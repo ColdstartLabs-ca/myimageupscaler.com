@@ -17,6 +17,14 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 - [x] `https://myimageupscaler.com/blog/photo-restoration-program`
 - [x] `https://myimageupscaler.com/blog/image-resolution-guide-everything-you-need-to-know`
 
+## 2026-06-21 Trending Down CTR Recovery
+
+- [ ] `https://myimageupscaler.com/blog/how-to-upscale-images-for-instagram`
+- [ ] `https://myimageupscaler.com/blog/free-photo-restoration-app`
+- [ ] `https://myimageupscaler.com/blog/best-app-to-restore-old-photos`
+- [ ] `https://myimageupscaler.com/blog/fix-pixelated-image`
+- [ ] `https://myimageupscaler.com/blog/image-upscaler-8x`
+
 ## 2026-05-24 Metadata CTR Pass
 
 - [x] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared`

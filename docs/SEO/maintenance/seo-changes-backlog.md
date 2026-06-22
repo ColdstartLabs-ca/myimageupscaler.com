@@ -18,6 +18,30 @@ Maintenance rules:
 
 ## 2026-06-21
 
+### Trending Down Blog CTR Recovery
+
+Changes:
+
+- Investigated Search Console trending-down URLs for 2026-06-05 to 2026-06-18 versus 2026-05-22 to 2026-06-04.
+- Updated `/blog/best-free-ai-photo-enhancer-online` title/SEO title, description/SEO description, and first-screen quick answer around `free AI photo enhancer online` after a real impression/ranking drop.
+- Updated `/blog/how-to-upscale-images-for-instagram` title/SEO title, description/SEO description, first-screen `2160x2700` answer, and in-body CTA markers.
+- Updated `/blog/free-photo-restoration-app` title/SEO title, description/SEO description, first-screen answer, and in-body restoration CTA markers.
+- Added in-body `[!CTA_TRY]` and `[!CTA_DEMO]` markers to `/blog/best-app-to-restore-old-photos`, `/blog/fix-pixelated-image`, `/blog/image-upscaler-8x`, and `/blog/sharpen-a-video`.
+- Treated `/blog/best-ai-image-quality-enhancer` as an expected old-URL drop because production redirects it to `/blog/best-ai-image-enhancer`; the destination already has CTA markers and had been refreshed earlier on 2026-06-21.
+- Did not rewrite `/blog/topaz-video-upscaler` because it was already refreshed on 2026-06-21 and remains in the indexing backlog; current GSC data is still inside the post-change lag window.
+- Did not edit one-click/no-data rows where fresh GSC page/query data showed no current actionable query cluster.
+
+Validation:
+
+- API readback confirmed updated metadata on `/blog/best-free-ai-photo-enhancer-online`, `/blog/how-to-upscale-images-for-instagram`, and `/blog/free-photo-restoration-app`.
+- API readback confirmed `[!CTA_TRY]` and `[!CTA_DEMO]` on all patched posts.
+- `yarn verify` passed.
+
+Follow-up:
+
+- Manually request indexing for the new unchecked URLs in `gsc-request-indexing-backlog.md`, plus existing unchecked changed URLs already present there.
+- Recheck after 14 complete GSC days; do not judge the 2026-06-21 edits from data before 2026-07-08.
+
 ### SEO Blog CTR Body CTA Skill Rename
 
 Changes:

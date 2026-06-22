@@ -3,9 +3,11 @@
 ## 2026-06-20
 
 ### SEO: Blog Thin Content Scan — Video Upscaling Software
+
 **Affected:** video-upscaling-software
 **Why:** Fresh 90-day GSC+GA scan found 1,989 impressions, 0 clicks, avg position 13.6, no recent-edit/indexing blocker, and clear SERP demand for `best video upscaling software 2026` / `video upscaling software`.
 **Changes:**
+
 - `video-upscaling-software` — retitled around best video upscaling software 2026, tightened SEO description, added an above-fold direct answer/use-case matrix, and linked to the Topaz Video AI support guide.
 
 Track all blog changes made via skills. **Read the last 30 lines before starting. Append an entry when done.**
@@ -275,3 +277,14 @@ Intent mismatch fixes (seo_title only):
 
 - Generated a new Replicate image showing a printed photo with a pixelated half and restored AI-upscaled half.
 - Uploaded the compressed WebP to Supabase Storage and updated the post `featured_image_url` plus alt text through the blog API.
+
+### SEO: Trending Down Blog CTR Recovery
+
+**Affected:** best-free-ai-photo-enhancer-online, how-to-upscale-images-for-instagram, free-photo-restoration-app, best-app-to-restore-old-photos, fix-pixelated-image, image-upscaler-8x, sharpen-a-video
+**Why:** GSC trending-down review showed a real drop on the free photo enhancer page, zero-click/weak-query rows on Instagram and restoration posts, and missing body CTA paths on several older URLs.
+**Changes:**
+
+- `best-free-ai-photo-enhancer-online` — tightened title/SEO title around `Free AI Photo Enhancer Online`, refreshed description fields, and added a first-screen quick answer.
+- `how-to-upscale-images-for-instagram` — retargeted title/SEO title and opening answer around `2160x2700`, refreshed description fields, and added CTA markers.
+- `free-photo-restoration-app` — retargeted title/SEO title and opening answer around free photo restoration app intent, refreshed description fields, and added CTA markers.
+- `best-app-to-restore-old-photos`, `fix-pixelated-image`, `image-upscaler-8x`, `sharpen-a-video` — added missing `[!CTA_TRY]` and `[!CTA_DEMO]` body markers.
