@@ -16,6 +16,29 @@ Maintenance rules:
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
 
+## 2026-06-22
+
+### Blog Growth Maintenance: Opportunities + Performance Monitor
+
+Source: [blog-opportunities-publisher-2026-06-22.md](../reports/blog-opportunities-publisher-2026-06-22.md), [blog-performance-recovery-2026-06-22.md](../reports/blog-performance-recovery-2026-06-22.md)
+
+Changes:
+
+- Ran the blog opportunities publisher against fresh 90-day GSC query+page data through 2026-06-19; selected no new publish because all high-evidence candidates duplicate existing canonical blog/tool pages or are inside GSC lag from 2026-06-20/2026-06-21 edits.
+- Ran the blog performance monitor against 14-day blog comparison windows: previous 2026-05-23–2026-06-05 and current 2026-06-06–2026-06-19.
+- Applied no `blog-edit` changes because candidates were either recently refreshed, improving at page-level despite exact-query CTR leaks, or below edit-now thresholds.
+
+Validation:
+
+- GSC exports completed for 90-day opportunity discovery and 14-day blog monitoring.
+- Production spot checks for key loser URLs returned `200`, self-canonical, `index, follow`.
+- Reports saved under `docs/SEO/reports/`.
+
+Follow-up:
+
+- User attention required: manually request indexing for the 25 unchecked URLs in [gsc-request-indexing-backlog.md](./gsc-request-indexing-backlog.md).
+- Re-run after 2026-06-25 for best-free-upscaler and AI-upscaling-vs-sharpening exact-query CTR escalation; wait until 2026-07-07/08 for pages changed on 2026-06-20/21.
+
 ## 2026-06-21
 
 ### Trending Down Blog CTR Recovery
