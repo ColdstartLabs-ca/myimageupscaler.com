@@ -5,7 +5,12 @@ import Image from 'next/image';
 import { Check, ChevronDown, Lock, Search, Sparkles, X } from 'lucide-react';
 import { QualityTier, QUALITY_TIER_CONFIG } from '@/shared/types/coreflow.types';
 import { MODEL_COSTS } from '@shared/config/model-costs.config';
-import { getCreditsForTierAtScale } from '@shared/config/subscription.utils';
+import {
+  getCreditDisplayForTier,
+  getCreditsForTierAtScale,
+  getEnabledCreditPacks,
+  getEnabledPlans,
+} from '@shared/config/subscription.utils';
 import { BottomSheet } from '@client/components/ui/BottomSheet';
 import { ModelGallerySearch } from './ModelGallerySearch';
 import { analytics } from '@client/analytics/analyticsClient';
@@ -17,7 +22,6 @@ import {
 } from '@client/utils/checkoutTrackingContext';
 import { getVariant } from '@client/utils/abTest';
 import { resolveCheapestRegionalPlan } from '@shared/config/subscription.config';
-import { getEnabledCreditPacks, getEnabledPlans } from '@shared/config/subscription.utils';
 import type { PricingRegion } from '@shared/config/pricing-regions';
 import type { IExperimentAssignment } from '@shared/types/experiments.types';
 
@@ -756,16 +760,7 @@ const GalleryModelCard: React.FC<IGalleryModelCardProps> = ({
 };
 
 function formatCardCredits(tier: QualityTier): string {
-  const config = QUALITY_TIER_CONFIG[tier];
-  if (config.credits === 'variable') {
-    if (tier === 'clarity-pro' && config.modelId) {
-      return `${getCreditsForTierAtScale(tier, 2)} credits`;
-    }
-
-    return '1-8 credits';
-  }
-
-  return `${config.credits} credit${config.credits === 1 ? '' : 's'}`;
+  return getCreditDisplayForTier(tier);
 }
 
 interface IGalleryBeforeAfterSliderProps {

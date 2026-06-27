@@ -148,7 +148,40 @@ test.describe('API: Multi-Model Architecture', () => {
       expect(data.modelToBe).toBe('clarity-pro-upscaler');
       expect(data.breakdown.pricingModel).toBe('output-megapixel');
       expect(data.breakdown.outputMegapixels).toBe(4);
-      expect(data.breakdown.totalCredits).toBe(24);
+      // providerCost = 4MP * $0.03 = $0.12
+      // credits = ceil($0.12 * 2.5 margin / $0.03 cheapest credit value) = 10
+      expect(data.breakdown.totalCredits).toBe(10);
+    });
+
+    test('should cap Clarity Pro output-megapixel estimate at 64MP', async () => {
+      const user = await ctx.createUser({
+        subscription: 'active',
+        tier: 'hobby',
+        credits: 200,
+      });
+
+      const response = await api.withAuth(user.token).post('/api/credit-estimate', {
+        config: {
+          mode: 'upscale',
+          scale: 8,
+          qualityLevel: 'premium',
+          preserveText: false,
+          enhanceFaces: false,
+          denoise: false,
+          autoModelSelection: false,
+          selectedModel: 'clarity-pro-upscaler',
+          inputWidth: 4000,
+          inputHeight: 4000,
+        },
+      });
+
+      response.expectStatus(200);
+      const data = await response.json();
+
+      expect(data.modelToBe).toBe('clarity-pro-upscaler');
+      expect(data.breakdown.pricingModel).toBe('output-megapixel');
+      expect(data.breakdown.outputMegapixels).toBe(64);
+      expect(data.breakdown.totalCredits).toBe(160);
     });
 
     test('should estimate fixed per-image pricing for Recraft Crisp regardless of scale', async () => {

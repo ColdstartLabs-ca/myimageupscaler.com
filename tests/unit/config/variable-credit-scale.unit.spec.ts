@@ -66,7 +66,13 @@ describe('getScaleCreditMultiplier', () => {
   });
 
   describe('all other models — flat cost regardless of scale', () => {
-    const flatModels = ['real-esrgan', 'gfpgan', 'nano-banana-pro', 'realesrgan-anime', 'nano-banana'];
+    const flatModels = [
+      'real-esrgan',
+      'gfpgan',
+      'nano-banana-pro',
+      'realesrgan-anime',
+      'nano-banana',
+    ];
 
     for (const modelId of flatModels) {
       it(`${modelId}: returns 1.0 at 2x and 4x`, () => {
@@ -156,6 +162,13 @@ describe('getCreditsForTierAtScale — the main pricing function', () => {
       expect(getCreditsForTierAtScale('seedream-edit', 4)).toBe(4);
     });
   });
+
+  describe('clarity-pro tier — output-megapixel pricing', () => {
+    it('returns the non-zero provider minimum for static UI estimates', () => {
+      expect(getCreditsForTierAtScale('clarity-pro', 2)).toBe(3);
+      expect(getCreditsForTierAtScale('clarity-pro', 8)).toBe(3);
+    });
+  });
 });
 
 // ─── getCreditRangeForTier — UI display ──────────────────────────────────────
@@ -183,9 +196,19 @@ describe('getCreditRangeForTier — drives ModelCard badge', () => {
 
   it('hd-upscale is the ONLY tier with a range — all others are flat', () => {
     const allTiers = [
-      'quick', 'face-restore', 'budget-edit', 'face-pro', 'seedream-edit',
-      'fast-edit', 'budget-old-photo', 'anime-upscale', 'ultra',
-      'bg-removal', 'lighting-fix', 'resume-photo', 'photo-repair',
+      'quick',
+      'face-restore',
+      'budget-edit',
+      'face-pro',
+      'seedream-edit',
+      'fast-edit',
+      'budget-old-photo',
+      'anime-upscale',
+      'ultra',
+      'bg-removal',
+      'lighting-fix',
+      'resume-photo',
+      'photo-repair',
     ] as const;
 
     for (const tier of allTiers) {
@@ -196,30 +219,36 @@ describe('getCreditRangeForTier — drives ModelCard badge', () => {
     // Only hd-upscale should return a range
     expect(typeof getCreditRangeForTier('hd-upscale')).toBe('object');
   });
+
+  it('returns provider-aware min/max bounds for clarity-pro instead of 0', () => {
+    expect(getCreditRangeForTier('clarity-pro')).toEqual({ min: 3, max: 160 });
+  });
 });
 
 // ─── Regression: existing tiers unaffected ───────────────────────────────────
 
 describe('Regression: no unintended credit cost changes', () => {
   const expectedCosts: Array<{ tier: string; scale: 2 | 4; expectedCredits: number }> = [
-    { tier: 'quick',        scale: 2, expectedCredits: 1 },
-    { tier: 'quick',        scale: 4, expectedCredits: 1 },
+    { tier: 'quick', scale: 2, expectedCredits: 1 },
+    { tier: 'quick', scale: 4, expectedCredits: 1 },
     { tier: 'face-restore', scale: 2, expectedCredits: 2 },
     { tier: 'face-restore', scale: 4, expectedCredits: 2 },
-    { tier: 'budget-edit',  scale: 2, expectedCredits: 3 },
-    { tier: 'fast-edit',    scale: 2, expectedCredits: 2 },
-    { tier: 'face-pro',     scale: 2, expectedCredits: 6 },
-    { tier: 'ultra',        scale: 2, expectedCredits: 8 },
-    { tier: 'ultra',        scale: 4, expectedCredits: 8 },
+    { tier: 'budget-edit', scale: 2, expectedCredits: 3 },
+    { tier: 'fast-edit', scale: 2, expectedCredits: 2 },
+    { tier: 'face-pro', scale: 2, expectedCredits: 6 },
+    { tier: 'ultra', scale: 2, expectedCredits: 8 },
+    { tier: 'ultra', scale: 4, expectedCredits: 8 },
     { tier: 'anime-upscale', scale: 2, expectedCredits: 1 },
     { tier: 'anime-upscale', scale: 4, expectedCredits: 1 },
-    { tier: 'hd-upscale',   scale: 2, expectedCredits: 4 }, // unchanged at 2x
-    { tier: 'hd-upscale',   scale: 4, expectedCredits: 8 }, // fixed: was 4, now 8
+    { tier: 'hd-upscale', scale: 2, expectedCredits: 4 }, // unchanged at 2x
+    { tier: 'hd-upscale', scale: 4, expectedCredits: 8 }, // fixed: was 4, now 8
   ] as const;
 
   for (const { tier, scale, expectedCredits } of expectedCosts) {
     it(`${tier} @${scale}x = ${expectedCredits} credits`, () => {
-      expect(getCreditsForTierAtScale(tier as Parameters<typeof getCreditsForTierAtScale>[0], scale)).toBe(expectedCredits);
+      expect(
+        getCreditsForTierAtScale(tier as Parameters<typeof getCreditsForTierAtScale>[0], scale)
+      ).toBe(expectedCredits);
     });
   }
 });

@@ -2,7 +2,7 @@
 
 import { QUALITY_TIER_CONFIG, QualityTier } from '@/shared/types/coreflow.types';
 import { MODEL_COSTS } from '@shared/config/model-costs.config';
-import { getCreditsForTierAtScale } from '@shared/config/subscription.utils';
+import { getCreditDisplayForTierAtScale } from '@shared/config/subscription.utils';
 import { LayoutGrid } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { ModelGalleryModal, type IUpgradeDirectParams } from '../ModelGalleryModal';
@@ -45,16 +45,12 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
   const currentTierConfig = QUALITY_TIER_CONFIG[tier];
 
   const formatCredits = (): string => {
-    if (currentTierConfig.credits === 'variable') {
-      if (tier === 'clarity-pro') {
-        return 'Variable credits';
-      }
-      return '1-8 credits';
-    }
-
-    const smartAnalysisCost = tier !== 'auto' && smartAnalysisEnabled ? 1 : 0;
-    const credits = getCreditsForTierAtScale(tier, scale) + smartAnalysisCost;
-    return `${credits} credit${credits === 1 ? '' : 's'}`;
+    return getCreditDisplayForTierAtScale({
+      tier,
+      scale,
+      smartAnalysis: smartAnalysisEnabled,
+      unit: 'CR',
+    });
   };
 
   const handleOpenGallery = () => {
@@ -98,7 +94,7 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
         </div>
         <div className="flex items-center gap-2 shrink-0 relative z-10 ml-2">
           <span className="text-[9px] font-black tracking-widest uppercase text-white/60 bg-black/20 border border-white/10 px-2 py-0.5 rounded-lg">
-            {formatCredits().replace(' credits', ' CR').replace(' credit', ' CR')}
+            {formatCredits()}
           </span>
           <LayoutGrid className="h-4 w-4 text-accent" />
         </div>

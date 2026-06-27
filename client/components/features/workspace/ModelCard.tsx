@@ -3,7 +3,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Check, Lock, Image as ImageIcon } from 'lucide-react';
 import { QualityTier, QUALITY_TIER_CONFIG, IPreviewImages } from '@/shared/types/coreflow.types';
-import { getCreditRangeForTier } from '@shared/config/subscription.utils';
+import { getCreditDisplayForTier } from '@shared/config/subscription.utils';
 import { cn } from '@client/utils/cn';
 
 export interface IModelCardProps {
@@ -36,19 +36,7 @@ export const ModelCard: React.FC<IModelCardProps> = ({
     }
   };
 
-  const formatCredits = (): string => {
-    if (config.credits === 'variable') {
-      if (tier === 'clarity-pro') {
-        return 'Variable';
-      }
-      return '1-8 CR';
-    }
-    const range = getCreditRangeForTier(tier);
-    if (typeof range === 'number') {
-      return `${range} CR`;
-    }
-    return `${range.min}-${range.max} CR`;
-  };
+  const formatCredits = (): string => getCreditDisplayForTier(tier, 'CR');
 
   const isAuto = tier === 'auto';
   const hasPreviewImages = Boolean(config.previewImages);

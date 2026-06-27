@@ -539,6 +539,10 @@ export interface IBatchItem {
   processedUrl: string | null;
   status: ProcessingStatus;
   progress: number;
+  inputDimensions?: {
+    width: number;
+    height: number;
+  };
   stage?: ProcessingStage; // NEW
   error?: string;
 }

@@ -372,6 +372,18 @@ describe('ModelCard', () => {
     expect(images[0]).toHaveAttribute('src', '/before-after/quick/before.webp');
     expect(images[1]).toHaveAttribute('src', '/before-after/quick/after.webp');
   });
+
+  it('should render Clarity Pro variable credit bounds instead of 0', () => {
+    render(
+      <ModelCard
+        {...defaultCardProps}
+        tier="clarity-pro"
+        config={QUALITY_TIER_CONFIG['clarity-pro']}
+      />
+    );
+
+    expect(screen.getByText('3-160 CR')).toBeInTheDocument();
+  });
 });
 
 describe('ModelGallerySearch', () => {

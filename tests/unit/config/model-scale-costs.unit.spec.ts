@@ -75,6 +75,10 @@ describe('getCreditsForTierAtScale', () => {
     expect(getCreditsForTierAtScale('auto', 2)).toBe(0);
   });
 
+  it('should return the non-zero minimum display cost for clarity-pro', () => {
+    expect(getCreditsForTierAtScale('clarity-pro', 8)).toBe(3);
+  });
+
   it('should return flat cost for enhancement-only tiers', () => {
     // face-pro uses flux-2-pro (no scale support, no multiplier)
     expect(getCreditsForTierAtScale('face-pro', 2)).toBe(6);
@@ -107,5 +111,9 @@ describe('getCreditRangeForTier', () => {
 
   it('should return base cost for auto tier', () => {
     expect(getCreditRangeForTier('auto')).toBe(0);
+  });
+
+  it('should return provider-aware display range for clarity-pro', () => {
+    expect(getCreditRangeForTier('clarity-pro')).toEqual({ min: 3, max: 160 });
   });
 });

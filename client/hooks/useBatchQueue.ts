@@ -111,6 +111,11 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         let dimensions: { width: number; height: number } | null = null;
         try {
           dimensions = await loadImageDimensions(file);
+          setQueue(prev =>
+            prev.map(item =>
+              item.file === file ? { ...item, inputDimensions: dimensions ?? undefined } : item
+            )
+          );
         } catch {
           // If we can't load dimensions, still track the event without them
         }

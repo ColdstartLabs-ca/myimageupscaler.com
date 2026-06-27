@@ -3,7 +3,12 @@
  * Helper functions to access configuration values
  */
 
-import { QUALITY_TIER_CONFIG, type QualityTier } from '../types/coreflow.types';
+import {
+  QUALITY_TIER_CONFIG,
+  type IBatchItem,
+  type IUpscaleConfig,
+  type QualityTier,
+} from '../types/coreflow.types';
 import { MODEL_SCALE_CREDIT_MULTIPLIERS } from './model-costs.config';
 import { getSubscriptionConfig } from './subscription.config';
 import type {
@@ -187,12 +192,26 @@ export function getCreditsForTier(tier: QualityTier): number {
 }
 
 /**
- * Provider-aware credit pricing constants
+ * Provider-aware credit pricing constants.
+ *
+ * Use the cheapest effective subscription credit value (Business: $149 / 5000
+ * credits ~= $0.03) as the safety baseline, then apply margin to provider cost.
  */
-export const PROVIDER_COST_PER_CREDIT_TARGET_USD = 0.005;
+export const PROVIDER_COST_MARGIN_MULTIPLIER = 2.5;
+export const PROVIDER_COST_CREDIT_VALUE_USD = 0.03;
 export const CLARITY_PRO_MAX_OUTPUT_MEGAPIXELS = 64;
 export const CLARITY_PRO_MINIMUM_PROVIDER_COST_USD = 0.03;
 export const CLARITY_PRO_OUTPUT_MEGAPIXEL_PRICE_USD = 0.03;
+export const CLARITY_PRO_MINIMUM_CREDITS = Math.ceil(
+  (CLARITY_PRO_MINIMUM_PROVIDER_COST_USD * PROVIDER_COST_MARGIN_MULTIPLIER) /
+    PROVIDER_COST_CREDIT_VALUE_USD
+);
+export const CLARITY_PRO_MAXIMUM_CREDITS = Math.ceil(
+  (CLARITY_PRO_MAX_OUTPUT_MEGAPIXELS *
+    CLARITY_PRO_OUTPUT_MEGAPIXEL_PRICE_USD *
+    PROVIDER_COST_MARGIN_MULTIPLIER) /
+    PROVIDER_COST_CREDIT_VALUE_USD
+);
 export const RECRAFT_CRISP_CREDITS = 2;
 export const RECRAFT_CRISP_PROVIDER_COST_USD = 0.006;
 export const RESOLUTION_CREDIT_MULTIPLIERS: Record<'2k' | '4k' | '8k', number> = {
@@ -205,7 +224,7 @@ export const RESOLUTION_CREDIT_MULTIPLIERS: Record<'2k' | '4k' | '8k', number> =
  * Calculate provider-aware credits for any model.
  * Supports flat pricing, per-image fixed pricing, and output-megapixel dynamic pricing.
  *
- * For Clarity Pro: credits = ceil(max(0.03, outputMP * 0.03) / 0.005)
+ * For Clarity Pro: credits = ceil(providerCost * margin / cheapestCreditValue)
  * For Recraft Crisp: fixed 2 credits
  * For all others: falls back to existing tier-based scale multiplier logic
  */
@@ -253,7 +272,9 @@ export function calculateProviderAwareCredits(params: {
       outputMegapixels * CLARITY_PRO_OUTPUT_MEGAPIXEL_PRICE_USD
     );
 
-    const credits = Math.ceil(providerCostUsd / PROVIDER_COST_PER_CREDIT_TARGET_USD);
+    const credits = Math.ceil(
+      (providerCostUsd * PROVIDER_COST_MARGIN_MULTIPLIER) / PROVIDER_COST_CREDIT_VALUE_USD
+    );
 
     return {
       credits: credits + smartAnalysisCost,
@@ -336,6 +357,8 @@ export function getScaleCreditMultiplier(modelId: string, scale: number): number
  * Applies model-specific scale multipliers for GPU-time-billed models.
  */
 export function getCreditsForTierAtScale(tier: QualityTier, scale: number): number {
+  if (tier === 'clarity-pro') return CLARITY_PRO_MINIMUM_CREDITS;
+
   const baseCost = getCreditsForTier(tier);
   const modelId = QUALITY_TIER_CONFIG[tier].modelId;
   if (!modelId) return baseCost; // Auto/bg-removal — no model-specific multiplier
@@ -348,6 +371,10 @@ export function getCreditsForTierAtScale(tier: QualityTier, scale: number): numb
  * Returns { min, max } when costs vary by scale, or a flat number when uniform.
  */
 export function getCreditRangeForTier(tier: QualityTier): number | { min: number; max: number } {
+  if (tier === 'clarity-pro') {
+    return { min: CLARITY_PRO_MINIMUM_CREDITS, max: CLARITY_PRO_MAXIMUM_CREDITS };
+  }
+
   const baseCost = getCreditsForTier(tier);
   const modelId = QUALITY_TIER_CONFIG[tier].modelId;
   if (!modelId) return baseCost;
@@ -364,6 +391,60 @@ export function getCreditRangeForTier(tier: QualityTier): number | { min: number
   const max = Math.ceil(baseCost * Math.max(...multiplierValues));
 
   return min === max ? min : { min, max };
+}
+
+type CreditLabelUnit = 'credits' | 'CR';
+
+function formatCreditLabel(credits: number, unit: CreditLabelUnit): string {
+  if (unit === 'CR') return `${credits} CR`;
+  return `${credits} credit${credits === 1 ? '' : 's'}`;
+}
+
+function formatCreditRangeLabel(
+  range: number | { min: number; max: number },
+  unit: CreditLabelUnit
+): string {
+  if (typeof range === 'number') return formatCreditLabel(range, unit);
+  if (unit === 'CR') return `${range.min}-${range.max} CR`;
+  return `${range.min}-${range.max} credits`;
+}
+
+/**
+ * Get the static credit label for model cards and gallery entries.
+ * Dynamic tiers expose a range; flat tiers expose a single cost.
+ */
+export function getCreditDisplayForTier(
+  tier: QualityTier,
+  unit: CreditLabelUnit = 'credits'
+): string {
+  if (QUALITY_TIER_CONFIG[tier].credits === 'variable') {
+    if (!QUALITY_TIER_CONFIG[tier].modelId) return unit === 'CR' ? '1-8 CR' : '1-8 credits';
+    return formatCreditRangeLabel(getCreditRangeForTier(tier), unit);
+  }
+
+  return formatCreditRangeLabel(getCreditRangeForTier(tier), unit);
+}
+
+/**
+ * Get the selected-tier credit label when scale/smart-analysis are known.
+ * Provider-priced tiers still use their static range because exact cost requires
+ * image dimensions and is shown by the batch cost preview.
+ */
+export function getCreditDisplayForTierAtScale(params: {
+  tier: QualityTier;
+  scale: number;
+  smartAnalysis?: boolean;
+  unit?: CreditLabelUnit;
+}): string {
+  const { tier, scale, smartAnalysis, unit = 'credits' } = params;
+  const config = QUALITY_TIER_CONFIG[tier];
+
+  if (config.credits === 'variable') {
+    return getCreditDisplayForTier(tier, unit);
+  }
+
+  const smartAnalysisCost = tier !== 'auto' && smartAnalysis ? 1 : 0;
+  return formatCreditLabel(getCreditsForTierAtScale(tier, scale) + smartAnalysisCost, unit);
 }
 
 /**
@@ -448,6 +529,45 @@ export function getModelMultiplier(modelId: string): number {
  */
 export function calculateBatchCost(imageCount: number, costPerImage: number): number {
   return imageCount * costPerImage;
+}
+
+/**
+ * Calculate the exact displayed batch cost using the same provider-aware resolver
+ * as the billing path. Dynamic models such as Clarity Pro require per-image
+ * dimensions; without them, the resolver falls back to the model minimum.
+ */
+export function calculateBatchProviderAwareCreditCost(params: {
+  config: Pick<IUpscaleConfig, 'qualityTier' | 'scale' | 'additionalOptions'>;
+  items: Pick<IBatchItem, 'inputDimensions'>[];
+}): { perItemCredits: number[]; totalCredits: number } {
+  const { qualityTier, scale, additionalOptions } = params.config;
+
+  const perItemCredits = params.items.map(item => {
+    if (qualityTier === 'auto') {
+      // Auto mode uses variable cost — use upper bound (ultra = 8 CR) to avoid understating.
+      return 8;
+    }
+
+    const modelId = QUALITY_TIER_CONFIG[qualityTier].modelId;
+    if (modelId) {
+      return calculateFinalProviderAwareCredits({
+        modelId,
+        qualityTier,
+        scale,
+        inputWidth: item.inputDimensions?.width,
+        inputHeight: item.inputDimensions?.height,
+        smartAnalysis: additionalOptions?.smartAnalysis,
+      }).finalCredits;
+    }
+
+    const smartAnalysisCost = additionalOptions?.smartAnalysis ? 1 : 0;
+    return getCreditsForTierAtScale(qualityTier, scale) + smartAnalysisCost;
+  });
+
+  return {
+    perItemCredits,
+    totalCredits: perItemCredits.reduce((sum, credits) => sum + credits, 0),
+  };
 }
 
 /**

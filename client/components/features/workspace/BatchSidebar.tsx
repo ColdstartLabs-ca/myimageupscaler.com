@@ -4,17 +4,13 @@ import {
   IBatchItem,
   IUpscaleConfig,
   ProcessingStatus,
-  QUALITY_TIER_CONFIG,
   QUALITY_TIER_SCALES,
   QualityTier,
 } from '@/shared/types/coreflow.types';
 import { useUserData } from '@client/store/userStore';
 import { downloadBatch } from '@client/utils/download';
 import { generatePrompt } from '@client/utils/prompt-utils';
-import {
-  calculateFinalProviderAwareCredits,
-  getCreditsForTierAtScale,
-} from '@shared/config/subscription.utils';
+import { calculateBatchProviderAwareCreditCost } from '@shared/config/subscription.utils';
 import { Settings } from 'lucide-react';
 import React, { useState } from 'react';
 import {
@@ -64,40 +60,12 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
     downloadBatch(queue, config.qualityTier);
   };
 
-  // Calculate credit costs using new quality tier system
+  // Calculate credit costs using the same provider-aware resolver as billing.
   const pendingQueue = queue.filter(i => i.status !== ProcessingStatus.COMPLETED);
-
-  // Get cost per image based on quality tier, scale, and smart analysis
-  const getCostPerImage = (): number => {
-    const { qualityTier, scale, additionalOptions } = config;
-
-    // Smart analysis cost (1 credit when enabled and not in auto mode)
-    // Auto mode always uses smart analysis, so it's included in the base cost
-    const smartAnalysisCost = qualityTier !== 'auto' && additionalOptions?.smartAnalysis ? 1 : 0;
-
-    if (qualityTier === 'auto') {
-      // Auto mode uses variable cost — use upper bound (ultra = 8 CR) to avoid understating
-      return 8;
-    }
-
-    if (qualityTier === 'clarity-pro') {
-      const modelId = QUALITY_TIER_CONFIG[qualityTier].modelId;
-      if (modelId) {
-        return calculateFinalProviderAwareCredits({
-          modelId,
-          qualityTier,
-          scale,
-          smartAnalysis: additionalOptions?.smartAnalysis,
-        }).finalCredits;
-      }
-    }
-
-    // Use scale-aware credit calculation (applies model-specific multipliers)
-    return getCreditsForTierAtScale(qualityTier, scale) + smartAnalysisCost;
-  };
-
-  const costPerImage = getCostPerImage();
-  const totalCost = pendingQueue.length * costPerImage;
+  const totalCost = calculateBatchProviderAwareCreditCost({
+    config,
+    items: pendingQueue,
+  }).totalCredits;
 
   // Handler functions for sub-components
   const handleQualityTierChange = (qualityTier: QualityTier) => {
