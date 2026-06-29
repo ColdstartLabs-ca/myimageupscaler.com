@@ -18,6 +18,31 @@ Maintenance rules:
 
 ## 2026-06-29
 
+### Blog Growth Maintenance: Opportunities + Performance Monitor
+
+Source: [blog-opportunities-publisher-2026-06-29.md](../reports/blog-opportunities-publisher-2026-06-29.md), [blog-performance-recovery-2026-06-29.md](../reports/blog-performance-recovery-2026-06-29.md)
+
+Changes:
+
+- Ran the blog opportunities publisher against fresh 90-day GSC query+page data through 2026-06-26; selected no new publish because all strong candidates duplicate existing canonical blog/tool/pSEO ownership.
+- Ran the blog performance monitor against 14-day blog comparison windows: previous 2026-05-30–2026-06-12 and current 2026-06-13–2026-06-26.
+- Updated `/blog/best-free-ai-image-upscaler-2026-tested-compared` `description` and `seo_description` only, after persistent zero-click exact-query rows crossed the edit-now threshold while page-level CTR improved.
+- Added the changed blog URL to [gsc-request-indexing-backlog.md](./gsc-request-indexing-backlog.md).
+
+Validation:
+
+- GSC exports completed for 90-day opportunity discovery and 14-day blog monitoring.
+- Blog API PATCH and GET verified the updated description fields.
+- Production page HTML rendered the new meta description.
+
+Follow-up:
+
+- User attention required: manually request indexing for the 30 unchecked URLs in [gsc-request-indexing-backlog.md](./gsc-request-indexing-backlog.md).
+- Recheck `/blog/best-free-ai-image-upscaler-2026-tested-compared` exact-query CTR after 2026-07-15; if rows remain 300+ impressions, positions 3-10, and zero clicks after indexing, test a title angle.
+- Do not judge 2026-06-20/21 refreshed blog pages until 2026-07-07/08.
+
+## 2026-06-29
+
 ### Localized Homepage Metadata Fallback Fix
 
 Source: 28-day GSC export through 2026-06-25 and user-reported trending-down query cluster.

@@ -8,6 +8,10 @@ After the next production deploy, open Google Search Console URL Inspection for 
 
 Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myimageupscaler.com/sitemap-static.xml` were resubmitted through the Search Console Sitemaps API and both returned `204 No Content`. This does not replace manual URL Inspection request indexing, so unchecked URLs below still need the GSC UI action.
 
+## 2026-06-29 Blog Growth Maintenance CTR Description Test
+
+- [ ] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared`
+
 ## 2026-06-29 Localized Homepage Metadata Fallback Fix
 
 - [ ] `https://myimageupscaler.com/es`

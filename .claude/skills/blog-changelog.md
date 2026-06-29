@@ -1,5 +1,15 @@
 # Blog Changelog
 
+## 2026-06-29
+
+### SEO: Blog Growth Maintenance CTR Description Test
+
+**Affected:** best-free-ai-image-upscaler-2026-tested-compared
+**Why:** `blog-performance-monitor` found persistent zero-click exact-query rows in the current 14-day GSC window: `best free ai image upscaler 2026` had 1,316 impressions at position 5.0 and `best ai image upscaling tools 2026` had 458 impressions at position 5.9.
+**Changes:**
+
+- `best-free-ai-image-upscaler-2026-tested-compared` — updated `description` and `seo_description` only; title/H1/content stayed unchanged because page-level CTR improved after the 2026-06-07 refresh.
+
 ## 2026-06-20
 
 ### SEO: Blog Thin Content Scan — Video Upscaling Software
