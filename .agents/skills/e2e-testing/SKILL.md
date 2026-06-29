@@ -1,3 +1,8 @@
+---
+name: e2e-testing
+description: Write and maintain Playwright end-to-end browser tests for this codebase using page objects, BasePage patterns, TestContext, fixtures, accessibility checks, mobile coverage, and user-flow assertions.
+---
+
 # E2E Testing Skill
 
 When writing E2E/client tests for this codebase, follow the established patterns using Playwright and the BasePage pattern.

@@ -1,3 +1,8 @@
+---
+name: test-coverage-gaps
+description: Find and close test coverage gaps in this codebase by analyzing uncovered server services, API routes, client components, shared utilities, and orchestrating focused tests for critical missing coverage.
+---
+
 # Test Coverage Gap Finder Skill
 
 Find test coverage gaps in the codebase and spawn parallel agents to write missing tests.

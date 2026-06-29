@@ -16,6 +16,31 @@ Maintenance rules:
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
 
+## 2026-06-29
+
+### Localized Homepage Metadata Fallback Fix
+
+Source: 28-day GSC export through 2026-06-25 and user-reported trending-down query cluster.
+
+Changes:
+
+- Investigated the reported impression dip; 28-day web clicks and impressions were up overall, but CTR was down and Spanish image-quality queries were ranking too low.
+- Added missing localized `meta.homepage` title/description blocks for `es`, `it`, `pt`, and `ja` so localized homepages no longer fall back to English metadata.
+- Aligned Spanish homepage metadata with GSC terms around `mejorar calidad de imagen con IA`, `gratis`, and photo-quality improvement.
+- Added SEO unit coverage to prevent missing localized homepage metadata and to assert Spanish query-intent alignment.
+
+Validation:
+
+- GSC export completed for current 2026-05-29 to 2026-06-25 versus previous 2026-05-01 to 2026-05-28.
+- `npx vitest run tests/unit/seo/locale-homepage-meta.unit.spec.ts` passed.
+- `yarn i18n:helper validate` passed for `es`, `it`, `pt`, and `ja` `common.json`.
+- `yarn verify` passed.
+- `yarn test` completed API and E2E successfully, but the final Vitest phase still has unrelated existing failures in ModelGallery upgrade tests, homepage internal-link source assertions, and email service provider expectations.
+
+Follow-up:
+
+- After deploy, request indexing for the changed localized homepages listed in [gsc-request-indexing-backlog.md](./gsc-request-indexing-backlog.md).
+
 ## 2026-06-22
 
 ### Blog Growth Maintenance: Opportunities + Performance Monitor

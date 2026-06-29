@@ -1,3 +1,8 @@
+---
+name: translation-workflow
+description: Manage i18n translation workflows for this codebase, including locale diffing, batching, applying translated JSON entries with translation-helper commands, syncing, validating, and avoiding unsafe JSON edits.
+---
+
 # Translation Workflow
 
 **CRITICAL: NEVER use the Edit tool on JSON locale files.** Multi-byte UTF-8 characters (Japanese, etc.) cause crashes. ALWAYS use `apply-inline` command to update translations.

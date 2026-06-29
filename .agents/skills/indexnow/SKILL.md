@@ -1,3 +1,8 @@
+---
+name: indexnow
+description: Work with IndexNow SEO submissions for myimageupscaler.com, including submitting changed URLs, batch submissions, key file setup, API route checks, CLI scripts, tests, and debugging indexing notifications.
+---
+
 # IndexNow SEO Skill
 
 Use this skill when you need to submit URLs to IndexNow for faster search engine indexing. IndexNow is a protocol that instantly notifies search engines about content changes.

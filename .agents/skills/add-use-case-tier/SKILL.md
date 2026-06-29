@@ -1,3 +1,8 @@
+---
+name: add-use-case-tier
+description: Add a new quality tier or use-case tier that reuses an existing image model, covering QualityTier types, tier config, scale config, validation schema, model cost categorization, UI exposure, and tests.
+---
+
 # Add Quality Tier (Use Case) Skill
 
 When adding a new quality tier that reuses an existing model (e.g., a "Budget Old Photo" tier using `p-image-edit`), follow these steps. This is simpler than adding a new model — no provider integration needed.

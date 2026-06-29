@@ -100,6 +100,42 @@ describe('Locale Homepage Meta — File Structure', () => {
     });
   });
 
+  describe('Spanish locale meta', () => {
+    it('must have meta.homepage title and description in locales/es/common.json', () => {
+      const esCommonPath = path.join(localesDir, 'es', 'common.json');
+      const esCommon = JSON.parse(fs.readFileSync(esCommonPath, 'utf-8'));
+
+      expect(esCommon.meta?.homepage?.title).toBeDefined();
+      expect(esCommon.meta?.homepage?.description).toBeDefined();
+    });
+
+    it('Spanish title and description must target GSC image quality intent', () => {
+      const esCommonPath = path.join(localesDir, 'es', 'common.json');
+      const esCommon = JSON.parse(fs.readFileSync(esCommonPath, 'utf-8'));
+      const combined = `${esCommon.meta.homepage.title} ${esCommon.meta.homepage.description}`;
+
+      expect(combined).toMatch(/Mejorar|Mejora/);
+      expect(combined).toMatch(/Calidad|calidad/);
+      expect(combined).toMatch(/Imagen|imagen/);
+      expect(combined).toMatch(/\bIA\b/);
+      expect(combined).toMatch(/Gratis|gratis/);
+    });
+  });
+
+  describe('All locale homepage meta', () => {
+    it('must define homepage metadata for every supported locale', () => {
+      const supportedLocales = ['en', 'es', 'fr', 'de', 'it', 'pt', 'ja'];
+
+      supportedLocales.forEach(locale => {
+        const commonPath = path.join(localesDir, locale, 'common.json');
+        const common = JSON.parse(fs.readFileSync(commonPath, 'utf-8'));
+
+        expect(common.meta?.homepage?.title, `${locale} title`).toBeTruthy();
+        expect(common.meta?.homepage?.description, `${locale} description`).toBeTruthy();
+      });
+    });
+  });
+
   describe('English locale meta', () => {
     it('must have meta.homepage in locales/en/common.json', () => {
       const enCommonPath = path.join(localesDir, 'en', 'common.json');

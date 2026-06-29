@@ -116,5 +116,11 @@
     "pwaInstallTitle": "{appName}をインストール",
     "pwaInstallDescription": "ホーム画面に追加して素早くアクセス",
     "pwaInstallButton": "インストール"
+  },
+  "meta": {
+    "homepage": {
+      "title": "AI画像高画質化・写真補正を無料で | MyImageUpscaler",
+      "description": "AIで画像を高画質化し、写真を4K相当に拡大。ぼやけ補正、ディテール復元、JPEG・PNG・WebP対応。無料クレジットで今すぐ試せます。"
+    }
   }
 }

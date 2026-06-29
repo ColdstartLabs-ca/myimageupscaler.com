@@ -1,3 +1,8 @@
+---
+name: test-fixing
+description: Diagnose and fix failing test suites in this codebase, especially large or cross-file failures, by grouping failures, applying focused fixes, and rerunning affected tests and full verification.
+---
+
 # Test Fixing Methodology
 
 ## Overview

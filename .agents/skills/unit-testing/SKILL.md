@@ -1,3 +1,8 @@
+---
+name: unit-testing
+description: Write and maintain Vitest unit tests for this codebase, including React Testing Library component tests, service and utility tests, API handler unit tests, mocks, fixtures, and jsdom setup patterns.
+---
+
 # Unit Testing Skill
 
 When writing unit tests for this codebase, follow the established patterns using Vitest and React Testing Library.

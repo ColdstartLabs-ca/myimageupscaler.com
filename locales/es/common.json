@@ -116,5 +116,11 @@
     "pwaInstallTitle": "Instalar {appName}",
     "pwaInstallDescription": "Añadir a la pantalla de inicio para acceso rápido",
     "pwaInstallButton": "Instalar"
+  },
+  "meta": {
+    "homepage": {
+      "title": "Mejorar Calidad de Imagen con IA Gratis | MyImageUpscaler",
+      "description": "Mejora la calidad de imagen con IA gratis online. Aumenta resolución, arregla fotos borrosas y mejora fotos sin tarjeta de crédito."
+    }
   }
 }

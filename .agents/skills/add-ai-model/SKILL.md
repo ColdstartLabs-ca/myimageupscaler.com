@@ -1,3 +1,8 @@
+---
+name: add-ai-model
+description: Add a new AI image model to myimageupscaler.com, including model costs, provider configuration, model registry, quality tiers, scale capabilities, feature flags, tests, and free versus paid access rules.
+---
+
 # Add AI Model Skill
 
 When adding a new AI model to the image upscaler, follow these steps in order. Each file must be updated for the model to work correctly.

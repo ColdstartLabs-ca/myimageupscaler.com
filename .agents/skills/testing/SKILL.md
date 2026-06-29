@@ -1,3 +1,8 @@
+---
+name: testing
+description: Use the codebase testing strategy across Vitest unit tests and Playwright API, integration, and E2E tests, including when to choose each test type and related local testing patterns.
+---
+
 # Testing Overview
 
 This codebase uses a multi-layered testing strategy with Vitest for unit tests and Playwright for integration, API, and E2E tests.

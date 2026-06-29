@@ -1,3 +1,8 @@
+---
+name: api-testing
+description: Write and maintain Playwright API and integration tests for this codebase using ApiClient, TestContext, TestDataManager, authentication helpers, and fluent request/response assertions.
+---
+
 # API Testing Skill
 
 When writing API tests for this codebase, follow the established patterns using the ApiClient helper and supertest-style assertions.
