@@ -8,6 +8,12 @@ After the next production deploy, open Google Search Console URL Inspection for 
 
 Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myimageupscaler.com/sitemap-static.xml` were resubmitted through the Search Console Sitemaps API and both returned `204 No Content`. This does not replace manual URL Inspection request indexing, so unchecked URLs below still need the GSC UI action.
 
+## 2026-07-03 CTR / Ranking Lift Pass
+
+- [ ] `https://myimageupscaler.com/blog/fixing-pixelated-photos`
+- [ ] `https://myimageupscaler.com/blog/best-ai-upscaler`
+- [ ] `https://myimageupscaler.com/blog/topaz-video-upscaler`
+
 ## 2026-06-29 Blog Growth Maintenance CTR Description Test
 
 - [ ] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared`
@@ -30,9 +36,9 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 
 ## 2026-06-21 Trending Down CTR Recovery
 
-- [ ] `https://myimageupscaler.com/blog/how-to-upscale-images-for-instagram`
-- [ ] `https://myimageupscaler.com/blog/free-photo-restoration-app`
-- [ ] `https://myimageupscaler.com/blog/best-app-to-restore-old-photos`
+- [x] `https://myimageupscaler.com/blog/how-to-upscale-images-for-instagram`
+- [x] `https://myimageupscaler.com/blog/free-photo-restoration-app`
+- [x] `https://myimageupscaler.com/blog/best-app-to-restore-old-photos`
 - [ ] `https://myimageupscaler.com/blog/fix-pixelated-image`
 - [ ] `https://myimageupscaler.com/blog/image-upscaler-8x`
 

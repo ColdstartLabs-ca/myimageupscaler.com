@@ -16,6 +16,29 @@ Maintenance rules:
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
 
+## 2026-07-03
+
+### CTR / Ranking Lift Pass: Pixelated, Best AI Upscaler, Topaz Video
+
+Source: fresh 90-day GSC export through 2026-06-30, GA4 organic export through 2026-07-02, and blog SEO audit rerun.
+
+Changes:
+
+- Updated `/blog/fixing-pixelated-photos` SEO title and description around the `fix pixelated photos` / `stop pixelated photos` query cluster, and tightened the above-fold direct-answer paragraph.
+- Updated `/blog/best-ai-upscaler` title, SEO title, descriptions, opening summary, and added a quick-answer comparison table for AI image upscaler websites.
+- Updated `/blog/topaz-video-upscaler` title, SEO title, descriptions, and first H2/intro around `Topaz Video AI vs alternatives 2026`.
+- Added the three changed URLs to [gsc-request-indexing-backlog.md](./gsc-request-indexing-backlog.md).
+
+Validation:
+
+- Blog API PATCH returned `200` for all three posts; GET readback confirmed updated metadata/content.
+- Production HTML spot checks for all three URLs returned canonical, indexable pages and rendered the new title/body text.
+- Blog SEO audit rerun cleared the title-length warning for `/blog/topaz-video-upscaler` and keyword-overlap warning for `/blog/fixing-pixelated-photos`; historical CTR flags remain pending new GSC data.
+
+Follow-up:
+
+- Manually request indexing for the three changed URLs, then judge CTR/ranking only after 14-28 complete GSC days.
+
 ## 2026-06-29
 
 ### Blog Growth Maintenance: Opportunities + Performance Monitor

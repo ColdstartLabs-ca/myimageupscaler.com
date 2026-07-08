@@ -1,5 +1,17 @@
 # Blog Changelog
 
+## 2026-07-03
+
+### SEO: CTR / Ranking Lift Pass
+
+**Affected:** fixing-pixelated-photos, best-ai-upscaler, topaz-video-upscaler
+**Why:** Fresh 90-day GSC/GA4 data showed high impressions with weak CTR/rank capture: `/blog/fixing-pixelated-photos` had 61,183 impressions and 3 clicks, `/blog/best-ai-upscaler` had 13,287 impressions and 14 clicks, and `/blog/topaz-video-upscaler` had 18,280 impressions and 7 clicks.
+**Changes:**
+
+- `fixing-pixelated-photos` — updated SEO title/description for the `fix pixelated photos` / `stop pixelated photos` query cluster and tightened the above-fold direct answer.
+- `best-ai-upscaler` — changed title/SEO title/descriptions to `Best AI Image Upscaler Websites 2026: 12 Tested`, rewrote the opening, and added a quick-answer comparison table.
+- `topaz-video-upscaler` — changed title/SEO title/descriptions to `Topaz Video AI vs Alternatives 2026: Price & Features` and aligned the first H2/intro with `Topaz Video AI vs alternatives 2026` demand.
+
 ## 2026-06-29
 
 ### SEO: Blog Growth Maintenance CTR Description Test
