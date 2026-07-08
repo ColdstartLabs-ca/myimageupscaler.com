@@ -6,6 +6,7 @@ import { assertKnownPriceId, getPlanForPriceId, resolvePlanOrPack } from '@share
 import { getBasePriceIdByPlanKey } from '@shared/config/pricing-regions';
 import { getEmailService } from '@server/services/email.service';
 import { getEmailLifecycleService } from '@server/services/email-lifecycle.service';
+import { getRevenueRecoveryService } from '@server/services/revenue-recovery.service';
 import { redeemDiscount } from '@server/services/engagement-discount.service';
 import { recordBanditConversion } from '@/lib/pricing-bandit';
 import { recordExperimentReward } from '@lib/experiments';
@@ -635,6 +636,23 @@ export class PaymentHandler {
         packKey,
       });
 
+      await getRevenueRecoveryService()
+        .markUserConverted({
+          userId,
+          purchaseType,
+          stripeCheckoutSessionId: session.id,
+          amountCents,
+          planKey,
+          packKey,
+        })
+        .catch(error => {
+          console.error('[RECOVERY_INTENT] Failed to mark user converted', {
+            userId,
+            sessionId: session.id,
+            error: error instanceof Error ? error.message : String(error),
+          });
+        });
+
       // Record bandit conversion so Thompson Sampling can update arm stats
       const banditArmIdRaw = session.metadata?.bandit_arm_id;
       if (banditArmIdRaw) {
@@ -764,6 +782,22 @@ export class PaymentHandler {
       },
       amplitudeOpts
     );
+
+    await getRevenueRecoveryService()
+      .markUserConverted({
+        userId,
+        purchaseType: 'credit_pack',
+        stripeCheckoutSessionId: session.id,
+        amountCents,
+        packKey,
+      })
+      .catch(error => {
+        console.error('[RECOVERY_INTENT] Failed to mark async payment user converted', {
+          userId,
+          sessionId: session.id,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      });
 
     const banditArmIdRaw = session.metadata?.bandit_arm_id;
     if (banditArmIdRaw) {

@@ -12,6 +12,7 @@ import {
   calculateStackedDiscount,
 } from '@server/services/engagement-discount.service';
 import { verifyCheckoutRescueOffer } from '@server/services/checkout-rescue-offer.service';
+import { getRevenueRecoveryService } from '@server/services/revenue-recovery.service';
 import { ENGAGEMENT_DISCOUNT_CONFIG } from '@shared/config/engagement-discount';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
@@ -739,6 +740,23 @@ export async function POST(request: NextRequest) {
       },
       { apiKey: serverEnv.AMPLITUDE_API_KEY, userId: user.id }
     );
+
+    await getRevenueRecoveryService()
+      .persistCheckoutIntentContext({
+        userId: user.id,
+        priceId: validatedPriceId,
+        purchaseType: resolvedPrice?.type === 'pack' ? 'credit_pack' : 'subscription',
+        selectedKey: unifiedMetadata?.key,
+        pricingRegion: resolvedPricingRegion,
+        stripeCheckoutSessionId: session.id,
+      })
+      .catch(error => {
+        console.warn('[RECOVERY_INTENT] Failed to persist checkout intent context', {
+          userId: user.id,
+          sessionId: session.id,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      });
 
     // 8. Return the session data
     return NextResponse.json({

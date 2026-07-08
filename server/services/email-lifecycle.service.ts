@@ -7,6 +7,10 @@ import {
   getEmailContentRecommendationService,
   type LifecycleIntent,
 } from '@server/services/email-content-recommendation.service';
+import {
+  getRevenueRecoveryService,
+  type IQueueRecoveryEligibilityResult,
+} from '@server/services/revenue-recovery.service';
 
 export type LifecycleEventType =
   | 'queued'
@@ -73,6 +77,17 @@ export interface IProcessLifecycleQueueResult {
   failed: number;
   eligible: number;
   dryRun: boolean;
+}
+
+export interface IEmailLifecycleQueueHealth {
+  duePending: number;
+  oldestPendingScheduledFor: string | null;
+}
+
+export interface IQueueDailyEligibilityResult {
+  queued: number;
+  lifecycleQueued: number;
+  recovery: IQueueRecoveryEligibilityResult;
 }
 
 interface IUserEmailContext {
@@ -408,7 +423,46 @@ export class EmailLifecycleService {
     return result;
   }
 
+  async getQueueHealth(now: Date = new Date()): Promise<IEmailLifecycleQueueHealth> {
+    const dueCutoff = now.toISOString();
+    const { count, error: countError } = await supabaseAdmin
+      .from('email_lifecycle_queue')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'pending')
+      .lte('scheduled_for', dueCutoff);
+
+    if (countError) {
+      throw new Error(`Failed to count due lifecycle queue: ${countError.message}`);
+    }
+
+    const { data, error: oldestError } = await supabaseAdmin
+      .from('email_lifecycle_queue')
+      .select('scheduled_for')
+      .eq('status', 'pending')
+      .lte('scheduled_for', dueCutoff)
+      .order('scheduled_for', { ascending: true })
+      .limit(1)
+      .maybeSingle();
+
+    if (oldestError) {
+      throw new Error(`Failed to load oldest due lifecycle queue row: ${oldestError.message}`);
+    }
+
+    return {
+      duePending: count ?? 0,
+      oldestPendingScheduledFor: data?.scheduled_for ? String(data.scheduled_for) : null,
+    };
+  }
+
   async queueDailyEligibility(options?: { dryRun?: boolean; limit?: number }): Promise<number> {
+    const result = await this.queueDailyEligibilityDetailed(options);
+    return result.queued;
+  }
+
+  async queueDailyEligibilityDetailed(options?: {
+    dryRun?: boolean;
+    limit?: number;
+  }): Promise<IQueueDailyEligibilityResult> {
     const limit = options?.limit ?? 100;
     const dryRun = options?.dryRun ?? false;
     const { data, error } = await supabaseAdmin
@@ -423,7 +477,7 @@ export class EmailLifecycleService {
       throw new Error(`Failed to scan lifecycle eligibility: ${error.message}`);
     }
 
-    let queued = 0;
+    let lifecycleQueued = 0;
     for (const profile of (data || []) as Array<Record<string, unknown>>) {
       const userId = String(profile.id);
       const email = await this.resolveUserEmail(userId);
@@ -650,15 +704,24 @@ export class EmailLifecycleService {
 
       for (const candidate of candidates) {
         if (dryRun) {
-          queued++;
+          lifecycleQueued++;
           continue;
         }
         const outcome = await this.queueLifecycleEmail(candidate);
-        if (outcome.queued) queued++;
+        if (outcome.queued) lifecycleQueued++;
       }
     }
 
-    return queued;
+    const recoveryResult = await getRevenueRecoveryService().queueEligibleRecoveryEmails({
+      dryRun,
+      limit,
+    });
+
+    return {
+      queued: lifecycleQueued + recoveryResult.queued,
+      lifecycleQueued,
+      recovery: recoveryResult,
+    };
   }
 
   async cancelPendingForUser(

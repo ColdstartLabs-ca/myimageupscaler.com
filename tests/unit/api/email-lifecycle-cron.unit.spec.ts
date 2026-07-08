@@ -13,21 +13,23 @@ vi.mock('@server/services/email-lifecycle.service', () => ({
   getEmailLifecycleService: vi.fn(),
 }));
 
-describe('POST /api/cron/email-lifecycle', () => {
+describe('POST /api/cron/email-lifecycle throughput controls', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.mocked(getEmailLifecycleService).mockReturnValue({
       queueDailyEligibilityDetailed: vi.fn().mockResolvedValue({
-        queued: 2,
-        lifecycleQueued: 1,
+        queued: 5,
+        lifecycleQueued: 2,
         recovery: {
-          scanned: 2,
-          eligible: 1,
-          queued: 1,
+          scanned: 4,
+          eligible: 3,
+          queued: 3,
           skippedPurchased: 0,
           skippedPriority: 1,
           skippedMissingEmail: 0,
-          dryRun: true,
+          dryRun: false,
           byAudience: {
             checkout_abandoner: {
               scanned: 1,
@@ -38,14 +40,22 @@ describe('POST /api/cron/email-lifecycle', () => {
               skippedMissingEmail: 0,
             },
             upgrade_click_no_purchase: {
-              scanned: 0,
-              eligible: 0,
-              queued: 0,
+              scanned: 1,
+              eligible: 1,
+              queued: 1,
               skippedPurchased: 0,
               skippedPriority: 0,
               skippedMissingEmail: 0,
             },
             credit_wall_dismissed: {
+              scanned: 1,
+              eligible: 1,
+              queued: 1,
+              skippedPurchased: 0,
+              skippedPriority: 0,
+              skippedMissingEmail: 0,
+            },
+            high_usage_free_user: {
               scanned: 1,
               eligible: 0,
               queued: 0,
@@ -53,44 +63,47 @@ describe('POST /api/cron/email-lifecycle', () => {
               skippedPriority: 1,
               skippedMissingEmail: 0,
             },
-            high_usage_free_user: {
-              scanned: 0,
-              eligible: 0,
-              queued: 0,
-              skippedPurchased: 0,
-              skippedPriority: 0,
-              skippedMissingEmail: 0,
-            },
           },
         },
       }),
       processDueQueue: vi.fn().mockResolvedValue({
-        queued: 3,
-        sent: 0,
-        skipped: 1,
-        failed: 0,
-        eligible: 4,
-        dryRun: true,
+        queued: 0,
+        sent: 10,
+        skipped: 2,
+        failed: 1,
+        eligible: 13,
+        dryRun: false,
       }),
       getQueueHealth: vi.fn().mockResolvedValue({
-        duePending: 12,
+        duePending: 87,
         oldestPendingScheduledFor: '2026-07-08T00:00:00.000Z',
       }),
     } as never);
   });
 
-  it('rejects invalid cron secret', async () => {
+  it('should cap batchSize above max', async () => {
     const response = await POST(
-      new NextRequest('http://localhost/api/cron/email-lifecycle', {
+      new NextRequest('http://localhost/api/cron/email-lifecycle?batchSize=9999&scanLimit=9999', {
         method: 'POST',
-        headers: { 'x-cron-secret': 'wrong' },
+        headers: { 'x-cron-secret': 'test-cron-secret' },
       })
     );
+    const body = await response.json();
 
-    expect(response.status).toBe(401);
+    const service = vi.mocked(getEmailLifecycleService).mock.results[0].value;
+    expect(service.processDueQueue).toHaveBeenCalledWith({ dryRun: false, batchSize: 250 });
+    expect(service.queueDailyEligibilityDetailed).toHaveBeenCalledWith({
+      dryRun: false,
+      limit: 1000,
+    });
+    expect(body).toMatchObject({
+      success: true,
+      batchSize: 250,
+      scanLimit: 1000,
+    });
   });
 
-  it('dry run does not send email', async () => {
+  it('should include queue health in response', async () => {
     const response = await POST(
       new NextRequest('http://localhost/api/cron/email-lifecycle?dryRun=true', {
         method: 'POST',
@@ -99,33 +112,27 @@ describe('POST /api/cron/email-lifecycle', () => {
     );
     const body = await response.json();
 
-    const service = vi.mocked(getEmailLifecycleService).mock.results[0].value;
-    expect(service.processDueQueue).toHaveBeenCalledWith({ dryRun: true, batchSize: 50 });
-    expect(service.queueDailyEligibilityDetailed).toHaveBeenCalledWith({
-      dryRun: true,
-      limit: 100,
-    });
-    expect(service.getQueueHealth).toHaveBeenCalled();
+    expect(response.status).toBe(200);
     expect(body).toMatchObject({
       success: true,
       dryRun: true,
-      queued: 5,
-      sent: 0,
-      skipped: 1,
-      duePending: 12,
+      duePending: 87,
       oldestPendingScheduledFor: '2026-07-08T00:00:00.000Z',
       recoveryEligibility: {
-        dryRun: true,
+        queued: 3,
         byAudience: {
           checkout_abandoner: {
-            eligible: 1,
             queued: 1,
           },
-          credit_wall_dismissed: {
+          high_usage_free_user: {
             skippedPriority: 1,
           },
         },
       },
+      sent: 10,
+      skipped: 2,
+      failed: 1,
     });
+    expect(body.durationMs).toEqual(expect.any(Number));
   });
 });

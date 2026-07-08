@@ -165,6 +165,36 @@ describe('Cloudflare Cron Worker', () => {
       );
     });
 
+    it('should route email lifecycle catch-up schedule with bounded params', async () => {
+      const event = {
+        cron: '40 * * * *',
+        scheduledTime: Date.now(),
+      } as ScheduledEvent;
+
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({ success: true, sent: 25 }),
+      });
+      global.fetch = fetchMock;
+
+      await worker.scheduled(event, mockEnv, mockCtx as unknown);
+
+      expect(mockCtx.waitUntil).toHaveBeenCalled();
+      const waitUntilPromise = mockCtx.waitUntil.mock.calls[0][0];
+      await waitUntilPromise;
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        'https://api.example.com/api/cron/email-lifecycle?batchSize=250&scanLimit=500',
+        expect.objectContaining({
+          method: 'POST',
+          headers: expect.objectContaining({
+            'x-cron-secret': 'test-secret-123',
+          }),
+        })
+      );
+    });
+
     it('should handle unknown cron patterns', async () => {
       const event = {
         cron: '* * * * *',

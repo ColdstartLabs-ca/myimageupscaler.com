@@ -228,6 +228,8 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
       'unused-credits': 'UnusedCreditsEmail',
       'finish-image': 'FinishImageEmail',
       'win-back': 'WinBackEmail',
+      'checkout-recovery': 'CheckoutRecoveryEmail',
+      'credit-wall-recovery': 'CreditWallRecoveryEmail',
     };
 
     const exportName = templateExportNames[templateName];
@@ -250,6 +252,8 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
       'unused-credits': () => import('@/emails/templates/UnusedCreditsEmail'),
       'finish-image': () => import('@/emails/templates/FinishImageEmail'),
       'win-back': () => import('@/emails/templates/WinBackEmail'),
+      'checkout-recovery': () => import('@/emails/templates/CheckoutRecoveryEmail'),
+      'credit-wall-recovery': () => import('@/emails/templates/CreditWallRecoveryEmail'),
     };
     /* eslint-enable no-restricted-syntax */
 
@@ -281,6 +285,14 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
       'unused-credits': 'You still have credits waiting',
       'finish-image': 'Finish this image',
       'win-back': 'Still need cleaner images?',
+      'checkout-recovery': d =>
+        d.recoveryAudience === 'upgrade_click_no_purchase'
+          ? 'Unlock the feature you tried to use'
+          : 'Your checkout is still waiting',
+      'credit-wall-recovery': d =>
+        d.recoveryAudience === 'high_usage_free_user'
+          ? 'You are close to your free upscale limit'
+          : 'Finish more images with more credits',
       'password-reset': 'Reset your password',
       'support-request': d =>
         `[Support] [${String(d.category || 'GENERAL').toUpperCase()}] ${d.subject || 'Support Request'}`,

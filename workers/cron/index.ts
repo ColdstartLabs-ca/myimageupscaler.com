@@ -56,9 +56,12 @@ export default {
     } else if (cronPattern === '0 0 * * *') {
       endpoint = '/api/cron/gallery-cleanup';
       jobName = 'Gallery Cleanup';
-    } else if (cronPattern === '15 5 * * *') {
-      endpoint = '/api/cron/email-lifecycle';
+    } else if (cronPattern === '10 * * * *') {
+      endpoint = '/api/cron/email-lifecycle?batchSize=100&scanLimit=250';
       jobName = 'Email Lifecycle';
+    } else if (cronPattern === '40 * * * *') {
+      endpoint = '/api/cron/email-lifecycle?batchSize=250&scanLimit=500';
+      jobName = 'Email Lifecycle Catch-up';
     } else {
       console.error(`[CRON] Unknown cron pattern: ${cronPattern}`);
       return;

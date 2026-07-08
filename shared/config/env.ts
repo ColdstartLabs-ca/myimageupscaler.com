@@ -239,6 +239,8 @@ const serverEnvSchema = z.object({
   // Analytics (server-side HTTP API)
   AMPLITUDE_API_KEY: z.string().default(''),
   AMPLITUDE_SECRET_KEY: z.string().default(''),
+  AMPLITUDE_COHORT_CHECKOUT_ABANDONERS: z.string().default('i1u84c2g'),
+  AMPLITUDE_COHORT_UPGRADE_CLICKERS_NO_PURCHASE: z.string().default('o4y4ltj8'),
   GA4_API_SECRET: z.string().default(''),
   GA_MEASUREMENT_ID: z.string().default(''),
   // CORS
@@ -286,6 +288,7 @@ const serverEnvSchema = z.object({
   BASE_URL: z.string().url().default('http://localhost:3000'),
   // Allow sending transactional emails in development (for testing)
   ALLOW_TRANSACTIONAL_EMAILS_IN_DEV: z.coerce.boolean().default(false),
+  RECOVERY_EMAILS_ENABLED: z.coerce.boolean().default(true),
 
   // ==========================================
   // BLOG API
@@ -395,6 +398,10 @@ function loadServerEnv(): IServerEnv {
       process.env.AMPLITUDE_API_KEY || process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY || '',
     // Dashboard REST queries require the project's secret key in addition to the API key.
     AMPLITUDE_SECRET_KEY: process.env.AMPLITUDE_SECRET_KEY || '',
+    AMPLITUDE_COHORT_CHECKOUT_ABANDONERS:
+      process.env.AMPLITUDE_COHORT_CHECKOUT_ABANDONERS || 'i1u84c2g',
+    AMPLITUDE_COHORT_UPGRADE_CLICKERS_NO_PURCHASE:
+      process.env.AMPLITUDE_COHORT_UPGRADE_CLICKERS_NO_PURCHASE || 'o4y4ltj8',
     GA4_API_SECRET: process.env.GA4_API_SECRET || '',
     GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || '',
     // CORS
@@ -434,6 +441,7 @@ function loadServerEnv(): IServerEnv {
       'support@myimageupscaler.com',
     BASE_URL: process.env.BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
     ALLOW_TRANSACTIONAL_EMAILS_IN_DEV: process.env.ALLOW_TRANSACTIONAL_EMAILS_IN_DEV ?? 'false',
+    RECOVERY_EMAILS_ENABLED: process.env.RECOVERY_EMAILS_ENABLED ?? 'true',
 
     // Blog API
     BLOG_API_KEY: process.env.BLOG_API_KEY || '',

@@ -15,6 +15,7 @@ step_verify() {
         if [[ "$status" == "200" ]]; then
             log_success "Health check passed"
             _verify_webhook_secret "$url"
+            _verify_recovery_lifecycle_dry_run "$url"
             _check_subscription_reconciliation
             _run_smoke_tests "$url"
             return 0
@@ -40,6 +41,75 @@ _verify_cron_schedules() {
     done
 
     log_error "Deployed cron schedules do not match workers/cron/wrangler.toml"
+}
+
+_verify_recovery_lifecycle_dry_run() {
+    local url="$1"
+    local cron_secret="${CRON_SECRET:-}"
+
+    if [[ -z "$cron_secret" ]]; then
+        log_warn "CRON_SECRET is not set — skipping recovery lifecycle dry-run verification"
+        return 0
+    fi
+
+    log_info "Verifying recovery lifecycle dry-run..."
+
+    local response_file
+    response_file=$(mktemp)
+    local response_code
+    response_code=$(curl -s -o "$response_file" -w "%{http_code}" \
+        -X POST "$url/api/cron/email-lifecycle?dryRun=true&batchSize=250&scanLimit=500" \
+        -H "x-cron-secret: $cron_secret" \
+        2>/dev/null || echo "000")
+
+    if [[ "$response_code" != "200" ]]; then
+        rm -f "$response_file"
+        log_error "Recovery lifecycle dry-run failed with HTTP $response_code"
+    fi
+
+    if python3 - "$response_file" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], "r", encoding="utf-8") as fh:
+    data = json.load(fh)
+
+required_audiences = {
+    "checkout_abandoner",
+    "upgrade_click_no_purchase",
+    "credit_wall_dismissed",
+    "high_usage_free_user",
+}
+recovery = data.get("recoveryEligibility")
+by_audience = recovery.get("byAudience") if isinstance(recovery, dict) else None
+
+if data.get("success") is not True or data.get("dryRun") is not True:
+    raise SystemExit("dry-run response did not report success=true and dryRun=true")
+if not isinstance(data.get("duePending"), int):
+    raise SystemExit("dry-run response is missing duePending")
+if not isinstance(data.get("durationMs"), int):
+    raise SystemExit("dry-run response is missing durationMs")
+if not isinstance(by_audience, dict):
+    raise SystemExit("dry-run response is missing recoveryEligibility.byAudience")
+missing = sorted(required_audiences - set(by_audience))
+if missing:
+    raise SystemExit(f"dry-run response is missing recovery audiences: {', '.join(missing)}")
+for audience, counts in by_audience.items():
+    if audience not in required_audiences:
+        continue
+    if not isinstance(counts, dict):
+        raise SystemExit(f"{audience} counts are not an object")
+    for key in ("scanned", "eligible", "queued", "skippedPurchased", "skippedPriority", "skippedMissingEmail"):
+        if not isinstance(counts.get(key), int):
+            raise SystemExit(f"{audience}.{key} is missing or not an integer")
+PY
+    then
+        rm -f "$response_file"
+        log_success "Recovery lifecycle dry-run verified"
+    else
+        rm -f "$response_file"
+        log_error "Recovery lifecycle dry-run returned an invalid response shape"
+    fi
 }
 
 # Verify STRIPE_WEBHOOK_SECRET on Cloudflare matches Stripe by sending a correctly-signed

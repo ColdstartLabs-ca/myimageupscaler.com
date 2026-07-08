@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 
+const persistCheckoutIntentContextMock = vi.hoisted(() => vi.fn());
+
 vi.mock('@shared/config/env', async importOriginal => {
   const actual = await importOriginal<typeof import('@shared/config/env')>();
   return {
@@ -59,6 +61,12 @@ vi.mock('@server/services/engagement-discount.service', () => ({
 
 vi.mock('@server/services/checkout-rescue-offer.service', () => ({
   verifyCheckoutRescueOffer: vi.fn(() => ({ valid: false })),
+}));
+
+vi.mock('@server/services/revenue-recovery.service', () => ({
+  getRevenueRecoveryService: vi.fn(() => ({
+    persistCheckoutIntentContext: persistCheckoutIntentContextMock,
+  })),
 }));
 
 vi.mock('@shared/config/subscription.config', async importOriginal => {
@@ -149,6 +157,7 @@ describe('POST /api/checkout price alignment', () => {
       valid: true,
       expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
     });
+    persistCheckoutIntentContextMock.mockResolvedValue(true);
   });
 
   test('does not silently apply engagement discount without explicit trigger', async () => {
@@ -266,5 +275,23 @@ describe('POST /api/checkout price alignment', () => {
         exp_key: 'purchase_modal_default_selection',
       })
     );
+  });
+
+  test('should persist recovery intent context after creating checkout session', async () => {
+    const response = await POST(
+      createRequest({
+        priceId: STRIPE_PRICES.MEDIUM_CREDITS,
+      })
+    );
+
+    expect(response.status).toBe(200);
+    expect(persistCheckoutIntentContextMock).toHaveBeenCalledWith({
+      userId: 'user_checkout_alignment',
+      priceId: STRIPE_PRICES.MEDIUM_CREDITS,
+      purchaseType: 'credit_pack',
+      selectedKey: 'medium',
+      pricingRegion: 'standard',
+      stripeCheckoutSessionId: 'cs_test_alignment',
+    });
   });
 });

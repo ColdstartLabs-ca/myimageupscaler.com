@@ -3,6 +3,8 @@ import { PaymentHandler } from '@/app/api/webhooks/stripe/handlers/payment.handl
 import Stripe from 'stripe';
 import { getEmailService } from '@server/services/email.service';
 
+const markUserConvertedMock = vi.hoisted(() => vi.fn());
+
 const mockProfilesUpdateEq = vi.fn(() => Promise.resolve({ error: null }));
 const mockProfilesUpdate = vi.fn(() => ({
   eq: mockProfilesUpdateEq,
@@ -118,6 +120,12 @@ vi.mock('@server/services/email.service', () => ({
   })),
 }));
 
+vi.mock('@server/services/revenue-recovery.service', () => ({
+  getRevenueRecoveryService: vi.fn(() => ({
+    markUserConverted: markUserConvertedMock,
+  })),
+}));
+
 describe('Stripe Webhooks - Email Integration', () => {
   const mockSend = vi.fn();
 
@@ -126,6 +134,7 @@ describe('Stripe Webhooks - Email Integration', () => {
     mockProfilesUpdateEq.mockClear();
     mockProfilesUpdate.mockClear();
     mockSubscriptionsUpsert.mockClear();
+    markUserConvertedMock.mockResolvedValue(1);
 
     // Reset email service mock
     (getEmailService as ReturnType<typeof vi.fn>).mockReturnValue({
@@ -186,6 +195,14 @@ describe('Stripe Webhooks - Email Integration', () => {
           price_id: 'price_test',
         })
       );
+      expect(markUserConvertedMock).toHaveBeenCalledWith({
+        userId: 'user-123',
+        purchaseType: 'subscription',
+        stripeCheckoutSessionId: 'cs_test',
+        amountCents: 4900,
+        planKey: 'pro_monthly',
+        packKey: undefined,
+      });
     });
 
     it('should use "there" as fallback when customer name is missing', async () => {

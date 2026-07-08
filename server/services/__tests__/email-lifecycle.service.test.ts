@@ -1,15 +1,18 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { EmailLifecycleService } from '@server/services/email-lifecycle.service';
-import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 
 const queueInserts: Record<string, unknown>[] = [];
 const eventInserts: Record<string, unknown>[] = [];
+const { sendEmailMock } = vi.hoisted(() => ({
+  sendEmailMock: vi.fn(),
+}));
 let preferences: Record<string, boolean> = {
   marketing_emails: true,
   product_updates: true,
   low_credit_alerts: true,
 };
 let recentMarketingRows: Array<{ id: string }> = [];
+let dueQueueRows: Array<Record<string, unknown>> = [];
 
 vi.mock('@shared/config/env', () => ({
   serverEnv: {
@@ -25,7 +28,7 @@ vi.mock('@server/analytics', () => ({
 
 vi.mock('@server/services/email.service', () => ({
   getEmailService: () => ({
-    send: vi.fn().mockResolvedValue({ success: true, messageId: 'msg_test' }),
+    send: sendEmailMock,
   }),
 }));
 
@@ -44,16 +47,30 @@ function makeSelectChain(table: string, selectColumns?: string) {
     limit: vi.fn(() => chain),
     maybeSingle: vi.fn(async () => {
       if (table === 'email_lifecycle_campaigns') {
+        const isRecovery = [
+          'checkout-abandoned-24h',
+          'upgrade-click-no-purchase-24h',
+          'credit-wall-dismissed-48h',
+          'high-usage-free-user',
+        ].includes(String(state.key));
         return {
           data: {
             key: state.key,
-            name: 'Low credits',
-            category: state.key === 'blog-education-face-restore' ? 'blog_education' : 'low_credit',
+            name: isRecovery ? 'Checkout Recovery' : 'Low credits',
+            category: isRecovery
+              ? 'revenue_recovery'
+              : state.key === 'blog-education-face-restore'
+                ? 'blog_education'
+                : 'low_credit',
             template_name:
-              state.key === 'blog-education-face-restore' ? 'blog-education' : 'low-credits',
+              state.key === 'blog-education-face-restore'
+                ? 'blog-education'
+                : isRecovery
+                  ? 'checkout-recovery'
+                  : 'low-credits',
             email_type: 'marketing',
             preference_key:
-              state.key === 'blog-education-face-restore'
+              isRecovery || state.key === 'blog-education-face-restore'
                 ? 'marketing_emails'
                 : 'low_credit_alerts',
             enabled: true,
@@ -77,6 +94,10 @@ function makeSelectChain(table: string, selectColumns?: string) {
         return;
       }
       if (table === 'email_lifecycle_queue') {
+        if (selectColumns === '*' && state.status === 'pending') {
+          resolve({ data: dueQueueRows, error: null });
+          return;
+        }
         if (state.campaign_key) {
           resolve({ data: [], error: null });
           return;
@@ -129,6 +150,8 @@ describe('EmailLifecycleService', () => {
       low_credit_alerts: true,
     };
     recentMarketingRows = [];
+    dueQueueRows = [];
+    sendEmailMock.mockResolvedValue({ success: true, messageId: 'msg_test' });
   });
 
   it('suppresses marketing emails for opted-out users', async () => {
@@ -215,6 +238,71 @@ describe('EmailLifecycleService', () => {
     });
     expect(queueInserts[0].template_data).toMatchObject({
       headline: 'Want a sharper version of your image?',
+    });
+  });
+
+  it('should queue checkout recovery with click tracking', async () => {
+    dueQueueRows = [
+      {
+        id: 'queue_recovery_1',
+        campaign_key: 'checkout-abandoned-24h',
+        user_id: 'user_123',
+        recipient_email: 'user@example.com',
+        scheduled_for: new Date(Date.now() - 1000).toISOString(),
+        status: 'pending',
+        reason: null,
+        template_data: {
+          ctaUrl: '/pricing?recovery=checkout-abandoned',
+          preferenceUrl: '/dashboard/settings',
+          recoveryAudience: 'checkout_abandoner',
+        },
+        metadata: {},
+        sent_at: null,
+        created_at: new Date().toISOString(),
+      },
+    ];
+    const service = new EmailLifecycleService();
+
+    const result = await service.processDueQueue({ batchSize: 1 });
+
+    expect(result.sent).toBe(1);
+    expect(sendEmailMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        template: 'checkout-recovery',
+        data: expect.objectContaining({
+          ctaUrl: expect.stringContaining('/api/email/click'),
+          recoveryAudience: 'checkout_abandoner',
+        }),
+      })
+    );
+    expect(sendEmailMock.mock.calls[0][0].data.ctaUrl).toContain('queue_recovery_1');
+    expect(sendEmailMock.mock.calls[0][0].data.ctaUrl).toContain('token=');
+  });
+
+  it('should honor marketing opt out for recovery campaigns', async () => {
+    preferences.marketing_emails = false;
+    const service = new EmailLifecycleService();
+
+    const result = await service.queueLifecycleEmail({
+      campaignKey: 'credit-wall-dismissed-48h',
+      userId: 'user_123',
+      templateData: {
+        ctaUrl: '/pricing?recovery=credit-wall',
+        preferenceUrl: '/dashboard/settings',
+        recoveryAudience: 'credit_wall_dismissed',
+      },
+    });
+
+    expect(result.skipped).toBe(true);
+    expect(result.reason).toBe('suppressed_preference');
+    expect(queueInserts[0]).toMatchObject({
+      campaign_key: 'credit-wall-dismissed-48h',
+      status: 'skipped',
+      reason: 'suppressed_preference',
+    });
+    expect(eventInserts[0]).toMatchObject({
+      event_type: 'suppressed_preference',
+      campaign_key: 'credit-wall-dismissed-48h',
     });
   });
 });

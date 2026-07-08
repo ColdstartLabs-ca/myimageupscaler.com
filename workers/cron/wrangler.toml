@@ -19,8 +19,10 @@ crons = [
   "30 4 * * *",
   # Gallery cleanup - daily at midnight UTC
   "0 0 * * *",
-  # Email lifecycle retention drips - daily at 5:15 AM UTC
-  "15 5 * * *"
+  # Email lifecycle retention drips - hourly at :10 UTC
+  "10 * * * *",
+  # Email lifecycle catch-up - hourly at :40 UTC
+  "40 * * * *"
 ]
 
 # Environment Variables (non-sensitive defaults)

@@ -538,6 +538,110 @@ await emailService.send({
 });
 ```
 
+## Lifecycle And Recovery Operations
+
+Revenue recovery campaigns use `email_lifecycle_campaigns`, `email_lifecycle_queue`,
+`email_lifecycle_events`, and `revenue_recovery_intents`.
+
+### Dry-Run Queue Health
+
+Use the cron endpoint with `dryRun=true` before enabling or expanding a recovery send:
+
+```bash
+curl -sS -X POST \
+  -H "x-cron-secret: $CRON_SECRET" \
+  "$BASE_URL/api/cron/email-lifecycle?dryRun=true&batchSize=250&scanLimit=500"
+```
+
+Expected response fields:
+
+- `duePending`: due pending lifecycle queue rows.
+- `oldestPendingScheduledFor`: oldest due pending send time.
+- `recoveryEligibility.byAudience`: scanned, eligible, queued, and skipped counts for each recovery audience.
+- `queuedFromEligibility`: total rows that would be queued from all lifecycle eligibility scanners.
+
+### Queue Health Queries
+
+Due pending count and oldest due row:
+
+```sql
+SELECT
+  COUNT(*) AS due_pending,
+  MIN(scheduled_for) AS oldest_due
+FROM public.email_lifecycle_queue
+WHERE status = 'pending'
+  AND scheduled_for <= NOW();
+```
+
+Failed lifecycle emails in the last 24 hours:
+
+```sql
+SELECT
+  campaign_key,
+  COUNT(*) AS failed_count,
+  MAX(updated_at) AS last_failed_at
+FROM public.email_lifecycle_queue
+WHERE status = 'failed'
+  AND updated_at >= NOW() - INTERVAL '24 hours'
+GROUP BY campaign_key
+ORDER BY failed_count DESC;
+```
+
+Recovery sends, clicks, returns, and purchase attribution by campaign:
+
+```sql
+SELECT
+  q.campaign_key,
+  COUNT(*) FILTER (WHERE e.event_type = 'sent') AS sent,
+  COUNT(*) FILTER (WHERE e.event_type = 'clicked') AS clicked,
+  COUNT(*) FILTER (WHERE e.event_type = 'returned') AS returned,
+  COUNT(*) FILTER (WHERE e.event_type = 'purchased_after_email') AS purchased_after_email
+FROM public.email_lifecycle_queue q
+LEFT JOIN public.email_lifecycle_events e ON e.queue_id = q.id
+WHERE q.campaign_key IN (
+  'checkout-abandoned-24h',
+  'upgrade-click-no-purchase-24h',
+  'credit-wall-dismissed-48h',
+  'high-usage-free-user'
+)
+  AND q.created_at >= NOW() - INTERVAL '30 days'
+GROUP BY q.campaign_key
+ORDER BY q.campaign_key;
+```
+
+Recovery intent status by audience:
+
+```sql
+SELECT
+  audience_key,
+  status,
+  COUNT(*) AS intents,
+  MIN(first_seen_at) AS first_seen,
+  MAX(last_seen_at) AS last_seen
+FROM public.revenue_recovery_intents
+GROUP BY audience_key, status
+ORDER BY audience_key, status;
+```
+
+### Kill Switch
+
+Set `RECOVERY_EMAILS_ENABLED=false` to stop non-dry-run Amplitude cohort imports from
+queueing new recovery emails. Existing pending recovery rows can be cancelled with:
+
+```sql
+UPDATE public.email_lifecycle_queue
+SET status = 'cancelled',
+    reason = 'manual_recovery_kill_switch',
+    updated_at = NOW()
+WHERE status = 'pending'
+  AND campaign_key IN (
+    'checkout-abandoned-24h',
+    'upgrade-click-no-purchase-24h',
+    'credit-wall-dismissed-48h',
+    'high-usage-free-user'
+  );
+```
+
 ## Open Questions / TODOs
 
 1. **Bounce Handling**: No webhook handling for Resend bounce/complaint events
@@ -549,5 +653,4 @@ await emailService.send({
 
 ---
 
-_Last updated: 2026-01-15_
-_Generated from codebase analysis_
+_Last updated: 2026-07-08_

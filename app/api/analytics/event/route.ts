@@ -5,6 +5,7 @@ import { trackServerEvent } from '@server/analytics';
 import { serverEnv } from '@shared/config/env';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serializeError } from '@shared/utils/errors';
+import { getRevenueRecoveryService } from '@server/services/revenue-recovery.service';
 
 // Allowed event names for security - matches IAnalyticsEventName type
 // Note: $identify is excluded because it's a server-side only event
@@ -326,6 +327,21 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         userId = user?.id;
       }
     }
+
+    await getRevenueRecoveryService()
+      .captureAnalyticsIntent({
+        userId,
+        eventName,
+        properties,
+        sessionId,
+      })
+      .catch(error => {
+        logger.warn('Failed to capture recovery intent', {
+          eventName,
+          userId: userId || 'anonymous',
+          error: serializeError(error),
+        });
+      });
 
     // 6. Track the event
     const success = await trackServerEvent(
