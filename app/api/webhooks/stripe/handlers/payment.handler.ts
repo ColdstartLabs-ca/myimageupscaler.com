@@ -18,13 +18,18 @@ interface IStripeChargeExtended extends Stripe.Charge {
 }
 
 export class PaymentHandler {
-  /** Build Amplitude tracking options, stitching server events to the originating browser session. */
-  private static buildAmplitudeOpts(
-    session: Stripe.Checkout.Session,
+  private static getStripeCustomerId(
+    customer: string | Stripe.Customer | Stripe.DeletedCustomer | null
+  ): string | null {
+    return typeof customer === 'string' ? customer : customer?.id || null;
+  }
+
+  private static buildAmplitudeOptsFromMetadata(
+    metadata: Stripe.Metadata | null | undefined,
     userId: string
   ): IServerTrackOptions {
-    const deviceId = session.metadata?.amplitude_device_id;
-    const rawSessionId = session.metadata?.amplitude_session_id;
+    const deviceId = metadata?.amplitude_device_id;
+    const rawSessionId = metadata?.amplitude_session_id;
     const sessionId = rawSessionId ? parseInt(rawSessionId, 10) : undefined;
     return {
       apiKey: serverEnv.AMPLITUDE_API_KEY,
@@ -32,6 +37,14 @@ export class PaymentHandler {
       ...(deviceId ? { deviceId } : {}),
       ...(sessionId !== undefined && !isNaN(sessionId) ? { sessionId } : {}),
     };
+  }
+
+  /** Build Amplitude tracking options, stitching server events to the originating browser session. */
+  private static buildAmplitudeOpts(
+    session: Stripe.Checkout.Session,
+    userId: string
+  ): IServerTrackOptions {
+    return this.buildAmplitudeOptsFromMetadata(session.metadata, userId);
   }
 
   private static async resolveCheckoutSessionUserId(
@@ -81,6 +94,57 @@ export class PaymentHandler {
     });
 
     return profile.id;
+  }
+
+  private static async resolvePaymentIntentUserId(
+    paymentIntent: Stripe.PaymentIntent
+  ): Promise<string> {
+    const metadataUserId =
+      paymentIntent.metadata?.user_id || paymentIntent.metadata?.supabase_user_id;
+    if (metadataUserId) {
+      return metadataUserId;
+    }
+
+    const customerId = this.getStripeCustomerId(paymentIntent.customer);
+    if (!customerId) {
+      throw new Error(`Unable to resolve payment intent user: ${paymentIntent.id} has no user_id`);
+    }
+
+    const { data: profile, error } = await supabaseAdmin
+      .from('profiles')
+      .select('id')
+      .eq('stripe_customer_id', customerId)
+      .maybeSingle();
+
+    if (error) {
+      throw new Error(
+        `Failed to resolve payment intent user from customer ${customerId}: ${error.message}`
+      );
+    }
+
+    if (!profile?.id) {
+      throw new Error(`No profile found for payment intent customer ${customerId}`);
+    }
+
+    console.warn('[PAYMENT_INTENT_USER_ID_RECOVERED]', {
+      paymentIntentId: paymentIntent.id,
+      strategy: 'stripe_customer_id',
+      customerId,
+      userId: profile.id,
+    });
+
+    return profile.id;
+  }
+
+  private static normalizePaymentErrorType(declineReason: string): string {
+    if (declineReason === 'insufficient_funds') return 'insufficient_funds';
+    if (declineReason === 'expired_card') return 'expired_card';
+    if (declineReason === 'card_declined') return 'card_declined';
+    return 'generic';
+  }
+
+  private static sanitizeStripeErrorMessage(message: string | null | undefined): string {
+    return (message || 'Payment failed').replace(/[\r\n\t]+/g, ' ').slice(0, 500);
   }
 
   private static async syncSubscriptionStateFromCheckout(params: {
@@ -732,6 +796,93 @@ export class PaymentHandler {
         currency: session.currency ?? 'usd',
       },
       this.buildAmplitudeOpts(session, userId)
+    );
+  }
+
+  static async handleCheckoutSessionExpired(session: Stripe.Checkout.Session): Promise<void> {
+    let userId: string;
+    try {
+      userId = await this.resolveCheckoutSessionUserId(session);
+    } catch {
+      console.warn(`[CHECKOUT_SESSION_EXPIRED] Session ${session.id} - could not resolve user`);
+      return;
+    }
+
+    const customerId = this.getStripeCustomerId(session.customer);
+    const metadataType = session.metadata?.type;
+    const selectedType = metadataType === 'pack' ? 'credit_pack' : 'subscription';
+    const selectedKey =
+      metadataType === 'pack' ? session.metadata?.pack_key : session.metadata?.plan_key;
+    const created = typeof session.created === 'number' ? session.created : null;
+    const expiresAt = typeof session.expires_at === 'number' ? session.expires_at : null;
+    const timeSpentMs =
+      created !== null && expiresAt !== null && expiresAt >= created
+        ? (expiresAt - created) * 1000
+        : 0;
+
+    trackServerEvent(
+      'checkout_abandoned',
+      {
+        source: 'stripe_webhook',
+        method: 'session_expired',
+        step: 'stripe_embed',
+        priceId: session.metadata?.price_id || 'unknown',
+        plan: session.metadata?.plan_key || 'free',
+        pricingRegion: session.metadata?.pricing_region || 'standard',
+        selectedType,
+        selectedKey: selectedKey || 'unknown',
+        sessionId: session.id,
+        stripeCheckoutSessionId: session.id,
+        stripeCustomerId: customerId,
+        checkoutOpened: true,
+        timeSpentMs,
+      },
+      this.buildAmplitudeOpts(session, userId)
+    ).catch(err =>
+      console.error('[ANALYTICS] Failed to track checkout.session.expired event', err)
+    );
+  }
+
+  static async handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent): Promise<void> {
+    let userId: string;
+    try {
+      userId = await this.resolvePaymentIntentUserId(paymentIntent);
+    } catch {
+      console.warn(
+        `[PAYMENT_INTENT_FAILED] PaymentIntent ${paymentIntent.id} - could not resolve user`
+      );
+      return;
+    }
+
+    const customerId = this.getStripeCustomerId(paymentIntent.customer);
+    const lastPaymentError = paymentIntent.last_payment_error;
+    const declineReason = lastPaymentError?.decline_code || lastPaymentError?.code || 'generic';
+    const metadataType = paymentIntent.metadata?.type;
+
+    trackServerEvent(
+      'payment_failed',
+      {
+        priceId: paymentIntent.metadata?.price_id || 'unknown',
+        plan: paymentIntent.metadata?.plan_key || 'free',
+        customerId,
+        attemptCount: 1,
+        stripePaymentIntentId: paymentIntent.id,
+        stripeCustomerId: customerId,
+        amount: paymentIntent.amount,
+        currency: paymentIntent.currency ?? 'usd',
+        purchaseType:
+          metadataType === 'plan'
+            ? 'subscription'
+            : metadataType === 'pack'
+              ? 'credit_pack'
+              : 'unknown',
+        decline_reason: declineReason,
+        errorType: this.normalizePaymentErrorType(declineReason),
+        errorMessage: this.sanitizeStripeErrorMessage(lastPaymentError?.message),
+      },
+      this.buildAmplitudeOptsFromMetadata(paymentIntent.metadata, userId)
+    ).catch(err =>
+      console.error('[ANALYTICS] Failed to track payment_intent.payment_failed event', err)
     );
   }
 

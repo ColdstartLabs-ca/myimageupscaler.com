@@ -8,6 +8,8 @@ type StripeWebhookEventType =
   | 'checkout.session.completed'
   | 'checkout.session.async_payment_succeeded'
   | 'checkout.session.async_payment_failed'
+  | 'checkout.session.expired'
+  | 'payment_intent.payment_failed'
   | 'customer.created'
   | 'customer.subscription.created'
   | 'customer.subscription.updated'
@@ -106,6 +108,16 @@ export async function processStripeWebhookEvent(
 
     case 'checkout.session.async_payment_failed':
       await PaymentHandler.handleAsyncPaymentFailed(event.data.object as Stripe.Checkout.Session);
+      return { handled: true };
+
+    case 'checkout.session.expired':
+      await PaymentHandler.handleCheckoutSessionExpired(
+        event.data.object as Stripe.Checkout.Session
+      );
+      return { handled: true };
+
+    case 'payment_intent.payment_failed':
+      await PaymentHandler.handlePaymentIntentFailed(event.data.object as Stripe.PaymentIntent);
       return { handled: true };
 
     case 'customer.created':

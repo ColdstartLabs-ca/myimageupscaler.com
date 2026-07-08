@@ -608,49 +608,57 @@ export async function POST(request: NextRequest) {
       lineItems = [{ price: validatedPriceId, quantity: 1 }];
     }
 
+    const checkoutMetadata: Record<string, string> = {
+      ...customMetadata,
+      user_id: user.id,
+      price_id: validatedPriceId,
+      pricing_region: resolvedPricingRegion,
+      discount_percent: regionalDiscountPercent.toString(),
+      effective_discount_percent: effectiveDiscountPercent.toString(),
+      // Track engagement discount for webhook redemption
+      ...(engagementDiscountPercent > 0
+        ? {
+            engagement_discount_percent: engagementDiscountPercent.toString(),
+            engagement_discount_applied: 'true',
+          }
+        : {}),
+      ...(checkoutOfferDiscountPercent > 0
+        ? {
+            checkout_offer_percent: checkoutOfferDiscountPercent.toString(),
+            checkout_offer_applied: 'true',
+          }
+        : {}),
+      ...(unifiedMetadata
+        ? {
+            type: unifiedMetadata.type,
+            ...(unifiedMetadata.type === 'plan'
+              ? {
+                  plan_key: unifiedMetadata.key,
+                  credits_per_cycle: unifiedMetadata.creditsPerCycle?.toString() || '',
+                  max_rollover: unifiedMetadata.maxRollover?.toString() || '',
+                }
+              : {
+                  pack_key: unifiedMetadata.key,
+                  credits: unifiedMetadata.credits?.toString() || '',
+                }),
+          }
+        : {}),
+    };
+
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
       client_reference_id: user.id,
       line_items: lineItems,
       mode: checkoutMode,
       ui_mode: uiMode,
-      metadata: {
-        ...customMetadata,
-        user_id: user.id,
-        price_id: validatedPriceId,
-        pricing_region: resolvedPricingRegion,
-        discount_percent: regionalDiscountPercent.toString(),
-        effective_discount_percent: effectiveDiscountPercent.toString(),
-        // Track engagement discount for webhook redemption
-        ...(engagementDiscountPercent > 0
-          ? {
-              engagement_discount_percent: engagementDiscountPercent.toString(),
-              engagement_discount_applied: 'true',
-            }
-          : {}),
-        ...(checkoutOfferDiscountPercent > 0
-          ? {
-              checkout_offer_percent: checkoutOfferDiscountPercent.toString(),
-              checkout_offer_applied: 'true',
-            }
-          : {}),
-        ...(unifiedMetadata
-          ? {
-              type: unifiedMetadata.type,
-              ...(unifiedMetadata.type === 'plan'
-                ? {
-                    plan_key: unifiedMetadata.key,
-                    credits_per_cycle: unifiedMetadata.creditsPerCycle?.toString() || '',
-                    max_rollover: unifiedMetadata.maxRollover?.toString() || '',
-                  }
-                : {
-                    pack_key: unifiedMetadata.key,
-                    credits: unifiedMetadata.credits?.toString() || '',
-                  }),
-            }
-          : {}),
-      },
+      metadata: checkoutMetadata,
     };
+
+    if (checkoutMode === 'payment') {
+      sessionParams.payment_intent_data = {
+        metadata: checkoutMetadata,
+      };
+    }
 
     // Only add subscription_data for subscriptions
     if (resolvedPrice?.type === 'plan' && checkoutMode === 'subscription') {

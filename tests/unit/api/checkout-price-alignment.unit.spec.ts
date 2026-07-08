@@ -235,4 +235,36 @@ describe('POST /api/checkout price alignment', () => {
       })
     );
   });
+
+  test('should copy checkout attribution metadata to payment_intent_data for payment sessions', async () => {
+    const response = await POST(
+      createRequest({
+        priceId: STRIPE_PRICES.MEDIUM_CREDITS,
+        metadata: {
+          amplitude_device_id: 'device_test_123',
+          amplitude_session_id: '123456',
+          checkout_trigger: 'batch_limit_quick_buy',
+          exp_key: 'purchase_modal_default_selection',
+        },
+      })
+    );
+
+    expect(response.status).toBe(200);
+
+    const sessionParams = getCreatedSessionParams();
+    expect(sessionParams.mode).toBe('payment');
+    expect(sessionParams.payment_intent_data?.metadata).toEqual(
+      expect.objectContaining({
+        user_id: 'user_checkout_alignment',
+        price_id: STRIPE_PRICES.MEDIUM_CREDITS,
+        pricing_region: 'standard',
+        type: 'pack',
+        pack_key: 'medium',
+        amplitude_device_id: 'device_test_123',
+        amplitude_session_id: '123456',
+        checkout_trigger: 'batch_limit_quick_buy',
+        exp_key: 'purchase_modal_default_selection',
+      })
+    );
+  });
 });

@@ -19,6 +19,8 @@ vi.mock('../../../app/api/webhooks/stripe/handlers/payment.handler', () => ({
     handleCheckoutSessionCompleted: vi.fn(),
     handleAsyncPaymentSucceeded: vi.fn(),
     handleAsyncPaymentFailed: vi.fn(),
+    handleCheckoutSessionExpired: vi.fn(),
+    handlePaymentIntentFailed: vi.fn(),
     handleChargeRefunded: vi.fn(),
     handleInvoicePaymentRefunded: vi.fn(),
   },
@@ -59,6 +61,8 @@ const MockedPaymentHandler = PaymentHandler as {
   handleCheckoutSessionCompleted: ReturnType<typeof vi.fn>;
   handleAsyncPaymentSucceeded: ReturnType<typeof vi.fn>;
   handleAsyncPaymentFailed: ReturnType<typeof vi.fn>;
+  handleCheckoutSessionExpired: ReturnType<typeof vi.fn>;
+  handlePaymentIntentFailed: ReturnType<typeof vi.fn>;
   handleChargeRefunded: ReturnType<typeof vi.fn>;
   handleInvoicePaymentRefunded: ReturnType<typeof vi.fn>;
 };
@@ -405,6 +409,48 @@ describe('Stripe Webhook Event Processor', () => {
 
         expect(result.handled).toBe(true);
         expect(MockedPaymentHandler.handleAsyncPaymentFailed).toHaveBeenCalledWith(
+          event.data.object
+        );
+      });
+    });
+
+    describe('checkout.session.expired', () => {
+      test('should route checkout.session.expired to PaymentHandler.handleCheckoutSessionExpired', async () => {
+        const event = {
+          id: 'evt_test',
+          type: 'checkout.session.expired',
+          data: {
+            object: { id: 'cs_test_expired', mode: 'payment' },
+          },
+        } as Stripe.Event;
+
+        MockedPaymentHandler.handleCheckoutSessionExpired.mockResolvedValue(undefined);
+
+        const result = await processStripeWebhookEvent(event);
+
+        expect(result.handled).toBe(true);
+        expect(MockedPaymentHandler.handleCheckoutSessionExpired).toHaveBeenCalledWith(
+          event.data.object
+        );
+      });
+    });
+
+    describe('payment_intent.payment_failed', () => {
+      test('should route payment_intent.payment_failed to PaymentHandler.handlePaymentIntentFailed', async () => {
+        const event = {
+          id: 'evt_test',
+          type: 'payment_intent.payment_failed',
+          data: {
+            object: { id: 'pi_test_failed', object: 'payment_intent' },
+          },
+        } as Stripe.Event;
+
+        MockedPaymentHandler.handlePaymentIntentFailed.mockResolvedValue(undefined);
+
+        const result = await processStripeWebhookEvent(event);
+
+        expect(result.handled).toBe(true);
+        expect(MockedPaymentHandler.handlePaymentIntentFailed).toHaveBeenCalledWith(
           event.data.object
         );
       });
