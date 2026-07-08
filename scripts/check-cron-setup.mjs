@@ -16,6 +16,11 @@ const fail = (message) => {
 
 const read = (filePath) => fs.readFileSync(filePath, 'utf8');
 
+const endpointRoutePath = (endpoint) => {
+  const pathname = new URL(endpoint, 'https://cron.local').pathname;
+  return path.join(root, 'app', pathname.replace(/^\//, ''), 'route.ts');
+};
+
 const parseWranglerCrons = (toml) => {
   const match = toml.match(/crons\s*=\s*\[([\s\S]*?)\]/);
   if (!match) return [];
@@ -78,13 +83,13 @@ for (const cron of cronPatterns) {
     continue;
   }
 
-  const endpointRoutePath = path.join(root, 'app', route.endpoint.replace(/^\//, ''), 'route.ts');
-  if (!fs.existsSync(endpointRoutePath)) {
-    fail(`Cron pattern ${cron} routes to ${route.endpoint}, but ${endpointRoutePath} does not exist`);
+  const routePath = endpointRoutePath(route.endpoint);
+  if (!fs.existsSync(routePath)) {
+    fail(`Cron pattern ${cron} routes to ${route.endpoint}, but ${routePath} does not exist`);
     continue;
   }
 
-  const endpointSource = read(endpointRoutePath);
+  const endpointSource = read(routePath);
   if (!endpointSource.includes("request.headers.get('x-cron-secret')")) {
     fail(`${route.endpoint} does not validate the x-cron-secret request header`);
   }

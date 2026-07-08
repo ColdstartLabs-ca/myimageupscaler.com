@@ -57,16 +57,30 @@ describe('Cron Worker Router', () => {
     );
   });
 
-  it('maps 15 5 * * * to the email lifecycle endpoint', async () => {
+  it('maps 10 * * * * to the bounded email lifecycle endpoint', async () => {
     const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve({}) });
     global.fetch = fetchMock;
 
     const ctx = makeCtx();
-    await worker.scheduled({ cron: '15 5 * * *', scheduledTime: Date.now() }, mockEnv, ctx);
+    await worker.scheduled({ cron: '10 * * * *', scheduledTime: Date.now() }, mockEnv, ctx);
     await ctx.flush();
 
     expect(fetchMock).toHaveBeenCalledWith(
-      'https://myimageupscaler.com/api/cron/email-lifecycle',
+      'https://myimageupscaler.com/api/cron/email-lifecycle?batchSize=100&scanLimit=250',
+      expect.any(Object)
+    );
+  });
+
+  it('maps 40 * * * * to the bounded email lifecycle catch-up endpoint', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve({}) });
+    global.fetch = fetchMock;
+
+    const ctx = makeCtx();
+    await worker.scheduled({ cron: '40 * * * *', scheduledTime: Date.now() }, mockEnv, ctx);
+    await ctx.flush();
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://myimageupscaler.com/api/cron/email-lifecycle?batchSize=250&scanLimit=500',
       expect.any(Object)
     );
   });
