@@ -63,6 +63,33 @@ _verify_recovery_lifecycle_dry_run() {
         2>/dev/null || echo "000")
 
     if [[ "$response_code" != "200" ]]; then
+        local error_preview
+        error_preview=$(python3 - "$response_file" <<'PY'
+import json
+import sys
+
+try:
+    with open(sys.argv[1], "r", encoding="utf-8") as fh:
+        body = fh.read().strip()
+except OSError:
+    body = ""
+
+if not body:
+    raise SystemExit(0)
+
+try:
+    data = json.loads(body)
+    message = data.get("error") or data.get("message") or body
+except Exception:
+    message = body
+
+print(str(message).replace("\n", " ")[:500])
+PY
+)
+        if [[ -n "$error_preview" ]]; then
+            rm -f "$response_file"
+            log_error "Recovery lifecycle dry-run failed with HTTP $response_code: $error_preview"
+        fi
         rm -f "$response_file"
         log_error "Recovery lifecycle dry-run failed with HTTP $response_code"
     fi
