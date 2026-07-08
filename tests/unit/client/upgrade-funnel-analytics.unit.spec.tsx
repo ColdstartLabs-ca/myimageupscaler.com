@@ -58,6 +58,14 @@ vi.mock('@shared/config/stripe', () => ({
   },
 }));
 
+vi.mock('@shared/config/subscription.utils', async importOriginal => {
+  const actual = await importOriginal<typeof import('@shared/config/subscription.utils')>();
+  return {
+    ...actual,
+    getCreditDisplayForTier: vi.fn(() => '3 credits'),
+  };
+});
+
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn() }),
   usePathname: () => '/',

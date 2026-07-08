@@ -21,10 +21,8 @@ export function InsufficientCreditsModal({
   onBuyCredits,
   onViewPlans,
 }: IInsufficientCreditsModalProps): JSX.Element | null {
-  const t = useTranslations('stripe.insufficientCredits');
   const deficit = requiredCredits - currentBalance;
-  const costPerCredit = 2; // Approximate based on medium pack ($14.99 / 200 credits)
-  const maxImagesWithCurrentBalance = Math.floor(currentBalance / costPerCredit);
+  const t = useTranslations('stripe.insufficientCredits');
 
   if (!isOpen) return null;
 
@@ -50,10 +48,12 @@ export function InsufficientCreditsModal({
               <AlertCircle className="h-6 w-6 text-warning dark:text-warning/80" />
             </div>
             <h2 className="mb-2 text-2xl font-bold text-primary dark:text-gray-100">
-              {t('title')}
+              Keep enhancing instantly
             </h2>
             <p className="text-muted-foreground dark:text-gray-400">
-              {t('description', { requiredCredits, currentBalance })}
+              You used your free credits. This job needs {requiredCredits}{' '}
+              {requiredCredits === 1 ? 'credit' : 'credits'} and your balance is {currentBalance}.
+              Get credits now and continue this upscale.
             </p>
           </div>
 
@@ -63,7 +63,7 @@ export function InsufficientCreditsModal({
               onClick={onBuyCredits}
               className="w-full rounded-lg bg-accent px-6 py-3 font-medium text-white transition-colors hover:bg-accent-hover"
             >
-              {t('buyCredits', { deficit })}
+              Get credits
             </button>
             <button
               onClick={onViewPlans}
@@ -73,14 +73,11 @@ export function InsufficientCreditsModal({
             </button>
           </div>
 
-          {/* Alternative suggestion */}
-          {maxImagesWithCurrentBalance > 0 && (
+          {/* Deficit context */}
+          {deficit > 0 && (
             <div className="rounded-lg border border-border bg-surface p-4 dark:border-gray-700 dark:bg-gray-900">
               <p className="text-sm text-muted-foreground dark:text-gray-400">
-                {t('reduceBatch', {
-                  count: maxImagesWithCurrentBalance,
-                  image: maxImagesWithCurrentBalance === 1 ? t('image') : t('images'),
-                })}
+                Need {deficit} more {deficit === 1 ? 'credit' : 'credits'} to start.
               </p>
             </div>
           )}

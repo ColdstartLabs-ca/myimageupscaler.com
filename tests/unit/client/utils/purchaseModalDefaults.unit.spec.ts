@@ -99,6 +99,20 @@ describe('getPurchaseModalInitialSelection', () => {
     expect(selection.lockToCredits).toBe(false);
   });
 
+  test('should default insufficient_credits to the starter credit pack', () => {
+    const selection = getPurchaseModalInitialSelection({
+      trigger: 'insufficient_credits',
+      outOfCredits: true,
+      creditPacks,
+      subscriptionPlans,
+    });
+
+    expect(selection.purchaseMode).toBe('credits');
+    expect(selection.selectedPack?.key).toBe('small');
+    expect(selection.selectedPlan).toBeNull();
+    expect(selection.lockToCredits).toBe(false);
+  });
+
   test('batch limit triggers default to the recommended subscription plan', () => {
     const selection = getPurchaseModalInitialSelection({
       trigger: 'workspace_batch_limit',

@@ -126,6 +126,7 @@ vi.mock('next-intl', () => ({
       }
       return result;
     };
+    t.has = (key: string) => Boolean(translations[`${ns}.${key}`]);
     return t;
   },
 }));
@@ -247,6 +248,7 @@ vi.mock('@client/components/features/workspace/ModelGallerySearch', () => ({
 import { ModelGalleryModal } from '@/client/components/features/workspace/ModelGalleryModal';
 import { AfterUpscaleBanner } from '@/client/components/features/workspace/AfterUpscaleBanner';
 import { PostDownloadPrompt } from '@/client/components/features/workspace/PostDownloadPrompt';
+import { UpgradeCard } from '@/client/components/dashboard/UpgradeCard';
 import { QualityTier } from '@/shared/types/coreflow.types';
 import { canShowPrompt, markPromptShown } from '@/client/utils/promptFrequency';
 
@@ -743,6 +745,62 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
 
     await new Promise(r => setTimeout(r, 10));
     expect(screen.queryByText(/See what other models can do/i)).not.toBeInTheDocument();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Phase 3: dashboard/sidebar upgrade card attribution
+// ---------------------------------------------------------------------------
+
+describe('Phase 3: dashboard/sidebar upgrade card attribution', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should track dashboard sidebar card clicks with dashboard_sidebar trigger', () => {
+    const onUpgrade = vi.fn();
+    render(<UpgradeCard trigger="dashboard_sidebar" onUpgrade={onUpgrade} />);
+
+    fireEvent.click(screen.getByRole('button', { name: /View Plans/i }));
+
+    expect(mockSetCheckoutTrackingContext).toHaveBeenCalledWith({
+      trigger: 'dashboard_sidebar',
+    });
+    expect(mockAnalyticsTrack).toHaveBeenCalledWith(
+      'upgrade_prompt_clicked',
+      expect.objectContaining({
+        trigger: 'dashboard_sidebar',
+        destination: 'upgrade_modal',
+      })
+    );
+    expect(onUpgrade).toHaveBeenCalledTimes(1);
+  });
+
+  it('should keep upgrade_card fallback trigger when no trigger prop is supplied', () => {
+    const onUpgrade = vi.fn();
+    render(<UpgradeCard onUpgrade={onUpgrade} />);
+
+    fireEvent.click(screen.getByRole('button', { name: /View Plans/i }));
+
+    expect(mockSetCheckoutTrackingContext).toHaveBeenCalledWith({
+      trigger: 'upgrade_card',
+    });
+    expect(mockAnalyticsTrack).toHaveBeenCalledWith(
+      'upgrade_prompt_clicked',
+      expect.objectContaining({
+        trigger: 'upgrade_card',
+        destination: 'upgrade_modal',
+      })
+    );
+  });
+
+  it('should render outcome-framed heading on sidebar upgrade cards', () => {
+    render(<UpgradeCard onUpgrade={vi.fn()} />);
+
+    expect(screen.getByTestId('upgrade-card-heading')).toHaveTextContent(
+      'Upscale 10x more images today'
+    );
+    expect(screen.queryByText('Upgrade to Pro')).not.toBeInTheDocument();
   });
 });
 

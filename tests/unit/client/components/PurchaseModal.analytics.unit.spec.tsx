@@ -236,6 +236,34 @@ describe('PurchaseModal analytics', () => {
     });
   });
 
+  test('should include outOfCredits context when insufficient_credits prompt is shown', async () => {
+    render(
+      <PurchaseModal
+        isOpen={true}
+        onClose={vi.fn()}
+        onPurchaseComplete={vi.fn()}
+        trigger="insufficient_credits"
+        outOfCredits={true}
+        requiredCredits={4}
+        currentBalance={1}
+      />
+    );
+
+    await waitFor(() => {
+      expect(mockTrack).toHaveBeenCalledWith(
+        'upgrade_prompt_shown',
+        expect.objectContaining({
+          trigger: 'insufficient_credits',
+          outOfCredits: true,
+          requiredCredits: 4,
+          currentBalance: 1,
+          initialTab: 'credits',
+          lockToCredits: false,
+        })
+      );
+    });
+  });
+
   test('renders compact credit picker arm', async () => {
     mockUseExperimentArm.mockReturnValue({
       assignment: {

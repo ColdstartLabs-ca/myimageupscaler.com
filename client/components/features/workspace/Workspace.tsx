@@ -29,6 +29,7 @@ import { useModalStore } from '@client/store/modalStore';
 import { cn } from '@client/utils/cn';
 import { EngagementDiscountBanner } from '@client/components/engagement-discount';
 import { clientEnv } from '@shared/config/env';
+import { calculateBatchProviderAwareCreditCost } from '@shared/config/subscription.utils';
 import { getMaxPixelsForQualityTier } from '@shared/validation/upscale.schema';
 import { downloadSingle } from '@client/utils/download';
 import { getCheckoutUiMode } from '@client/utils/checkoutUiMode';
@@ -55,7 +56,6 @@ import {
 import type { IUpgradeDirectParams } from './ModelGalleryModal';
 import { AfterUpscaleBanner } from './AfterUpscaleBanner';
 import { BatchLimitModal } from './BatchLimitModal';
-import { MobileUpgradePrompt } from './MobileUpgradePrompt';
 import { ModelGalleryModal } from './ModelGalleryModal';
 import { PostDownloadPrompt } from './PostDownloadPrompt';
 import { ProgressSteps, checkIsFirstTimeUser, markFirstUploadCompleted } from './ProgressSteps';
@@ -88,7 +88,7 @@ const Workspace: React.FC = () => {
     clearBatchLimitError,
   } = useBatchQueue();
 
-  const { isFreeUser, profile, isAuthenticated } = useUserData();
+  const { isFreeUser, profile, isAuthenticated, totalCredits } = useUserData();
   const { openAuthRequiredModal } = useModalStore();
   const searchParams = useSearchParams();
   const { trackUpscale, trackDownload, trackModelSwitch } = useEngagementTracker();
@@ -102,15 +102,25 @@ const Workspace: React.FC = () => {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [upgradeModalOutOfCredits, setUpgradeModalOutOfCredits] = useState(false);
   const [upgradeModalTrigger, setUpgradeModalTrigger] = useState('workspace');
+  const [upgradeModalCreditContext, setUpgradeModalCreditContext] = useState<{
+    requiredCredits: number;
+    currentBalance: number;
+  } | null>(null);
 
-  const openUpgradeModal = (outOfCredits = false, trigger = 'workspace') => {
+  const openUpgradeModal = (
+    outOfCredits = false,
+    trigger = 'workspace',
+    creditContext?: { requiredCredits: number; currentBalance: number }
+  ) => {
     setUpgradeModalOutOfCredits(outOfCredits);
     setUpgradeModalTrigger(trigger);
+    setUpgradeModalCreditContext(creditContext ?? null);
     setShowUpgradeModal(true);
   };
   const closeUpgradeModal = () => {
     setShowUpgradeModal(false);
     setUpgradeModalOutOfCredits(false);
+    setUpgradeModalCreditContext(null);
   };
   const [postAuthCheckoutPriceId, setPostAuthCheckoutPriceId] = useState<string | null>(null);
   const [directCheckoutPriceId, setDirectCheckoutPriceId] = useState<string | null>(null);
@@ -424,6 +434,33 @@ const Workspace: React.FC = () => {
     setExploreGalleryOpen(true);
   };
 
+  const getPendingQueue = () => queue.filter(i => i.status !== ProcessingStatus.COMPLETED);
+
+  const getRequiredCreditsForPendingQueue = () =>
+    calculateBatchProviderAwareCreditCost({
+      config,
+      items: getPendingQueue(),
+    }).totalCredits;
+
+  const handleProcessBatch = () => {
+    const pendingQueue = getPendingQueue();
+    if (pendingQueue.length === 0) {
+      processBatch(config);
+      return;
+    }
+
+    const requiredCredits = getRequiredCreditsForPendingQueue();
+    if (requiredCredits > totalCredits) {
+      openUpgradeModal(true, 'insufficient_credits', {
+        requiredCredits,
+        currentBalance: totalCredits,
+      });
+      return;
+    }
+
+    processBatch(config);
+  };
+
   const handleCloseModelGallery = () => {
     setMobileGalleryOpen(false);
     setExploreGalleryOpen(false);
@@ -634,7 +671,7 @@ const Workspace: React.FC = () => {
             isProcessing={isProcessingBatch}
             batchProgress={batchProgress}
             completedCount={completedCount}
-            onProcess={() => processBatch(config)}
+            onProcess={handleProcessBatch}
             onClear={clearQueue}
             onUpgrade={() => openUpgradeModal(true, 'workspace_batch_sidebar')}
             onUpgradeDirect={handleUpgradeDirect}
@@ -681,14 +718,6 @@ const Workspace: React.FC = () => {
             downloadCount={downloadCount}
             currentModel={config.qualityTier}
             onExploreModels={openExploreGallery}
-          />
-
-          {/* Mobile upgrade prompt — shown on preview tab after first completion */}
-          <MobileUpgradePrompt
-            isVisible={mobileTab === 'preview' && completedCount > 0}
-            isFreeUser={isFreeUser}
-            onUpgradeDirect={handleUpgradeDirect}
-            onUpgrade={() => openUpgradeModal(false, 'mobile_preview_prompt')}
           />
 
           {/* Global Error Alerts */}
@@ -783,7 +812,7 @@ const Workspace: React.FC = () => {
           <div className="md:hidden px-4 py-2 bg-surface border-t border-border shrink-0">
             <button
               data-driver="mobile-process-button"
-              onClick={() => processBatch(config)}
+              onClick={handleProcessBatch}
               disabled={isProcessingBatch}
               className={cn(
                 'w-full py-3 px-4 rounded-xl font-bold text-white flex items-center justify-center gap-2 transition-all relative overflow-hidden',
@@ -920,7 +949,10 @@ const Workspace: React.FC = () => {
         isOpen={showUpgradeModal}
         onClose={closeUpgradeModal}
         onPurchaseComplete={closeUpgradeModal}
+        outOfCredits={upgradeModalOutOfCredits}
         trigger={upgradeModalTrigger}
+        requiredCredits={upgradeModalCreditContext?.requiredCredits}
+        currentBalance={upgradeModalCreditContext?.currentBalance}
       />
 
       {postAuthCheckoutPriceId && (

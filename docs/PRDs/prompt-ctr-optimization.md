@@ -94,6 +94,8 @@ This is a MEDIUM PRD because it changes multiple prompt surfaces, checkout attri
 - Batch processing has a better pre-wall pattern in `BatchSidebar/ActionPanel.tsx`: it shows current balance, total cost, credit deficit, and a dedicated insufficient-credit modal before processing.
 - `UpgradeCard` emits `trigger: 'upgrade_card'`, but `DashboardSidebar` opens `PurchaseModal` with `trigger="dashboard_sidebar"`. This causes clicks without matching shown counts and weakens trigger-level reporting.
 - `model_gate` direct checkout is already implemented in `ModelGalleryModal.tsx` and `Workspace.tsx`; the task is to increase high-intent exposure without regressing that path.
+- `mobile_tab_credits` (the persistent "More Credits" tab in the mobile workspace nav, `Workspace.tsx` ~line 886) is the second near-dead trigger: 313 shown, 2 clicks (0.6% CTR), 146 dismisses. Unlike `mobile_preview_prompt` it is user-initiated navigation, so the shown/dismiss numbers suggest the modal it opens disappoints rather than the placement interrupting.
+- Passive sidebar placements (`dashboard_sidebar` 3.6% CTR / 384 dismisses, `workspace_batch_sidebar` 2.2% CTR / 566 dismisses) use feature-framed copy ("Upgrade to Pro") rather than outcome-framed copy, per the July 2026 CTR analysis.
 - `/api/credit-estimate` exists, but it appears to use legacy `credits_balance` instead of the current `subscription_credits_balance + purchased_credits_balance` model. Treat it as suspect unless fixed and tested.
 
 ---
@@ -107,7 +109,8 @@ This is a MEDIUM PRD because it changes multiple prompt surfaces, checkout attri
 3. **Redesign insufficient-credit handling as a preflight, not only an error reaction.** Reuse the batch sidebar pattern for single-image/workspace processing: show current balance, required credits, and deficit before the user starts a job when the deficit is knowable.
 4. **Improve purchase copy for credit-wall sessions.** Change the framing from “insufficient credits” to instant continuation: “You used your free credits - get 50 more instantly.”
 5. **Clean up analytics trigger attribution.** Align sidebar card shown/clicked/modal triggers so CTR reports are trustworthy.
-6. **Protect `model_gate`.** Keep direct checkout and add regression tests that premium model clicks still emit `model_gate` and open checkout directly.
+6. **Outcome-frame the passive sidebar placements.** Rewrite `dashboard_sidebar` (`UpgradeCard`) and `workspace_batch_sidebar` upgrade card copy to lead with the outcome ("Upscale 10× more images today") instead of the feature ("Upgrade to Pro").
+7. **Protect `model_gate`.** Keep direct checkout and add regression tests that premium model clicks still emit `model_gate` and open checkout directly.
 
 ### 2.2 Architecture Diagram
 
@@ -133,6 +136,7 @@ flowchart LR
 - **Mobile preview:** remove the active prompt rather than changing copy. The trigger has 0.07% CTR and 76% dismiss rate despite already having direct checkout.
 - **Credit preflight:** prefer local calculation from `QUALITY_TIER_CONFIG`/provider-aware model config where already available in workspace state. Only use `/api/credit-estimate` if Phase 2 fixes its legacy balance field and adds tests.
 - **Purchase modal default:** keep `insufficient_credits` defaulting to the smallest credit pack, but make copy and analytics explicit about required credits and deficit.
+- **`mobile_tab_credits`:** keep the tab for now — it is self-initiated navigation, not an interrupting prompt, so removing it does not free impression budget. Monitor it after the purchase-modal copy changes land (Phase 2 improves the modal it opens); if CTR stays under 2%, remove or repurpose the tab in a follow-up.
 - **Analytics:** do not add new trigger names for this PRD unless a genuinely new surface is introduced. The first target is cleaner measurement for existing triggers.
 - **Cloudflare constraint:** no heavy server computation. Any credit preflight should be constant-time config lookup or one lightweight API call.
 
@@ -273,14 +277,14 @@ sequenceDiagram
 
 ---
 
-### Phase 3: Sidebar Trigger Attribution Cleanup - Dashboard sidebar reports shown/clicked under one trigger
+### Phase 3: Sidebar Attribution and Copy - Dashboard sidebar reports under one trigger and passive placements use outcome framing
 
 **Files (max 5):**
 
-- `client/components/dashboard/UpgradeCard.tsx` - accept a `trigger` prop and use it for clicked analytics.
+- `client/components/dashboard/UpgradeCard.tsx` - accept a `trigger` prop, use it for clicked analytics, and rewrite copy to outcome framing.
 - `client/components/dashboard/DashboardSidebar.tsx` - pass `trigger="dashboard_sidebar"` into `UpgradeCard`.
-- `client/components/dashboard/DashboardLayout.tsx` - ensure credits-display modal uses `dashboard_layout` consistently.
-- `tests/unit/client/upgrade-prompts.unit.spec.tsx` - update assertions around sidebar triggers.
+- `client/components/features/workspace/BatchSidebar/` upgrade card component (locate the `workspace_batch_sidebar` copy source) - rewrite copy to outcome framing.
+- `tests/unit/client/upgrade-prompts.unit.spec.tsx` - update assertions around sidebar triggers and copy.
 - `server/analytics/types.ts` - update trigger union only if existing types do not already permit the aligned trigger.
 
 **Implementation:**
@@ -288,15 +292,18 @@ sequenceDiagram
 - [ ] Add `trigger?: TUpgradePromptTrigger` or local typed string prop to `UpgradeCard`, defaulting to `upgrade_card` for backward compatibility.
 - [ ] In `DashboardSidebar`, render `<UpgradeCard trigger="dashboard_sidebar" ... />`.
 - [ ] Ensure the modal opened from that same click also receives `trigger="dashboard_sidebar"`.
+- [ ] Verify (no edit expected) that `DashboardLayout` credits-display modal uses `dashboard_layout` consistently.
+- [ ] Rewrite `UpgradeCard` and batch sidebar upgrade card copy to lead with the outcome, e.g. `Upscale 10× more images today`, not the feature (`Upgrade to Pro`). Use existing plan/credit data — no hardcoded prices.
 - [ ] Decide whether `upgrade_card` should remain as a standalone trigger. If no live surface uses it after this change, mark it deprecated in tests/docs rather than deleting immediately.
 - [ ] Add shown-event tracking if `UpgradeCard` is the actual impression source and current reports depend on `PurchaseModal` shown events.
 
 **Tests Required:**
 
-| Test File                                         | Test Name                                                                    | Assertion                                        |
-| ------------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------ |
-| `tests/unit/client/upgrade-prompts.unit.spec.tsx` | `should track dashboard sidebar card clicks with dashboard_sidebar trigger`  | clicked event has `trigger: 'dashboard_sidebar'` |
-| `tests/unit/client/upgrade-prompts.unit.spec.tsx` | `should keep upgrade_card fallback trigger when no trigger prop is supplied` | clicked event has `trigger: 'upgrade_card'`      |
+| Test File                                         | Test Name                                                                    | Assertion                                               |
+| ------------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `tests/unit/client/upgrade-prompts.unit.spec.tsx` | `should track dashboard sidebar card clicks with dashboard_sidebar trigger`  | clicked event has `trigger: 'dashboard_sidebar'`        |
+| `tests/unit/client/upgrade-prompts.unit.spec.tsx` | `should keep upgrade_card fallback trigger when no trigger prop is supplied` | clicked event has `trigger: 'upgrade_card'`             |
+| `tests/unit/client/upgrade-prompts.unit.spec.tsx` | `should render outcome-framed heading on sidebar upgrade cards`              | card heading matches outcome copy, not `Upgrade to Pro` |
 
 **User Verification:**
 
@@ -375,6 +382,8 @@ sequenceDiagram
 - `insufficient_credits` CTR should rise from 1.2% toward 3-4% after preflight/copy changes.
 - `model_gate` shown volume and CTR should remain healthy. Any CTR drop below 10% is a regression signal.
 - `upgrade_card` should either disappear from active reports or have matching shown/clicked counts if retained.
+- `dashboard_sidebar` (3.6%) and `workspace_batch_sidebar` (2.2%) CTR should trend toward 4-5% after outcome-framed copy.
+- `mobile_tab_credits` should improve alongside the Phase 2 modal copy changes; if it stays under 2% CTR, schedule a follow-up to remove or repurpose the tab.
 
 ---
 
@@ -402,6 +411,7 @@ sequenceDiagram
 - [ ] Server 402 insufficient-credit fallback still opens a purchase path.
 - [ ] `insufficient_credits` copy frames purchase as instant continuation and uses credit-pack data rather than hardcoded prices.
 - [ ] Dashboard sidebar shown/clicked/modal analytics use a consistent trigger.
+- [ ] `dashboard_sidebar` and `workspace_batch_sidebar` upgrade cards use outcome-framed copy.
 - [ ] All phase tests pass.
 - [ ] `yarn verify` passes.
 - [ ] Automated checkpoint reviews pass after each implementation phase.
@@ -416,6 +426,8 @@ sequenceDiagram
 - SEO changes.
 - Redesigning the full purchase modal.
 - Changing Stripe checkout provider behavior.
+- Checkout → purchase funnel instrumentation (webhook failure/abandonment logging) — covered separately by `docs/PRDs/stripe-checkout-failure-webhook-logging.md`.
+- Removing the `mobile_tab_credits` tab — monitor first (see §5); follow-up PRD if it stays under 2% CTR.
 
 ---
 

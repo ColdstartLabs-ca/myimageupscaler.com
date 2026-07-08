@@ -220,7 +220,9 @@ export const DashboardSidebar: React.FC<IDashboardSidebarProps> = ({ isOpen, onC
           })}
 
           {/* Upgrade Prompt */}
-          {isFreeUser && <UpgradeCard onUpgrade={() => setShowUpgradeModal(true)} />}
+          {isFreeUser && (
+            <UpgradeCard trigger="dashboard_sidebar" onUpgrade={() => setShowUpgradeModal(true)} />
+          )}
         </nav>
 
         {/* Bottom Navigation */}

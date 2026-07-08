@@ -136,6 +136,9 @@ export type IUpgradePromptTrigger =
   | 'post_download_explore'
   | 'celebration_explore'
   | 'after_batch'
+  | 'dashboard_sidebar'
+  | 'workspace_batch_sidebar'
+  | 'mobile_tab_credits'
   | 'upgrade_card';
 
 export interface IUpgradePromptShownProperties {

@@ -39,9 +39,10 @@ let mockSubscription: { price_id: string } | null = null;
 let mockIsFreeUser = true; // Default to free user
 let mockProfile: { id: string } | null = { id: 'user-123' };
 let mockIsAuthenticated = true;
+let mockTotalCredits = 100;
 vi.mock('@client/store/userStore', () => ({
   useUserData: () => ({
-    totalCredits: 100,
+    totalCredits: mockTotalCredits,
     profile: mockProfile,
     subscription: mockSubscription,
     isAuthenticated: mockIsAuthenticated,
@@ -103,16 +104,23 @@ vi.mock('../QueueStrip', () => ({
 
 vi.mock('../BatchSidebar', () => ({
   BatchSidebar: ({
+    onProcess,
     onUpgradeDirect,
   }: {
+    onProcess?: () => void;
     onUpgradeDirect?: (params: { trigger: string; planId: string }) => void;
   }) => (
-    <button
-      data-testid="batch-sidebar-direct-checkout"
-      onClick={() => onUpgradeDirect?.({ trigger: 'model_gate', planId: 'price_test_small' })}
-    >
-      Sidebar locked model
-    </button>
+    <div>
+      <button data-testid="batch-sidebar-process" onClick={onProcess}>
+        Process
+      </button>
+      <button
+        data-testid="batch-sidebar-direct-checkout"
+        onClick={() => onUpgradeDirect?.({ trigger: 'model_gate', planId: 'price_test_small' })}
+      >
+        Sidebar locked model
+      </button>
+    </div>
   ),
 }));
 
@@ -179,7 +187,28 @@ vi.mock('../MobileUpgradePrompt', () => ({
 }));
 
 vi.mock('@client/components/stripe/PurchaseModal', () => ({
-  PurchaseModal: () => null,
+  PurchaseModal: ({
+    isOpen,
+    trigger,
+    outOfCredits,
+    requiredCredits,
+    currentBalance,
+  }: {
+    isOpen: boolean;
+    trigger?: string;
+    outOfCredits?: boolean;
+    requiredCredits?: number;
+    currentBalance?: number;
+  }) =>
+    isOpen ? (
+      <div
+        data-testid="purchase-modal"
+        data-trigger={trigger}
+        data-out-of-credits={String(Boolean(outOfCredits))}
+        data-required-credits={requiredCredits}
+        data-current-balance={currentBalance}
+      />
+    ) : null,
 }));
 
 vi.mock('@client/components/stripe/CheckoutModal', () => ({
@@ -254,6 +283,7 @@ describe('Workspace Quality Tier Defaults', () => {
     mockIsFreeUser = true;
     mockProfile = { id: 'user-123' };
     mockIsAuthenticated = true;
+    mockTotalCredits = 100;
     mockBatchQueueState.queue = [];
     mockBatchQueueState.activeId = null;
     mockBatchQueueState.activeItem = null;
@@ -302,6 +332,7 @@ describe('Workspace Quality Tier Logic', () => {
     mockIsFreeUser = true;
     mockProfile = { id: 'user-123' };
     mockIsAuthenticated = true;
+    mockTotalCredits = 100;
     mockBatchQueueState.queue = [];
     mockBatchQueueState.activeId = null;
     mockBatchQueueState.activeItem = null;
@@ -478,7 +509,7 @@ describe('Workspace Quality Tier Logic', () => {
     });
   });
 
-  test('renders CheckoutModal after mobile preview direct upgrade', async () => {
+  test('should not show mobile preview upgrade prompt after a completed result', async () => {
     mockBatchQueueState.queue = [
       {
         id: 'item-1',
@@ -493,13 +524,60 @@ describe('Workspace Quality Tier Logic', () => {
     const { container } = render(<Workspace />);
 
     fireEvent.click(screen.getByText('Preview'));
-    fireEvent.click(screen.getByTestId('mobile-preview-direct-checkout'));
 
-    await waitFor(() => {
-      expect(
-        container.querySelector('[data-modal="checkout"][data-price-id="price_test_small"]')
-      ).toBeInTheDocument();
-    });
+    expect(screen.queryByTestId('mobile-upgrade-prompt')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('mobile-preview-direct-checkout')).not.toBeInTheDocument();
+    expect(
+      container.querySelector('[data-modal="checkout"][data-price-id="price_test_small"]')
+    ).not.toBeInTheDocument();
+  });
+
+  test('should open insufficient_credits modal before processing when balance is too low', async () => {
+    mockTotalCredits = 0;
+    mockBatchQueueState.queue = [
+      {
+        id: 'item-1',
+        status: ProcessingStatus.IDLE,
+        file: new File(['test'], 'test.png', { type: 'image/png' }),
+      },
+    ];
+    mockBatchQueueState.activeId = 'item-1';
+    mockBatchQueueState.activeItem = mockBatchQueueState.queue[0];
+
+    render(<Workspace />);
+
+    fireEvent.click(screen.getByTestId('batch-sidebar-process'));
+
+    expect(mockProcessBatch).not.toHaveBeenCalled();
+    expect(screen.getByTestId('purchase-modal')).toHaveAttribute(
+      'data-trigger',
+      'insufficient_credits'
+    );
+    expect(screen.getByTestId('purchase-modal')).toHaveAttribute('data-out-of-credits', 'true');
+    expect(screen.getByTestId('purchase-modal')).toHaveAttribute('data-required-credits', '1');
+    expect(screen.getByTestId('purchase-modal')).toHaveAttribute('data-current-balance', '0');
+  });
+
+  test('should still process when balance covers selected model cost', async () => {
+    mockTotalCredits = 2;
+    mockBatchQueueState.queue = [
+      {
+        id: 'item-1',
+        status: ProcessingStatus.IDLE,
+        file: new File(['test'], 'test.png', { type: 'image/png' }),
+      },
+    ];
+    mockBatchQueueState.activeId = 'item-1';
+    mockBatchQueueState.activeItem = mockBatchQueueState.queue[0];
+
+    render(<Workspace />);
+
+    fireEvent.click(screen.getByTestId('batch-sidebar-process'));
+
+    expect(mockProcessBatch).toHaveBeenCalledWith(
+      expect.objectContaining({ qualityTier: 'quick', scale: 2 })
+    );
+    expect(screen.queryByTestId('purchase-modal')).not.toBeInTheDocument();
   });
 });
 
@@ -509,6 +587,7 @@ describe('Workspace Paywall Tracking', () => {
     localStorage.clear();
     mockSubscription = null; // Free user by default
     mockIsFreeUser = true; // Free user by default
+    mockTotalCredits = 100;
     mockBatchQueueState.queue = [];
     mockBatchQueueState.activeId = null;
     mockBatchQueueState.activeItem = null;
@@ -659,6 +738,7 @@ describe('Workspace Activation Tracking', () => {
     localStorage.clear();
     mockSubscription = null;
     mockIsFreeUser = true;
+    mockTotalCredits = 100;
     mockBatchQueueState.queue = [];
     mockBatchQueueState.activeId = null;
     mockBatchQueueState.activeItem = null;

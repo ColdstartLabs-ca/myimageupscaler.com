@@ -57,6 +57,7 @@ vi.mock('@client/hooks/useExperimentArm', () => ({
 
 vi.mock('@shared/config/subscription.utils', () => ({
   getCreditsForTierAtScale: vi.fn(() => 3),
+  getCreditDisplayForTier: vi.fn(() => '3 credits'),
   getEnabledCreditPacks: vi.fn(() => [
     { key: 'small', credits: 50, stripePriceId: 'price_test_small' },
     { key: 'medium', credits: 200, stripePriceId: 'price_test_medium' },
@@ -253,6 +254,30 @@ describe('ModelGalleryModal — upgrade direct flow', () => {
       trigger: 'model_gate',
       planId: 'price_test_small',
     });
+  });
+
+  it('should route every locked premium model through model_gate direct checkout', () => {
+    const { onUpgradeDirect, onUpgrade } = renderModal();
+
+    for (const tier of ['hd-upscale', 'ultra', 'face-pro']) {
+      onUpgradeDirect.mockClear();
+      mockSetCheckoutTrackingContext.mockClear();
+
+      fireEvent.click(screen.getByTestId(`locked-${tier}`));
+
+      expect(onUpgradeDirect).toHaveBeenCalledWith({
+        trigger: 'model_gate',
+        planId: 'price_test_small',
+      });
+      expect(mockSetCheckoutTrackingContext).toHaveBeenCalledWith(
+        expect.objectContaining({
+          trigger: 'model_gate',
+          originatingModel: tier,
+        })
+      );
+    }
+
+    expect(onUpgrade).not.toHaveBeenCalled();
   });
 
   it('should not call onUpgrade when direct checkout is available', () => {

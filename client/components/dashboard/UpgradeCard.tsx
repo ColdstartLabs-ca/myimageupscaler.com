@@ -8,16 +8,20 @@ import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContex
 
 interface IUpgradeCardProps {
   onUpgrade: () => void;
+  trigger?: 'upgrade_card' | 'dashboard_sidebar';
 }
 
-export const UpgradeCard: React.FC<IUpgradeCardProps> = ({ onUpgrade }) => {
+export const UpgradeCard: React.FC<IUpgradeCardProps> = ({
+  onUpgrade,
+  trigger = 'upgrade_card',
+}) => {
   const t = useTranslations('dashboard');
   const { pricingRegion } = useRegionTier();
 
   const handleUpgradeClick = () => {
-    setCheckoutTrackingContext({ trigger: 'upgrade_card' });
+    setCheckoutTrackingContext({ trigger });
     analytics.track('upgrade_prompt_clicked', {
-      trigger: 'upgrade_card',
+      trigger,
       destination: 'upgrade_modal',
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
@@ -54,15 +58,17 @@ export const UpgradeCard: React.FC<IUpgradeCardProps> = ({ onUpgrade }) => {
           >
             <Zap className="w-4 h-4" />
           </motion.div>
-          <h4 className="font-bold text-white text-sm">
-            {t.has('sidebar.upgradeTitle') ? t('sidebar.upgradeTitle') : 'Upgrade to Pro'}
+          <h4 className="font-bold text-white text-sm" data-testid="upgrade-card-heading">
+            {t.has('sidebar.upgradeTitle')
+              ? t('sidebar.upgradeTitle')
+              : 'Upscale 10x more images today'}
           </h4>
         </div>
 
         <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
           {t.has('sidebar.upgradeDesc')
             ? t('sidebar.upgradeDesc')
-            : 'Get more credits, faster processing, and premium features.'}
+            : 'Get more credits for bigger batches, premium models, and finished images without waiting for monthly resets.'}
         </p>
 
         <button

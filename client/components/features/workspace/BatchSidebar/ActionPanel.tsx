@@ -120,7 +120,7 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
             Need {totalCost - currentBalance} more{' '}
             {totalCost - currentBalance === 1 ? 'credit' : 'credits'} •{' '}
             <button onClick={onUpgrade} className="underline hover:text-amber-300">
-              Upgrade
+              Get credits to upscale today
             </button>
           </p>
         </div>

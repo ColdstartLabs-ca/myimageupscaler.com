@@ -29,6 +29,8 @@ export interface IPurchaseModalProps {
   onClose: () => void;
   onPurchaseComplete: () => void;
   outOfCredits?: boolean;
+  requiredCredits?: number;
+  currentBalance?: number;
   /** Where in the UI this modal was triggered from */
   trigger?: string;
 }
@@ -120,6 +122,8 @@ export function PurchaseModal({
   onClose,
   onPurchaseComplete,
   outOfCredits = false,
+  requiredCredits,
+  currentBalance,
   trigger = 'unknown',
 }: IPurchaseModalProps): JSX.Element | null {
   const t = useTranslations('stripe.outOfCredits');
@@ -139,6 +143,8 @@ export function PurchaseModal({
       trigger,
       pricingRegion: pricingRegion || 'standard',
       outOfCredits,
+      requiredCredits,
+      currentBalance,
     },
     fallbackArm: {
       armKey: 'current_modal_control',
@@ -177,6 +183,7 @@ export function PurchaseModal({
   }, [creditPacks, purchaseBanditConfig.visiblePacks]);
 
   const basePack = creditPacks[0];
+  const starterPack = creditPacks.find(pack => pack.key === 'small') || basePack;
 
   // Default selection on open
   useEffect(() => {
@@ -207,6 +214,8 @@ export function PurchaseModal({
       analytics.track('purchase_modal_opened', {
         trigger,
         outOfCredits,
+        requiredCredits,
+        currentBalance,
         currentPlan,
         pricingRegion: pricingRegion || 'standard',
         initialTab: initialSelection.purchaseMode,
@@ -220,6 +229,8 @@ export function PurchaseModal({
       analytics.track('upgrade_prompt_shown', {
         trigger,
         outOfCredits,
+        requiredCredits,
+        currentBalance,
         currentPlan,
         pricingRegion: pricingRegion || 'standard',
         initialTab: initialSelection.purchaseMode,
@@ -231,6 +242,8 @@ export function PurchaseModal({
     isOpen,
     trigger,
     outOfCredits,
+    requiredCredits,
+    currentBalance,
     pricingRegion,
     currentPlan,
     creditPacks,
@@ -484,12 +497,19 @@ export function PurchaseModal({
 
   if (!isOpen) return null;
 
-  const title = outOfCredits
-    ? 'Get credits to finish this image'
-    : 'Get credits for premium models';
+  const title = outOfCredits ? 'Keep enhancing instantly' : 'Get credits for premium models';
+  const deficit =
+    typeof requiredCredits === 'number' && typeof currentBalance === 'number'
+      ? Math.max(requiredCredits - currentBalance, 0)
+      : null;
+  const starterCredits = starterPack?.credits;
   const subtitle = outOfCredits
-    ? 'Credits pay for each upscale or edit. Start with 50 credits, or switch to monthly credits if you process images often.'
-    : 'Credits unlock premium models and pay for each upscale or edit. Start with 50 credits for $4.99.';
+    ? starterCredits
+      ? `You used your free credits. Get ${starterCredits} more now and continue this upscale.`
+      : 'You used your free credits. Get more now and continue this upscale.'
+    : starterCredits
+      ? `Credits unlock premium models and pay for each upscale or edit. Start with ${starterCredits} credits.`
+      : 'Credits unlock premium models and pay for each upscale or edit.';
 
   return (
     <>
@@ -537,6 +557,12 @@ export function PurchaseModal({
                     <p className="text-xs sm:text-sm text-text-secondary mt-1 leading-relaxed">
                       {subtitle}
                     </p>
+                    {outOfCredits && deficit !== null && (
+                      <p className="mt-2 text-xs font-semibold text-accent">
+                        Need {requiredCredits} {requiredCredits === 1 ? 'credit' : 'credits'}. Your
+                        balance: {currentBalance}. Deficit: {deficit}.
+                      </p>
+                    )}
                   </div>
                   <div className="flex-shrink-0 -mt-2 sm:-mt-3 -mr-1">
                     <Image
