@@ -14,6 +14,7 @@ import { LLMImageAnalyzer } from '@server/services/llm-image-analyzer';
 import { ModelRegistry } from '@server/services/model-registry';
 import type { SubscriptionTier } from '@server/services/model-registry.types';
 import { ReplicateError } from '@server/services/replicate.service';
+import { resolveScalePreservingModel } from '@server/services/scale-preserving-model';
 import { creditManager } from '@server/services/replicate/utils/credit-manager';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv, isProduction } from '@shared/config/env';
@@ -218,7 +219,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     );
 
     logFailure(
-      refunded ? 'credits_refunded_after_route_failure' : 'credit_refund_failed_after_route_failure',
+      refunded
+        ? 'credits_refunded_after_route_failure'
+        : 'credit_refund_failed_after_route_failure',
       {
         originalFailureReason: failureReason,
         jobId: creditDeduction.jobId,
@@ -612,9 +615,43 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       });
     }
 
-    // Validate model is available for user's subscription tier
     const modelRegistry = ModelRegistry.getInstance();
+
+    // Preserve the billing promise from the user's selected tier. If the default
+    // Quick model cannot fit a 2x source at its provider GPU limit, route the
+    // processing internally to the tiled model without charging a premium-tier cost.
+    const billingModelId = resolvedModelId;
+    if (inputDimensions) {
+      const scaleSafeModel = resolveScalePreservingModel({
+        modelId: resolvedModelId,
+        width: inputDimensions.width,
+        height: inputDimensions.height,
+        scale: config.scale,
+      });
+      const fallbackModel = modelRegistry.getModel(scaleSafeModel.modelId);
+
+      if (scaleSafeModel.usedFallback && fallbackModel?.isEnabled) {
+        logger.info('Using scale-preserving model fallback', {
+          userId,
+          requestedModelId: resolvedModelId,
+          processingModelId: scaleSafeModel.modelId,
+          inputWidth: inputDimensions.width,
+          inputHeight: inputDimensions.height,
+          requestedScale: config.scale,
+        });
+        resolvedModelId = scaleSafeModel.modelId;
+      } else if (scaleSafeModel.usedFallback) {
+        logger.warn('Scale-preserving model fallback unavailable', {
+          userId,
+          requestedModelId: resolvedModelId,
+          fallbackModelId: scaleSafeModel.modelId,
+        });
+      }
+    }
+
+    // Validate model is available for user's subscription tier
     const selectedModel = modelRegistry.getModel(resolvedModelId);
+    const isInternalScaleFallback = resolvedModelId !== billingModelId;
     if (!selectedModel || !selectedModel.isEnabled) {
       logFailure(
         'resolved_model_unavailable',
@@ -630,7 +667,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     // Check if model requires higher subscription tier
-    if (selectedModel.tierRestriction) {
+    if (selectedModel.tierRestriction && !isInternalScaleFallback) {
       const minRequiredTier = normalizePaidTier(selectedModel.tierRestriction);
       const userTierForModels = isPaidUser ? userTier : 'free';
 
@@ -699,17 +736,23 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           maxPixels,
         });
 
-        // Format pixel count for display (e.g., 2.6M)
-        const formatPixels = (p: number): string => {
-          if (p >= 1_000_000) {
-            return `${(p / 1_000_000).toFixed(1)}M`;
-          }
-          return p.toLocaleString();
-        };
+        const twoXAlternative = resolveScalePreservingModel({
+          modelId: billingModelId,
+          width: inputDimensions.width,
+          height: inputDimensions.height,
+          scale: 2,
+        });
+        const canChooseTwoX =
+          config.scale !== 2 &&
+          twoXAlternative.usedFallback &&
+          modelRegistry.getModel(twoXAlternative.modelId)?.isEnabled;
+        const nextStep = canChooseTwoX
+          ? 'Choose 2x for this original image.'
+          : 'Upload a smaller original for this processing mode.';
 
         const { body: errorBody, status } = createErrorResponse(
           ErrorCodes.IMAGE_TOO_LARGE,
-          `Image dimensions (${inputDimensions.width}×${inputDimensions.height} = ${formatPixels(pixels)} pixels) exceed the maximum for this processing mode (${formatPixels(maxPixels)} pixels). Please resize your image before uploading.`,
+          `The selected ${config.scale}x scale cannot process the original image dimensions (${inputDimensions.width}×${inputDimensions.height}) without shrinking the source. ${nextStep}`,
           422,
           {
             width: inputDimensions.width,
@@ -725,7 +768,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Calculate credit cost using provider-aware pricing for new models,
     // falling back to tier-based scale multiplier for legacy models.
     const providerAware = calculateFinalProviderAwareCredits({
-      modelId: resolvedModelId,
+      modelId: billingModelId,
       qualityTier: resolvedTier,
       scale: config.scale,
       inputWidth: inputDimensions?.width,

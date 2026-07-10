@@ -30,7 +30,7 @@ describe('prepareFileForProcessing', () => {
 
     expect(result.file).toBe(file);
     expect(result.resized).toBe(false);
-    expect(result.maxPixels).toBe(1_500_000);
+    expect(result.maxPixels).toBeNull();
     expect(result.dimensions).toEqual({
       width: 1000,
       height: 1000,
@@ -39,37 +39,21 @@ describe('prepareFileForProcessing', () => {
     expect(compressImage).not.toHaveBeenCalled();
   });
 
-  it('auto-resizes files that exceed the selected tier limit', async () => {
+  it('never downsizes Quick inputs because scale is relative to the original', async () => {
     const file = new File(['image'], 'photo.png', { type: 'image/png' });
     vi.mocked(loadImageDimensions).mockResolvedValue({ width: 3006, height: 1994 });
-    vi.mocked(compressImage).mockResolvedValue({
-      blob: new Blob(['resized'], { type: 'image/jpeg' }),
-      originalSize: file.size,
-      compressedSize: 1234,
-      reductionPercent: 50,
-      dimensions: { width: 1503, height: 997 },
-    });
 
     const result = await prepareFileForProcessing(file, 'quick');
 
-    expect(result.resized).toBe(true);
-    expect(result.file).not.toBe(file);
-    expect(result.file.name).toBe('photo.jpg');
-    expect(result.file.type).toBe('image/jpeg');
-    expect(result.maxPixels).toBe(1_500_000);
+    expect(result.resized).toBe(false);
+    expect(result.file).toBe(file);
+    expect(result.maxPixels).toBeNull();
     expect(result.dimensions).toEqual({
-      width: 1503,
-      height: 997,
-      pixels: 1_498_491,
+      width: 3006,
+      height: 1994,
+      pixels: 5_993_964,
     });
-    expect(compressImage).toHaveBeenCalledWith(
-      file,
-      expect.objectContaining({
-        maxPixels: 1_500_000,
-        format: 'jpeg',
-        maintainAspectRatio: true,
-      })
-    );
+    expect(compressImage).not.toHaveBeenCalled();
   });
 
   it('skips pixel resizing for tiers without a processing pixel cap', async () => {
@@ -89,7 +73,7 @@ describe('prepareFileForProcessing', () => {
     vi.mocked(isAutoResizeEnabled).mockReturnValue(false);
     vi.mocked(loadImageDimensions).mockResolvedValue({ width: 3006, height: 1994 });
 
-    const result = await prepareFileForProcessing(file, 'quick');
+    const result = await prepareFileForProcessing(file, 'face-restore');
 
     expect(result.file).toBe(file);
     expect(result.resized).toBe(false);

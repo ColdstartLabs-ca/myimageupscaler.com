@@ -14,8 +14,8 @@ import {
 
 describe('Model Pixel Limits', () => {
   describe('getMaxPixelsForModel', () => {
-    it('should return correct pixel limit for real-esrgan (1.5M)', () => {
-      expect(getMaxPixelsForModel('real-esrgan')).toBe(1_500_000);
+    it('should return the empirically verified Real-ESRGAN provider limit', () => {
+      expect(getMaxPixelsForModel('real-esrgan')).toBe(2_096_704);
     });
 
     it('should return correct pixel limit for gfpgan (1.5M)', () => {
@@ -26,8 +26,8 @@ describe('Model Pixel Limits', () => {
       expect(getMaxPixelsForModel('realesrgan-anime')).toBe(1_500_000);
     });
 
-    it('should return correct pixel limit for clarity-upscaler (4M)', () => {
-      expect(getMaxPixelsForModel('clarity-upscaler')).toBe(4_000_000);
+    it('should accept verified 2048x2048 Clarity inputs', () => {
+      expect(getMaxPixelsForModel('clarity-upscaler')).toBe(4_194_304);
     });
 
     it('should return correct pixel limit for nano-banana (4M)', () => {
@@ -65,9 +65,9 @@ describe('Model Pixel Limits', () => {
   });
 
   describe('getMaxPixelsForQualityTier', () => {
-    it('should return model-specific limits for explicit quality tiers', () => {
-      expect(getMaxPixelsForQualityTier('quick')).toBe(1_500_000);
-      expect(getMaxPixelsForQualityTier('hd-upscale')).toBe(4_000_000);
+    it('should never silently resize Quick inputs and should preserve other tier limits', () => {
+      expect(getMaxPixelsForQualityTier('quick')).toBeNull();
+      expect(getMaxPixelsForQualityTier('hd-upscale')).toBe(4_194_304);
       expect(getMaxPixelsForQualityTier('budget-edit')).toBe(2_560_000);
     });
 
@@ -81,10 +81,12 @@ describe('Model Pixel Limits', () => {
   });
 
   describe('MODEL_MAX_INPUT_PIXELS configuration', () => {
-    it('should have limits <= 4M for all models', () => {
-      const maxAllowed = 4_000_000;
+    it('should have limits <= 2048x2048 for all models', () => {
+      const maxAllowed = 4_194_304;
       for (const [modelId, limit] of Object.entries(MODEL_MAX_INPUT_PIXELS)) {
-        expect(limit, `Model ${modelId} limit should be <= 4M`).toBeLessThanOrEqual(maxAllowed);
+        expect(limit, `Model ${modelId} limit should be <= 2048x2048`).toBeLessThanOrEqual(
+          maxAllowed
+        );
       }
     });
 

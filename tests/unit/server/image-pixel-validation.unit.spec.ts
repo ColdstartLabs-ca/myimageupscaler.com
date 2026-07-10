@@ -18,8 +18,8 @@ describe('Server-Side Image Pixel Validation', () => {
   });
 
   describe('ModelRegistry.getMaxInputPixels', () => {
-    it('should return correct pixel limit for real-esrgan (1.5M)', () => {
-      expect(modelRegistry.getMaxInputPixels('real-esrgan')).toBe(1_500_000);
+    it('should return the empirically verified Real-ESRGAN provider limit', () => {
+      expect(modelRegistry.getMaxInputPixels('real-esrgan')).toBe(2_096_704);
     });
 
     it('should return correct pixel limit for gfpgan (1.5M)', () => {
@@ -30,8 +30,8 @@ describe('Server-Side Image Pixel Validation', () => {
       expect(modelRegistry.getMaxInputPixels('realesrgan-anime')).toBe(1_500_000);
     });
 
-    it('should return correct pixel limit for clarity-upscaler (4M)', () => {
-      expect(modelRegistry.getMaxInputPixels('clarity-upscaler')).toBe(4_000_000);
+    it('should accept verified 2048x2048 Clarity inputs', () => {
+      expect(modelRegistry.getMaxInputPixels('clarity-upscaler')).toBe(4_194_304);
     });
 
     it('should return correct pixel limit for nano-banana (4M)', () => {
@@ -109,11 +109,11 @@ describe('Server-Side Image Pixel Validation', () => {
     }
 
     it('should reject image exceeding model pixel limit', () => {
-      // 1300x1300 = 1.69M pixels, exceeds real-esrgan's 1.5M limit
-      const result = validatePixelsForModel(1300, 1300, 'real-esrgan');
+      // 1449x1448 exceeds Replicate's verified 2,096,704-pixel limit
+      const result = validatePixelsForModel(1449, 1448, 'real-esrgan');
       expect(result.valid).toBe(false);
       expect(result.error).toContain('exceed the maximum');
-      expect(result.maxPixels).toBe(1_500_000);
+      expect(result.maxPixels).toBe(2_096_704);
     });
 
     it('should accept image within model pixel limit', () => {
@@ -124,12 +124,11 @@ describe('Server-Side Image Pixel Validation', () => {
     });
 
     it('should accept larger image for model with higher limit', () => {
-      // 1300x1300 = 1.69M pixels
-      // Exceeds real-esrgan's 1.5M limit, but within clarity-upscaler's 4M limit
-      const resultRealEsrgan = validatePixelsForModel(1300, 1300, 'real-esrgan');
+      // 2048x2048 exceeds Real-ESRGAN, but the tiled Clarity model was verified at this size
+      const resultRealEsrgan = validatePixelsForModel(2048, 2048, 'real-esrgan');
       expect(resultRealEsrgan.valid).toBe(false);
 
-      const resultClarity = validatePixelsForModel(1300, 1300, 'clarity-upscaler');
+      const resultClarity = validatePixelsForModel(2048, 2048, 'clarity-upscaler');
       expect(resultClarity.valid).toBe(true);
     });
 
@@ -145,20 +144,17 @@ describe('Server-Side Image Pixel Validation', () => {
       const result = validatePixelsForModel(3000, 2000, 'real-esrgan');
       expect(result.valid).toBe(false);
       expect(result.error).toBeDefined();
-      expect(result.maxPixels).toBe(1_500_000);
+      expect(result.maxPixels).toBe(2_096_704);
       expect(result.error).toContain('3000×2000');
       expect(result.error).toContain('6.0M pixels');
     });
 
     it('should correctly validate boundary cases', () => {
-      // Exactly at the limit should pass
-      // sqrt(1.5M) ≈ 1224.74, so 1224x1224 = 1,498,176 pixels (under limit)
-      const atLimit = validatePixelsForModel(1224, 1224, 'real-esrgan');
+      // Replicate reports an exact 2,096,704-pixel limit, which is 1448x1448
+      const atLimit = validatePixelsForModel(1448, 1448, 'real-esrgan');
       expect(atLimit.valid).toBe(true);
 
-      // Just over the limit should fail
-      // 1225x1225 = 1,500,625 pixels (over limit)
-      const overLimit = validatePixelsForModel(1225, 1225, 'real-esrgan');
+      const overLimit = validatePixelsForModel(1449, 1448, 'real-esrgan');
       expect(overLimit.valid).toBe(false);
     });
 

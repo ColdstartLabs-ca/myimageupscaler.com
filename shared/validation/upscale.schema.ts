@@ -149,7 +149,10 @@ export function getMaxPixelsForModel(modelId: string): number {
  * model. `bg-removal` skips Replicate entirely, so it has no Replicate pixel cap.
  */
 export function getMaxPixelsForQualityTier(qualityTier: QualityTier): number | null {
-  if (qualityTier === 'bg-removal') {
+  if (qualityTier === 'bg-removal' || qualityTier === 'quick') {
+    // Quick must preserve the original input dimensions. The server either uses
+    // Real-ESRGAN directly, routes eligible 2x requests to a tiled fallback, or
+    // rejects the request. Never silently downsize and redefine the selected scale.
     return null;
   }
 

@@ -8,10 +8,10 @@
  * Used to prevent GPU memory errors and cost overruns for large images
  */
 export const MODEL_MAX_INPUT_PIXELS: Record<string, number> = {
-  'real-esrgan': 1_500_000, // 1.5M pixels - GPU memory limit (2M OOMs with enhancements)
+  'real-esrgan': 2_096_704, // Replicate provider GPU limit (1448x1448); larger Quick 2x uses tiled fallback
   gfpgan: 1_500_000, // 1.5M pixels - GPU memory limit
   'realesrgan-anime': 1_500_000, // 1.5M pixels - GPU memory limit
-  'clarity-upscaler': 4_000_000, // 4M pixels - more capable model
+  'clarity-upscaler': 4_194_304, // 2048x2048 verified with tiled processing
   'nano-banana': 4_000_000, // 4M pixels - Gemini handles larger inputs
   'nano-banana-pro': 4_000_000, // 4M pixels - premium model
   'flux-2-pro': 4_000_000, // 4M pixels - premium model
