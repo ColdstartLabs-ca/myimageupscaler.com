@@ -290,8 +290,9 @@ function analyzeWindow(
     groups.set(key, group);
   }
 
+  const threshold = input.minSegmentSignups ?? MIN_SEGMENT_SIGNUPS;
   const comparable = [...groups.values()].filter(
-    group => group.baseline.length > 0 && group.comparison.length > 0
+    group => group.baseline.length >= threshold && group.comparison.length >= threshold
   );
   const comparableComparisonSignups = comparable.reduce(
     (total, group) => total + group.comparison.length,
@@ -375,7 +376,6 @@ function analyzeWindow(
         action: chooseAction(baselineSegment, comparisonSegment, group.dimension, group.value),
       };
     });
-  const threshold = input.minSegmentSignups ?? MIN_SEGMENT_SIGNUPS;
   const visible = ranked
     .filter(row => row.baselineSignups >= threshold && row.comparisonSignups >= threshold)
     .sort((left, right) => Math.abs(right.lostBuyers) - Math.abs(left.lostBuyers));

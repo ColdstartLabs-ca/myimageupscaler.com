@@ -134,6 +134,41 @@ describe('conversion cohort decomposition', () => {
     });
   });
 
+  it('should exclude rare primary sources from the headline decomposition', () => {
+    const febStable = signups('2026-02', 100, 'feb-stable');
+    const juneStable = signups('2026-06', 100, 'jun-stable');
+    const febRare = signups('2026-02', 1, 'feb-rare').map(row => ({
+      ...row,
+      sourceMedium: 'rare / referral',
+    }));
+    const juneRare = signups('2026-06', 100, 'jun-rare').map(row => ({
+      ...row,
+      sourceMedium: 'rare / referral',
+    }));
+
+    const result = analyze({
+      minSegmentSignups: 20,
+      signups: [...febStable, ...juneStable, ...febRare, ...juneRare],
+      purchases: [
+        ...purchases(
+          febStable.slice(0, 10).map(row => row.signupId),
+          '2026-02'
+        ),
+        ...purchases(
+          juneStable.slice(0, 10).map(row => row.signupId),
+          '2026-06'
+        ),
+        ...purchases([febRare[0].signupId], '2026-02'),
+      ],
+    });
+    const window = result.windows.find(row => row.maturityDays === 30)!;
+
+    expect(window.decomposition.comparableComparisonSignups).toBe(100);
+    expect(window.decomposition.counterfactualRateAtBaselineSegmentRates).toBeCloseTo(0.1);
+    expect(window.decomposition.withinSegmentEffectBuyers).toBeCloseTo(0);
+    expect(Math.abs(window.decomposition.mixEffectBuyers)).toBeLessThan(1);
+  });
+
   it('should enforce maturity, exclusions, join coverage, and tiny-segment suppression', () => {
     const mature = signups('2026-06', 2, 'mature');
     const input: ICohortAnalysisInput = {
