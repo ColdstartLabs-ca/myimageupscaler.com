@@ -5,6 +5,9 @@ test('low-balance prior buyer opens their last pack while all packs remain avail
   page,
 }) => {
   await setupAuthenticatedStateWithSupabase(page, {
+    id: 'repeat-pack-buyer',
+    email: 'repeat@example.com',
+    role: 'user',
     subscription: null,
     profile: {
       id: 'repeat-pack-buyer',
@@ -23,14 +26,16 @@ test('low-balance prior buyer opens their last pack while all packs remain avail
   );
 
   await page.goto('/workspace');
+  await page.getByRole('button', { name: 'repeat@example.com' }).click();
   const credits = page.getByRole('button', { name: /3 credits/i }).first();
   await credits.hover();
   const repeat = page.getByRole('button', { name: /buy medium pack again/i });
   await expect(repeat).toBeVisible();
   await repeat.click();
 
-  await expect(page.getByText('Medium Pack', { exact: true })).toBeVisible();
-  await expect(page.getByText('Small Pack', { exact: true })).toBeVisible();
-  await expect(page.getByText('Large Pack', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Credits for premium models' })).toBeVisible();
+  await expect(page.getByText('50', { exact: true })).toBeVisible();
+  await expect(page.getByText('200', { exact: true })).toBeVisible();
+  await expect(page.getByText('600', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: /buy 200 credits/i })).toBeVisible();
 });
