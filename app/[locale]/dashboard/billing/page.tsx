@@ -9,7 +9,6 @@ import { InternalTabs, type ITabItem } from '@client/components/ui/InternalTabs'
 import { StripeService, preloadStripe } from '@client/services/stripeService';
 import { useToastStore } from '@client/store/toastStore';
 import { getPlanDisplayName, getPlanForPriceId } from '@shared/config/stripe';
-import { getPlanByKey } from '@shared/config/subscription.utils';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { motion } from 'framer-motion';
@@ -171,12 +170,9 @@ export default function BillingPage() {
     }
   };
 
-  const handleAcceptCancellationRetentionOffer = (targetPlanKey: string) => {
-    const targetPlan = getPlanByKey(targetPlanKey);
-    if (!targetPlan?.stripePriceId) return;
+  const handleAcceptCancellationRetentionOffer = async () => {
     setShowCancelModal(false);
-    setSelectedPlanId(targetPlan.stripePriceId);
-    setIsPlanModalOpen(true);
+    await loadBillingData();
   };
 
   const formatDate = (dateString: string) => {

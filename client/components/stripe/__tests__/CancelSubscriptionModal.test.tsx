@@ -49,6 +49,7 @@ function renderWithTranslations(ui: React.ReactElement) {
             subscriptionBetterValue: 'A smaller plan may fit better.',
             changePlan: 'Change Plan',
             cancelSubscription: 'Cancel Subscription',
+            error: 'Failed to load billing information',
           },
         },
         stripe: {
@@ -72,7 +73,6 @@ describe('CancelSubscriptionModal', () => {
     onConfirm: mockOnConfirm,
     planName: 'Professional',
     periodEnd: '2025-03-01',
-    currentPlanKey: 'pro',
     onAcceptRetentionOffer: mockOnAcceptRetentionOffer,
   };
 
@@ -148,8 +148,32 @@ describe('CancelSubscriptionModal', () => {
     fireEvent.click(screen.getByText('Continue'));
     fireEvent.click(await screen.findByText('Change Plan'));
 
-    expect(mockOnAcceptRetentionOffer).toHaveBeenCalledWith('hobby');
+    await waitFor(() => expect(mockOnAcceptRetentionOffer).toHaveBeenCalledTimes(1));
     expect(mockOnConfirm).not.toHaveBeenCalled();
+  });
+
+  test('should preserve the offer and cancellation choice when Stripe execution fails', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(async (_url, init) => {
+        if (init?.method === 'PUT') return { ok: false, json: async () => ({}) };
+        return {
+          ok: true,
+          json: async () => ({
+            data: { offer: { targetPlanKey: 'hobby', targetPlanName: 'Hobby' } },
+          }),
+        };
+      })
+    );
+    renderWithTranslations(<CancelSubscriptionModal {...defaultProps} />);
+    fireEvent.click(screen.getByLabelText('Too expensive'));
+    fireEvent.click(screen.getByText('Continue'));
+    fireEvent.click(await screen.findByText('Change Plan'));
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Failed to load billing information'
+    );
+    expect(screen.getByText('Change Plan')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Cancel Subscription' })).toBeEnabled();
   });
 
   test('should allow direct cancellation after declining offer', async () => {

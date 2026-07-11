@@ -17,7 +17,7 @@ interface ICancelSubscriptionModalProps {
   onConfirm: (reason?: string) => Promise<void>;
   planName: string;
   periodEnd: string;
-  onAcceptRetentionOffer?: (targetPlanKey: RetentionPlanKey) => void;
+  onAcceptRetentionOffer?: () => Promise<void> | void;
 }
 
 function getCancellationReasons(t: ReturnType<typeof useTranslations>) {
@@ -60,6 +60,8 @@ export function CancelSubscriptionModal({
     targetPlanName: string;
   } | null>(null);
   const [offerLoading, setOfferLoading] = useState(false);
+  const [retentionChanging, setRetentionChanging] = useState(false);
+  const [retentionError, setRetentionError] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
   const requestSequence = useRef(0);
   const busyRef = useRef(false);
@@ -73,6 +75,8 @@ export function CancelSubscriptionModal({
     setShowRetentionOffer(false);
     setRetentionOffer(null);
     setOfferLoading(false);
+    setRetentionChanging(false);
+    setRetentionError(false);
     busyRef.current = false;
   };
 
@@ -182,6 +186,32 @@ export function CancelSubscriptionModal({
     }
   };
 
+  const handleAcceptRetentionOffer = async () => {
+    if (!selectedReasonKey || retentionChanging) return;
+    setRetentionChanging(true);
+    setRetentionError(false);
+    busyRef.current = true;
+    try {
+      const { data } = await supabase.auth.getSession();
+      if (!data.session?.access_token) throw new Error('User not authenticated');
+      const response = await fetch('/api/subscriptions/retention-offer', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${data.session.access_token}`,
+        },
+        body: JSON.stringify({ reason: selectedReasonKey }),
+      });
+      if (!response.ok) throw new Error('Failed to schedule retention downgrade');
+      await onAcceptRetentionOffer?.();
+    } catch {
+      setRetentionError(true);
+    } finally {
+      setRetentionChanging(false);
+      busyRef.current = false;
+    }
+  };
+
   const formattedEndDate = dayjs(periodEnd).format('MMMM D, YYYY');
 
   return (
@@ -206,7 +236,7 @@ export function CancelSubscriptionModal({
           {showRetentionOffer && retentionOffer ? (
             <CancellationRetentionOffer
               targetPlanName={retentionOffer.targetPlanName}
-              onAccept={() => onAcceptRetentionOffer?.(retentionOffer.targetPlanKey)}
+              onAccept={handleAcceptRetentionOffer}
               onContinueCancellation={() => {
                 setShowRetentionOffer(false);
                 setShowConfirmation(true);
@@ -214,6 +244,10 @@ export function CancelSubscriptionModal({
               title={billingT('subscriptionBetterValue')}
               changePlanLabel={billingT('changePlan')}
               cancelLabel={billingT('cancelSubscription')}
+              processingLabel={t('processing')}
+              errorLabel={billingT('error')}
+              changing={retentionChanging}
+              error={retentionError}
             />
           ) : !showConfirmation ? (
             <CancellationReasonForm
@@ -347,6 +381,10 @@ interface ICancellationRetentionOfferProps {
   title: string;
   changePlanLabel: string;
   cancelLabel: string;
+  processingLabel: string;
+  errorLabel: string;
+  changing: boolean;
+  error: boolean;
   onAccept: () => void;
   onContinueCancellation: () => void;
 }
@@ -356,6 +394,10 @@ function CancellationRetentionOffer({
   title,
   changePlanLabel,
   cancelLabel,
+  processingLabel,
+  errorLabel,
+  changing,
+  error,
   onAccept,
   onContinueCancellation,
 }: ICancellationRetentionOfferProps): JSX.Element {
@@ -365,15 +407,22 @@ function CancellationRetentionOffer({
         <h3 className="text-lg font-semibold text-primary">{title}</h3>
         <p className="mt-2 text-sm text-muted-foreground">{targetPlanName}</p>
       </div>
+      {error && (
+        <p role="alert" className="text-sm text-error">
+          {errorLabel}
+        </p>
+      )}
       <div className="flex gap-3">
         <button
           onClick={onAccept}
+          disabled={changing}
           className="flex-1 rounded-lg bg-accent px-4 py-3 font-medium text-white transition-colors hover:bg-accent-hover"
         >
-          {changePlanLabel}
+          {changing ? processingLabel : changePlanLabel}
         </button>
         <button
           onClick={onContinueCancellation}
+          disabled={changing}
           className="flex-1 rounded-lg bg-surface-light px-4 py-3 font-medium text-muted-foreground transition-colors hover:bg-surface-light"
         >
           {cancelLabel}
