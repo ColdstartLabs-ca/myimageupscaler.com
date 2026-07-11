@@ -283,7 +283,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { priceId, successUrl, cancelUrl, metadata = {}, uiMode = 'hosted', offerToken } = body;
+    const {
+      priceId,
+      successUrl,
+      cancelUrl,
+      metadata = {},
+      uiMode = 'hosted',
+      offerToken,
+      autoTopUp,
+    } = body;
     const customMetadata = sanitizeCustomCheckoutMetadata(metadata);
 
     let validatedFunnelMetadata: Record<string, string> = {};
@@ -493,6 +501,25 @@ export async function POST(request: NextRequest) {
 
     // 6. Get or create Stripe customer
     const customerId = await getOrCreateCustomerId(user, token);
+
+    if (autoTopUp) {
+      if (
+        autoTopUp.enabled !== true ||
+        !Number.isInteger(autoTopUp.thresholdCredits) ||
+        autoTopUp.thresholdCredits < 1 ||
+        autoTopUp.thresholdCredits > 10000 ||
+        resolvedPrice?.type !== 'pack' ||
+        !['small', 'medium'].includes(resolvedPrice.key)
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: { code: 'INVALID_AUTO_TOP_UP', message: 'Invalid auto top-up rule' },
+          },
+          { status: 400 }
+        );
+      }
+    }
 
     // 6.5. Detect country and resolve regional pricing
     const country =
@@ -757,6 +784,7 @@ export async function POST(request: NextRequest) {
     if (checkoutMode === 'payment') {
       sessionParams.payment_intent_data = {
         metadata: checkoutMetadata,
+        ...(autoTopUp ? { setup_future_usage: 'off_session' as const } : {}),
       };
     }
 
@@ -822,6 +850,38 @@ export async function POST(request: NextRequest) {
         session = await stripe.checkout.sessions.create(sessionParams);
       } else {
         throw sessionError;
+      }
+    }
+
+    if (autoTopUp && resolvedPrice?.type === 'pack') {
+      const { error: settingsError } = await supabaseAdmin.from('auto_top_up_settings').upsert(
+        {
+          user_id: user.id,
+          enabled: false,
+          pending_enabled: true,
+          threshold_credits: autoTopUp.thresholdCredits,
+          pack_key: resolvedPrice.key,
+          stripe_price_id: validatedPriceId,
+          stripe_customer_id: customerId,
+          stripe_payment_method_id: null,
+          consented_at: new Date().toISOString(),
+          consecutive_failures: 0,
+          failure_reason: null,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'user_id' }
+      );
+      if (settingsError) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: 'AUTO_TOP_UP_SETUP_FAILED',
+              message: 'Unable to save auto top-up consent',
+            },
+          },
+          { status: 500 }
+        );
       }
     }
 

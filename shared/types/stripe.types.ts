@@ -75,6 +75,10 @@ export interface ICheckoutSessionRequest {
   metadata?: Record<string, string>;
   uiMode?: 'hosted' | 'embedded';
   offerToken?: string;
+  autoTopUp?: {
+    enabled: true;
+    thresholdCredits: number;
+  };
 }
 
 export interface ICheckoutSessionResponse {

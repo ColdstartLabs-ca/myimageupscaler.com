@@ -1,8 +1,12 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { NextRequest } from 'next/server';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 const persistCheckoutIntentContextMock = vi.hoisted(() => vi.fn());
 const validateExperimentCheckoutAttributionMock = vi.hoisted(() => vi.fn());
+const autoTopUpUpsertMock = vi.hoisted(() => vi.fn());
+const autoTopUpUpdateMaybeSingleMock = vi.hoisted(() => vi.fn());
 
 vi.mock('@shared/config/env', async importOriginal => {
   const actual = await importOriginal<typeof import('@shared/config/env')>();
@@ -83,6 +87,7 @@ vi.mock('@shared/config/subscription.config', async importOriginal => {
 });
 
 import { POST } from '@app/api/checkout/route';
+import { GET as GETAutoTopUp, PUT as PUTAutoTopUp } from '@app/api/auto-top-up/settings/route';
 import { stripe } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { trackServerEvent } from '@server/analytics';
@@ -90,6 +95,10 @@ import { isDiscountValid } from '@server/services/engagement-discount.service';
 import { STRIPE_PRICES } from '@shared/config/stripe';
 
 type TCheckoutSessionParams = Parameters<typeof stripe.checkout.sessions.create>[0];
+const autoTopUpMigration = readFileSync(
+  join(process.cwd(), 'supabase/migrations/20260711000400_auto_top_up_settings.sql'),
+  'utf8'
+);
 
 describe('POST /api/checkout price alignment', () => {
   const sessionCreateMock = vi.mocked(stripe.checkout.sessions.create);
@@ -151,6 +160,20 @@ describe('POST /api/checkout price alignment', () => {
           })),
         } as never;
       }
+      if (table === 'auto_top_up_settings') {
+        const updateQuery = {
+          eq: vi.fn(() => ({
+            select: vi.fn(() => ({ maybeSingle: autoTopUpUpdateMaybeSingleMock })),
+          })),
+        };
+        return {
+          upsert: autoTopUpUpsertMock,
+          update: vi.fn(() => updateQuery),
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({ maybeSingle: autoTopUpUpdateMaybeSingleMock })),
+          })),
+        } as never;
+      }
 
       throw new Error(`Unexpected supabase table in test: ${table}`);
     });
@@ -173,6 +196,11 @@ describe('POST /api/checkout price alignment', () => {
       expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
     });
     persistCheckoutIntentContextMock.mockResolvedValue(true);
+    autoTopUpUpsertMock.mockResolvedValue({ error: null });
+    autoTopUpUpdateMaybeSingleMock.mockResolvedValue({
+      data: { enabled: false, pending_enabled: false },
+      error: null,
+    });
   });
 
   test('does not silently apply engagement discount without explicit trigger', async () => {
@@ -190,10 +218,75 @@ describe('POST /api/checkout price alignment', () => {
     ]);
     expect(sessionParams.metadata?.engagement_discount_applied).toBeUndefined();
     expect(sessionParams.metadata?.engagement_discount_percent).toBeUndefined();
+    expect(sessionParams.payment_intent_data?.setup_future_usage).toBeUndefined();
+    expect(autoTopUpUpsertMock).not.toHaveBeenCalled();
     expect(trackServerEventMock).not.toHaveBeenCalledWith(
       'engagement_discount_checkout_started',
       expect.anything(),
       expect.anything()
+    );
+  });
+
+  test('persists explicit Small/Medium auto top-up consent and retains payment method', async () => {
+    const response = await POST(
+      createRequest({
+        priceId: STRIPE_PRICES.MEDIUM_CREDITS,
+        autoTopUp: { enabled: true, thresholdCredits: 25 },
+      })
+    );
+    expect(response.status).toBe(200);
+    expect(getCreatedSessionParams().payment_intent_data?.setup_future_usage).toBe('off_session');
+    expect(autoTopUpUpsertMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        user_id: 'user_checkout_alignment',
+        enabled: false,
+        pending_enabled: true,
+        threshold_credits: 25,
+        pack_key: 'medium',
+        stripe_payment_method_id: null,
+      }),
+      { onConflict: 'user_id' }
+    );
+  });
+
+  test('rejects auto top-up for an unsupported pack', async () => {
+    const response = await POST(
+      createRequest({
+        priceId: STRIPE_PRICES.LARGE_CREDITS,
+        autoTopUp: { enabled: true, thresholdCredits: 25 },
+      })
+    );
+    expect(response.status).toBe(400);
+    expect(sessionCreateMock).not.toHaveBeenCalled();
+  });
+
+  test('disables active and pending auto top-up immediately for the authenticated user', async () => {
+    const response = await PUTAutoTopUp(
+      new NextRequest('https://example.com/api/auto-top-up/settings', {
+        method: 'PUT',
+        headers: { authorization: 'Bearer jwt_token_checkout_alignment' },
+        body: JSON.stringify({ enabled: false }),
+      })
+    );
+    expect(response.status).toBe(200);
+    expect(autoTopUpUpdateMaybeSingleMock).toHaveBeenCalledOnce();
+  });
+
+  test('settings reads are authenticated and user-scoped', async () => {
+    const unauthorized = await GETAutoTopUp(
+      new NextRequest('https://example.com/api/auto-top-up/settings')
+    );
+    expect(unauthorized.status).toBe(401);
+
+    const authorized = await GETAutoTopUp(
+      new NextRequest('https://example.com/api/auto-top-up/settings', {
+        headers: { authorization: 'Bearer jwt_token_checkout_alignment' },
+      })
+    );
+    expect(authorized.status).toBe(200);
+    expect(autoTopUpMigration).toContain('USING (auth.uid() = user_id)');
+    expect(autoTopUpMigration).not.toMatch(
+      /CREATE POLICY "Users[^\n]+"[\s\S]+FOR (INSERT|UPDATE|DELETE)/
     );
   });
 
