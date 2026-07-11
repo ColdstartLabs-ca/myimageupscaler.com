@@ -1,5 +1,6 @@
 import { getEmailProviderManager } from './email-providers/email-provider-manager';
 import type { ISendEmailParams, ISendEmailResult } from '@shared/types/provider-adapter.types';
+import { EmailProviderSendError } from './email-providers/base-email-provider-adapter';
 
 export type EmailType = 'transactional' | 'marketing';
 
@@ -20,9 +21,9 @@ export class EmailError extends Error {
  * Email service for sending transactional and marketing emails via provider manager.
  *
  * Provider priority:
- * 1. Cloudflare Email Service (primary) - 3,000 included emails/month
- * 2. Brevo (fallback) - 300 free emails/day
- * 3. Resend (final fallback) - 3,000 free emails/month
+ * 1. Cloudflare Email Service (paid primary)
+ * 2. Brevo (resilience fallback for transient failures)
+ * 3. Resend (final resilience fallback for transient failures)
  *
  * The service automatically handles:
  * - Provider selection and fallback
@@ -44,6 +45,16 @@ export class EmailService {
     } catch (error) {
       // Re-throw EmailErrors directly without wrapping
       if (error instanceof EmailError) {
+        throw error;
+      }
+
+      if (error instanceof EmailProviderSendError) {
+        console.error('Email send failed', {
+          template: params.template,
+          classification: error.classification,
+          transient: error.transient,
+          attemptedProviders: error.attemptedProviders,
+        });
         throw error;
       }
 

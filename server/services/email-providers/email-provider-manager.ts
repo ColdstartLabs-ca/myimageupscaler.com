@@ -2,12 +2,12 @@
  * Email Provider Manager
  *
  * Manages multiple email providers with automatic provider selection
- * and fallback support when providers hit their free tier limits.
+ * and failure-aware fallback support.
  *
  * Provider priority:
- * 1. Cloudflare Email Service (primary) - 3,000 included emails/month
- * 2. Brevo (fallback) - 9,000 free emails/month
- * 3. Resend (final fallback) - 3,000 free emails/month
+ * 1. Cloudflare Email Service (paid primary)
+ * 2. Brevo (resilience fallback)
+ * 3. Resend (final resilience fallback)
  */
 
 import type {
@@ -21,6 +21,11 @@ import { EmailProvider } from '@shared/types/provider-adapter.types';
 import { createCloudflareEmailAdapter } from './cloudflare.provider-adapter';
 import { createBrevoAdapter } from './brevo.provider-adapter';
 import { createResendAdapter } from './resend.provider-adapter';
+import {
+  EmailError as EmailTemplateError,
+  EmailProviderSendError,
+  normalizeEmailProviderError,
+} from './base-email-provider-adapter';
 
 /**
  * Email provider manager with auto-switching
@@ -54,14 +59,20 @@ export class EmailProviderManager implements IEmailProviderManager {
       }
     }
 
-    throw new Error('No email providers available. All providers have hit their free tier limits.');
+    throw new EmailProviderSendError(
+      'No configured email providers are currently available.',
+      'provider_unavailable',
+      true
+    );
   }
 
   /**
    * Send email with automatic provider selection and fallback
    */
   async send(params: ISendEmailParams): Promise<ISendEmailResult> {
-    let lastError: Error | null = null;
+    let lastError: EmailProviderSendError | null = null;
+    const attemptedProviders: string[] = [];
+    const unavailableProviders: string[] = [];
 
     // Try providers in priority order
     const sortedProviders = Array.from(this.providers.values())
@@ -72,24 +83,60 @@ export class EmailProviderManager implements IEmailProviderManager {
       try {
         const isAvailable = await adapter.isAvailable();
         if (!isAvailable) {
+          unavailableProviders.push(adapter.getProviderName());
+          lastError = new EmailProviderSendError(
+            `${adapter.getProviderName()} is unavailable`,
+            'provider_unavailable',
+            true
+          );
           continue;
         }
 
+        attemptedProviders.push(adapter.getProviderName());
         const result = await adapter.send(params);
         return result;
       } catch (error) {
-        lastError = error instanceof Error ? error : new Error(String(error));
-        console.warn(
-          `Email provider ${adapter.getProviderName()} failed, trying next provider:`,
-          lastError.message
-        );
+        if (error instanceof EmailTemplateError) {
+          throw error;
+        }
+        lastError = normalizeEmailProviderError(error);
+        console.warn('Email provider attempt failed', {
+          provider: adapter.getProviderName(),
+          classification: lastError.classification,
+          transient: lastError.transient,
+          attemptedProviders,
+        });
+        if (!lastError.transient) {
+          console.error('Email delivery terminated', {
+            classification: lastError.classification,
+            transient: false,
+            attemptedProviders,
+            unavailableProviders,
+          });
+          throw new EmailProviderSendError(
+            lastError.message,
+            lastError.classification,
+            false,
+            attemptedProviders
+          );
+        }
         continue;
       }
     }
 
-    throw new Error(
-      `All email providers failed. Last error: ${lastError?.message || 'Unknown error'}`
+    const terminalError = new EmailProviderSendError(
+      `All email providers failed. Last error: ${lastError?.message || 'Unknown error'}`,
+      lastError?.classification ?? 'provider_unavailable',
+      true,
+      attemptedProviders
     );
+    console.error('Email delivery terminated', {
+      classification: terminalError.classification,
+      transient: terminalError.transient,
+      attemptedProviders,
+      unavailableProviders,
+    });
+    throw terminalError;
   }
 
   /**

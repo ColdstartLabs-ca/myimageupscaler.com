@@ -13,6 +13,7 @@ let preferences: Record<string, boolean> = {
 };
 let recentMarketingRows: Array<{ id: string }> = [];
 let dueQueueRows: Array<Record<string, unknown>> = [];
+let emailLogRows: Array<Record<string, unknown>> = [];
 
 vi.mock('@shared/config/env', () => ({
   serverEnv: {
@@ -75,7 +76,9 @@ function makeSelectChain(table: string, selectColumns?: string) {
                 : 'low_credit_alerts',
             enabled: true,
             cooldown_days: 7,
-            priority: 1,
+            priority:
+              state.key === 'blog-education-face-restore' ? 'education' : 'revenue_critical',
+            sort_priority: state.key === 'blog-education-face-restore' ? 40 : 90,
           },
           error: null,
         };
@@ -105,6 +108,10 @@ function makeSelectChain(table: string, selectColumns?: string) {
         resolve({ data: recentMarketingRows, error: null });
         return;
       }
+      if (table === 'email_logs') {
+        resolve({ data: emailLogRows, error: null });
+        return;
+      }
       resolve({ data: [], error: null });
     },
   };
@@ -121,6 +128,43 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
         }),
       },
     },
+    rpc: vi.fn(async (_name: string, args: { p_limit: number }) => ({
+      data: dueQueueRows
+        .map(row => {
+          const education = row.campaign_key === 'blog-education-face-restore';
+          const recovery = String(row.campaign_key).includes('checkout-abandoned');
+          return {
+            ...row,
+            campaign_name: education
+              ? 'Photo restoration guide'
+              : recovery
+                ? 'Checkout recovery'
+                : 'Low credits',
+            campaign_category: education
+              ? 'blog_education'
+              : recovery
+                ? 'revenue_recovery'
+                : 'low_credit',
+            campaign_template_name: education
+              ? 'blog-education'
+              : recovery
+                ? 'checkout-recovery'
+                : 'low-credits',
+            campaign_email_type: 'marketing',
+            campaign_preference_key: education ? 'marketing_emails' : 'low_credit_alerts',
+            campaign_enabled: true,
+            campaign_cooldown_days: 7,
+            campaign_priority: education ? 'education' : 'revenue_critical',
+            campaign_sort_priority: education ? 40 : 90,
+          };
+        })
+        .sort((a, b) => {
+          const rank = { revenue_critical: 1, education: 3 } as const;
+          return rank[a.campaign_priority] - rank[b.campaign_priority];
+        })
+        .slice(0, args.p_limit),
+      error: null,
+    })),
     from: vi.fn((table: string) => ({
       select: vi.fn((columns?: string) => makeSelectChain(table, columns)),
       insert: vi.fn((payload: Record<string, unknown>) => {
@@ -151,6 +195,7 @@ describe('EmailLifecycleService', () => {
     };
     recentMarketingRows = [];
     dueQueueRows = [];
+    emailLogRows = [];
     sendEmailMock.mockResolvedValue({ success: true, messageId: 'msg_test' });
   });
 
@@ -187,11 +232,35 @@ describe('EmailLifecycleService', () => {
     });
 
     expect(result.skipped).toBe(true);
-    expect(result.reason).toBe('suppressed_frequency_cap');
+    expect(result.reason).toBe('suppressed_revenue_72h_cap');
     expect(queueInserts[0]).toMatchObject({
       status: 'skipped',
-      reason: 'suppressed_frequency_cap',
+      reason: 'suppressed_revenue_72h_cap',
     });
+  });
+
+  it('should always suppress complained recipient even after 90 days', async () => {
+    emailLogRows = [
+      ...Array.from({ length: 101 }, (_, index) => ({
+        provider_response: { error: `transient_${index}` },
+        status: 'failed',
+        sent_at: new Date(Date.UTC(2026, 0, index + 1)).toISOString(),
+      })),
+      {
+        provider_response: { complaint: true },
+        status: 'failed',
+        sent_at: '2025-01-01T00:00:00.000Z',
+      },
+    ];
+    const service = new EmailLifecycleService();
+
+    const result = await service.queueLifecycleEmail({
+      campaignKey: 'low-credits',
+      userId: 'user_123',
+      templateData: { creditsRemaining: 0 },
+    });
+
+    expect(result).toMatchObject({ skipped: true, reason: 'suppressed_email_status' });
   });
 
   it('queues low credit alert at threshold', async () => {
@@ -277,6 +346,47 @@ describe('EmailLifecycleService', () => {
     );
     expect(sendEmailMock.mock.calls[0][0].data.ctaUrl).toContain('queue_recovery_1');
     expect(sendEmailMock.mock.calls[0][0].data.ctaUrl).toContain('token=');
+  });
+
+  it('should process revenue-critical rows before education rows', async () => {
+    const scheduledFor = new Date(Date.now() - 1000).toISOString();
+    dueQueueRows = [
+      ...Array.from({ length: 251 }, (_, index) => ({
+        id: `queue_education_${index}`,
+        campaign_key: 'blog-education-face-restore',
+        user_id: 'user_123',
+        recipient_email: 'user@example.com',
+        scheduled_for: scheduledFor,
+        status: 'pending',
+        template_data: {},
+        metadata: {},
+        created_at: scheduledFor,
+      })),
+      {
+        id: 'queue_revenue',
+        campaign_key: 'low-credits',
+        user_id: 'user_456',
+        recipient_email: 'buyer@example.com',
+        scheduled_for: scheduledFor,
+        status: 'pending',
+        template_data: {},
+        metadata: {},
+        created_at: scheduledFor,
+      },
+    ];
+    const service = new EmailLifecycleService();
+
+    await service.processDueQueue({ batchSize: 2 });
+
+    expect(sendEmailMock).toHaveBeenCalledTimes(2);
+    expect(sendEmailMock.mock.calls[0][0]).toMatchObject({
+      to: 'buyer@example.com',
+      template: 'low-credits',
+    });
+    expect(sendEmailMock.mock.calls[1][0]).toMatchObject({
+      to: 'user@example.com',
+      template: 'blog-education',
+    });
   });
 
   it('should honor marketing opt out for recovery campaigns', async () => {

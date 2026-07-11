@@ -26,6 +26,7 @@ export type LifecycleEventType =
 
 type EmailPreferenceKey = 'marketing_emails' | 'product_updates' | 'low_credit_alerts';
 type LifecycleQueueStatus = 'pending' | 'sent' | 'failed' | 'skipped' | 'cancelled';
+export type CampaignPriority = 'transactional' | 'revenue_critical' | 'lifecycle' | 'education';
 
 interface ICampaign {
   key: string;
@@ -36,7 +37,8 @@ interface ICampaign {
   preference_key: EmailPreferenceKey | null;
   enabled: boolean;
   cooldown_days: number;
-  priority: number;
+  priority: CampaignPriority;
+  sort_priority: number;
 }
 
 interface IQueueRow {
@@ -51,6 +53,15 @@ interface IQueueRow {
   metadata: Record<string, unknown>;
   sent_at: string | null;
   created_at: string;
+  campaign_name?: string;
+  campaign_category?: string;
+  campaign_template_name?: string;
+  campaign_email_type?: 'transactional' | 'marketing';
+  campaign_preference_key?: EmailPreferenceKey | null;
+  campaign_enabled?: boolean;
+  campaign_cooldown_days?: number;
+  campaign_priority?: CampaignPriority;
+  campaign_sort_priority?: number;
 }
 
 export interface IQueueLifecycleEmailInput {
@@ -60,7 +71,6 @@ export interface IQueueLifecycleEmailInput {
   scheduledFor?: Date;
   templateData?: Record<string, unknown>;
   metadata?: Record<string, unknown>;
-  forceFrequency?: boolean;
 }
 
 export interface IQueueLifecycleEmailResult {
@@ -96,10 +106,25 @@ interface IUserEmailContext {
   userName?: string;
 }
 
+const REVENUE_CRITICAL_CAP_HOURS = 72;
 const MARKETING_CAP_DAYS = 7;
-const BLOG_CAP_DAYS = 14;
-const TOTAL_LIFECYCLE_CAP_DAYS = 7;
-const TOTAL_LIFECYCLE_CAP = 2;
+
+export function evaluateCampaignFrequencyCap(input: {
+  priority: CampaignPriority;
+  revenueCriticalLast72Hours: number;
+  revenueCriticalLast7Days: number;
+  lifecycleEducationLast7Days: number;
+  allMarketingLast7Days: number;
+}): string | null {
+  if (input.priority === 'transactional') return null;
+  if (input.allMarketingLast7Days >= 3) return 'suppressed_emergency_ceiling';
+  if (input.priority === 'revenue_critical') {
+    if (input.revenueCriticalLast72Hours >= 1) return 'suppressed_revenue_72h_cap';
+    if (input.revenueCriticalLast7Days >= 2) return 'suppressed_revenue_weekly_cap';
+    return null;
+  }
+  return input.lifecycleEducationLast7Days >= 1 ? 'suppressed_lifecycle_weekly_cap' : null;
+}
 
 function daysAgo(days: number): string {
   return new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
@@ -151,9 +176,7 @@ export class EmailLifecycleService {
       return { queued: false, skipped: true, reason: 'missing_recipient_email' };
     }
 
-    const suppression = await this.getSuppressionReason(campaign, input.userId, {
-      forceFrequency: input.forceFrequency,
-    });
+    const suppression = await this.getSuppressionReason(campaign, input.userId);
     if (suppression) {
       const queueId = await this.insertQueueRow({
         campaign,
@@ -235,7 +258,6 @@ export class EmailLifecycleService {
       campaignKey,
       userId: params.userId,
       scheduledFor: reason === 'insufficient' ? addMinutes(new Date(), 10) : new Date(),
-      forceFrequency: reason === 'zero',
       templateData: {
         creditsRemaining: Math.max(params.creditsRemaining, 0),
         requiredCredits: params.requiredCredits,
@@ -318,13 +340,10 @@ export class EmailLifecycleService {
       dryRun,
     };
 
-    const { data, error } = await supabaseAdmin
-      .from('email_lifecycle_queue')
-      .select('*')
-      .eq('status', 'pending')
-      .lte('scheduled_for', new Date().toISOString())
-      .order('scheduled_for', { ascending: true })
-      .limit(batchSize);
+    const { data, error } = await supabaseAdmin.rpc('get_due_email_lifecycle_queue', {
+      p_limit: batchSize,
+      p_due_before: new Date().toISOString(),
+    });
 
     if (error) {
       throw new Error(`Failed to fetch lifecycle queue: ${error.message}`);
@@ -334,7 +353,7 @@ export class EmailLifecycleService {
     result.eligible = rows.length;
 
     for (const row of rows) {
-      const campaign = await this.getCampaign(row.campaign_key);
+      const campaign = this.getCampaignFromQueueRow(row);
       if (!campaign) {
         await this.markQueueRow(row.id, 'skipped', 'campaign_missing');
         result.skipped++;
@@ -986,19 +1005,19 @@ export class EmailLifecycleService {
   private async getSuppressionReason(
     campaign: ICampaign,
     userId: string,
-    options?: { forceFrequency?: boolean; ignoreExistingPending?: boolean; queueId?: string }
+    options?: { ignoreExistingPending?: boolean; queueId?: string }
   ): Promise<string | null> {
+    if (await this.hasBounceOrComplaintStatus(userId)) {
+      return 'suppressed_email_status';
+    }
+
     if (campaign.preference_key) {
       const allowed = await this.isPreferenceAllowed(userId, campaign.preference_key);
       if (!allowed) return 'suppressed_preference';
     }
 
-    if (campaign.email_type === 'transactional' || options?.forceFrequency) {
+    if (campaign.email_type === 'transactional') {
       return null;
-    }
-
-    if (await this.hasBounceOrComplaintStatus(userId)) {
-      return 'suppressed_email_status';
     }
 
     const recentSame = await this.hasRecentQueueRow(
@@ -1007,33 +1026,39 @@ export class EmailLifecycleService {
       campaign.cooldown_days,
       options?.queueId
     );
-    if (recentSame) return 'suppressed_frequency_cap';
+    if (recentSame) return 'suppressed_campaign_cooldown';
 
-    if (campaign.category === 'blog_education') {
-      const recentBlog = await this.hasRecentCategory(
-        userId,
-        'blog_education',
-        BLOG_CAP_DAYS,
-        options?.queueId
-      );
-      if (recentBlog) return 'suppressed_frequency_cap';
-    }
-
-    const recentMarketing = await this.countRecentMarketing(
+    const allMarketingLast7Days = await this.countRecentMarketing(
       userId,
       MARKETING_CAP_DAYS,
       options?.queueId
     );
-    if (recentMarketing >= 1) return 'suppressed_frequency_cap';
-
-    const recentLifecycle = await this.countRecentLifecycle(
+    const revenueCriticalLast72Hours = await this.countRecentMarketingByPriorities(
       userId,
-      TOTAL_LIFECYCLE_CAP_DAYS,
+      ['revenue_critical'],
+      REVENUE_CRITICAL_CAP_HOURS / 24,
       options?.queueId
     );
-    if (recentLifecycle >= TOTAL_LIFECYCLE_CAP) return 'suppressed_frequency_cap';
+    const revenueCriticalLast7Days = await this.countRecentMarketingByPriorities(
+      userId,
+      ['revenue_critical'],
+      MARKETING_CAP_DAYS,
+      options?.queueId
+    );
+    const lifecycleEducationLast7Days = await this.countRecentMarketingByPriorities(
+      userId,
+      ['lifecycle', 'education'],
+      MARKETING_CAP_DAYS,
+      options?.queueId
+    );
 
-    return null;
+    return evaluateCampaignFrequencyCap({
+      priority: campaign.priority,
+      revenueCriticalLast72Hours,
+      revenueCriticalLast7Days,
+      lifecycleEducationLast7Days,
+      allMarketingLast7Days,
+    });
   }
 
   private async isPreferenceAllowed(
@@ -1115,6 +1140,36 @@ export class EmailLifecycleService {
     return data?.length ?? 0;
   }
 
+  private async countRecentMarketingByPriorities(
+    userId: string,
+    priorities: CampaignPriority[],
+    days: number,
+    excludeQueueId?: string
+  ): Promise<number> {
+    const { data: campaigns, error: campaignError } = await supabaseAdmin
+      .from('email_lifecycle_campaigns')
+      .select('key')
+      .eq('email_type', 'marketing')
+      .in('priority', priorities);
+    if (campaignError) {
+      throw new Error(`Failed to load lifecycle campaign priorities: ${campaignError.message}`);
+    }
+    const campaignKeys = (campaigns || []).map(row => String(row.key));
+    if (!campaignKeys.length) return 0;
+
+    let query = supabaseAdmin
+      .from('email_lifecycle_queue')
+      .select('id')
+      .eq('user_id', userId)
+      .in('campaign_key', campaignKeys)
+      .in('status', ['pending', 'sent'])
+      .gte('created_at', daysAgo(days));
+    if (excludeQueueId) query = query.neq('id', excludeQueueId);
+    const { data, error } = await query;
+    if (error) throw new Error(`Failed to check lifecycle priority cap: ${error.message}`);
+    return data?.length ?? 0;
+  }
+
   private async countRecentLifecycle(
     userId: string,
     days: number,
@@ -1138,9 +1193,7 @@ export class EmailLifecycleService {
       .select('provider_response, status')
       .eq('user_id', userId)
       .eq('status', 'failed')
-      .gte('sent_at', daysAgo(90))
-      .order('sent_at', { ascending: false })
-      .limit(20);
+      .order('sent_at', { ascending: false });
     if (error) {
       console.error('Failed to check lifecycle email status suppression', error);
       return true;
@@ -1155,6 +1208,33 @@ export class EmailLifecycleService {
         response.includes('complained')
       );
     });
+  }
+
+  private getCampaignFromQueueRow(row: IQueueRow): ICampaign | null {
+    if (
+      !row.campaign_name ||
+      !row.campaign_category ||
+      !row.campaign_template_name ||
+      !row.campaign_email_type ||
+      !row.campaign_priority ||
+      row.campaign_enabled === undefined ||
+      row.campaign_cooldown_days === undefined ||
+      row.campaign_sort_priority === undefined
+    ) {
+      return null;
+    }
+    return {
+      key: row.campaign_key,
+      name: row.campaign_name,
+      category: row.campaign_category,
+      template_name: row.campaign_template_name,
+      email_type: row.campaign_email_type,
+      preference_key: row.campaign_preference_key ?? null,
+      enabled: row.campaign_enabled,
+      cooldown_days: row.campaign_cooldown_days,
+      priority: row.campaign_priority,
+      sort_priority: row.campaign_sort_priority,
+    };
   }
 
   private async getCampaignKeysByCategory(category: string): Promise<string[]> {

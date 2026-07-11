@@ -30,6 +30,55 @@ export class EmailError extends Error {
   }
 }
 
+export type EmailProviderFailureClassification =
+  | 'rate_limited'
+  | 'timeout'
+  | 'provider_unavailable'
+  | 'provider_error'
+  | 'invalid_recipient'
+  | 'unsubscribed'
+  | 'complaint'
+  | 'permanent_rejection';
+
+/** A provider-neutral failure contract used to decide whether fallback is safe. */
+export class EmailProviderSendError extends Error {
+  constructor(
+    message: string,
+    public readonly classification: EmailProviderFailureClassification,
+    public readonly transient: boolean,
+    public readonly attemptedProviders: string[] = []
+  ) {
+    super(message);
+    this.name = 'EmailProviderSendError';
+  }
+}
+
+export function normalizeEmailProviderError(error: unknown): EmailProviderSendError {
+  if (error instanceof EmailProviderSendError) return error;
+
+  const message = error instanceof Error ? error.message : String(error);
+  const normalized = message.toLowerCase();
+  if (/\b429\b|rate.?limit/.test(normalized)) {
+    return new EmailProviderSendError(message, 'rate_limited', true);
+  }
+  if (/timeout|timed out|aborterror/.test(normalized)) {
+    return new EmailProviderSendError(message, 'timeout', true);
+  }
+  if (/\b5\d\d\b|unavailable|not configured|network|fetch failed/.test(normalized)) {
+    return new EmailProviderSendError(message, 'provider_unavailable', true);
+  }
+  if (/invalid (recipient|email)|permanent bounce/.test(normalized)) {
+    return new EmailProviderSendError(message, 'invalid_recipient', false);
+  }
+  if (/unsubscribe/.test(normalized)) {
+    return new EmailProviderSendError(message, 'unsubscribed', false);
+  }
+  if (/complaint/.test(normalized)) {
+    return new EmailProviderSendError(message, 'complaint', false);
+  }
+  return new EmailProviderSendError(message, 'permanent_rejection', false);
+}
+
 /**
  * Abstract base class for email provider adapters
  */

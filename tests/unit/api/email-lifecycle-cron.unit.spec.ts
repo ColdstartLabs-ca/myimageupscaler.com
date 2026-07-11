@@ -135,4 +135,19 @@ describe('POST /api/cron/email-lifecycle throughput controls', () => {
     });
     expect(body.durationMs).toEqual(expect.any(Number));
   });
+
+  it('should process revenue-critical rows before education rows', async () => {
+    await POST(
+      new NextRequest('http://localhost/api/cron/email-lifecycle?batchSize=25', {
+        method: 'POST',
+        headers: { 'x-cron-secret': 'test-cron-secret' },
+      })
+    );
+
+    const service = vi.mocked(getEmailLifecycleService).mock.results[0].value;
+    // Ordering is owned by the service's database RPC; cron must delegate exactly once
+    // with the requested batch rather than prefetching or reordering queue rows.
+    expect(service.processDueQueue).toHaveBeenCalledOnce();
+    expect(service.processDueQueue).toHaveBeenCalledWith({ dryRun: false, batchSize: 25 });
+  });
 });

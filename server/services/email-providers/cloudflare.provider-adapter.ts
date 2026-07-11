@@ -10,7 +10,7 @@ import { render } from '@react-email/render';
 import { EmailProvider, ProviderTier } from '@shared/types/provider-adapter.types';
 import type { IEmailProviderConfig } from '@shared/types/provider-adapter.types';
 import { isTest, serverEnv } from '@shared/config/env';
-import { BaseEmailProviderAdapter } from './base-email-provider-adapter';
+import { BaseEmailProviderAdapter, EmailProviderSendError } from './base-email-provider-adapter';
 
 interface ICloudflareEmailResponse {
   success?: boolean;
@@ -25,15 +25,9 @@ interface ICloudflareEmailResponse {
 
 const CLOUDFLARE_CONFIG: IEmailProviderConfig = {
   provider: EmailProvider.CLOUDFLARE,
-  tier: ProviderTier.HYBRID,
+  tier: ProviderTier.PAID,
   priority: 1,
   enabled: true,
-  freeTier: {
-    dailyRequests: 0,
-    monthlyCredits: 3000,
-    hardLimit: true,
-    resetTimezone: 'UTC',
-  },
   fallbackProvider: EmailProvider.BREVO,
 };
 
@@ -89,16 +83,29 @@ export class CloudflareEmailProviderAdapter extends BaseEmailProviderAdapter {
     const errorMessage = this.getErrorMessage(result);
 
     if (!response.ok || result.success === false || errorMessage) {
-      throw new Error(
-        `Cloudflare Email Service API error (${response.status}): ${
-          errorMessage || response.statusText
-        }`
+      const message = `Cloudflare Email Service API error (${response.status}): ${
+        errorMessage || response.statusText
+      }`;
+      const transient =
+        response.status === 408 || response.status === 429 || response.status >= 500;
+      throw new EmailProviderSendError(
+        message,
+        response.status === 429
+          ? 'rate_limited'
+          : response.status === 408
+            ? 'timeout'
+            : response.status >= 500
+              ? 'provider_error'
+              : 'permanent_rejection',
+        transient
       );
     }
 
     if (result.result?.permanent_bounces?.length) {
-      throw new Error(
-        `Cloudflare Email Service permanent bounce: ${result.result.permanent_bounces.join(', ')}`
+      throw new EmailProviderSendError(
+        `Cloudflare Email Service permanent bounce: ${result.result.permanent_bounces.join(', ')}`,
+        'invalid_recipient',
+        false
       );
     }
 
@@ -118,7 +125,7 @@ export class CloudflareEmailProviderAdapter extends BaseEmailProviderAdapter {
       return false;
     }
 
-    return await super.isAvailable();
+    return true;
   }
 
   private getErrorMessage(result: ICloudflareEmailResponse): string | null {

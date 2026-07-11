@@ -73,6 +73,8 @@ vi.mock('@/emails/templates/PasswordResetEmail', () => ({
 }));
 
 import { EmailService, EmailError } from '@server/services/email.service';
+import { getEmailProviderManager } from '@server/services/email-providers/email-provider-manager';
+import { EmailProviderSendError } from '@server/services/email-providers/base-email-provider-adapter';
 
 describe('EmailService', () => {
   let emailService: EmailService;
@@ -303,6 +305,23 @@ describe('EmailService', () => {
   });
 
   describe('send - error handling', () => {
+    it('should preserve structured provider failure metadata', async () => {
+      const providerError = new EmailProviderSendError('Cloudflare timed out', 'timeout', true, [
+        'cloudflare',
+        'brevo',
+      ]);
+      vi.spyOn(getEmailProviderManager(), 'send').mockRejectedValueOnce(providerError);
+
+      await expect(
+        emailService.send({ to: 'test@example.com', template: 'welcome', data: {} })
+      ).rejects.toBe(providerError);
+      expect(providerError).toMatchObject({
+        classification: 'timeout',
+        transient: true,
+        attemptedProviders: ['cloudflare', 'brevo'],
+      });
+    });
+
     it('should throw EmailError with TEMPLATE_NOT_FOUND for invalid template', async () => {
       await expect(
         emailService.send({
@@ -386,7 +405,7 @@ describe('EmailService', () => {
       expect(consoleSpy).toHaveBeenCalledWith(
         '[EMAIL_TEST_MODE] Email would be sent:',
         expect.objectContaining({
-          provider: 'brevo',
+          provider: 'cloudflare',
           from: 'test@example.com',
           to: 'test@example.com',
           template: 'welcome',
@@ -419,7 +438,7 @@ describe('EmailService', () => {
       expect(consoleSpy).toHaveBeenCalledWith(
         '[EMAIL_TEST_MODE] Email would be sent:',
         expect.objectContaining({
-          provider: 'brevo',
+          provider: 'cloudflare',
           to: 'user@example.com',
           template: 'payment-success',
           type: 'transactional',

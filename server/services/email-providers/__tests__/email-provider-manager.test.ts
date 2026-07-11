@@ -13,6 +13,10 @@ import { EmailProviderManager } from '../email-provider-manager';
 import { EmailProvider } from '@shared/types/provider-adapter.types';
 import type { IEmailProviderAdapter } from '@shared/types/provider-adapter.types';
 import { CloudflareEmailProviderAdapter } from '../cloudflare.provider-adapter';
+import {
+  EmailProviderSendError,
+  normalizeEmailProviderError,
+} from '../base-email-provider-adapter';
 
 vi.mock('@shared/config/env', () => ({
   clientEnv: {
@@ -133,7 +137,10 @@ describe('EmailProviderManager', () => {
       manager.updateProviderConfig(EmailProvider.BREVO, { enabled: false });
       manager.updateProviderConfig(EmailProvider.RESEND, { enabled: false });
 
-      await expect(manager.getProvider()).rejects.toThrow('No email providers available');
+      await expect(manager.getProvider()).rejects.toMatchObject({
+        classification: 'provider_unavailable',
+        transient: true,
+      });
     });
 
     test('should get provider by type', () => {
@@ -164,7 +171,8 @@ describe('EmailProviderManager', () => {
       expect(config?.provider).toBe(EmailProvider.CLOUDFLARE);
       expect(config?.priority).toBe(1);
       expect(config?.enabled).toBe(true);
-      expect(config?.freeTier?.monthlyCredits).toBe(3000);
+      expect(config?.tier).toBe('paid');
+      expect(config?.freeTier).toBeUndefined();
       expect(config?.fallbackProvider).toBe(EmailProvider.BREVO);
     });
 
@@ -201,6 +209,54 @@ describe('EmailProviderManager', () => {
   });
 
   describe('Fallback Priority', () => {
+    test('should use Cloudflare first when configured', async () => {
+      const cloudflare = manager.getProviderByType(EmailProvider.CLOUDFLARE)!;
+      const brevo = manager.getProviderByType(EmailProvider.BREVO)!;
+      const cloudflareSend = vi
+        .spyOn(cloudflare, 'send')
+        .mockResolvedValue({ success: true, provider: EmailProvider.CLOUDFLARE });
+      const brevoSend = vi.spyOn(brevo, 'send');
+
+      await manager.send({ to: 'buyer@example.com', template: 'welcome', data: {} });
+
+      expect(cloudflareSend).toHaveBeenCalledOnce();
+      expect(brevoSend).not.toHaveBeenCalled();
+    });
+
+    test('should fall back when Cloudflare returns a transient failure', async () => {
+      const cloudflare = manager.getProviderByType(EmailProvider.CLOUDFLARE)!;
+      const brevo = manager.getProviderByType(EmailProvider.BREVO)!;
+      vi.spyOn(cloudflare, 'send').mockRejectedValue(
+        new EmailProviderSendError('Cloudflare unavailable', 'provider_unavailable', true)
+      );
+      const brevoSend = vi
+        .spyOn(brevo, 'send')
+        .mockResolvedValue({ success: true, provider: EmailProvider.BREVO });
+
+      const result = await manager.send({
+        to: 'buyer@example.com',
+        template: 'welcome',
+        data: {},
+      });
+
+      expect(result.provider).toBe(EmailProvider.BREVO);
+      expect(brevoSend).toHaveBeenCalledOnce();
+    });
+
+    test('should not fall back when Cloudflare permanently rejects recipient', async () => {
+      const cloudflare = manager.getProviderByType(EmailProvider.CLOUDFLARE)!;
+      const brevo = manager.getProviderByType(EmailProvider.BREVO)!;
+      vi.spyOn(cloudflare, 'send').mockRejectedValue(
+        new EmailProviderSendError('Invalid recipient', 'invalid_recipient', false)
+      );
+      const brevoSend = vi.spyOn(brevo, 'send');
+
+      await expect(
+        manager.send({ to: 'invalid', template: 'welcome', data: {} })
+      ).rejects.toMatchObject({ classification: 'invalid_recipient', transient: false });
+      expect(brevoSend).not.toHaveBeenCalled();
+    });
+
     test('should order providers by priority', async () => {
       const providers = manager
         .getAllProviders()
@@ -238,6 +294,30 @@ describe('EmailProviderManager', () => {
 });
 
 describe('BaseEmailProviderAdapter', () => {
+  describe('Failure classification', () => {
+    test.each([
+      ['Provider API error (429): rate limit', 'rate_limited', true],
+      ['Request timed out', 'timeout', true],
+      ['Provider API error (503): unavailable', 'provider_unavailable', true],
+      ['Invalid recipient address', 'invalid_recipient', false],
+      ['Permanent bounce for recipient', 'invalid_recipient', false],
+    ])('should classify %s', (message, classification, transient) => {
+      expect(normalizeEmailProviderError(new Error(message))).toMatchObject({
+        classification,
+        transient,
+      });
+    });
+
+    test('should not classify an arbitrary 400 as an invalid recipient', () => {
+      expect(
+        normalizeEmailProviderError(new Error('API error (400): malformed payload'))
+      ).toMatchObject({
+        classification: 'permanent_rejection',
+        transient: false,
+      });
+    });
+  });
+
   describe('Template Loading', () => {
     test('should have all required templates defined', async () => {
       const templates = [
