@@ -301,6 +301,52 @@ describe('POST /api/checkout price alignment', () => {
     );
   });
 
+  test('clears pending consent when stale-customer retry also fails', async () => {
+    sessionCreateMock
+      .mockRejectedValueOnce(
+        new Stripe.errors.StripeInvalidRequestError({
+          type: 'invalid_request_error',
+          message: 'No such customer',
+          code: 'resource_missing',
+          param: 'customer',
+        })
+      )
+      .mockRejectedValueOnce(new Error('Stripe unavailable'));
+    vi.mocked(stripe.customers.create).mockResolvedValue({ id: 'cus_fresh_456' } as never);
+    const response = await POST(
+      createRequest({
+        priceId: STRIPE_PRICES.MEDIUM_CREDITS,
+        autoTopUp: { enabled: true, thresholdCredits: 25 },
+      })
+    );
+    expect(response.status).toBe(500);
+    expect(autoTopUpUpdateMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pending_enabled: false,
+        failure_reason: 'checkout_session_retry_failed',
+      })
+    );
+  });
+
+  test('surfaces and records an orphan when checkout expiration fails', async () => {
+    autoTopUpUpdateMaybeSingleMock.mockResolvedValueOnce({ data: null, error: null });
+    sessionExpireMock.mockRejectedValueOnce(new Error('Stripe unavailable'));
+    const response = await POST(
+      createRequest({
+        priceId: STRIPE_PRICES.MEDIUM_CREDITS,
+        autoTopUp: { enabled: true, thresholdCredits: 25 },
+      })
+    );
+    expect(response.status).toBe(503);
+    expect(autoTopUpUpdateMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pending_enabled: false,
+        failure_reason: 'orphaned_session_expiration_failed',
+        checkout_session_id: 'cs_test_alignment',
+      })
+    );
+  });
+
   test('rejects auto top-up for an unsupported pack', async () => {
     const response = await POST(
       createRequest({

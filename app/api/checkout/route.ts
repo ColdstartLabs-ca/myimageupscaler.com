@@ -872,6 +872,20 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    const clearPendingConsent = async (failureReason: string, checkoutSessionId?: string) => {
+      if (!autoTopUpConsentVersion) return;
+      await supabaseAdmin
+        .from('auto_top_up_settings')
+        .update({
+          pending_enabled: false,
+          failure_reason: failureReason,
+          ...(checkoutSessionId ? { checkout_session_id: checkoutSessionId } : {}),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('user_id', user.id)
+        .eq('consent_version', autoTopUpConsentVersion);
+    };
+
     let session: Stripe.Checkout.Session;
     try {
       session = await stripe.checkout.sessions.create(sessionParams);
@@ -892,15 +906,14 @@ export async function POST(request: NextRequest) {
           .eq('id', user.id);
         customerId = freshCustomer.id;
         sessionParams.customer = freshCustomer.id;
-        session = await stripe.checkout.sessions.create(sessionParams);
-      } else {
-        if (autoTopUpConsentVersion) {
-          await supabaseAdmin
-            .from('auto_top_up_settings')
-            .update({ pending_enabled: false, failure_reason: 'checkout_session_failed' })
-            .eq('user_id', user.id)
-            .eq('consent_version', autoTopUpConsentVersion);
+        try {
+          session = await stripe.checkout.sessions.create(sessionParams);
+        } catch (retryError) {
+          await clearPendingConsent('checkout_session_retry_failed');
+          throw retryError;
         }
+      } else {
+        await clearPendingConsent('checkout_session_failed');
         throw sessionError;
       }
     }
@@ -919,7 +932,21 @@ export async function POST(request: NextRequest) {
         .select('user_id')
         .maybeSingle();
       if (settingsError || !attachedConsent) {
-        await stripe.checkout.sessions.expire(session.id).catch(() => undefined);
+        try {
+          await stripe.checkout.sessions.expire(session.id);
+        } catch {
+          await clearPendingConsent('orphaned_session_expiration_failed', session.id);
+          return NextResponse.json(
+            {
+              success: false,
+              error: {
+                code: 'AUTO_TOP_UP_SESSION_CLEANUP_FAILED',
+                message: 'Checkout cleanup is pending reconciliation',
+              },
+            },
+            { status: 503 }
+          );
+        }
         return NextResponse.json(
           {
             success: false,
