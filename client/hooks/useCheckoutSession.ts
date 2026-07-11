@@ -7,7 +7,10 @@ import { clientEnv } from '@shared/config/env';
 import { StripeService, clearCheckoutSessionCache } from '@client/services/stripeService';
 import { analytics } from '@client/analytics';
 import { useToastStore } from '@client/store/toastStore';
-import { getCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
+import {
+  getCheckoutFunnelMetadata,
+  getCheckoutTrackingContext,
+} from '@client/utils/checkoutTrackingContext';
 import { getCheckoutUiMode } from '@client/utils/checkoutUiMode';
 import { getStoredCheckoutRescueOffer } from '@client/utils/checkoutRescueOfferStorage';
 import { EXPERIMENT_CHECKOUT_METADATA_KEYS } from '@shared/types/experiments.types';
@@ -202,7 +205,7 @@ export function useCheckoutSession({
         getStoredCheckoutRescueOffer(priceId); // side-effect: hydrate storage check
         const checkoutContext = getCheckoutTrackingContext();
         const checkoutTrigger = checkoutContext?.trigger;
-        const metadata: Record<string, string> = {};
+        const metadata: Record<string, string> = getCheckoutFunnelMetadata();
 
         if (checkoutTrigger) {
           metadata.checkout_trigger = checkoutTrigger;

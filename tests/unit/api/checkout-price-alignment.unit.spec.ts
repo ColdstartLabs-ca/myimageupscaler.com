@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 
 const persistCheckoutIntentContextMock = vi.hoisted(() => vi.fn());
+const validateExperimentCheckoutAttributionMock = vi.hoisted(() => vi.fn());
 
 vi.mock('@shared/config/env', async importOriginal => {
   const actual = await importOriginal<typeof import('@shared/config/env')>();
@@ -69,6 +70,10 @@ vi.mock('@server/services/revenue-recovery.service', () => ({
   })),
 }));
 
+vi.mock('@lib/experiments', () => ({
+  validateExperimentCheckoutAttribution: validateExperimentCheckoutAttributionMock,
+}));
+
 vi.mock('@shared/config/subscription.config', async importOriginal => {
   const actual = await importOriginal<typeof import('@shared/config/subscription.config')>();
   return {
@@ -112,6 +117,16 @@ describe('POST /api/checkout price alignment', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    validateExperimentCheckoutAttributionMock.mockResolvedValue({
+      valid: true,
+      attribution: {
+        experimentKey: 'purchase_modal_default_selection',
+        contextKey: 'global',
+        armId: 10,
+        armKey: 'compact_credit_picker',
+        assignmentKey: 'session:abc',
+      },
+    });
 
     getUserMock.mockResolvedValue({
       data: {
@@ -232,6 +247,13 @@ describe('POST /api/checkout price alignment', () => {
     );
 
     expect(response.status).toBe(200);
+    expect(validateExperimentCheckoutAttributionMock).toHaveBeenCalledWith({
+      experimentKey: 'purchase_modal_default_selection',
+      contextKey: 'global',
+      armId: 10,
+      armKey: 'compact_credit_picker',
+      assignmentKey: 'session:abc',
+    });
 
     const sessionParams = getCreatedSessionParams();
     expect(sessionParams.metadata).toEqual(
@@ -245,6 +267,49 @@ describe('POST /api/checkout price alignment', () => {
     );
   });
 
+  test('should reject incomplete experiment attribution before creating checkout', async () => {
+    const response = await POST(
+      createRequest({
+        priceId: STRIPE_PRICES.MEDIUM_CREDITS,
+        metadata: {
+          exp_key: 'purchase_modal_default_selection',
+          exp_arm_id: '10',
+        },
+      })
+    );
+
+    expect(response.status).toBe(400);
+    expect(sessionCreateMock).not.toHaveBeenCalled();
+  });
+
+  test('should return retryable error when experiment validation storage is unavailable', async () => {
+    validateExperimentCheckoutAttributionMock.mockResolvedValueOnce({
+      valid: false,
+      reason: 'storage_error',
+    });
+
+    const response = await POST(
+      createRequest({
+        priceId: STRIPE_PRICES.MEDIUM_CREDITS,
+        metadata: {
+          exp_key: 'purchase_modal_default_selection',
+          exp_ctx: 'global',
+          exp_arm_id: '10',
+          exp_arm_key: 'compact_credit_picker',
+          exp_assign_key: 'session:abc',
+        },
+      })
+    );
+
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual(
+      expect.objectContaining({
+        error: expect.objectContaining({ code: 'EXPERIMENT_ATTRIBUTION_UNAVAILABLE' }),
+      })
+    );
+    expect(sessionCreateMock).not.toHaveBeenCalled();
+  });
+
   test('should copy checkout attribution metadata to payment_intent_data for payment sessions', async () => {
     const response = await POST(
       createRequest({
@@ -254,6 +319,10 @@ describe('POST /api/checkout price alignment', () => {
           amplitude_session_id: '123456',
           checkout_trigger: 'batch_limit_quick_buy',
           exp_key: 'purchase_modal_default_selection',
+          exp_ctx: 'global',
+          exp_arm_id: '10',
+          exp_arm_key: 'compact_credit_picker',
+          exp_assign_key: 'session:abc',
         },
       })
     );
@@ -273,6 +342,10 @@ describe('POST /api/checkout price alignment', () => {
         amplitude_session_id: '123456',
         checkout_trigger: 'batch_limit_quick_buy',
         exp_key: 'purchase_modal_default_selection',
+        exp_ctx: 'global',
+        exp_arm_id: '10',
+        exp_arm_key: 'compact_credit_picker',
+        exp_assign_key: 'session:abc',
       })
     );
   });

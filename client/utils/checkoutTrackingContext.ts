@@ -2,6 +2,21 @@ const CHECKOUT_TRACKING_CONTEXT_KEY = 'miu_checkout_tracking_context';
 const CHECKOUT_ORIGINATING_MODEL_KEY = 'checkout_originating_model';
 const CONTEXT_EXPIRY_MS = 30 * 60 * 1000;
 const ATTRIBUTION_CHAIN_MAX = 5;
+const FIRST_TOUCH_UTM_STORAGE_KEY = 'miu_first_touch_utm';
+const PSEO_FAMILIES = new Set([
+  'tools',
+  'formats',
+  'scale',
+  'guides',
+  'free',
+  'alternatives',
+  'compare',
+  'platforms',
+  'use-cases',
+  'device-use',
+  'format-scale',
+  'platform-format',
+]);
 
 interface IStoredCheckoutTrackingContext {
   trigger?: string;
@@ -13,6 +28,8 @@ interface IStoredCheckoutTrackingContext {
   experimentArmId?: number;
   experimentArmKey?: string;
   experimentAssignmentKey?: string;
+  pricingRegion?: string;
+  discountPercent?: number;
   timestamp: number;
 }
 
@@ -26,6 +43,46 @@ export interface ICheckoutTrackingContext {
   experimentArmId?: number;
   experimentArmKey?: string;
   experimentAssignmentKey?: string;
+  pricingRegion?: string;
+  discountPercent?: number;
+}
+
+interface IFirstTouchAttribution {
+  utmSource?: string;
+  utmMedium?: string;
+  landingPage?: string;
+}
+
+function getLandingPageFamily(path: string): string {
+  return path.split('?')[0]?.split('/').filter(Boolean)[0] || 'home';
+}
+
+/** Builds the versioned, non-identity funnel contract sent with checkout creation. */
+export function getCheckoutFunnelMetadata(): Record<string, string> {
+  if (typeof window === 'undefined') return {};
+
+  let firstTouch: IFirstTouchAttribution = {};
+  try {
+    const stored = window.localStorage.getItem(FIRST_TOUCH_UTM_STORAGE_KEY);
+    if (stored) firstTouch = JSON.parse(stored) as IFirstTouchAttribution;
+  } catch {
+    // Missing/corrupt attribution must never block checkout.
+  }
+
+  const landingPage = firstTouch.landingPage || window.location.pathname;
+  const landingPageFamily = getLandingPageFamily(landingPage);
+  const width = window.innerWidth;
+  const metadata: Record<string, string> = {
+    funnel_schema_version: '1',
+    first_touch_landing_page: landingPage,
+    landing_page_family: landingPageFamily,
+    device_type: width < 768 ? 'mobile' : width < 1024 ? 'tablet' : 'desktop',
+    is_pseo_landing: String(PSEO_FAMILIES.has(landingPageFamily)),
+  };
+
+  if (firstTouch.utmSource) metadata.first_touch_source = firstTouch.utmSource;
+  if (firstTouch.utmMedium) metadata.first_touch_medium = firstTouch.utmMedium;
+  return metadata;
 }
 
 function readStoredContext(): IStoredCheckoutTrackingContext | null {
@@ -65,7 +122,9 @@ export function getCheckoutTrackingContext(): ICheckoutTrackingContext | null {
     !stored?.trigger &&
     !originatingModel &&
     !stored?.originatingTrigger &&
-    !stored?.experimentKey
+    !stored?.experimentKey &&
+    !stored?.pricingRegion &&
+    stored?.discountPercent === undefined
   ) {
     return null;
   }
@@ -80,6 +139,8 @@ export function getCheckoutTrackingContext(): ICheckoutTrackingContext | null {
     experimentArmId: stored?.experimentArmId,
     experimentArmKey: stored?.experimentArmKey,
     experimentAssignmentKey: stored?.experimentAssignmentKey,
+    pricingRegion: stored?.pricingRegion,
+    discountPercent: stored?.discountPercent,
   };
 }
 
@@ -96,8 +157,17 @@ export function setCheckoutTrackingContext(context: ICheckoutTrackingContext): v
   const experimentArmKey = context.experimentArmKey || existing?.experimentArmKey;
   const experimentAssignmentKey =
     context.experimentAssignmentKey || existing?.experimentAssignmentKey;
+  const pricingRegion = context.pricingRegion || existing?.pricingRegion;
+  const discountPercent = context.discountPercent ?? existing?.discountPercent;
 
-  if (!trigger && !originatingModel && !originatingTrigger && !experimentKey) {
+  if (
+    !trigger &&
+    !originatingModel &&
+    !originatingTrigger &&
+    !experimentKey &&
+    !pricingRegion &&
+    discountPercent === undefined
+  ) {
     clearCheckoutTrackingContext();
     return;
   }
@@ -148,6 +218,14 @@ export function setCheckoutTrackingContext(context: ICheckoutTrackingContext): v
 
   if (experimentAssignmentKey) {
     next.experimentAssignmentKey = experimentAssignmentKey;
+  }
+
+  if (pricingRegion) {
+    next.pricingRegion = pricingRegion;
+  }
+
+  if (discountPercent !== undefined) {
+    next.discountPercent = discountPercent;
   }
 
   sessionStorage.setItem(CHECKOUT_TRACKING_CONTEXT_KEY, JSON.stringify(next));

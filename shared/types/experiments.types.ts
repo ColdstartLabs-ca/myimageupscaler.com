@@ -32,8 +32,15 @@ export interface IExperimentRewardRequest {
   rewardValue?: number;
   revenueCents?: number;
   sourceEvent?: string;
+  purchaseId?: string;
   metadata?: Record<string, unknown>;
 }
+
+export type TExperimentRewardOutcome =
+  | 'recorded'
+  | 'duplicate'
+  | 'missing_assignment'
+  | 'invalid_arm';
 
 export interface IExperimentCheckoutMetadata {
   experimentKey: string;
@@ -42,6 +49,21 @@ export interface IExperimentCheckoutMetadata {
   experimentArmKey: string;
   experimentAssignmentKey?: string;
 }
+
+export interface IExperimentCheckoutAttributionInput {
+  experimentKey: string;
+  contextKey: string;
+  armId: number;
+  armKey: string;
+  assignmentKey: string;
+}
+
+export type TExperimentAttributionValidationResult =
+  | { valid: true; attribution: IExperimentCheckoutAttributionInput }
+  | {
+      valid: false;
+      reason: 'missing_assignment' | 'assignment_mismatch' | 'invalid_arm' | 'storage_error';
+    };
 
 export const EXPERIMENT_CHECKOUT_METADATA_KEYS = {
   experimentKey: 'exp_key',

@@ -780,6 +780,19 @@ export type IAnalyticsEventName =
   // Amplitude identity events (server-side only)
   | '$identify';
 
+/** Versioned dimensions used to join acquisition, checkout, and purchase events. */
+export const FUNNEL_SCHEMA_VERSION = '1' as const;
+
+export interface IFunnelAttributionProperties {
+  funnelSchemaVersion: typeof FUNNEL_SCHEMA_VERSION;
+  firstTouchSource?: string;
+  firstTouchMedium?: string;
+  firstTouchLandingPage?: string;
+  landingPageFamily?: string;
+  deviceType?: 'mobile' | 'tablet' | 'desktop';
+  isPseoLanding?: boolean;
+}
+
 export interface IAnalyticsEvent {
   name: IAnalyticsEventName;
   properties?: Record<string, unknown>;

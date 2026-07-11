@@ -59,6 +59,7 @@ vi.mock('@client/utils/checkoutRescueOfferStorage', () => ({
 
 vi.mock('@client/utils/checkoutTrackingContext', () => ({
   getCheckoutTrackingContext: mockGetTrackingContext,
+  getCheckoutFunnelMetadata: vi.fn(() => ({})),
 }));
 
 vi.mock('@client/analytics', () => ({

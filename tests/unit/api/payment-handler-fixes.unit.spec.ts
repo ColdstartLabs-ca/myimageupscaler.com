@@ -54,7 +54,7 @@ vi.mock('@server/services/engagement-discount.service', () => ({
 }));
 
 vi.mock('@lib/experiments', () => ({
-  recordExperimentReward: vi.fn(() => Promise.resolve()),
+  recordExperimentReward: vi.fn(() => Promise.resolve('recorded')),
 }));
 
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
@@ -228,7 +228,14 @@ describe('PaymentHandler - MEDIUM-14: Verify credits from price config', () => {
           assignmentKey: 'session:abc',
           rewardType: 'purchase_confirmed',
           revenueCents: 2000,
-          sourceEvent: 'purchase_confirmed',
+          purchaseId: mockSessionId,
+        })
+      );
+      expect(consoleSpy.log).toHaveBeenCalledWith(
+        '[EXPERIMENT_REWARD_HEALTH]',
+        expect.objectContaining({
+          outcome: 'recorded',
+          stripeCheckoutSessionId: mockSessionId,
         })
       );
     });

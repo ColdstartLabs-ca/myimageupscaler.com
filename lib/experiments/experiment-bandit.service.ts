@@ -4,6 +4,9 @@ import type {
   IExperimentAssignmentRequest,
   IExperimentArmConfig,
   IExperimentRewardRequest,
+  IExperimentCheckoutAttributionInput,
+  TExperimentAttributionValidationResult,
+  TExperimentRewardOutcome,
 } from '@shared/types/experiments.types';
 
 interface IExperimentArmRow {
@@ -15,6 +18,36 @@ interface IExperimentArmRow {
   impressions: number;
   rewards: number;
   revenue_cents: number;
+}
+
+export async function validateExperimentCheckoutAttribution(
+  attribution: IExperimentCheckoutAttributionInput
+): Promise<TExperimentAttributionValidationResult> {
+  const { data: assignment, error } = await supabaseAdmin
+    .from('experiment_assignments')
+    .select('arm_id, experiment_key, context_key, assignment_key, surface')
+    .eq('experiment_key', attribution.experimentKey)
+    .eq('context_key', attribution.contextKey)
+    .eq('assignment_key', attribution.assignmentKey)
+    .maybeSingle();
+
+  if (error) return { valid: false, reason: 'storage_error' };
+  if (!assignment) return { valid: false, reason: 'missing_assignment' };
+  if (Number(assignment.arm_id) !== attribution.armId) {
+    return { valid: false, reason: 'assignment_mismatch' };
+  }
+
+  const arm = await getArmById(attribution.armId);
+  if (
+    !arm ||
+    arm.experiment_key !== attribution.experimentKey ||
+    arm.context_key !== attribution.contextKey ||
+    arm.arm_key !== attribution.armKey
+  ) {
+    return { valid: false, reason: 'invalid_arm' };
+  }
+
+  return { valid: true, attribution };
 }
 
 interface IExperimentAssignmentRow {
@@ -194,43 +227,40 @@ export async function assignExperimentArm(
   }
 }
 
-export async function recordExperimentReward(params: IExperimentRewardRequest): Promise<void> {
+export async function recordExperimentReward(
+  params: IExperimentRewardRequest
+): Promise<TExperimentRewardOutcome> {
   const contextKey = params.contextKey || 'global';
   const rewardValue = params.rewardValue ?? 1;
   const revenueCents = params.revenueCents ?? 0;
 
-  try {
-    const { data: arm, error: fetchError } = await supabaseAdmin
-      .from('experiment_arms')
-      .select('rewards, revenue_cents')
-      .eq('id', params.armId)
-      .eq('experiment_key', params.experimentKey)
-      .eq('context_key', contextKey)
-      .single();
+  if (!params.assignmentKey) return 'missing_assignment';
+  if (!params.purchaseId) throw new Error('Experiment purchase reward requires purchaseId');
 
-    if (fetchError || !arm) return;
+  const { data, error } = await supabaseAdmin.rpc('record_experiment_purchase_reward', {
+    p_experiment_key: params.experimentKey,
+    p_context_key: contextKey,
+    p_arm_id: params.armId,
+    p_assignment_key: params.assignmentKey,
+    p_purchase_id: params.purchaseId,
+    p_reward_type: params.rewardType,
+    p_reward_value: rewardValue,
+    p_revenue_cents: revenueCents,
+    p_metadata: params.metadata ?? {},
+  });
 
-    await supabaseAdmin.from('experiment_rewards').insert({
-      experiment_key: params.experimentKey,
-      context_key: contextKey,
-      arm_id: params.armId,
-      assignment_key: params.assignmentKey,
-      reward_type: params.rewardType,
-      reward_value: rewardValue,
-      revenue_cents: revenueCents,
-      source_event: params.sourceEvent,
-      metadata: params.metadata ?? {},
-    });
-
-    await supabaseAdmin
-      .from('experiment_arms')
-      .update({
-        rewards: Number(arm.rewards ?? 0) + rewardValue,
-        revenue_cents: Number(arm.revenue_cents ?? 0) + revenueCents,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', params.armId);
-  } catch {
-    return;
+  if (error) {
+    throw new Error(`Failed to record experiment reward: ${error.message}`);
   }
+
+  if (
+    data !== 'recorded' &&
+    data !== 'duplicate' &&
+    data !== 'missing_assignment' &&
+    data !== 'invalid_arm'
+  ) {
+    throw new Error(`Unexpected experiment reward outcome: ${String(data)}`);
+  }
+
+  return data;
 }

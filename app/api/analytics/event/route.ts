@@ -6,6 +6,7 @@ import { serverEnv } from '@shared/config/env';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serializeError } from '@shared/utils/errors';
 import { getRevenueRecoveryService } from '@server/services/revenue-recovery.service';
+import { FUNNEL_SCHEMA_VERSION } from '@server/analytics/types';
 
 // Allowed event names for security - matches IAnalyticsEventName type
 // Note: $identify is excluded because it's a server-side only event
@@ -269,6 +270,21 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     const { eventName, properties = {}, sessionId } = validated.data;
+
+    if (
+      properties.funnelSchemaVersion !== undefined &&
+      properties.funnelSchemaVersion !== FUNNEL_SCHEMA_VERSION
+    ) {
+      return NextResponse.json(
+        { error: 'Invalid event payload', details: ['Invalid funnel schema version'] },
+        { status: 400 }
+      );
+    }
+
+    // Identity is always resolved from the bearer token below. Never forward a
+    // client-provided identity as an event property.
+    delete properties.userId;
+    delete properties.user_id;
 
     // 4.5. Validate pricingRegion for pricing-related events
     const PRICING_EVENTS_REQUIRING_REGION = [

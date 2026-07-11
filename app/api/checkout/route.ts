@@ -16,6 +16,19 @@ import { getRevenueRecoveryService } from '@server/services/revenue-recovery.ser
 import { ENGAGEMENT_DISCOUNT_CONFIG } from '@shared/config/engagement-discount';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { validateExperimentCheckoutAttribution } from '@lib/experiments';
+import { EXPERIMENT_CHECKOUT_METADATA_KEYS } from '@shared/types/experiments.types';
+import { FUNNEL_SCHEMA_VERSION } from '@server/analytics/types';
+
+const FUNNEL_CHECKOUT_METADATA_KEYS = {
+  schemaVersion: 'funnel_schema_version',
+  firstTouchSource: 'first_touch_source',
+  firstTouchMedium: 'first_touch_medium',
+  firstTouchLandingPage: 'first_touch_landing_page',
+  landingPageFamily: 'landing_page_family',
+  deviceType: 'device_type',
+  isPseoLanding: 'is_pseo_landing',
+} as const;
 
 /**
  * Validates and parses the request body
@@ -71,9 +84,65 @@ const RESERVED_CHECKOUT_METADATA_KEYS = new Set([
   'pack_key',
   'credits',
   'price_id',
+  ...Object.values(EXPERIMENT_CHECKOUT_METADATA_KEYS),
+  ...Object.values(FUNNEL_CHECKOUT_METADATA_KEYS),
   // bandit_arm_id is intentionally NOT reserved: it comes from the client (via /api/geo)
   // and must pass through to Stripe metadata so the webhook can record conversions.
 ]);
+
+export function parseFunnelCheckoutAttribution(metadata: Record<string, string>) {
+  const keys = FUNNEL_CHECKOUT_METADATA_KEYS;
+  const hasFunnelMetadata = Object.values(keys).some(key => metadata[key] !== undefined);
+  if (!hasFunnelMetadata) return null;
+
+  if (metadata[keys.schemaVersion] !== FUNNEL_SCHEMA_VERSION) {
+    throw new Error('Invalid funnel schema version');
+  }
+
+  const deviceType = metadata[keys.deviceType];
+  if (deviceType && !['mobile', 'tablet', 'desktop'].includes(deviceType)) {
+    throw new Error('Invalid funnel device type');
+  }
+  const isPseoLanding = metadata[keys.isPseoLanding];
+  if (isPseoLanding && !['true', 'false'].includes(isPseoLanding)) {
+    throw new Error('Invalid funnel pSEO classification');
+  }
+
+  return Object.fromEntries(
+    Object.values(keys)
+      .filter(key => metadata[key] !== undefined)
+      .map(key => [key, metadata[key]])
+  );
+}
+
+function parseExperimentCheckoutAttribution(metadata: Record<string, string>) {
+  const keys = EXPERIMENT_CHECKOUT_METADATA_KEYS;
+  const hasExperimentMetadata = Object.values(keys).some(key => metadata[key] !== undefined);
+  if (!hasExperimentMetadata) return null;
+
+  const experimentKey = metadata[keys.experimentKey];
+  const experimentContextKey = metadata[keys.experimentContextKey];
+  const experimentArmKey = metadata[keys.experimentArmKey];
+  const experimentAssignmentKey = metadata[keys.experimentAssignmentKey];
+  const experimentArmId = Number(metadata[keys.experimentArmId]);
+  if (
+    !experimentKey ||
+    !experimentContextKey ||
+    !experimentArmKey ||
+    !experimentAssignmentKey ||
+    !Number.isSafeInteger(experimentArmId) ||
+    experimentArmId <= 0
+  ) {
+    throw new Error('Incomplete or invalid experiment checkout attribution');
+  }
+  return {
+    experimentKey,
+    contextKey: experimentContextKey,
+    armId: experimentArmId,
+    armKey: experimentArmKey,
+    assignmentKey: experimentAssignmentKey,
+  };
+}
 
 function sanitizeCustomCheckoutMetadata(metadata: Record<string, string>): Record<string, string> {
   return Object.fromEntries(
@@ -249,6 +318,22 @@ export async function POST(request: NextRequest) {
     const { priceId, successUrl, cancelUrl, metadata = {}, uiMode = 'hosted', offerToken } = body;
     const customMetadata = sanitizeCustomCheckoutMetadata(metadata);
 
+    let validatedFunnelMetadata: Record<string, string> = {};
+    try {
+      validatedFunnelMetadata = parseFunnelCheckoutAttribution(metadata) || {};
+    } catch (error) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'INVALID_FUNNEL_ATTRIBUTION',
+            message: error instanceof Error ? error.message : 'Invalid funnel attribution',
+          },
+        },
+        { status: 400 }
+      );
+    }
+
     if (Object.keys(customMetadata).length !== Object.keys(metadata).length) {
       console.warn('[CHECKOUT_METADATA_OVERRIDE_BLOCKED]', {
         requestedKeys: Object.keys(metadata),
@@ -341,6 +426,50 @@ export async function POST(request: NextRequest) {
           },
         },
         { status: 401 }
+      );
+    }
+
+    let validatedExperimentMetadata: Record<string, string> = {};
+    try {
+      const attribution = parseExperimentCheckoutAttribution(metadata);
+      if (attribution) {
+        const validation = await validateExperimentCheckoutAttribution(attribution);
+        if (!validation.valid && validation.reason === 'storage_error') {
+          return NextResponse.json(
+            {
+              success: false,
+              error: {
+                code: 'EXPERIMENT_ATTRIBUTION_UNAVAILABLE',
+                message: 'Experiment attribution is temporarily unavailable',
+              },
+            },
+            { status: 503 }
+          );
+        }
+        if (!validation.valid) {
+          throw new Error(`Invalid experiment checkout attribution: ${validation.reason}`);
+        }
+        validatedExperimentMetadata = {
+          [EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentKey]: validation.attribution.experimentKey,
+          [EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentContextKey]:
+            validation.attribution.contextKey,
+          [EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmId]:
+            validation.attribution.armId.toString(),
+          [EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmKey]: validation.attribution.armKey,
+          [EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentAssignmentKey]:
+            validation.attribution.assignmentKey,
+        };
+      }
+    } catch (error) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'INVALID_EXPERIMENT_ATTRIBUTION',
+            message: error instanceof Error ? error.message : 'Invalid experiment attribution',
+          },
+        },
+        { status: 400 }
       );
     }
 
@@ -611,6 +740,8 @@ export async function POST(request: NextRequest) {
 
     const checkoutMetadata: Record<string, string> = {
       ...customMetadata,
+      ...validatedExperimentMetadata,
+      ...validatedFunnelMetadata,
       user_id: user.id,
       price_id: validatedPriceId,
       pricing_region: resolvedPricingRegion,
@@ -737,6 +868,17 @@ export async function POST(request: NextRequest) {
         pack: unifiedMetadata?.type === 'pack' ? unifiedMetadata.key : undefined,
         pricingRegion: resolvedPricingRegion,
         discountPercent: regionalDiscountPercent,
+        funnelSchemaVersion: validatedFunnelMetadata.funnel_schema_version,
+        firstTouchSource: validatedFunnelMetadata.first_touch_source,
+        firstTouchMedium: validatedFunnelMetadata.first_touch_medium,
+        firstTouchLandingPage: validatedFunnelMetadata.first_touch_landing_page,
+        landingPageFamily: validatedFunnelMetadata.landing_page_family,
+        deviceType: validatedFunnelMetadata.device_type,
+        isPseoLanding:
+          validatedFunnelMetadata.is_pseo_landing === undefined
+            ? undefined
+            : validatedFunnelMetadata.is_pseo_landing === 'true',
+        checkoutAuthenticated: true,
       },
       { apiKey: serverEnv.AMPLITUDE_API_KEY, userId: user.id }
     );

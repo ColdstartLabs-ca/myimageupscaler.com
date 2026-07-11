@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { assignExperimentArm, recordExperimentReward } from '@lib/experiments';
+import {
+  assignExperimentArm,
+  recordExperimentReward,
+  validateExperimentCheckoutAttribution,
+} from '@lib/experiments';
 
 interface IArmRow {
   id: number;
@@ -24,6 +28,38 @@ interface IAssignmentRow {
 const arms: IArmRow[] = [];
 const assignments: IAssignmentRow[] = [];
 const rewards: unknown[] = [];
+
+async function recordRewardRpc(params: Record<string, unknown>) {
+  const assignment = assignments.find(
+    row =>
+      row.experiment_key === params.p_experiment_key &&
+      row.context_key === params.p_context_key &&
+      row.assignment_key === params.p_assignment_key
+  );
+  if (!assignment) return { data: 'missing_assignment', error: null };
+  const arm = arms.find(
+    row =>
+      row.id === params.p_arm_id &&
+      row.experiment_key === params.p_experiment_key &&
+      row.context_key === params.p_context_key
+  );
+  if (!arm || assignment.arm_id !== params.p_arm_id) {
+    return { data: 'invalid_arm', error: null };
+  }
+  const duplicate = rewards.some(
+    reward =>
+      (reward as Record<string, unknown>).purchaseId === params.p_purchase_id &&
+      (reward as Record<string, unknown>).experimentKey === params.p_experiment_key
+  );
+  if (duplicate) return { data: 'duplicate', error: null };
+  rewards.push({
+    purchaseId: params.p_purchase_id,
+    experimentKey: params.p_experiment_key,
+  });
+  arm.rewards += Number(params.p_reward_value);
+  arm.revenue_cents += Number(params.p_revenue_cents);
+  return { data: 'recorded', error: null };
+}
 
 class QueryBuilder {
   private filters: Record<string, unknown> = {};
@@ -103,6 +139,7 @@ class QueryBuilder {
 vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: {
     from: (table: string) => new QueryBuilder(table),
+    rpc: (_name: string, params: Record<string, unknown>) => recordRewardRpc(params),
   },
 }));
 
@@ -174,17 +211,146 @@ describe('experiment bandit service', () => {
   });
 
   it('records revenue reward', async () => {
-    await recordExperimentReward({
-      experimentKey: 'purchase_modal_default_selection',
-      contextKey: 'global',
-      armId: 10,
-      rewardType: 'purchase_confirmed',
-      revenueCents: 1499,
+    assignments.push({
+      experiment_key: 'purchase_modal_default_selection',
+      context_key: 'global',
+      arm_id: 10,
+      assignment_key: 'session:abc',
+      surface: 'purchase_modal',
     });
+
+    await expect(
+      recordExperimentReward({
+        experimentKey: 'purchase_modal_default_selection',
+        contextKey: 'global',
+        armId: 10,
+        assignmentKey: 'session:abc',
+        purchaseId: 'cs_test_123',
+        rewardType: 'purchase_confirmed',
+        revenueCents: 1499,
+      })
+    ).resolves.toBe('recorded');
 
     expect(rewards).toHaveLength(1);
     expect(arms[0].rewards).toBe(1);
     expect(arms[0].revenue_cents).toBe(1499);
+  });
+
+  it('should ignore duplicate Stripe purchase reward', async () => {
+    assignments.push({
+      experiment_key: 'purchase_modal_default_selection',
+      context_key: 'global',
+      arm_id: 10,
+      assignment_key: 'session:abc',
+      surface: 'purchase_modal',
+    });
+    const request = {
+      experimentKey: 'purchase_modal_default_selection',
+      contextKey: 'global',
+      armId: 10,
+      assignmentKey: 'session:abc',
+      purchaseId: 'cs_test_duplicate',
+      rewardType: 'purchase_confirmed',
+      revenueCents: 1499,
+    };
+
+    await expect(recordExperimentReward(request)).resolves.toBe('recorded');
+    await expect(recordExperimentReward(request)).resolves.toBe('duplicate');
+
+    expect(rewards).toHaveLength(1);
+    expect(arms[0].rewards).toBe(1);
+    expect(arms[0].revenue_cents).toBe(1499);
+  });
+
+  it('should report missing assignment without recording reward', async () => {
+    await expect(
+      recordExperimentReward({
+        experimentKey: 'purchase_modal_default_selection',
+        contextKey: 'global',
+        armId: 10,
+        assignmentKey: 'session:missing',
+        purchaseId: 'cs_test_missing',
+        rewardType: 'purchase_confirmed',
+        revenueCents: 1499,
+      })
+    ).resolves.toBe('missing_assignment');
+
+    expect(rewards).toHaveLength(0);
+    expect(arms[0].rewards).toBe(0);
+  });
+
+  it('should report invalid arm without recording reward', async () => {
+    assignments.push({
+      experiment_key: 'purchase_modal_default_selection',
+      context_key: 'global',
+      arm_id: 10,
+      assignment_key: 'session:abc',
+      surface: 'purchase_modal',
+    });
+
+    await expect(
+      recordExperimentReward({
+        experimentKey: 'purchase_modal_default_selection',
+        contextKey: 'global',
+        armId: 11,
+        assignmentKey: 'session:abc',
+        purchaseId: 'cs_test_invalid',
+        rewardType: 'purchase_confirmed',
+        revenueCents: 1499,
+      })
+    ).resolves.toBe('invalid_arm');
+
+    expect(rewards).toHaveLength(0);
+    expect(arms.every(arm => arm.rewards === 0)).toBe(true);
+  });
+
+  it('should validate a complete assignment for checkout metadata', async () => {
+    assignments.push({
+      experiment_key: 'purchase_modal_default_selection',
+      context_key: 'global',
+      arm_id: 10,
+      assignment_key: 'session:abc',
+      surface: 'purchase_modal',
+    });
+
+    await expect(
+      validateExperimentCheckoutAttribution({
+        experimentKey: 'purchase_modal_default_selection',
+        contextKey: 'global',
+        armId: 10,
+        armKey: 'control',
+        assignmentKey: 'session:abc',
+      })
+    ).resolves.toEqual({
+      valid: true,
+      attribution: {
+        experimentKey: 'purchase_modal_default_selection',
+        contextKey: 'global',
+        armId: 10,
+        armKey: 'control',
+        assignmentKey: 'session:abc',
+      },
+    });
+  });
+
+  it('should reject checkout attribution when the arm does not match assignment', async () => {
+    assignments.push({
+      experiment_key: 'purchase_modal_default_selection',
+      context_key: 'global',
+      arm_id: 10,
+      assignment_key: 'session:abc',
+      surface: 'purchase_modal',
+    });
+
+    await expect(
+      validateExperimentCheckoutAttribution({
+        experimentKey: 'purchase_modal_default_selection',
+        contextKey: 'global',
+        armId: 11,
+        armKey: 'compact',
+        assignmentKey: 'session:abc',
+      })
+    ).resolves.toEqual({ valid: false, reason: 'assignment_mismatch' });
   });
 
   it('returns null when no active arms exist', async () => {

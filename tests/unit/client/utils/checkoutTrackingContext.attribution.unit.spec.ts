@@ -3,6 +3,7 @@ import {
   setCheckoutTrackingContext,
   getCheckoutTrackingContext,
   clearCheckoutTrackingContext,
+  getCheckoutFunnelMetadata,
 } from '@client/utils/checkoutTrackingContext';
 
 const SESSION_KEY = 'miu_checkout_tracking_context';
@@ -112,5 +113,28 @@ describe('checkoutTrackingContext — attribution chain', () => {
         experimentAssignmentKey: 'session:abc',
       })
     );
+  });
+
+  test('should preserve acquisition and landing-page fields through checkout', () => {
+    vi.mocked(window.localStorage.getItem).mockImplementation(key =>
+      key === 'miu_first_touch_utm'
+        ? JSON.stringify({
+            utmSource: 'google',
+            utmMedium: 'cpc',
+            landingPage: '/tools/ai-image-upscaler',
+          })
+        : null
+    );
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: 390 });
+
+    expect(getCheckoutFunnelMetadata()).toEqual({
+      funnel_schema_version: '1',
+      first_touch_source: 'google',
+      first_touch_medium: 'cpc',
+      first_touch_landing_page: '/tools/ai-image-upscaler',
+      landing_page_family: 'tools',
+      device_type: 'mobile',
+      is_pseo_landing: 'true',
+    });
   });
 });

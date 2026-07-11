@@ -54,6 +54,8 @@
     "stripe:check": "./scripts/load-env.sh --print",
     "amplitude:check": "bash -c 'source ./scripts/load-env.sh && npx tsx scripts/check-amplitude-events.ts \"$@\"' --",
     "amplitude:check:prod": "bash -c 'source ./scripts/load-env.sh --prod && npx tsx scripts/check-amplitude-events.ts \"$@\"' --",
+    "experiment:rewards:check": "bash -c 'source ./scripts/load-env.sh && npx tsx scripts/check-experiment-reward-health.ts'",
+    "experiment:rewards:check:prod": "bash -c 'source ./scripts/load-env.sh --prod && npx tsx scripts/check-experiment-reward-health.ts'",
     "recovery:cohorts:check": "bash -c 'source ./scripts/load-env.sh && npx tsx scripts/check-recovery-cohorts.ts \"$@\"' --",
     "recovery:cohorts:check:prod": "bash -c 'source ./scripts/load-env.sh --prod && npx tsx scripts/check-recovery-cohorts.ts \"$@\"' --",
     "recovery:controlled:check": "bash -c 'source ./scripts/load-env.sh && npx tsx scripts/check-recovery-controlled-path.ts \"$@\"' --",

@@ -258,22 +258,54 @@ export class PaymentHandler {
     amountCents: number
   ): Promise<void> {
     const experiment = this.getExperimentRewardMetadata(session);
-    if (!experiment) return;
+    const hasExperimentMetadata = Object.values(EXPERIMENT_CHECKOUT_METADATA_KEYS).some(
+      key => session.metadata?.[key] !== undefined
+    );
+    if (!experiment) {
+      if (hasExperimentMetadata) {
+        console.warn('[EXPERIMENT_REWARD_HEALTH]', {
+          outcome: 'missing_assignment',
+          stripeCheckoutSessionId: session.id,
+        });
+      }
+      return;
+    }
 
-    await recordExperimentReward({
-      experimentKey: experiment.experimentKey,
-      contextKey: experiment.contextKey,
-      armId: experiment.armId,
-      assignmentKey: experiment.assignmentKey,
-      rewardType: 'purchase_confirmed',
-      rewardValue: 1,
-      revenueCents: amountCents,
-      sourceEvent: 'purchase_confirmed',
-      metadata: {
+    try {
+      const outcome = await recordExperimentReward({
+        experimentKey: experiment.experimentKey,
+        contextKey: experiment.contextKey,
+        armId: experiment.armId,
+        assignmentKey: experiment.assignmentKey,
+        rewardType: 'purchase_confirmed',
+        rewardValue: 1,
+        revenueCents: amountCents,
+        purchaseId: session.id,
+        metadata: {
+          stripeCheckoutSessionId: session.id,
+          stripePaymentIntentId:
+            typeof session.payment_intent === 'string'
+              ? session.payment_intent
+              : session.payment_intent?.id,
+          armKey: experiment.armKey,
+        },
+      });
+      console.log('[EXPERIMENT_REWARD_HEALTH]', {
+        outcome,
+        experimentKey: experiment.experimentKey,
+        armId: experiment.armId,
         stripeCheckoutSessionId: session.id,
-        armKey: experiment.armKey,
-      },
-    });
+      });
+    } catch (error) {
+      // Attribution health must never roll back confirmed payment fulfillment.
+      console.error('[EXPERIMENT_REWARD_HEALTH]', {
+        outcome: 'storage_error',
+        experimentKey: experiment.experimentKey,
+        armId: experiment.armId,
+        stripeCheckoutSessionId: session.id,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
   }
 
   /**
@@ -582,7 +614,9 @@ export class PaymentHandler {
         amplitudeOpts
       );
 
-      await this.recordCheckoutExperimentReward(session, amountCents);
+      if (session.payment_status === 'paid') {
+        await this.recordCheckoutExperimentReward(session, amountCents);
+      }
 
       // Update user properties in Amplitude for subscription purchases
       // Note: subscription.handler.ts handles the primary $identify for subscriptions,
