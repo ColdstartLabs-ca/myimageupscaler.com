@@ -65,6 +65,41 @@ function trackPurchaseConfirmed(params: {
     );
 }
 
+async function recordRetentionBillingEvent(params: {
+  subscriptionId: string | undefined;
+  sourceId: string;
+  eventType: 'invoice_paid' | 'billing_error';
+  amountCents?: number;
+}): Promise<void> {
+  if (!params.subscriptionId) return;
+  try {
+    const { data: cohort } = await supabaseAdmin
+      .from('subscription_retention_events')
+      .select('user_id, variant')
+      .eq('subscription_id', params.subscriptionId)
+      .in('event_type', ['offer_shown', 'holdout_assigned'])
+      .limit(1)
+      .maybeSingle();
+    if (!cohort) return;
+    const { error } = await supabaseAdmin.from('subscription_retention_events').upsert(
+      {
+        event_key: `${params.eventType}:${params.sourceId}`,
+        subscription_id: params.subscriptionId,
+        user_id: cohort.user_id,
+        event_type: params.eventType,
+        variant: cohort.variant,
+        amount_cents: params.amountCents ?? 0,
+      },
+      { onConflict: 'event_key', ignoreDuplicates: true }
+    );
+    if (error) console.warn('[RETENTION_MEASUREMENT] Failed to record billing event', error);
+  } catch (error) {
+    if (!(error instanceof TypeError)) {
+      console.warn('[RETENTION_MEASUREMENT] Failed to record billing event', error);
+    }
+  }
+}
+
 // Invoice line item interface for accessing runtime properties
 interface IStripeInvoiceLineItemExtended {
   type?: string;
@@ -100,6 +135,12 @@ export class InvoiceHandler {
     if (!subscriptionId) {
       return; // Not a subscription invoice
     }
+    await recordRetentionBillingEvent({
+      subscriptionId,
+      sourceId: invoice.id,
+      eventType: 'invoice_paid',
+      amountCents: invoice.amount_paid || 0,
+    });
 
     // Check if this is the first invoice for a new subscription
     // Previously we blindly skipped these, assuming checkout.session.completed already added credits.
@@ -442,6 +483,18 @@ export class InvoiceHandler {
    */
   static async handleInvoicePaymentFailed(invoice: Stripe.Invoice): Promise<void> {
     const customerId = invoice.customer as string;
+    const invoiceSubscription = (
+      invoice as Stripe.Invoice & {
+        subscription?: string | Stripe.Subscription | null;
+      }
+    ).subscription;
+    const subscriptionId =
+      typeof invoiceSubscription === 'string' ? invoiceSubscription : invoiceSubscription?.id;
+    await recordRetentionBillingEvent({
+      subscriptionId,
+      sourceId: invoice.id,
+      eventType: 'billing_error',
+    });
 
     // Get the user ID from the customer
     const { data: profile } = await supabaseAdmin

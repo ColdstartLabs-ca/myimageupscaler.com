@@ -25,6 +25,12 @@ export class DisputeHandler {
     // 1. Get charge details to find customer
     const charge = await stripe.charges.retrieve(chargeId);
     const customerId = charge.customer as string;
+    const chargeInvoice = (
+      charge as Stripe.Charge & {
+        invoice?: string | Stripe.Invoice | null;
+      }
+    ).invoice;
+    const invoiceId = typeof chargeInvoice === 'string' ? chargeInvoice : chargeInvoice?.id;
 
     if (!customerId) {
       console.error(`[DISPUTE] No customer ID for charge ${chargeId}`);
@@ -89,6 +95,7 @@ export class DisputeHandler {
       dispute_id: dispute.id,
       user_id: profile.id,
       charge_id: chargeId,
+      invoice_id: invoiceId,
       amount_cents: disputeAmountCents,
       credits_held: creditsToHold,
       status: 'created',

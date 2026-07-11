@@ -22,26 +22,26 @@ export class PaymentHandler {
   private static async recordRetentionRefund(
     userId: string,
     sourceId: string,
-    amountCents: number
+    amountCents: number,
+    invoiceId: string | null | undefined
   ): Promise<void> {
+    if (!invoiceId) return;
     try {
-      const { data: accepted } = await supabaseAdmin
+      const { data: paidInvoice } = await supabaseAdmin
         .from('subscription_retention_events')
-        .select('subscription_id')
+        .select('subscription_id, variant')
         .eq('user_id', userId)
-        .eq('event_type', 'offer_accepted')
-        .order('occurred_at', { ascending: false })
-        .limit(1)
+        .eq('event_key', `invoice_paid:${invoiceId}`)
         .maybeSingle();
-      if (!accepted?.subscription_id) return;
+      if (!paidInvoice?.subscription_id) return;
 
       const { error } = await supabaseAdmin.from('subscription_retention_events').upsert(
         {
           event_key: `refund:${sourceId}`,
-          subscription_id: accepted.subscription_id,
+          subscription_id: paidInvoice.subscription_id,
           user_id: userId,
           event_type: 'refund',
-          variant: 'treatment',
+          variant: paidInvoice.variant,
           amount_cents: amountCents,
         },
         { onConflict: 'event_key', ignoreDuplicates: true }
@@ -1194,7 +1194,7 @@ export class PaymentHandler {
       paymentIntentId,
       timestamp: new Date().toISOString(),
     });
-    await this.recordRetentionRefund(userId, charge.id, refundAmount);
+    await this.recordRetentionRefund(userId, charge.id, refundAmount, invoiceId);
 
     // Try multiple reference formats to find the original transaction
     // Credit packs use pi_ or session_, subscriptions use invoice_
@@ -1268,7 +1268,7 @@ export class PaymentHandler {
       throw new Error(`Profile not found for customer ${customerId} - webhook will retry`);
     }
 
-    await this.recordRetentionRefund(profile.id, invoice.id, invoice.amount_paid);
+    await this.recordRetentionRefund(profile.id, invoice.id, invoice.amount_paid, invoice.id);
 
     try {
       // Clawback using invoice reference - will route to correct pool automatically
