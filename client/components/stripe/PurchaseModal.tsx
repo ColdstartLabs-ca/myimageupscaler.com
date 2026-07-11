@@ -190,6 +190,8 @@ export function PurchaseModal({
   // Default selection on open
   useEffect(() => {
     if (isOpen && !purchaseExperiment.isLoading) {
+      setAutoTopUpEnabled(false);
+      setAutoTopUpThreshold(25);
       openTimeRef.current = Date.now();
       const existingContext = getCheckoutTrackingContext();
       const experimentProps = getExperimentAnalyticsProps(purchaseExperiment.assignment);
@@ -334,6 +336,7 @@ export function PurchaseModal({
           current || subscriptionPlans.find(p => p.recommended) || subscriptionPlans[0] || null
       );
       setSelectedPack(null);
+      setAutoTopUpEnabled(false);
     },
     [
       creditPacks,
@@ -361,6 +364,7 @@ export function PurchaseModal({
     setSelectedPlan(plan);
     setSelectedPack(null);
     setPurchaseMode('subscribe');
+    setAutoTopUpEnabled(false);
     analytics.track('pricing_plan_viewed', {
       planName: plan.key,
       priceId: plan.stripePriceId,
@@ -862,23 +866,33 @@ export function PurchaseModal({
                       onChange={event => setAutoTopUpEnabled(event.target.checked)}
                       className="mt-0.5"
                     />
-                    <span>Automatically buy this pack when my balance is low</span>
+                    <span>
+                      Automatically buy {selectedPack.name} for{' '}
+                      {formatPrice(selectedPack.priceInCents, discountPercent)} when my balance is
+                      low
+                    </span>
                   </label>
                   {autoTopUpEnabled && (
-                    <label className="mt-2 flex items-center justify-between gap-3 text-xs text-text-secondary">
-                      Refill below
-                      <select
-                        value={autoTopUpThreshold}
-                        onChange={event => setAutoTopUpThreshold(Number(event.target.value))}
-                        className="rounded-lg border border-border bg-surface px-2 py-1 text-text-primary"
-                      >
-                        {[10, 25, 50].map(value => (
-                          <option key={value} value={value}>
-                            {value} credits
-                          </option>
-                        ))}
-                      </select>
-                    </label>
+                    <>
+                      <label className="mt-2 flex items-center justify-between gap-3 text-xs text-text-secondary">
+                        Refill below
+                        <select
+                          value={autoTopUpThreshold}
+                          onChange={event => setAutoTopUpThreshold(Number(event.target.value))}
+                          className="rounded-lg border border-border bg-surface px-2 py-1 text-text-primary"
+                        >
+                          {[10, 25, 50].map(value => (
+                            <option key={value} value={value}>
+                              {value} credits
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <p className="mt-2 text-xs text-text-tertiary">
+                        We will repeatedly charge your saved payment method off-session. Disable
+                        anytime in Billing.
+                      </p>
+                    </>
                   )}
                 </div>
               )}

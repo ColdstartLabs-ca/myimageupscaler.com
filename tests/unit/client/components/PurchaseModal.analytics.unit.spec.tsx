@@ -225,7 +225,7 @@ describe('PurchaseModal analytics', () => {
       />
     );
     const checkbox = await screen.findByRole('checkbox', {
-      name: /automatically buy this pack/i,
+      name: /automatically buy small for/i,
     });
     expect(checkbox).not.toBeChecked();
     fireEvent.click(checkbox);
@@ -238,6 +238,36 @@ describe('PurchaseModal analytics', () => {
         expect.objectContaining({ autoTopUp: { enabled: true, thresholdCredits: 10 } })
       )
     );
+  });
+
+  test('resets auto top-up consent whenever the modal is reopened', async () => {
+    const { rerender } = render(
+      <PurchaseModal
+        isOpen={true}
+        onClose={vi.fn()}
+        onPurchaseComplete={vi.fn()}
+        trigger="model_gate"
+      />
+    );
+    fireEvent.click(await screen.findByRole('checkbox', { name: /automatically buy small for/i }));
+    expect(screen.getByRole('checkbox')).toBeChecked();
+    rerender(
+      <PurchaseModal
+        isOpen={false}
+        onClose={vi.fn()}
+        onPurchaseComplete={vi.fn()}
+        trigger="model_gate"
+      />
+    );
+    rerender(
+      <PurchaseModal
+        isOpen={true}
+        onClose={vi.fn()}
+        onPurchaseComplete={vi.fn()}
+        trigger="model_gate"
+      />
+    );
+    expect(await screen.findByRole('checkbox')).not.toBeChecked();
   });
 
   test('tracks purchase_modal_opened with recommended subscription for batch-limit triggers', async () => {
