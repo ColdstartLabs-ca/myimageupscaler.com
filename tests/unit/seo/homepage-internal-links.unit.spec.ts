@@ -136,26 +136,13 @@ describe('Homepage "From the Blog" section', () => {
     expect(homePageSource).toMatch(/import.*LandingBlogSection.*from/);
   });
 
-  it('defines HOMEPAGE_BLOG_SLUGS constant', () => {
-    expect(homePageSource).toContain('HOMEPAGE_BLOG_SLUGS');
+  it('selects curated homepage posts through the SEO equity helper', () => {
+    expect(homePageSource).toContain("import { getHomepageBlogPicks } from '@lib/seo/seo-equity'");
+    expect(homePageSource).toContain('getHomepageBlogPicks(undefined, 4)');
   });
 
   it('renders LandingBlogSection with homepage blog slugs', () => {
     expect(homePageSource).toContain('<LandingBlogSection');
-    expect(homePageSource).toContain('blogPostSlugs={HOMEPAGE_BLOG_SLUGS}');
-  });
-
-  it('HOMEPAGE_BLOG_SLUGS matches the curated homepage list in page.tsx', () => {
-    const match = homePageSource.match(/HOMEPAGE_BLOG_SLUGS\s*=\s*\[([\s\S]*?)\]/);
-    expect(match).toBeTruthy();
-    const slugs = [...match![1].matchAll(/['"]([^'"]+)['"]/g)].map(m => m[1]);
-
-    // Source of truth: app/[locale]/page.tsx (includes planned SEO posts not yet published)
-    expect(slugs).toEqual([
-      'best-free-ai-image-upscaler-2026-tested-compared',
-      'free-ai-upscaler-no-watermark',
-      'upscale-image-for-print-300-dpi-guide',
-      'fix-blurry-photos-ai-methods-guide',
-    ]);
+    expect(homePageSource).toContain('blogPostSlugs={homepageBlogSlugs}');
   });
 });

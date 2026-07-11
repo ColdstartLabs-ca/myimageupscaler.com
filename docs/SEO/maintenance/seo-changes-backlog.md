@@ -21,6 +21,20 @@ Maintenance rules:
 
 ## 2026-07-10
 
+### Homepage Blog Selection Test Maintenance
+
+Changes:
+
+- Updated the homepage internal-link unit test to validate the current `getHomepageBlogPicks` SEO-equity selector instead of the retired hardcoded slug array. Runtime homepage behavior and URLs are unchanged.
+
+Validation:
+
+- `yarn vitest run tests/unit/seo/homepage-internal-links.unit.spec.ts`
+
+Follow-up:
+
+- None; this is test maintenance and does not require GSC or IndexNow action.
+
 ### Premature Measurement Check (Observation Only)
 
 - Pulled fresh GSC data through 2026-07-07 and GA4 organic data through 2026-07-09 at the user's request; the scheduled 2026-07-19/20 measurement windows are not complete, so no page was rewritten and both dated follow-ups remain open.
