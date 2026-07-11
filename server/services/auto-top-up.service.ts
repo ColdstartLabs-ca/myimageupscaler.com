@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { stripe } from '@server/stripe';
 import { getEmailService } from '@server/services/email.service';
+import { isRevenueFeatureEligible } from '@server/services/revenue-feature-rollout.service';
 import { assertKnownPriceId } from '@shared/config/subscription.utils';
 
 interface IAutoTopUpSetting {
@@ -77,6 +78,7 @@ export class AutoTopUpService {
     };
 
     for (const setting of settings) {
+      if (!(await isRevenueFeatureEligible(setting.user_id, 'auto_top_up'))) continue;
       if (setting.charge_claim_id) {
         if (!isStaleAutoTopUpLease(setting.charge_claimed_at, now)) continue;
         const { data: staleAttempt, error: staleAttemptError } = await supabaseAdmin

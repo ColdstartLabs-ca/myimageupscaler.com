@@ -9,6 +9,7 @@ const {
   paymentIntentRetrieve,
   sendEmail,
   rpcMock,
+  revenueFeatureEligible,
 } = vi.hoisted(() => ({
   fromMock: vi.fn(),
   priceRetrieve: vi.fn(),
@@ -18,6 +19,7 @@ const {
   paymentIntentRetrieve: vi.fn(),
   sendEmail: vi.fn(),
   rpcMock: vi.fn(),
+  revenueFeatureEligible: vi.fn(),
 }));
 
 vi.mock('@server/supabase/supabaseAdmin', () => ({
@@ -35,6 +37,9 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
 }));
 vi.mock('@server/services/email.service', () => ({
   getEmailService: () => ({ send: sendEmail }),
+}));
+vi.mock('@server/services/revenue-feature-rollout.service', () => ({
+  isRevenueFeatureEligible: revenueFeatureEligible,
 }));
 vi.mock('@server/stripe', () => ({
   stripe: {
@@ -88,6 +93,7 @@ describe('AutoTopUpService', () => {
     paymentIntentRetrieve.mockResolvedValue({ id: 'pi_auto_1', status: 'requires_confirmation' });
     sendEmail.mockResolvedValue({ success: true });
     rpcMock.mockResolvedValue({ data: 1, error: null });
+    revenueFeatureEligible.mockResolvedValue(true);
   });
 
   test('matches below-threshold disclosure and accepts only payable Stripe states', () => {
@@ -104,6 +110,38 @@ describe('AutoTopUpService', () => {
     expect(parseAutoTopUpBalance(0)).toBe(0);
     expect(() => parseAutoTopUpBalance(null)).toThrow('missing credit balance');
     expect(() => parseAutoTopUpBalance('not-a-number')).toThrow('invalid credit balance');
+  });
+
+  test('kill switch prevents a previously enabled setting from charging', async () => {
+    revenueFeatureEligible.mockResolvedValue(false);
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'auto_top_up_attempts') {
+        return {
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({ limit: vi.fn().mockResolvedValue({ data: [], error: null }) })),
+          })),
+        } as never;
+      }
+      if (table === 'auto_top_up_settings') {
+        return {
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              eq: vi.fn(() => ({
+                not: vi.fn(() => ({
+                  limit: vi.fn().mockResolvedValue({ data: [setting], error: null }),
+                })),
+              })),
+            })),
+          })),
+        } as never;
+      }
+      throw new Error(`Unexpected table ${table}`);
+    });
+
+    const result = await new AutoTopUpService().processEligible();
+
+    expect(result).toMatchObject({ scanned: 1, claimed: 0, paymentPending: 0 });
+    expect(paymentIntentCreate).not.toHaveBeenCalled();
   });
 
   test('concurrent scans produce at most one Stripe charge with deterministic idempotency', async () => {
