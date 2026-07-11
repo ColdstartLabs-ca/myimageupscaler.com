@@ -10,6 +10,8 @@ const cancelPendingForUser = vi.fn();
 let recoveryIntentRows: Array<Record<string, unknown>> = [];
 let highUsageProfileRows: Array<Record<string, unknown>> = [];
 let recoveryPriorityRows: Array<{ id: string }> = [];
+let marketingConsent = true;
+let unverifiedUserIds = new Set<string>();
 
 vi.mock('@shared/config/env', () => ({
   serverEnv: {
@@ -25,11 +27,17 @@ function makeSelectChain(table: string) {
       return chain;
     }),
     in: vi.fn(() => chain),
+    not: vi.fn(() => chain),
+    gt: vi.fn(() => chain),
+    lt: vi.fn(() => chain),
     lte: vi.fn(() => chain),
     gte: vi.fn(() => chain),
     order: vi.fn(() => chain),
     limit: vi.fn(() => chain),
     maybeSingle: vi.fn(async () => {
+      if (table === 'email_preferences') {
+        return { data: { marketing_emails: marketingConsent }, error: null };
+      }
       if (table === 'profiles' && state.id === 'user_1') {
         return { data: { id: 'user_1' }, error: null };
       }
@@ -64,6 +72,7 @@ function makeSelectChain(table: string) {
 function makeUpdateChain(payload: unknown) {
   const chain = {
     eq: vi.fn(() => chain),
+    lt: vi.fn(() => chain),
     in: vi.fn(() => chain),
     select: vi.fn(() => {
       selectedUpdates.push(payload);
@@ -85,7 +94,9 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
                 ? {
                     id: userId,
                     email: userId === 'user_1' ? 'user@example.com' : `${userId}@example.com`,
-                    email_confirmed_at: '2026-01-01T00:00:00Z',
+                    email_confirmed_at: unverifiedUserIds.has(userId)
+                      ? null
+                      : '2026-01-01T00:00:00Z',
                   }
                 : null,
           },
@@ -117,6 +128,8 @@ describe('RevenueRecoveryService', () => {
     recoveryIntentRows = [];
     highUsageProfileRows = [];
     recoveryPriorityRows = [];
+    marketingConsent = true;
+    unverifiedUserIds = new Set<string>();
     queueLifecycleEmail.mockResolvedValue({ queued: true, skipped: false, queueId: 'queue_1' });
     cancelPendingForUser.mockResolvedValue(1);
   });
@@ -230,8 +243,49 @@ describe('RevenueRecoveryService', () => {
         purchase_type: 'credit_pack',
         selected_key: 'medium',
         pricing_region: 'standard',
+        identity_verified_at: expect.any(String),
+        consent_basis: 'email_preferences.marketing_emails',
+        source_surface: 'analytics_event',
+        expires_at: expect.any(String),
       },
     });
+  });
+
+  it('should not persist recovery intent for an unverified identity', async () => {
+    unverifiedUserIds.add('user_1');
+    const service = new RevenueRecoveryService({
+      amplitudeService: { downloadCohortMembers: vi.fn() } as never,
+      lifecycleService: { queueLifecycleEmail, cancelPendingForUser } as never,
+    });
+
+    await expect(
+      service.captureAnalyticsIntent({
+        userId: 'user_1',
+        eventName: 'checkout_abandoned',
+        properties: { sourceSurface: 'purchase_modal' },
+      })
+    ).resolves.toBe(false);
+
+    expect(upserts).toHaveLength(0);
+  });
+
+  it('should not persist or queue recovery without marketing consent', async () => {
+    marketingConsent = false;
+    const service = new RevenueRecoveryService({
+      amplitudeService: { downloadCohortMembers: vi.fn() } as never,
+      lifecycleService: { queueLifecycleEmail, cancelPendingForUser } as never,
+    });
+
+    await expect(
+      service.captureAnalyticsIntent({
+        userId: 'user_1',
+        eventName: 'checkout_abandoned',
+        properties: {},
+      })
+    ).resolves.toBe(false);
+
+    expect(upserts).toHaveLength(0);
+    expect(queueLifecycleEmail).not.toHaveBeenCalled();
   });
 
   it('should ignore anonymous analytics and non-credit-wall dismissals', async () => {

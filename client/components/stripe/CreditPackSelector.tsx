@@ -111,6 +111,8 @@ export function CreditPackSelector({
         setCheckoutTrackingContext({
           trigger: checkoutContext?.trigger,
           originatingModel: checkoutContext?.originatingModel,
+          pricingRegion: pricingRegion || 'standard',
+          discountPercent,
         });
         const currentSearchParams = new URLSearchParams(window.location.search);
         currentSearchParams.set('checkout', pack.stripePriceId);
@@ -121,6 +123,8 @@ export function CreditPackSelector({
             priceId: pack.stripePriceId,
             trigger: checkoutContext?.trigger,
             originatingModel: checkoutContext?.originatingModel,
+            pricingRegion: pricingRegion || 'standard',
+            discountPercent,
           },
         });
         analytics.track('checkout_auth_required', {

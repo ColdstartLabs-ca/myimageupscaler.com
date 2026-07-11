@@ -120,6 +120,53 @@ describe('authRedirectManager — handleAuthRedirect (post-auth checkout)', () =
     expect(window.location.href).toBe('/pricing?checkout=price_test_123');
   });
 
+  it('restores the full checkout handoff context before redirecting', async () => {
+    storeIntent(
+      makeIntent({
+        context: {
+          priceId: 'price_small_pack_ca',
+          trigger: 'model_gate',
+          originatingModel: 'clarity-upscaler',
+          pricingRegion: 'regional',
+          discountPercent: 35,
+        },
+        returnTo: '/pricing?source=model-gate&checkout=price_small_pack_ca',
+      })
+    );
+
+    const { handleAuthRedirect } = await import('@client/utils/authRedirectManager');
+    await handleAuthRedirect();
+
+    expect(window.location.href).toBe('/pricing?source=model-gate&checkout=price_small_pack_ca');
+    expect(
+      JSON.parse(sessionStorage.getItem('miu_checkout_tracking_context') ?? '{}')
+    ).toMatchObject({
+      trigger: 'model_gate',
+      originatingModel: 'clarity-upscaler',
+      pricingRegion: 'regional',
+      discountPercent: 35,
+    });
+  });
+
+  it('consumes an existing-user checkout intent only once', async () => {
+    storeIntent(
+      makeIntent({
+        context: { priceId: 'price_small_pack_ca' },
+        returnTo: '/pricing?checkout=price_small_pack_ca',
+      })
+    );
+
+    const { handleAuthRedirect } = await import('@client/utils/authRedirectManager');
+    await handleAuthRedirect();
+    expect(window.location.href).toBe('/pricing?checkout=price_small_pack_ca');
+
+    window.location.href = 'http://localhost/pricing';
+    await handleAuthRedirect();
+
+    expect(window.location.href).toBe('/dashboard');
+    expect(localStorage.getItem(REDIRECT_STORAGE_KEY)).toBeNull();
+  });
+
   it('should redirect to dashboard when no intent exists', async () => {
     // No intent stored
 

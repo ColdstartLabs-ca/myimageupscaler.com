@@ -113,6 +113,8 @@ const RECOVERY_DELAY_HOURS: Record<RecoveryAudienceKey, number> = {
 };
 
 const RECOVERY_PRIORITY_SUPPRESSION_DAYS = 7;
+const RECOVERY_INTENT_TTL_DAYS = 7;
+const RECOVERY_CONSENT_BASIS = 'email_preferences.marketing_emails';
 
 export class RevenueRecoveryService {
   private readonly amplitudeService: AmplitudeCohortService;
@@ -128,6 +130,11 @@ export class RevenueRecoveryService {
 
     const audienceKey = this.getAudienceKeyForAnalyticsEvent(input.eventName, input.properties);
     if (!audienceKey) return false;
+
+    const verifiedUser = await this.getVerifiedAuthUserById(input.userId);
+    if (!verifiedUser || !(await this.hasMarketingConsent(input.userId))) return false;
+
+    const verifiedAt = new Date();
 
     await this.upsertRecoveryIntent({
       userId: input.userId,
@@ -147,6 +154,14 @@ export class RevenueRecoveryService {
       pricingRegion: this.getStringProperty(input.properties, 'pricingRegion'),
       creditsRemaining: this.getNumberProperty(input.properties, 'creditsRemaining'),
       freeUsageCount: this.getNumberProperty(input.properties, 'freeUsageCount'),
+      identityVerifiedAt: verifiedAt.toISOString(),
+      consentBasis: RECOVERY_CONSENT_BASIS,
+      sourceSurface:
+        this.getStringProperty(input.properties, 'sourceSurface') ||
+        this.getStringProperty(input.properties, 'checkoutTrigger') ||
+        this.getStringProperty(input.properties, 'trigger') ||
+        'analytics_event',
+      expiresAt: this.getRecoveryIntentExpiry(verifiedAt),
       context: {
         event_name: input.eventName,
         session_id: input.sessionId,
@@ -168,6 +183,10 @@ export class RevenueRecoveryService {
   }
 
   async persistCheckoutIntentContext(input: IPersistCheckoutIntentContextInput): Promise<boolean> {
+    const verifiedUser = await this.getVerifiedAuthUserById(input.userId);
+    if (!verifiedUser || !(await this.hasMarketingConsent(input.userId))) return false;
+
+    const verifiedAt = new Date();
     await this.upsertRecoveryIntent({
       userId: input.userId,
       audienceKey: 'checkout_abandoner',
@@ -177,9 +196,11 @@ export class RevenueRecoveryService {
       purchaseType: input.purchaseType,
       selectedKey: input.selectedKey,
       pricingRegion: input.pricingRegion,
-      context: {
-        stripe_checkout_session_id: input.stripeCheckoutSessionId,
-      },
+      identityVerifiedAt: verifiedAt.toISOString(),
+      consentBasis: RECOVERY_CONSENT_BASIS,
+      sourceSurface: 'checkout_session',
+      expiresAt: this.getRecoveryIntentExpiry(verifiedAt),
+      context: {},
     });
 
     return true;
@@ -236,6 +257,7 @@ export class RevenueRecoveryService {
       byAudience: this.createEmptyAudienceCounts(),
     };
 
+    await this.expireAndMinimizeRecoveryIntents();
     const intents = await this.getActiveRecoveryIntents(limit);
     await this.addHighUsageFreeUserIntents(intents, limit, dryRun);
     intents.sort(
@@ -267,7 +289,7 @@ export class RevenueRecoveryService {
       }
 
       const authUser = await this.getVerifiedAuthUserById(intent.userId);
-      if (!authUser?.email) {
+      if (!authUser?.email || !(await this.hasMarketingConsent(intent.userId))) {
         result.skippedMissingEmail++;
         audienceCounts.skippedMissingEmail++;
         continue;
@@ -509,6 +531,9 @@ export class RevenueRecoveryService {
       )
       .in('audience_key', Object.keys(AUDIENCE_CAMPAIGN_MAP))
       .eq('status', 'active')
+      .not('identity_verified_at', 'is', null)
+      .eq('consent_basis', RECOVERY_CONSENT_BASIS)
+      .gt('expires_at', new Date().toISOString())
       .order('last_seen_at', { ascending: true })
       .limit(limit);
     if (error) throw new Error(`Failed to scan recovery intents: ${error.message}`);
@@ -566,12 +591,19 @@ export class RevenueRecoveryService {
       if (freeUsageCount < CREDIT_COSTS.DEFAULT_FREE_CREDITS - 1) continue;
 
       if (!dryRun) {
+        const verifiedUser = await this.getVerifiedAuthUserById(userId);
+        if (!verifiedUser || !(await this.hasMarketingConsent(userId))) continue;
+        const verifiedAt = new Date();
         await this.upsertRecoveryIntent({
           userId,
           audienceKey: 'high_usage_free_user',
           source: 'profile_credit_scan',
           creditsRemaining,
           freeUsageCount,
+          identityVerifiedAt: verifiedAt.toISOString(),
+          consentBasis: RECOVERY_CONSENT_BASIS,
+          sourceSurface: 'profile_credit_scan',
+          expiresAt: this.getRecoveryIntentExpiry(verifiedAt),
           context: {
             profile_subscription_status: profile.subscription_status,
           },
@@ -662,6 +694,10 @@ export class RevenueRecoveryService {
     pricingRegion?: string;
     creditsRemaining?: number;
     freeUsageCount?: number;
+    identityVerifiedAt: string;
+    consentBasis: typeof RECOVERY_CONSENT_BASIS;
+    sourceSurface: string;
+    expiresAt: string;
     context: Record<string, unknown>;
   }): Promise<void> {
     const { error } = await supabaseAdmin.from('revenue_recovery_intents').upsert(
@@ -677,6 +713,10 @@ export class RevenueRecoveryService {
         pricing_region: params.pricingRegion,
         credits_remaining: params.creditsRemaining,
         free_usage_count: params.freeUsageCount,
+        identity_verified_at: params.identityVerifiedAt,
+        consent_basis: params.consentBasis,
+        source_surface: params.sourceSurface,
+        expires_at: params.expiresAt,
         status: 'active',
         last_seen_at: new Date().toISOString(),
         context: this.stripUndefined(params.context),
@@ -693,6 +733,31 @@ export class RevenueRecoveryService {
       .eq('user_id', userId)
       .eq('audience_key', audienceKey);
     if (error) throw new Error(`Failed to mark recovery intent queued: ${error.message}`);
+  }
+
+  private async hasMarketingConsent(userId: string): Promise<boolean> {
+    const { data, error } = await supabaseAdmin
+      .from('email_preferences')
+      .select('marketing_emails')
+      .eq('user_id', userId)
+      .maybeSingle();
+    if (error) return false;
+    return data?.marketing_emails === true;
+  }
+
+  private async expireAndMinimizeRecoveryIntents(): Promise<void> {
+    const { error } = await supabaseAdmin
+      .from('revenue_recovery_intents')
+      .update({ status: 'expired', context: {} })
+      .eq('status', 'active')
+      .lt('expires_at', new Date().toISOString());
+    if (error) throw new Error(`Failed to expire recovery intents: ${error.message}`);
+  }
+
+  private getRecoveryIntentExpiry(verifiedAt: Date): string {
+    return new Date(
+      verifiedAt.getTime() + RECOVERY_INTENT_TTL_DAYS * 24 * 60 * 60 * 1000
+    ).toISOString();
   }
 
   private getTemplateData(intent: {

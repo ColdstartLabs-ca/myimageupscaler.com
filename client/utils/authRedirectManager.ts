@@ -18,6 +18,28 @@ interface IRedirectIntent {
   timestamp: number;
 }
 
+async function restoreCheckoutContext(context: Record<string, unknown> | undefined): Promise<void> {
+  if (!context) return;
+
+  const trigger = typeof context.trigger === 'string' ? context.trigger : undefined;
+  const originatingModel =
+    typeof context.originatingModel === 'string' ? context.originatingModel : undefined;
+  const pricingRegion =
+    typeof context.pricingRegion === 'string' ? context.pricingRegion : undefined;
+  const discountPercent =
+    typeof context.discountPercent === 'number' ? context.discountPercent : undefined;
+
+  if (!trigger && !originatingModel && !pricingRegion && discountPercent === undefined) return;
+
+  const { setCheckoutTrackingContext } = await import('@client/utils/checkoutTrackingContext');
+  setCheckoutTrackingContext({
+    trigger,
+    originatingModel,
+    pricingRegion,
+    discountPercent,
+  });
+}
+
 const REDIRECT_STORAGE_KEY = 'auth_redirect_intent';
 const INTENT_EXPIRY_MS = 30 * 60 * 1000; // 30 minutes
 
@@ -94,6 +116,7 @@ export async function handleAuthRedirect(): Promise<void> {
     // Handle checkout action — prefer returnTo (e.g. /pricing?checkout=priceId) when set,
     // so the user lands back on the page they came from with the modal pre-triggered.
     if (intent?.action === 'checkout') {
+      await restoreCheckoutContext(intent.context);
       if (intent.returnTo) {
         try {
           const url = new URL(intent.returnTo, window.location.origin);

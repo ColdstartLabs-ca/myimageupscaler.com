@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { CreditPackSelector } from '@client/components/stripe/CreditPackSelector';
 
 vi.mock('@client/analytics', () => ({
@@ -9,8 +9,12 @@ vi.mock('@client/analytics', () => ({
   },
 }));
 
+const authState = vi.hoisted(() => ({ isAuthenticated: true }));
+const mockPrepareAuthRedirect = vi.hoisted(() => vi.fn());
+const mockSetCheckoutTrackingContext = vi.hoisted(() => vi.fn());
+
 vi.mock('@client/store/userStore', () => ({
-  useUserStore: () => ({ isAuthenticated: true }),
+  useUserStore: () => authState,
 }));
 
 vi.mock('@client/store/modalStore', () => ({
@@ -18,7 +22,19 @@ vi.mock('@client/store/modalStore', () => ({
 }));
 
 vi.mock('@client/hooks/useRegionTier', () => ({
-  useRegionTier: () => ({ pricingRegion: 'standard' }),
+  useRegionTier: () => ({ pricingRegion: 'regional' }),
+}));
+
+vi.mock('@client/utils/authRedirectManager', () => ({
+  prepareAuthRedirect: mockPrepareAuthRedirect,
+}));
+
+vi.mock('@client/utils/checkoutTrackingContext', () => ({
+  getCheckoutTrackingContext: () => ({
+    trigger: 'model_gate',
+    originatingModel: 'clarity-upscaler',
+  }),
+  setCheckoutTrackingContext: mockSetCheckoutTrackingContext,
 }));
 
 vi.mock('./CheckoutModal', () => ({
@@ -41,6 +57,7 @@ vi.mock('lucide-react', async importOriginal => {
 describe('CreditPackSelector', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    authState.isAuthenticated = true;
   });
 
   it('uses site gradient CTA styling on purchase buttons', () => {
@@ -63,5 +80,31 @@ describe('CreditPackSelector', () => {
     expect(bestValueCard?.className).toContain('border-secondary/60');
 
     expect(container.querySelector('.gradient-text-primary')).toBeTruthy();
+  });
+
+  it('preserves the selected small pack and regional context through guest authentication', () => {
+    authState.isAuthenticated = false;
+    render(<CreditPackSelector discountPercent={35} />);
+
+    fireEvent.click(screen.getAllByRole('button', { name: /purchase/i })[0]);
+
+    const expectedPriceId = mockPrepareAuthRedirect.mock.calls[0]?.[1]?.context?.priceId;
+    expect(expectedPriceId).toEqual(expect.stringMatching(/^price_/));
+    expect(mockPrepareAuthRedirect).toHaveBeenCalledWith('checkout', {
+      returnTo: expect.stringContaining(`checkout=${expectedPriceId}`),
+      context: {
+        priceId: expectedPriceId,
+        trigger: 'model_gate',
+        originatingModel: 'clarity-upscaler',
+        pricingRegion: 'regional',
+        discountPercent: 35,
+      },
+    });
+    expect(mockSetCheckoutTrackingContext).toHaveBeenCalledWith({
+      trigger: 'model_gate',
+      originatingModel: 'clarity-upscaler',
+      pricingRegion: 'regional',
+      discountPercent: 35,
+    });
   });
 });

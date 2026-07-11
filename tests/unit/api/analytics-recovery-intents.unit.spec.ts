@@ -110,4 +110,40 @@ describe('POST /api/analytics/event recovery intents', () => {
       sessionId: 'session_anonymous',
     });
   });
+
+  test('should reject invalid funnel schema version', async () => {
+    const response = await POST(
+      createRequest({
+        eventName: 'checkout_opened',
+        properties: { funnelSchemaVersion: '999' },
+        sessionId: 'session_bad_version',
+      })
+    );
+
+    expect(response.status).toBe(400);
+    expect(trackServerEventMock).not.toHaveBeenCalled();
+  });
+
+  test('should attach authenticated user id server-side and discard spoofed identity', async () => {
+    await POST(
+      createRequest(
+        {
+          eventName: 'checkout_opened',
+          properties: {
+            funnelSchemaVersion: '1',
+            userId: 'spoofed-user',
+            user_id: 'spoofed-user',
+          },
+          sessionId: 'session_secure_identity',
+        },
+        'test_token_real-user'
+      )
+    );
+
+    expect(trackServerEventMock).toHaveBeenCalledWith(
+      'checkout_opened',
+      expect.not.objectContaining({ userId: expect.anything(), user_id: expect.anything() }),
+      expect.objectContaining({ userId: 'real-user' })
+    );
+  });
 });
