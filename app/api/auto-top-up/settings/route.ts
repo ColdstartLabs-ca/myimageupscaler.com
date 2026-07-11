@@ -3,6 +3,8 @@ import { z } from 'zod';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { stripe } from '@server/stripe';
 import { isRevenueFeatureEligible } from '@server/services/revenue-feature-rollout.service';
+import { trackServerEvent } from '@server/analytics';
+import { serverEnv } from '@shared/config/env';
 
 async function authenticate(request: NextRequest) {
   const token = request.headers.get('authorization')?.replace('Bearer ', '');
@@ -93,5 +95,10 @@ export async function PUT(request: NextRequest) {
       .update({ status: 'cancelled', error_class: 'disabled_by_user' })
       .eq('id', attempt.id);
   }
+  await trackServerEvent(
+    'auto_top_up_disabled',
+    { cancelledAttempt: Boolean(attempt?.id) },
+    { apiKey: serverEnv.AMPLITUDE_API_KEY, userId: user.id }
+  );
   return NextResponse.json({ data: data ?? { enabled: false, pending_enabled: false } });
 }

@@ -1,13 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type Stripe from 'stripe';
 
-const { fromMock, rpcMock, sendMock, getUserMock, retrieveMock } = vi.hoisted(() => ({
-  fromMock: vi.fn(),
-  rpcMock: vi.fn(),
-  sendMock: vi.fn(),
-  getUserMock: vi.fn(),
-  retrieveMock: vi.fn(),
-}));
+const { fromMock, rpcMock, sendMock, getUserMock, retrieveMock, trackServerEventMock } = vi.hoisted(
+  () => ({
+    fromMock: vi.fn(),
+    rpcMock: vi.fn(),
+    sendMock: vi.fn(),
+    getUserMock: vi.fn(),
+    retrieveMock: vi.fn(),
+    trackServerEventMock: vi.fn(),
+  })
+);
 
 vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: {
@@ -21,7 +24,7 @@ vi.mock('@server/stripe', () => ({
   stripe: { paymentIntents: { retrieve: retrieveMock }, subscriptions: { retrieve: vi.fn() } },
 }));
 vi.mock('@server/analytics', () => ({
-  trackServerEvent: vi.fn().mockResolvedValue(true),
+  trackServerEvent: trackServerEventMock,
   trackRevenue: vi.fn(),
 }));
 vi.mock('@shared/config/stripe', () => ({
@@ -97,6 +100,11 @@ describe('auto top-up webhook convergence', () => {
       p_credits: 200,
     });
     expect(sendMock).toHaveBeenCalledWith(expect.objectContaining({ template: 'payment-success' }));
+    expect(trackServerEventMock).toHaveBeenCalledWith(
+      'auto_top_up_succeeded',
+      expect.objectContaining({ attemptId: 'attempt-old', packKey: 'medium' }),
+      expect.objectContaining({ userId: 'user-1' })
+    );
   });
 
   it('activates only the matching paid checkout consent with a reusable payment method', async () => {
@@ -132,6 +140,11 @@ describe('auto top-up webhook convergence', () => {
     );
     expect(activationQuery.eq).toHaveBeenCalledWith('checkout_session_id', 'cs_paid');
     expect(activationQuery.eq).toHaveBeenCalledWith('consent_version', 'consent-v1');
+    expect(trackServerEventMock).toHaveBeenCalledWith(
+      'auto_top_up_opted_in',
+      { checkoutSessionId: 'cs_paid' },
+      expect.objectContaining({ userId: 'user-1' })
+    );
   });
 
   it('does not send a second receipt when the attempt was already finalized', async () => {
@@ -171,6 +184,11 @@ describe('auto top-up webhook convergence', () => {
         template: 'auto-top-up-failure',
         data: { paused: true },
       })
+    );
+    expect(trackServerEventMock).toHaveBeenCalledWith(
+      'auto_top_up_declined',
+      expect.objectContaining({ attemptId: 'attempt-old', consecutiveFailures: 3 }),
+      expect.objectContaining({ userId: 'user-1' })
     );
   });
 });

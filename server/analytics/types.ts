@@ -658,6 +658,10 @@ export type IAnalyticsEventName =
   | 'credit_pack_purchased'
   | 'repeat_purchase_prompt_shown'
   | 'repeat_purchase_prompt_clicked'
+  | 'auto_top_up_opted_in'
+  | 'auto_top_up_succeeded'
+  | 'auto_top_up_declined'
+  | 'auto_top_up_disabled'
   | 'credits_deducted'
   | 'credits_refunded'
   // Image processing events

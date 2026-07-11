@@ -407,6 +407,11 @@ describe('POST /api/checkout price alignment', () => {
     );
     expect(response.status).toBe(200);
     expect(autoTopUpUpdateMaybeSingleMock).toHaveBeenCalledOnce();
+    expect(trackServerEventMock).toHaveBeenCalledWith(
+      'auto_top_up_disabled',
+      { cancelledAttempt: false },
+      { apiKey: 'amplitude_test_key', userId: 'user_checkout_alignment' }
+    );
   });
 
   test('settings reads are authenticated and user-scoped', async () => {

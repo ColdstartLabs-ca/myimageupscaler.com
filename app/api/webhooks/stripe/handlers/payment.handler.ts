@@ -1019,6 +1019,11 @@ export class PaymentHandler {
       .eq('stripe_customer_id', customerId)
       .eq('pending_enabled', true);
     if (error) throw new Error(`Unable to activate auto top-up consent: ${error.message}`);
+    await trackServerEvent(
+      'auto_top_up_opted_in',
+      { checkoutSessionId: session.id },
+      this.buildAmplitudeOptsFromMetadata(session.metadata, userId)
+    );
   }
 
   static async handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent): Promise<void> {
@@ -1054,6 +1059,16 @@ export class PaymentHandler {
     );
     if (finalizeError || !finalized) throw new Error('Unable to finalize auto top-up attempt');
     if (attempt.status === 'succeeded') return;
+    await trackServerEvent(
+      'auto_top_up_succeeded',
+      {
+        attemptId,
+        packKey: attempt.pack_key,
+        amount: paymentIntent.amount_received,
+        currency: paymentIntent.currency,
+      },
+      this.buildAmplitudeOptsFromMetadata(paymentIntent.metadata, userId)
+    );
 
     const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(userId);
     const email = authUser.user?.email;
@@ -1089,6 +1104,11 @@ export class PaymentHandler {
     if (failureError)
       throw new Error(`Unable to finalize auto top-up failure: ${failureError.message}`);
     if (typeof failures !== 'number') return;
+    await trackServerEvent(
+      'auto_top_up_declined',
+      { attemptId, declineReason: reason, consecutiveFailures: failures },
+      this.buildAmplitudeOptsFromMetadata(paymentIntent.metadata, userId)
+    );
 
     const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(userId);
     const email = authUser.user?.email;
