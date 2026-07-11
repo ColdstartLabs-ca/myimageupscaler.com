@@ -12,6 +12,8 @@ import { DisputeHandler } from '@app/api/webhooks/stripe/handlers/dispute.handle
 vi.mock('@app/api/webhooks/stripe/handlers/payment.handler', () => ({
   PaymentHandler: {
     handleCheckoutSessionCompleted: vi.fn(),
+    handlePaymentIntentSucceeded: vi.fn(),
+    handlePaymentIntentFailed: vi.fn(),
     handleChargeRefunded: vi.fn(),
     handleInvoicePaymentRefunded: vi.fn(),
   },
@@ -111,6 +113,17 @@ describe('stripe-webhook-event-processor', () => {
 
       expect(result).toEqual({ handled: true });
       expect(InvoiceHandler.handleInvoicePaymentSucceeded).toHaveBeenCalledWith(invoice);
+    });
+
+    it('routes successful payment intents through the payment handler', async () => {
+      const paymentIntent = { id: 'pi_auto' } as Stripe.PaymentIntent;
+      const event = {
+        id: 'evt_auto',
+        type: 'payment_intent.succeeded',
+        data: { object: paymentIntent },
+      } as unknown as Stripe.Event;
+      await expect(processStripeWebhookEvent(event)).resolves.toEqual({ handled: true });
+      expect(PaymentHandler.handlePaymentIntentSucceeded).toHaveBeenCalledWith(paymentIntent);
     });
 
     it('returns handled false for unknown event types', async () => {

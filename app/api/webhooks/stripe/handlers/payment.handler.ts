@@ -342,6 +342,7 @@ export class PaymentHandler {
    */
   static async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session): Promise<void> {
     const userId = await this.resolveCheckoutSessionUserId(session);
+    await this.activateAutoTopUpConsent(session, userId);
     const amplitudeOpts = this.buildAmplitudeOpts(session, userId);
 
     console.log(`Checkout completed for user ${userId}, mode: ${session.mode}`);
@@ -941,6 +942,7 @@ export class PaymentHandler {
   }
 
   static async handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent): Promise<void> {
+    await this.failAutoTopUpAttempt(paymentIntent);
     let userId: string;
     try {
       userId = await this.resolvePaymentIntentUserId(paymentIntent);
@@ -981,6 +983,139 @@ export class PaymentHandler {
     ).catch(err =>
       console.error('[ANALYTICS] Failed to track payment_intent.payment_failed event', err)
     );
+  }
+
+  private static async activateAutoTopUpConsent(
+    session: Stripe.Checkout.Session,
+    userId: string
+  ): Promise<void> {
+    const consentVersion = session.metadata?.auto_top_up_consent_version;
+    if (!consentVersion || session.payment_status !== 'paid') return;
+
+    const paymentIntentId =
+      typeof session.payment_intent === 'string'
+        ? session.payment_intent
+        : session.payment_intent?.id;
+    if (!paymentIntentId) return;
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+    const paymentMethodId =
+      typeof paymentIntent.payment_method === 'string'
+        ? paymentIntent.payment_method
+        : paymentIntent.payment_method?.id;
+    const customerId = this.getStripeCustomerId(session.customer);
+    if (!paymentMethodId || !customerId) return;
+
+    const { error } = await supabaseAdmin
+      .from('auto_top_up_settings')
+      .update({
+        enabled: true,
+        pending_enabled: false,
+        stripe_payment_method_id: paymentMethodId,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('user_id', userId)
+      .eq('consent_version', consentVersion)
+      .eq('checkout_session_id', session.id)
+      .eq('stripe_customer_id', customerId)
+      .eq('pending_enabled', true);
+    if (error) throw new Error(`Unable to activate auto top-up consent: ${error.message}`);
+  }
+
+  static async handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent): Promise<void> {
+    if (paymentIntent.metadata?.auto_top_up !== 'true') return;
+    const attemptId = paymentIntent.metadata.auto_top_up_attempt_id;
+    const userId = paymentIntent.metadata.auto_top_up_user_id;
+    if (!attemptId || !userId) throw new Error('Invalid auto top-up PaymentIntent metadata');
+
+    const { data: attempt, error: attemptError } = await supabaseAdmin
+      .from('auto_top_up_attempts')
+      .select('amount_cents, currency, status')
+      .eq('id', attemptId)
+      .eq('user_id', userId)
+      .eq('stripe_payment_intent_id', paymentIntent.id)
+      .maybeSingle();
+    if (attemptError || !attempt) throw new Error('Unknown auto top-up attempt');
+    if (
+      attempt.amount_cents !== paymentIntent.amount_received ||
+      attempt.currency !== paymentIntent.currency
+    )
+      throw new Error('Auto top-up amount mismatch');
+
+    const { data: setting } = await supabaseAdmin
+      .from('auto_top_up_settings')
+      .select('stripe_price_id, pack_key')
+      .eq('user_id', userId)
+      .maybeSingle();
+    const pack = setting ? resolvePlanOrPack(setting.stripe_price_id) : null;
+    if (
+      !pack ||
+      pack.type !== 'pack' ||
+      pack.key !== paymentIntent.metadata.auto_top_up_pack_key ||
+      !pack.credits
+    )
+      throw new Error('Invalid auto top-up pack');
+
+    const { data: finalized, error: finalizeError } = await supabaseAdmin.rpc(
+      'finalize_auto_top_up_attempt',
+      { p_attempt_id: attemptId, p_payment_intent_id: paymentIntent.id, p_credits: pack.credits }
+    );
+    if (finalizeError || !finalized) throw new Error('Unable to finalize auto top-up attempt');
+    if (attempt.status === 'succeeded') return;
+
+    const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(userId);
+    const email = authUser.user?.email;
+    if (email) {
+      await getEmailService()
+        .send({
+          to: email,
+          userId,
+          type: 'transactional',
+          template: 'payment-success',
+          data: {
+            amount: new Intl.NumberFormat('en-US', {
+              style: 'currency',
+              currency: paymentIntent.currency.toUpperCase(),
+            }).format(paymentIntent.amount_received / 100),
+            credits: pack.credits,
+          },
+        })
+        .catch(error => console.error('[AUTO_TOP_UP_EMAIL_FAILED]', error));
+    }
+  }
+
+  private static async failAutoTopUpAttempt(paymentIntent: Stripe.PaymentIntent): Promise<void> {
+    if (paymentIntent.metadata?.auto_top_up !== 'true') return;
+    const attemptId = paymentIntent.metadata.auto_top_up_attempt_id;
+    const userId = paymentIntent.metadata.auto_top_up_user_id;
+    if (!attemptId || !userId) return;
+    const reason = paymentIntent.last_payment_error?.decline_code || 'payment_failed';
+    await supabaseAdmin
+      .from('auto_top_up_attempts')
+      .update({ status: 'failed', error_class: reason, updated_at: new Date().toISOString() })
+      .eq('id', attemptId)
+      .eq('user_id', userId)
+      .eq('stripe_payment_intent_id', paymentIntent.id)
+      .eq('status', 'payment_pending');
+    const { data: setting } = await supabaseAdmin
+      .from('auto_top_up_settings')
+      .select('consecutive_failures')
+      .eq('user_id', userId)
+      .eq('charge_claim_id', attemptId)
+      .maybeSingle();
+    if (!setting) return;
+    const failures = setting.consecutive_failures + 1;
+    await supabaseAdmin
+      .from('auto_top_up_settings')
+      .update({
+        consecutive_failures: failures,
+        enabled: failures < 3,
+        failure_reason: reason,
+        charge_claim_id: null,
+        charge_claimed_at: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('user_id', userId)
+      .eq('charge_claim_id', attemptId);
   }
 
   /**
