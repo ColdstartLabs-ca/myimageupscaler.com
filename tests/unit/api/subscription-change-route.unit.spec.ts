@@ -512,7 +512,14 @@ describe('POST /api/subscription/change', () => {
       phases: [{ start_date: 1773111702 }],
     } as never);
     vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
-      if (table === 'subscriptions')
+      if (table === 'subscriptions') {
+        const updateQuery: Record<string, ReturnType<typeof vi.fn>> = {};
+        updateQuery.eq = vi.fn(() => updateQuery);
+        updateQuery.select = vi.fn(() => updateQuery);
+        updateQuery.maybeSingle = vi.fn(async () => ({
+          data: { id: proSubscription.id },
+          error: null,
+        }));
         return {
           select: vi.fn(() => ({
             eq: vi.fn(() => ({
@@ -525,8 +532,9 @@ describe('POST /api/subscription/change', () => {
               })),
             })),
           })),
-          update: vi.fn(() => ({ eq: vi.fn(async () => ({ error: null })) })),
+          update: vi.fn(() => updateQuery),
         };
+      }
       if (table === 'profiles')
         return {
           select: vi.fn(() => ({
@@ -583,7 +591,14 @@ describe('POST /api/subscription/change', () => {
     } as never);
     vi.mocked(stripe.subscriptionSchedules.release).mockResolvedValue({} as never);
     vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
-      if (table === 'subscriptions')
+      if (table === 'subscriptions') {
+        const updateQuery: Record<string, ReturnType<typeof vi.fn>> = {};
+        updateQuery.eq = vi.fn(() => updateQuery);
+        updateQuery.select = vi.fn(() => updateQuery);
+        updateQuery.maybeSingle = vi.fn(async () => ({
+          data: null,
+          error: { message: 'db unavailable' },
+        }));
         return {
           select: vi.fn(() => ({
             eq: vi.fn(() => ({
@@ -596,10 +611,9 @@ describe('POST /api/subscription/change', () => {
               })),
             })),
           })),
-          update: vi.fn(() => ({
-            eq: vi.fn(async () => ({ error: { message: 'db unavailable' } })),
-          })),
+          update: vi.fn(() => updateQuery),
         };
+      }
       if (table === 'profiles')
         return {
           select: vi.fn(() => ({

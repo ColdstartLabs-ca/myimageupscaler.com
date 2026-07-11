@@ -533,7 +533,7 @@ export async function POST(request: NextRequest) {
 
         // Store the scheduled downgrade in our database
         // The subscription keeps current price_id until the schedule executes
-        const { error: scheduledStateError } = await supabaseAdmin
+        const { data: scheduledState, error: scheduledStateError } = await supabaseAdmin
           .from('subscriptions')
           .update({
             price_id: currentSubscription.price_id,
@@ -541,9 +541,16 @@ export async function POST(request: NextRequest) {
             scheduled_change_date: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
             updated_at: new Date().toISOString(),
           })
-          .eq('id', currentSubscription.id);
-        if (scheduledStateError) {
-          throw new Error(`Failed to persist scheduled downgrade: ${scheduledStateError.message}`);
+          .eq('id', currentSubscription.id)
+          .eq('cancel_at_period_end', false)
+          .select('id')
+          .maybeSingle();
+        if (scheduledStateError || !scheduledState) {
+          throw new Error(
+            scheduledStateError
+              ? `Failed to persist scheduled downgrade: ${scheduledStateError.message}`
+              : 'Cancellation superseded scheduled downgrade'
+          );
         }
         retentionScheduleCommitted = true;
 

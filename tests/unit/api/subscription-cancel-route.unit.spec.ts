@@ -56,6 +56,9 @@ describe('subscription cancellation route', () => {
     );
     expect(response.status).toBe(200);
     expect(stripe.subscriptionSchedules.release).toHaveBeenCalledWith('sub_sched_retention');
+    expect(updateEq.mock.invocationCallOrder[0]).toBeLessThan(
+      vi.mocked(stripe.subscriptionSchedules.release).mock.invocationCallOrder[0]
+    );
     expect(stripe.subscriptions.update).toHaveBeenCalledWith('sub-1', {
       cancel_at_period_end: true,
     });

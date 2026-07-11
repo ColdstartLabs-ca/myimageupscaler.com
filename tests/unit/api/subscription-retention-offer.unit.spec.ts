@@ -2,19 +2,28 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 import { getPlanByKey } from '@shared/config/subscription.utils';
 
-const { single, changeSubscription } = vi.hoisted(() => ({
+const { single, changeSubscription, claimResult } = vi.hoisted(() => ({
   single: vi.fn(),
   changeSubscription: vi.fn(),
+  claimResult: vi.fn(),
 }));
 vi.mock('@/app/api/subscription/change/route', () => ({ POST: changeSubscription }));
 vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: {
     auth: { getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null }) },
-    from: vi.fn(() => ({
-      select: () => ({
-        eq: () => ({ in: () => ({ order: () => ({ limit: () => ({ single }) }) }) }),
-      }),
-    })),
+    from: vi.fn(() => {
+      const updateQuery: Record<string, ReturnType<typeof vi.fn>> = {};
+      updateQuery.eq = vi.fn(() => updateQuery);
+      updateQuery.is = vi.fn(() => updateQuery);
+      updateQuery.select = vi.fn(() => updateQuery);
+      updateQuery.maybeSingle = claimResult;
+      return {
+        select: () => ({
+          eq: () => ({ in: () => ({ order: () => ({ limit: () => ({ single }) }) }) }),
+        }),
+        update: vi.fn(() => updateQuery),
+      };
+    }),
   },
 }));
 
@@ -29,6 +38,7 @@ describe('subscription retention offer route', () => {
     changeSubscription.mockResolvedValue(
       Response.json({ success: true, data: { status: 'scheduled' } })
     );
+    claimResult.mockResolvedValue({ data: { id: 'sub-1' }, error: null });
   });
 
   test('requires authentication', async () => {
@@ -110,6 +120,40 @@ describe('subscription retention offer route', () => {
       })
     );
     expect((await response.json()).data.idempotent_replay).toBe(true);
+    expect(changeSubscription).not.toHaveBeenCalled();
+  });
+
+  test('allows only one concurrent request to claim Stripe execution', async () => {
+    claimResult
+      .mockResolvedValueOnce({ data: { id: 'sub-1' }, error: null })
+      .mockResolvedValueOnce({ data: null, error: null });
+    const makeRequest = () =>
+      new NextRequest('http://localhost/api/subscriptions/retention-offer', {
+        method: 'PUT',
+        headers: { authorization: 'Bearer token', 'content-type': 'application/json' },
+        body: JSON.stringify({ reason: 'too_expensive' }),
+      });
+    const responses = await Promise.all([PUT(makeRequest()), PUT(makeRequest())]);
+    expect(responses.map(response => response.status).sort()).toEqual([200, 202]);
+    expect(changeSubscription).toHaveBeenCalledTimes(1);
+  });
+
+  test('rejects retention after cancellation has claimed the subscription', async () => {
+    single.mockResolvedValue({
+      data: {
+        id: 'sub-1',
+        price_id: getPlanByKey('pro')?.stripePriceId,
+        cancel_at_period_end: true,
+      },
+    });
+    const response = await PUT(
+      new NextRequest('http://localhost/api/subscriptions/retention-offer', {
+        method: 'PUT',
+        headers: { authorization: 'Bearer token', 'content-type': 'application/json' },
+        body: JSON.stringify({ reason: 'too_expensive' }),
+      })
+    );
+    expect(response.status).toBe(409);
     expect(changeSubscription).not.toHaveBeenCalled();
   });
 

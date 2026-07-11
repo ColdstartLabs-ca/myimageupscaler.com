@@ -85,6 +85,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const cancellationStartedAt = new Date().toISOString();
+    const { error: cancellationClaimError } = await supabaseAdmin
+      .from('subscriptions')
+      .update({
+        cancel_at_period_end: true,
+        scheduled_price_id: null,
+        scheduled_change_date: null,
+        updated_at: cancellationStartedAt,
+      })
+      .eq('id', subscription.id);
+    if (cancellationClaimError) {
+      throw new Error(
+        `Failed to claim subscription cancellation: ${cancellationClaimError.message}`
+      );
+    }
+
     // Cancellation wins over any pending plan change.
     const stripeSubscription = await stripe.subscriptions.retrieve(subscription.id);
     if (stripeSubscription.schedule && typeof stripeSubscription.schedule === 'string') {
@@ -105,7 +121,7 @@ export async function POST(request: NextRequest) {
       scheduled_change_date: null;
     } = {
       cancel_at_period_end: true,
-      updated_at: new Date().toISOString(),
+      updated_at: cancellationStartedAt,
       scheduled_price_id: null,
       scheduled_change_date: null,
     };

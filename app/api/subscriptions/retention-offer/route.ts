@@ -71,7 +71,7 @@ export async function PUT(request: NextRequest) {
 
   const { data: subscription } = await supabaseAdmin
     .from('subscriptions')
-    .select('id, price_id, scheduled_price_id, scheduled_change_date')
+    .select('id, price_id, scheduled_price_id, scheduled_change_date, cancel_at_period_end')
     .eq('user_id', user.id)
     .in('status', ['active', 'trialing'])
     .order('created_at', { ascending: false })
@@ -80,6 +80,12 @@ export async function PUT(request: NextRequest) {
 
   if (!subscription?.price_id) {
     return NextResponse.json({ error: 'No active subscription' }, { status: 400 });
+  }
+  if (subscription.cancel_at_period_end) {
+    return NextResponse.json(
+      { error: 'Subscription cancellation is already scheduled' },
+      { status: 409 }
+    );
   }
 
   const current = assertKnownPriceId(subscription.price_id);
@@ -106,15 +112,54 @@ export async function PUT(request: NextRequest) {
     });
   }
 
-  return changeSubscription(
+  const attemptId = crypto.randomUUID();
+  const { data: claim, error: claimError } = await supabaseAdmin
+    .from('subscriptions')
+    .update({
+      scheduled_price_id: target.stripePriceId,
+      scheduled_change_date: null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', subscription.id)
+    .eq('cancel_at_period_end', false)
+    .is('scheduled_price_id', null)
+    .select('id')
+    .maybeSingle();
+  if (claimError) {
+    return NextResponse.json({ error: 'Unable to claim retention change' }, { status: 500 });
+  }
+  if (!claim) {
+    return NextResponse.json(
+      {
+        success: true,
+        data: { subscription_id: subscription.id, status: 'processing', idempotent_replay: true },
+      },
+      { status: 202 }
+    );
+  }
+
+  const response = await changeSubscription(
     new NextRequest(new URL('/api/subscription/change', request.url), {
       method: 'POST',
       headers: {
         authorization,
         'content-type': 'application/json',
-        'x-retention-idempotency-key': `retention:${user.id}:${subscription.id}:${target.stripePriceId}`,
+        'x-retention-idempotency-key': `retention:${user.id}:${subscription.id}:${target.stripePriceId}:${attemptId}`,
       },
       body: JSON.stringify({ targetPriceId: target.stripePriceId }),
     })
   );
+  if (!response.ok) {
+    await supabaseAdmin
+      .from('subscriptions')
+      .update({
+        scheduled_price_id: null,
+        scheduled_change_date: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', subscription.id)
+      .eq('scheduled_price_id', target.stripePriceId)
+      .is('scheduled_change_date', null);
+  }
+  return response;
 }
