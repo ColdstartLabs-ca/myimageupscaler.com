@@ -66,7 +66,28 @@ REVOKE ALL ON FUNCTION public.record_subscription_retention_refund(text, text, u
 GRANT EXECUTE ON FUNCTION public.record_subscription_retention_refund(text, text, uuid, text, integer)
   TO service_role;
 
-ALTER TABLE public.dispute_events ADD COLUMN invoice_id text;
+CREATE TABLE IF NOT EXISTS public.dispute_events (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  dispute_id text NOT NULL,
+  user_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  charge_id text,
+  invoice_id text,
+  amount_cents integer NOT NULL,
+  credits_held integer NOT NULL,
+  status text NOT NULL CHECK (status IN ('created', 'updated', 'closed', 'won')),
+  reason text,
+  evidence_due_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+ALTER TABLE public.dispute_events ADD COLUMN IF NOT EXISTS invoice_id text;
+CREATE INDEX IF NOT EXISTS idx_dispute_events_user_id ON public.dispute_events(user_id);
+CREATE INDEX IF NOT EXISTS idx_dispute_events_dispute_id ON public.dispute_events(dispute_id);
+CREATE INDEX IF NOT EXISTS idx_dispute_events_status ON public.dispute_events(status);
+ALTER TABLE public.dispute_events ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Service role manages dispute events" ON public.dispute_events;
+CREATE POLICY "Service role manages dispute events"
+  ON public.dispute_events FOR ALL TO service_role USING (true) WITH CHECK (true);
 
 CREATE OR REPLACE FUNCTION public.capture_subscription_retention_state()
 RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $$
