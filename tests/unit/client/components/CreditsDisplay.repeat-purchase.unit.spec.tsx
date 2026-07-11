@@ -2,14 +2,22 @@ import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { trackMock, upgradeMock } = vi.hoisted(() => ({
+const { trackMock, upgradeMock, contextMock } = vi.hoisted(() => ({
   trackMock: vi.fn(),
   upgradeMock: vi.fn(),
+  contextMock: vi.fn(),
 }));
 
 vi.mock('@client/analytics', () => ({ analytics: { track: trackMock } }));
 vi.mock('@client/utils/purchaseModalDefaults', () => ({
-  getRememberedPurchasedPack: () => 'medium',
+  setRepeatPurchaseContext: contextMock,
+}));
+vi.mock('@server/supabase/supabaseClient', () => ({
+  supabase: {
+    auth: {
+      getSession: vi.fn().mockResolvedValue({ data: { session: { access_token: 'token' } } }),
+    },
+  },
 }));
 vi.mock('@client/store/userStore', () => ({
   useCredits: () => ({ total: 3 }),
@@ -17,7 +25,7 @@ vi.mock('@client/store/userStore', () => ({
     isLoading: false,
     error: null,
     invalidate: vi.fn(),
-    user: { profile: {} },
+    user: { id: 'user-1', profile: {} },
     isAuthenticated: true,
     lastFetched: 1,
   }),
@@ -40,7 +48,16 @@ vi.mock('@client/components/ui/SmartTooltip', () => ({
 import { CreditsDisplay } from '@client/components/stripe/CreditsDisplay';
 
 describe('CreditsDisplay repeat purchase prompt', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: vi.fn().mockResolvedValue({ repeatPackKey: 'medium' }),
+      })
+    );
+  });
 
   it('shows the prior pack at low balance and tracks the short-flow click', async () => {
     render(<CreditsDisplay onUpgrade={upgradeMock} />);
@@ -51,6 +68,7 @@ describe('CreditsDisplay repeat purchase prompt', () => {
         creditBalance: 3,
       })
     );
+    expect(contextMock).toHaveBeenCalledWith('user-1', 'medium');
     fireEvent.click(prompt);
     expect(trackMock).toHaveBeenCalledWith('repeat_purchase_prompt_clicked', {
       packKey: 'medium',

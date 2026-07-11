@@ -1,17 +1,21 @@
 import type { ICreditPack, IPlanConfig } from '@shared/config/subscription.types';
 
 export type TPurchaseMode = 'credits' | 'subscribe';
-const LAST_PURCHASED_PACK_KEY = 'miu_last_purchased_pack';
+const REPEAT_PURCHASE_CONTEXT_KEY = 'miu_repeat_purchase';
 
-export function rememberPurchasedPack(packKey: string): void {
-  if (typeof localStorage !== 'undefined' && ['small', 'medium', 'large'].includes(packKey)) {
-    localStorage.setItem(LAST_PURCHASED_PACK_KEY, packKey);
+export function setRepeatPurchaseContext(userId: string, packKey: string | null): void {
+  if (typeof sessionStorage === 'undefined') return;
+  const key = `${REPEAT_PURCHASE_CONTEXT_KEY}:${userId}`;
+  if (packKey && ['small', 'medium', 'large'].includes(packKey)) {
+    sessionStorage.setItem(key, packKey);
+  } else {
+    sessionStorage.removeItem(key);
   }
 }
 
-export function getRememberedPurchasedPack(): string | null {
-  if (typeof localStorage === 'undefined') return null;
-  const value = localStorage.getItem(LAST_PURCHASED_PACK_KEY);
+export function getRepeatPurchaseContext(userId: string | undefined): string | null {
+  if (!userId || typeof sessionStorage === 'undefined') return null;
+  const value = sessionStorage.getItem(`${REPEAT_PURCHASE_CONTEXT_KEY}:${userId}`);
   return value && ['small', 'medium', 'large'].includes(value) ? value : null;
 }
 
@@ -60,16 +64,14 @@ export function getPurchaseModalInitialSelection({
 }): IPurchaseModalInitialSelection {
   const starterPack = getStarterPack(creditPacks);
 
-  if (outOfCredits || trigger === 'out_of_credits' || trigger === 'insufficient_credits') {
-    const repeatPack = creditPacks.find(pack => pack.key === repeatPackKey);
-    if (repeatPack) {
-      return {
-        purchaseMode: 'credits',
-        selectedPack: repeatPack,
-        selectedPlan: null,
-        lockToCredits: false,
-      };
-    }
+  const repeatPack = creditPacks.find(pack => pack.key === repeatPackKey);
+  if (repeatPack) {
+    return {
+      purchaseMode: 'credits',
+      selectedPack: repeatPack,
+      selectedPlan: null,
+      lockToCredits: false,
+    };
   }
 
   if (banditConfig?.defaultType === 'credit_pack' || banditConfig?.defaultKey) {

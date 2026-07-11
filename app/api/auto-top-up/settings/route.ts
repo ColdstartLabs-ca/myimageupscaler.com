@@ -19,7 +19,17 @@ export async function GET(request: NextRequest) {
     .eq('user_id', user.id)
     .maybeSingle();
   if (error) return NextResponse.json({ error: 'Unable to load settings' }, { status: 500 });
-  return NextResponse.json({ data });
+  const { data: purchase } = await supabaseAdmin
+    .from('credit_transactions')
+    .select('description')
+    .eq('user_id', user.id)
+    .eq('type', 'purchase')
+    .like('description', 'Credit pack purchase - %')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const match = purchase?.description?.match(/^Credit pack purchase - (small|medium|large) -/);
+  return NextResponse.json({ data, repeatPackKey: match?.[1] ?? null });
 }
 
 const disableSchema = z.object({ enabled: z.literal(false) }).strict();

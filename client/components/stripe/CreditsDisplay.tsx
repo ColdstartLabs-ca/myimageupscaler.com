@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useCredits, useUserStore } from '@client/store/userStore';
 import { SmartTooltip } from '@client/components/ui/SmartTooltip';
 import { analytics } from '@client/analytics';
-import { getRememberedPurchasedPack } from '@client/utils/purchaseModalDefaults';
+import { setRepeatPurchaseContext } from '@client/utils/purchaseModalDefaults';
+import { supabase } from '@server/supabase/supabaseClient';
 
 // Low credit threshold - show warning when credits fall below this amount
 const LOW_CREDIT_THRESHOLD = 5;
@@ -53,15 +54,22 @@ export function CreditsDisplay({ onUpgrade }: ICreditsDisplayProps = {}): JSX.El
 
   useEffect(() => {
     if (!isProfileLoading && creditBalance <= LOW_CREDIT_THRESHOLD) {
-      const packKey = getRememberedPurchasedPack();
-      setRepeatPackKey(packKey);
-      if (packKey) {
-        analytics.track('repeat_purchase_prompt_shown', { packKey, creditBalance });
-      }
+      void supabase.auth.getSession().then(async ({ data }) => {
+        if (!data.session?.access_token || !user?.id) return;
+        const response = await fetch('/api/auto-top-up/settings', {
+          headers: { authorization: `Bearer ${data.session.access_token}` },
+        });
+        if (!response.ok) return;
+        const payload = (await response.json()) as { repeatPackKey?: string | null };
+        const packKey = payload.repeatPackKey ?? null;
+        setRepeatPurchaseContext(user.id, packKey);
+        setRepeatPackKey(packKey);
+        if (packKey) analytics.track('repeat_purchase_prompt_shown', { packKey, creditBalance });
+      });
     } else {
       setRepeatPackKey(null);
     }
-  }, [creditBalance, isProfileLoading]);
+  }, [creditBalance, isProfileLoading, user?.id]);
 
   // Should show tooltip?
   const showTooltip = isLowCredits || isNoCredits;

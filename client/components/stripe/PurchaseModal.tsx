@@ -20,8 +20,7 @@ import {
 } from '@client/utils/checkoutTrackingContext';
 import {
   getPurchaseModalInitialSelection,
-  getRememberedPurchasedPack,
-  rememberPurchasedPack,
+  getRepeatPurchaseContext,
 } from '@client/utils/purchaseModalDefaults';
 import type { IPurchaseModalBanditConfig } from '@client/utils/purchaseModalDefaults';
 import { getEnabledCreditPacks, getEnabledPlans } from '@shared/config/subscription.utils';
@@ -133,7 +132,7 @@ export function PurchaseModal({
   const t = useTranslations('stripe.outOfCredits');
   const { pricingRegion, discountPercent } = useRegionTier();
   const openTimeRef = useRef<number>(0);
-  const { isAuthenticated } = useUserStore();
+  const { isAuthenticated, user } = useUserStore();
   const { openAuthRequiredModal } = useModalStore();
 
   const { planKey: currentPlan, priceId: currentPriceId, isPaidUser } = useCurrentPlan();
@@ -181,12 +180,13 @@ export function PurchaseModal({
   );
 
   const visibleCreditPacks = useMemo(() => {
+    if (getRepeatPurchaseContext(user?.id)) return creditPacks;
     if (!purchaseBanditConfig.visiblePacks?.length) return creditPacks;
 
     const allowedKeys = new Set(purchaseBanditConfig.visiblePacks);
     const filtered = creditPacks.filter(pack => allowedKeys.has(pack.key));
     return filtered.length > 0 ? filtered : creditPacks;
-  }, [creditPacks, purchaseBanditConfig.visiblePacks]);
+  }, [creditPacks, purchaseBanditConfig.visiblePacks, user?.id]);
 
   const basePack = creditPacks[0];
   const starterPack = creditPacks.find(pack => pack.key === 'small') || basePack;
@@ -212,7 +212,7 @@ export function PurchaseModal({
         creditPacks,
         subscriptionPlans,
         banditConfig: purchaseBanditConfig,
-        repeatPackKey: getRememberedPurchasedPack(),
+        repeatPackKey: getRepeatPurchaseContext(user?.id),
       });
       setSelectedPack(initialSelection.selectedPack);
       setSelectedPlan(initialSelection.selectedPlan);
@@ -377,12 +377,11 @@ export function PurchaseModal({
   }, []);
 
   const handleCheckoutSuccess = useCallback(() => {
-    if (selectedPack) rememberPurchasedPack(selectedPack.key);
     setShowCheckoutModal(false);
     setCheckoutPriceId(null);
     onPurchaseComplete();
     onClose();
-  }, [onPurchaseComplete, onClose, selectedPack]);
+  }, [onPurchaseComplete, onClose]);
 
   const handlePlanChangeComplete = useCallback(() => {
     setIsPlanChangeModalOpen(false);
