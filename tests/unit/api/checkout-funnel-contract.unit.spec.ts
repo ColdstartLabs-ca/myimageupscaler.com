@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { NextRequest } from 'next/server';
-import { POST, parseFunnelCheckoutAttribution } from '@app/api/checkout/route';
+import { POST } from '@app/api/checkout/route';
+import { parseFunnelCheckoutAttribution } from '@app/api/checkout/funnel-attribution';
 
 describe('checkout funnel contract', () => {
   test('should preserve acquisition and landing-page fields through checkout', () => {

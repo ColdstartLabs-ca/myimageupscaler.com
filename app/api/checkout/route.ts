@@ -18,17 +18,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { validateExperimentCheckoutAttribution } from '@lib/experiments';
 import { EXPERIMENT_CHECKOUT_METADATA_KEYS } from '@shared/types/experiments.types';
-import { FUNNEL_SCHEMA_VERSION } from '@server/analytics/types';
-
-const FUNNEL_CHECKOUT_METADATA_KEYS = {
-  schemaVersion: 'funnel_schema_version',
-  firstTouchSource: 'first_touch_source',
-  firstTouchMedium: 'first_touch_medium',
-  firstTouchLandingPage: 'first_touch_landing_page',
-  landingPageFamily: 'landing_page_family',
-  deviceType: 'device_type',
-  isPseoLanding: 'is_pseo_landing',
-} as const;
+import {
+  FUNNEL_CHECKOUT_METADATA_KEYS,
+  parseFunnelCheckoutAttribution,
+} from './funnel-attribution';
 
 /**
  * Validates and parses the request body
@@ -89,31 +82,6 @@ const RESERVED_CHECKOUT_METADATA_KEYS = new Set([
   // bandit_arm_id is intentionally NOT reserved: it comes from the client (via /api/geo)
   // and must pass through to Stripe metadata so the webhook can record conversions.
 ]);
-
-export function parseFunnelCheckoutAttribution(metadata: Record<string, string>) {
-  const keys = FUNNEL_CHECKOUT_METADATA_KEYS;
-  const hasFunnelMetadata = Object.values(keys).some(key => metadata[key] !== undefined);
-  if (!hasFunnelMetadata) return null;
-
-  if (metadata[keys.schemaVersion] !== FUNNEL_SCHEMA_VERSION) {
-    throw new Error('Invalid funnel schema version');
-  }
-
-  const deviceType = metadata[keys.deviceType];
-  if (deviceType && !['mobile', 'tablet', 'desktop'].includes(deviceType)) {
-    throw new Error('Invalid funnel device type');
-  }
-  const isPseoLanding = metadata[keys.isPseoLanding];
-  if (isPseoLanding && !['true', 'false'].includes(isPseoLanding)) {
-    throw new Error('Invalid funnel pSEO classification');
-  }
-
-  return Object.fromEntries(
-    Object.values(keys)
-      .filter(key => metadata[key] !== undefined)
-      .map(key => [key, metadata[key]])
-  );
-}
 
 function parseExperimentCheckoutAttribution(metadata: Record<string, string>) {
   const keys = EXPERIMENT_CHECKOUT_METADATA_KEYS;
