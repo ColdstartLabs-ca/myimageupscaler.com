@@ -153,24 +153,19 @@ describe('auto top-up webhook convergence', () => {
   });
 
   it('propagates failed-attempt storage errors and never grants credits', async () => {
-    fromMock.mockReturnValue(query({ data: null, error: { message: 'database unavailable' } }));
+    rpcMock.mockResolvedValue({ data: null, error: { message: 'database unavailable' } });
     await expect(
       PaymentHandler.handlePaymentIntentFailed(autoTopUpIntent('requires_payment_method'))
-    ).rejects.toThrow('Unable to fail auto top-up attempt');
-    expect(rpcMock).not.toHaveBeenCalled();
+    ).rejects.toThrow('Unable to finalize auto top-up failure');
+    expect(rpcMock).not.toHaveBeenCalledWith('finalize_auto_top_up_attempt', expect.anything());
     expect(sendMock).not.toHaveBeenCalled();
   });
 
   it('marks a decline, releases its lease, and sends a notice without granting credits', async () => {
-    let call = 0;
-    fromMock.mockImplementation(() => {
-      call++;
-      if (call === 1) return query({ data: { id: 'attempt-old' }, error: null });
-      if (call === 2) return query({ data: { consecutive_failures: 2 }, error: null });
-      return query({ data: { user_id: 'user-1' }, error: null });
-    });
+    rpcMock.mockResolvedValue({ data: 3, error: null });
+    fromMock.mockReturnValue(query({ data: null, error: null }));
     await PaymentHandler.handlePaymentIntentFailed(autoTopUpIntent('requires_payment_method'));
-    expect(rpcMock).not.toHaveBeenCalled();
+    expect(rpcMock).not.toHaveBeenCalledWith('finalize_auto_top_up_attempt', expect.anything());
     expect(sendMock).toHaveBeenCalledWith(
       expect.objectContaining({
         template: 'auto-top-up-failure',

@@ -1082,58 +1082,37 @@ export class PaymentHandler {
     const userId = paymentIntent.metadata.auto_top_up_user_id;
     if (!attemptId || !userId) return;
     const reason = paymentIntent.last_payment_error?.decline_code || 'payment_failed';
-    const { data: failedAttempt, error: attemptError } = await supabaseAdmin
-      .from('auto_top_up_attempts')
-      .update({ status: 'failed', error_class: reason, updated_at: new Date().toISOString() })
-      .eq('id', attemptId)
-      .eq('user_id', userId)
-      .eq('stripe_payment_intent_id', paymentIntent.id)
-      .eq('status', 'payment_pending')
-      .select('id')
-      .maybeSingle();
-    if (attemptError)
-      throw new Error(`Unable to fail auto top-up attempt: ${attemptError.message}`);
-    if (!failedAttempt) return;
-    const { data: setting, error: settingError } = await supabaseAdmin
-      .from('auto_top_up_settings')
-      .select('consecutive_failures')
-      .eq('user_id', userId)
-      .eq('charge_claim_id', attemptId)
-      .maybeSingle();
-    if (settingError)
-      throw new Error(`Unable to load auto top-up setting: ${settingError.message}`);
-    if (!setting) return;
-    const failures = setting.consecutive_failures + 1;
-    const { data: updatedSetting, error: updateError } = await supabaseAdmin
-      .from('auto_top_up_settings')
-      .update({
-        consecutive_failures: failures,
-        enabled: failures < 3,
-        failure_reason: reason,
-        charge_claim_id: null,
-        charge_claimed_at: null,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('user_id', userId)
-      .eq('charge_claim_id', attemptId)
-      .select('user_id')
-      .maybeSingle();
-    if (updateError)
-      throw new Error(`Unable to update auto top-up failure state: ${updateError.message}`);
-    if (!updatedSetting) throw new Error('Auto top-up lease changed during failure convergence');
+    const { data: failures, error: failureError } = await supabaseAdmin.rpc(
+      'finalize_auto_top_up_failure',
+      { p_attempt_id: attemptId, p_payment_intent_id: paymentIntent.id, p_error_class: reason }
+    );
+    if (failureError)
+      throw new Error(`Unable to finalize auto top-up failure: ${failureError.message}`);
+    if (typeof failures !== 'number') return;
 
     const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(userId);
     const email = authUser.user?.email;
     if (email) {
-      await getEmailService()
-        .send({
+      try {
+        await getEmailService().send({
           to: email,
           userId,
           type: 'transactional',
           template: 'auto-top-up-failure',
           data: { paused: failures >= 3 },
-        })
-        .catch(error => console.error('[AUTO_TOP_UP_EMAIL_FAILED]', error));
+        });
+        const { error } = await supabaseAdmin
+          .from('auto_top_up_attempts')
+          .update({
+            failure_notification_pending: false,
+            failure_notified_at: new Date().toISOString(),
+          })
+          .eq('id', attemptId)
+          .eq('failure_notification_pending', true);
+        if (error) throw error;
+      } catch (error) {
+        console.error('[AUTO_TOP_UP_EMAIL_FAILED]', error);
+      }
     }
   }
 

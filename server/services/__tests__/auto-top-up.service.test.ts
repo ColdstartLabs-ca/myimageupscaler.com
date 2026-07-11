@@ -8,6 +8,7 @@ const {
   paymentIntentCancel,
   paymentIntentRetrieve,
   sendEmail,
+  rpcMock,
 } = vi.hoisted(() => ({
   fromMock: vi.fn(),
   priceRetrieve: vi.fn(),
@@ -16,11 +17,13 @@ const {
   paymentIntentCancel: vi.fn(),
   paymentIntentRetrieve: vi.fn(),
   sendEmail: vi.fn(),
+  rpcMock: vi.fn(),
 }));
 
 vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: {
     from: fromMock,
+    rpc: rpcMock,
     auth: {
       admin: {
         getUserById: vi
@@ -84,6 +87,7 @@ describe('AutoTopUpService', () => {
     paymentIntentCancel.mockResolvedValue({ id: 'pi_auto_1', status: 'canceled' });
     paymentIntentRetrieve.mockResolvedValue({ id: 'pi_auto_1', status: 'requires_confirmation' });
     sendEmail.mockResolvedValue({ success: true });
+    rpcMock.mockResolvedValue({ data: 1, error: null });
   });
 
   test('matches below-threshold disclosure and accepts only payable Stripe states', () => {
@@ -151,6 +155,9 @@ describe('AutoTopUpService', () => {
       }
       if (table === 'auto_top_up_attempts') {
         return {
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({ limit: vi.fn().mockResolvedValue({ data: [], error: null }) })),
+          })),
           insert: vi.fn(() => ({
             select: vi.fn(() => ({
               maybeSingle: vi.fn(async () => {
@@ -229,6 +236,9 @@ describe('AutoTopUpService', () => {
         };
       if (table === 'auto_top_up_attempts')
         return {
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({ limit: vi.fn().mockResolvedValue({ data: [], error: null }) })),
+          })),
           insert: vi.fn((payload: Record<string, unknown>) => {
             attemptInsert = payload;
             return {

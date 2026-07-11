@@ -56,6 +56,7 @@ export function isStaleAutoTopUpLease(claimedAt: string | null, now: Date): bool
 
 export class AutoTopUpService {
   async processEligible(limit = 25, now = new Date()): Promise<IAutoTopUpRunResult> {
+    await this.flushFailureNotifications();
     const { data, error } = await supabaseAdmin
       .from('auto_top_up_settings')
       .select(
@@ -178,6 +179,7 @@ export class AutoTopUpService {
         continue;
       }
 
+      let paymentIntentId: string | null = null;
       try {
         const price = await stripe.prices.retrieve(setting.stripe_price_id);
         if (!price.unit_amount || !price.currency || price.type !== 'one_time') {
@@ -200,6 +202,7 @@ export class AutoTopUpService {
           },
           { idempotencyKey }
         );
+        paymentIntentId = paymentIntent.id;
         const { error: persistError } = await supabaseAdmin
           .from('auto_top_up_attempts')
           .update({
@@ -274,14 +277,32 @@ export class AutoTopUpService {
         if (paymentError instanceof AmbiguousAutoTopUpConfirmationError) throw paymentError;
         const errorClass =
           paymentError instanceof Error ? paymentError.message : 'payment_intent_failed';
-        const { error: failureError } = await supabaseAdmin
-          .from('auto_top_up_attempts')
-          .update({ status: 'failed', error_class: errorClass })
-          .eq('id', attempt.id);
-        if (failureError)
-          throw new Error(`Unable to persist auto top-up failure: ${failureError.message}`);
-        await this.pauseSetting(setting, errorClass, attempt.id);
-        await this.notifyFailure(setting.user_id, setting.consecutive_failures + 1);
+        let failures = setting.consecutive_failures + 1;
+        if (paymentIntentId) {
+          const { data, error } = await supabaseAdmin.rpc('finalize_auto_top_up_failure', {
+            p_attempt_id: attempt.id,
+            p_payment_intent_id: paymentIntentId,
+            p_error_class: errorClass,
+          });
+          if (error || typeof data !== 'number')
+            throw new Error(
+              `Unable to finalize auto top-up failure: ${error?.message || 'invalid result'}`
+            );
+          failures = data;
+        } else {
+          const { error: failureError } = await supabaseAdmin
+            .from('auto_top_up_attempts')
+            .update({
+              status: 'failed',
+              error_class: errorClass,
+              failure_notification_pending: true,
+            })
+            .eq('id', attempt.id);
+          if (failureError)
+            throw new Error(`Unable to persist auto top-up failure: ${failureError.message}`);
+          await this.pauseSetting(setting, errorClass, attempt.id);
+        }
+        await this.notifyFailure(setting.user_id, failures, attempt.id);
         result.failed++;
       }
     }
@@ -308,7 +329,7 @@ export class AutoTopUpService {
     if (error) throw new Error(`Unable to update auto top-up failure state: ${error.message}`);
   }
 
-  private async notifyFailure(userId: string, failures: number): Promise<void> {
+  private async notifyFailure(userId: string, failures: number, attemptId: string): Promise<void> {
     const { data, error } = await supabaseAdmin.auth.admin.getUserById(userId);
     if (error) throw new Error(`Unable to load auto top-up email recipient: ${error.message}`);
     if (!data.user?.email) return;
@@ -319,6 +340,35 @@ export class AutoTopUpService {
       template: 'auto-top-up-failure',
       data: { paused: failures >= 3 },
     });
+    const { error: updateError } = await supabaseAdmin
+      .from('auto_top_up_attempts')
+      .update({
+        failure_notification_pending: false,
+        failure_notified_at: new Date().toISOString(),
+      })
+      .eq('id', attemptId)
+      .eq('failure_notification_pending', true);
+    if (updateError)
+      throw new Error(`Unable to mark auto top-up notice sent: ${updateError.message}`);
+  }
+
+  private async flushFailureNotifications(): Promise<void> {
+    const { data, error } = await supabaseAdmin
+      .from('auto_top_up_attempts')
+      .select('id, user_id')
+      .eq('failure_notification_pending', true)
+      .limit(25);
+    if (error) throw new Error(`Unable to load pending auto top-up notices: ${error.message}`);
+    for (const attempt of data ?? []) {
+      const { data: setting, error: settingError } = await supabaseAdmin
+        .from('auto_top_up_settings')
+        .select('consecutive_failures')
+        .eq('user_id', attempt.user_id)
+        .maybeSingle();
+      if (settingError)
+        throw new Error(`Unable to load auto top-up notice state: ${settingError.message}`);
+      await this.notifyFailure(attempt.user_id, setting?.consecutive_failures ?? 0, attempt.id);
+    }
   }
 }
 
