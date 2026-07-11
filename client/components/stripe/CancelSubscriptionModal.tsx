@@ -1,14 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { AlertTriangle } from 'lucide-react';
 import dayjs from 'dayjs';
-import {
-  resolveCancellationRetentionOffer,
-  type CancellationReasonKey,
-  type RetentionPlanKey,
+import type {
+  CancellationReasonKey,
+  RetentionPlanKey,
 } from '@shared/config/cancellation-retention';
+import { supabase } from '@server/supabase/supabaseClient';
 import { ModalHeader } from './ModalHeader';
 
 interface ICancelSubscriptionModalProps {
@@ -17,7 +17,6 @@ interface ICancelSubscriptionModalProps {
   onConfirm: (reason?: string) => Promise<void>;
   planName: string;
   periodEnd: string;
-  currentPlanKey?: string | null;
   onAcceptRetentionOffer?: (targetPlanKey: RetentionPlanKey) => void;
 }
 
@@ -46,7 +45,6 @@ export function CancelSubscriptionModal({
   onConfirm,
   planName,
   periodEnd,
-  currentPlanKey,
   onAcceptRetentionOffer,
 }: ICancelSubscriptionModalProps): JSX.Element | null {
   const t = useTranslations('stripe.cancelSubscription');
@@ -57,9 +55,36 @@ export function CancelSubscriptionModal({
   const [loading, setLoading] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showRetentionOffer, setShowRetentionOffer] = useState(false);
-  const retentionOffer = selectedReasonKey
-    ? resolveCancellationRetentionOffer(selectedReasonKey, currentPlanKey)
-    : null;
+  const [retentionOffer, setRetentionOffer] = useState<{
+    targetPlanKey: RetentionPlanKey;
+    targetPlanName: string;
+  } | null>(null);
+  const [offerLoading, setOfferLoading] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  const resetFlow = () => {
+    setSelectedReason('');
+    setSelectedReasonKey(null);
+    setCustomReason('');
+    setLoading(false);
+    setShowConfirmation(false);
+    setShowRetentionOffer(false);
+    setRetentionOffer(null);
+    setOfferLoading(false);
+  };
+
+  useEffect(() => {
+    if (!isOpen) {
+      resetFlow();
+      return;
+    }
+    dialogRef.current?.focus();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && !loading) onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, loading, onClose]);
 
   if (!isOpen) return null;
 
@@ -71,12 +96,36 @@ export function CancelSubscriptionModal({
     }
   };
 
-  const handleContinue = () => {
-    if (retentionOffer && onAcceptRetentionOffer) {
-      setShowRetentionOffer(true);
+  const handleContinue = async () => {
+    if (!selectedReasonKey || !onAcceptRetentionOffer) {
+      setShowConfirmation(true);
       return;
     }
-    setShowConfirmation(true);
+    setOfferLoading(true);
+    try {
+      const { data } = await supabase.auth.getSession();
+      if (!data.session?.access_token) throw new Error('User not authenticated');
+      const response = await fetch('/api/subscriptions/retention-offer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${data.session.access_token}`,
+        },
+        body: JSON.stringify({ reason: selectedReasonKey }),
+      });
+      const result = await response.json();
+      const offer = response.ok ? result.data?.offer : null;
+      if (offer) {
+        setRetentionOffer(offer);
+        setShowRetentionOffer(true);
+      } else {
+        setShowConfirmation(true);
+      }
+    } catch {
+      setShowConfirmation(true);
+    } finally {
+      setOfferLoading(false);
+    }
   };
 
   const handleCancel = async () => {
@@ -96,7 +145,14 @@ export function CancelSubscriptionModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-surface rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={t('title')}
+        tabIndex={-1}
+        className="bg-surface rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto"
+      >
         <ModalHeader
           title={t('title')}
           icon={AlertTriangle}
@@ -108,7 +164,7 @@ export function CancelSubscriptionModal({
         <div className="p-6 space-y-6">
           {showRetentionOffer && retentionOffer ? (
             <CancellationRetentionOffer
-              targetPlanKey={retentionOffer.targetPlanKey}
+              targetPlanName={retentionOffer.targetPlanName}
               onAccept={() => onAcceptRetentionOffer?.(retentionOffer.targetPlanKey)}
               onContinueCancellation={() => {
                 setShowRetentionOffer(false);
@@ -125,6 +181,7 @@ export function CancelSubscriptionModal({
               selectedReason={selectedReason}
               customReason={customReason}
               loading={loading}
+              offerLoading={offerLoading}
               onReasonChange={handleReasonChange}
               onCustomReasonChange={setCustomReason}
               onClose={onClose}
@@ -153,6 +210,7 @@ interface ICancellationReasonFormProps {
   selectedReason: string;
   customReason: string;
   loading: boolean;
+  offerLoading: boolean;
   onReasonChange: (reasonKey: CancellationReasonKey, reason: string) => void;
   onCustomReasonChange: (reason: string) => void;
   onClose: () => void;
@@ -165,6 +223,7 @@ function CancellationReasonForm({
   selectedReason,
   customReason,
   loading,
+  offerLoading,
   onReasonChange,
   onCustomReasonChange,
   onClose,
@@ -226,7 +285,7 @@ function CancellationReasonForm({
         <button
           onClick={onClose}
           className="flex-1 px-4 py-3 bg-surface-light hover:bg-surface-light text-muted-foreground font-medium rounded-lg transition-colors"
-          disabled={loading}
+          disabled={loading || offerLoading}
         >
           {t('keepSubscription')}
         </button>
@@ -235,7 +294,7 @@ function CancellationReasonForm({
           className="flex-1 px-4 py-3 bg-error hover:bg-error/80 text-white font-medium rounded-lg transition-colors"
           disabled={loading}
         >
-          {t('continue')}
+          {offerLoading ? t('processing') : t('continue')}
         </button>
       </div>
     </>
@@ -243,7 +302,7 @@ function CancellationReasonForm({
 }
 
 interface ICancellationRetentionOfferProps {
-  targetPlanKey: RetentionPlanKey;
+  targetPlanName: string;
   title: string;
   changePlanLabel: string;
   cancelLabel: string;
@@ -252,7 +311,7 @@ interface ICancellationRetentionOfferProps {
 }
 
 function CancellationRetentionOffer({
-  targetPlanKey,
+  targetPlanName,
   title,
   changePlanLabel,
   cancelLabel,
@@ -263,7 +322,7 @@ function CancellationRetentionOffer({
     <div className="space-y-5">
       <div className="rounded-xl border border-accent/20 bg-accent/10 p-5 text-center">
         <h3 className="text-lg font-semibold text-primary">{title}</h3>
-        <p className="mt-2 text-sm capitalize text-muted-foreground">{targetPlanKey}</p>
+        <p className="mt-2 text-sm text-muted-foreground">{targetPlanName}</p>
       </div>
       <div className="flex gap-3">
         <button

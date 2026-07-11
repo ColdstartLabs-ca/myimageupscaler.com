@@ -5,6 +5,14 @@ import { CancelSubscriptionModal } from '@client/components/stripe/CancelSubscri
 import { resolveCancellationRetentionOffer } from '@shared/config/cancellation-retention';
 import React from 'react';
 
+vi.mock('@server/supabase/supabaseClient', () => ({
+  supabase: {
+    auth: {
+      getSession: vi.fn().mockResolvedValue({ data: { session: { access_token: 'token' } } }),
+    },
+  },
+}));
+
 // Mock translations for stripe.cancelSubscription
 const mockTranslations = {
   title: 'Cancel Subscription',
@@ -21,6 +29,7 @@ const mockTranslations = {
   },
   otherPlaceholder: "Please tell us why you're canceling...",
   continue: 'Continue',
+  processing: 'Checking...',
   keepSubscription: 'Keep Subscription',
   confirmationTitle: 'Are you sure?',
   confirmationText:
@@ -69,6 +78,16 @@ describe('CancelSubscriptionModal', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(async (_url, init) => {
+        const reason = JSON.parse(String(init?.body)).reason;
+        const offer = ['too_expensive', 'not_using_enough'].includes(reason)
+          ? { targetPlanKey: 'hobby', targetPlanName: 'Hobby' }
+          : null;
+        return { ok: true, json: async () => ({ data: { offer } }) };
+      })
+    );
   });
 
   test('should resolve one lower-plan offer for price and usage reasons', () => {
@@ -88,34 +107,34 @@ describe('CancelSubscriptionModal', () => {
     expect(resolveCancellationRetentionOffer('technical_issues', 'business')).toBeNull();
   });
 
-  test('should show downgrade offer and preserve continue cancellation action', () => {
+  test('should show downgrade offer and preserve continue cancellation action', async () => {
     renderWithTranslations(<CancelSubscriptionModal {...defaultProps} />);
 
     fireEvent.click(screen.getByLabelText('Too expensive'));
     fireEvent.click(screen.getByText('Continue'));
 
-    expect(screen.getByText('A smaller plan may fit better.')).toBeInTheDocument();
+    expect(await screen.findByText('A smaller plan may fit better.')).toBeInTheDocument();
     expect(screen.getByText('Change Plan')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Cancel Subscription' })).toBeInTheDocument();
   });
 
-  test('should accept downgrade offer without canceling', () => {
+  test('should accept downgrade offer without canceling', async () => {
     renderWithTranslations(<CancelSubscriptionModal {...defaultProps} />);
 
     fireEvent.click(screen.getByLabelText('Not using it enough'));
     fireEvent.click(screen.getByText('Continue'));
-    fireEvent.click(screen.getByText('Change Plan'));
+    fireEvent.click(await screen.findByText('Change Plan'));
 
     expect(mockOnAcceptRetentionOffer).toHaveBeenCalledWith('hobby');
     expect(mockOnConfirm).not.toHaveBeenCalled();
   });
 
-  test('should allow direct cancellation after declining offer', () => {
+  test('should allow direct cancellation after declining offer', async () => {
     renderWithTranslations(<CancelSubscriptionModal {...defaultProps} />);
 
     fireEvent.click(screen.getByLabelText('Too expensive'));
     fireEvent.click(screen.getByText('Continue'));
-    fireEvent.click(screen.getByRole('button', { name: 'Cancel Subscription' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Cancel Subscription' }));
 
     expect(screen.getByText('Are you sure?')).toBeInTheDocument();
   });
@@ -182,10 +201,10 @@ describe('CancelSubscriptionModal', () => {
     const continueButton = screen.getByText('Continue');
     fireEvent.click(continueButton);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Cancel Subscription' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Cancel Subscription' }));
 
     // Confirm cancellation
-    const confirmButton = screen.getByText('Yes, Cancel Subscription');
+    const confirmButton = await screen.findByText('Yes, Cancel Subscription');
     fireEvent.click(confirmButton);
 
     await waitFor(() => {
@@ -213,7 +232,7 @@ describe('CancelSubscriptionModal', () => {
     fireEvent.click(continueButton);
 
     // Confirm cancellation
-    const confirmButton = screen.getByText('Yes, Cancel Subscription');
+    const confirmButton = await screen.findByText('Yes, Cancel Subscription');
     fireEvent.click(confirmButton);
 
     await waitFor(() => {

@@ -665,7 +665,6 @@ export default function BillingPage() {
           onConfirm={handleCancelSubscription}
           planName={planName}
           periodEnd={subscription.current_period_end}
-          currentPlanKey={profile?.subscription_tier}
           onAcceptRetentionOffer={handleAcceptCancellationRetentionOffer}
         />
       )}
