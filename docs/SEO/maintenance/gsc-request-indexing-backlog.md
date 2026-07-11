@@ -10,22 +10,22 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 
 ## 2026-07-10 SEO Growth Plan Execution
 
-- [ ] `https://myimageupscaler.com/tools/ai-image-upscaler`
-- [ ] `https://myimageupscaler.com/formats/upscale-gif-images`
-- [ ] `https://myimageupscaler.com/scale/upscale-16x`
-- [ ] `https://myimageupscaler.com/blog/topaz-labs-free-trial`
-- [ ] `https://myimageupscaler.com/blog/topaz-video-upscaler`
-- [ ] `https://myimageupscaler.com/blog/topaz-denoise-ai`
-- [ ] `https://myimageupscaler.com/blog/best-ai-image-enhancer`
-- [ ] `https://myimageupscaler.com/blog/pixelcut-ai-photo-editor`
-- [ ] `https://myimageupscaler.com/blog/mejorar-calidad-imagen-ia-gratis`
-- [ ] `https://myimageupscaler.com/blog/ai-upscaler-muryou-osusume`
+- [x] `https://myimageupscaler.com/tools/ai-image-upscaler`
+- [x] `https://myimageupscaler.com/formats/upscale-gif-images`
+- [x] `https://myimageupscaler.com/scale/upscale-16x`
+- [x] `https://myimageupscaler.com/blog/topaz-labs-free-trial`
+- [x] `https://myimageupscaler.com/blog/topaz-video-upscaler`
+- [x] `https://myimageupscaler.com/blog/topaz-denoise-ai`
+- [x] `https://myimageupscaler.com/blog/best-ai-image-enhancer`
+- [x] `https://myimageupscaler.com/blog/pixelcut-ai-photo-editor`
+- [x] `https://myimageupscaler.com/blog/mejorar-calidad-imagen-ia-gratis`
+- [x] `https://myimageupscaler.com/blog/ai-upscaler-muryou-osusume`
 
 ## 2026-07-03 CTR / Ranking Lift Pass
 
-- [ ] `https://myimageupscaler.com/blog/fixing-pixelated-photos`
-- [ ] `https://myimageupscaler.com/blog/best-ai-upscaler`
-- [ ] `https://myimageupscaler.com/blog/topaz-video-upscaler`
+- [x] `https://myimageupscaler.com/blog/fixing-pixelated-photos`
+- [ ] `https://myimageupscaler.com/blog/best-ai-upscaler` — daily request-indexing quota reached on 2026-07-10; retry later.
+- [x] `https://myimageupscaler.com/blog/topaz-video-upscaler`
 
 ## 2026-06-29 Blog Growth Maintenance CTR Description Test
 
@@ -83,9 +83,9 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 - [ ] `https://myimageupscaler.com/blog/best-ai-upscaler`
 - [ ] `https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark`
 - [ ] `https://myimageupscaler.com/blog/fix-blurry-photos-ai-methods-guide`
-- [ ] `https://myimageupscaler.com/blog/topaz-denoise-ai`
+- [x] `https://myimageupscaler.com/blog/topaz-denoise-ai`
 - [ ] `https://myimageupscaler.com/blog/photoshop-upscale-image`
-- [ ] `https://myimageupscaler.com/blog/best-ai-image-enhancer`
+- [x] `https://myimageupscaler.com/blog/best-ai-image-enhancer`
 - [ ] `https://myimageupscaler.com/blog/sharpen-a-video`
 
 ## 2026-06-05 Blog Thin Content Refresh - Primary
@@ -100,7 +100,7 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 
 ## 2026-06-05 Blog Thin Content Refresh - Secondary
 
-- [ ] `https://myimageupscaler.com/blog/topaz-video-upscaler`
+- [x] `https://myimageupscaler.com/blog/topaz-video-upscaler`
 - [ ] `https://myimageupscaler.com/blog/best-ai-upscaler`
 - [ ] `https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark`
 - [ ] `https://myimageupscaler.com/blog/fix-blurry-photos-ai-methods-guide`
