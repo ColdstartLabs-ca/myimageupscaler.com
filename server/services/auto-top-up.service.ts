@@ -11,6 +11,8 @@ interface IAutoTopUpSetting {
   stripe_payment_method_id: string;
   consent_version: string;
   consecutive_failures: number;
+  charge_claim_id: string | null;
+  charge_claimed_at: string | null;
 }
 
 export interface IAutoTopUpRunResult {
@@ -32,12 +34,18 @@ export function isAutoTopUpPayableStatus(status: string): boolean {
   return status === 'succeeded' || status === 'processing';
 }
 
+export function isStaleAutoTopUpLease(claimedAt: string | null, now: Date): boolean {
+  if (!claimedAt) return true;
+  const timestamp = Date.parse(claimedAt);
+  return !Number.isFinite(timestamp) || now.getTime() - timestamp >= 5 * 60 * 1000;
+}
+
 export class AutoTopUpService {
   async processEligible(limit = 25, now = new Date()): Promise<IAutoTopUpRunResult> {
     const { data, error } = await supabaseAdmin
       .from('auto_top_up_settings')
       .select(
-        'user_id, threshold_credits, pack_key, stripe_price_id, stripe_customer_id, stripe_payment_method_id, consent_version, consecutive_failures'
+        'user_id, threshold_credits, pack_key, stripe_price_id, stripe_customer_id, stripe_payment_method_id, consent_version, consecutive_failures, charge_claim_id, charge_claimed_at'
       )
       .eq('enabled', true)
       .eq('pending_enabled', false)
@@ -54,6 +62,34 @@ export class AutoTopUpService {
     };
 
     for (const setting of settings) {
+      if (setting.charge_claim_id) {
+        if (!isStaleAutoTopUpLease(setting.charge_claimed_at, now)) continue;
+        const { data: staleAttempt } = await supabaseAdmin
+          .from('auto_top_up_attempts')
+          .select('stripe_payment_intent_id')
+          .eq('id', setting.charge_claim_id)
+          .maybeSingle();
+        if (staleAttempt?.stripe_payment_intent_id) {
+          await stripe.paymentIntents
+            .cancel(staleAttempt.stripe_payment_intent_id)
+            .catch(() => undefined);
+        }
+        await supabaseAdmin
+          .from('auto_top_up_attempts')
+          .update({ status: 'cancelled', error_class: 'stale_charge_lease' })
+          .eq('id', setting.charge_claim_id);
+        const { error: staleReleaseError } = await supabaseAdmin
+          .from('auto_top_up_settings')
+          .update({ charge_claim_id: null, charge_claimed_at: null })
+          .eq('user_id', setting.user_id)
+          .eq('charge_claim_id', setting.charge_claim_id);
+        if (staleReleaseError) {
+          throw new Error(
+            `Unable to release stale auto top-up lease: ${staleReleaseError.message}`
+          );
+        }
+      }
+
       const { data: balance } = await supabaseAdmin
         .from('user_credits')
         .select('total_credits_balance')
@@ -123,7 +159,6 @@ export class AutoTopUpService {
             currency: price.currency,
             customer: setting.stripe_customer_id,
             payment_method: setting.stripe_payment_method_id,
-            off_session: true,
             confirm: false,
             metadata: {
               auto_top_up: 'true',

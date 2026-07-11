@@ -27,6 +27,7 @@ import {
   AutoTopUpService,
   isAutoTopUpEligibleBalance,
   isAutoTopUpPayableStatus,
+  isStaleAutoTopUpLease,
 } from '../auto-top-up.service';
 import { getCreditPackByKey } from '@shared/config/subscription.utils';
 
@@ -68,6 +69,9 @@ describe('AutoTopUpService', () => {
     for (const status of ['requires_action', 'requires_payment_method', 'canceled']) {
       expect(isAutoTopUpPayableStatus(status)).toBe(false);
     }
+    const now = new Date('2026-07-11T12:10:00.000Z');
+    expect(isStaleAutoTopUpLease('2026-07-11T12:04:59.000Z', now)).toBe(true);
+    expect(isStaleAutoTopUpLease('2026-07-11T12:05:01.000Z', now)).toBe(false);
   });
 
   test('concurrent scans produce at most one Stripe charge with deterministic idempotency', async () => {
@@ -140,11 +144,12 @@ describe('AutoTopUpService', () => {
     await Promise.all([service.processEligible(25, now), service.processEligible(25, now)]);
     expect(paymentIntentCreate).toHaveBeenCalledTimes(1);
     expect(paymentIntentCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ off_session: true, confirm: false, amount: 1499, currency: 'usd' }),
+      expect.objectContaining({ confirm: false, amount: 1499, currency: 'usd' }),
       {
         idempotencyKey: `auto-top-up:user-1:${setting.consent_version}:2026-07-11`,
       }
     );
+    expect(paymentIntentCreate.mock.calls[0][0]).not.toHaveProperty('off_session');
     expect(paymentIntentConfirm).toHaveBeenCalledWith(
       'pi_auto_1',
       { off_session: true },
