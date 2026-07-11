@@ -33,12 +33,18 @@ export function AutoTopUpSettingsCard(): JSX.Element | null {
     return (await response.json()).data as IAutoTopUpSettings | null;
   }, []);
 
-  useEffect(() => {
-    request()
+  const load = useCallback(() => {
+    setLoading(true);
+    setError(null);
+    return request()
       .then(setSettings)
       .catch(() => setError('Unable to load auto top-up settings'))
       .finally(() => setLoading(false));
   }, [request]);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
 
   const disable = async () => {
     setDisabling(true);
@@ -55,8 +61,31 @@ export function AutoTopUpSettingsCard(): JSX.Element | null {
     }
   };
 
-  if (loading) return <div className="h-24 animate-pulse rounded-2xl bg-surface-light/30" />;
-  if (!settings) return null;
+  if (loading)
+    return (
+      <div
+        className="h-24 animate-pulse rounded-2xl bg-surface-light/30"
+        role="status"
+        aria-live="polite"
+      >
+        <span className="sr-only">Loading auto top-up settings</span>
+      </div>
+    );
+  if (!settings)
+    return error ? (
+      <section className="rounded-2xl border border-border bg-surface p-5">
+        <p className="text-sm text-error" role="alert">
+          {error}
+        </p>
+        <button
+          type="button"
+          onClick={() => void load()}
+          className="mt-3 rounded-lg border border-border px-3 py-2 text-sm text-text-secondary hover:bg-surface-light"
+        >
+          Retry
+        </button>
+      </section>
+    ) : null;
 
   const active = settings.enabled || settings.pending_enabled;
   return (
@@ -71,7 +100,7 @@ export function AutoTopUpSettingsCard(): JSX.Element | null {
           </h2>
           <p className="mt-1 text-sm text-text-secondary">
             {settings.pending_enabled
-              ? 'Pending checkout confirmation'
+              ? `Pending ${settings.pack_key} pack below ${settings.threshold_credits} credits`
               : active
                 ? `Buys the ${settings.pack_key} pack below ${settings.threshold_credits} credits`
                 : 'Disabled'}
@@ -81,7 +110,7 @@ export function AutoTopUpSettingsCard(): JSX.Element | null {
               Last refill: {new Date(settings.last_refill_at).toLocaleDateString()}
             </p>
           )}
-          {settings.failure_reason && active && (
+          {settings.failure_reason && (
             <p className="mt-1 text-xs text-error">Status: {settings.failure_reason}</p>
           )}
         </div>

@@ -55,7 +55,38 @@ describe('AutoTopUpSettingsCard', () => {
       })
     );
     render(<AutoTopUpSettingsCard />);
-    expect(await screen.findByText('Pending checkout confirmation')).toBeInTheDocument();
+    expect(await screen.findByText('Pending small pack below 10 credits')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /disable auto top-up/i })).toBeEnabled();
+  });
+
+  test('shows accessible loading and a retryable GET failure', async () => {
+    const fetchMock = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(new Response(null, { status: 500 }))
+      .mockResolvedValueOnce(Response.json({ data: null }));
+    render(<AutoTopUpSettingsCard />);
+    expect(screen.getByRole('status')).toHaveTextContent('Loading auto top-up settings');
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Unable to load auto top-up settings'
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+  });
+
+  test('keeps a paused failure reason visible while disabled', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      Response.json({
+        data: {
+          enabled: false,
+          pending_enabled: false,
+          threshold_credits: 25,
+          pack_key: 'medium',
+          last_refill_at: null,
+          failure_reason: 'payment_declined',
+        },
+      })
+    );
+    render(<AutoTopUpSettingsCard />);
+    expect(await screen.findByText('Status: payment_declined')).toBeInTheDocument();
   });
 });
