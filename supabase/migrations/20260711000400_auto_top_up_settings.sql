@@ -7,6 +7,8 @@ CREATE TABLE public.auto_top_up_settings (
   stripe_price_id text NOT NULL,
   stripe_customer_id text NOT NULL,
   stripe_payment_method_id text,
+  consent_version uuid NOT NULL,
+  checkout_session_id text UNIQUE,
   consented_at timestamptz NOT NULL,
   last_refill_at timestamptz,
   consecutive_failures integer NOT NULL DEFAULT 0 CHECK (consecutive_failures >= 0),
@@ -14,6 +16,8 @@ CREATE TABLE public.auto_top_up_settings (
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
+CREATE UNIQUE INDEX idx_auto_top_up_settings_user_consent
+  ON public.auto_top_up_settings(user_id, consent_version);
 ALTER TABLE public.auto_top_up_settings ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users read own auto top up settings"
   ON public.auto_top_up_settings FOR SELECT TO authenticated

@@ -2,11 +2,13 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import Stripe from 'stripe';
 
 const persistCheckoutIntentContextMock = vi.hoisted(() => vi.fn());
 const validateExperimentCheckoutAttributionMock = vi.hoisted(() => vi.fn());
 const autoTopUpUpsertMock = vi.hoisted(() => vi.fn());
 const autoTopUpUpdateMaybeSingleMock = vi.hoisted(() => vi.fn());
+const autoTopUpUpdateMock = vi.hoisted(() => vi.fn());
 
 vi.mock('@shared/config/env', async importOriginal => {
   const actual = await importOriginal<typeof import('@shared/config/env')>();
@@ -36,6 +38,7 @@ vi.mock('@server/stripe', () => ({
     checkout: {
       sessions: {
         create: vi.fn(),
+        expire: vi.fn(),
       },
     },
   },
@@ -102,6 +105,7 @@ const autoTopUpMigration = readFileSync(
 
 describe('POST /api/checkout price alignment', () => {
   const sessionCreateMock = vi.mocked(stripe.checkout.sessions.create);
+  const sessionExpireMock = vi.mocked(stripe.checkout.sessions.expire);
   const priceRetrieveMock = vi.mocked(stripe.prices.retrieve);
   const getUserMock = vi.mocked(supabaseAdmin.auth.getUser);
   const fromMock = vi.mocked(supabaseAdmin.from);
@@ -150,6 +154,7 @@ describe('POST /api/checkout price alignment', () => {
     fromMock.mockImplementation((table: string) => {
       if (table === 'profiles') {
         return {
+          update: vi.fn(() => ({ eq: vi.fn().mockResolvedValue({ error: null }) })),
           select: vi.fn(() => ({
             eq: vi.fn(() => ({
               single: vi.fn().mockResolvedValue({
@@ -161,14 +166,13 @@ describe('POST /api/checkout price alignment', () => {
         } as never;
       }
       if (table === 'auto_top_up_settings') {
-        const updateQuery = {
-          eq: vi.fn(() => ({
-            select: vi.fn(() => ({ maybeSingle: autoTopUpUpdateMaybeSingleMock })),
-          })),
-        };
+        const updateQuery: Record<string, ReturnType<typeof vi.fn>> = {};
+        updateQuery.eq = vi.fn(() => updateQuery);
+        updateQuery.select = vi.fn(() => updateQuery);
+        updateQuery.maybeSingle = autoTopUpUpdateMaybeSingleMock;
         return {
           upsert: autoTopUpUpsertMock,
-          update: vi.fn(() => updateQuery),
+          update: autoTopUpUpdateMock.mockImplementation(() => updateQuery),
           select: vi.fn(() => ({
             eq: vi.fn(() => ({ maybeSingle: autoTopUpUpdateMaybeSingleMock })),
           })),
@@ -190,6 +194,7 @@ describe('POST /api/checkout price alignment', () => {
       url: 'https://checkout.stripe.com/c/pay/cs_test_alignment',
       client_secret: 'cs_test_alignment_secret',
     } as never);
+    sessionExpireMock.mockResolvedValue({ id: 'cs_test_alignment', status: 'expired' } as never);
 
     discountValidMock.mockResolvedValue({
       valid: true,
@@ -244,8 +249,55 @@ describe('POST /api/checkout price alignment', () => {
         threshold_credits: 25,
         pack_key: 'medium',
         stripe_payment_method_id: null,
+        consent_version: expect.any(String),
+        checkout_session_id: null,
       }),
       { onConflict: 'user_id' }
+    );
+    expect(getCreatedSessionParams().metadata).toMatchObject({
+      auto_top_up_consent_version: expect.any(String),
+      auto_top_up_threshold: '25',
+      auto_top_up_pack_key: 'medium',
+    });
+  });
+
+  test('expires checkout when the versioned consent cannot be attached', async () => {
+    autoTopUpUpdateMaybeSingleMock.mockResolvedValueOnce({ data: null, error: null });
+    const response = await POST(
+      createRequest({
+        priceId: STRIPE_PRICES.MEDIUM_CREDITS,
+        autoTopUp: { enabled: true, thresholdCredits: 25 },
+      })
+    );
+    expect(response.status).toBe(409);
+    expect(stripe.checkout.sessions.expire).toHaveBeenCalledWith('cs_test_alignment');
+  });
+
+  test('attaches stale-customer recovery to the fresh Stripe customer', async () => {
+    sessionCreateMock
+      .mockRejectedValueOnce(
+        new Stripe.errors.StripeInvalidRequestError({
+          type: 'invalid_request_error',
+          message: 'No such customer',
+          code: 'resource_missing',
+          param: 'customer',
+        })
+      )
+      .mockResolvedValueOnce({
+        id: 'cs_test_alignment',
+        url: 'https://checkout.stripe.com/c/pay/cs_test_alignment',
+      } as never);
+    vi.mocked(stripe.customers.create).mockResolvedValue({ id: 'cus_fresh_456' } as never);
+
+    const response = await POST(
+      createRequest({
+        priceId: STRIPE_PRICES.MEDIUM_CREDITS,
+        autoTopUp: { enabled: true, thresholdCredits: 25 },
+      })
+    );
+    expect(response.status).toBe(200);
+    expect(autoTopUpUpdateMock).toHaveBeenCalledWith(
+      expect.objectContaining({ stripe_customer_id: 'cus_fresh_456' })
     );
   });
 
