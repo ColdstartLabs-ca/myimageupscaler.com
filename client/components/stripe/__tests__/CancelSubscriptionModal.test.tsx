@@ -126,7 +126,13 @@ describe('CancelSubscriptionModal', () => {
     const fetchMock = vi.fn(() => pending);
     vi.stubGlobal('fetch', fetchMock);
     renderWithTranslations(<CancelSubscriptionModal {...defaultProps} />);
-    expect(screen.getByRole('dialog')).toHaveFocus();
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toHaveFocus();
+    const buttons = dialog.querySelectorAll('button');
+    fireEvent.keyDown(dialog, { key: 'Tab', shiftKey: true });
+    expect(buttons[buttons.length - 1]).toHaveFocus();
+    fireEvent.keyDown(buttons[buttons.length - 1], { key: 'Tab' });
+    expect(buttons[0]).toHaveFocus();
     fireEvent.click(screen.getByLabelText('Too expensive'));
     const continueButton = screen.getByText('Continue');
     fireEvent.click(continueButton);
