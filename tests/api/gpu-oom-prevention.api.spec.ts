@@ -10,7 +10,7 @@ import { createCanvas } from '../helpers/test-image-generator';
  *
  * Tests the fixes from PR #38:
  * 1. JPEG decoder read window fix (750B → 32KB) for phone photos with large EXIF
- * 2. Per-model pixel limit validation on authenticated route
+ * 2. Per-processing-model pixel limit validation on authenticated route
  * 3. IMAGE_TOO_LARGE error code with actionable message
  */
 
@@ -20,7 +20,7 @@ const SMALL_TEST_IMAGE =
 
 const UPSCALE_CONFIG = {
   scale: 2,
-  qualityTier: 'quick' as const, // Uses real-esrgan (1.5MP limit)
+  qualityTier: 'quick' as const, // Uses a scale-preserving tiled fallback when available
   additionalOptions: {
     smartAnalysis: false,
     enhance: false,
@@ -40,12 +40,11 @@ test.afterAll(async () => {
 });
 
 test.describe('GPU OOM Prevention: Authenticated Route', () => {
-  test('should reject 2000x2000 PNG exceeding real-esrgan 1.5MP limit', async ({ request }) => {
+  test('should reject PNG exceeding the Quick 2x processing limit', async ({ request }) => {
     const user = await ctx.createUser({ credits: 100 });
     const api = new ApiClient(request).withAuth(user.token);
 
-    // 2000x2000 = 4MP — exceeds real-esrgan's 1.5MP limit
-    const oversizedImage = createCanvas(2000, 2000);
+    const oversizedImage = createCanvas(2100, 2000);
 
     const response = await api.post('/api/upscale', {
       imageData: oversizedImage,
@@ -56,8 +55,8 @@ test.describe('GPU OOM Prevention: Authenticated Route', () => {
     response.expectStatus(422);
     const body = await response.json();
     expect(body.error.code).toBe('IMAGE_TOO_LARGE');
-    expect(body.error.message).toContain('exceed the maximum');
-    expect(body.error.message).toContain('resize');
+    expect(body.error.message).toContain('original image dimensions');
+    expect(body.error.message).toContain('smaller original');
   });
 
   test('should reject 3000x4000 JPEG (12MP phone photo scenario)', async ({ request }) => {
@@ -84,7 +83,7 @@ test.describe('GPU OOM Prevention: Authenticated Route', () => {
     const user = await ctx.createUser({ credits: 100 });
     const api = new ApiClient(request).withAuth(user.token);
 
-    const oversizedImage = createCanvas(2000, 2000);
+    const oversizedImage = createCanvas(2100, 2000);
 
     const response = await api.post('/api/upscale', {
       imageData: oversizedImage,
@@ -95,35 +94,19 @@ test.describe('GPU OOM Prevention: Authenticated Route', () => {
     response.expectStatus(422);
     const body = await response.json();
     expect(body.error.details).toBeDefined();
-    expect(body.error.details.width).toBe(2000);
+    expect(body.error.details.width).toBe(2100);
     expect(body.error.details.height).toBe(2000);
-    expect(body.error.details.pixels).toBe(4_000_000);
-    expect(body.error.details.maxPixels).toBe(1_500_000);
+    expect(body.error.details.pixels).toBe(4_200_000);
+    expect(body.error.details.maxPixels).toBe(2_096_704);
   });
 
-  test('should reject 1300x1300 (1.69MP — just over 1.5MP limit)', async ({ request }) => {
+  test('should accept the former 1.5MP boundary via the scale-preserving fallback', async ({
+    request,
+  }) => {
     const user = await ctx.createUser({ credits: 100 });
     const api = new ApiClient(request).withAuth(user.token);
 
-    const oversizedImage = createCanvas(1300, 1300);
-
-    const response = await api.post('/api/upscale', {
-      imageData: oversizedImage,
-      mimeType: 'image/png',
-      config: UPSCALE_CONFIG,
-    });
-
-    response.expectStatus(422);
-    const body = await response.json();
-    expect(body.error.code).toBe('IMAGE_TOO_LARGE');
-  });
-
-  test('should accept 1224x1224 (1.49MP — just under 1.5MP limit)', async ({ request }) => {
-    const user = await ctx.createUser({ credits: 100 });
-    const api = new ApiClient(request).withAuth(user.token);
-
-    // 1224x1224 = 1,498,176 pixels — just under 1.5MP limit
-    const justUnderImage = createCanvas(1224, 1224);
+    const justUnderImage = createCanvas(1300, 1300);
 
     const response = await api.post('/api/upscale', {
       imageData: justUnderImage,
