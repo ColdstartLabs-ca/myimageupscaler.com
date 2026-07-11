@@ -3,6 +3,7 @@
 import type { ISubscription, IUserProfile } from '@/shared/types/stripe.types';
 import { PlanChangeModal, SubscriptionPlanGrid, TrustBadges } from '@client/components/stripe';
 import { CancelSubscriptionModal } from '@client/components/stripe/CancelSubscriptionModal';
+import { AutoTopUpSettingsCard } from '@client/components/stripe/AutoTopUpSettingsCard';
 import { CreditPackSelector } from '@client/components/stripe/CreditPackSelector';
 import { ModalHeader } from '@client/components/stripe/ModalHeader';
 import { InternalTabs, type ITabItem } from '@client/components/ui/InternalTabs';
@@ -651,6 +652,7 @@ export default function BillingPage() {
       </div>
 
       {/* Tabs Section */}
+      <AutoTopUpSettingsCard />
       <InternalTabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
 
       {/* Cancel Subscription Modal */}
