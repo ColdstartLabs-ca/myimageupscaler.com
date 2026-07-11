@@ -13,6 +13,7 @@ import {
 } from '@server/services/engagement-discount.service';
 import { verifyCheckoutRescueOffer } from '@server/services/checkout-rescue-offer.service';
 import { getRevenueRecoveryService } from '@server/services/revenue-recovery.service';
+import { isRevenueFeatureEligible } from '@server/services/revenue-feature-rollout.service';
 import { ENGAGEMENT_DISCOUNT_CONFIG } from '@shared/config/engagement-discount';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
@@ -467,6 +468,18 @@ export async function POST(request: NextRequest) {
           error: { code: 'INVALID_AUTO_TOP_UP', message: 'Invalid auto top-up rule' },
         },
         { status: 400 }
+      );
+    }
+    if (autoTopUp && !(await isRevenueFeatureEligible(user.id, 'auto_top_up'))) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'AUTO_TOP_UP_NOT_ELIGIBLE',
+            message: 'Auto top-up is not available for this account yet',
+          },
+        },
+        { status: 403 }
       );
     }
     const autoTopUpConsentVersion = autoTopUp ? crypto.randomUUID() : null;

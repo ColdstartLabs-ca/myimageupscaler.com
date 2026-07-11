@@ -9,6 +9,7 @@ const validateExperimentCheckoutAttributionMock = vi.hoisted(() => vi.fn());
 const autoTopUpUpsertMock = vi.hoisted(() => vi.fn());
 const autoTopUpUpdateMaybeSingleMock = vi.hoisted(() => vi.fn());
 const autoTopUpUpdateMock = vi.hoisted(() => vi.fn());
+const revenueFeatureEligibleMock = vi.hoisted(() => vi.fn());
 
 vi.mock('@shared/config/env', async importOriginal => {
   const actual = await importOriginal<typeof import('@shared/config/env')>();
@@ -75,6 +76,10 @@ vi.mock('@server/services/revenue-recovery.service', () => ({
   getRevenueRecoveryService: vi.fn(() => ({
     persistCheckoutIntentContext: persistCheckoutIntentContextMock,
   })),
+}));
+
+vi.mock('@server/services/revenue-feature-rollout.service', () => ({
+  isRevenueFeatureEligible: revenueFeatureEligibleMock,
 }));
 
 vi.mock('@lib/experiments', () => ({
@@ -222,6 +227,7 @@ describe('POST /api/checkout price alignment', () => {
       data: { enabled: false, pending_enabled: false },
       error: null,
     });
+    revenueFeatureEligibleMock.mockResolvedValue(true);
   });
 
   test('does not silently apply engagement discount without explicit trigger', async () => {
@@ -374,6 +380,23 @@ describe('POST /api/checkout price alignment', () => {
     expect(sessionCreateMock).not.toHaveBeenCalled();
   });
 
+  test('rejects auto top-up outside the server-side rollout', async () => {
+    revenueFeatureEligibleMock.mockResolvedValueOnce(false);
+
+    const response = await POST(
+      createRequest({
+        priceId: STRIPE_PRICES.MEDIUM_CREDITS,
+        autoTopUp: { enabled: true, thresholdCredits: 25 },
+      })
+    );
+
+    expect(response.status).toBe(403);
+    expect(await response.json()).toMatchObject({
+      error: { code: 'AUTO_TOP_UP_NOT_ELIGIBLE' },
+    });
+    expect(sessionCreateMock).not.toHaveBeenCalled();
+  });
+
   test('disables active and pending auto top-up immediately for the authenticated user', async () => {
     const response = await PUTAutoTopUp(
       new NextRequest('https://example.com/api/auto-top-up/settings', {
@@ -398,6 +421,10 @@ describe('POST /api/checkout price alignment', () => {
       })
     );
     expect(authorized.status).toBe(200);
+    expect(await authorized.json()).toMatchObject({
+      autoTopUpEligible: true,
+      repeatPurchaseEligible: true,
+    });
     expect(autoTopUpMigration).toContain('USING (auth.uid() = user_id)');
     expect(autoTopUpMigration).not.toMatch(
       /CREATE POLICY "Users[^\n]+"[\s\S]+FOR (INSERT|UPDATE|DELETE)/

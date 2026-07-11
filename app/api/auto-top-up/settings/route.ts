@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { stripe } from '@server/stripe';
+import { isRevenueFeatureEligible } from '@server/services/revenue-feature-rollout.service';
 
 async function authenticate(request: NextRequest) {
   const token = request.headers.get('authorization')?.replace('Bearer ', '');
@@ -13,11 +14,18 @@ async function authenticate(request: NextRequest) {
 export async function GET(request: NextRequest) {
   const user = await authenticate(request);
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  const { data, error } = await supabaseAdmin
-    .from('auto_top_up_settings')
-    .select('enabled, pending_enabled, threshold_credits, pack_key, last_refill_at, failure_reason')
-    .eq('user_id', user.id)
-    .maybeSingle();
+  const [settingsResult, autoTopUpEligible, repeatPurchaseEligible] = await Promise.all([
+    supabaseAdmin
+      .from('auto_top_up_settings')
+      .select(
+        'enabled, pending_enabled, threshold_credits, pack_key, last_refill_at, failure_reason'
+      )
+      .eq('user_id', user.id)
+      .maybeSingle(),
+    isRevenueFeatureEligible(user.id, 'auto_top_up'),
+    isRevenueFeatureEligible(user.id, 'repeat_purchase'),
+  ]);
+  const { data, error } = settingsResult;
   if (error) return NextResponse.json({ error: 'Unable to load settings' }, { status: 500 });
   const { data: purchase } = await supabaseAdmin
     .from('credit_transactions')
@@ -29,7 +37,12 @@ export async function GET(request: NextRequest) {
     .limit(1)
     .maybeSingle();
   const match = purchase?.description?.match(/^Credit pack purchase - (small|medium|large) -/);
-  return NextResponse.json({ data, repeatPackKey: match?.[1] ?? null });
+  return NextResponse.json({
+    data,
+    autoTopUpEligible,
+    repeatPurchaseEligible,
+    repeatPackKey: repeatPurchaseEligible ? (match?.[1] ?? null) : null,
+  });
 }
 
 const disableSchema = z.object({ enabled: z.literal(false) }).strict();
