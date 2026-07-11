@@ -1116,6 +1116,20 @@ export class PaymentHandler {
       })
       .eq('user_id', userId)
       .eq('charge_claim_id', attemptId);
+
+    const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(userId);
+    const email = authUser.user?.email;
+    if (email) {
+      await getEmailService()
+        .send({
+          to: email,
+          userId,
+          type: 'transactional',
+          template: 'auto-top-up-failure',
+          data: { paused: failures >= 3 },
+        })
+        .catch(error => console.error('[AUTO_TOP_UP_EMAIL_FAILED]', error));
+    }
   }
 
   /**

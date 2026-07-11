@@ -279,6 +279,7 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
       'win-back': 'WinBackEmail',
       'checkout-recovery': 'CheckoutRecoveryEmail',
       'credit-wall-recovery': 'CreditWallRecoveryEmail',
+      'auto-top-up-failure': 'AutoTopUpFailureEmail',
     };
 
     const exportName = templateExportNames[templateName];
@@ -303,6 +304,7 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
       'win-back': () => import('@/emails/templates/WinBackEmail'),
       'checkout-recovery': () => import('@/emails/templates/CheckoutRecoveryEmail'),
       'credit-wall-recovery': () => import('@/emails/templates/CreditWallRecoveryEmail'),
+      'auto-top-up-failure': () => import('@/emails/templates/AutoTopUpFailureEmail'),
     };
     /* eslint-enable no-restricted-syntax */
 
@@ -342,6 +344,7 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
         d.recoveryAudience === 'high_usage_free_user'
           ? 'You are close to your free upscale limit'
           : 'Finish more images with more credits',
+      'auto-top-up-failure': 'Your auto top-up needs attention',
       'password-reset': 'Reset your password',
       'support-request': d =>
         `[Support] [${String(d.category || 'GENERAL').toUpperCase()}] ${d.subject || 'Support Request'}`,
