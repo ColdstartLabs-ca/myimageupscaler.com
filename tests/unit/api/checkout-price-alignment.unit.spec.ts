@@ -186,6 +186,14 @@ describe('POST /api/checkout price alignment', () => {
         query.maybeSingle = vi.fn().mockResolvedValue({ data: null, error: null });
         return query as never;
       }
+      if (table === 'credit_transactions') {
+        const query: Record<string, ReturnType<typeof vi.fn>> = {};
+        for (const method of ['select', 'eq', 'like', 'order', 'limit']) {
+          query[method] = vi.fn(() => query);
+        }
+        query.maybeSingle = vi.fn().mockResolvedValue({ data: null, error: null });
+        return query as never;
+      }
 
       throw new Error(`Unexpected supabase table in test: ${table}`);
     });

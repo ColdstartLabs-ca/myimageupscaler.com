@@ -20,14 +20,16 @@ describe('purchase_confirmed tracking coverage', () => {
       );
 
       // Find the catch block for plan resolution failure
-      const catchBlock = source.match(
-        /catch\s*\([^)]*\)\s*\{[\s\S]*?WEBHOOK_ERROR.*?Checkout session plan resolution failed[\s\S]*?\n\s*\}/
-      );
-      expect(catchBlock).toBeTruthy();
+      const marker = source.indexOf('[WEBHOOK_ERROR] Checkout session plan resolution failed');
+      expect(marker).toBeGreaterThan(0);
+      const catchStart = source.lastIndexOf('catch (error)', marker);
+      const catchEnd = source.indexOf("// Don't return", marker);
+      expect(catchStart).toBeGreaterThan(0);
+      expect(catchEnd).toBeGreaterThan(marker);
 
       // The catch block should NOT contain a bare `return;`
       // (It used to have `return;` which skipped all analytics)
-      const catchContent = catchBlock![0];
+      const catchContent = source.slice(catchStart, catchEnd);
       expect(catchContent).not.toMatch(/^\s*return;\s*$/m);
       expect(catchContent).not.toContain('return;\n');
     });
