@@ -17,7 +17,7 @@ const schema = z.object({
 });
 
 const RETENTION_CLAIM_LEASE_MS = 5 * 60 * 1000;
-const RETENTION_ROLLOUT_PERCENT = 10;
+const DEFAULT_RETENTION_ROLLOUT_PERCENT = 10;
 
 function retentionRolloutBucket(userId: string): number {
   let hash = 2166136261;
@@ -33,6 +33,17 @@ async function recordRetentionEvent(event: Record<string, unknown>): Promise<boo
     .from('subscription_retention_events')
     .upsert(event, { onConflict: 'event_key', ignoreDuplicates: true });
   return !error;
+}
+
+async function getRetentionRolloutPercent(): Promise<number> {
+  const { data, error } = await supabaseAdmin
+    .from('subscription_retention_rollout')
+    .select('enabled, treatment_percent')
+    .eq('id', true)
+    .maybeSingle();
+  if (error) return 0;
+  if (!data) return DEFAULT_RETENTION_ROLLOUT_PERCENT;
+  return data.enabled ? data.treatment_percent : 0;
 }
 
 export async function POST(request: NextRequest) {
@@ -61,7 +72,7 @@ export async function POST(request: NextRequest) {
       : null;
   if (!offer) return NextResponse.json({ data: { offer: null } });
   const target = getPlanByKey(offer.targetPlanKey);
-  const treatment = retentionRolloutBucket(user.id) < RETENTION_ROLLOUT_PERCENT;
+  const treatment = retentionRolloutBucket(user.id) < (await getRetentionRolloutPercent());
   const measured = await recordRetentionEvent({
     event_key: `${treatment ? 'shown' : 'holdout'}:${subscription.id}`,
     subscription_id: subscription.id,
@@ -135,7 +146,7 @@ export async function PUT(request: NextRequest) {
   if (!offer || !target?.stripePriceId) {
     return NextResponse.json({ error: 'Offer is no longer eligible' }, { status: 409 });
   }
-  if (retentionRolloutBucket(user.id) >= RETENTION_ROLLOUT_PERCENT) {
+  if (retentionRolloutBucket(user.id) >= (await getRetentionRolloutPercent())) {
     return NextResponse.json({ error: 'Offer is no longer eligible' }, { status: 409 });
   }
 
