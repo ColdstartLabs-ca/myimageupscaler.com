@@ -35,17 +35,13 @@ export class PaymentHandler {
         .maybeSingle();
       if (!paidInvoice?.subscription_id) return;
 
-      const { error } = await supabaseAdmin.from('subscription_retention_events').upsert(
-        {
-          event_key: `refund:${sourceId}`,
-          subscription_id: paidInvoice.subscription_id,
-          user_id: userId,
-          event_type: 'refund',
-          variant: paidInvoice.variant,
-          amount_cents: amountCents,
-        },
-        { onConflict: 'event_key', ignoreDuplicates: true }
-      );
+      const { error } = await supabaseAdmin.rpc('record_subscription_retention_refund', {
+        p_event_key: `refund:${sourceId}`,
+        p_subscription_id: paidInvoice.subscription_id,
+        p_user_id: userId,
+        p_variant: paidInvoice.variant,
+        p_amount_cents: amountCents,
+      });
       if (error) console.warn('[RETENTION_MEASUREMENT] Failed to record refund', error);
     } catch (error) {
       console.warn('[RETENTION_MEASUREMENT] Failed to record refund', error);

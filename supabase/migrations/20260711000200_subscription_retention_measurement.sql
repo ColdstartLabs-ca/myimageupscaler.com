@@ -38,6 +38,34 @@ ALTER TABLE public.subscription_retention_events ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Service role manages subscription retention events"
   ON public.subscription_retention_events FOR ALL TO service_role USING (true) WITH CHECK (true);
 
+CREATE OR REPLACE FUNCTION public.record_subscription_retention_refund(
+  p_event_key text,
+  p_subscription_id text,
+  p_user_id uuid,
+  p_variant text,
+  p_amount_cents integer
+)
+RETURNS void LANGUAGE sql SECURITY INVOKER SET search_path = '' AS $$
+  INSERT INTO public.subscription_retention_events (
+    event_key, subscription_id, user_id, event_type, variant, amount_cents
+  ) VALUES (
+    p_event_key, p_subscription_id, p_user_id, 'refund', p_variant, p_amount_cents
+  )
+  ON CONFLICT (event_key) DO UPDATE SET
+    amount_cents = GREATEST(
+      public.subscription_retention_events.amount_cents,
+      EXCLUDED.amount_cents
+    ),
+    occurred_at = GREATEST(
+      public.subscription_retention_events.occurred_at,
+      EXCLUDED.occurred_at
+    );
+$$;
+REVOKE ALL ON FUNCTION public.record_subscription_retention_refund(text, text, uuid, text, integer)
+  FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.record_subscription_retention_refund(text, text, uuid, text, integer)
+  TO service_role;
+
 ALTER TABLE public.dispute_events ADD COLUMN invoice_id text;
 
 CREATE OR REPLACE FUNCTION public.capture_subscription_retention_state()
