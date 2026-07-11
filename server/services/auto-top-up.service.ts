@@ -70,9 +70,16 @@ export class AutoTopUpService {
           .eq('id', setting.charge_claim_id)
           .maybeSingle();
         if (staleAttempt?.stripe_payment_intent_id) {
-          await stripe.paymentIntents
-            .cancel(staleAttempt.stripe_payment_intent_id)
-            .catch(() => undefined);
+          const existingIntent = await stripe.paymentIntents.retrieve(
+            staleAttempt.stripe_payment_intent_id
+          );
+          if (['succeeded', 'processing'].includes(existingIntent.status)) continue;
+          if (existingIntent.status !== 'canceled') {
+            const canceled = await stripe.paymentIntents.cancel(
+              staleAttempt.stripe_payment_intent_id
+            );
+            if (canceled.status !== 'canceled') continue;
+          }
         }
         await supabaseAdmin
           .from('auto_top_up_attempts')
@@ -205,17 +212,6 @@ export class AutoTopUpService {
         );
         if (!isAutoTopUpPayableStatus(confirmed.status)) {
           throw new Error(`payment_intent_${confirmed.status}`);
-        }
-        const { error: releaseError } = await supabaseAdmin
-          .from('auto_top_up_settings')
-          .update({ charge_claim_id: null, charge_claimed_at: null })
-          .eq('user_id', setting.user_id)
-          .eq('charge_claim_id', attempt.id);
-        if (releaseError) {
-          console.error('[AUTO_TOP_UP] Charge lease release failed', {
-            attemptId: attempt.id,
-            error: releaseError.message,
-          });
         }
         result.paymentPending++;
       } catch (paymentError) {

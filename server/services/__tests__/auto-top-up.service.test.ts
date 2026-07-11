@@ -1,13 +1,20 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-const { fromMock, priceRetrieve, paymentIntentCreate, paymentIntentConfirm, paymentIntentCancel } =
-  vi.hoisted(() => ({
-    fromMock: vi.fn(),
-    priceRetrieve: vi.fn(),
-    paymentIntentCreate: vi.fn(),
-    paymentIntentConfirm: vi.fn(),
-    paymentIntentCancel: vi.fn(),
-  }));
+const {
+  fromMock,
+  priceRetrieve,
+  paymentIntentCreate,
+  paymentIntentConfirm,
+  paymentIntentCancel,
+  paymentIntentRetrieve,
+} = vi.hoisted(() => ({
+  fromMock: vi.fn(),
+  priceRetrieve: vi.fn(),
+  paymentIntentCreate: vi.fn(),
+  paymentIntentConfirm: vi.fn(),
+  paymentIntentCancel: vi.fn(),
+  paymentIntentRetrieve: vi.fn(),
+}));
 
 vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: { from: fromMock },
@@ -19,6 +26,7 @@ vi.mock('@server/stripe', () => ({
       create: paymentIntentCreate,
       confirm: paymentIntentConfirm,
       cancel: paymentIntentCancel,
+      retrieve: paymentIntentRetrieve,
     },
   },
 }));
@@ -59,6 +67,7 @@ describe('AutoTopUpService', () => {
     paymentIntentCreate.mockResolvedValue({ id: 'pi_auto_1' });
     paymentIntentConfirm.mockResolvedValue({ id: 'pi_auto_1', status: 'succeeded' });
     paymentIntentCancel.mockResolvedValue({ id: 'pi_auto_1', status: 'canceled' });
+    paymentIntentRetrieve.mockResolvedValue({ id: 'pi_auto_1', status: 'requires_confirmation' });
   });
 
   test('matches below-threshold disclosure and accepts only payable Stripe states', () => {
