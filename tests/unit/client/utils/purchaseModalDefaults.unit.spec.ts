@@ -111,6 +111,18 @@ describe('getPurchaseModalInitialSelection', () => {
     expect(creditPacks.map(pack => pack.key)).toEqual(['medium', 'small']);
   });
 
+  test('repeat context overrides a pack-filtering bandit default', () => {
+    const selection = getPurchaseModalInitialSelection({
+      trigger: 'dashboard_sidebar',
+      outOfCredits: false,
+      creditPacks,
+      subscriptionPlans,
+      repeatPackKey: 'medium',
+      banditConfig: { defaultType: 'credit_pack', defaultKey: 'small', visiblePacks: ['small'] },
+    });
+    expect(selection.selectedPack?.key).toBe('medium');
+  });
+
   test('should default insufficient_credits to the starter credit pack', () => {
     const selection = getPurchaseModalInitialSelection({
       trigger: 'insufficient_credits',

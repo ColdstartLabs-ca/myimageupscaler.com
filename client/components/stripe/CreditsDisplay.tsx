@@ -53,14 +53,18 @@ export function CreditsDisplay({ onUpgrade }: ICreditsDisplayProps = {}): JSX.El
   const isNoCredits = creditBalance === 0 && !isProfileLoading;
 
   useEffect(() => {
+    let cancelled = false;
+    setRepeatPackKey(null);
+    if (user?.id) setRepeatPurchaseContext(user.id, null);
     if (!isProfileLoading && creditBalance <= LOW_CREDIT_THRESHOLD) {
       void supabase.auth.getSession().then(async ({ data }) => {
         if (!data.session?.access_token || !user?.id) return;
         const response = await fetch('/api/auto-top-up/settings', {
           headers: { authorization: `Bearer ${data.session.access_token}` },
         });
-        if (!response.ok) return;
+        if (!response.ok || cancelled) return;
         const payload = (await response.json()) as { repeatPackKey?: string | null };
+        if (cancelled) return;
         const packKey = payload.repeatPackKey ?? null;
         setRepeatPurchaseContext(user.id, packKey);
         setRepeatPackKey(packKey);
@@ -69,6 +73,9 @@ export function CreditsDisplay({ onUpgrade }: ICreditsDisplayProps = {}): JSX.El
     } else {
       setRepeatPackKey(null);
     }
+    return () => {
+      cancelled = true;
+    };
   }, [creditBalance, isProfileLoading, user?.id]);
 
   // Should show tooltip?

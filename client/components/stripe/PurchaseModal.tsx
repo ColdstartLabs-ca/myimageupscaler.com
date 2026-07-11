@@ -178,15 +178,16 @@ export function PurchaseModal({
         .sort((a, b) => a.displayOrder - b.displayOrder),
     []
   );
+  const repeatPackKey = isOpen ? getRepeatPurchaseContext(user?.id) : null;
 
   const visibleCreditPacks = useMemo(() => {
-    if (getRepeatPurchaseContext(user?.id)) return creditPacks;
+    if (repeatPackKey) return creditPacks;
     if (!purchaseBanditConfig.visiblePacks?.length) return creditPacks;
 
     const allowedKeys = new Set(purchaseBanditConfig.visiblePacks);
     const filtered = creditPacks.filter(pack => allowedKeys.has(pack.key));
     return filtered.length > 0 ? filtered : creditPacks;
-  }, [creditPacks, purchaseBanditConfig.visiblePacks, user?.id]);
+  }, [creditPacks, purchaseBanditConfig.visiblePacks, repeatPackKey]);
 
   const basePack = creditPacks[0];
   const starterPack = creditPacks.find(pack => pack.key === 'small') || basePack;
@@ -212,7 +213,7 @@ export function PurchaseModal({
         creditPacks,
         subscriptionPlans,
         banditConfig: purchaseBanditConfig,
-        repeatPackKey: getRepeatPurchaseContext(user?.id),
+        repeatPackKey,
       });
       setSelectedPack(initialSelection.selectedPack);
       setSelectedPlan(initialSelection.selectedPlan);
@@ -260,6 +261,7 @@ export function PurchaseModal({
     purchaseBanditConfig,
     purchaseExperiment.assignment,
     purchaseExperiment.isLoading,
+    repeatPackKey,
   ]);
 
   const lockToCredits = trigger === 'model_gate';
