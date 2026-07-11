@@ -118,6 +118,23 @@ describe('CancelSubscriptionModal', () => {
     expect(screen.getByRole('button', { name: 'Cancel Subscription' })).toBeInTheDocument();
   });
 
+  test('contains keyboard focus and prevents duplicate offer requests while pending', async () => {
+    let resolveRequest!: (value: unknown) => void;
+    const pending = new Promise(resolve => {
+      resolveRequest = resolve;
+    });
+    const fetchMock = vi.fn(() => pending);
+    vi.stubGlobal('fetch', fetchMock);
+    renderWithTranslations(<CancelSubscriptionModal {...defaultProps} />);
+    expect(screen.getByRole('dialog')).toHaveFocus();
+    fireEvent.click(screen.getByLabelText('Too expensive'));
+    const continueButton = screen.getByText('Continue');
+    fireEvent.click(continueButton);
+    fireEvent.click(continueButton);
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    resolveRequest({ ok: true, json: async () => ({ data: { offer: null } }) });
+  });
+
   test('should accept downgrade offer without canceling', async () => {
     renderWithTranslations(<CancelSubscriptionModal {...defaultProps} />);
 

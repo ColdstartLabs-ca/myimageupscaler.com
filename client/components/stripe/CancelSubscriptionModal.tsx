@@ -61,6 +61,8 @@ export function CancelSubscriptionModal({
   } | null>(null);
   const [offerLoading, setOfferLoading] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
+  const requestSequence = useRef(0);
+  const busyRef = useRef(false);
 
   const resetFlow = () => {
     setSelectedReason('');
@@ -71,20 +73,43 @@ export function CancelSubscriptionModal({
     setShowRetentionOffer(false);
     setRetentionOffer(null);
     setOfferLoading(false);
+    busyRef.current = false;
   };
 
   useEffect(() => {
     if (!isOpen) {
+      requestSequence.current += 1;
       resetFlow();
       return;
     }
+    const previouslyFocused =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
     dialogRef.current?.focus();
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && !loading) onClose();
+      if (event.key === 'Escape' && !busyRef.current) onClose();
+      if (event.key !== 'Tab' || !dialogRef.current) return;
+      const focusable = Array.from(
+        dialogRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, loading, onClose]);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      previouslyFocused?.focus();
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -101,7 +126,10 @@ export function CancelSubscriptionModal({
       setShowConfirmation(true);
       return;
     }
+    if (offerLoading) return;
+    const sequence = ++requestSequence.current;
     setOfferLoading(true);
+    busyRef.current = true;
     try {
       const { data } = await supabase.auth.getSession();
       if (!data.session?.access_token) throw new Error('User not authenticated');
@@ -114,6 +142,7 @@ export function CancelSubscriptionModal({
         body: JSON.stringify({ reason: selectedReasonKey }),
       });
       const result = await response.json();
+      if (sequence !== requestSequence.current) return;
       const offer = response.ok ? result.data?.offer : null;
       if (offer) {
         setRetentionOffer(offer);
@@ -122,15 +151,20 @@ export function CancelSubscriptionModal({
         setShowConfirmation(true);
       }
     } catch {
+      if (sequence !== requestSequence.current) return;
       setShowConfirmation(true);
     } finally {
-      setOfferLoading(false);
+      if (sequence === requestSequence.current) {
+        setOfferLoading(false);
+        busyRef.current = false;
+      }
     }
   };
 
   const handleCancel = async () => {
     try {
       setLoading(true);
+      busyRef.current = true;
       const reason = selectedReason === t('reasons.other') ? customReason : selectedReason;
       await onConfirm(reason || undefined);
       onClose();
@@ -138,6 +172,7 @@ export function CancelSubscriptionModal({
       console.error('Error canceling subscription:', error);
     } finally {
       setLoading(false);
+      busyRef.current = false;
     }
   };
 
@@ -158,7 +193,7 @@ export function CancelSubscriptionModal({
           icon={AlertTriangle}
           iconClassName="text-error"
           onClose={onClose}
-          disabled={loading}
+          disabled={loading || offerLoading}
         />
 
         <div className="p-6 space-y-6">
