@@ -21,6 +21,13 @@ Maintenance rules:
 
 ## 2026-07-10
 
+### Premature Measurement Check (Observation Only)
+
+- Pulled fresh GSC data through 2026-07-07 and GA4 organic data through 2026-07-09 at the user's request; the scheduled 2026-07-19/20 measurement windows are not complete, so no page was rewritten and both dated follow-ups remain open.
+- In the latest complete four-day GSC comparison (2026-07-04 through 2026-07-07 vs. 2026-06-30 through 2026-07-03), `/blog/fixing-pixelated-photos` increased from 386 to 5,613 impressions and improved from position 15.6 to 10.1; `/blog/best-ai-upscaler` increased from 237 to 1,894 impressions and improved from 19.3 to 11.8; `/blog/topaz-video-upscaler` increased from 738 to 1,951 impressions and improved from 11.1 to 9.0. Click volume remains too small for a CTR conclusion.
+- `/blog/best-free-ai-photo-enhancer-online` remained weak in that four-day comparison: 530 impressions, zero clicks, and position 37.9 versus 396 impressions, one click, and position 36.4. Its planned next complete 16-day comparison is still required before another edit.
+- GA4 organic behavior for 2026-07-03 through 2026-07-09 was directionally positive but low-volume: the four English pages produced 16 sessions and three configured key events in total, with each page flat or up in sessions versus the preceding seven days. Treat these as event counts, not purchases.
+
 ### SEO Growth Plan Execution: Commercial Funnels, Blog Routing, and Ranking Pages
 
 Source: [SEO growth plan 2026-07-10](../reports/seo-growth-plan-2026-07-10.md)
