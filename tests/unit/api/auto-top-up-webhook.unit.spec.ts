@@ -191,4 +191,52 @@ describe('auto top-up webhook convergence', () => {
       expect.objectContaining({ userId: 'user-1' })
     );
   });
+
+  it('attributes an auto top-up refund to the rollout cohort', async () => {
+    retrieveMock.mockResolvedValue({
+      id: 'pi_auto_refund',
+      metadata: { auto_top_up: 'true', auto_top_up_user_id: 'user-1' },
+    });
+    fromMock.mockReturnValue(query({ data: { id: 'user-1' }, error: null }));
+    rpcMock.mockResolvedValue({ data: [{ success: true }], error: null });
+
+    await PaymentHandler.handleChargeRefunded({
+      id: 'ch_refund',
+      customer: 'cus_1',
+      amount_refunded: 1499,
+      currency: 'usd',
+      invoice: null,
+      payment_intent: 'pi_auto_refund',
+    } as unknown as Stripe.Charge);
+
+    expect(trackServerEventMock).toHaveBeenCalledWith(
+      'auto_top_up_refunded',
+      expect.objectContaining({ refundAmount: 1499, paymentIntentId: 'pi_auto_refund' }),
+      expect.objectContaining({ userId: 'user-1' })
+    );
+  });
+
+  it('attributes a prompted repeat-purchase refund to the rollout cohort', async () => {
+    retrieveMock.mockResolvedValue({
+      id: 'pi_repeat_refund',
+      metadata: { checkout_trigger: 'repeat_purchase_prompt', user_id: 'user-1' },
+    });
+    fromMock.mockReturnValue(query({ data: { id: 'user-1' }, error: null }));
+    rpcMock.mockResolvedValue({ data: [{ success: true }], error: null });
+
+    await PaymentHandler.handleChargeRefunded({
+      id: 'ch_repeat_refund',
+      customer: 'cus_1',
+      amount_refunded: 1499,
+      currency: 'usd',
+      invoice: null,
+      payment_intent: 'pi_repeat_refund',
+    } as unknown as Stripe.Charge);
+
+    expect(trackServerEventMock).toHaveBeenCalledWith(
+      'repeat_purchase_refunded',
+      expect.objectContaining({ paymentIntentId: 'pi_repeat_refund' }),
+      expect.objectContaining({ userId: 'user-1' })
+    );
+  });
 });

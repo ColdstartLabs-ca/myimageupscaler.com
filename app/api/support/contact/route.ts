@@ -3,6 +3,7 @@ import { getEmailService } from '@server/services/email.service';
 import { contactFormSchema } from '@shared/validation/support.schema';
 import { serverEnv } from '@shared/config/env';
 import { createLogger } from '@server/monitoring/logger';
+import { trackServerEvent } from '@server/analytics';
 
 export async function POST(request: NextRequest) {
   const logger = createLogger(request, 'support-contact');
@@ -37,6 +38,20 @@ export async function POST(request: NextRequest) {
       type: 'transactional',
       userId: userId || undefined,
     });
+
+    if (userId) {
+      try {
+        await trackServerEvent(
+          'revenue_support_contact',
+          { category: validatedData.category },
+          { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+        );
+      } catch (error) {
+        logger.error('Revenue support metric failed', {
+          message: error instanceof Error ? error.message : 'Unknown analytics error',
+        });
+      }
+    }
 
     logger.info('Support request sent successfully');
 

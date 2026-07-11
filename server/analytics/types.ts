@@ -662,6 +662,9 @@ export type IAnalyticsEventName =
   | 'auto_top_up_succeeded'
   | 'auto_top_up_declined'
   | 'auto_top_up_disabled'
+  | 'auto_top_up_refunded'
+  | 'repeat_purchase_refunded'
+  | 'revenue_support_contact'
   | 'credits_deducted'
   | 'credits_refunded'
   // Image processing events

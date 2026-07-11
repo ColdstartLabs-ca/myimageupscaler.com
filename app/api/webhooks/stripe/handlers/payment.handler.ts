@@ -1345,6 +1345,30 @@ export class PaymentHandler {
     });
     await this.recordRetentionRefund(userId, charge.id, refundAmount, invoiceId);
 
+    if (paymentIntentId) {
+      try {
+        const paymentIntent =
+          typeof charge.payment_intent === 'object' && charge.payment_intent
+            ? charge.payment_intent
+            : await stripe.paymentIntents.retrieve(paymentIntentId);
+        const refundEvent =
+          paymentIntent.metadata?.auto_top_up === 'true'
+            ? 'auto_top_up_refunded'
+            : paymentIntent.metadata?.checkout_trigger === 'repeat_purchase_prompt'
+              ? 'repeat_purchase_refunded'
+              : null;
+        if (refundEvent) {
+          await trackServerEvent(
+            refundEvent,
+            { chargeId: charge.id, paymentIntentId, refundAmount, currency: charge.currency },
+            this.buildAmplitudeOptsFromMetadata(paymentIntent.metadata, userId)
+          );
+        }
+      } catch (error) {
+        console.warn('[REVENUE_REFUND_METRIC_FAILED]', { chargeId: charge.id, error });
+      }
+    }
+
     // Try multiple reference formats to find the original transaction
     // Credit packs use pi_ or session_, subscriptions use invoice_
     const referenceIds = [
