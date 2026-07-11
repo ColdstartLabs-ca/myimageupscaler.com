@@ -2,15 +2,19 @@ import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { trackMock, upgradeMock, contextMock } = vi.hoisted(() => ({
+const { trackMock, upgradeMock, contextMock, checkoutContextMock } = vi.hoisted(() => ({
   trackMock: vi.fn(),
   upgradeMock: vi.fn(),
   contextMock: vi.fn(),
+  checkoutContextMock: vi.fn(),
 }));
 
 vi.mock('@client/analytics', () => ({ analytics: { track: trackMock } }));
 vi.mock('@client/utils/purchaseModalDefaults', () => ({
   setRepeatPurchaseContext: contextMock,
+}));
+vi.mock('@client/utils/checkoutTrackingContext', () => ({
+  setCheckoutTrackingContext: checkoutContextMock,
 }));
 vi.mock('@server/supabase/supabaseClient', () => ({
   supabase: {
@@ -74,6 +78,7 @@ describe('CreditsDisplay repeat purchase prompt', () => {
       packKey: 'medium',
       creditBalance: 3,
     });
+    expect(checkoutContextMock).toHaveBeenCalledWith({ trigger: 'repeat_purchase_prompt' });
     expect(upgradeMock).toHaveBeenCalledTimes(1);
   });
 });

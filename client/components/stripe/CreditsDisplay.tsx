@@ -5,6 +5,7 @@ import { useCredits, useUserStore } from '@client/store/userStore';
 import { SmartTooltip } from '@client/components/ui/SmartTooltip';
 import { analytics } from '@client/analytics';
 import { setRepeatPurchaseContext } from '@client/utils/purchaseModalDefaults';
+import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import { supabase } from '@server/supabase/supabaseClient';
 
 // Low credit threshold - show warning when credits fall below this amount
@@ -146,6 +147,7 @@ export function CreditsDisplay({ onUpgrade }: ICreditsDisplayProps = {}): JSX.El
             onClick={e => {
               e.stopPropagation();
               if (repeatPackKey) {
+                setCheckoutTrackingContext({ trigger: 'repeat_purchase_prompt' });
                 analytics.track('repeat_purchase_prompt_clicked', {
                   packKey: repeatPackKey,
                   creditBalance,
