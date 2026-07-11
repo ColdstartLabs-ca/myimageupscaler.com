@@ -45,6 +45,33 @@ describe('Middleware Legacy Redirects', () => {
     consoleSpy.mockRestore();
   });
 
+  describe('English-only blog URL normalization', () => {
+    test('rewrites an unprefixed blog URL to the English route without changing the public URL', async () => {
+      const { middleware } = await import('../../../middleware');
+      const request = new NextRequest('http://localhost/blog/mejorar-calidad-imagen-ia-gratis', {
+        headers: { 'accept-language': 'es-ES,es;q=0.9' },
+      });
+
+      const response = await middleware(request);
+
+      expect(response.headers.get('x-middleware-rewrite')).toBe(
+        'http://localhost/en/blog/mejorar-calidad-imagen-ia-gratis'
+      );
+    });
+
+    test('redirects locale-prefixed blog URLs to the canonical unprefixed URL', async () => {
+      const { middleware } = await import('../../../middleware');
+      const request = new NextRequest('http://localhost/es/blog/mejorar-calidad-imagen-ia-gratis');
+
+      const response = await middleware(request);
+
+      expect(response.status).toBe(301);
+      expect(response.headers.get('location')).toBe(
+        'http://localhost/blog/mejorar-calidad-imagen-ia-gratis'
+      );
+    });
+  });
+
   describe('Dedicated-route tools accessed at wrong path', () => {
     test('should redirect /tools/png-to-jpg to /tools/convert/png-to-jpg', async () => {
       const { middleware } = await import('../../../middleware');

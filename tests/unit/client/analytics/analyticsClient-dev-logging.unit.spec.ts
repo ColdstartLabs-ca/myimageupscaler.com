@@ -104,4 +104,44 @@ describe('Analytics Client - Dev Logging', () => {
 
     expect(infoSpy).not.toHaveBeenCalled();
   });
+
+  test.each(['/tools/ai-image-upscaler', '/formats/upscale-gif-images', '/scale/upscale-16x'])(
+    'retains %s across the complete commercial funnel',
+    async landingPage => {
+      const infoSpy = vi.spyOn(console, 'info').mockImplementation(() => {});
+      const { analytics } = await loadAnalyticsClient({
+        isDevelopment: true,
+        isTest: false,
+      });
+
+      analytics.trackPageView(landingPage);
+      analytics.track('signup_completed', { method: 'email' });
+      analytics.track('image_uploaded', { source: 'dropzone' });
+      analytics.track('image_upscale_started', { modelUsed: 'quick' });
+      analytics.track('upscale_completed', { success: true });
+      analytics.track('first_upload_completed', { source: 'upload', durationMs: 1000 });
+      analytics.track('checkout_opened', { trigger: 'post_download_explore' });
+
+      const funnelEvents = new Set([
+        'signup_completed',
+        'image_uploaded',
+        'image_upscale_started',
+        'upscale_completed',
+        'first_upload_completed',
+        'checkout_opened',
+      ]);
+      const loggedFunnelEvents = infoSpy.mock.calls
+        .filter(call => call[0] === '[Analytics:dev] track')
+        .map(call => call[1] as { name: string; properties: Record<string, unknown> })
+        .filter(event => funnelEvents.has(event.name));
+
+      expect(loggedFunnelEvents.map(event => event.name)).toEqual([...funnelEvents]);
+      for (const event of loggedFunnelEvents) {
+        expect(event.properties).toMatchObject({
+          entry_page: landingPage,
+          session_id: expect.any(String),
+        });
+      }
+    }
+  );
 });

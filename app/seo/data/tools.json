@@ -4,10 +4,10 @@
     {
       "slug": "ai-image-upscaler",
       "title": "AI Image Upscaler",
-      "metaTitle": "Free AI Image Upscaler \u2014 Enlarge to 8x, No Signup",
-      "metaDescription": "Upscale images up to 8x with AI. Free online \u2014 no signup, no watermarks. Preserves text and details. Upload a photo and get instant HD results.",
+      "metaTitle": "Free AI Image Upscaler \u2014 Enlarge Images Online up to 8x",
+      "metaDescription": "Upscale images up to 8x with AI. Create a free account with 5 free credits, upload a JPEG, PNG, or WebP, and download without a watermark.",
       "h1": "Free AI Image Upscaler - Enlarge Images Up to 8x Online",
-      "intro": "Use this free AI image upscaler to enlarge photos up to 8x online with no signup and no watermarks. The AI preserves sharpness and adds realistic detail instead of just stretching pixels, so low-resolution images turn into cleaner HD visuals for print, web, and professional projects.",
+      "intro": "Use this AI image upscaler to enlarge photos up to 8x online without watermarks. Create a free account with 5 free credits, then upload a JPEG, PNG, or WebP in the workspace. The AI preserves sharpness and adds realistic detail instead of just stretching pixels.",
       "primaryKeyword": "ai image upscaler",
       "secondaryKeywords": [
         "image upscaler",
@@ -190,7 +190,7 @@
           "description": "How machine learning models can reconstruct high-resolution images from low-resolution inputs."
         }
       ],
-      "ctaText": "Upscale Image Free",
+      "ctaText": "Get 5 Free Credits",
       "ctaUrl": "/?signup=1",
       "beforeAfterImages": {
         "before": "/before-after/girl-before.webp",

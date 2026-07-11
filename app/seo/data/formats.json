@@ -823,10 +823,10 @@
     {
       "slug": "upscale-gif-images",
       "title": "Upscale GIF Images",
-      "metaTitle": "Free GIF Upscaler – Enhance GIF Quality Online (No Signup)",
-      "metaDescription": "Upscale animated and static GIFs for free with AI — no signup required. Enhance memes, icons, and web graphics up to 4x resolution. Instant results online.",
-      "h1": "Upscale GIF Images - Animated & Static Enhancement",
-      "intro": "Enhance both animated and static GIF images with our AI upscaler. Increase resolution while preserving animation frames and transparency for better quality display.",
+      "metaTitle": "How to Upscale GIF Images Without Losing Animation Quality",
+      "metaDescription": "Learn the safest GIF upscaling workflow, file-size tradeoffs, and when to convert a still frame to PNG before using an AI image upscaler.",
+      "h1": "How to Upscale GIF Images Without Ruining the Animation",
+      "intro": "Animated GIF processing is not currently supported by our AI workspace. For a static GIF, export the frame as PNG, upscale it up to 8x, then convert it back. For animation, use a frame-aware GIF or video editor so timing and every frame remain intact.",
       "primaryKeyword": "upscale gif images",
       "secondaryKeywords": [
         "gif upscaler",
@@ -846,7 +846,7 @@
         },
         {
           "title": "256 Color Limit",
-          "description": "Limited color palette can cause banding, which our AI can improve during upscaling."
+          "description": "Limited color palettes can cause banding. A frame-aware editor can reduce artifacts, while our workspace only accepts JPEG, PNG, and WebP."
         },
         {
           "title": "Transparency",
@@ -882,7 +882,7 @@
       "bestPractices": [
         {
           "title": "Frame-by-Frame Enhancement",
-          "description": "Our AI enhances each frame individually while maintaining animation consistency."
+          "description": "Use a frame-aware GIF editor for animated files. Our AI workspace does not currently process GIF animation frames."
         },
         {
           "title": "Consider Alternatives",
@@ -890,7 +890,7 @@
         },
         {
           "title": "Preserve Animation",
-          "description": "All frames and timing are preserved during the upscaling process."
+          "description": "Preserve every frame and its timing in a dedicated GIF or video editor; do not send an animated GIF through a still-image workflow."
         },
         {
           "title": "Optimize File Size",
@@ -900,11 +900,11 @@
       "faq": [
         {
           "question": "Can I upscale animated GIFs?",
-          "answer": "Yes! Our AI processes each frame individually while preserving the animation sequence and timing, resulting in higher-quality animated GIFs."
+          "answer": "Not currently in our AI workspace. Use a frame-aware GIF or video editor for animated files. For a static GIF, export the desired frame as PNG and upscale that image."
         },
         {
           "question": "Will upscaling fix GIF color banding?",
-          "answer": "Our AI can reduce the appearance of banding artifacts common in GIFs, though the 256-color limitation will still apply to the output format."
+          "answer": "A dedicated GIF editor can reduce banding, but the 256-color limitation still applies when the result is exported back to GIF."
         },
         {
           "question": "Are upscaled GIFs worth the larger file size?",
@@ -912,7 +912,7 @@
         },
         {
           "question": "Can I convert GIF to video after upscaling?",
-          "answer": "Yes! After upscaling, you can use other tools to convert your enhanced GIF to WebM or MP4 for better compression and quality."
+          "answer": "Yes. Converting the original animation to WebM or MP4 before enhancement often provides better color and compression than GIF."
         },
         {
           "question": "Why does my GIF have a limited color palette?",
@@ -920,14 +920,16 @@
         },
         {
           "question": "How do I upscale a GIF online for free?",
-          "answer": "Upload your GIF to MyImageUpscaler, select your desired upscale factor (2x or 4x), and download the enhanced result — no account or credit card needed."
+          "answer": "Animated GIFs are not currently supported. Export a static frame as PNG, create a free account, and upscale the PNG in the workspace; use a frame-aware editor for the full animation."
         },
         {
           "question": "Is there a free GIF upscaler that works with animated GIFs?",
-          "answer": "Yes! MyImageUpscaler is free and processes animated GIFs frame by frame, preserving all animation timing and sequences at higher resolution."
+          "answer": "MyImageUpscaler does not currently process animated GIFs. Use a dedicated frame-aware GIF or video editor to preserve animation timing."
         }
       ],
-      "relatedFormats": ["upscale-png-images", "upscale-webp-images"]
+      "relatedFormats": ["upscale-png-images", "upscale-webp-images"],
+      "ctaText": "Upscale an Exported PNG Frame",
+      "ctaUrl": "/tools/ai-image-upscaler"
     },
     {
       "slug": "upscale-avif-images",

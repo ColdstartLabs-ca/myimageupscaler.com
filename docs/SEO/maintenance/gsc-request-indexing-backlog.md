@@ -8,6 +8,19 @@ After the next production deploy, open Google Search Console URL Inspection for 
 
 Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myimageupscaler.com/sitemap-static.xml` were resubmitted through the Search Console Sitemaps API and both returned `204 No Content`. This does not replace manual URL Inspection request indexing, so unchecked URLs below still need the GSC UI action.
 
+## 2026-07-10 SEO Growth Plan Execution
+
+- [ ] `https://myimageupscaler.com/tools/ai-image-upscaler`
+- [ ] `https://myimageupscaler.com/formats/upscale-gif-images`
+- [ ] `https://myimageupscaler.com/scale/upscale-16x`
+- [ ] `https://myimageupscaler.com/blog/topaz-labs-free-trial`
+- [ ] `https://myimageupscaler.com/blog/topaz-video-upscaler`
+- [ ] `https://myimageupscaler.com/blog/topaz-denoise-ai`
+- [ ] `https://myimageupscaler.com/blog/best-ai-image-enhancer`
+- [ ] `https://myimageupscaler.com/blog/pixelcut-ai-photo-editor`
+- [ ] `https://myimageupscaler.com/blog/mejorar-calidad-imagen-ia-gratis`
+- [ ] `https://myimageupscaler.com/blog/ai-upscaler-muryou-osusume`
+
 ## 2026-07-03 CTR / Ranking Lift Pass
 
 - [ ] `https://myimageupscaler.com/blog/fixing-pixelated-photos`

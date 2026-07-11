@@ -259,7 +259,7 @@ function getReferralSource(): IReferralSource | null {
 function getEntryPage(): string | null {
   if (typeof window === 'undefined') return null;
   try {
-    return localStorage.getItem(ENTRY_PAGE_KEY);
+    return sessionStorage.getItem(ENTRY_PAGE_KEY);
   } catch {
     // Gracefully handle Safari private mode and quota errors
     return null;
@@ -369,8 +369,8 @@ async function getSafeIdentifyLogPayload(
 function setEntryPageOnce(path: string): void {
   if (typeof window === 'undefined') return;
   try {
-    if (!localStorage.getItem(ENTRY_PAGE_KEY)) {
-      localStorage.setItem(ENTRY_PAGE_KEY, path);
+    if (!sessionStorage.getItem(ENTRY_PAGE_KEY)) {
+      sessionStorage.setItem(ENTRY_PAGE_KEY, path);
     }
   } catch {
     // Gracefully handle Safari private mode and quota errors
@@ -545,6 +545,11 @@ export const analytics = {
   trackPageView(path: string, properties?: Record<string, unknown>): void {
     const referralSource = getReferralSource();
 
+    // Landing-page attribution must be captured before consent/provider checks.
+    // Otherwise a user who navigates before granting consent is incorrectly
+    // attributed to the later signup, dashboard, or workspace page.
+    setEntryPageOnce(path);
+
     if (!this.isEnabled()) {
       logDevTrack(
         'page_view',
@@ -552,9 +557,6 @@ export const analytics = {
       );
       return;
     }
-
-    // Initialize entry page for session attribution
-    setEntryPageOnce(path);
 
     // Track return visit on first page view
     const lastVisit = getLastVisit();

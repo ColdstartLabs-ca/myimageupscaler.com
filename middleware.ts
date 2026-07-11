@@ -447,6 +447,25 @@ async function handleLocaleRouting(req: NextRequest): Promise<NextResponse | nul
   // Extract path segments to check for locale prefix
   const segments = pathname.split('/').filter(Boolean);
 
+  // Blog content is English-only and canonicalized without a locale prefix.
+  // Always serve the internal /en route for canonical blog URLs, regardless of
+  // geolocation or browser language, and collapse legacy localized URLs.
+  if (segments[0] === 'blog') {
+    const url = req.nextUrl.clone();
+    url.pathname = `/en${pathname}`;
+    const response = NextResponse.rewrite(url);
+    applySecurityHeaders(response);
+    return response;
+  }
+
+  if (segments.length > 1 && isValidLocale(segments[0]) && segments[1] === 'blog') {
+    const url = req.nextUrl.clone();
+    url.pathname = `/${segments.slice(1).join('/')}`;
+    const response = NextResponse.redirect(url, 301);
+    applySecurityHeaders(response);
+    return response;
+  }
+
   // Locale-prefixed dashboard routes need page auth handling before generic
   // locale responses; unprefixed /dashboard still uses the existing /en rewrite.
   const hasLocalePrefix = segments.length > 0 && isValidLocale(segments[0]);

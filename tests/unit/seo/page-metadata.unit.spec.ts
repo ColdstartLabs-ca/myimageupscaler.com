@@ -130,13 +130,13 @@ describe('Phase 5: upscale-gif-images metadata', () => {
   const data = loadCategory('formats');
   const page = findPage(data, 'upscale-gif-images');
 
-  it('gif page metaTitle includes "free" and "gif upscaler"', () => {
-    expect(page.metaTitle).toMatch(/free/i);
-    expect(page.metaTitle).toMatch(/gif upscaler/i);
+  it('gif page metaTitle targets a safe GIF upscaling workflow', () => {
+    expect(page.metaTitle).toMatch(/upscale gif/i);
+    expect(page.metaTitle).toMatch(/animation quality/i);
   });
 
-  it('gif page metaTitle mentions no signup', () => {
-    expect(page.metaTitle).toMatch(/no signup/i);
+  it('gif page discloses that animated GIF processing is unsupported', () => {
+    expect(page.intro).toMatch(/not currently supported/i);
   });
 
   it('gif metaTitle ≤ 70 chars', () => {

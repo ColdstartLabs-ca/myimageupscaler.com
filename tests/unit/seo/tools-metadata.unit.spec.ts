@@ -59,11 +59,12 @@ describe('Tools Metadata — ai-image-upscaler CTR optimization', () => {
     expect(page!.metaTitle).toContain('8x');
   });
 
-  it('metaDescription should mention "no signup"', () => {
-    expect(page!.metaDescription).toMatch(/no signup/i);
+  it('metaDescription should explain the free signup offer', () => {
+    expect(page!.metaDescription).toMatch(/free account/i);
+    expect(page!.metaDescription).toMatch(/5 free credits/i);
   });
 
   it('metaDescription should mention "no watermarks"', () => {
-    expect(page!.metaDescription).toMatch(/no watermark/i);
+    expect(page!.metaDescription).toMatch(/without a watermark/i);
   });
 });

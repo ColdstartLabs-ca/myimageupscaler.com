@@ -124,6 +124,8 @@ export interface IFormatPage extends IBasePSEOPage {
   relatedFormats: string[];
   relatedGuides: string[];
   beforeAfterImages?: IBeforeAfterImages;
+  ctaText?: string;
+  ctaUrl?: string;
 }
 
 /**
@@ -152,6 +154,8 @@ export interface IScalePage extends IBasePSEOPage {
   uniqueIntro?: string;
   expandedDescription?: string;
   pageSpecificDetails?: string;
+  ctaText?: string;
+  ctaUrl?: string;
 }
 
 /**

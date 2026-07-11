@@ -310,3 +310,15 @@ Intent mismatch fixes (seo_title only):
 - `how-to-upscale-images-for-instagram` — retargeted title/SEO title and opening answer around `2160x2700`, refreshed description fields, and added CTA markers.
 - `free-photo-restoration-app` — retargeted title/SEO title and opening answer around free photo restoration app intent, refreshed description fields, and added CTA markers.
 - `best-app-to-restore-old-photos`, `fix-pixelated-image`, `image-upscaler-8x`, `sharpen-a-video` — added missing `[!CTA_TRY]` and `[!CTA_DEMO]` body markers.
+
+## 2026-07-10
+
+### SEO: Growth Plan Topaz and Pixelcut Refresh
+
+**Affected:** topaz-labs-free-trial, topaz-video-upscaler, topaz-denoise-ai, best-ai-image-enhancer, pixelcut-ai-photo-editor
+**Why:** The July 10 growth plan identified `/blog/topaz-labs-free-trial` as a strong striking-distance opportunity and `/blog/pixelcut-ai-photo-editor` as an intent/engagement problem.
+**Changes:**
+
+- `topaz-labs-free-trial` — replaced outdated legacy trial claims with current 2026 Topaz Photo subscription and two-day refund terms, distinguished desktop, legacy, and web offers, and refreshed metadata.
+- `topaz-video-upscaler`, `topaz-denoise-ai`, `best-ai-image-enhancer` — added relevant inbound links to the refreshed trial guide.
+- `pixelcut-ai-photo-editor` — replaced the narrative opening with a direct official-tool link, comparison disclosure, current plan summary, and quick verdict.

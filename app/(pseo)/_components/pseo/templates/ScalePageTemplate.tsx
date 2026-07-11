@@ -90,8 +90,8 @@ export function ScalePageTemplate({
           <HeroSection
             h1={data.h1}
             intro={data.intro}
-            ctaText={`Upscale to ${data.resolution}`}
-            ctaUrl="/?signup=1"
+            ctaText={data.ctaText || `Upscale to ${data.resolution}`}
+            ctaUrl={data.ctaUrl || '/?signup=1'}
             pageType="scale"
             slug={data.slug}
             hideBadge={true}

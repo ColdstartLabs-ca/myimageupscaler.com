@@ -12,9 +12,42 @@ Maintenance rules:
 ## Open Follow-Ups
 
 - [ ] After next deploy, complete [GSC request indexing backlog](./gsc-request-indexing-backlog.md).
+- [ ] On or after 2026-07-19, compare `/blog/best-free-ai-photo-enhancer-online` for 2026-06-22 through 2026-07-07 against the next complete 16-day GSC window; inspect query and competing-URL losses before any further edit.
+- [ ] Around 2026-07-20, run the early GSC check for the 2026-07-03 edits to `/blog/fixing-pixelated-photos`, `/blog/topaz-video-upscaler`, and `/blog/best-ai-upscaler`; use early August for the stronger 28-day evaluation and do not rewrite during the window.
+- [ ] After the 2026-06-29 Spanish homepage metadata has matured, evaluate `/es` query movement and add natural Spanish internal links only if visibility still needs support.
 - [x] After next deploy, verify `https://myimageupscaler.com/sitemap-static.xml` includes `/de`, `/es`, `/fr`, `/it`, `/ja`, and `/pt`. Verified 2026-05-13.
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
+
+## 2026-07-10
+
+### SEO Growth Plan Execution: Commercial Funnels, Blog Routing, and Ranking Pages
+
+Source: [SEO growth plan 2026-07-10](../reports/seo-growth-plan-2026-07-10.md)
+
+Changes:
+
+- Corrected the three high-traffic commercial landing funnels: `/tools/ai-image-upscaler` now states the five-credit signup requirement, `/formats/upscale-gif-images` no longer promises unsupported animated-GIF processing, and `/scale/upscale-16x` explains the real two-pass 4x workflow. Their hero CTAs now use page-specific destinations and copy.
+- Normalized English-only blog routing so canonical `/blog/...` URLs always serve the internal English route regardless of visitor locale, while `/es/blog/...` and other locale-prefixed variants permanently redirect to the unprefixed canonical URL. This fixes the GSC-to-GA path mismatch seen on Spanish and Japanese posts.
+- Refreshed production `/blog/topaz-labs-free-trial` around current 2026 official terms: current Topaz Photo has no trial mode, uses a two-day refund window, and differs from the discontinued preview-only Photo AI trial. Added inbound links from the Topaz Video, Topaz Denoise, and best AI enhancer articles.
+- Improved `/blog/pixelcut-ai-photo-editor` first-screen intent satisfaction with a direct official-tool link, clear independent-comparison label, current free/paid positioning, and a concise verdict.
+- Added a Pixelcut-specific hero intent notice so mobile visitors can see that this is an independent comparison and open the official Pixelcut editor before the featured image or generic MyImageUpscaler CTA.
+- Added all changed and normalized URLs to the GSC request-indexing backlog; preserved the report's measurement guardrails as dated follow-ups rather than rewriting pages inside their evaluation windows.
+
+Validation:
+
+- Added SEO unit coverage for commercial claims/CTA destinations and English-only blog URL normalization.
+- Corrected commercial-funnel `entry_page` attribution to use session storage instead of persistent local storage, and capture the landing page before analytics consent/provider checks. Signup, upload, processing, result, activation, and checkout events now retain the real commercial landing route within the session.
+- Added funnel-sequence coverage for `/tools/ai-image-upscaler`, `/formats/upscale-gif-images`, and `/scale/upscale-16x` across signup, upload, processing start/completion, first result, and checkout.
+- Production blog API PATCH requests returned `200`; GET readback confirmed Topaz metadata/content, all three inbound links, and the Pixelcut first-screen update.
+- Official Topaz and Pixelcut documentation was checked before editing product terms.
+- GA4 Admin key-event audit for property `519826120` confirmed all nine expected internal funnel events and all six emitted GA4 event names are configured; no expected events are missing.
+- Mobile visual verification at `390x844` confirmed the Pixelcut disclosure and official-editor link render above the fold without horizontal overflow or console errors.
+
+Follow-up:
+
+- After deploy, manually request indexing for the new 2026-07-10 group in [gsc-request-indexing-backlog.md](./gsc-request-indexing-backlog.md).
+- Run the dated 2026-07-19, 2026-07-20, and early-August GSC comparisons above before further edits.
 
 ## 2026-07-03
 

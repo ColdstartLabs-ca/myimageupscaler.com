@@ -23,6 +23,11 @@ interface IBlogPostHeroSectionProps {
   image?: string;
   tableOfContents: ITableOfContentsItem[];
   specialist?: IBlogSpecialistProfile;
+  intentNotice?: {
+    text: string;
+    href: string;
+    linkLabel: string;
+  };
 }
 
 export function BlogPostHeroSection({
@@ -36,6 +41,7 @@ export function BlogPostHeroSection({
   image,
   tableOfContents,
   specialist,
+  intentNotice,
 }: IBlogPostHeroSectionProps): JSX.Element {
   const { lead, highlight } = splitBlogHeroTitle(title);
 
@@ -56,6 +62,20 @@ export function BlogPostHeroSection({
             <p className="max-w-xl text-base leading-relaxed text-text-secondary lg:text-lg">
               {description}
             </p>
+
+            {intentNotice ? (
+              <aside className="max-w-xl rounded-xl border border-accent/30 bg-accent/10 p-3 text-sm leading-relaxed text-text-secondary">
+                <span>{intentNotice.text}</span>{' '}
+                <Link
+                  href={intentNotice.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-accent hover:underline"
+                >
+                  {intentNotice.linkLabel}
+                </Link>
+              </aside>
+            ) : null}
           </header>
 
           <div className="order-3 space-y-5 lg:mt-6">

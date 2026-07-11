@@ -7,8 +7,8 @@ import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
  * store and retrieve the first page visited for session attribution.
  */
 
-// Mock localStorage
-const localStorageMock = (() => {
+// Mock sessionStorage: entry-page attribution is scoped to a browser session.
+const sessionStorageMock = (() => {
   let store: Record<string, string> = {};
   return {
     getItem: vi.fn((key: string) => store[key] || null),
@@ -24,14 +24,15 @@ const localStorageMock = (() => {
   };
 })();
 
-Object.defineProperty(global, 'localStorage', {
-  value: localStorageMock,
+Object.defineProperty(global, 'sessionStorage', {
+  value: sessionStorageMock,
 });
 
 // Mock window
 Object.defineProperty(global, 'window', {
   value: {
-    localStorage: localStorageMock,
+    sessionStorage: sessionStorageMock,
+    location: { pathname: '/', href: 'http://localhost/' },
   },
   writable: true,
 });
@@ -39,7 +40,7 @@ Object.defineProperty(global, 'window', {
 describe('Analytics Client - Entry Page Tracking', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    localStorageMock.clear();
+    sessionStorageMock.clear();
     vi.resetModules();
   });
 
@@ -49,7 +50,7 @@ describe('Analytics Client - Entry Page Tracking', () => {
 
   describe('getEntryPage method', () => {
     test('should return null when no entry page is set', async () => {
-      localStorageMock.clear();
+      sessionStorageMock.clear();
 
       const { analytics } = await import('../../../../client/analytics/analyticsClient');
 
@@ -58,8 +59,8 @@ describe('Analytics Client - Entry Page Tracking', () => {
       expect(entryPage).toBeNull();
     });
 
-    test('should return existing entry page from localStorage', async () => {
-      localStorageMock.setItem('miu_entry_page', '/pricing');
+    test('should return existing entry page from sessionStorage', async () => {
+      sessionStorageMock.setItem('miu_entry_page', '/pricing');
 
       const { analytics } = await import('../../../../client/analytics/analyticsClient');
 
@@ -85,8 +86,8 @@ describe('Analytics Client - Entry Page Tracking', () => {
       global.window = originalWindow;
     });
 
-    test('should handle localStorage errors gracefully', async () => {
-      localStorageMock.getItem.mockImplementationOnce(() => {
+    test('should handle sessionStorage errors gracefully', async () => {
+      sessionStorageMock.getItem.mockImplementationOnce(() => {
         throw new Error('Storage error');
       });
 
@@ -101,19 +102,19 @@ describe('Analytics Client - Entry Page Tracking', () => {
 
   describe('initEntryPage method', () => {
     test('should set entry page if not already set', async () => {
-      localStorageMock.clear();
+      sessionStorageMock.clear();
 
       const { analytics } = await import('../../../../client/analytics/analyticsClient');
 
       analytics.initEntryPage('/dashboard');
 
-      expect(localStorageMock.setItem).toHaveBeenCalledWith('miu_entry_page', '/dashboard');
+      expect(sessionStorageMock.setItem).toHaveBeenCalledWith('miu_entry_page', '/dashboard');
       expect(analytics.getEntryPage()).toBe('/dashboard');
     });
 
     test('should NOT overwrite existing entry page', async () => {
-      localStorageMock.setItem('miu_entry_page', '/landing-page');
-      localStorageMock.setItem.mockClear();
+      sessionStorageMock.setItem('miu_entry_page', '/landing-page');
+      sessionStorageMock.setItem.mockClear();
 
       const { analytics } = await import('../../../../client/analytics/analyticsClient');
 
@@ -121,14 +122,14 @@ describe('Analytics Client - Entry Page Tracking', () => {
       analytics.initEntryPage('/other-page');
 
       // Should NOT have been called since entry page already exists
-      expect(localStorageMock.setItem).not.toHaveBeenCalled();
+      expect(sessionStorageMock.setItem).not.toHaveBeenCalled();
       expect(analytics.getEntryPage()).toBe('/landing-page');
     });
 
-    test('should handle localStorage errors gracefully', async () => {
-      localStorageMock.clear();
-      localStorageMock.getItem.mockReturnValueOnce(null);
-      localStorageMock.setItem.mockImplementationOnce(() => {
+    test('should handle sessionStorage errors gracefully', async () => {
+      sessionStorageMock.clear();
+      sessionStorageMock.getItem.mockReturnValueOnce(null);
+      sessionStorageMock.setItem.mockImplementationOnce(() => {
         throw new Error('Storage quota exceeded');
       });
 
@@ -141,7 +142,7 @@ describe('Analytics Client - Entry Page Tracking', () => {
 
   describe('Entry page persistence', () => {
     test('should persist entry page across multiple calls', async () => {
-      localStorageMock.clear();
+      sessionStorageMock.clear();
 
       const { analytics } = await import('../../../../client/analytics/analyticsClient');
 
@@ -158,7 +159,7 @@ describe('Analytics Client - Entry Page Tracking', () => {
     });
 
     test('should use first-touch semantics for entry page', async () => {
-      localStorageMock.clear();
+      sessionStorageMock.clear();
 
       const { analytics } = await import('../../../../client/analytics/analyticsClient');
 
@@ -172,6 +173,22 @@ describe('Analytics Client - Entry Page Tracking', () => {
 
       // Entry page should still be the first page
       expect(analytics.getEntryPage()).toBe('/ai-image-upscaler');
+    });
+  });
+
+  describe('consent-independent initialization', () => {
+    test('captures the landing page before analytics consent is granted', async () => {
+      sessionStorageMock.clear();
+
+      const { analytics } = await import('../../../../client/analytics/analyticsClient');
+
+      analytics.trackPageView('/tools/ai-image-upscaler');
+
+      expect(sessionStorageMock.setItem).toHaveBeenCalledWith(
+        'miu_entry_page',
+        '/tools/ai-image-upscaler'
+      );
+      expect(analytics.getEntryPage()).toBe('/tools/ai-image-upscaler');
     });
   });
 });

@@ -98,8 +98,8 @@ export function FormatPageTemplate({
           <HeroSection
             h1={data.h1}
             intro={data.intro}
-            ctaText="Try Free"
-            ctaUrl="/"
+            ctaText={data.ctaText || 'Try Free'}
+            ctaUrl={data.ctaUrl || '/?signup=1'}
             pageType="format"
             slug={data.slug}
           />

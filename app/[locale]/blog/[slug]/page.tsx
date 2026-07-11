@@ -239,7 +239,9 @@ export default async function BlogPostPage({ params }: IPageProps) {
   const snapshotRelated = snapshotRelatedSlugs
     .map(relatedSlug => allPosts.find(p => p.slug === relatedSlug))
     .filter((relatedPost): relatedPost is (typeof allPosts)[number] => Boolean(relatedPost));
-  const fallbackRelated = allPosts.filter(p => p.slug !== slug && p.category === post.category).slice(0, 3);
+  const fallbackRelated = allPosts
+    .filter(p => p.slug !== slug && p.category === post.category)
+    .slice(0, 3);
   const relatedPosts = snapshotRelated.length > 0 ? snapshotRelated : fallbackRelated;
 
   const postDate = getPostPublishedDate(post);
@@ -350,6 +352,15 @@ export default async function BlogPostPage({ params }: IPageProps) {
               image={post.image}
               tableOfContents={tableOfContents}
               specialist={BLOG_SPECIALIST_PROFILE}
+              intentNotice={
+                slug === 'pixelcut-ai-photo-editor'
+                  ? {
+                      text: 'Independent comparison — looking for Pixelcut itself?',
+                      href: 'https://www.pixelcut.ai/',
+                      linkLabel: 'Open the official Pixelcut editor',
+                    }
+                  : undefined
+              }
             />
 
             <BlogPostTags tags={post.tags} placement="top" />
