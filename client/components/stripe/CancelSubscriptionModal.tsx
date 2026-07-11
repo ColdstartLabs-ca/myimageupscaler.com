@@ -64,6 +64,8 @@ export function CancelSubscriptionModal({
   const [retentionError, setRetentionError] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
   const requestSequence = useRef(0);
+  const retentionSequence = useRef(0);
+  const retentionAbortController = useRef<AbortController | null>(null);
   const busyRef = useRef(false);
 
   const resetFlow = () => {
@@ -83,6 +85,8 @@ export function CancelSubscriptionModal({
   useEffect(() => {
     if (!isOpen) {
       requestSequence.current += 1;
+      retentionSequence.current += 1;
+      retentionAbortController.current?.abort();
       resetFlow();
       return;
     }
@@ -191,6 +195,10 @@ export function CancelSubscriptionModal({
     setRetentionChanging(true);
     setRetentionError(false);
     busyRef.current = true;
+    const sequence = ++retentionSequence.current;
+    const controller = new AbortController();
+    retentionAbortController.current = controller;
+    const timeout = window.setTimeout(() => controller.abort(), 10_000);
     try {
       const { data } = await supabase.auth.getSession();
       if (!data.session?.access_token) throw new Error('User not authenticated');
@@ -201,14 +209,20 @@ export function CancelSubscriptionModal({
           Authorization: `Bearer ${data.session.access_token}`,
         },
         body: JSON.stringify({ reason: selectedReasonKey }),
+        signal: controller.signal,
       });
+      if (sequence !== retentionSequence.current) return;
       if (!response.ok) throw new Error('Failed to schedule retention downgrade');
       await onAcceptRetentionOffer?.();
     } catch {
-      setRetentionError(true);
+      if (sequence === retentionSequence.current) setRetentionError(true);
     } finally {
-      setRetentionChanging(false);
-      busyRef.current = false;
+      window.clearTimeout(timeout);
+      if (sequence === retentionSequence.current) {
+        setRetentionChanging(false);
+        busyRef.current = false;
+        retentionAbortController.current = null;
+      }
     }
   };
 
@@ -238,6 +252,12 @@ export function CancelSubscriptionModal({
               targetPlanName={retentionOffer.targetPlanName}
               onAccept={handleAcceptRetentionOffer}
               onContinueCancellation={() => {
+                retentionSequence.current += 1;
+                retentionAbortController.current?.abort();
+                retentionAbortController.current = null;
+                setRetentionChanging(false);
+                setRetentionError(false);
+                busyRef.current = false;
                 setShowRetentionOffer(false);
                 setShowConfirmation(true);
               }}
@@ -422,7 +442,6 @@ function CancellationRetentionOffer({
         </button>
         <button
           onClick={onContinueCancellation}
-          disabled={changing}
           className="flex-1 rounded-lg bg-surface-light px-4 py-3 font-medium text-muted-foreground transition-colors hover:bg-surface-light"
         >
           {cancelLabel}

@@ -176,6 +176,36 @@ describe('CancelSubscriptionModal', () => {
     expect(screen.getByRole('button', { name: 'Cancel Subscription' })).toBeEnabled();
   });
 
+  test('should keep cancellation available and ignore a late retention response', async () => {
+    let resolveRetention!: (value: unknown) => void;
+    const pendingRetention = new Promise(resolve => {
+      resolveRetention = resolve;
+    });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(async (_url, init) => {
+        if (init?.method === 'PUT') return pendingRetention;
+        return {
+          ok: true,
+          json: async () => ({
+            data: { offer: { targetPlanKey: 'hobby', targetPlanName: 'Hobby' } },
+          }),
+        };
+      })
+    );
+    renderWithTranslations(<CancelSubscriptionModal {...defaultProps} />);
+    fireEvent.click(screen.getByLabelText('Too expensive'));
+    fireEvent.click(screen.getByText('Continue'));
+    fireEvent.click(await screen.findByText('Change Plan'));
+    const continueCancellation = screen.getByRole('button', { name: 'Cancel Subscription' });
+    expect(continueCancellation).toBeEnabled();
+    fireEvent.click(continueCancellation);
+    expect(screen.getByText('Are you sure?')).toBeInTheDocument();
+    resolveRetention({ ok: true, json: async () => ({}) });
+    await waitFor(() => expect(mockOnAcceptRetentionOffer).not.toHaveBeenCalled());
+    expect(screen.getByText('Are you sure?')).toBeInTheDocument();
+  });
+
   test('should allow direct cancellation after declining offer', async () => {
     renderWithTranslations(<CancelSubscriptionModal {...defaultProps} />);
 

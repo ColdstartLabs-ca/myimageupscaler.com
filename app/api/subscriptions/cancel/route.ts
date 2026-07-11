@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     // 2. Get the user's active subscription
     const { data: subscription, error: subError } = await supabaseAdmin
       .from('subscriptions')
-      .select('id, status')
+      .select('id, status, scheduled_price_id')
       .eq('user_id', user.id)
       .in('status', ['active', 'trialing'])
       .order('created_at', { ascending: false })
@@ -85,6 +85,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Cancellation wins over any pending plan change.
+    const stripeSubscription = await stripe.subscriptions.retrieve(subscription.id);
+    if (stripeSubscription.schedule && typeof stripeSubscription.schedule === 'string') {
+      await stripe.subscriptionSchedules.release(stripeSubscription.schedule);
+    }
+
     // 3. Cancel the subscription in Stripe (at period end)
     const updatedSubscription = await stripe.subscriptions.update(subscription.id, {
       cancel_at_period_end: true,
@@ -95,9 +101,13 @@ export async function POST(request: NextRequest) {
       cancel_at_period_end: boolean;
       updated_at: string;
       cancellation_reason?: string;
+      scheduled_price_id: null;
+      scheduled_change_date: null;
     } = {
       cancel_at_period_end: true,
       updated_at: new Date().toISOString(),
+      scheduled_price_id: null,
+      scheduled_change_date: null,
     };
 
     // Add cancellation reason if provided
@@ -118,6 +128,8 @@ export async function POST(request: NextRequest) {
           .update({
             cancel_at_period_end: true,
             updated_at: updateData.updated_at,
+            scheduled_price_id: null,
+            scheduled_change_date: null,
           })
           .eq('id', subscription.id);
 
