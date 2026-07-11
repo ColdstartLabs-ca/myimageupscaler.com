@@ -22,6 +22,8 @@ export interface IAutoTopUpRunResult {
   failed: number;
 }
 
+class AmbiguousAutoTopUpConfirmationError extends Error {}
+
 function dailyAttemptKey(userId: string, consentVersion: string, now: Date): string {
   return `auto-top-up:${userId}:${consentVersion}:${now.toISOString().slice(0, 10)}`;
 }
@@ -64,11 +66,16 @@ export class AutoTopUpService {
     for (const setting of settings) {
       if (setting.charge_claim_id) {
         if (!isStaleAutoTopUpLease(setting.charge_claimed_at, now)) continue;
-        const { data: staleAttempt } = await supabaseAdmin
+        const { data: staleAttempt, error: staleAttemptError } = await supabaseAdmin
           .from('auto_top_up_attempts')
           .select('stripe_payment_intent_id')
           .eq('id', setting.charge_claim_id)
           .maybeSingle();
+        if (staleAttemptError) {
+          throw new Error(
+            `Unable to inspect stale auto top-up attempt: ${staleAttemptError.message}`
+          );
+        }
         if (staleAttempt?.stripe_payment_intent_id) {
           const existingIntent = await stripe.paymentIntents.retrieve(
             staleAttempt.stripe_payment_intent_id
@@ -205,16 +212,44 @@ export class AutoTopUpService {
           continue;
         }
 
-        const confirmed = await stripe.paymentIntents.confirm(
-          paymentIntent.id,
-          { off_session: true },
-          { idempotencyKey: `${idempotencyKey}:confirm` }
-        );
+        let confirmed;
+        try {
+          confirmed = await stripe.paymentIntents.confirm(
+            paymentIntent.id,
+            { off_session: true },
+            { idempotencyKey: `${idempotencyKey}:confirm` }
+          );
+        } catch {
+          let reconciled;
+          try {
+            reconciled = await stripe.paymentIntents.retrieve(paymentIntent.id);
+          } catch (reconcileError) {
+            throw new AmbiguousAutoTopUpConfirmationError(
+              `Unable to reconcile PaymentIntent confirmation: ${String(reconcileError)}`
+            );
+          }
+          if (isAutoTopUpPayableStatus(reconciled.status)) {
+            confirmed = reconciled;
+          } else {
+            try {
+              const canceled = await stripe.paymentIntents.cancel(paymentIntent.id);
+              if (canceled.status !== 'canceled') {
+                throw new Error(`unexpected_cancel_status_${canceled.status}`);
+              }
+            } catch (cancelError) {
+              throw new AmbiguousAutoTopUpConfirmationError(
+                `Unable to cancel reconciled PaymentIntent: ${String(cancelError)}`
+              );
+            }
+            throw new Error(`payment_intent_${reconciled.status}`);
+          }
+        }
         if (!isAutoTopUpPayableStatus(confirmed.status)) {
           throw new Error(`payment_intent_${confirmed.status}`);
         }
         result.paymentPending++;
       } catch (paymentError) {
+        if (paymentError instanceof AmbiguousAutoTopUpConfirmationError) throw paymentError;
         const errorClass =
           paymentError instanceof Error ? paymentError.message : 'payment_intent_failed';
         const { error: failureError } = await supabaseAdmin
