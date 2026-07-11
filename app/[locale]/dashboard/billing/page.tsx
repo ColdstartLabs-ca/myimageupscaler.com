@@ -9,6 +9,7 @@ import { InternalTabs, type ITabItem } from '@client/components/ui/InternalTabs'
 import { StripeService, preloadStripe } from '@client/services/stripeService';
 import { useToastStore } from '@client/store/toastStore';
 import { getPlanDisplayName, getPlanForPriceId } from '@shared/config/stripe';
+import { getPlanByKey } from '@shared/config/subscription.utils';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { motion } from 'framer-motion';
@@ -168,6 +169,14 @@ export default function BillingPage() {
       });
       throw err; // Re-throw so modal can handle loading state
     }
+  };
+
+  const handleAcceptCancellationRetentionOffer = (targetPlanKey: string) => {
+    const targetPlan = getPlanByKey(targetPlanKey);
+    if (!targetPlan?.stripePriceId) return;
+    setShowCancelModal(false);
+    setSelectedPlanId(targetPlan.stripePriceId);
+    setIsPlanModalOpen(true);
   };
 
   const formatDate = (dateString: string) => {
@@ -656,6 +665,8 @@ export default function BillingPage() {
           onConfirm={handleCancelSubscription}
           planName={planName}
           periodEnd={subscription.current_period_end}
+          currentPlanKey={profile?.subscription_tier}
+          onAcceptRetentionOffer={handleAcceptCancellationRetentionOffer}
         />
       )}
 

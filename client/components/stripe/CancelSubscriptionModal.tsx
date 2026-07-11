@@ -4,6 +4,11 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { AlertTriangle } from 'lucide-react';
 import dayjs from 'dayjs';
+import {
+  resolveCancellationRetentionOffer,
+  type CancellationReasonKey,
+  type RetentionPlanKey,
+} from '@shared/config/cancellation-retention';
 import { ModalHeader } from './ModalHeader';
 
 interface ICancelSubscriptionModalProps {
@@ -12,17 +17,19 @@ interface ICancelSubscriptionModalProps {
   onConfirm: (reason?: string) => Promise<void>;
   planName: string;
   periodEnd: string;
+  currentPlanKey?: string | null;
+  onAcceptRetentionOffer?: (targetPlanKey: RetentionPlanKey) => void;
 }
 
 function getCancellationReasons(t: ReturnType<typeof useTranslations>) {
   return [
-    t('reasons.tooExpensive'),
-    t('reasons.notUsingEnough'),
-    t('reasons.missingFeatures'),
-    t('reasons.switchingCompetitor'),
-    t('reasons.technicalIssues'),
-    t('reasons.other'),
-  ];
+    { key: 'too_expensive', label: t('reasons.tooExpensive') },
+    { key: 'not_using_enough', label: t('reasons.notUsingEnough') },
+    { key: 'missing_features', label: t('reasons.missingFeatures') },
+    { key: 'switching_competitor', label: t('reasons.switchingCompetitor') },
+    { key: 'technical_issues', label: t('reasons.technicalIssues') },
+    { key: 'other', label: t('reasons.other') },
+  ] as const satisfies ReadonlyArray<{ key: CancellationReasonKey; label: string }>;
 }
 
 /**
@@ -39,20 +46,37 @@ export function CancelSubscriptionModal({
   onConfirm,
   planName,
   periodEnd,
+  currentPlanKey,
+  onAcceptRetentionOffer,
 }: ICancelSubscriptionModalProps): JSX.Element | null {
   const t = useTranslations('stripe.cancelSubscription');
+  const billingT = useTranslations('dashboard.billing');
   const [selectedReason, setSelectedReason] = useState<string>('');
+  const [selectedReasonKey, setSelectedReasonKey] = useState<CancellationReasonKey | null>(null);
   const [customReason, setCustomReason] = useState('');
   const [loading, setLoading] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showRetentionOffer, setShowRetentionOffer] = useState(false);
+  const retentionOffer = selectedReasonKey
+    ? resolveCancellationRetentionOffer(selectedReasonKey, currentPlanKey)
+    : null;
 
   if (!isOpen) return null;
 
-  const handleReasonChange = (reason: string) => {
+  const handleReasonChange = (reasonKey: CancellationReasonKey, reason: string) => {
+    setSelectedReasonKey(reasonKey);
     setSelectedReason(reason);
-    if (reason !== t('reasons.other')) {
+    if (reasonKey !== 'other') {
       setCustomReason('');
     }
+  };
+
+  const handleContinue = () => {
+    if (retentionOffer && onAcceptRetentionOffer) {
+      setShowRetentionOffer(true);
+      return;
+    }
+    setShowConfirmation(true);
   };
 
   const handleCancel = async () => {
@@ -82,7 +106,19 @@ export function CancelSubscriptionModal({
         />
 
         <div className="p-6 space-y-6">
-          {!showConfirmation ? (
+          {showRetentionOffer && retentionOffer ? (
+            <CancellationRetentionOffer
+              targetPlanKey={retentionOffer.targetPlanKey}
+              onAccept={() => onAcceptRetentionOffer?.(retentionOffer.targetPlanKey)}
+              onContinueCancellation={() => {
+                setShowRetentionOffer(false);
+                setShowConfirmation(true);
+              }}
+              title={billingT('subscriptionBetterValue')}
+              changePlanLabel={billingT('changePlan')}
+              cancelLabel={billingT('cancelSubscription')}
+            />
+          ) : !showConfirmation ? (
             <CancellationReasonForm
               planName={planName}
               formattedEndDate={formattedEndDate}
@@ -92,13 +128,16 @@ export function CancelSubscriptionModal({
               onReasonChange={handleReasonChange}
               onCustomReasonChange={setCustomReason}
               onClose={onClose}
-              onContinue={() => setShowConfirmation(true)}
+              onContinue={handleContinue}
             />
           ) : (
             <CancellationConfirmation
               formattedEndDate={formattedEndDate}
               loading={loading}
-              onGoBack={() => setShowConfirmation(false)}
+              onGoBack={() => {
+                setShowConfirmation(false);
+                if (retentionOffer && onAcceptRetentionOffer) setShowRetentionOffer(true);
+              }}
               onConfirm={handleCancel}
             />
           )}
@@ -114,7 +153,7 @@ interface ICancellationReasonFormProps {
   selectedReason: string;
   customReason: string;
   loading: boolean;
-  onReasonChange: (reason: string) => void;
+  onReasonChange: (reasonKey: CancellationReasonKey, reason: string) => void;
   onCustomReasonChange: (reason: string) => void;
   onClose: () => void;
   onContinue: () => void;
@@ -154,18 +193,18 @@ function CancellationReasonForm({
         <div className="space-y-2">
           {reasons.map(reason => (
             <label
-              key={reason}
+              key={reason.key}
               className="flex items-center p-3 border border-border rounded-lg hover:bg-surface cursor-pointer transition-colors"
             >
               <input
                 type="radio"
                 name="reason"
-                value={reason}
-                checked={selectedReason === reason}
-                onChange={e => onReasonChange(e.target.value)}
+                value={reason.key}
+                checked={selectedReason === reason.label}
+                onChange={() => onReasonChange(reason.key, reason.label)}
                 className="w-4 h-4 text-accent border-border focus:ring-accent"
               />
-              <span className="ml-3 text-sm text-muted-foreground">{reason}</span>
+              <span className="ml-3 text-sm text-muted-foreground">{reason.label}</span>
             </label>
           ))}
         </div>
@@ -200,6 +239,47 @@ function CancellationReasonForm({
         </button>
       </div>
     </>
+  );
+}
+
+interface ICancellationRetentionOfferProps {
+  targetPlanKey: RetentionPlanKey;
+  title: string;
+  changePlanLabel: string;
+  cancelLabel: string;
+  onAccept: () => void;
+  onContinueCancellation: () => void;
+}
+
+function CancellationRetentionOffer({
+  targetPlanKey,
+  title,
+  changePlanLabel,
+  cancelLabel,
+  onAccept,
+  onContinueCancellation,
+}: ICancellationRetentionOfferProps): JSX.Element {
+  return (
+    <div className="space-y-5">
+      <div className="rounded-xl border border-accent/20 bg-accent/10 p-5 text-center">
+        <h3 className="text-lg font-semibold text-primary">{title}</h3>
+        <p className="mt-2 text-sm capitalize text-muted-foreground">{targetPlanKey}</p>
+      </div>
+      <div className="flex gap-3">
+        <button
+          onClick={onAccept}
+          className="flex-1 rounded-lg bg-accent px-4 py-3 font-medium text-white transition-colors hover:bg-accent-hover"
+        >
+          {changePlanLabel}
+        </button>
+        <button
+          onClick={onContinueCancellation}
+          className="flex-1 rounded-lg bg-surface-light px-4 py-3 font-medium text-muted-foreground transition-colors hover:bg-surface-light"
+        >
+          {cancelLabel}
+        </button>
+      </div>
+    </div>
   );
 }
 

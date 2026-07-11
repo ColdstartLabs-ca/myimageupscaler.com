@@ -2,6 +2,7 @@ import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { CancelSubscriptionModal } from '@client/components/stripe/CancelSubscriptionModal';
+import { resolveCancellationRetentionOffer } from '@shared/config/cancellation-retention';
 import React from 'react';
 
 // Mock translations for stripe.cancelSubscription
@@ -34,6 +35,13 @@ function renderWithTranslations(ui: React.ReactElement) {
     <NextIntlClientProvider
       locale="en"
       messages={{
+        dashboard: {
+          billing: {
+            subscriptionBetterValue: 'A smaller plan may fit better.',
+            changePlan: 'Change Plan',
+            cancelSubscription: 'Cancel Subscription',
+          },
+        },
         stripe: {
           cancelSubscription: mockTranslations,
         },
@@ -47,6 +55,7 @@ function renderWithTranslations(ui: React.ReactElement) {
 describe('CancelSubscriptionModal', () => {
   const mockOnClose = vi.fn();
   const mockOnConfirm = vi.fn();
+  const mockOnAcceptRetentionOffer = vi.fn();
 
   const defaultProps = {
     isOpen: true,
@@ -54,10 +63,61 @@ describe('CancelSubscriptionModal', () => {
     onConfirm: mockOnConfirm,
     planName: 'Professional',
     periodEnd: '2025-03-01',
+    currentPlanKey: 'pro',
+    onAcceptRetentionOffer: mockOnAcceptRetentionOffer,
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  test('should resolve one lower-plan offer for price and usage reasons', () => {
+    expect(resolveCancellationRetentionOffer('too_expensive', 'business')).toMatchObject({
+      type: 'downgrade',
+      targetPlanKey: 'pro',
+    });
+    expect(resolveCancellationRetentionOffer('not_using_enough', 'pro')).toMatchObject({
+      type: 'downgrade',
+      targetPlanKey: 'hobby',
+    });
+  });
+
+  test('should not offer retention for starter or product-quality reasons', () => {
+    expect(resolveCancellationRetentionOffer('too_expensive', 'starter')).toBeNull();
+    expect(resolveCancellationRetentionOffer('missing_features', 'pro')).toBeNull();
+    expect(resolveCancellationRetentionOffer('technical_issues', 'business')).toBeNull();
+  });
+
+  test('should show downgrade offer and preserve continue cancellation action', () => {
+    renderWithTranslations(<CancelSubscriptionModal {...defaultProps} />);
+
+    fireEvent.click(screen.getByLabelText('Too expensive'));
+    fireEvent.click(screen.getByText('Continue'));
+
+    expect(screen.getByText('A smaller plan may fit better.')).toBeInTheDocument();
+    expect(screen.getByText('Change Plan')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Cancel Subscription' })).toBeInTheDocument();
+  });
+
+  test('should accept downgrade offer without canceling', () => {
+    renderWithTranslations(<CancelSubscriptionModal {...defaultProps} />);
+
+    fireEvent.click(screen.getByLabelText('Not using it enough'));
+    fireEvent.click(screen.getByText('Continue'));
+    fireEvent.click(screen.getByText('Change Plan'));
+
+    expect(mockOnAcceptRetentionOffer).toHaveBeenCalledWith('hobby');
+    expect(mockOnConfirm).not.toHaveBeenCalled();
+  });
+
+  test('should allow direct cancellation after declining offer', () => {
+    renderWithTranslations(<CancelSubscriptionModal {...defaultProps} />);
+
+    fireEvent.click(screen.getByLabelText('Too expensive'));
+    fireEvent.click(screen.getByText('Continue'));
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel Subscription' }));
+
+    expect(screen.getByText('Are you sure?')).toBeInTheDocument();
   });
 
   test('should render modal when open', () => {
@@ -121,6 +181,8 @@ describe('CancelSubscriptionModal', () => {
     // Click continue to show confirmation
     const continueButton = screen.getByText('Continue');
     fireEvent.click(continueButton);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel Subscription' }));
 
     // Confirm cancellation
     const confirmButton = screen.getByText('Yes, Cancel Subscription');
