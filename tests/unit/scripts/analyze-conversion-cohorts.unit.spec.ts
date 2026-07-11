@@ -123,6 +123,8 @@ describe('conversion cohort decomposition', () => {
     expect(window.decomposition.mixEffectBuyers).toBeCloseTo(0);
     expect(window.decomposition.withinSegmentEffectBuyers).toBeCloseTo(-15);
     expect(window.rankedLostBuyerSegments[0]).toMatchObject({
+      dimension: 'sourceMedium',
+      value: 'google / organic',
       expectedBuyers: 20,
       actualBuyers: 5,
       baselineConversionRate: 0.2,
@@ -157,7 +159,7 @@ describe('conversion cohort decomposition', () => {
     const thirtyDay = result.windows.find(row => row.maturityDays === 30)!;
     expect(MIN_SEGMENT_SIGNUPS).toBe(20);
     expect(thirtyDay.cohorts.find(row => row.month === '2026-06')?.signupCount).toBe(2);
-    expect(thirtyDay.suppressedSegmentCount).toBe(1);
+    expect(thirtyDay.suppressedSegmentCount).toBe(7);
     expect(result.purchaseJoinCoverage).toMatchObject({
       eligiblePurchaseCount: 2,
       joinedPurchaseCount: 1,

@@ -70,12 +70,15 @@ interface ISegmentDimensions {
   isPseo: boolean;
 }
 
+type TSegmentDimension = keyof ISegmentDimensions;
+
 type TAction =
   | { kind: 'prd_phase'; prd: string; phase: string; reason: string }
   | { kind: 'no_action'; reason: string };
 
 interface IRankedSegment {
-  dimensions: ISegmentDimensions;
+  dimension: TSegmentDimension;
+  value: string | boolean;
   baselineSignups: number;
   comparisonSignups: number;
   baselineBuyers: number;
@@ -125,7 +128,6 @@ export interface ICohortAnalysisResult {
 interface IPreparedSignup {
   row: ISignupCohortRow;
   month: string;
-  segmentKey: string;
   dimensions: ISegmentDimensions;
 }
 
@@ -148,10 +150,6 @@ function dimensionsFor(row: ISignupCohortRow): ISegmentDimensions {
     authState: row.authState,
     isPseo: row.isPseo,
   };
-}
-
-function segmentKey(dimensions: ISegmentDimensions): string {
-  return JSON.stringify(dimensions);
 }
 
 function isWithinWindow(timestamp: string | undefined, signupAt: string, days: number): boolean {
@@ -207,7 +205,8 @@ function summarize(
 function chooseAction(
   baseline: ICohortSummary,
   comparison: ICohortSummary,
-  dimensions: ISegmentDimensions
+  dimension: TSegmentDimension,
+  value: string | boolean
 ): TAction {
   const regression = {
     activation: baseline.rates.activated - comparison.rates.activated,
@@ -240,7 +239,7 @@ function chooseAction(
       kind: 'prd_phase',
       prd: 'click-to-checkout-conversion-fix.md',
       phase:
-        dimensions.device === 'mobile'
+        dimension === 'device' && value === 'mobile'
           ? 'Phase 3 — Mobile Checkout Audit + Fix'
           : 'Phase 1 — model_gate Direct Checkout',
       reason: 'Checkout entry has the largest within-segment decline.',
@@ -278,18 +277,17 @@ function analyzeWindow(
     comparisonRows,
     funnelCounts(comparisonRows, maturityDays, firstPurchaseBySignup)
   );
-  const groups = new Map<
-    string,
-    { dimensions: ISegmentDimensions; baseline: IPreparedSignup[]; comparison: IPreparedSignup[] }
-  >();
+  // Source/medium is the primary mutually-exclusive decomposition axis. Combining every
+  // dimension into one key creates hundreds of tiny cells and makes the counterfactual unstable.
+  const groups = new Map<string, { baseline: IPreparedSignup[]; comparison: IPreparedSignup[] }>();
   for (const signup of [...baselineRows, ...comparisonRows]) {
-    const group = groups.get(signup.segmentKey) ?? {
-      dimensions: signup.dimensions,
+    const key = signup.dimensions.sourceMedium;
+    const group = groups.get(key) ?? {
       baseline: [],
       comparison: [],
     };
     group[signup.month === input.baselineMonth ? 'baseline' : 'comparison'].push(signup);
-    groups.set(signup.segmentKey, group);
+    groups.set(key, group);
   }
 
   const comparable = [...groups.values()].filter(
@@ -300,7 +298,7 @@ function analyzeWindow(
     0
   );
   let expectedBuyers = 0;
-  const ranked = comparable.map(group => {
+  for (const group of comparable) {
     const baselineSegment = summarize(
       input.baselineMonth,
       group.baseline,
@@ -313,19 +311,70 @@ function analyzeWindow(
     );
     const expected = group.comparison.length * baselineSegment.rates.purchased;
     expectedBuyers += expected;
-    return {
-      dimensions: group.dimensions,
-      baselineSignups: group.baseline.length,
-      comparisonSignups: group.comparison.length,
-      baselineBuyers: baselineSegment.purchased,
-      actualBuyers: comparisonSegment.purchased,
-      baselineConversionRate: baselineSegment.rates.purchased,
-      comparisonConversionRate: comparisonSegment.rates.purchased,
-      expectedBuyers: expected,
-      lostBuyers: expected - comparisonSegment.purchased,
-      action: chooseAction(baselineSegment, comparisonSegment, group.dimensions),
-    };
-  });
+  }
+
+  // Rank each business dimension independently. Each row remains interpretable and satisfies
+  // the minimum sample threshold without hiding losses inside a sparse cross-product.
+  const dimensions: TSegmentDimension[] = [
+    'sourceMedium',
+    'landingPageFamily',
+    'pricingTier',
+    'region',
+    'device',
+    'authState',
+    'isPseo',
+  ];
+  const dimensionGroups = new Map<
+    string,
+    {
+      dimension: TSegmentDimension;
+      value: string | boolean;
+      baseline: IPreparedSignup[];
+      comparison: IPreparedSignup[];
+    }
+  >();
+  for (const signup of [...baselineRows, ...comparisonRows]) {
+    for (const dimension of dimensions) {
+      const value = signup.dimensions[dimension];
+      const key = `${dimension}:${String(value)}`;
+      const group = dimensionGroups.get(key) ?? {
+        dimension,
+        value,
+        baseline: [],
+        comparison: [],
+      };
+      group[signup.month === input.baselineMonth ? 'baseline' : 'comparison'].push(signup);
+      dimensionGroups.set(key, group);
+    }
+  }
+  const ranked = [...dimensionGroups.values()]
+    .filter(group => group.baseline.length > 0 && group.comparison.length > 0)
+    .map(group => {
+      const baselineSegment = summarize(
+        input.baselineMonth,
+        group.baseline,
+        funnelCounts(group.baseline, maturityDays, firstPurchaseBySignup)
+      );
+      const comparisonSegment = summarize(
+        input.comparisonMonth,
+        group.comparison,
+        funnelCounts(group.comparison, maturityDays, firstPurchaseBySignup)
+      );
+      const expected = group.comparison.length * baselineSegment.rates.purchased;
+      return {
+        dimension: group.dimension,
+        value: group.value,
+        baselineSignups: group.baseline.length,
+        comparisonSignups: group.comparison.length,
+        baselineBuyers: baselineSegment.purchased,
+        actualBuyers: comparisonSegment.purchased,
+        baselineConversionRate: baselineSegment.rates.purchased,
+        comparisonConversionRate: comparisonSegment.rates.purchased,
+        expectedBuyers: expected,
+        lostBuyers: expected - comparisonSegment.purchased,
+        action: chooseAction(baselineSegment, comparisonSegment, group.dimension, group.value),
+      };
+    });
   const threshold = input.minSegmentSignups ?? MIN_SEGMENT_SIGNUPS;
   const visible = ranked
     .filter(row => row.baselineSignups >= threshold && row.comparisonSignups >= threshold)
@@ -351,7 +400,7 @@ function analyzeWindow(
     },
     segmentThreshold: threshold,
     suppressedSegmentCount: ranked.length - visible.length,
-    nonComparableSegmentCount: groups.size - comparable.length,
+    nonComparableSegmentCount: dimensionGroups.size - ranked.length,
     rankedLostBuyerSegments: visible,
   };
 }
@@ -374,7 +423,6 @@ export function analyzeConversionCohorts(input: ICohortAnalysisInput): ICohortAn
         row,
         month: monthOf(row.signedUpAt),
         dimensions,
-        segmentKey: segmentKey(dimensions),
       };
     });
 
