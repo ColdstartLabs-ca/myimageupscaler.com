@@ -117,18 +117,16 @@ test.describe('SEO Redirects E2E Tests', () => {
   });
 
   test.describe('Tracking Parameter Cleanup for SEO', () => {
-    test('preserves functional parameters like signup', async ({ page, baseURL }) => {
+    test('preserves functional parameters like signup', async ({ request, baseURL }) => {
       // Note: 'signup' is a functional parameter for the app, not a tracking parameter
       // The middleware only strips actual tracking parameters (utm_*, fbclid, etc.)
-      await page.goto('/?signup=1');
+      const response = await request.get('/?signup=1');
 
-      // Should preserve the signup parameter
-      const url = page.url();
+      // Assert the middleware response before the client consumes this one-shot parameter.
+      const url = response.url();
       expect(url).toBe(`${baseURL}/?signup=1`);
       expect(url).toContain('signup');
-
-      // Page should load successfully
-      await expect(page.locator('h1')).toBeVisible();
+      expect(response.status()).toBe(200);
     });
 
     test('redirects UTM parameters to clean URL (301)', async ({ page, baseURL }) => {

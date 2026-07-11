@@ -26,10 +26,12 @@ Maintenance rules:
 Changes:
 
 - Updated the homepage internal-link unit test to validate the current `getHomepageBlogPicks` SEO-equity selector instead of the retired hardcoded slug array. Runtime homepage behavior and URLs are unchanged.
+- Stabilized the signup-query redirect E2E assertion by checking the middleware response before the client consumes the one-shot functional parameter.
 
 Validation:
 
 - `yarn vitest run tests/unit/seo/homepage-internal-links.unit.spec.ts`
+- `yarn playwright test tests/e2e/seo-redirects.e2e.spec.ts --project=chromium`
 
 Follow-up:
 
