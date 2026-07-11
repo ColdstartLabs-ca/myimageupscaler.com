@@ -5,6 +5,7 @@ import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { POST } from '../../../app/api/webhooks/stripe/route';
 import { supabaseAdmin } from '../../../server/supabase/supabaseAdmin';
+import { SubscriptionHandler } from '../../../app/api/webhooks/stripe/handlers/subscription.handler';
 import {
   getPlanByPriceId,
   resolvePlanOrPack,
@@ -328,6 +329,77 @@ describe('Bug Fix: Double credit grant when scheduled downgrade completes', () =
         name === 'add_subscription_credits' && typeof args?.amount === 'number' && args.amount > 0
     );
     expect(creditAddCalls).toHaveLength(0);
+  });
+
+  test('schedule completion throws when subscription convergence fails', async () => {
+    (supabaseAdmin.from as ReturnType<typeof vi.fn>).mockImplementation((table: string) => {
+      if (table === 'subscriptions') {
+        return {
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              maybeSingle: vi.fn(async () => ({
+                data: {
+                  id: 'sub_failed_convergence',
+                  user_id: 'user_123',
+                  scheduled_price_id: 'price_starter_monthly',
+                  price_id: 'price_business_monthly',
+                },
+                error: null,
+              })),
+            })),
+          })),
+          update: vi.fn(() => ({
+            eq: vi.fn(async () => ({ error: { message: 'database unavailable' } })),
+          })),
+        };
+      }
+      return {};
+    });
+
+    await expect(
+      SubscriptionHandler.handleSubscriptionScheduleCompleted({
+        id: 'sub_sched_failed',
+        subscription: 'sub_failed_convergence',
+      } as never)
+    ).rejects.toThrow('Failed to converge completed schedule');
+  });
+
+  test('schedule completion throws when profile tier convergence fails', async () => {
+    (supabaseAdmin.from as ReturnType<typeof vi.fn>).mockImplementation((table: string) => {
+      if (table === 'subscriptions') {
+        return {
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              maybeSingle: vi.fn(async () => ({
+                data: {
+                  id: 'sub_profile_failed',
+                  user_id: 'user_123',
+                  scheduled_price_id: 'price_starter_monthly',
+                  price_id: 'price_business_monthly',
+                },
+                error: null,
+              })),
+            })),
+          })),
+          update: vi.fn(() => ({ eq: vi.fn(async () => ({ error: null })) })),
+        };
+      }
+      if (table === 'profiles') {
+        return {
+          update: vi.fn(() => ({
+            eq: vi.fn(async () => ({ error: { message: 'profile write failed' } })),
+          })),
+        };
+      }
+      return {};
+    });
+
+    await expect(
+      SubscriptionHandler.handleSubscriptionScheduleCompleted({
+        id: 'sub_sched_profile_failed',
+        subscription: 'sub_profile_failed',
+      } as never)
+    ).rejects.toThrow('Failed to update profile for completed schedule');
   });
 
   test('invoice.payment_succeeded should be the sole credit allocator after schedule completes', async () => {

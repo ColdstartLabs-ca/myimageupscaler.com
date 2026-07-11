@@ -7,6 +7,12 @@ vi.mock('@server/stripe', () => ({
       retrieve: vi.fn(),
       update: vi.fn(),
     },
+    subscriptionSchedules: {
+      retrieve: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      release: vi.fn(),
+    },
   },
 }));
 
@@ -476,5 +482,149 @@ describe('POST /api/subscription/change', () => {
     expect(data.error.code).toBe('STRIPE_ERROR');
     expect(data.error.message).toContain('Failed to update local subscription record');
     expect(supabaseAdmin.rpc).not.toHaveBeenCalled();
+  });
+
+  test('uses deterministic Stripe idempotency and converges concurrent retention downgrades', async () => {
+    const proSubscription = { ...currentSubscription, price_id: 'price_pro' };
+    const proProfile = { ...profile, subscription_tier: 'pro' };
+    vi.mocked(stripe.subscriptions.retrieve).mockResolvedValue({
+      id: proSubscription.id,
+      billing_cycle_anchor: 1773111702,
+      schedule: null,
+      metadata: {},
+      current_period_start: 1773111702,
+      current_period_end: 1775703702,
+      items: {
+        data: [
+          {
+            id: 'si_pro',
+            price: { id: 'price_pro', recurring: { interval: 'month', interval_count: 1 } },
+          },
+        ],
+      },
+    } as never);
+    vi.mocked(stripe.subscriptionSchedules.create).mockResolvedValue({
+      id: 'sub_sched_retention',
+      phases: [{ start_date: 1773111702 }],
+    } as never);
+    vi.mocked(stripe.subscriptionSchedules.update).mockResolvedValue({
+      id: 'sub_sched_retention',
+      phases: [{ start_date: 1773111702 }],
+    } as never);
+    vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
+      if (table === 'subscriptions')
+        return {
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              in: vi.fn(() => ({
+                order: vi.fn(() => ({
+                  limit: vi.fn(() => ({
+                    single: vi.fn(async () => ({ data: { ...proSubscription }, error: null })),
+                  })),
+                })),
+              })),
+            })),
+          })),
+          update: vi.fn(() => ({ eq: vi.fn(async () => ({ error: null })) })),
+        };
+      if (table === 'profiles')
+        return {
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({ single: vi.fn(async () => ({ data: proProfile, error: null })) })),
+          })),
+          update: vi.fn(() => ({ eq: vi.fn(async () => ({ error: null })) })),
+        };
+      throw new Error(`Unexpected table in test: ${table}`);
+    });
+    const makeRequest = () =>
+      new NextRequest('http://localhost/api/subscription/change', {
+        method: 'POST',
+        headers: {
+          authorization: 'Bearer test_token',
+          'content-type': 'application/json',
+          'x-retention-idempotency-key': 'retention:user:sub:hobby',
+        },
+        body: JSON.stringify({ targetPriceId: 'price_hobby' }),
+      });
+    const responses = await Promise.all([POST(makeRequest()), POST(makeRequest())]);
+    expect(responses.map(response => response.status)).toEqual([200, 200]);
+    expect(stripe.subscriptionSchedules.create).toHaveBeenCalledTimes(2);
+    for (const call of vi.mocked(stripe.subscriptionSchedules.create).mock.calls) {
+      expect(call[1]).toEqual({ idempotencyKey: 'retention:user:sub:hobby:create' });
+    }
+    for (const call of vi.mocked(stripe.subscriptionSchedules.update).mock.calls) {
+      expect(call[2]).toEqual({ idempotencyKey: 'retention:user:sub:hobby:update' });
+    }
+  });
+
+  test('releases the retention schedule when the local scheduled-state write fails', async () => {
+    const proSubscription = { ...currentSubscription, price_id: 'price_pro' };
+    vi.mocked(stripe.subscriptions.retrieve).mockResolvedValue({
+      id: proSubscription.id,
+      schedule: null,
+      current_period_start: 1773111702,
+      current_period_end: 1775703702,
+      items: {
+        data: [
+          {
+            id: 'si_pro',
+            price: { id: 'price_pro', recurring: { interval: 'month', interval_count: 1 } },
+          },
+        ],
+      },
+    } as never);
+    vi.mocked(stripe.subscriptionSchedules.create).mockResolvedValue({
+      id: 'sub_sched_cleanup',
+      phases: [{ start_date: 1773111702 }],
+    } as never);
+    vi.mocked(stripe.subscriptionSchedules.update).mockResolvedValue({
+      id: 'sub_sched_cleanup',
+      phases: [{ start_date: 1773111702 }],
+    } as never);
+    vi.mocked(stripe.subscriptionSchedules.release).mockResolvedValue({} as never);
+    vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
+      if (table === 'subscriptions')
+        return {
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              in: vi.fn(() => ({
+                order: vi.fn(() => ({
+                  limit: vi.fn(() => ({
+                    single: vi.fn(async () => ({ data: { ...proSubscription }, error: null })),
+                  })),
+                })),
+              })),
+            })),
+          })),
+          update: vi.fn(() => ({
+            eq: vi.fn(async () => ({ error: { message: 'db unavailable' } })),
+          })),
+        };
+      if (table === 'profiles')
+        return {
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              single: vi.fn(async () => ({
+                data: { ...profile, subscription_tier: 'pro' },
+                error: null,
+              })),
+            })),
+          })),
+        };
+      throw new Error(`Unexpected table in test: ${table}`);
+    });
+    const response = await POST(
+      new NextRequest('http://localhost/api/subscription/change', {
+        method: 'POST',
+        headers: {
+          authorization: 'Bearer test_token',
+          'content-type': 'application/json',
+          'x-retention-idempotency-key': 'retention:user:sub:hobby',
+        },
+        body: JSON.stringify({ targetPriceId: 'price_hobby' }),
+      })
+    );
+    expect(response.status).toBe(500);
+    expect(stripe.subscriptionSchedules.release).toHaveBeenCalledWith('sub_sched_cleanup');
   });
 });

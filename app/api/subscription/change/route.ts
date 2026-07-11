@@ -267,6 +267,10 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
     });
 
+    const retentionIdempotencyKey = request.headers.get('x-retention-idempotency-key');
+    let retentionScheduleIdForCleanup: string | null = null;
+    let retentionScheduleCommitted = false;
+
     // Existing subscription - modify it
     try {
       // Check if we're in test mode
@@ -332,12 +336,13 @@ export async function POST(request: NextRequest) {
         console.log(
           `[PLAN_CHANGE] Syncing price_id - DB had: ${currentSubscription.price_id}, Stripe has: ${latestPriceId}`
         );
-        // Update database to match Stripe (source of truth)
-        await supabaseAdmin
-          .from('subscriptions')
-          .update({ price_id: latestPriceId })
-          .eq('id', currentSubscription.id);
-        // Use the correct price_id going forward
+        // Defer the local sync for retention downgrades until the schedule is fully committed.
+        if (!retentionIdempotencyKey) {
+          await supabaseAdmin
+            .from('subscriptions')
+            .update({ price_id: latestPriceId })
+            .eq('id', currentSubscription.id);
+        }
         currentSubscription.price_id = latestPriceId;
       }
 
@@ -435,7 +440,14 @@ export async function POST(request: NextRequest) {
         let schedule;
         const existingScheduleId = latestSubscription.schedule;
 
-        if (existingScheduleId && typeof existingScheduleId === 'string') {
+        if (
+          retentionIdempotencyKey &&
+          existingScheduleId &&
+          typeof existingScheduleId === 'string'
+        ) {
+          schedule = await stripe.subscriptionSchedules.retrieve(existingScheduleId);
+          retentionScheduleIdForCleanup = existingScheduleId;
+        } else if (existingScheduleId && typeof existingScheduleId === 'string') {
           // Release existing schedule first to avoid "phase already ended" errors
           // This converts the schedule back to a regular subscription
           console.log('[PLAN_CHANGE_RELEASING_EXISTING_SCHEDULE]', {
@@ -454,10 +466,15 @@ export async function POST(request: NextRequest) {
           }
         }
 
-        // Create a fresh schedule from the current subscription
-        schedule = await stripe.subscriptionSchedules.create({
-          from_subscription: currentSubscription.id,
-        });
+        if (!schedule) {
+          schedule = await stripe.subscriptionSchedules.create(
+            { from_subscription: currentSubscription.id },
+            retentionIdempotencyKey
+              ? { idempotencyKey: `${retentionIdempotencyKey}:create` }
+              : undefined
+          );
+          retentionScheduleIdForCleanup = schedule.id;
+        }
 
         // CRITICAL: Extract the existing phase's start_date - we MUST use this exact value
         // to avoid "cannot modify start_date of current phase" error while also satisfying
@@ -491,34 +508,44 @@ export async function POST(request: NextRequest) {
         // 1. Current phase: keep current plan until period end
         // 2. Next phase: switch to new (lower) plan
         // CRITICAL: Use the EXACT same start_date from the existing phase
-        schedule = await stripe.subscriptionSchedules.update(schedule.id, {
-          end_behavior: 'release', // Release back to regular subscription after schedule completes
-          phases: [
-            {
-              items: [{ price: currentSubscription.price_id!, quantity: 1 }],
-              start_date: existingPhaseStartDate, // MUST use exact value from existing phase
-              end_date: periodEnd,
-              proration_behavior: 'none',
-            },
-            {
-              items: [{ price: body.targetPriceId, quantity: 1 }],
-              start_date: periodEnd,
-              // No end_date for final phase with end_behavior: release
-              proration_behavior: 'none',
-            },
-          ],
-        });
+        schedule = await stripe.subscriptionSchedules.update(
+          schedule.id,
+          {
+            end_behavior: 'release',
+            phases: [
+              {
+                items: [{ price: currentSubscription.price_id!, quantity: 1 }],
+                start_date: existingPhaseStartDate,
+                end_date: periodEnd,
+                proration_behavior: 'none',
+              },
+              {
+                items: [{ price: body.targetPriceId, quantity: 1 }],
+                start_date: periodEnd,
+                proration_behavior: 'none',
+              },
+            ],
+          },
+          retentionIdempotencyKey
+            ? { idempotencyKey: `${retentionIdempotencyKey}:update` }
+            : undefined
+        );
 
         // Store the scheduled downgrade in our database
         // The subscription keeps current price_id until the schedule executes
-        await supabaseAdmin
+        const { error: scheduledStateError } = await supabaseAdmin
           .from('subscriptions')
           .update({
+            price_id: currentSubscription.price_id,
             scheduled_price_id: body.targetPriceId,
             scheduled_change_date: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
             updated_at: new Date().toISOString(),
           })
           .eq('id', currentSubscription.id);
+        if (scheduledStateError) {
+          throw new Error(`Failed to persist scheduled downgrade: ${scheduledStateError.message}`);
+        }
+        retentionScheduleCommitted = true;
 
         console.log('[PLAN_CHANGE_DOWNGRADE_COMPLETE]', {
           userId: user.id,
@@ -721,6 +748,13 @@ export async function POST(request: NextRequest) {
         },
       });
     } catch (stripeError: unknown) {
+      if (retentionIdempotencyKey && retentionScheduleIdForCleanup && !retentionScheduleCommitted) {
+        try {
+          await stripe.subscriptionSchedules.release(retentionScheduleIdForCleanup);
+        } catch (cleanupError) {
+          console.error('[RETENTION_SCHEDULE_CLEANUP_FAILED]', cleanupError);
+        }
+      }
       console.error('Stripe subscription change error:', stripeError);
       const errorMessage = stripeError instanceof Error ? stripeError.message : 'Unknown error';
 

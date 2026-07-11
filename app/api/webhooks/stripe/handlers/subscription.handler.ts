@@ -1003,7 +1003,7 @@ export class SubscriptionHandler {
 
     if (subError || !subscription) {
       console.error(`No subscription found for schedule completion: ${subscriptionId}`, subError);
-      return;
+      throw new Error(`Subscription lookup failed for completed schedule ${schedule.id}`);
     }
 
     const scheduledPriceId = subscription.scheduled_price_id;
@@ -1024,7 +1024,7 @@ export class SubscriptionHandler {
         `Error clearing scheduled downgrade for subscription ${subscriptionId}:`,
         updateError
       );
-      return;
+      throw new Error(`Failed to converge completed schedule ${schedule.id}`);
     }
 
     // If this was a scheduled downgrade, update the profile tier
@@ -1036,12 +1036,15 @@ export class SubscriptionHandler {
       if (newPlan) {
         // Update profile tier
         // IMPORTANT: Use plan.key (e.g., 'pro') not plan.name (e.g., 'Professional')
-        await supabaseAdmin
+        const { error: profileUpdateError } = await supabaseAdmin
           .from('profiles')
           .update({
             subscription_tier: newPlan.key,
           })
           .eq('id', subscription.user_id);
+        if (profileUpdateError) {
+          throw new Error(`Failed to update profile for completed schedule ${schedule.id}`);
+        }
 
         console.log(
           `[SCHEDULE_DOWNGRADE_TIER_UPDATED] User ${subscription.user_id} tier updated to ${newPlan.key} for ${newPlan.name} plan. Credits will be allocated by invoice handler.`

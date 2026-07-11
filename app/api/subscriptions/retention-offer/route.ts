@@ -109,7 +109,11 @@ export async function PUT(request: NextRequest) {
   return changeSubscription(
     new NextRequest(new URL('/api/subscription/change', request.url), {
       method: 'POST',
-      headers: { authorization, 'content-type': 'application/json' },
+      headers: {
+        authorization,
+        'content-type': 'application/json',
+        'x-retention-idempotency-key': `retention:${user.id}:${subscription.id}:${target.stripePriceId}`,
+      },
       body: JSON.stringify({ targetPriceId: target.stripePriceId }),
     })
   );
