@@ -17,6 +17,23 @@ const schema = z.object({
 });
 
 const RETENTION_CLAIM_LEASE_MS = 5 * 60 * 1000;
+const RETENTION_ROLLOUT_PERCENT = 10;
+
+function retentionRolloutBucket(userId: string): number {
+  let hash = 2166136261;
+  for (let index = 0; index < userId.length; index++) {
+    hash ^= userId.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0) % 100;
+}
+
+async function recordRetentionEvent(event: Record<string, unknown>): Promise<boolean> {
+  const { error } = await supabaseAdmin
+    .from('subscription_retention_events')
+    .upsert(event, { onConflict: 'event_key', ignoreDuplicates: true });
+  return !error;
+}
 
 export async function POST(request: NextRequest) {
   const token = request.headers.get('authorization')?.replace('Bearer ', '');
@@ -30,7 +47,7 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) return NextResponse.json({ error: 'Invalid reason' }, { status: 400 });
   const { data: subscription } = await supabaseAdmin
     .from('subscriptions')
-    .select('price_id')
+    .select('id, price_id')
     .eq('user_id', user.id)
     .in('status', ['active', 'trialing'])
     .order('created_at', { ascending: false })
@@ -44,6 +61,23 @@ export async function POST(request: NextRequest) {
       : null;
   if (!offer) return NextResponse.json({ data: { offer: null } });
   const target = getPlanByKey(offer.targetPlanKey);
+  const treatment = retentionRolloutBucket(user.id) < RETENTION_ROLLOUT_PERCENT;
+  const measured = await recordRetentionEvent({
+    event_key: `${treatment ? 'shown' : 'holdout'}:${subscription.id}`,
+    subscription_id: subscription.id,
+    user_id: user.id,
+    event_type: treatment ? 'offer_shown' : 'holdout_assigned',
+    variant: treatment ? 'treatment' : 'holdout',
+    reason: parsed.data.reason,
+    current_price_id: subscription.price_id,
+    target_price_id: target?.stripePriceId,
+    current_monthly_cents: current.type === 'plan' ? current.priceInCents : null,
+    target_monthly_cents: target?.priceInCents,
+  });
+  if (!measured) {
+    return NextResponse.json({ error: 'Unable to record retention eligibility' }, { status: 500 });
+  }
+  if (!treatment) return NextResponse.json({ data: { offer: null } });
   return NextResponse.json({
     data: {
       offer: {
@@ -101,11 +135,34 @@ export async function PUT(request: NextRequest) {
   if (!offer || !target?.stripePriceId) {
     return NextResponse.json({ error: 'Offer is no longer eligible' }, { status: 409 });
   }
+  if (retentionRolloutBucket(user.id) >= RETENTION_ROLLOUT_PERCENT) {
+    return NextResponse.json({ error: 'Offer is no longer eligible' }, { status: 409 });
+  }
+
+  const recordAccepted = () =>
+    recordRetentionEvent({
+      event_key: `accepted:${subscription.id}:${target.stripePriceId}`,
+      subscription_id: subscription.id,
+      user_id: user.id,
+      event_type: 'offer_accepted',
+      variant: 'treatment',
+      reason: parsed.data.reason,
+      current_price_id: subscription.price_id,
+      target_price_id: target.stripePriceId,
+      current_monthly_cents: current.type === 'plan' ? current.priceInCents : null,
+      target_monthly_cents: target.priceInCents,
+    });
 
   if (
     subscription.scheduled_price_id === target.stripePriceId &&
     subscription.scheduled_change_date
   ) {
+    if (!(await recordAccepted())) {
+      return NextResponse.json(
+        { error: 'Unable to record accepted retention offer' },
+        { status: 500 }
+      );
+    }
     return NextResponse.json({
       success: true,
       data: {
@@ -203,6 +260,12 @@ export async function PUT(request: NextRequest) {
   }
   if (!response.ok && !cleanup.data) {
     return NextResponse.json({ error: 'Retention change recovery conflicted' }, { status: 409 });
+  }
+  if (response.ok && !(await recordAccepted())) {
+    return NextResponse.json(
+      { error: 'Unable to record accepted retention offer' },
+      { status: 500 }
+    );
   }
   return response;
 }

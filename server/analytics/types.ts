@@ -644,6 +644,13 @@ export type IAnalyticsEventName =
   | 'subscription_updated'
   | 'subscription_canceled'
   | 'subscription_renewed'
+  | 'subscription_retention_holdout_assigned'
+  | 'subscription_retention_offer_shown'
+  | 'subscription_retention_offer_accepted'
+  | 'subscription_retention_cancellation_completed'
+  | 'subscription_retention_later_cancellation'
+  | 'subscription_retention_refund'
+  | 'subscription_retention_chargeback'
   | 'upgrade_started'
   // Revenue events (server-side only)
   | 'revenue_received'

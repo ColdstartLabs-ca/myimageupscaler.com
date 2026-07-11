@@ -1,18 +1,27 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { NextRequest } from 'next/server';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { getPlanByKey } from '@shared/config/subscription.utils';
 
-const { single, changeSubscription, claimResult, cleanupResult } = vi.hoisted(() => ({
-  single: vi.fn(),
-  changeSubscription: vi.fn(),
-  claimResult: vi.fn(),
-  cleanupResult: vi.fn(),
-}));
+const { single, changeSubscription, claimResult, cleanupResult, eventUpsert, getUser } = vi.hoisted(
+  () => ({
+    single: vi.fn(),
+    changeSubscription: vi.fn(),
+    claimResult: vi.fn(),
+    cleanupResult: vi.fn(),
+    eventUpsert: vi.fn(),
+    getUser: vi.fn(),
+  })
+);
 vi.mock('@/app/api/subscription/change/route', () => ({ POST: changeSubscription }));
 vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: {
-    auth: { getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null }) },
-    from: vi.fn(() => {
+    auth: { getUser },
+    from: vi.fn((table: string) => {
+      if (table === 'subscription_retention_events') {
+        return { upsert: eventUpsert };
+      }
       const updateQuery: Record<string, ReturnType<typeof vi.fn>> = {};
       updateQuery.eq = vi.fn(() => updateQuery);
       updateQuery.is = vi.fn(() => updateQuery);
@@ -33,9 +42,15 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
 
 import { POST, PUT } from '@/app/api/subscriptions/retention-offer/route';
 
+const measurementMigration = readFileSync(
+  join(process.cwd(), 'supabase/migrations/20260711000200_subscription_retention_measurement.sql'),
+  'utf8'
+);
+
 describe('subscription retention offer route', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
     single.mockResolvedValue({
       data: { id: 'sub-1', price_id: getPlanByKey('pro')?.stripePriceId },
     });
@@ -44,6 +59,7 @@ describe('subscription retention offer route', () => {
     );
     claimResult.mockResolvedValue({ data: { id: 'sub-1' }, error: null });
     cleanupResult.mockResolvedValue({ data: { id: 'sub-1' }, error: null });
+    eventUpsert.mockResolvedValue({ error: null });
   });
 
   test('requires authentication', async () => {
@@ -64,6 +80,41 @@ describe('subscription retention offer route', () => {
     expect(response.status).toBe(200);
     const body = await response.json();
     expect(body.data.offer).toMatchObject({ targetPlanKey: 'hobby' });
+    expect(eventUpsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event_type: 'offer_shown',
+        variant: 'treatment',
+        current_monthly_cents: 4900,
+        target_monthly_cents: 1900,
+      }),
+      { onConflict: 'event_key', ignoreDuplicates: true }
+    );
+  });
+
+  test('keeps the deterministic holdout from seeing or accepting an offer', async () => {
+    getUser.mockResolvedValue({ data: { user: { id: 'user-2' } }, error: null });
+    const shown = await POST(
+      new NextRequest('http://localhost/api/subscriptions/retention-offer', {
+        method: 'POST',
+        headers: { authorization: 'Bearer token', 'content-type': 'application/json' },
+        body: JSON.stringify({ reason: 'too_expensive' }),
+      })
+    );
+    expect((await shown.json()).data.offer).toBeNull();
+    expect(eventUpsert).toHaveBeenCalledWith(
+      expect.objectContaining({ event_type: 'holdout_assigned', variant: 'holdout' }),
+      expect.anything()
+    );
+
+    const accepted = await PUT(
+      new NextRequest('http://localhost/api/subscriptions/retention-offer', {
+        method: 'PUT',
+        headers: { authorization: 'Bearer token', 'content-type': 'application/json' },
+        body: JSON.stringify({ reason: 'too_expensive' }),
+      })
+    );
+    expect(accepted.status).toBe(409);
+    expect(changeSubscription).not.toHaveBeenCalled();
   });
 
   test('returns no offer for product-quality reasons', async () => {
@@ -106,6 +157,10 @@ describe('subscription retention offer route', () => {
     expect(await delegatedRequest.json()).toEqual({
       targetPriceId: getPlanByKey('hobby')?.stripePriceId,
     });
+    expect(eventUpsert).toHaveBeenCalledWith(
+      expect.objectContaining({ event_type: 'offer_accepted', variant: 'treatment' }),
+      { onConflict: 'event_key', ignoreDuplicates: true }
+    );
   });
 
   test('returns the existing scheduled downgrade on retry without another Stripe change', async () => {
@@ -233,5 +288,33 @@ describe('subscription retention offer route', () => {
     );
     expect(response.status).toBe(500);
     expect(await response.json()).toEqual({ error: 'Unable to finalize retention change' });
+  });
+});
+
+describe('subscription retention durable measurement', () => {
+  test('reports treatment versus holdout at 30/60 days with revenue and harm guardrails', () => {
+    expect(measurementMigration).toContain('event_key text NOT NULL UNIQUE');
+    expect(measurementMigration).toContain('get_subscription_retention_health');
+    expect(measurementMigration).toContain("interval '30 days'");
+    expect(measurementMigration).toContain("interval '60 days'");
+    expect(measurementMigration).toContain('incremental_retained_revenue_cents');
+    expect(measurementMigration).toContain("hm.variant = 'holdout'");
+    for (const harm of ['refund_cents', 'chargeback_cents', 'later_cancellation_count']) {
+      expect(measurementMigration).toContain(harm);
+    }
+    expect(measurementMigration).toContain('stop_recommended');
+    expect(measurementMigration).toContain('SECURITY INVOKER');
+    expect(measurementMigration).toContain('TO service_role');
+    expect(measurementMigration).toContain('AFTER INSERT ON public.dispute_events');
+  });
+
+  test('pauses pending retention email whenever cancellation state changes', () => {
+    expect(measurementMigration).toContain('AFTER UPDATE OF cancel_at_period_end');
+    expect(measurementMigration).toContain("status = 'cancelled'");
+    expect(measurementMigration).toContain("campaign_key = 'cancelled-period-ending'");
+    expect(measurementMigration).toContain("reason = 'subscription_cancellation_state_changed'");
+    expect(measurementMigration).toContain('NEW.cancel_at_period_end IS TRUE');
+    expect(measurementMigration).toContain('NEW.cancel_at_period_end IS FALSE');
+    expect(measurementMigration).toContain('ON CONFLICT (event_key) DO NOTHING');
   });
 });

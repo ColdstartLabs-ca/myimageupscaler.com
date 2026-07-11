@@ -19,6 +19,39 @@ interface IStripeChargeExtended extends Stripe.Charge {
 }
 
 export class PaymentHandler {
+  private static async recordRetentionRefund(
+    userId: string,
+    sourceId: string,
+    amountCents: number
+  ): Promise<void> {
+    try {
+      const { data: accepted } = await supabaseAdmin
+        .from('subscription_retention_events')
+        .select('subscription_id')
+        .eq('user_id', userId)
+        .eq('event_type', 'offer_accepted')
+        .order('occurred_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (!accepted?.subscription_id) return;
+
+      const { error } = await supabaseAdmin.from('subscription_retention_events').upsert(
+        {
+          event_key: `refund:${sourceId}`,
+          subscription_id: accepted.subscription_id,
+          user_id: userId,
+          event_type: 'refund',
+          variant: 'treatment',
+          amount_cents: amountCents,
+        },
+        { onConflict: 'event_key', ignoreDuplicates: true }
+      );
+      if (error) console.warn('[RETENTION_MEASUREMENT] Failed to record refund', error);
+    } catch (error) {
+      console.warn('[RETENTION_MEASUREMENT] Failed to record refund', error);
+    }
+  }
+
   private static getStripeCustomerId(
     customer: string | Stripe.Customer | Stripe.DeletedCustomer | null
   ): string | null {
@@ -1161,6 +1194,7 @@ export class PaymentHandler {
       paymentIntentId,
       timestamp: new Date().toISOString(),
     });
+    await this.recordRetentionRefund(userId, charge.id, refundAmount);
 
     // Try multiple reference formats to find the original transaction
     // Credit packs use pi_ or session_, subscriptions use invoice_
@@ -1233,6 +1267,8 @@ export class PaymentHandler {
       });
       throw new Error(`Profile not found for customer ${customerId} - webhook will retry`);
     }
+
+    await this.recordRetentionRefund(profile.id, invoice.id, invoice.amount_paid);
 
     try {
       // Clawback using invoice reference - will route to correct pool automatically
