@@ -656,6 +656,8 @@ export type IAnalyticsEventName =
   | 'revenue_received'
   // Credit events
   | 'credit_pack_purchased'
+  | 'repeat_purchase_prompt_shown'
+  | 'repeat_purchase_prompt_clicked'
   | 'credits_deducted'
   | 'credits_refunded'
   // Image processing events

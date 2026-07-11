@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useCredits, useUserStore } from '@client/store/userStore';
 import { SmartTooltip } from '@client/components/ui/SmartTooltip';
+import { analytics } from '@client/analytics';
+import { getRememberedPurchasedPack } from '@client/utils/purchaseModalDefaults';
 
 // Low credit threshold - show warning when credits fall below this amount
 const LOW_CREDIT_THRESHOLD = 5;
@@ -23,6 +25,7 @@ export function CreditsDisplay({ onUpgrade }: ICreditsDisplayProps = {}): JSX.El
   const { total: creditBalance } = useCredits();
   const { isLoading, error, invalidate, user, isAuthenticated, lastFetched } = useUserStore();
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [repeatPackKey, setRepeatPackKey] = useState<string | null>(null);
   const prevLastFetched = useRef(lastFetched);
 
   // Detect when fetch completes after refresh (lastFetched becomes a new timestamp, not null)
@@ -47,6 +50,18 @@ export function CreditsDisplay({ onUpgrade }: ICreditsDisplayProps = {}): JSX.El
 
   const isLowCredits = creditBalance > 0 && creditBalance <= LOW_CREDIT_THRESHOLD;
   const isNoCredits = creditBalance === 0 && !isProfileLoading;
+
+  useEffect(() => {
+    if (!isProfileLoading && creditBalance <= LOW_CREDIT_THRESHOLD) {
+      const packKey = getRememberedPurchasedPack();
+      setRepeatPackKey(packKey);
+      if (packKey) {
+        analytics.track('repeat_purchase_prompt_shown', { packKey, creditBalance });
+      }
+    } else {
+      setRepeatPackKey(null);
+    }
+  }, [creditBalance, isProfileLoading]);
 
   // Should show tooltip?
   const showTooltip = isLowCredits || isNoCredits;
@@ -115,11 +130,17 @@ export function CreditsDisplay({ onUpgrade }: ICreditsDisplayProps = {}): JSX.El
           <button
             onClick={e => {
               e.stopPropagation();
+              if (repeatPackKey) {
+                analytics.track('repeat_purchase_prompt_clicked', {
+                  packKey: repeatPackKey,
+                  creditBalance,
+                });
+              }
               onUpgrade?.();
             }}
             className="block text-accent hover:text-accent-light underline text-center"
           >
-            Buy more credits →
+            {repeatPackKey ? `Buy ${repeatPackKey} pack again →` : 'Buy more credits →'}
           </button>
         </>
       )}
