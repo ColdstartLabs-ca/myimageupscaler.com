@@ -155,6 +155,8 @@ export function PurchaseModal({
 
   // Selection state
   const [selectedPack, setSelectedPack] = useState<ICreditPack | null>(null);
+  const [autoTopUpEnabled, setAutoTopUpEnabled] = useState(false);
+  const [autoTopUpThreshold, setAutoTopUpThreshold] = useState(25);
   const [selectedPlan, setSelectedPlan] = useState<IPlanConfig | null>(null);
   const [purchaseMode, setPurchaseMode] = useState<'credits' | 'subscribe'>('credits');
 
@@ -348,6 +350,7 @@ export function PurchaseModal({
     setSelectedPack(pack);
     setSelectedPlan(null);
     setPurchaseMode('credits');
+    if (!['small', 'medium'].includes(pack.key)) setAutoTopUpEnabled(false);
     analytics.track('pricing_plan_viewed', {
       planName: pack.key,
       priceId: pack.stripePriceId,
@@ -850,6 +853,35 @@ export function PurchaseModal({
 
             {/* Fixed CTA at bottom */}
             <div className="flex-shrink-0 px-4 sm:px-5 pt-2.5 pb-5 sm:pb-6 bg-surface border-t border-surface-light/30">
+              {selectedPack && ['small', 'medium'].includes(selectedPack.key) && (
+                <div className="mb-3 rounded-xl border border-border bg-surface-light/30 p-3 text-left">
+                  <label className="flex items-start gap-2 text-sm text-text-primary">
+                    <input
+                      type="checkbox"
+                      checked={autoTopUpEnabled}
+                      onChange={event => setAutoTopUpEnabled(event.target.checked)}
+                      className="mt-0.5"
+                    />
+                    <span>Automatically buy this pack when my balance is low</span>
+                  </label>
+                  {autoTopUpEnabled && (
+                    <label className="mt-2 flex items-center justify-between gap-3 text-xs text-text-secondary">
+                      Refill below
+                      <select
+                        value={autoTopUpThreshold}
+                        onChange={event => setAutoTopUpThreshold(Number(event.target.value))}
+                        className="rounded-lg border border-border bg-surface px-2 py-1 text-text-primary"
+                      >
+                        {[10, 25, 50].map(value => (
+                          <option key={value} value={value}>
+                            {value} credits
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  )}
+                </div>
+              )}
               <button
                 onClick={handleCTA}
                 disabled={!selectedPack && !selectedPlan}
@@ -881,6 +913,9 @@ export function PurchaseModal({
             setCheckoutPriceId(null);
           }}
           onSuccess={handleCheckoutSuccess}
+          autoTopUp={
+            autoTopUpEnabled ? { enabled: true, thresholdCredits: autoTopUpThreshold } : undefined
+          }
         />
       )}
 

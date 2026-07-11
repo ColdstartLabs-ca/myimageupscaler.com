@@ -57,6 +57,7 @@ interface IUseCheckoutSessionParams {
   trackError: (errorType: TCheckoutErrorType, errorMessage: string, step: TCheckoutStep) => void;
   onComplete: () => void;
   isAuthenticated: boolean;
+  autoTopUp?: { enabled: true; thresholdCredits: number };
 }
 
 interface IUseCheckoutSessionReturn {
@@ -92,6 +93,7 @@ export function useCheckoutSession({
   trackError,
   onComplete,
   isAuthenticated,
+  autoTopUp,
 }: IUseCheckoutSessionParams): IUseCheckoutSessionReturn {
   const t = useTranslations('stripe.checkout');
   const { showToast } = useToastStore();
@@ -290,6 +292,7 @@ export function useCheckoutSession({
           const hostedResponse = await StripeService.createCheckoutSession(priceId, {
             uiMode: 'hosted',
             ...(Object.keys(metadata).length > 0 ? { metadata } : {}),
+            ...(autoTopUp ? { autoTopUp } : {}),
           });
 
           if (timedOut) return;
@@ -322,6 +325,7 @@ export function useCheckoutSession({
           uiMode: 'embedded',
           offerToken: appliedOfferToken ?? undefined,
           ...(Object.keys(metadata).length > 0 ? { metadata } : {}),
+          ...(autoTopUp ? { autoTopUp } : {}),
         });
 
         if (timedOut) return; // Timeout already fired, discard result
@@ -389,6 +393,8 @@ export function useCheckoutSession({
     regionLoading,
     appliedOfferToken,
     isAuthenticated,
+    autoTopUp?.enabled,
+    autoTopUp?.thresholdCredits,
   ]);
 
   const retry = useCallback(() => {

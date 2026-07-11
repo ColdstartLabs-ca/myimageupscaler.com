@@ -1,16 +1,22 @@
-import { render, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { PurchaseModal } from '@client/components/stripe/PurchaseModal';
 import type { ICreditPack, IPlanConfig } from '@shared/config/subscription.types';
 
-const { mockTrack, mockGetTrackingContext, mockSetTrackingContext, mockUseExperimentArm } =
-  vi.hoisted(() => ({
-    mockTrack: vi.fn(),
-    mockGetTrackingContext: vi.fn(),
-    mockSetTrackingContext: vi.fn(),
-    mockUseExperimentArm: vi.fn(),
-  }));
+const {
+  mockTrack,
+  mockGetTrackingContext,
+  mockSetTrackingContext,
+  mockUseExperimentArm,
+  mockCheckoutModal,
+} = vi.hoisted(() => ({
+  mockTrack: vi.fn(),
+  mockGetTrackingContext: vi.fn(),
+  mockSetTrackingContext: vi.fn(),
+  mockUseExperimentArm: vi.fn(),
+  mockCheckoutModal: vi.fn(() => null),
+}));
 
 const creditPacks: ICreditPack[] = [
   {
@@ -135,7 +141,7 @@ vi.mock('@shared/config/subscription.utils', () => ({
 }));
 
 vi.mock('@client/components/stripe/CheckoutModal', () => ({
-  CheckoutModal: () => null,
+  CheckoutModal: (props: unknown) => mockCheckoutModal(props),
 }));
 
 vi.mock('@client/components/stripe/PlanChangeModal', () => ({
@@ -207,6 +213,31 @@ describe('PurchaseModal analytics', () => {
         })
       );
     });
+  });
+
+  test('keeps auto top-up unchecked and forwards explicit threshold consent only after opt-in', async () => {
+    render(
+      <PurchaseModal
+        isOpen={true}
+        onClose={vi.fn()}
+        onPurchaseComplete={vi.fn()}
+        trigger="model_gate"
+      />
+    );
+    const checkbox = await screen.findByRole('checkbox', {
+      name: /automatically buy this pack/i,
+    });
+    expect(checkbox).not.toBeChecked();
+    fireEvent.click(checkbox);
+    fireEvent.change(screen.getByRole('combobox', { name: /refill below/i }), {
+      target: { value: '10' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /buy 50 credits/i }));
+    await waitFor(() =>
+      expect(mockCheckoutModal).toHaveBeenCalledWith(
+        expect.objectContaining({ autoTopUp: { enabled: true, thresholdCredits: 10 } })
+      )
+    );
   });
 
   test('tracks purchase_modal_opened with recommended subscription for batch-limit triggers', async () => {

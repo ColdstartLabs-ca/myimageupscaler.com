@@ -86,6 +86,7 @@ function getCacheKey(
     cancelUrl?: string;
     metadata?: Record<string, string>;
     offerToken?: string;
+    autoTopUp?: ICheckoutSessionRequest['autoTopUp'];
   }
 ): string {
   return [
@@ -95,6 +96,9 @@ function getCacheKey(
     options?.successUrl || 'default-success',
     options?.cancelUrl || 'default-cancel',
     serializeMetadata(options?.metadata),
+    options?.autoTopUp
+      ? `${options.autoTopUp.enabled}:${options.autoTopUp.thresholdCredits}`
+      : 'no-auto-top-up',
   ].join(':');
 }
 
@@ -109,6 +113,7 @@ function getCachedSession(
     cancelUrl?: string;
     metadata?: Record<string, string>;
     offerToken?: string;
+    autoTopUp?: ICheckoutSessionRequest['autoTopUp'];
   }
 ): ICachedCheckoutSession | null {
   const key = getCacheKey(priceId, uiMode, options);
@@ -137,6 +142,7 @@ function cacheSession(
         cancelUrl?: string;
         metadata?: Record<string, string>;
         offerToken?: string;
+        autoTopUp?: ICheckoutSessionRequest['autoTopUp'];
       }
     | undefined,
   session: ICheckoutSessionResponse
@@ -219,6 +225,7 @@ async function createCheckoutSessionInternal(
     metadata?: Record<string, string>;
     uiMode?: 'hosted' | 'embedded';
     offerToken?: string;
+    autoTopUp?: ICheckoutSessionRequest['autoTopUp'];
   }
 ): Promise<ICheckoutSessionResponse> {
   const {
@@ -236,6 +243,7 @@ async function createCheckoutSessionInternal(
     metadata: options?.metadata,
     uiMode: options?.uiMode,
     offerToken: options?.offerToken,
+    autoTopUp: options?.autoTopUp,
   };
 
   const response = await fetch('/api/checkout', {
@@ -290,6 +298,7 @@ export class StripeService {
       metadata?: Record<string, string>;
       uiMode?: 'hosted' | 'embedded';
       offerToken?: string;
+      autoTopUp?: ICheckoutSessionRequest['autoTopUp'];
     }
   ): Promise<ICheckoutSessionResponse> {
     const uiMode = options?.uiMode || 'hosted';

@@ -32,6 +32,7 @@ interface ICheckoutModalProps {
    * can still navigate back to the full purchase flow.
    */
   prefillPlanId?: string;
+  autoTopUp?: { enabled: true; thresholdCredits: number };
 }
 
 /**
@@ -44,6 +45,7 @@ export function CheckoutModal({
   onClose,
   onSuccess,
   prefillPlanId,
+  autoTopUp,
 }: ICheckoutModalProps): JSX.Element {
   const t = useTranslations('stripe.checkout');
   const { pricingRegion, banditArmId, isLoading: regionLoading } = useRegionTier();
@@ -139,6 +141,7 @@ export function CheckoutModal({
     trackError,
     onComplete: handleComplete,
     isAuthenticated,
+    autoTopUp,
   });
 
   // Handle close — orchestrates rescue offer, survey, and tracking
