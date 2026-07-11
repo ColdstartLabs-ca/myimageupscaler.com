@@ -16,6 +16,8 @@ const schema = z.object({
   ]),
 });
 
+const RETENTION_CLAIM_LEASE_MS = 5 * 60 * 1000;
+
 export async function POST(request: NextRequest) {
   const token = request.headers.get('authorization')?.replace('Bearer ', '');
   if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -71,7 +73,9 @@ export async function PUT(request: NextRequest) {
 
   const { data: subscription } = await supabaseAdmin
     .from('subscriptions')
-    .select('id, price_id, scheduled_price_id, scheduled_change_date, cancel_at_period_end')
+    .select(
+      'id, price_id, scheduled_price_id, scheduled_change_date, cancel_at_period_end, retention_claim_id, retention_claimed_at'
+    )
     .eq('user_id', user.id)
     .in('status', ['active', 'trialing'])
     .order('created_at', { ascending: false })
@@ -98,7 +102,10 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: 'Offer is no longer eligible' }, { status: 409 });
   }
 
-  if (subscription.scheduled_price_id === target.stripePriceId) {
+  if (
+    subscription.scheduled_price_id === target.stripePriceId &&
+    subscription.scheduled_change_date
+  ) {
     return NextResponse.json({
       success: true,
       data: {
@@ -113,18 +120,39 @@ export async function PUT(request: NextRequest) {
   }
 
   const attemptId = crypto.randomUUID();
-  const { data: claim, error: claimError } = await supabaseAdmin
+  const claimedAt = new Date();
+  let claimQuery = supabaseAdmin
     .from('subscriptions')
     .update({
       scheduled_price_id: target.stripePriceId,
       scheduled_change_date: null,
-      updated_at: new Date().toISOString(),
+      retention_claim_id: attemptId,
+      retention_claimed_at: claimedAt.toISOString(),
+      updated_at: claimedAt.toISOString(),
     })
     .eq('id', subscription.id)
-    .eq('cancel_at_period_end', false)
-    .is('scheduled_price_id', null)
-    .select('id')
-    .maybeSingle();
+    .eq('cancel_at_period_end', false);
+
+  if (subscription.retention_claim_id) {
+    const leaseStartedAt = Date.parse(subscription.retention_claimed_at ?? '');
+    if (
+      Number.isFinite(leaseStartedAt) &&
+      claimedAt.getTime() - leaseStartedAt < RETENTION_CLAIM_LEASE_MS
+    ) {
+      return NextResponse.json(
+        {
+          success: true,
+          data: { subscription_id: subscription.id, status: 'processing', idempotent_replay: true },
+        },
+        { status: 202 }
+      );
+    }
+    claimQuery = claimQuery.eq('retention_claim_id', subscription.retention_claim_id);
+  } else {
+    claimQuery = claimQuery.is('scheduled_price_id', null).is('retention_claim_id', null);
+  }
+
+  const { data: claim, error: claimError } = await claimQuery.select('id').maybeSingle();
   if (claimError) {
     return NextResponse.json({ error: 'Unable to claim retention change' }, { status: 500 });
   }
@@ -149,17 +177,32 @@ export async function PUT(request: NextRequest) {
       body: JSON.stringify({ targetPriceId: target.stripePriceId }),
     })
   );
-  if (!response.ok) {
-    await supabaseAdmin
-      .from('subscriptions')
-      .update({
-        scheduled_price_id: null,
-        scheduled_change_date: null,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', subscription.id)
-      .eq('scheduled_price_id', target.stripePriceId)
-      .is('scheduled_change_date', null);
+  const cleanup = await supabaseAdmin
+    .from('subscriptions')
+    .update(
+      response.ok
+        ? {
+            retention_claim_id: null,
+            retention_claimed_at: null,
+            updated_at: new Date().toISOString(),
+          }
+        : {
+            scheduled_price_id: null,
+            scheduled_change_date: null,
+            retention_claim_id: null,
+            retention_claimed_at: null,
+            updated_at: new Date().toISOString(),
+          }
+    )
+    .eq('id', subscription.id)
+    .eq('retention_claim_id', attemptId)
+    .select('id')
+    .maybeSingle();
+  if (cleanup.error) {
+    return NextResponse.json({ error: 'Unable to finalize retention change' }, { status: 500 });
+  }
+  if (!response.ok && !cleanup.data) {
+    return NextResponse.json({ error: 'Retention change recovery conflicted' }, { status: 409 });
   }
   return response;
 }

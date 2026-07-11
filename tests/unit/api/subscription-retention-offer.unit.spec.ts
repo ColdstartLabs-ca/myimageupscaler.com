@@ -2,10 +2,11 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 import { getPlanByKey } from '@shared/config/subscription.utils';
 
-const { single, changeSubscription, claimResult } = vi.hoisted(() => ({
+const { single, changeSubscription, claimResult, cleanupResult } = vi.hoisted(() => ({
   single: vi.fn(),
   changeSubscription: vi.fn(),
   claimResult: vi.fn(),
+  cleanupResult: vi.fn(),
 }));
 vi.mock('@/app/api/subscription/change/route', () => ({ POST: changeSubscription }));
 vi.mock('@server/supabase/supabaseAdmin', () => ({
@@ -16,12 +17,15 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
       updateQuery.eq = vi.fn(() => updateQuery);
       updateQuery.is = vi.fn(() => updateQuery);
       updateQuery.select = vi.fn(() => updateQuery);
-      updateQuery.maybeSingle = claimResult;
+      updateQuery.maybeSingle = vi.fn();
       return {
         select: () => ({
           eq: () => ({ in: () => ({ order: () => ({ limit: () => ({ single }) }) }) }),
         }),
-        update: vi.fn(() => updateQuery),
+        update: vi.fn(payload => {
+          updateQuery.maybeSingle = payload.retention_claim_id ? claimResult : cleanupResult;
+          return updateQuery;
+        }),
       };
     }),
   },
@@ -39,6 +43,7 @@ describe('subscription retention offer route', () => {
       Response.json({ success: true, data: { status: 'scheduled' } })
     );
     claimResult.mockResolvedValue({ data: { id: 'sub-1' }, error: null });
+    cleanupResult.mockResolvedValue({ data: { id: 'sub-1' }, error: null });
   });
 
   test('requires authentication', async () => {
@@ -138,6 +143,48 @@ describe('subscription retention offer route', () => {
     expect(changeSubscription).toHaveBeenCalledTimes(1);
   });
 
+  test('returns processing for a fresh interrupted claim without replaying Stripe', async () => {
+    single.mockResolvedValue({
+      data: {
+        id: 'sub-1',
+        price_id: getPlanByKey('pro')?.stripePriceId,
+        scheduled_price_id: getPlanByKey('hobby')?.stripePriceId,
+        retention_claim_id: '5af78248-58f4-4a9f-bfe6-a847a7015978',
+        retention_claimed_at: new Date().toISOString(),
+      },
+    });
+    const response = await PUT(
+      new NextRequest('http://localhost/api/subscriptions/retention-offer', {
+        method: 'PUT',
+        headers: { authorization: 'Bearer token', 'content-type': 'application/json' },
+        body: JSON.stringify({ reason: 'too_expensive' }),
+      })
+    );
+    expect(response.status).toBe(202);
+    expect(changeSubscription).not.toHaveBeenCalled();
+  });
+
+  test('atomically reclaims a stale interrupted claim and retries Stripe', async () => {
+    single.mockResolvedValue({
+      data: {
+        id: 'sub-1',
+        price_id: getPlanByKey('pro')?.stripePriceId,
+        scheduled_price_id: getPlanByKey('hobby')?.stripePriceId,
+        retention_claim_id: '5af78248-58f4-4a9f-bfe6-a847a7015978',
+        retention_claimed_at: '2026-01-01T00:00:00.000Z',
+      },
+    });
+    const response = await PUT(
+      new NextRequest('http://localhost/api/subscriptions/retention-offer', {
+        method: 'PUT',
+        headers: { authorization: 'Bearer token', 'content-type': 'application/json' },
+        body: JSON.stringify({ reason: 'too_expensive' }),
+      })
+    );
+    expect(response.status).toBe(200);
+    expect(changeSubscription).toHaveBeenCalledTimes(1);
+  });
+
   test('rejects retention after cancellation has claimed the subscription', async () => {
     single.mockResolvedValue({
       data: {
@@ -170,5 +217,21 @@ describe('subscription retention offer route', () => {
     );
     expect(response.status).toBe(500);
     expect(single).toHaveBeenCalledTimes(1);
+  });
+
+  test('reports rollback failure instead of hiding a stranded claim', async () => {
+    changeSubscription.mockResolvedValue(
+      Response.json({ success: false, error: { code: 'STRIPE_ERROR' } }, { status: 500 })
+    );
+    cleanupResult.mockResolvedValue({ data: null, error: { message: 'database unavailable' } });
+    const response = await PUT(
+      new NextRequest('http://localhost/api/subscriptions/retention-offer', {
+        method: 'PUT',
+        headers: { authorization: 'Bearer token', 'content-type': 'application/json' },
+        body: JSON.stringify({ reason: 'too_expensive' }),
+      })
+    );
+    expect(response.status).toBe(500);
+    expect(await response.json()).toEqual({ error: 'Unable to finalize retention change' });
   });
 });
