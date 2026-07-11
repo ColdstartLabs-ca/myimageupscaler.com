@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../test-fixtures';
 
 test.describe('middleware auth routing', () => {
   test('public pSEO route renders without auth redirect', async ({ page }) => {
