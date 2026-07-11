@@ -36,6 +36,7 @@ import {
   isAutoTopUpEligibleBalance,
   isAutoTopUpPayableStatus,
   isStaleAutoTopUpLease,
+  parseAutoTopUpBalance,
 } from '../auto-top-up.service';
 import { getCreditPackByKey } from '@shared/config/subscription.utils';
 
@@ -81,6 +82,9 @@ describe('AutoTopUpService', () => {
     const now = new Date('2026-07-11T12:10:00.000Z');
     expect(isStaleAutoTopUpLease('2026-07-11T12:04:59.000Z', now)).toBe(true);
     expect(isStaleAutoTopUpLease('2026-07-11T12:05:01.000Z', now)).toBe(false);
+    expect(parseAutoTopUpBalance(0)).toBe(0);
+    expect(() => parseAutoTopUpBalance(null)).toThrow('missing credit balance');
+    expect(() => parseAutoTopUpBalance('not-a-number')).toThrow('invalid credit balance');
   });
 
   test('concurrent scans produce at most one Stripe charge with deterministic idempotency', async () => {

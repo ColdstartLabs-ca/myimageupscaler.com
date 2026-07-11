@@ -32,6 +32,17 @@ export function isAutoTopUpEligibleBalance(balance: number, threshold: number): 
   return balance < threshold;
 }
 
+export function parseAutoTopUpBalance(value: unknown): number {
+  if (value === null || value === undefined) {
+    throw new Error('Unable to read auto top-up balance: missing credit balance');
+  }
+  const balance = Number(value);
+  if (!Number.isFinite(balance) || balance < 0) {
+    throw new Error('Unable to read auto top-up balance: invalid credit balance');
+  }
+  return balance;
+}
+
 export function isAutoTopUpPayableStatus(status: string): boolean {
   return status === 'succeeded' || status === 'processing';
 }
@@ -104,12 +115,14 @@ export class AutoTopUpService {
         }
       }
 
-      const { data: balance } = await supabaseAdmin
+      const { data: balance, error: balanceError } = await supabaseAdmin
         .from('user_credits')
         .select('total_credits_balance')
         .eq('user_id', setting.user_id)
         .maybeSingle();
-      const startingBalance = Number(balance?.total_credits_balance ?? 0);
+      if (balanceError)
+        throw new Error(`Unable to read auto top-up balance: ${balanceError.message}`);
+      const startingBalance = parseAutoTopUpBalance(balance?.total_credits_balance);
       if (!isAutoTopUpEligibleBalance(startingBalance, setting.threshold_credits)) continue;
 
       const resolved = assertKnownPriceId(setting.stripe_price_id);
