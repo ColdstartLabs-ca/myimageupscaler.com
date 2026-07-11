@@ -12,6 +12,20 @@ interface IAutoTopUpSettings {
   failure_reason: string | null;
 }
 
+export function getAutoTopUpFailureMessage(reason: string): string {
+  if (reason === 'disabled_by_user') return 'Disabled by you.';
+  if (reason === 'invalid_pack_configuration') {
+    return 'This setting needs attention. Please contact support.';
+  }
+  if (reason.startsWith('payment_intent_') || reason.includes('payment_intent')) {
+    return 'The last top-up could not be completed. We will try again when eligible.';
+  }
+  if (reason.includes('checkout_session')) {
+    return 'The previous checkout did not finish. You can try enabling auto top-up again.';
+  }
+  return 'The last top-up could not be completed. Please check your payment method.';
+}
+
 export function AutoTopUpSettingsCard(): JSX.Element | null {
   const [settings, setSettings] = useState<IAutoTopUpSettings | null>(null);
   const [loading, setLoading] = useState(true);
@@ -111,7 +125,9 @@ export function AutoTopUpSettingsCard(): JSX.Element | null {
             </p>
           )}
           {settings.failure_reason && (
-            <p className="mt-1 text-xs text-error">Status: {settings.failure_reason}</p>
+            <p className="mt-1 text-xs text-error">
+              Status: {getAutoTopUpFailureMessage(settings.failure_reason)}
+            </p>
           )}
         </div>
         {active && (

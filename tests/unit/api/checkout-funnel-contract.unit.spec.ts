@@ -45,4 +45,13 @@ describe('checkout funnel contract', () => {
       error: { code: 'INVALID_FUNNEL_ATTRIBUTION' },
     });
   });
+
+  test('should reject funnel metadata that exceeds Stripe metadata limits', () => {
+    expect(() =>
+      parseFunnelCheckoutAttribution({
+        funnel_schema_version: '1',
+        first_touch_landing_page: 'x'.repeat(501),
+      })
+    ).toThrow('too long');
+  });
 });

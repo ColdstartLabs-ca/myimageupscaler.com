@@ -114,7 +114,7 @@ export class EmailProviderManager implements IEmailProviderManager {
           transient: lastError.transient,
           attemptedProviders,
         });
-        if (!lastError.transient) {
+        if (!lastError.transient && !lastError.fallbackEligible) {
           console.error('Email delivery terminated', {
             classification: lastError.classification,
             transient: false,
@@ -125,7 +125,8 @@ export class EmailProviderManager implements IEmailProviderManager {
             lastError.message,
             lastError.classification,
             false,
-            attemptedProviders
+            attemptedProviders,
+            false
           );
         }
         continue;

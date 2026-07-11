@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
-import { assertKnownPriceId, getPlanByKey } from '@shared/config/subscription.utils';
+import { getPlanByKey, resolvePriceId } from '@shared/config/subscription.utils';
 import { resolveCancellationRetentionOffer } from '@shared/config/cancellation-retention';
-import { POST as changeSubscription } from '@/app/api/subscription/change/route';
+import { postRetentionSubscriptionChange } from '@/app/api/subscription/change/route';
 
 const schema = z.object({
   reason: z.enum([
@@ -17,7 +17,6 @@ const schema = z.object({
 });
 
 const RETENTION_CLAIM_LEASE_MS = 5 * 60 * 1000;
-const DEFAULT_RETENTION_ROLLOUT_PERCENT = 10;
 
 function retentionRolloutBucket(userId: string): number {
   let hash = 2166136261;
@@ -42,7 +41,7 @@ async function getRetentionRolloutPercent(): Promise<number> {
     .eq('id', true)
     .maybeSingle();
   if (error) return 0;
-  if (!data) return DEFAULT_RETENTION_ROLLOUT_PERCENT;
+  if (!data) return 0;
   return data.enabled ? data.treatment_percent : 0;
 }
 
@@ -65,14 +64,30 @@ export async function POST(request: NextRequest) {
     .limit(1)
     .single();
   if (!subscription?.price_id) return NextResponse.json({ data: { offer: null } });
-  const current = assertKnownPriceId(subscription.price_id);
+  const current = resolvePriceId(subscription.price_id);
+  if (!current) return NextResponse.json({ data: { offer: null } });
   const offer =
     current.type === 'plan'
       ? resolveCancellationRetentionOffer(parsed.data.reason, current.key)
       : null;
   if (!offer) return NextResponse.json({ data: { offer: null } });
   const target = getPlanByKey(offer.targetPlanKey);
-  const treatment = retentionRolloutBucket(user.id) < (await getRetentionRolloutPercent());
+  const cohortSince = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+  const { data: existingCohort, error: cohortError } = await supabaseAdmin
+    .from('subscription_retention_events')
+    .select('variant')
+    .eq('subscription_id', subscription.id)
+    .in('event_type', ['offer_shown', 'holdout_assigned'])
+    .gte('occurred_at', cohortSince)
+    .order('occurred_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (cohortError) {
+    return NextResponse.json({ error: 'Unable to record retention eligibility' }, { status: 503 });
+  }
+  const treatment = existingCohort
+    ? existingCohort.variant === 'treatment'
+    : retentionRolloutBucket(user.id) < (await getRetentionRolloutPercent());
   const measured = await recordRetentionEvent({
     event_key: `${treatment ? 'shown' : 'holdout'}:${subscription.id}`,
     subscription_id: subscription.id,
@@ -137,7 +152,8 @@ export async function PUT(request: NextRequest) {
     );
   }
 
-  const current = assertKnownPriceId(subscription.price_id);
+  const current = resolvePriceId(subscription.price_id);
+  if (!current) return NextResponse.json({ error: 'Offer is no longer eligible' }, { status: 409 });
   const offer =
     current.type === 'plan'
       ? resolveCancellationRetentionOffer(parsed.data.reason, current.key)
@@ -146,7 +162,24 @@ export async function PUT(request: NextRequest) {
   if (!offer || !target?.stripePriceId) {
     return NextResponse.json({ error: 'Offer is no longer eligible' }, { status: 409 });
   }
-  if (retentionRolloutBucket(user.id) >= (await getRetentionRolloutPercent())) {
+
+  const cohortSince = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+  const { data: existingCohort, error: cohortError } = await supabaseAdmin
+    .from('subscription_retention_events')
+    .select('variant')
+    .eq('subscription_id', subscription.id)
+    .in('event_type', ['offer_shown', 'holdout_assigned'])
+    .gte('occurred_at', cohortSince)
+    .order('occurred_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (cohortError) {
+    return NextResponse.json({ error: 'Unable to verify retention eligibility' }, { status: 503 });
+  }
+  const treatment = existingCohort
+    ? existingCohort.variant === 'treatment'
+    : retentionRolloutBucket(user.id) < (await getRetentionRolloutPercent());
+  if (!treatment) {
     return NextResponse.json({ error: 'Offer is no longer eligible' }, { status: 409 });
   }
 
@@ -168,6 +201,40 @@ export async function PUT(request: NextRequest) {
     subscription.scheduled_price_id === target.stripePriceId &&
     subscription.scheduled_change_date
   ) {
+    const { data: acceptedEvent, error: acceptedEventError } = await supabaseAdmin
+      .from('subscription_retention_events')
+      .select('event_key')
+      .eq('subscription_id', subscription.id)
+      .eq('event_type', 'offer_accepted')
+      .eq('target_price_id', target.stripePriceId)
+      .limit(1)
+      .maybeSingle();
+    if (acceptedEventError) {
+      return NextResponse.json(
+        { error: 'Unable to verify retention offer state' },
+        { status: 503 }
+      );
+    }
+    if (!acceptedEvent && !subscription.retention_claim_id) {
+      return NextResponse.json(
+        { error: 'A different downgrade is already scheduled for this subscription' },
+        { status: 409 }
+      );
+    }
+    if (subscription.retention_claim_id) {
+      const { error: claimCleanupError } = await supabaseAdmin
+        .from('subscriptions')
+        .update({
+          retention_claim_id: null,
+          retention_claimed_at: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', subscription.id)
+        .eq('retention_claim_id', subscription.retention_claim_id);
+      if (claimCleanupError) {
+        return NextResponse.json({ error: 'Unable to finalize retention offer' }, { status: 500 });
+      }
+    }
     if (!(await recordAccepted())) {
       return NextResponse.json(
         { error: 'Unable to record accepted retention offer' },
@@ -187,13 +254,11 @@ export async function PUT(request: NextRequest) {
     });
   }
 
-  const attemptId = crypto.randomUUID();
+  const attemptId = subscription.retention_claim_id ?? crypto.randomUUID();
   const claimedAt = new Date();
   let claimQuery = supabaseAdmin
     .from('subscriptions')
     .update({
-      scheduled_price_id: target.stripePriceId,
-      scheduled_change_date: null,
       retention_claim_id: attemptId,
       retention_claimed_at: claimedAt.toISOString(),
       updated_at: claimedAt.toISOString(),
@@ -234,16 +299,16 @@ export async function PUT(request: NextRequest) {
     );
   }
 
-  const response = await changeSubscription(
+  const response = await postRetentionSubscriptionChange(
     new NextRequest(new URL('/api/subscription/change', request.url), {
       method: 'POST',
       headers: {
         authorization,
         'content-type': 'application/json',
-        'x-retention-idempotency-key': `retention:${user.id}:${subscription.id}:${target.stripePriceId}:${attemptId}`,
       },
       body: JSON.stringify({ targetPriceId: target.stripePriceId }),
-    })
+    }),
+    `retention:${user.id}:${subscription.id}:${target.stripePriceId}:${attemptId}`
   );
   const cleanup = await supabaseAdmin
     .from('subscriptions')

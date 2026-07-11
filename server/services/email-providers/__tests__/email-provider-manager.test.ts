@@ -247,6 +247,32 @@ describe('EmailProviderManager', () => {
       expect(brevoSend).toHaveBeenCalledOnce();
     });
 
+    test('should fall back when Cloudflare rejects the provider credentials', async () => {
+      const cloudflare = manager.getProviderByType(EmailProvider.CLOUDFLARE)!;
+      const brevo = manager.getProviderByType(EmailProvider.BREVO)!;
+      vi.spyOn(cloudflare, 'send').mockRejectedValue(
+        new EmailProviderSendError(
+          'Cloudflare API error (401): invalid token',
+          'provider_authentication',
+          false,
+          [],
+          true
+        )
+      );
+      const brevoSend = vi
+        .spyOn(brevo, 'send')
+        .mockResolvedValue({ success: true, provider: EmailProvider.BREVO });
+
+      const result = await manager.send({
+        to: 'buyer@example.com',
+        template: 'welcome',
+        data: {},
+      });
+
+      expect(result.provider).toBe(EmailProvider.BREVO);
+      expect(brevoSend).toHaveBeenCalledOnce();
+    });
+
     test('should not fall back when Cloudflare permanently rejects recipient', async () => {
       const cloudflare = manager.getProviderByType(EmailProvider.CLOUDFLARE)!;
       const brevo = manager.getProviderByType(EmailProvider.BREVO)!;
@@ -312,12 +338,21 @@ describe('BaseEmailProviderAdapter', () => {
       });
     });
 
-    test('should not classify an arbitrary 400 as an invalid recipient', () => {
+    test('should classify a provider-scoped 400 as fallback eligible', () => {
       expect(
         normalizeEmailProviderError(new Error('API error (400): malformed payload'))
       ).toMatchObject({
-        classification: 'permanent_rejection',
+        classification: 'provider_request',
         transient: false,
+        fallbackEligible: true,
+      });
+    });
+
+    test('should classify provider auth failures as fallback eligible', () => {
+      expect(normalizeEmailProviderError(new Error('API error (401): invalid token'))).toMatchObject({
+        classification: 'provider_authentication',
+        transient: false,
+        fallbackEligible: true,
       });
     });
   });

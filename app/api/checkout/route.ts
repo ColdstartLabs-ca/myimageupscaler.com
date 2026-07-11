@@ -145,7 +145,7 @@ function createTestResolvedPrice(priceId: string): ReturnType<typeof assertKnown
 /**
  * Extracts user from authentication token
  */
-async function authenticateUser(authHeader: string | null, token: string, request?: Request) {
+async function authenticateUser(token: string) {
   let user: {
     id: string;
     email?: string;
@@ -157,11 +157,9 @@ async function authenticateUser(authHeader: string | null, token: string, reques
     status?: number;
   } | null = null;
 
-  // Check for test mode via environment OR header
-  const isTestMode =
-    serverEnv.ENV === 'test' ||
-    request?.headers.get('x-test-env') === 'true' ||
-    request?.headers.get('x-playwright-test') === 'true';
+  // Test-token authentication is available only in the test environment. The
+  // headers are not trusted as an environment switch in a deployed build.
+  const isTestMode = serverEnv.ENV === 'test';
 
   if (isTestMode) {
     // In test mode, only accept mock tokens
@@ -359,12 +357,9 @@ export async function POST(request: NextRequest) {
     // Extract the JWT token
     const token = authHeader.replace('Bearer ', '');
 
-    // Check if we're in test mode (after basic validation)
-    const isTestMode =
-      (serverEnv.STRIPE_SECRET_KEY?.includes('dummy_key') && serverEnv.ENV === 'test') ||
-      (serverEnv.ENV === 'test' && token.startsWith('test_token_')) ||
-      request.headers.get('x-test-env') === 'true' ||
-      request.headers.get('x-playwright-test') === 'true';
+    // Test-token and relaxed price handling are available only in the test
+    // environment; request headers cannot enable them in production.
+    const isTestMode = serverEnv.ENV === 'test';
 
     // Validate price ID using unified resolver (skip validation errors in test mode, but still resolve for type checking)
     let resolvedPrice = null;
@@ -394,7 +389,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 3. Authenticate user
-    const { user, authError } = await authenticateUser(null, token, request);
+    const { user, authError } = await authenticateUser(token);
 
     if (authError || !user) {
       return NextResponse.json(
@@ -414,43 +409,29 @@ export async function POST(request: NextRequest) {
       const attribution = parseExperimentCheckoutAttribution(metadata);
       if (attribution) {
         const validation = await validateExperimentCheckoutAttribution(attribution);
-        if (!validation.valid && validation.reason === 'storage_error') {
-          return NextResponse.json(
-            {
-              success: false,
-              error: {
-                code: 'EXPERIMENT_ATTRIBUTION_UNAVAILABLE',
-                message: 'Experiment attribution is temporarily unavailable',
-              },
-            },
-            { status: 503 }
-          );
-        }
         if (!validation.valid) {
-          throw new Error(`Invalid experiment checkout attribution: ${validation.reason}`);
+          console.warn('[CHECKOUT_EXPERIMENT_ATTRIBUTION_IGNORED]', {
+            userId: user.id,
+            reason: validation.reason,
+          });
+        } else {
+          validatedExperimentMetadata = {
+            [EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentKey]: validation.attribution.experimentKey,
+            [EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentContextKey]:
+              validation.attribution.contextKey,
+            [EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmId]:
+              validation.attribution.armId.toString(),
+            [EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmKey]: validation.attribution.armKey,
+            [EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentAssignmentKey]:
+              validation.attribution.assignmentKey,
+          };
         }
-        validatedExperimentMetadata = {
-          [EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentKey]: validation.attribution.experimentKey,
-          [EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentContextKey]:
-            validation.attribution.contextKey,
-          [EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmId]:
-            validation.attribution.armId.toString(),
-          [EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmKey]: validation.attribution.armKey,
-          [EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentAssignmentKey]:
-            validation.attribution.assignmentKey,
-        };
       }
     } catch (error) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'INVALID_EXPERIMENT_ATTRIBUTION',
-            message: error instanceof Error ? error.message : 'Invalid experiment attribution',
-          },
-        },
-        { status: 400 }
-      );
+      console.warn('[CHECKOUT_EXPERIMENT_ATTRIBUTION_IGNORED]', {
+        userId: user.id,
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
 
     if (
@@ -458,7 +439,7 @@ export async function POST(request: NextRequest) {
       (autoTopUp.enabled !== true ||
         !Number.isInteger(autoTopUp.thresholdCredits) ||
         autoTopUp.thresholdCredits < 1 ||
-        autoTopUp.thresholdCredits > 10000 ||
+        autoTopUp.thresholdCredits > 50 ||
         resolvedPrice?.type !== 'pack' ||
         !['small', 'medium'].includes(resolvedPrice.key))
     ) {
@@ -852,25 +833,18 @@ export async function POST(request: NextRequest) {
     }
 
     if (autoTopUp && autoTopUpConsentVersion && resolvedPrice?.type === 'pack') {
-      const { error: pendingError } = await supabaseAdmin.from('auto_top_up_settings').upsert(
-        {
+      const { error: pendingError } = await supabaseAdmin
+        .from('auto_top_up_checkout_consents')
+        .insert({
+          consent_version: autoTopUpConsentVersion,
           user_id: user.id,
-          enabled: false,
-          pending_enabled: true,
+          checkout_session_id: null,
           threshold_credits: autoTopUp.thresholdCredits,
           pack_key: resolvedPrice.key,
           stripe_price_id: validatedPriceId,
           stripe_customer_id: customerId,
-          stripe_payment_method_id: null,
-          consent_version: autoTopUpConsentVersion,
-          checkout_session_id: null,
           consented_at: new Date().toISOString(),
-          consecutive_failures: 0,
-          failure_reason: null,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: 'user_id' }
-      );
+        });
       if (pendingError) {
         return NextResponse.json(
           {
@@ -887,6 +861,16 @@ export async function POST(request: NextRequest) {
 
     const clearPendingConsent = async (failureReason: string, checkoutSessionId?: string) => {
       if (!autoTopUpConsentVersion) return;
+      const { error: consentError } = await supabaseAdmin
+        .from('auto_top_up_checkout_consents')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('consent_version', autoTopUpConsentVersion);
+      if (consentError) {
+        console.error('[AUTO_TOP_UP_CONSENT_CLEANUP_FAILED]', consentError);
+      }
+      // Clean up pending rows created by an older deployment without touching
+      // a currently active setting.
       await supabaseAdmin
         .from('auto_top_up_settings')
         .update({
@@ -896,7 +880,8 @@ export async function POST(request: NextRequest) {
           updated_at: new Date().toISOString(),
         })
         .eq('user_id', user.id)
-        .eq('consent_version', autoTopUpConsentVersion);
+        .eq('consent_version', autoTopUpConsentVersion)
+        .eq('pending_enabled', true);
     };
 
     let session: Stripe.Checkout.Session;
@@ -933,15 +918,13 @@ export async function POST(request: NextRequest) {
 
     if (autoTopUp && autoTopUpConsentVersion) {
       const { data: attachedConsent, error: settingsError } = await supabaseAdmin
-        .from('auto_top_up_settings')
+        .from('auto_top_up_checkout_consents')
         .update({
           checkout_session_id: session.id,
           stripe_customer_id: customerId,
-          updated_at: new Date().toISOString(),
         })
         .eq('user_id', user.id)
         .eq('consent_version', autoTopUpConsentVersion)
-        .eq('pending_enabled', true)
         .select('user_id')
         .maybeSingle();
       if (settingsError || !attachedConsent) {

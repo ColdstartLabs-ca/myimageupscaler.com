@@ -746,6 +746,15 @@ export class RevenueRecoveryService {
   }
 
   private async expireAndMinimizeRecoveryIntents(): Promise<void> {
+    const { error: legacyContextError } = await supabaseAdmin
+      .from('revenue_recovery_intents')
+      .update({ context: {} })
+      .eq('status', 'active')
+      .is('expires_at', null);
+    if (legacyContextError) {
+      throw new Error(`Failed to minimize legacy recovery intents: ${legacyContextError.message}`);
+    }
+
     const { error } = await supabaseAdmin
       .from('revenue_recovery_intents')
       .update({ status: 'expired', context: {} })

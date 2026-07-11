@@ -131,15 +131,20 @@ export async function selectBanditArm(region: PricingRegion): Promise<IBanditRes
     }
   }
 
-  // Record impression (fire-and-forget — don't block the geo response)
-  supabaseAdmin
-    .from('pricing_bandit_arms')
-    .update({ impressions: bestArm.impressions + 1, updated_at: new Date().toISOString() })
-    .eq('id', bestArm.id)
+  // Record impression without a read-modify-write race between concurrent geo requests.
+  void Promise.resolve(
+    supabaseAdmin.rpc('increment_pricing_bandit_arm', {
+      p_arm_id: bestArm.id,
+      p_impressions: 1,
+      p_conversions: 0,
+      p_revenue_cents: 0,
+    })
+  )
     .then(({ error }) => {
       if (error)
         console.error('[BANDIT] Failed to increment impressions', { armId: bestArm.id, error });
-    });
+    })
+    .catch((error: unknown) => console.error('[BANDIT] Failed to increment impressions', error));
 
   return {
     armId: bestArm.id,
@@ -154,29 +159,18 @@ export async function selectBanditArm(region: PricingRegion): Promise<IBanditRes
  */
 export async function recordBanditConversion(armId: number, revenueCents: number): Promise<void> {
   try {
-    // Fetch current stats then increment atomically
-    const { data, error: fetchError } = await supabaseAdmin
-      .from('pricing_bandit_arms')
-      .select('conversions, revenue_cents')
-      .eq('id', armId)
-      .single();
-
-    if (fetchError || !data) {
-      console.error('[BANDIT] Failed to fetch arm for conversion', { armId, fetchError });
-      return;
-    }
-
-    const { error: updateError } = await supabaseAdmin
-      .from('pricing_bandit_arms')
-      .update({
-        conversions: data.conversions + 1,
-        revenue_cents: data.revenue_cents + revenueCents,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', armId);
-
-    if (updateError) {
-      console.error('[BANDIT] Failed to record conversion', { armId, revenueCents, updateError });
+    const { data, error } = await supabaseAdmin.rpc('increment_pricing_bandit_arm', {
+      p_arm_id: armId,
+      p_impressions: 0,
+      p_conversions: 1,
+      p_revenue_cents: revenueCents,
+    });
+    if (error || data !== true) {
+      console.error('[BANDIT] Failed to record conversion', {
+        armId,
+        revenueCents,
+        error,
+      });
     }
   } catch (err) {
     console.error('[BANDIT] Unexpected error recording conversion', { armId, revenueCents, err });

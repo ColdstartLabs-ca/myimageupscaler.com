@@ -10,6 +10,7 @@ const {
   claimResult,
   cleanupResult,
   eventUpsert,
+  eventSelect,
   getUser,
   rolloutResult,
 } = vi.hoisted(() => ({
@@ -18,16 +19,25 @@ const {
   claimResult: vi.fn(),
   cleanupResult: vi.fn(),
   eventUpsert: vi.fn(),
+  eventSelect: vi.fn(),
   getUser: vi.fn(),
   rolloutResult: vi.fn(),
 }));
-vi.mock('@/app/api/subscription/change/route', () => ({ POST: changeSubscription }));
+vi.mock('@/app/api/subscription/change/route', () => ({
+  POST: changeSubscription,
+  postRetentionSubscriptionChange: changeSubscription,
+}));
 vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: {
     auth: { getUser },
     from: vi.fn((table: string) => {
       if (table === 'subscription_retention_events') {
-        return { upsert: eventUpsert };
+        const query: Record<string, ReturnType<typeof vi.fn>> = {};
+        for (const method of ['eq', 'in', 'gte', 'order', 'limit']) {
+          query[method] = vi.fn(() => query);
+        }
+        query.maybeSingle = eventSelect;
+        return { upsert: eventUpsert, select: vi.fn(() => query) };
       }
       if (table === 'subscription_retention_rollout') {
         return { select: () => ({ eq: () => ({ maybeSingle: rolloutResult }) }) };
@@ -70,6 +80,7 @@ describe('subscription retention offer route', () => {
     claimResult.mockResolvedValue({ data: { id: 'sub-1' }, error: null });
     cleanupResult.mockResolvedValue({ data: { id: 'sub-1' }, error: null });
     eventUpsert.mockResolvedValue({ error: null });
+    eventSelect.mockResolvedValue({ data: null, error: null });
     rolloutResult.mockResolvedValue({
       data: { enabled: true, treatment_percent: 10 },
       error: null,
@@ -205,6 +216,9 @@ describe('subscription retention offer route', () => {
         scheduled_change_date: '2026-08-01T00:00:00.000Z',
       },
     });
+    eventSelect
+      .mockResolvedValueOnce({ data: { variant: 'treatment' }, error: null })
+      .mockResolvedValueOnce({ data: { event_key: 'accepted:sub-1' }, error: null });
     const response = await PUT(
       new NextRequest('http://localhost/api/subscriptions/retention-offer', {
         method: 'PUT',
@@ -214,6 +228,71 @@ describe('subscription retention offer route', () => {
     );
     expect((await response.json()).data.idempotent_replay).toBe(true);
     expect(changeSubscription).not.toHaveBeenCalled();
+  });
+
+  test('does not let a rollout increase move an existing holdout into treatment', async () => {
+    rolloutResult.mockResolvedValue({
+      data: { enabled: true, treatment_percent: 100 },
+      error: null,
+    });
+    eventSelect.mockResolvedValueOnce({ data: { variant: 'holdout' }, error: null });
+
+    const response = await PUT(
+      new NextRequest('http://localhost/api/subscriptions/retention-offer', {
+        method: 'PUT',
+        headers: { authorization: 'Bearer token', 'content-type': 'application/json' },
+        body: JSON.stringify({ reason: 'too_expensive' }),
+      })
+    );
+
+    expect(response.status).toBe(409);
+    expect(changeSubscription).not.toHaveBeenCalled();
+  });
+
+  test('rejects a pre-existing normal downgrade instead of claiming it as retention', async () => {
+    single.mockResolvedValue({
+      data: {
+        id: 'sub-1',
+        price_id: getPlanByKey('pro')?.stripePriceId,
+        scheduled_price_id: getPlanByKey('hobby')?.stripePriceId,
+        scheduled_change_date: '2026-08-01T00:00:00.000Z',
+      },
+    });
+    const response = await PUT(
+      new NextRequest('http://localhost/api/subscriptions/retention-offer', {
+        method: 'PUT',
+        headers: { authorization: 'Bearer token', 'content-type': 'application/json' },
+        body: JSON.stringify({ reason: 'too_expensive' }),
+      })
+    );
+    expect(response.status).toBe(409);
+    expect(changeSubscription).not.toHaveBeenCalled();
+  });
+
+  test('recovers a completed retention schedule after a worker crashed before cleanup', async () => {
+    single.mockResolvedValue({
+      data: {
+        id: 'sub-1',
+        price_id: getPlanByKey('pro')?.stripePriceId,
+        scheduled_price_id: getPlanByKey('hobby')?.stripePriceId,
+        scheduled_change_date: '2026-08-01T00:00:00.000Z',
+        retention_claim_id: '5af78248-58f4-4a9f-bfe6-a847a7015978',
+        retention_claimed_at: '2026-01-01T00:00:00.000Z',
+      },
+    });
+    const response = await PUT(
+      new NextRequest('http://localhost/api/subscriptions/retention-offer', {
+        method: 'PUT',
+        headers: { authorization: 'Bearer token', 'content-type': 'application/json' },
+        body: JSON.stringify({ reason: 'too_expensive' }),
+      })
+    );
+    expect(response.status).toBe(200);
+    expect(changeSubscription).not.toHaveBeenCalled();
+    expect(eventUpsert).toHaveBeenCalledWith(
+      expect.objectContaining({ event_type: 'offer_accepted' }),
+      expect.anything()
+    );
   });
 
   test('allows only one concurrent request to claim Stripe execution', async () => {

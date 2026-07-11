@@ -186,6 +186,27 @@ export function useCheckoutSession({
 
       const sessionLoadStart = Date.now();
       let timedOut = false;
+      let checkoutAutoTopUp = autoTopUp;
+
+      type TCheckoutSessionOptions = Parameters<typeof StripeService.createCheckoutSession>[1];
+      const createSession = async (options: TCheckoutSessionOptions) => {
+        const requestOptions: TCheckoutSessionOptions = {
+          ...options,
+          ...(checkoutAutoTopUp ? { autoTopUp: checkoutAutoTopUp } : {}),
+        };
+
+        try {
+          return await StripeService.createCheckoutSession(priceId, requestOptions);
+        } catch (sessionError) {
+          const code = (sessionError as { code?: string })?.code;
+          if (checkoutAutoTopUp && code === 'AUTO_TOP_UP_NOT_ELIGIBLE') {
+            checkoutAutoTopUp = undefined;
+            console.warn('Auto top-up became ineligible during checkout; retrying without consent');
+            return StripeService.createCheckoutSession(priceId, options);
+          }
+          throw sessionError;
+        }
+      };
 
       const timeoutId = setTimeout(() => {
         timedOut = true;
@@ -289,10 +310,9 @@ export function useCheckoutSession({
         // or fail to render correctly. Use the hosted redirect path instead so
         // mobile users land on Stripe's own mobile-optimised checkout page.
         if (checkoutUiMode === 'hosted') {
-          const hostedResponse = await StripeService.createCheckoutSession(priceId, {
+          const hostedResponse = await createSession({
             uiMode: 'hosted',
             ...(Object.keys(metadata).length > 0 ? { metadata } : {}),
-            ...(autoTopUp ? { autoTopUp } : {}),
           });
 
           if (timedOut) return;
@@ -321,11 +341,10 @@ export function useCheckoutSession({
         }
 
         // Don't pass successUrl - let the server construct it with proper type & credits params
-        const response = await StripeService.createCheckoutSession(priceId, {
+        const response = await createSession({
           uiMode: 'embedded',
           offerToken: appliedOfferToken ?? undefined,
           ...(Object.keys(metadata).length > 0 ? { metadata } : {}),
-          ...(autoTopUp ? { autoTopUp } : {}),
         });
 
         if (timedOut) return; // Timeout already fired, discard result
@@ -393,8 +412,7 @@ export function useCheckoutSession({
     regionLoading,
     appliedOfferToken,
     isAuthenticated,
-    autoTopUp?.enabled,
-    autoTopUp?.thresholdCredits,
+    autoTopUp,
   ]);
 
   const retry = useCallback(() => {

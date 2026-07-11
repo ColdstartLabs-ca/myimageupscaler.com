@@ -69,7 +69,10 @@ export function CreditsDisplay({ onUpgrade }: ICreditsDisplayProps = {}): JSX.El
         const packKey = payload.repeatPackKey ?? null;
         setRepeatPurchaseContext(user.id, packKey);
         setRepeatPackKey(packKey);
-        if (packKey) analytics.track('repeat_purchase_prompt_shown', { packKey, creditBalance });
+      }).catch(error => {
+        if (!cancelled) {
+          console.warn('[REPEAT_PURCHASE_PROMPT] Failed to load repeat pack', error);
+        }
       });
     } else {
       setRepeatPackKey(null);
@@ -81,6 +84,19 @@ export function CreditsDisplay({ onUpgrade }: ICreditsDisplayProps = {}): JSX.El
 
   // Should show tooltip?
   const showTooltip = isLowCredits || isNoCredits;
+  const repeatPromptVisible = showTooltip && Boolean(repeatPackKey);
+  const trackedRepeatPrompt = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!repeatPromptVisible || !user?.id || !repeatPackKey) {
+      trackedRepeatPrompt.current = null;
+      return;
+    }
+    const promptKey = `${user.id}:${repeatPackKey}`;
+    if (trackedRepeatPrompt.current === promptKey) return;
+    trackedRepeatPrompt.current = promptKey;
+    analytics.track('repeat_purchase_prompt_shown', { packKey: repeatPackKey, creditBalance });
+  }, [creditBalance, repeatPackKey, repeatPromptVisible, user?.id]);
 
   // Check error first - don't show loading skeleton if there's an error
   if (error) {

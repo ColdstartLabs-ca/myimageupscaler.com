@@ -94,9 +94,7 @@ async function recordRetentionBillingEvent(params: {
     );
     if (error) console.warn('[RETENTION_MEASUREMENT] Failed to record billing event', error);
   } catch (error) {
-    if (!(error instanceof TypeError)) {
-      console.warn('[RETENTION_MEASUREMENT] Failed to record billing event', error);
-    }
+    console.warn('[RETENTION_MEASUREMENT] Failed to record billing event', error);
   }
 }
 

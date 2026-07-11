@@ -146,7 +146,11 @@ describe('InvoiceHandler - Test Mode Graceful Handling', () => {
     ).resolves.toBeUndefined();
 
     // Assert - Logged test mode warning
-    expect(consoleSpy.warn).toHaveBeenCalledTimes(1);
+    expect(consoleSpy.warn).toHaveBeenCalledTimes(2);
+    expect(consoleSpy.warn).toHaveBeenCalledWith(
+      '[RETENTION_MEASUREMENT] Failed to record billing event',
+      expect.anything()
+    );
     expect(consoleSpy.warn).toHaveBeenCalledWith(
       expect.stringContaining('[WEBHOOK_TEST_MODE]'),
       expect.any(Object)

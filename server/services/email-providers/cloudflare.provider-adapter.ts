@@ -88,6 +88,10 @@ export class CloudflareEmailProviderAdapter extends BaseEmailProviderAdapter {
       }`;
       const transient =
         response.status === 408 || response.status === 429 || response.status >= 500;
+      const recipientScoped400 =
+        response.status === 400 && /recipient|email|bounce/i.test(errorMessage || '');
+      const providerScopedFallback =
+        [401, 402, 403].includes(response.status) || (response.status === 400 && !recipientScoped400);
       throw new EmailProviderSendError(
         message,
         response.status === 429
@@ -96,8 +100,18 @@ export class CloudflareEmailProviderAdapter extends BaseEmailProviderAdapter {
             ? 'timeout'
             : response.status >= 500
               ? 'provider_error'
-              : 'permanent_rejection',
-        transient
+              : response.status === 401 || response.status === 403
+                ? 'provider_authentication'
+                : response.status === 402
+                  ? 'provider_configuration'
+                  : response.status === 400
+                    ? recipientScoped400
+                      ? 'invalid_recipient'
+                      : 'provider_request'
+                    : 'permanent_rejection',
+        transient,
+        [],
+        providerScopedFallback
       );
     }
 

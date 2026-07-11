@@ -9,12 +9,13 @@ import { sampleBeta, selectBanditArm, recordBanditConversion } from '@/lib/prici
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
-const mockUpdate = vi.fn();
 const mockFrom = vi.fn();
+const mockRpc = vi.fn();
 
 vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: {
     from: (...args: unknown[]) => mockFrom(...args),
+    rpc: (...args: unknown[]) => mockRpc(...args),
   },
 }));
 
@@ -76,6 +77,7 @@ describe('sampleBeta', () => {
 describe('selectBanditArm', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockRpc.mockResolvedValue({ data: true, error: null });
   });
 
   it('returns null for standard region', async () => {
@@ -130,7 +132,6 @@ describe('selectBanditArm', () => {
       },
     ];
 
-    mockUpdate.mockResolvedValue({ error: null });
     mockFrom.mockReturnValue({
       select: vi.fn().mockReturnValue({
         eq: vi.fn().mockReturnValue({
@@ -147,6 +148,10 @@ describe('selectBanditArm', () => {
     expect(result!.isBanditArm).toBe(true);
     expect([1, 2]).toContain(result!.armId);
     expect([50, 65]).toContain(result!.discountPercent);
+    expect(mockRpc).toHaveBeenCalledWith(
+      'increment_pricing_bandit_arm',
+      expect.objectContaining({ p_impressions: 1 })
+    );
   });
 
   it('selected armId matches arm discountPercent', async () => {
@@ -240,63 +245,27 @@ describe('recordBanditConversion', () => {
     vi.clearAllMocks();
   });
 
-  it('increments conversions and revenue_cents', async () => {
-    const mockUpdateEq = vi.fn().mockResolvedValue({ error: null });
-    const mockUpdateFn = vi.fn().mockReturnValue({ eq: mockUpdateEq });
-    const mockSelectFn = vi
-      .fn()
-      .mockReturnValue({
-        eq: vi
-          .fn()
-          .mockReturnValue({
-            single: vi
-              .fn()
-              .mockResolvedValue({ data: { conversions: 3, revenue_cents: 1500 }, error: null }),
-          }),
-      });
-
-    mockFrom.mockReturnValue({
-      select: mockSelectFn,
-      update: mockUpdateFn,
-    });
-
+  it('increments conversions and revenue_cents atomically', async () => {
     await recordBanditConversion(5, 900);
-
-    // Should have called update with incremented values
-    expect(mockUpdateFn).toHaveBeenCalledWith(
+    expect(mockRpc).toHaveBeenCalledWith(
+      'increment_pricing_bandit_arm',
       expect.objectContaining({
-        conversions: 4,
-        revenue_cents: 2400,
+        p_arm_id: 5,
+        p_conversions: 1,
+        p_revenue_cents: 900,
       })
     );
   });
 
-  it('handles DB fetch error gracefully without throwing', async () => {
-    mockFrom.mockReturnValue({
-      select: vi.fn().mockReturnValue({
-        eq: vi.fn().mockReturnValue({
-          single: vi.fn().mockResolvedValue({ data: null, error: new Error('DB error') }),
-        }),
-      }),
-    });
+  it('handles DB counter error gracefully without throwing', async () => {
+    mockRpc.mockResolvedValue({ data: null, error: new Error('DB error') });
 
     // Should not throw
     await expect(recordBanditConversion(1, 500)).resolves.toBeUndefined();
   });
 
-  it('handles DB update error gracefully without throwing', async () => {
-    mockFrom.mockReturnValue({
-      select: vi.fn().mockReturnValue({
-        eq: vi.fn().mockReturnValue({
-          single: vi
-            .fn()
-            .mockResolvedValue({ data: { conversions: 1, revenue_cents: 500 }, error: null }),
-        }),
-      }),
-      update: vi.fn().mockReturnValue({
-        eq: vi.fn().mockResolvedValue({ error: new Error('Update failed') }),
-      }),
-    });
+  it('handles a failed counter update gracefully without throwing', async () => {
+    mockRpc.mockResolvedValue({ data: null, error: new Error('Update failed') });
 
     // Should not throw
     await expect(recordBanditConversion(1, 500)).resolves.toBeUndefined();

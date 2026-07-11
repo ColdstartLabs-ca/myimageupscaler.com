@@ -7,6 +7,7 @@ import { getBasePriceIdByPlanKey } from '@shared/config/pricing-regions';
 import { getEmailService } from '@server/services/email.service';
 import { getEmailLifecycleService } from '@server/services/email-lifecycle.service';
 import { getRevenueRecoveryService } from '@server/services/revenue-recovery.service';
+import { notifyAutoTopUpFailure } from '@server/services/auto-top-up-notification.service';
 import { redeemDiscount } from '@server/services/engagement-discount.service';
 import { recordBanditConversion } from '@/lib/pricing-bandit';
 import { recordExperimentReward } from '@lib/experiments';
@@ -130,7 +131,9 @@ export class PaymentHandler {
     paymentIntent: Stripe.PaymentIntent
   ): Promise<string> {
     const metadataUserId =
-      paymentIntent.metadata?.user_id || paymentIntent.metadata?.supabase_user_id;
+      paymentIntent.metadata?.user_id ||
+      paymentIntent.metadata?.supabase_user_id ||
+      paymentIntent.metadata?.auto_top_up_user_id;
     if (metadataUserId) {
       return metadataUserId;
     }
@@ -749,6 +752,7 @@ export class PaymentHandler {
     const amountCents = session.amount_total || 0;
 
     await this.handleCreditPackPurchase(session, userId);
+    await this.activateAutoTopUpConsent(session, userId);
 
     if (session.metadata?.engagement_discount_applied === 'true') {
       try {
@@ -898,6 +902,24 @@ export class PaymentHandler {
   }
 
   static async handleCheckoutSessionExpired(session: Stripe.Checkout.Session): Promise<void> {
+    const consentVersion = session.metadata?.auto_top_up_consent_version;
+    const { error: consentCleanupError } = await supabaseAdmin
+      .from('auto_top_up_checkout_consents')
+      .delete()
+      .eq('checkout_session_id', session.id);
+    if (consentCleanupError) {
+      console.error('[AUTO_TOP_UP_CONSENT_CLEANUP_FAILED]', consentCleanupError);
+    }
+    if (consentVersion) {
+      const { error: versionCleanupError } = await supabaseAdmin
+        .from('auto_top_up_checkout_consents')
+        .delete()
+        .eq('consent_version', consentVersion);
+      if (versionCleanupError) {
+        console.error('[AUTO_TOP_UP_CONSENT_CLEANUP_FAILED]', versionCleanupError);
+      }
+    }
+
     let userId: string;
     try {
       userId = await this.resolveCheckoutSessionUserId(session);
@@ -942,7 +964,7 @@ export class PaymentHandler {
   }
 
   static async handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent): Promise<void> {
-    await this.failAutoTopUpAttempt(paymentIntent);
+    if (await this.failAutoTopUpAttempt(paymentIntent)) return;
     let userId: string;
     try {
       userId = await this.resolvePaymentIntentUserId(paymentIntent);
@@ -1005,20 +1027,46 @@ export class PaymentHandler {
     const customerId = this.getStripeCustomerId(session.customer);
     if (!paymentMethodId || !customerId) return;
 
-    const { error } = await supabaseAdmin
-      .from('auto_top_up_settings')
-      .update({
-        enabled: true,
-        pending_enabled: false,
-        stripe_payment_method_id: paymentMethodId,
-        updated_at: new Date().toISOString(),
-      })
+    const { data: consent, error: consentError } = await supabaseAdmin
+      .from('auto_top_up_checkout_consents')
+      .select('threshold_credits, pack_key, stripe_price_id, stripe_customer_id')
       .eq('user_id', userId)
       .eq('consent_version', consentVersion)
       .eq('checkout_session_id', session.id)
       .eq('stripe_customer_id', customerId)
-      .eq('pending_enabled', true);
-    if (error) throw new Error(`Unable to activate auto top-up consent: ${error.message}`);
+      .maybeSingle();
+    if (consentError) {
+      throw new Error(`Unable to load auto top-up consent: ${consentError.message}`);
+    }
+    if (!consent) return;
+
+    const { error: settingsError } = await supabaseAdmin.from('auto_top_up_settings').upsert(
+      {
+        user_id: userId,
+        enabled: true,
+        pending_enabled: false,
+        threshold_credits: consent.threshold_credits,
+        pack_key: consent.pack_key,
+        stripe_price_id: consent.stripe_price_id,
+        stripe_customer_id: customerId,
+        stripe_payment_method_id: paymentMethodId,
+        consent_version: consentVersion,
+        checkout_session_id: session.id,
+        consented_at: new Date().toISOString(),
+        consecutive_failures: 0,
+        failure_reason: null,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'user_id' }
+    );
+    if (settingsError)
+      throw new Error(`Unable to activate auto top-up consent: ${settingsError.message}`);
+    const { error: deleteError } = await supabaseAdmin
+      .from('auto_top_up_checkout_consents')
+      .delete()
+      .eq('consent_version', consentVersion);
+    if (deleteError)
+      throw new Error(`Unable to finalize auto top-up consent: ${deleteError.message}`);
     await trackServerEvent(
       'auto_top_up_opted_in',
       { checkoutSessionId: session.id },
@@ -1091,11 +1139,11 @@ export class PaymentHandler {
     }
   }
 
-  private static async failAutoTopUpAttempt(paymentIntent: Stripe.PaymentIntent): Promise<void> {
-    if (paymentIntent.metadata?.auto_top_up !== 'true') return;
+  private static async failAutoTopUpAttempt(paymentIntent: Stripe.PaymentIntent): Promise<boolean> {
+    if (paymentIntent.metadata?.auto_top_up !== 'true') return false;
     const attemptId = paymentIntent.metadata.auto_top_up_attempt_id;
     const userId = paymentIntent.metadata.auto_top_up_user_id;
-    if (!attemptId || !userId) return;
+    if (!attemptId || !userId) return true;
     const reason = paymentIntent.last_payment_error?.decline_code || 'payment_failed';
     const { data: failures, error: failureError } = await supabaseAdmin.rpc(
       'finalize_auto_top_up_failure',
@@ -1103,37 +1151,17 @@ export class PaymentHandler {
     );
     if (failureError)
       throw new Error(`Unable to finalize auto top-up failure: ${failureError.message}`);
-    if (typeof failures !== 'number') return;
+    if (typeof failures !== 'number') return true;
     await trackServerEvent(
       'auto_top_up_declined',
       { attemptId, declineReason: reason, consecutiveFailures: failures },
       this.buildAmplitudeOptsFromMetadata(paymentIntent.metadata, userId)
     );
 
-    const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(userId);
-    const email = authUser.user?.email;
-    if (email) {
-      try {
-        await getEmailService().send({
-          to: email,
-          userId,
-          type: 'transactional',
-          template: 'auto-top-up-failure',
-          data: { paused: failures >= 3 },
-        });
-        const { error } = await supabaseAdmin
-          .from('auto_top_up_attempts')
-          .update({
-            failure_notification_pending: false,
-            failure_notified_at: new Date().toISOString(),
-          })
-          .eq('id', attemptId)
-          .eq('failure_notification_pending', true);
-        if (error) throw error;
-      } catch (error) {
-        console.error('[AUTO_TOP_UP_EMAIL_FAILED]', error);
-      }
-    }
+    await notifyAutoTopUpFailure(userId, failures, attemptId).catch(error =>
+      console.error('[AUTO_TOP_UP_EMAIL_FAILED]', error)
+    );
+    return true;
   }
 
   /**

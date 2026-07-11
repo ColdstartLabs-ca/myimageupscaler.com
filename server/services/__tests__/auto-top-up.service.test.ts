@@ -55,6 +55,7 @@ vi.mock('@server/stripe', () => ({
 
 import {
   AutoTopUpService,
+  notifyAutoTopUpFailure,
   isAutoTopUpEligibleBalance,
   isAutoTopUpPayableStatus,
   isStaleAutoTopUpLease,
@@ -92,7 +93,16 @@ describe('AutoTopUpService', () => {
     paymentIntentCancel.mockResolvedValue({ id: 'pi_auto_1', status: 'canceled' });
     paymentIntentRetrieve.mockResolvedValue({ id: 'pi_auto_1', status: 'requires_confirmation' });
     sendEmail.mockResolvedValue({ success: true });
-    rpcMock.mockResolvedValue({ data: 1, error: null });
+    rpcMock.mockImplementation((name: string) =>
+      Promise.resolve({
+        data:
+          name === 'claim_auto_top_up_failure_notification' ||
+          name === 'finalize_auto_top_up_attempt'
+            ? true
+            : 1,
+        error: null,
+      })
+    );
     revenueFeatureEligible.mockResolvedValue(true);
   });
 
@@ -299,5 +309,165 @@ describe('AutoTopUpService', () => {
       expect.objectContaining({ template: 'auto-top-up-failure' })
     );
     expect(result.failed).toBe(1);
+  });
+
+  test('isolates an unknown price configuration and continues scanning later settings', async () => {
+    const badSetting = {
+      ...setting,
+      user_id: 'user-bad-price',
+      stripe_price_id: 'price_rotated_out_of_config',
+      charge_claim_id: null,
+      charge_claimed_at: null,
+    };
+    const laterSetting = {
+      ...setting,
+      user_id: 'user-later',
+      charge_claim_id: null,
+      charge_claimed_at: null,
+    };
+    const settings = [badSetting, laterSetting];
+    const settingsUpdates: Record<string, unknown>[] = [];
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'auto_top_up_attempts') {
+        return {
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              limit: vi.fn().mockResolvedValue({ data: [], error: null }),
+            })),
+          })),
+        } as never;
+      }
+      if (table === 'auto_top_up_settings') {
+        return {
+          select: vi.fn((columns: string) =>
+            columns.startsWith('user_id,')
+              ? {
+                  eq: vi.fn(() => ({
+                    eq: vi.fn(() => ({
+                      not: vi.fn(() => ({
+                        limit: vi.fn().mockResolvedValue({ data: settings, error: null }),
+                      })),
+                    })),
+                  })),
+                }
+              : { eq: vi.fn(() => ({ maybeSingle: vi.fn().mockResolvedValue({ data: null }) })) }
+          ),
+          update: vi.fn((payload: Record<string, unknown>) => {
+            settingsUpdates.push(payload);
+            return thenable({ error: null });
+          }),
+        };
+      }
+      if (table === 'user_credits') {
+        return {
+          select: vi.fn(() => ({
+            eq: vi.fn((field: string, value: string) => ({
+              maybeSingle: vi.fn().mockResolvedValue({
+                data: { total_credits_balance: value === 'user-bad-price' ? 0 : 100 },
+                error: null,
+              }),
+            })),
+          })),
+        } as never;
+      }
+      throw new Error(`Unexpected table ${table}`);
+    });
+
+    const result = await new AutoTopUpService().processEligible();
+
+    expect(result).toMatchObject({ scanned: 2, failed: 1 });
+    expect(settingsUpdates).toContainEqual(
+      expect.objectContaining({ enabled: false, failure_reason: 'invalid_pack_configuration' })
+    );
+    expect(paymentIntentCreate).not.toHaveBeenCalled();
+  });
+
+  test('finalizes a succeeded PaymentIntent during stale lease recovery', async () => {
+    const leasedSetting = {
+      ...setting,
+      charge_claim_id: 'attempt-stale',
+      charge_claimed_at: '2026-07-11T11:00:00.000Z',
+    };
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'auto_top_up_attempts') {
+        return {
+          select: vi.fn((columns: string) =>
+            columns.includes('stripe_payment_intent_id')
+              ? {
+                  eq: vi.fn(() => ({
+                    maybeSingle: vi.fn().mockResolvedValue({
+                      data: {
+                        id: 'attempt-stale',
+                        stripe_payment_intent_id: 'pi_stale_succeeded',
+                        credits: 200,
+                      },
+                      error: null,
+                    }),
+                  })),
+                }
+              : {
+                  eq: vi.fn(() => ({
+                    limit: vi.fn().mockResolvedValue({ data: [], error: null }),
+                  })),
+                }
+          ),
+          update: vi.fn(() => thenable({ error: null })),
+        } as never;
+      }
+      if (table === 'auto_top_up_settings') {
+        return {
+          select: vi.fn((columns: string) =>
+            columns.startsWith('user_id,')
+              ? {
+                  eq: vi.fn(() => ({
+                    eq: vi.fn(() => ({
+                      not: vi.fn(() => ({
+                        limit: vi.fn().mockResolvedValue({ data: [leasedSetting], error: null }),
+                      })),
+                    })),
+                  })),
+                }
+              : { eq: vi.fn(() => ({ maybeSingle: vi.fn() })) }
+          ),
+          update: vi.fn(() => thenable({ error: null })),
+        } as never;
+      }
+      throw new Error(`Unexpected table ${table}`);
+    });
+    paymentIntentRetrieve.mockResolvedValue({ id: 'pi_stale_succeeded', status: 'succeeded' });
+    rpcMock.mockImplementation((name: string) =>
+      Promise.resolve(
+        name === 'finalize_auto_top_up_attempt'
+          ? { data: true, error: null }
+          : { data: true, error: null }
+      )
+    );
+
+    const result = await new AutoTopUpService().processEligible(
+      25,
+      new Date('2026-07-11T12:00:00.000Z')
+    );
+
+    expect(result).toMatchObject({ scanned: 1, failed: 0, claimed: 0 });
+    expect(rpcMock).toHaveBeenCalledWith(
+      'finalize_auto_top_up_attempt',
+      expect.objectContaining({ p_attempt_id: 'attempt-stale', p_credits: 200 })
+    );
+    expect(paymentIntentCancel).not.toHaveBeenCalled();
+  });
+
+  test('does not send a duplicate failure notice when another worker owns the claim', async () => {
+    rpcMock.mockImplementation((name: string) =>
+      Promise.resolve(
+        name === 'claim_auto_top_up_failure_notification'
+          ? { data: false, error: null }
+          : { data: 1, error: null }
+      )
+    );
+
+    await notifyAutoTopUpFailure('user-1', 1, 'attempt-1');
+
+    expect(sendEmail).not.toHaveBeenCalled();
   });
 });

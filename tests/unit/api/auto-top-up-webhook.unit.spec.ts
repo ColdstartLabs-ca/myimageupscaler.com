@@ -49,6 +49,8 @@ function query(result: unknown) {
   const q: Record<string, unknown> = {};
   for (const method of ['eq', 'select', 'update']) q[method] = vi.fn(() => q);
   q.maybeSingle = vi.fn().mockResolvedValue(result);
+  q.then = (resolve: (value: unknown) => unknown) =>
+    Promise.resolve({ data: null, error: null }).then(resolve);
   return q;
 }
 
@@ -76,6 +78,7 @@ describe('auto top-up webhook convergence', () => {
     rpcMock.mockResolvedValue({ data: true, error: null });
     sendMock.mockResolvedValue({ success: true });
     getUserMock.mockResolvedValue({ data: { user: { email: 'buyer@example.com' } }, error: null });
+    trackServerEventMock.mockResolvedValue(true);
   });
 
   it('finalizes a delayed success from immutable attempt credits without reading current settings', async () => {
@@ -109,8 +112,27 @@ describe('auto top-up webhook convergence', () => {
 
   it('activates only the matching paid checkout consent with a reusable payment method', async () => {
     retrieveMock.mockResolvedValue({ payment_method: 'pm_saved' });
-    const activationQuery = query({ data: null, error: null });
-    fromMock.mockReturnValue(activationQuery);
+    const activationQuery = query({
+      data: {
+        threshold_credits: 25,
+        pack_key: 'medium',
+        stripe_price_id: 'price_medium',
+        stripe_customer_id: 'cus_1',
+      },
+      error: null,
+    });
+    const settingsUpsert = vi.fn().mockResolvedValue({ error: null });
+    const consentDelete = query({ data: null, error: null });
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'auto_top_up_checkout_consents') {
+        return {
+          select: vi.fn(() => activationQuery),
+          delete: vi.fn(() => consentDelete),
+        };
+      }
+      if (table === 'auto_top_up_settings') return { upsert: settingsUpsert };
+      throw new Error(`Unexpected table ${table}`);
+    });
     const activate = (
       PaymentHandler as unknown as {
         activateAutoTopUpConsent: (
@@ -131,12 +153,13 @@ describe('auto top-up webhook convergence', () => {
       'user-1'
     );
     expect(retrieveMock).toHaveBeenCalledWith('pi_checkout');
-    expect(activationQuery.update).toHaveBeenCalledWith(
+    expect(settingsUpsert).toHaveBeenCalledWith(
       expect.objectContaining({
         enabled: true,
         pending_enabled: false,
         stripe_payment_method_id: 'pm_saved',
-      })
+      }),
+      { onConflict: 'user_id' }
     );
     expect(activationQuery.eq).toHaveBeenCalledWith('checkout_session_id', 'cs_paid');
     expect(activationQuery.eq).toHaveBeenCalledWith('consent_version', 'consent-v1');
@@ -175,7 +198,12 @@ describe('auto top-up webhook convergence', () => {
   });
 
   it('marks a decline, releases its lease, and sends a notice without granting credits', async () => {
-    rpcMock.mockResolvedValue({ data: 3, error: null });
+    rpcMock.mockImplementation((name: string) =>
+      Promise.resolve({
+        data: name === 'claim_auto_top_up_failure_notification' ? true : 3,
+        error: null,
+      })
+    );
     fromMock.mockReturnValue(query({ data: null, error: null }));
     await PaymentHandler.handlePaymentIntentFailed(autoTopUpIntent('requires_payment_method'));
     expect(rpcMock).not.toHaveBeenCalledWith('finalize_auto_top_up_attempt', expect.anything());
@@ -189,6 +217,29 @@ describe('auto top-up webhook convergence', () => {
       'auto_top_up_declined',
       expect.objectContaining({ attemptId: 'attempt-old', consecutiveFailures: 3 }),
       expect.objectContaining({ userId: 'user-1' })
+    );
+    expect(trackServerEventMock).not.toHaveBeenCalledWith(
+      'payment_failed',
+      expect.anything(),
+      expect.anything()
+    );
+  });
+
+  it('does not emit duplicate decline analytics or email after finalization was already claimed', async () => {
+    rpcMock.mockResolvedValue({ data: null, error: null });
+
+    await PaymentHandler.handlePaymentIntentFailed(autoTopUpIntent('requires_payment_method'));
+
+    expect(sendMock).not.toHaveBeenCalled();
+    expect(trackServerEventMock).not.toHaveBeenCalledWith(
+      'auto_top_up_declined',
+      expect.anything(),
+      expect.anything()
+    );
+    expect(trackServerEventMock).not.toHaveBeenCalledWith(
+      'payment_failed',
+      expect.anything(),
+      expect.anything()
     );
   });
 

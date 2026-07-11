@@ -11,6 +11,7 @@ import {
   getRevenueRecoveryService,
   type IQueueRecoveryEligibilityResult,
 } from '@server/services/revenue-recovery.service';
+import { EmailProviderSendError } from '@server/services/email-providers/base-email-provider-adapter';
 
 export type LifecycleEventType =
   | 'queued'
@@ -53,6 +54,9 @@ interface IQueueRow {
   metadata: Record<string, unknown>;
   sent_at: string | null;
   created_at: string;
+  subscription_id?: string | null;
+  processing_claim_id?: string | null;
+  processing_claimed_at?: string | null;
   campaign_name?: string;
   campaign_category?: string;
   campaign_template_name?: string;
@@ -71,6 +75,8 @@ export interface IQueueLifecycleEmailInput {
   scheduledFor?: Date;
   templateData?: Record<string, unknown>;
   metadata?: Record<string, unknown>;
+  subscriptionId?: string;
+  forceFrequency?: boolean;
 }
 
 export interface IQueueLifecycleEmailResult {
@@ -176,7 +182,9 @@ export class EmailLifecycleService {
       return { queued: false, skipped: true, reason: 'missing_recipient_email' };
     }
 
-    const suppression = await this.getSuppressionReason(campaign, input.userId);
+    const suppression = await this.getSuppressionReason(campaign, input.userId, {
+      forceFrequency: input.forceFrequency,
+    });
     if (suppression) {
       const queueId = await this.insertQueueRow({
         campaign,
@@ -186,6 +194,7 @@ export class EmailLifecycleService {
         scheduledFor: input.scheduledFor ?? new Date(),
         templateData: input.templateData,
         metadata: input.metadata,
+        subscriptionId: input.subscriptionId,
       });
       await this.recordLifecycleEvent({
         queueId,
@@ -210,6 +219,7 @@ export class EmailLifecycleService {
       scheduledFor: input.scheduledFor ?? new Date(),
       templateData: input.templateData,
       metadata: input.metadata,
+      subscriptionId: input.subscriptionId,
     });
 
     await this.recordLifecycleEvent({
@@ -258,6 +268,7 @@ export class EmailLifecycleService {
       campaignKey,
       userId: params.userId,
       scheduledFor: reason === 'insufficient' ? addMinutes(new Date(), 10) : new Date(),
+      forceFrequency: reason === 'zero',
       templateData: {
         creditsRemaining: Math.max(params.creditsRemaining, 0),
         requiredCredits: params.requiredCredits,
@@ -360,12 +371,21 @@ export class EmailLifecycleService {
         continue;
       }
 
-      const suppression = row.user_id
-        ? await this.getSuppressionReason(campaign, row.user_id, {
-            ignoreExistingPending: true,
-            queueId: row.id,
-          })
-        : null;
+      let suppression: string | null = null;
+      try {
+        suppression = row.user_id
+          ? await this.getSuppressionReason(campaign, row.user_id, {
+              ignoreExistingPending: true,
+              queueId: row.id,
+            })
+          : null;
+      } catch (error) {
+        // Leave the row pending so a transient preference/status read failure
+        // is retried by the next cron pass.
+        console.error('[EMAIL_LIFECYCLE_SUPPRESSION_CHECK_FAILED]', error);
+        result.failed++;
+        continue;
+      }
 
       if (suppression) {
         if (!dryRun) {
@@ -390,6 +410,14 @@ export class EmailLifecycleService {
 
       if (dryRun) {
         result.queued++;
+        continue;
+      }
+
+      try {
+        if (!(await this.claimQueueRow(row.id))) continue;
+      } catch (error) {
+        console.error('[EMAIL_LIFECYCLE_QUEUE_CLAIM_FAILED]', error);
+        result.failed++;
         continue;
       }
 
@@ -429,7 +457,12 @@ export class EmailLifecycleService {
         }
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Unknown email send failure';
-        await this.markQueueRow(row.id, 'failed', message);
+        const transient = error instanceof EmailProviderSendError && error.transient;
+        if (transient) {
+          await this.rescheduleQueueRow(row.id, message);
+        } else {
+          await this.markQueueRow(row.id, 'failed', message);
+        }
         await this.recordLifecycleEvent({
           queueId: row.id,
           userId: row.user_id,
@@ -511,7 +544,8 @@ export class EmailLifecycleService {
       const createdAt = new Date(String(profile.created_at));
       const uploaded = await this.userHasCompletedJob(userId);
       const purchased = await this.userHasPurchase(userId);
-      const cancelingPeriodEnd = await this.getCancelingSubscriptionPeriodEnd(userId);
+      const cancelingSubscription = await this.getCancelingSubscription(userId);
+      const cancelingPeriodEnd = cancelingSubscription?.periodEnd ?? null;
       const lastJob = await this.getLastCompletedJob(userId);
       const lastJobAt = lastJob?.completedAt ?? null;
       const totalCredits =
@@ -689,6 +723,7 @@ export class EmailLifecycleService {
           campaignKey: 'cancelled-period-ending',
           userId,
           recipientEmail: email,
+          subscriptionId: cancelingSubscription?.id,
           templateData: {
             ctaUrl: appendUtm('/pricing', 'cancelled-period-ending', 'win-back'),
             preferenceUrl: '/dashboard/settings',
@@ -935,6 +970,7 @@ export class EmailLifecycleService {
     reason?: string;
     templateData?: Record<string, unknown>;
     metadata?: Record<string, unknown>;
+    subscriptionId?: string;
   }): Promise<string> {
     const { data, error } = await supabaseAdmin
       .from('email_lifecycle_queue')
@@ -950,6 +986,7 @@ export class EmailLifecycleService {
           ...(params.templateData ?? {}),
         },
         metadata: params.metadata ?? {},
+        subscription_id: params.subscriptionId ?? null,
       })
       .select('id')
       .single();
@@ -984,6 +1021,8 @@ export class EmailLifecycleService {
     };
     if (reason) update.reason = reason;
     if (status === 'sent') update.sent_at = new Date().toISOString();
+    update.processing_claim_id = null;
+    update.processing_claimed_at = null;
 
     const { error } = await supabaseAdmin
       .from('email_lifecycle_queue')
@@ -992,6 +1031,32 @@ export class EmailLifecycleService {
     if (error) {
       throw new Error(`Failed to update lifecycle queue row: ${error.message}`);
     }
+  }
+
+  private async claimQueueRow(queueId: string): Promise<boolean> {
+    const { data, error } = await supabaseAdmin.rpc('claim_email_lifecycle_queue_row', {
+      p_queue_id: queueId,
+      p_claim_id: crypto.randomUUID(),
+    });
+    if (error) {
+      throw new Error(`Failed to claim lifecycle queue row: ${error.message}`);
+    }
+    return data === true;
+  }
+
+  private async rescheduleQueueRow(queueId: string, reason: string): Promise<void> {
+    const { error } = await supabaseAdmin
+      .from('email_lifecycle_queue')
+      .update({
+        status: 'pending',
+        reason: `transient_provider_failure:${reason}`,
+        scheduled_for: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+        processing_claim_id: null,
+        processing_claimed_at: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', queueId);
+    if (error) throw new Error(`Failed to reschedule lifecycle queue row: ${error.message}`);
   }
 
   private async getCampaign(campaignKey: string): Promise<ICampaign | null> {
@@ -1011,19 +1076,19 @@ export class EmailLifecycleService {
   private async getSuppressionReason(
     campaign: ICampaign,
     userId: string,
-    options?: { ignoreExistingPending?: boolean; queueId?: string }
+    options?: { forceFrequency?: boolean; ignoreExistingPending?: boolean; queueId?: string }
   ): Promise<string | null> {
-    if (await this.hasBounceOrComplaintStatus(userId)) {
-      return 'suppressed_email_status';
-    }
+    if (campaign.email_type === 'transactional') return null;
 
     if (campaign.preference_key) {
       const allowed = await this.isPreferenceAllowed(userId, campaign.preference_key);
       if (!allowed) return 'suppressed_preference';
     }
 
-    if (campaign.email_type === 'transactional') {
-      return null;
+    if (options?.forceFrequency) return null;
+
+    if (await this.hasBounceOrComplaintStatus(userId)) {
+      return 'suppressed_email_status';
     }
 
     const recentSame = await this.hasRecentQueueRow(
@@ -1079,7 +1144,7 @@ export class EmailLifecycleService {
 
     if (error) {
       console.error('Failed to load email preferences', error);
-      return false;
+      throw new Error(`Failed to load email preferences: ${error.message}`);
     }
     return (data as Record<EmailPreferenceKey, boolean> | null)?.[preferenceKey] !== false;
   }
@@ -1199,10 +1264,12 @@ export class EmailLifecycleService {
       .select('provider_response, status')
       .eq('user_id', userId)
       .eq('status', 'failed')
-      .order('sent_at', { ascending: false });
+      .gte('sent_at', daysAgo(90))
+      .order('sent_at', { ascending: false })
+      .limit(20);
     if (error) {
       console.error('Failed to check lifecycle email status suppression', error);
-      return true;
+      throw new Error(`Failed to check lifecycle email status suppression: ${error.message}`);
     }
 
     return (data || []).some(row => {
@@ -1308,10 +1375,12 @@ export class EmailLifecycleService {
     return !!data?.length;
   }
 
-  private async getCancelingSubscriptionPeriodEnd(userId: string): Promise<Date | null> {
+  private async getCancelingSubscription(
+    userId: string
+  ): Promise<{ id: string; periodEnd: Date } | null> {
     const { data, error } = await supabaseAdmin
       .from('subscriptions')
-      .select('current_period_end')
+      .select('id, current_period_end')
       .eq('user_id', userId)
       .eq('cancel_at_period_end', true)
       .in('status', ['active', 'trialing'])
@@ -1319,7 +1388,7 @@ export class EmailLifecycleService {
       .limit(1)
       .maybeSingle();
     if (error || !data?.current_period_end) return null;
-    return new Date(String(data.current_period_end));
+    return { id: String(data.id), periodEnd: new Date(String(data.current_period_end)) };
   }
 
   private async getLastCompletedJob(

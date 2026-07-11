@@ -15,6 +15,16 @@ function isSchemaMissingError(
 }
 
 export async function POST(request: NextRequest) {
+  let cancellationClaimed = false;
+  let stripeCancellationApplied = false;
+  let cancellationStartedAt: string | null = null;
+  let cancellationState: {
+    id: string;
+    cancel_at_period_end: boolean | null;
+    scheduled_price_id: string | null;
+    scheduled_change_date: string | null;
+  } | null = null;
+
   try {
     // 1. Get the authenticated user from the Authorization header
     const authHeader = request.headers.get('authorization');
@@ -65,7 +75,7 @@ export async function POST(request: NextRequest) {
     // 2. Get the user's active subscription
     const { data: subscription, error: subError } = await supabaseAdmin
       .from('subscriptions')
-      .select('id, status, scheduled_price_id')
+      .select('id, status, cancel_at_period_end, scheduled_price_id, scheduled_change_date')
       .eq('user_id', user.id)
       .in('status', ['active', 'trialing'])
       .order('created_at', { ascending: false })
@@ -85,8 +95,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const cancellationStartedAt = new Date().toISOString();
-    const { error: cancellationClaimError } = await supabaseAdmin
+    cancellationStartedAt = new Date().toISOString();
+    cancellationState = subscription;
+    const { data: claimedSubscription, error: cancellationClaimError } = await supabaseAdmin
       .from('subscriptions')
       .update({
         cancel_at_period_end: true,
@@ -94,12 +105,18 @@ export async function POST(request: NextRequest) {
         scheduled_change_date: null,
         updated_at: cancellationStartedAt,
       })
-      .eq('id', subscription.id);
-    if (cancellationClaimError) {
+      .eq('id', subscription.id)
+      .select('updated_at')
+      .maybeSingle();
+    if (cancellationClaimError || !claimedSubscription) {
       throw new Error(
-        `Failed to claim subscription cancellation: ${cancellationClaimError.message}`
+        `Failed to claim subscription cancellation: ${
+          cancellationClaimError?.message ?? 'subscription was not updated'
+        }`
       );
     }
+    cancellationStartedAt = String(claimedSubscription.updated_at ?? cancellationStartedAt);
+    cancellationClaimed = true;
 
     // Cancellation wins over any pending plan change.
     const stripeSubscription = await stripe.subscriptions.retrieve(subscription.id);
@@ -111,6 +128,7 @@ export async function POST(request: NextRequest) {
     const updatedSubscription = await stripe.subscriptions.update(subscription.id, {
       cancel_at_period_end: true,
     });
+    stripeCancellationApplied = true;
 
     // 4. Update the subscription in our database
     const updateData: {
@@ -177,6 +195,26 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: unknown) {
     console.error('Cancel subscription error:', error);
+    if (
+      cancellationClaimed &&
+      !stripeCancellationApplied &&
+      cancellationState &&
+      cancellationStartedAt
+    ) {
+      const { error: rollbackError } = await supabaseAdmin
+        .from('subscriptions')
+        .update({
+          cancel_at_period_end: cancellationState.cancel_at_period_end,
+          scheduled_price_id: cancellationState.scheduled_price_id,
+          scheduled_change_date: cancellationState.scheduled_change_date,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', cancellationState.id)
+        .eq('updated_at', cancellationStartedAt);
+      if (rollbackError) {
+        console.error('Failed to roll back subscription cancellation claim:', rollbackError);
+      }
+    }
     const errorMessage =
       error instanceof Error ? error.message : 'An error occurred canceling subscription';
     return NextResponse.json(

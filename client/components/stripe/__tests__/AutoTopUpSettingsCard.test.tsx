@@ -87,6 +87,10 @@ describe('AutoTopUpSettingsCard', () => {
       })
     );
     render(<AutoTopUpSettingsCard />);
-    expect(await screen.findByText('Status: payment_declined')).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        'Status: The last top-up could not be completed. Please check your payment method.'
+      )
+    ).toBeInTheDocument();
   });
 });

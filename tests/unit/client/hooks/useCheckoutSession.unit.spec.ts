@@ -155,6 +155,33 @@ describe('useCheckoutSession', () => {
     });
   });
 
+  it('retries without auto top-up when eligibility changes during checkout', async () => {
+    const ineligibleError = Object.assign(new Error('Auto top-up is not available'), {
+      code: 'AUTO_TOP_UP_NOT_ELIGIBLE',
+    });
+    mockCreateCheckoutSession
+      .mockRejectedValueOnce(ineligibleError)
+      .mockResolvedValueOnce(SUCCESS_RESPONSE);
+
+    const { result } = renderHook(() =>
+      useCheckoutSession(
+        buildParams({ autoTopUp: { enabled: true, thresholdCredits: 25 } })
+      )
+    );
+
+    await waitFor(() => expect(result.current.clientSecret).toBe('cs_test_secret'));
+    expect(mockCreateCheckoutSession).toHaveBeenNthCalledWith(
+      1,
+      PRICE_ID,
+      expect.objectContaining({ autoTopUp: { enabled: true, thresholdCredits: 25 } })
+    );
+    expect(mockCreateCheckoutSession).toHaveBeenNthCalledWith(
+      2,
+      PRICE_ID,
+      expect.not.objectContaining({ autoTopUp: expect.anything() })
+    );
+  });
+
   it('should track stripe_embed step_viewed with load time on success', async () => {
     const { result } = renderHook(() => useCheckoutSession(buildParams()));
 

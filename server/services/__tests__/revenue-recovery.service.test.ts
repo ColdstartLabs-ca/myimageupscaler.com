@@ -72,6 +72,7 @@ function makeSelectChain(table: string) {
 function makeUpdateChain(payload: unknown) {
   const chain = {
     eq: vi.fn(() => chain),
+    is: vi.fn(() => chain),
     lt: vi.fn(() => chain),
     in: vi.fn(() => chain),
     select: vi.fn(() => {

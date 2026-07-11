@@ -19,6 +19,13 @@ export function parseFunnelCheckoutAttribution(metadata: Record<string, string>)
     throw new Error('Invalid funnel schema version');
   }
 
+  for (const key of Object.values(keys)) {
+    const value = metadata[key];
+    if (value !== undefined && value.length > 500) {
+      throw new Error('Funnel attribution value is too long');
+    }
+  }
+
   const deviceType = metadata[keys.deviceType];
   if (deviceType && !['mobile', 'tablet', 'desktop'].includes(deviceType)) {
     throw new Error('Invalid funnel device type');

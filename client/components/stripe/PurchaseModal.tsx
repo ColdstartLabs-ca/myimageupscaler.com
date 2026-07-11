@@ -26,6 +26,7 @@ import type { IPurchaseModalBanditConfig } from '@client/utils/purchaseModalDefa
 import { getEnabledCreditPacks, getEnabledPlans } from '@shared/config/subscription.utils';
 import type { IExperimentAssignment } from '@shared/types/experiments.types';
 import type { ICreditPack, IPlanConfig } from '@shared/config/subscription.types';
+import { supabase } from '@server/supabase/supabaseClient';
 
 export interface IPurchaseModalProps {
   isOpen: boolean;
@@ -160,6 +161,7 @@ export function PurchaseModal({
   const [selectedPack, setSelectedPack] = useState<ICreditPack | null>(null);
   const [autoTopUpEnabled, setAutoTopUpEnabled] = useState(false);
   const [autoTopUpThreshold, setAutoTopUpThreshold] = useState(25);
+  const [autoTopUpEligible, setAutoTopUpEligible] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<IPlanConfig | null>(null);
   const [purchaseMode, setPurchaseMode] = useState<'credits' | 'subscribe'>('credits');
 
@@ -180,11 +182,44 @@ export function PurchaseModal({
   );
   const repeatPackKey = isOpen ? getRepeatPurchaseContext(user?.id) : null;
 
+  useEffect(() => {
+    let cancelled = false;
+
+    setAutoTopUpEligible(false);
+    setAutoTopUpEnabled(false);
+
+    if (!isOpen || !isAuthenticated || !user?.id) return;
+
+    void supabase.auth
+      .getSession()
+      .then(async ({ data }) => {
+        const accessToken = data.session?.access_token;
+        if (!accessToken) return;
+
+        const response = await fetch('/api/auto-top-up/settings', {
+          headers: { authorization: `Bearer ${accessToken}` },
+        });
+        if (!response.ok || cancelled) return;
+
+        const payload = (await response.json()) as { autoTopUpEligible?: boolean };
+        if (!cancelled) setAutoTopUpEligible(payload.autoTopUpEligible === true);
+      })
+      .catch(error => {
+        if (!cancelled) console.warn('Unable to load auto top-up eligibility', error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated, isOpen, user?.id]);
+
   const visibleCreditPacks = useMemo(() => {
-    if (repeatPackKey) return creditPacks;
     if (!purchaseBanditConfig.visiblePacks?.length) return creditPacks;
 
-    const allowedKeys = new Set(purchaseBanditConfig.visiblePacks);
+    const allowedKeys = new Set([
+      ...purchaseBanditConfig.visiblePacks,
+      ...(repeatPackKey ? [repeatPackKey] : []),
+    ]);
     const filtered = creditPacks.filter(pack => allowedKeys.has(pack.key));
     return filtered.length > 0 ? filtered : creditPacks;
   }, [creditPacks, purchaseBanditConfig.visiblePacks, repeatPackKey]);
@@ -864,7 +899,9 @@ export function PurchaseModal({
 
             {/* Fixed CTA at bottom */}
             <div className="flex-shrink-0 px-4 sm:px-5 pt-2.5 pb-5 sm:pb-6 bg-surface border-t border-surface-light/30">
-              {selectedPack && ['small', 'medium'].includes(selectedPack.key) && (
+              {autoTopUpEligible &&
+                selectedPack &&
+                ['small', 'medium'].includes(selectedPack.key) && (
                 <div className="mb-3 rounded-xl border border-border bg-surface-light/30 p-3 text-left">
                   <label className="flex items-start gap-2 text-sm text-text-primary">
                     <input
@@ -935,7 +972,9 @@ export function PurchaseModal({
           }}
           onSuccess={handleCheckoutSuccess}
           autoTopUp={
-            autoTopUpEnabled ? { enabled: true, thresholdCredits: autoTopUpThreshold } : undefined
+            autoTopUpEligible && autoTopUpEnabled
+              ? { enabled: true, thresholdCredits: autoTopUpThreshold }
+              : undefined
           }
         />
       )}

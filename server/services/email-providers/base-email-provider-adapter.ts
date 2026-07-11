@@ -38,6 +38,9 @@ export type EmailProviderFailureClassification =
   | 'invalid_recipient'
   | 'unsubscribed'
   | 'complaint'
+  | 'provider_authentication'
+  | 'provider_configuration'
+  | 'provider_request'
   | 'permanent_rejection';
 
 /** A provider-neutral failure contract used to decide whether fallback is safe. */
@@ -46,7 +49,8 @@ export class EmailProviderSendError extends Error {
     message: string,
     public readonly classification: EmailProviderFailureClassification,
     public readonly transient: boolean,
-    public readonly attemptedProviders: string[] = []
+    public readonly attemptedProviders: string[] = [],
+    public readonly fallbackEligible: boolean = transient
   ) {
     super(message);
     this.name = 'EmailProviderSendError';
@@ -75,6 +79,15 @@ export function normalizeEmailProviderError(error: unknown): EmailProviderSendEr
   }
   if (/complaint/.test(normalized)) {
     return new EmailProviderSendError(message, 'complaint', false);
+  }
+  if (/\b401\b|\b403\b/.test(normalized)) {
+    return new EmailProviderSendError(message, 'provider_authentication', false, [], true);
+  }
+  if (/\b402\b/.test(normalized)) {
+    return new EmailProviderSendError(message, 'provider_configuration', false, [], true);
+  }
+  if (/\b400\b/.test(normalized)) {
+    return new EmailProviderSendError(message, 'provider_request', false, [], true);
   }
   return new EmailProviderSendError(message, 'permanent_rejection', false);
 }

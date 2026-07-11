@@ -14,7 +14,13 @@ vi.mock('@shared/config/env', async importOriginal => {
 
 vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: {
-    from: vi.fn(),
+    from: vi.fn(() => {
+      const query: Record<string, ReturnType<typeof vi.fn>> = {};
+      query.eq = vi.fn(() => query);
+      query.then = (resolve: (value: unknown) => unknown) =>
+        Promise.resolve({ data: null, error: null }).then(resolve);
+      return { delete: vi.fn(() => query) };
+    }),
     rpc: vi.fn(),
   },
 }));

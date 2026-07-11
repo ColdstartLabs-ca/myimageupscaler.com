@@ -7,6 +7,9 @@ import Stripe from 'stripe';
 const persistCheckoutIntentContextMock = vi.hoisted(() => vi.fn());
 const validateExperimentCheckoutAttributionMock = vi.hoisted(() => vi.fn());
 const autoTopUpUpsertMock = vi.hoisted(() => vi.fn());
+const autoTopUpConsentInsertMock = vi.hoisted(() => vi.fn());
+const autoTopUpConsentUpdateMock = vi.hoisted(() => vi.fn());
+const autoTopUpConsentDeleteMock = vi.hoisted(() => vi.fn());
 const autoTopUpUpdateMaybeSingleMock = vi.hoisted(() => vi.fn());
 const autoTopUpUpdateMock = vi.hoisted(() => vi.fn());
 const revenueFeatureEligibleMock = vi.hoisted(() => vi.fn());
@@ -183,6 +186,19 @@ describe('POST /api/checkout price alignment', () => {
           })),
         } as never;
       }
+      if (table === 'auto_top_up_checkout_consents') {
+        const query: Record<string, ReturnType<typeof vi.fn>> = {};
+        query.eq = vi.fn(() => query);
+        query.select = vi.fn(() => query);
+        query.maybeSingle = autoTopUpUpdateMaybeSingleMock;
+        query.then = (resolve: (value: unknown) => unknown) =>
+          Promise.resolve({ error: null }).then(resolve);
+        return {
+          insert: autoTopUpConsentInsertMock,
+          update: autoTopUpConsentUpdateMock.mockImplementation(() => query),
+          delete: autoTopUpConsentDeleteMock.mockImplementation(() => query),
+        } as never;
+      }
       if (table === 'auto_top_up_attempts') {
         const query: Record<string, ReturnType<typeof vi.fn>> = {};
         for (const method of ['eq', 'in', 'order', 'limit', 'select', 'update']) {
@@ -223,6 +239,21 @@ describe('POST /api/checkout price alignment', () => {
     });
     persistCheckoutIntentContextMock.mockResolvedValue(true);
     autoTopUpUpsertMock.mockResolvedValue({ error: null });
+    autoTopUpConsentInsertMock.mockResolvedValue({ error: null });
+    autoTopUpConsentUpdateMock.mockImplementation(() => {
+      const query: Record<string, ReturnType<typeof vi.fn>> = {};
+      query.eq = vi.fn(() => query);
+      query.select = vi.fn(() => query);
+      query.maybeSingle = autoTopUpUpdateMaybeSingleMock;
+      return query;
+    });
+    autoTopUpConsentDeleteMock.mockImplementation(() => {
+      const query: Record<string, ReturnType<typeof vi.fn>> = {};
+      query.eq = vi.fn(() => query);
+      query.then = (resolve: (value: unknown) => unknown) =>
+        Promise.resolve({ error: null }).then(resolve);
+      return query;
+    });
     autoTopUpUpdateMaybeSingleMock.mockResolvedValue({
       data: { enabled: false, pending_enabled: false },
       error: null,
@@ -263,19 +294,21 @@ describe('POST /api/checkout price alignment', () => {
     );
     expect(response.status).toBe(200);
     expect(getCreatedSessionParams().payment_intent_data?.setup_future_usage).toBe('off_session');
-    expect(autoTopUpUpsertMock).toHaveBeenCalledWith(
+    expect(autoTopUpConsentInsertMock).toHaveBeenCalledWith(
       expect.objectContaining({
         user_id: 'user_checkout_alignment',
-        enabled: false,
-        pending_enabled: true,
         threshold_credits: 25,
         pack_key: 'medium',
-        stripe_payment_method_id: null,
         consent_version: expect.any(String),
         checkout_session_id: null,
-      }),
-      { onConflict: 'user_id' }
+      })
     );
+    expect(autoTopUpConsentUpdateMock).toHaveBeenCalledWith({
+      checkout_session_id: 'cs_test_alignment',
+      stripe_customer_id: 'cus_existing_123',
+    });
+    expect(autoTopUpUpsertMock).not.toHaveBeenCalled();
+    expect(autoTopUpUpdateMock).not.toHaveBeenCalled();
     expect(getCreatedSessionParams().metadata).toMatchObject({
       auto_top_up_consent_version: expect.any(String),
       auto_top_up_threshold: '25',
@@ -318,7 +351,7 @@ describe('POST /api/checkout price alignment', () => {
       })
     );
     expect(response.status).toBe(200);
-    expect(autoTopUpUpdateMock).toHaveBeenCalledWith(
+    expect(autoTopUpConsentUpdateMock).toHaveBeenCalledWith(
       expect.objectContaining({ stripe_customer_id: 'cus_fresh_456' })
     );
   });
@@ -394,6 +427,27 @@ describe('POST /api/checkout price alignment', () => {
     expect(await response.json()).toMatchObject({
       error: { code: 'AUTO_TOP_UP_NOT_ELIGIBLE' },
     });
+    expect(sessionCreateMock).not.toHaveBeenCalled();
+  });
+
+  test('does not honor test authentication headers outside the test environment', async () => {
+    getUserMock.mockResolvedValueOnce({
+      data: { user: null },
+      error: { message: 'invalid token' },
+    } as never);
+    const response = await POST(
+      new NextRequest('https://example.com/api/checkout', {
+        method: 'POST',
+        headers: {
+          authorization: 'Bearer test_token_victim',
+          'x-test-env': 'true',
+          'x-playwright-test': 'true',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ priceId: STRIPE_PRICES.MEDIUM_CREDITS }),
+      })
+    );
+    expect(response.status).toBe(401);
     expect(sessionCreateMock).not.toHaveBeenCalled();
   });
 
@@ -506,7 +560,7 @@ describe('POST /api/checkout price alignment', () => {
     );
   });
 
-  test('should reject incomplete experiment attribution before creating checkout', async () => {
+  test('fails open when experiment attribution is incomplete', async () => {
     const response = await POST(
       createRequest({
         priceId: STRIPE_PRICES.MEDIUM_CREDITS,
@@ -517,11 +571,11 @@ describe('POST /api/checkout price alignment', () => {
       })
     );
 
-    expect(response.status).toBe(400);
-    expect(sessionCreateMock).not.toHaveBeenCalled();
+    expect(response.status).toBe(200);
+    expect(getCreatedSessionParams().metadata).not.toHaveProperty('exp_key');
   });
 
-  test('should return retryable error when experiment validation storage is unavailable', async () => {
+  test('fails open when experiment validation storage is unavailable', async () => {
     validateExperimentCheckoutAttributionMock.mockResolvedValueOnce({
       valid: false,
       reason: 'storage_error',
@@ -540,13 +594,8 @@ describe('POST /api/checkout price alignment', () => {
       })
     );
 
-    expect(response.status).toBe(503);
-    expect(await response.json()).toEqual(
-      expect.objectContaining({
-        error: expect.objectContaining({ code: 'EXPERIMENT_ATTRIBUTION_UNAVAILABLE' }),
-      })
-    );
-    expect(sessionCreateMock).not.toHaveBeenCalled();
+    expect(response.status).toBe(200);
+    expect(getCreatedSessionParams().metadata).not.toHaveProperty('exp_key');
   });
 
   test('should copy checkout attribution metadata to payment_intent_data for payment sessions', async () => {

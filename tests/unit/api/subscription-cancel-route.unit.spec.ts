@@ -1,7 +1,11 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 
-const { single, updateEq } = vi.hoisted(() => ({ single: vi.fn(), updateEq: vi.fn() }));
+const { single, updateEq, updatePayloads } = vi.hoisted(() => ({
+  single: vi.fn(),
+  updateEq: vi.fn(),
+  updatePayloads: [] as Record<string, unknown>[],
+}));
 
 vi.mock('@server/stripe', () => ({
   stripe: {
@@ -16,7 +20,21 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
       select: () => ({
         eq: () => ({ in: () => ({ order: () => ({ limit: () => ({ single }) }) }) }),
       }),
-      update: vi.fn(() => ({ eq: updateEq })),
+      update: vi.fn((payload: Record<string, unknown>) => {
+        updatePayloads.push(payload);
+        const query = {
+          eq: updateEq,
+          select: vi.fn(() => query),
+          maybeSingle: vi.fn().mockResolvedValue({
+            data: { updated_at: '2026-07-11T20:00:00.000Z' },
+            error: null,
+          }),
+          then: (resolve: (value: unknown) => unknown) =>
+            Promise.resolve({ error: null }).then(resolve),
+        };
+        updateEq.mockImplementation(() => query);
+        return query;
+      }),
     })),
   },
 }));
@@ -28,12 +46,12 @@ import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 describe('subscription cancellation route', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    updatePayloads.length = 0;
     vi.mocked(supabaseAdmin.auth.getUser).mockResolvedValue({
       data: { user: { id: 'user-1' } },
       error: null,
     } as never);
     single.mockResolvedValue({ data: { id: 'sub-1', status: 'active' }, error: null });
-    updateEq.mockResolvedValue({ error: null });
     vi.mocked(stripe.subscriptions.retrieve).mockResolvedValue({
       id: 'sub-1',
       schedule: 'sub_sched_retention',
@@ -78,5 +96,41 @@ describe('subscription cancellation route', () => {
     );
     expect(response.status).toBe(500);
     expect(stripe.subscriptions.update).not.toHaveBeenCalled();
+  });
+
+  test('rolls back the database cancellation claim when Stripe cancellation fails', async () => {
+    single.mockResolvedValue({
+      data: {
+        id: 'sub-1',
+        status: 'active',
+        cancel_at_period_end: false,
+        scheduled_price_id: 'price_hobby',
+        scheduled_change_date: '2026-08-01T00:00:00.000Z',
+      },
+      error: null,
+    });
+    vi.mocked(stripe.subscriptions.retrieve).mockResolvedValue({
+      id: 'sub-1',
+      schedule: null,
+    } as never);
+    vi.mocked(stripe.subscriptions.update).mockRejectedValue(new Error('Stripe unavailable'));
+
+    const response = await POST(
+      new NextRequest('http://localhost/api/subscriptions/cancel', {
+        method: 'POST',
+        headers: { authorization: 'Bearer token' },
+        body: JSON.stringify({}),
+      })
+    );
+
+    expect(response.status).toBe(500);
+    expect(updatePayloads).toEqual([
+      expect.objectContaining({ cancel_at_period_end: true }),
+      expect.objectContaining({
+        cancel_at_period_end: false,
+        scheduled_price_id: 'price_hobby',
+        scheduled_change_date: '2026-08-01T00:00:00.000Z',
+      }),
+    ]);
   });
 });

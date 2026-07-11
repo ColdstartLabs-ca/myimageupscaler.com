@@ -70,7 +70,10 @@ vi.mock('@shared/config/stripe', () => ({
   }),
 }));
 
-import { POST } from '../../../app/api/subscription/change/route';
+import {
+  POST,
+  postRetentionSubscriptionChange,
+} from '../../../app/api/subscription/change/route';
 import { stripe } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { getBasePriceIdByPlanKey } from '@shared/config/pricing-regions';
@@ -550,11 +553,13 @@ describe('POST /api/subscription/change', () => {
         headers: {
           authorization: 'Bearer test_token',
           'content-type': 'application/json',
-          'x-retention-idempotency-key': 'retention:user:sub:hobby',
         },
         body: JSON.stringify({ targetPriceId: 'price_hobby' }),
       });
-    const responses = await Promise.all([POST(makeRequest()), POST(makeRequest())]);
+    const responses = await Promise.all([
+      postRetentionSubscriptionChange(makeRequest(), 'retention:user:sub:hobby'),
+      postRetentionSubscriptionChange(makeRequest(), 'retention:user:sub:hobby'),
+    ]);
     expect(responses.map(response => response.status)).toEqual([200, 200]);
     expect(stripe.subscriptionSchedules.create).toHaveBeenCalledTimes(2);
     for (const call of vi.mocked(stripe.subscriptionSchedules.create).mock.calls) {
@@ -627,16 +632,16 @@ describe('POST /api/subscription/change', () => {
         };
       throw new Error(`Unexpected table in test: ${table}`);
     });
-    const response = await POST(
+    const response = await postRetentionSubscriptionChange(
       new NextRequest('http://localhost/api/subscription/change', {
         method: 'POST',
         headers: {
           authorization: 'Bearer test_token',
           'content-type': 'application/json',
-          'x-retention-idempotency-key': 'retention:user:sub:hobby',
         },
         body: JSON.stringify({ targetPriceId: 'price_hobby' }),
-      })
+      }),
+      'retention:user:sub:hobby'
     );
     expect(response.status).toBe(500);
     expect(stripe.subscriptionSchedules.release).toHaveBeenCalledWith('sub_sched_cleanup');

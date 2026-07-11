@@ -15,6 +15,21 @@ const subscriptionChangeSchema = z.object({
 type ISubscriptionChangeRequest = z.infer<typeof subscriptionChangeSchema>;
 
 export async function POST(request: NextRequest) {
+  return handleSubscriptionChange(request);
+}
+
+/** Internal-only entry point for the retention flow's Stripe idempotency key. */
+export async function postRetentionSubscriptionChange(
+  request: NextRequest,
+  retentionIdempotencyKey: string
+) {
+  return handleSubscriptionChange(request, retentionIdempotencyKey);
+}
+
+async function handleSubscriptionChange(
+  request: NextRequest,
+  internalRetentionIdempotencyKey?: string
+) {
   try {
     // 1. Authenticate user
     const authHeader = request.headers.get('authorization');
@@ -187,6 +202,7 @@ export async function POST(request: NextRequest) {
     // Get current plan metadata for logging using unified resolver
     let currentPlan = null;
     let resolvedCurrent = null;
+    let currentPlanCredits = 0;
 
     if (currentSubscription.price_id) {
       try {
@@ -208,6 +224,11 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    currentPlanCredits =
+      (resolvedCurrent?.type === 'plan' ? resolvedCurrent.credits : undefined) ??
+      currentPlan?.creditsPerMonth ??
+      0;
+
     if ((!currentPlan || resolvedCurrent?.type !== 'plan') && profile.subscription_tier) {
       const canonicalCurrentPriceId = getBasePriceIdByPlanKey(profile.subscription_tier);
 
@@ -215,6 +236,7 @@ export async function POST(request: NextRequest) {
         const existingPriceId = currentSubscription.price_id;
         currentPlan = getPlanForPriceId(canonicalCurrentPriceId);
         currentSubscription.price_id = canonicalCurrentPriceId;
+        currentPlanCredits = currentPlan?.creditsPerMonth ?? 0;
 
         const { error: canonicalizeError } = await supabaseAdmin
           .from('subscriptions')
@@ -267,7 +289,7 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
     });
 
-    const retentionIdempotencyKey = request.headers.get('x-retention-idempotency-key');
+    const retentionIdempotencyKey = internalRetentionIdempotencyKey;
     let retentionScheduleIdForCleanup: string | null = null;
     let retentionScheduleCommitted = false;
 
@@ -346,19 +368,27 @@ export async function POST(request: NextRequest) {
         currentSubscription.price_id = latestPriceId;
       }
 
-      // Check if this is a downgrade using subscription_tier (more reliable than price_id)
-      const tierCreditsMap: Record<string, number> = {
-        starter: 100,
-        hobby: 200,
-        pro: 1000,
-        business: 5000,
-      };
-      const currentTierCredits = tierCreditsMap[profile.subscription_tier || ''] || 0;
-      const isDowngradeChange = currentTierCredits > targetPlan.creditsPerMonth;
+      // Use the freshly observed Stripe price for downgrade classification. The
+      // profile tier can lag behind a portal change or a webhook.
+      try {
+        const latestResolved = latestPriceId ? assertKnownPriceId(latestPriceId) : null;
+        const latestPlan = latestPriceId ? getPlanForPriceId(latestPriceId) : null;
+        if (!currentPlan && latestPlan) currentPlan = latestPlan;
+        currentPlanCredits =
+          (latestResolved?.type === 'plan' ? latestResolved.credits : undefined) ??
+          latestPlan?.creditsPerMonth ??
+          currentPlanCredits;
+      } catch (error) {
+        console.warn('[PLAN_CHANGE] Unable to resolve latest Stripe price for classification', {
+          priceId: latestPriceId,
+          error: error instanceof Error ? error.message : error,
+        });
+      }
+      const isDowngradeChange = currentPlanCredits > targetPlan.creditsPerMonth;
 
       console.log('[PLAN_CHANGE] Downgrade check:', {
-        currentTier: profile.subscription_tier,
-        currentTierCredits,
+        currentTier: currentPlan?.key ?? resolvedCurrent?.key ?? profile.subscription_tier,
+        currentTierCredits: currentPlanCredits,
         targetPlan: targetPlan.name,
         targetCredits: targetPlan.creditsPerMonth,
         isDowngrade: isDowngradeChange,
@@ -677,7 +707,7 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const previousTierCredits = currentPlan?.creditsPerMonth ?? currentTierCredits;
+      const previousTierCredits = currentPlanCredits;
 
       if (previousTierCredits > 0 && targetPlan.creditsPerMonth > previousTierCredits) {
         const currentBalance =

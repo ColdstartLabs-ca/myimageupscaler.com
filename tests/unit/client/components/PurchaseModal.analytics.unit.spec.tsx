@@ -10,12 +10,14 @@ const {
   mockSetTrackingContext,
   mockUseExperimentArm,
   mockCheckoutModal,
+  mockGetSession,
 } = vi.hoisted(() => ({
   mockTrack: vi.fn(),
   mockGetTrackingContext: vi.fn(),
   mockSetTrackingContext: vi.fn(),
   mockUseExperimentArm: vi.fn(),
   mockCheckoutModal: vi.fn(() => null),
+  mockGetSession: vi.fn(),
 }));
 
 const creditPacks: ICreditPack[] = [
@@ -116,7 +118,12 @@ vi.mock('@client/hooks/useCurrentPlan', () => ({
 vi.mock('@client/store/userStore', () => ({
   useUserStore: () => ({
     isAuthenticated: true,
+    user: { id: 'user-1' },
   }),
+}));
+
+vi.mock('@server/supabase/supabaseClient', () => ({
+  supabase: { auth: { getSession: mockGetSession } },
 }));
 
 vi.mock('@client/store/modalStore', () => ({
@@ -170,6 +177,16 @@ vi.mock('lucide-react', () => ({
 describe('PurchaseModal analytics', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockGetSession.mockResolvedValue({
+      data: { session: { access_token: 'test-token' } },
+    });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ autoTopUpEligible: true }),
+      })
+    );
     mockGetTrackingContext.mockReturnValue(null);
     mockUseExperimentArm.mockReturnValue({
       assignment: {
@@ -186,6 +203,25 @@ describe('PurchaseModal analytics', () => {
       isLoading: false,
       isFallback: false,
     });
+  });
+
+  test('does not show auto top-up for an ineligible user', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ autoTopUpEligible: false }),
+    } as Response);
+
+    render(
+      <PurchaseModal
+        isOpen={true}
+        onClose={vi.fn()}
+        onPurchaseComplete={vi.fn()}
+        trigger="model_gate"
+      />
+    );
+
+    await waitFor(() => expect(screen.getByRole('button', { name: /buy 50 credits/i })).toBeVisible());
+    expect(screen.queryByRole('checkbox', { name: /automatically buy/i })).not.toBeInTheDocument();
   });
 
   test('tracks purchase_modal_opened with initial small credit-pack selection for model gates', async () => {

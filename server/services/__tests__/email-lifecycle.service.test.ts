@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { EmailLifecycleService } from '@server/services/email-lifecycle.service';
+import { EmailProviderSendError } from '@server/services/email-providers/base-email-provider-adapter';
 
 const queueInserts: Record<string, unknown>[] = [];
 const eventInserts: Record<string, unknown>[] = [];
@@ -14,6 +15,8 @@ let preferences: Record<string, boolean> = {
 let recentMarketingRows: Array<{ id: string }> = [];
 let dueQueueRows: Array<Record<string, unknown>> = [];
 let emailLogRows: Array<Record<string, unknown>> = [];
+let emailLogError: { message: string } | null = null;
+const queueUpdates: Record<string, unknown>[] = [];
 
 vi.mock('@shared/config/env', () => ({
   serverEnv: {
@@ -54,6 +57,7 @@ function makeSelectChain(table: string, selectColumns?: string) {
           'credit-wall-dismissed-48h',
           'high-usage-free-user',
         ].includes(String(state.key));
+        const isTransactional = String(state.key) === 'payment-success';
         return {
           data: {
             key: state.key,
@@ -69,9 +73,10 @@ function makeSelectChain(table: string, selectColumns?: string) {
                 : isRecovery
                   ? 'checkout-recovery'
                   : 'low-credits',
-            email_type: 'marketing',
-            preference_key:
-              isRecovery || state.key === 'blog-education-face-restore'
+            email_type: isTransactional ? 'transactional' : 'marketing',
+            preference_key: isTransactional
+              ? null
+              : isRecovery || state.key === 'blog-education-face-restore'
                 ? 'marketing_emails'
                 : 'low_credit_alerts',
             enabled: true,
@@ -109,7 +114,13 @@ function makeSelectChain(table: string, selectColumns?: string) {
         return;
       }
       if (table === 'email_logs') {
-        resolve({ data: emailLogRows, error: null });
+        const recentCutoff = Date.now() - 90 * 24 * 60 * 60 * 1000;
+        resolve({
+          data: emailLogRows
+            .filter(row => Date.parse(String(row.sent_at)) >= recentCutoff)
+            .slice(0, 20),
+          error: emailLogError,
+        });
         return;
       }
       resolve({ data: [], error: null });
@@ -128,7 +139,9 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
         }),
       },
     },
-    rpc: vi.fn(async (_name: string, args: { p_limit: number }) => ({
+    rpc: vi.fn(async (name: string, args: { p_limit?: number }) => {
+      if (name === 'claim_email_lifecycle_queue_row') return { data: true, error: null };
+      return {
       data: dueQueueRows
         .map(row => {
           const education = row.campaign_key === 'blog-education-face-restore';
@@ -162,9 +175,10 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
           const rank = { revenue_critical: 1, education: 3 } as const;
           return rank[a.campaign_priority] - rank[b.campaign_priority];
         })
-        .slice(0, args.p_limit),
+        .slice(0, args.p_limit ?? 50),
       error: null,
-    })),
+      };
+    }),
     from: vi.fn((table: string) => ({
       select: vi.fn((columns?: string) => makeSelectChain(table, columns)),
       insert: vi.fn((payload: Record<string, unknown>) => {
@@ -178,7 +192,10 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
           })),
         };
       }),
-      update: vi.fn(() => makeSelectChain(table)),
+      update: vi.fn((payload: Record<string, unknown>) => {
+        if (table === 'email_lifecycle_queue') queueUpdates.push(payload);
+        return makeSelectChain(table);
+      }),
     })),
   },
 }));
@@ -196,6 +213,8 @@ describe('EmailLifecycleService', () => {
     recentMarketingRows = [];
     dueQueueRows = [];
     emailLogRows = [];
+    emailLogError = null;
+    queueUpdates.length = 0;
     sendEmailMock.mockResolvedValue({ success: true, messageId: 'msg_test' });
   });
 
@@ -239,7 +258,7 @@ describe('EmailLifecycleService', () => {
     });
   });
 
-  it('should always suppress complained recipient even after 90 days', async () => {
+  it('does not suppress a recipient for a complaint older than 90 days', async () => {
     emailLogRows = [
       ...Array.from({ length: 101 }, (_, index) => ({
         provider_response: { error: `transient_${index}` },
@@ -260,7 +279,58 @@ describe('EmailLifecycleService', () => {
       templateData: { creditsRemaining: 0 },
     });
 
+    expect(result.queued).toBe(true);
+  });
+
+  it('suppresses a recent complaint but only scans a bounded recent window', async () => {
+    emailLogRows = [
+      {
+        provider_response: { complaint: true },
+        status: 'failed',
+        sent_at: new Date().toISOString(),
+      },
+    ];
+    const result = await new EmailLifecycleService().queueLifecycleEmail({
+      campaignKey: 'low-credits',
+      userId: 'user_123',
+      templateData: { creditsRemaining: 0 },
+    });
     expect(result).toMatchObject({ skipped: true, reason: 'suppressed_email_status' });
+  });
+
+  it('leaves a marketing row pending when the email status lookup fails', async () => {
+    emailLogError = { message: 'database unavailable' };
+    dueQueueRows = [
+      {
+        id: 'queue_status_error',
+        campaign_key: 'low-credits',
+        user_id: 'user_123',
+        recipient_email: 'user@example.com',
+        scheduled_for: new Date(Date.now() - 1000).toISOString(),
+        status: 'pending',
+        template_data: {},
+        metadata: {},
+        created_at: new Date().toISOString(),
+      },
+    ];
+    const result = await new EmailLifecycleService().processDueQueue({ batchSize: 1 });
+    expect(result.failed).toBe(1);
+    expect(sendEmailMock).not.toHaveBeenCalled();
+  });
+
+  it('does not apply bounce suppression to transactional campaigns', async () => {
+    emailLogRows = [
+      {
+        provider_response: { permanent_bounce: true },
+        status: 'failed',
+        sent_at: new Date().toISOString(),
+      },
+    ];
+    const result = await new EmailLifecycleService().queueLifecycleEmail({
+      campaignKey: 'payment-success',
+      userId: 'user_123',
+    });
+    expect(result.queued).toBe(true);
   });
 
   it('queues low credit alert at threshold', async () => {
@@ -432,5 +502,29 @@ describe('EmailLifecycleService', () => {
       event_type: 'suppressed_preference',
       campaign_key: 'credit-wall-dismissed-48h',
     });
+  });
+
+  it('reschedules transient provider failures instead of permanently failing them', async () => {
+    dueQueueRows = [
+      {
+        id: 'queue_transient',
+        campaign_key: 'low-credits',
+        user_id: 'user_123',
+        recipient_email: 'user@example.com',
+        scheduled_for: new Date(Date.now() - 1000).toISOString(),
+        status: 'pending',
+        template_data: {},
+        metadata: {},
+        created_at: new Date().toISOString(),
+      },
+    ];
+    sendEmailMock.mockRejectedValueOnce(
+      new EmailProviderSendError('provider unavailable', 'provider_unavailable', true)
+    );
+    const result = await new EmailLifecycleService().processDueQueue({ batchSize: 1 });
+    expect(result.failed).toBe(1);
+    expect(queueUpdates).toContainEqual(
+      expect.objectContaining({ status: 'pending', reason: expect.stringContaining('transient') })
+    );
   });
 });
