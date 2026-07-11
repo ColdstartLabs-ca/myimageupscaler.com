@@ -1029,7 +1029,7 @@ export class PaymentHandler {
 
     const { data: attempt, error: attemptError } = await supabaseAdmin
       .from('auto_top_up_attempts')
-      .select('amount_cents, currency, status')
+      .select('amount_cents, currency, status, pack_key, credits')
       .eq('id', attemptId)
       .eq('user_id', userId)
       .eq('stripe_payment_intent_id', paymentIntent.id)
@@ -1041,23 +1041,16 @@ export class PaymentHandler {
     )
       throw new Error('Auto top-up amount mismatch');
 
-    const { data: setting } = await supabaseAdmin
-      .from('auto_top_up_settings')
-      .select('stripe_price_id, pack_key')
-      .eq('user_id', userId)
-      .maybeSingle();
-    const pack = setting ? resolvePlanOrPack(setting.stripe_price_id) : null;
     if (
-      !pack ||
-      pack.type !== 'pack' ||
-      pack.key !== paymentIntent.metadata.auto_top_up_pack_key ||
-      !pack.credits
+      !attempt.pack_key ||
+      !attempt.credits ||
+      attempt.pack_key !== paymentIntent.metadata.auto_top_up_pack_key
     )
       throw new Error('Invalid auto top-up pack');
 
     const { data: finalized, error: finalizeError } = await supabaseAdmin.rpc(
       'finalize_auto_top_up_attempt',
-      { p_attempt_id: attemptId, p_payment_intent_id: paymentIntent.id, p_credits: pack.credits }
+      { p_attempt_id: attemptId, p_payment_intent_id: paymentIntent.id, p_credits: attempt.credits }
     );
     if (finalizeError || !finalized) throw new Error('Unable to finalize auto top-up attempt');
     if (attempt.status === 'succeeded') return;
@@ -1076,7 +1069,7 @@ export class PaymentHandler {
               style: 'currency',
               currency: paymentIntent.currency.toUpperCase(),
             }).format(paymentIntent.amount_received / 100),
-            credits: pack.credits,
+            credits: attempt.credits,
           },
         })
         .catch(error => console.error('[AUTO_TOP_UP_EMAIL_FAILED]', error));
@@ -1089,22 +1082,29 @@ export class PaymentHandler {
     const userId = paymentIntent.metadata.auto_top_up_user_id;
     if (!attemptId || !userId) return;
     const reason = paymentIntent.last_payment_error?.decline_code || 'payment_failed';
-    await supabaseAdmin
+    const { data: failedAttempt, error: attemptError } = await supabaseAdmin
       .from('auto_top_up_attempts')
       .update({ status: 'failed', error_class: reason, updated_at: new Date().toISOString() })
       .eq('id', attemptId)
       .eq('user_id', userId)
       .eq('stripe_payment_intent_id', paymentIntent.id)
-      .eq('status', 'payment_pending');
-    const { data: setting } = await supabaseAdmin
+      .eq('status', 'payment_pending')
+      .select('id')
+      .maybeSingle();
+    if (attemptError)
+      throw new Error(`Unable to fail auto top-up attempt: ${attemptError.message}`);
+    if (!failedAttempt) return;
+    const { data: setting, error: settingError } = await supabaseAdmin
       .from('auto_top_up_settings')
       .select('consecutive_failures')
       .eq('user_id', userId)
       .eq('charge_claim_id', attemptId)
       .maybeSingle();
+    if (settingError)
+      throw new Error(`Unable to load auto top-up setting: ${settingError.message}`);
     if (!setting) return;
     const failures = setting.consecutive_failures + 1;
-    await supabaseAdmin
+    const { data: updatedSetting, error: updateError } = await supabaseAdmin
       .from('auto_top_up_settings')
       .update({
         consecutive_failures: failures,
@@ -1115,7 +1115,12 @@ export class PaymentHandler {
         updated_at: new Date().toISOString(),
       })
       .eq('user_id', userId)
-      .eq('charge_claim_id', attemptId);
+      .eq('charge_claim_id', attemptId)
+      .select('user_id')
+      .maybeSingle();
+    if (updateError)
+      throw new Error(`Unable to update auto top-up failure state: ${updateError.message}`);
+    if (!updatedSetting) throw new Error('Auto top-up lease changed during failure convergence');
 
     const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(userId);
     const email = authUser.user?.email;

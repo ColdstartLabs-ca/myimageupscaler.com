@@ -7,6 +7,7 @@ const {
   paymentIntentConfirm,
   paymentIntentCancel,
   paymentIntentRetrieve,
+  sendEmail,
 } = vi.hoisted(() => ({
   fromMock: vi.fn(),
   priceRetrieve: vi.fn(),
@@ -14,10 +15,23 @@ const {
   paymentIntentConfirm: vi.fn(),
   paymentIntentCancel: vi.fn(),
   paymentIntentRetrieve: vi.fn(),
+  sendEmail: vi.fn(),
 }));
 
 vi.mock('@server/supabase/supabaseAdmin', () => ({
-  supabaseAdmin: { from: fromMock },
+  supabaseAdmin: {
+    from: fromMock,
+    auth: {
+      admin: {
+        getUserById: vi
+          .fn()
+          .mockResolvedValue({ data: { user: { email: 'u@example.com' } }, error: null }),
+      },
+    },
+  },
+}));
+vi.mock('@server/services/email.service', () => ({
+  getEmailService: () => ({ send: sendEmail }),
 }));
 vi.mock('@server/stripe', () => ({
   stripe: {
@@ -69,6 +83,7 @@ describe('AutoTopUpService', () => {
     paymentIntentConfirm.mockResolvedValue({ id: 'pi_auto_1', status: 'succeeded' });
     paymentIntentCancel.mockResolvedValue({ id: 'pi_auto_1', status: 'canceled' });
     paymentIntentRetrieve.mockResolvedValue({ id: 'pi_auto_1', status: 'requires_confirmation' });
+    sendEmail.mockResolvedValue({ success: true });
   });
 
   test('matches below-threshold disclosure and accepts only payable Stripe states', () => {
@@ -168,5 +183,73 @@ describe('AutoTopUpService', () => {
       { off_session: true },
       { idempotencyKey: `auto-top-up:user-1:${setting.consent_version}:2026-07-11:confirm` }
     );
+  });
+
+  test('cancels a normally returned nonpayable intent before releasing and notifies the user', async () => {
+    paymentIntentConfirm.mockResolvedValue({ id: 'pi_auto_1', status: 'requires_action' });
+    let attemptInsert: Record<string, unknown> | undefined;
+    fromMock.mockImplementation((table: string) => {
+      if (table === 'auto_top_up_settings') {
+        return {
+          select: vi.fn((columns: string) =>
+            columns.startsWith('user_id,')
+              ? {
+                  eq: vi.fn(() => ({
+                    eq: vi.fn(() => ({
+                      not: vi.fn(() => ({
+                        limit: vi.fn().mockResolvedValue({ data: [setting], error: null }),
+                      })),
+                    })),
+                  })),
+                }
+              : {
+                  eq: vi.fn(() => ({
+                    maybeSingle: vi
+                      .fn()
+                      .mockResolvedValue({ data: { enabled: true, charge_claim_id: 'attempt-1' } }),
+                  })),
+                }
+          ),
+          update: vi.fn(() => {
+            const query = thenable({ error: null });
+            query.maybeSingle = vi
+              .fn()
+              .mockResolvedValue({ data: { user_id: 'user-1' }, error: null });
+            return query;
+          }),
+        };
+      }
+      if (table === 'user_credits')
+        return {
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              maybeSingle: vi.fn().mockResolvedValue({ data: { total_credits_balance: 10 } }),
+            })),
+          })),
+        };
+      if (table === 'auto_top_up_attempts')
+        return {
+          insert: vi.fn((payload: Record<string, unknown>) => {
+            attemptInsert = payload;
+            return {
+              select: vi.fn(() => ({
+                maybeSingle: vi.fn().mockResolvedValue({ data: { id: 'attempt-1' }, error: null }),
+              })),
+            };
+          }),
+          update: vi.fn(() => thenable({ error: null })),
+        };
+      throw new Error(`Unexpected table ${table}`);
+    });
+    const result = await new AutoTopUpService().processEligible(
+      25,
+      new Date('2026-07-11T12:00:00Z')
+    );
+    expect(attemptInsert).toEqual(expect.objectContaining({ pack_key: 'medium', credits: 200 }));
+    expect(paymentIntentCancel).toHaveBeenCalledWith('pi_auto_1');
+    expect(sendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({ template: 'auto-top-up-failure' })
+    );
+    expect(result.failed).toBe(1);
   });
 });

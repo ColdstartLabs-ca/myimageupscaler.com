@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { stripe } from '@server/stripe';
+import { getEmailService } from '@server/services/email.service';
 import { assertKnownPriceId } from '@shared/config/subscription.utils';
 
 interface IAutoTopUpSetting {
@@ -146,6 +147,8 @@ export class AutoTopUpService {
           status: 'claimed',
           amount_cents: resolved.priceInCents,
           currency: resolved.currency,
+          pack_key: resolved.key,
+          credits: resolved.credits,
         })
         .select('id')
         .maybeSingle();
@@ -258,6 +261,12 @@ export class AutoTopUpService {
           }
         }
         if (!isAutoTopUpPayableStatus(confirmed.status)) {
+          const canceled = await stripe.paymentIntents.cancel(paymentIntent.id);
+          if (canceled.status !== 'canceled') {
+            throw new AmbiguousAutoTopUpConfirmationError(
+              `Unable to prove PaymentIntent cancellation: ${canceled.status}`
+            );
+          }
           throw new Error(`payment_intent_${confirmed.status}`);
         }
         result.paymentPending++;
@@ -272,6 +281,7 @@ export class AutoTopUpService {
         if (failureError)
           throw new Error(`Unable to persist auto top-up failure: ${failureError.message}`);
         await this.pauseSetting(setting, errorClass, attempt.id);
+        await this.notifyFailure(setting.user_id, setting.consecutive_failures + 1);
         result.failed++;
       }
     }
@@ -296,6 +306,19 @@ export class AutoTopUpService {
       .eq('user_id', setting.user_id)
       .eq('consent_version', setting.consent_version);
     if (error) throw new Error(`Unable to update auto top-up failure state: ${error.message}`);
+  }
+
+  private async notifyFailure(userId: string, failures: number): Promise<void> {
+    const { data, error } = await supabaseAdmin.auth.admin.getUserById(userId);
+    if (error) throw new Error(`Unable to load auto top-up email recipient: ${error.message}`);
+    if (!data.user?.email) return;
+    await getEmailService().send({
+      to: data.user.email,
+      userId,
+      type: 'transactional',
+      template: 'auto-top-up-failure',
+      data: { paused: failures >= 3 },
+    });
   }
 }
 
