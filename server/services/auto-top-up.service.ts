@@ -24,6 +24,14 @@ function dailyAttemptKey(userId: string, consentVersion: string, now: Date): str
   return `auto-top-up:${userId}:${consentVersion}:${now.toISOString().slice(0, 10)}`;
 }
 
+export function isAutoTopUpEligibleBalance(balance: number, threshold: number): boolean {
+  return balance < threshold;
+}
+
+export function isAutoTopUpPayableStatus(status: string): boolean {
+  return status === 'succeeded' || status === 'processing';
+}
+
 export class AutoTopUpService {
   async processEligible(limit = 25, now = new Date()): Promise<IAutoTopUpRunResult> {
     const { data, error } = await supabaseAdmin
@@ -52,7 +60,7 @@ export class AutoTopUpService {
         .eq('user_id', setting.user_id)
         .maybeSingle();
       const startingBalance = Number(balance?.total_credits_balance ?? 0);
-      if (startingBalance > setting.threshold_credits) continue;
+      if (!isAutoTopUpEligibleBalance(startingBalance, setting.threshold_credits)) continue;
 
       const resolved = assertKnownPriceId(setting.stripe_price_id);
       if (
@@ -78,19 +86,25 @@ export class AutoTopUpService {
         })
         .select('id')
         .maybeSingle();
-      if (claimError || !attempt) continue;
+      if (claimError) {
+        if (claimError.code === '23505') continue;
+        throw new Error(`Unable to claim auto top-up attempt: ${claimError.message}`);
+      }
+      if (!attempt) continue;
       result.claimed++;
 
-      const { data: current } = await supabaseAdmin
+      const { data: lease, error: leaseError } = await supabaseAdmin
         .from('auto_top_up_settings')
-        .select('enabled, stripe_payment_method_id, consent_version')
+        .update({ charge_claim_id: attempt.id, charge_claimed_at: now.toISOString() })
         .eq('user_id', setting.user_id)
+        .eq('enabled', true)
+        .eq('consent_version', setting.consent_version)
+        .eq('stripe_payment_method_id', setting.stripe_payment_method_id)
+        .is('charge_claim_id', null)
+        .select('user_id')
         .maybeSingle();
-      if (
-        !current?.enabled ||
-        current.consent_version !== setting.consent_version ||
-        current.stripe_payment_method_id !== setting.stripe_payment_method_id
-      ) {
+      if (leaseError) throw new Error(`Unable to lease auto top-up setting: ${leaseError.message}`);
+      if (!lease) {
         await supabaseAdmin
           .from('auto_top_up_attempts')
           .update({ status: 'cancelled', error_class: 'setting_changed' })
@@ -110,7 +124,7 @@ export class AutoTopUpService {
             customer: setting.stripe_customer_id,
             payment_method: setting.stripe_payment_method_id,
             off_session: true,
-            confirm: true,
+            confirm: false,
             metadata: {
               auto_top_up: 'true',
               auto_top_up_attempt_id: attempt.id,
@@ -121,7 +135,7 @@ export class AutoTopUpService {
           },
           { idempotencyKey }
         );
-        await supabaseAdmin
+        const { error: persistError } = await supabaseAdmin
           .from('auto_top_up_attempts')
           .update({
             status: 'payment_pending',
@@ -130,33 +144,79 @@ export class AutoTopUpService {
             currency: price.currency,
           })
           .eq('id', attempt.id);
+        if (persistError) {
+          await stripe.paymentIntents.cancel(paymentIntent.id).catch(() => undefined);
+          throw new Error(`payment_intent_persistence_failed:${persistError.message}`);
+        }
+
+        const { data: current } = await supabaseAdmin
+          .from('auto_top_up_settings')
+          .select('enabled, charge_claim_id')
+          .eq('user_id', setting.user_id)
+          .maybeSingle();
+        if (!current?.enabled || current.charge_claim_id !== attempt.id) {
+          await stripe.paymentIntents.cancel(paymentIntent.id);
+          await supabaseAdmin
+            .from('auto_top_up_attempts')
+            .update({ status: 'cancelled', error_class: 'disabled_before_confirmation' })
+            .eq('id', attempt.id);
+          continue;
+        }
+
+        const confirmed = await stripe.paymentIntents.confirm(
+          paymentIntent.id,
+          { off_session: true },
+          { idempotencyKey: `${idempotencyKey}:confirm` }
+        );
+        if (!isAutoTopUpPayableStatus(confirmed.status)) {
+          throw new Error(`payment_intent_${confirmed.status}`);
+        }
+        const { error: releaseError } = await supabaseAdmin
+          .from('auto_top_up_settings')
+          .update({ charge_claim_id: null, charge_claimed_at: null })
+          .eq('user_id', setting.user_id)
+          .eq('charge_claim_id', attempt.id);
+        if (releaseError) {
+          console.error('[AUTO_TOP_UP] Charge lease release failed', {
+            attemptId: attempt.id,
+            error: releaseError.message,
+          });
+        }
         result.paymentPending++;
       } catch (paymentError) {
         const errorClass =
-          paymentError instanceof Error ? paymentError.name : 'payment_intent_failed';
-        await supabaseAdmin
+          paymentError instanceof Error ? paymentError.message : 'payment_intent_failed';
+        const { error: failureError } = await supabaseAdmin
           .from('auto_top_up_attempts')
           .update({ status: 'failed', error_class: errorClass })
           .eq('id', attempt.id);
-        await this.pauseSetting(setting, errorClass);
+        if (failureError)
+          throw new Error(`Unable to persist auto top-up failure: ${failureError.message}`);
+        await this.pauseSetting(setting, errorClass, attempt.id);
         result.failed++;
       }
     }
     return result;
   }
 
-  private async pauseSetting(setting: IAutoTopUpSetting, reason: string): Promise<void> {
+  private async pauseSetting(
+    setting: IAutoTopUpSetting,
+    reason: string,
+    claimId?: string
+  ): Promise<void> {
     const failures = setting.consecutive_failures + 1;
-    await supabaseAdmin
+    const { error } = await supabaseAdmin
       .from('auto_top_up_settings')
       .update({
         consecutive_failures: failures,
         enabled: failures < 3,
         failure_reason: reason,
+        ...(claimId ? { charge_claim_id: null, charge_claimed_at: null } : {}),
         updated_at: new Date().toISOString(),
       })
       .eq('user_id', setting.user_id)
       .eq('consent_version', setting.consent_version);
+    if (error) throw new Error(`Unable to update auto top-up failure state: ${error.message}`);
   }
 }
 

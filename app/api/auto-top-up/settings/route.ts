@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
+import { stripe } from '@server/stripe';
 
 async function authenticate(request: NextRequest) {
   const token = request.headers.get('authorization')?.replace('Bearer ', '');
@@ -35,11 +36,39 @@ export async function PUT(request: NextRequest) {
       enabled: false,
       pending_enabled: false,
       failure_reason: 'disabled_by_user',
+      charge_claim_id: null,
+      charge_claimed_at: null,
       updated_at: new Date().toISOString(),
     })
     .eq('user_id', user.id)
     .select('enabled, pending_enabled')
     .maybeSingle();
   if (error) return NextResponse.json({ error: 'Unable to disable auto top-up' }, { status: 500 });
+
+  const { data: attempt } = await supabaseAdmin
+    .from('auto_top_up_attempts')
+    .select('id, stripe_payment_intent_id')
+    .eq('user_id', user.id)
+    .in('status', ['claimed', 'payment_pending'])
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (attempt?.stripe_payment_intent_id) {
+    try {
+      await stripe.paymentIntents.cancel(attempt.stripe_payment_intent_id);
+    } catch (cancelError) {
+      console.error('[AUTO_TOP_UP_DISABLE] PaymentIntent cancellation failed', cancelError);
+      return NextResponse.json(
+        { error: 'Auto top-up disabled; payment cancellation needs reconciliation' },
+        { status: 503 }
+      );
+    }
+  }
+  if (attempt?.id) {
+    await supabaseAdmin
+      .from('auto_top_up_attempts')
+      .update({ status: 'cancelled', error_class: 'disabled_by_user' })
+      .eq('id', attempt.id);
+  }
   return NextResponse.json({ data: data ?? { enabled: false, pending_enabled: false } });
 }

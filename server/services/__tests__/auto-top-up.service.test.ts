@@ -1,10 +1,13 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-const { fromMock, priceRetrieve, paymentIntentCreate } = vi.hoisted(() => ({
-  fromMock: vi.fn(),
-  priceRetrieve: vi.fn(),
-  paymentIntentCreate: vi.fn(),
-}));
+const { fromMock, priceRetrieve, paymentIntentCreate, paymentIntentConfirm, paymentIntentCancel } =
+  vi.hoisted(() => ({
+    fromMock: vi.fn(),
+    priceRetrieve: vi.fn(),
+    paymentIntentCreate: vi.fn(),
+    paymentIntentConfirm: vi.fn(),
+    paymentIntentCancel: vi.fn(),
+  }));
 
 vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: { from: fromMock },
@@ -12,16 +15,24 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
 vi.mock('@server/stripe', () => ({
   stripe: {
     prices: { retrieve: priceRetrieve },
-    paymentIntents: { create: paymentIntentCreate },
+    paymentIntents: {
+      create: paymentIntentCreate,
+      confirm: paymentIntentConfirm,
+      cancel: paymentIntentCancel,
+    },
   },
 }));
 
-import { AutoTopUpService } from '../auto-top-up.service';
+import {
+  AutoTopUpService,
+  isAutoTopUpEligibleBalance,
+  isAutoTopUpPayableStatus,
+} from '../auto-top-up.service';
 import { getCreditPackByKey } from '@shared/config/subscription.utils';
 
 function thenable(result: unknown) {
   const query: Record<string, unknown> = {};
-  for (const method of ['eq', 'not', 'select', 'update']) {
+  for (const method of ['eq', 'is', 'not', 'select', 'update']) {
     query[method] = vi.fn(() => query);
   }
   query.then = (resolve: (value: unknown) => void) => Promise.resolve(result).then(resolve);
@@ -45,6 +56,18 @@ describe('AutoTopUpService', () => {
     vi.clearAllMocks();
     priceRetrieve.mockResolvedValue({ type: 'one_time', unit_amount: 1499, currency: 'usd' });
     paymentIntentCreate.mockResolvedValue({ id: 'pi_auto_1' });
+    paymentIntentConfirm.mockResolvedValue({ id: 'pi_auto_1', status: 'succeeded' });
+    paymentIntentCancel.mockResolvedValue({ id: 'pi_auto_1', status: 'canceled' });
+  });
+
+  test('matches below-threshold disclosure and accepts only payable Stripe states', () => {
+    expect(isAutoTopUpEligibleBalance(24, 25)).toBe(true);
+    expect(isAutoTopUpEligibleBalance(25, 25)).toBe(false);
+    expect(isAutoTopUpPayableStatus('succeeded')).toBe(true);
+    expect(isAutoTopUpPayableStatus('processing')).toBe(true);
+    for (const status of ['requires_action', 'requires_payment_method', 'canceled']) {
+      expect(isAutoTopUpPayableStatus(status)).toBe(false);
+    }
   });
 
   test('concurrent scans produce at most one Stripe charge with deterministic idempotency', async () => {
@@ -69,14 +92,20 @@ describe('AutoTopUpService', () => {
                 maybeSingle: vi.fn().mockResolvedValue({
                   data: {
                     enabled: true,
-                    stripe_payment_method_id: 'pm_1',
-                    consent_version: setting.consent_version,
+                    charge_claim_id: 'attempt-1',
                   },
                 }),
               })),
             };
           }),
-          update: vi.fn(() => thenable({ error: null })),
+          update: vi.fn(payload => {
+            const query = thenable({ error: null });
+            query.maybeSingle = vi.fn().mockResolvedValue({
+              data: payload.charge_claim_id ? { user_id: 'user-1' } : null,
+              error: null,
+            });
+            return query;
+          }),
         };
       }
       if (table === 'user_credits') {
@@ -111,10 +140,15 @@ describe('AutoTopUpService', () => {
     await Promise.all([service.processEligible(25, now), service.processEligible(25, now)]);
     expect(paymentIntentCreate).toHaveBeenCalledTimes(1);
     expect(paymentIntentCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ off_session: true, confirm: true, amount: 1499, currency: 'usd' }),
+      expect.objectContaining({ off_session: true, confirm: false, amount: 1499, currency: 'usd' }),
       {
         idempotencyKey: `auto-top-up:user-1:${setting.consent_version}:2026-07-11`,
       }
+    );
+    expect(paymentIntentConfirm).toHaveBeenCalledWith(
+      'pi_auto_1',
+      { off_session: true },
+      { idempotencyKey: `auto-top-up:user-1:${setting.consent_version}:2026-07-11:confirm` }
     );
   });
 });

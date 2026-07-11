@@ -178,6 +178,14 @@ describe('POST /api/checkout price alignment', () => {
           })),
         } as never;
       }
+      if (table === 'auto_top_up_attempts') {
+        const query: Record<string, ReturnType<typeof vi.fn>> = {};
+        for (const method of ['eq', 'in', 'order', 'limit', 'select', 'update']) {
+          query[method] = vi.fn(() => query);
+        }
+        query.maybeSingle = vi.fn().mockResolvedValue({ data: null, error: null });
+        return query as never;
+      }
 
       throw new Error(`Unexpected supabase table in test: ${table}`);
     });
