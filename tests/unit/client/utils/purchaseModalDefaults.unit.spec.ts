@@ -99,6 +99,18 @@ describe('getPurchaseModalInitialSelection', () => {
     expect(selection.lockToCredits).toBe(false);
   });
 
+  test('low-balance repeat purchase defaults to the buyer last pack while retaining all packs', () => {
+    const selection = getPurchaseModalInitialSelection({
+      trigger: 'out_of_credits',
+      outOfCredits: true,
+      creditPacks,
+      subscriptionPlans,
+      repeatPackKey: 'medium',
+    });
+    expect(selection.selectedPack?.key).toBe('medium');
+    expect(creditPacks.map(pack => pack.key)).toEqual(['medium', 'small']);
+  });
+
   test('should default insufficient_credits to the starter credit pack', () => {
     const selection = getPurchaseModalInitialSelection({
       trigger: 'insufficient_credits',

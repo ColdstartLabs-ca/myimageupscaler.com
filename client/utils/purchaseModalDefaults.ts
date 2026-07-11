@@ -1,6 +1,19 @@
 import type { ICreditPack, IPlanConfig } from '@shared/config/subscription.types';
 
 export type TPurchaseMode = 'credits' | 'subscribe';
+const LAST_PURCHASED_PACK_KEY = 'miu_last_purchased_pack';
+
+export function rememberPurchasedPack(packKey: string): void {
+  if (typeof localStorage !== 'undefined' && ['small', 'medium', 'large'].includes(packKey)) {
+    localStorage.setItem(LAST_PURCHASED_PACK_KEY, packKey);
+  }
+}
+
+export function getRememberedPurchasedPack(): string | null {
+  if (typeof localStorage === 'undefined') return null;
+  const value = localStorage.getItem(LAST_PURCHASED_PACK_KEY);
+  return value && ['small', 'medium', 'large'].includes(value) ? value : null;
+}
 
 export interface IPurchaseModalInitialSelection {
   purchaseMode: TPurchaseMode;
@@ -36,14 +49,28 @@ export function getPurchaseModalInitialSelection({
   creditPacks,
   subscriptionPlans,
   banditConfig,
+  repeatPackKey,
 }: {
   trigger: string;
   outOfCredits: boolean;
   creditPacks: ICreditPack[];
   subscriptionPlans: IPlanConfig[];
   banditConfig?: IPurchaseModalBanditConfig;
+  repeatPackKey?: string | null;
 }): IPurchaseModalInitialSelection {
   const starterPack = getStarterPack(creditPacks);
+
+  if (outOfCredits || trigger === 'out_of_credits' || trigger === 'insufficient_credits') {
+    const repeatPack = creditPacks.find(pack => pack.key === repeatPackKey);
+    if (repeatPack) {
+      return {
+        purchaseMode: 'credits',
+        selectedPack: repeatPack,
+        selectedPlan: null,
+        lockToCredits: false,
+      };
+    }
+  }
 
   if (banditConfig?.defaultType === 'credit_pack' || banditConfig?.defaultKey) {
     const selectedPack =

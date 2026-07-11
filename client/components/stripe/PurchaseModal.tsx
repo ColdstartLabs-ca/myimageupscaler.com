@@ -18,7 +18,11 @@ import {
   getCheckoutTrackingContext,
   setCheckoutTrackingContext,
 } from '@client/utils/checkoutTrackingContext';
-import { getPurchaseModalInitialSelection } from '@client/utils/purchaseModalDefaults';
+import {
+  getPurchaseModalInitialSelection,
+  getRememberedPurchasedPack,
+  rememberPurchasedPack,
+} from '@client/utils/purchaseModalDefaults';
 import type { IPurchaseModalBanditConfig } from '@client/utils/purchaseModalDefaults';
 import { getEnabledCreditPacks, getEnabledPlans } from '@shared/config/subscription.utils';
 import type { IExperimentAssignment } from '@shared/types/experiments.types';
@@ -208,6 +212,7 @@ export function PurchaseModal({
         creditPacks,
         subscriptionPlans,
         banditConfig: purchaseBanditConfig,
+        repeatPackKey: getRememberedPurchasedPack(),
       });
       setSelectedPack(initialSelection.selectedPack);
       setSelectedPlan(initialSelection.selectedPlan);
@@ -372,11 +377,12 @@ export function PurchaseModal({
   }, []);
 
   const handleCheckoutSuccess = useCallback(() => {
+    if (selectedPack) rememberPurchasedPack(selectedPack.key);
     setShowCheckoutModal(false);
     setCheckoutPriceId(null);
     onPurchaseComplete();
     onClose();
-  }, [onPurchaseComplete, onClose]);
+  }, [onPurchaseComplete, onClose, selectedPack]);
 
   const handlePlanChangeComplete = useCallback(() => {
     setIsPlanChangeModalOpen(false);
