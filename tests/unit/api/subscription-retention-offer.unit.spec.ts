@@ -354,6 +354,13 @@ describe('subscription retention durable measurement', () => {
     expect(measurementMigration).toContain(
       'ALTER TABLE public.dispute_events ENABLE ROW LEVEL SECURITY'
     );
+    for (const triggerFunction of [
+      'capture_subscription_retention_state',
+      'block_stale_retention_email',
+      'capture_subscription_retention_chargeback',
+    ]) {
+      expect(measurementMigration).toContain(`REVOKE ALL ON FUNCTION public.${triggerFunction}()`);
+    }
     expect(measurementMigration).toContain('record_subscription_retention_refund');
     expect(measurementMigration).toContain('amount_cents = GREATEST(');
   });

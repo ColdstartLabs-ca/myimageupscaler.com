@@ -133,6 +133,8 @@ BEGIN
   RETURN NEW;
 END;
 $$;
+REVOKE ALL ON FUNCTION public.capture_subscription_retention_state()
+  FROM PUBLIC, anon, authenticated;
 CREATE TRIGGER capture_subscription_retention_state
 AFTER UPDATE OF cancel_at_period_end, status ON public.subscriptions
 FOR EACH ROW EXECUTE FUNCTION public.capture_subscription_retention_state();
@@ -150,6 +152,8 @@ BEGIN
   RETURN NEW;
 END;
 $$;
+REVOKE ALL ON FUNCTION public.block_stale_retention_email()
+  FROM PUBLIC, anon, authenticated;
 CREATE TRIGGER block_stale_retention_email
 BEFORE INSERT OR UPDATE OF status ON public.email_lifecycle_queue
 FOR EACH ROW EXECUTE FUNCTION public.block_stale_retention_email();
@@ -175,6 +179,8 @@ BEGIN
   RETURN NEW;
 END;
 $$;
+REVOKE ALL ON FUNCTION public.capture_subscription_retention_chargeback()
+  FROM PUBLIC, anon, authenticated;
 CREATE TRIGGER capture_subscription_retention_chargeback
 AFTER INSERT ON public.dispute_events
 FOR EACH ROW EXECUTE FUNCTION public.capture_subscription_retention_chargeback();
