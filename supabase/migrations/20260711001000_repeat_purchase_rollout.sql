@@ -1,9 +1,9 @@
 CREATE TABLE public.repeat_purchase_rollout (
   id boolean PRIMARY KEY DEFAULT true CHECK (id),
   auto_top_up_enabled boolean NOT NULL DEFAULT true,
-  auto_top_up_percent integer NOT NULL DEFAULT 5 CHECK (auto_top_up_percent BETWEEN 0 AND 100),
+  auto_top_up_percent integer NOT NULL DEFAULT 0 CHECK (auto_top_up_percent BETWEEN 0 AND 100),
   repeat_purchase_enabled boolean NOT NULL DEFAULT true,
-  repeat_purchase_percent integer NOT NULL DEFAULT 5 CHECK (repeat_purchase_percent BETWEEN 0 AND 100),
+  repeat_purchase_percent integer NOT NULL DEFAULT 0 CHECK (repeat_purchase_percent BETWEEN 0 AND 100),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 
