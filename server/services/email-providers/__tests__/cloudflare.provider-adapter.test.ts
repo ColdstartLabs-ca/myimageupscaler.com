@@ -126,7 +126,8 @@ describe('CloudflareEmailProviderAdapter', () => {
     expect(payload.html).toContain('Rendered body');
     expect(payload.text).toContain('Rendered body');
     expect(result.provider).toBe(EmailProvider.CLOUDFLARE);
-    expect(result.messageId).toBe('cloudflare-delivered-user@example.com');
+    expect(result.messageId).toMatch(/^cloudflare-delivered-[0-9a-f-]+$/);
+    expect(result.messageId).not.toContain('user@example.com');
   });
 
   test('throws on cloudflare api error', async () => {

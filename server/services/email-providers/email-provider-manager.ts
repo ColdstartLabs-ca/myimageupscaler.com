@@ -73,6 +73,7 @@ export class EmailProviderManager implements IEmailProviderManager {
     let lastError: EmailProviderSendError | null = null;
     const attemptedProviders: string[] = [];
     const unavailableProviders: string[] = [];
+    const fallbackReasons: string[] = [];
 
     // Try providers in priority order
     const sortedProviders = Array.from(this.providers.values())
@@ -89,17 +90,24 @@ export class EmailProviderManager implements IEmailProviderManager {
             'provider_unavailable',
             true
           );
+          fallbackReasons.push('provider_unavailable');
           continue;
         }
 
         attemptedProviders.push(adapter.getProviderName());
         const result = await adapter.send(params);
-        return result;
+        return {
+          ...result,
+          attemptedProviders,
+          unavailableProviders,
+          fallbackReasons,
+        };
       } catch (error) {
         if (error instanceof EmailTemplateError) {
           throw error;
         }
         lastError = normalizeEmailProviderError(error);
+        fallbackReasons.push(lastError.classification);
         console.warn('Email provider attempt failed', {
           provider: adapter.getProviderName(),
           classification: lastError.classification,

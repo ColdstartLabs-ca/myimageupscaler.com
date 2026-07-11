@@ -184,6 +184,9 @@ export interface ISendEmailResult {
   messageId?: string;
   provider?: EmailProvider;
   error?: string;
+  attemptedProviders?: string[];
+  unavailableProviders?: string[];
+  fallbackReasons?: string[];
 }
 
 /**

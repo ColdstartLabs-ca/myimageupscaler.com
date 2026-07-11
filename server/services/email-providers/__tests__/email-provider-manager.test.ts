@@ -183,7 +183,7 @@ describe('EmailProviderManager', () => {
       expect(config?.provider).toBe(EmailProvider.BREVO);
       expect(config?.priority).toBe(2);
       expect(config?.enabled).toBe(true);
-      expect(config?.freeTier?.monthlyCredits).toBe(9000);
+      expect(config?.freeTier).toBeUndefined();
       expect(config?.fallbackProvider).toBe(EmailProvider.RESEND);
     });
 
@@ -194,7 +194,7 @@ describe('EmailProviderManager', () => {
       expect(config?.provider).toBe(EmailProvider.RESEND);
       expect(config?.priority).toBe(3);
       expect(config?.enabled).toBe(true);
-      expect(config?.freeTier?.monthlyCredits).toBe(3000);
+      expect(config?.freeTier).toBeUndefined();
       expect(config?.fallbackProvider).toBeUndefined();
     });
 
@@ -240,6 +240,10 @@ describe('EmailProviderManager', () => {
       });
 
       expect(result.provider).toBe(EmailProvider.BREVO);
+      expect(result).toMatchObject({
+        attemptedProviders: [EmailProvider.CLOUDFLARE, EmailProvider.BREVO],
+        fallbackReasons: ['provider_unavailable'],
+      });
       expect(brevoSend).toHaveBeenCalledOnce();
     });
 

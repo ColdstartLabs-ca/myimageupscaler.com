@@ -2,7 +2,7 @@
  * Email Providers
  *
  * Adapter pattern implementation for email providers with credit tracking
- * and automatic provider switching based on free tier limits.
+ * and failure-aware switching to resilience providers.
  */
 
 export { BaseEmailProviderAdapter, EmailError } from './base-email-provider-adapter';

@@ -29,6 +29,10 @@ let mockServerEnv = {
 };
 
 vi.mock('@shared/config/env', () => ({
+  clientEnv: {
+    SUPABASE_URL: 'https://example.supabase.co',
+    SUPABASE_ANON_KEY: 'test-anon-key',
+  },
   serverEnv: new Proxy({} as Record<string, string>, {
     get(_, prop) {
       return mockServerEnv[prop as keyof typeof mockServerEnv];
@@ -145,6 +149,7 @@ describe('EmailProviderManager', () => {
   let EmailProviderManager: (typeof import('@server/services/email-providers/email-provider-manager'))['EmailProviderManager'];
   let getEmailProviderManager: (typeof import('@server/services/email-providers/email-provider-manager'))['getEmailProviderManager'];
   let resetEmailProviderManager: (typeof import('@server/services/email-providers/email-provider-manager'))['resetEmailProviderManager'];
+  let EmailProviderSendError: (typeof import('@server/services/email-providers/base-email-provider-adapter'))['EmailProviderSendError'];
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -159,6 +164,8 @@ describe('EmailProviderManager', () => {
     EmailProviderManager = module.EmailProviderManager;
     getEmailProviderManager = module.getEmailProviderManager;
     resetEmailProviderManager = module.resetEmailProviderManager;
+    ({ EmailProviderSendError } =
+      await import('@server/services/email-providers/base-email-provider-adapter'));
 
     // Clear singleton again after import
     resetEmailProviderManager();
@@ -241,7 +248,7 @@ describe('EmailProviderManager', () => {
       }
 
       await expect(manager.getProvider()).rejects.toThrow(
-        'No email providers available. All providers have hit their free tier limits.'
+        'No configured email providers are currently available.'
       );
     });
 
@@ -299,7 +306,9 @@ describe('EmailProviderManager', () => {
 
       // Mock Cloudflare to fail
       if (cloudflare) {
-        vi.spyOn(cloudflare, 'send').mockRejectedValue(new Error('Cloudflare API error'));
+        vi.spyOn(cloudflare, 'send').mockRejectedValue(
+          new EmailProviderSendError('Cloudflare API error', 'provider_error', true)
+        );
         vi.spyOn(cloudflare, 'isAvailable').mockResolvedValue(true);
       }
       if (brevo) {
@@ -328,9 +337,13 @@ describe('EmailProviderManager', () => {
       const resend = manager.getProviderByType(EmailProvider.RESEND);
 
       // Mock all to fail
-      const cloudflareError = new Error('Cloudflare API error');
-      const brevoError = new Error('Brevo API error');
-      const resendError = new Error('Resend API error');
+      const cloudflareError = new EmailProviderSendError(
+        'Cloudflare API error',
+        'provider_error',
+        true
+      );
+      const brevoError = new EmailProviderSendError('Brevo API error', 'provider_error', true);
+      const resendError = new EmailProviderSendError('Resend API error', 'provider_error', true);
 
       if (cloudflare) {
         vi.spyOn(cloudflare, 'send').mockRejectedValue(cloudflareError);
@@ -378,7 +391,7 @@ describe('EmailProviderManager', () => {
       expect(cloudflare?.send).not.toHaveBeenCalled();
     });
 
-    test('should handle error object that is not instanceof Error', async () => {
+    test('should stop on unclassified non-Error rejection', async () => {
       const mockEmailParams: ISendEmailParams = {
         to: 'user@example.com',
         template: 'welcome',
@@ -399,13 +412,11 @@ describe('EmailProviderManager', () => {
         vi.spyOn(brevo, 'isAvailable').mockResolvedValue(true);
       }
 
-      const result = await manager.send(mockEmailParams);
-
-      expect(result.success).toBe(true);
-      expect(result.provider).toBe(EmailProvider.BREVO);
+      await expect(manager.send(mockEmailParams)).rejects.toThrow('String error message');
+      expect(brevo?.send).not.toHaveBeenCalled();
     });
 
-    test('should handle provider throwing null/undefined', async () => {
+    test('should stop on null provider rejection', async () => {
       const mockEmailParams: ISendEmailParams = {
         to: 'user@example.com',
         template: 'welcome',
@@ -426,10 +437,8 @@ describe('EmailProviderManager', () => {
         vi.spyOn(brevo, 'isAvailable').mockResolvedValue(true);
       }
 
-      const result = await manager.send(mockEmailParams);
-
-      expect(result.success).toBe(true);
-      expect(result.provider).toBe(EmailProvider.BREVO);
+      await expect(manager.send(mockEmailParams)).rejects.toThrow('null');
+      expect(brevo?.send).not.toHaveBeenCalled();
     });
   });
 
@@ -664,7 +673,9 @@ describe('EmailProviderManager', () => {
         manager as unknown as { providers: Map<EmailProvider, IEmailProviderAdapter> }
       ).providers.clear();
 
-      await expect(manager.getProvider()).rejects.toThrow('No email providers available');
+      await expect(manager.getProvider()).rejects.toThrow(
+        'No configured email providers are currently available.'
+      );
     });
 
     test('should handle all providers disabled', async () => {
@@ -674,7 +685,9 @@ describe('EmailProviderManager', () => {
       manager.updateProviderConfig(EmailProvider.BREVO, { enabled: false });
       manager.updateProviderConfig(EmailProvider.RESEND, { enabled: false });
 
-      await expect(manager.getProvider()).rejects.toThrow('No email providers available');
+      await expect(manager.getProvider()).rejects.toThrow(
+        'No configured email providers are currently available.'
+      );
     });
 
     test('should handle provider with priority 0', async () => {
@@ -726,7 +739,9 @@ describe('EmailProviderManager', () => {
       const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
 
       if (cloudflare) {
-        vi.spyOn(cloudflare, 'send').mockRejectedValue(new Error('Provider failed'));
+        vi.spyOn(cloudflare, 'send').mockRejectedValue(
+          new EmailProviderSendError('Provider failed', 'provider_error', true)
+        );
         vi.spyOn(cloudflare, 'isAvailable').mockResolvedValue(true);
       }
       if (brevo) {
@@ -736,8 +751,12 @@ describe('EmailProviderManager', () => {
       await manager.send(mockEmailParams);
 
       expect(consoleWarnSpy).toHaveBeenCalledWith(
-        'Email provider cloudflare failed, trying next provider:',
-        'Provider failed'
+        'Email provider attempt failed',
+        expect.objectContaining({
+          provider: 'cloudflare',
+          classification: 'provider_error',
+          transient: true,
+        })
       );
 
       consoleWarnSpy.mockRestore();
@@ -757,15 +776,21 @@ describe('EmailProviderManager', () => {
       const resend = manager.getProviderByType(EmailProvider.RESEND);
 
       if (cloudflare) {
-        vi.spyOn(cloudflare, 'send').mockRejectedValue(new Error('First error'));
+        vi.spyOn(cloudflare, 'send').mockRejectedValue(
+          new EmailProviderSendError('First error', 'provider_error', true)
+        );
         vi.spyOn(cloudflare, 'isAvailable').mockResolvedValue(true);
       }
       if (brevo) {
-        vi.spyOn(brevo, 'send').mockRejectedValue(new Error('Second error'));
+        vi.spyOn(brevo, 'send').mockRejectedValue(
+          new EmailProviderSendError('Second error', 'provider_error', true)
+        );
         vi.spyOn(brevo, 'isAvailable').mockResolvedValue(true);
       }
       if (resend) {
-        vi.spyOn(resend, 'send').mockRejectedValue(new Error('Last error'));
+        vi.spyOn(resend, 'send').mockRejectedValue(
+          new EmailProviderSendError('Last error', 'provider_error', true)
+        );
         vi.spyOn(resend, 'isAvailable').mockResolvedValue(true);
       }
 
@@ -786,11 +811,15 @@ describe('EmailProviderManager', () => {
       const resend = manager.getProviderByType(EmailProvider.RESEND);
 
       if (cloudflare) {
-        vi.spyOn(cloudflare, 'send').mockRejectedValue(new Error('First error'));
+        vi.spyOn(cloudflare, 'send').mockRejectedValue(
+          new EmailProviderSendError('First error', 'provider_error', true)
+        );
         vi.spyOn(cloudflare, 'isAvailable').mockResolvedValue(true);
       }
       if (brevo) {
-        vi.spyOn(brevo, 'send').mockRejectedValue(new Error('Second error'));
+        vi.spyOn(brevo, 'send').mockRejectedValue(
+          new EmailProviderSendError('Second error', 'provider_error', true)
+        );
         vi.spyOn(brevo, 'isAvailable').mockResolvedValue(true);
       }
       if (resend) {
@@ -815,11 +844,15 @@ describe('EmailProviderManager', () => {
       const resend = manager.getProviderByType(EmailProvider.RESEND);
 
       if (cloudflare) {
-        vi.spyOn(cloudflare, 'send').mockRejectedValue(new Error('First error'));
+        vi.spyOn(cloudflare, 'send').mockRejectedValue(
+          new EmailProviderSendError('First error', 'provider_error', true)
+        );
         vi.spyOn(cloudflare, 'isAvailable').mockResolvedValue(true);
       }
       if (brevo) {
-        vi.spyOn(brevo, 'send').mockRejectedValue(new Error('Second error'));
+        vi.spyOn(brevo, 'send').mockRejectedValue(
+          new EmailProviderSendError('Second error', 'provider_error', true)
+        );
         vi.spyOn(brevo, 'isAvailable').mockResolvedValue(true);
       }
       if (resend) {

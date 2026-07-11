@@ -2,7 +2,7 @@
  * Brevo Provider Adapter
  *
  * Adapter for Brevo email provider with credit tracking and usage monitoring.
- * Brevo is our first fallback email provider with 300 free emails/day.
+ * Brevo is the first resilience fallback after Cloudflare.
  *
  * NOTE: Uses direct REST API calls instead of @getbrevo/brevo SDK because
  * the SDK is not compatible with Cloudflare Workers edge runtime.
@@ -29,21 +29,14 @@ interface IBrevoErrorResponse {
 }
 
 /**
- * Brevo provider configuration
- * Free tier: 300 emails/day
+ * Brevo provider configuration.
  */
 const BREVO_CONFIG: IEmailProviderConfig = {
   provider: EmailProvider.BREVO,
-  tier: ProviderTier.HYBRID, // Free tier with paid overage
-  priority: 2, // First fallback provider - 300 free emails/day
+  tier: ProviderTier.HYBRID,
+  priority: 2,
   enabled: true,
-  freeTier: {
-    dailyRequests: 300, // 300 free emails/day
-    monthlyCredits: 9000, // ~300/day * 30 days
-    hardLimit: true,
-    resetTimezone: 'UTC',
-  },
-  fallbackProvider: EmailProvider.RESEND, // Fall back to Resend if limits hit
+  fallbackProvider: EmailProvider.RESEND,
 };
 
 const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
@@ -112,7 +105,7 @@ export class BrevoProviderAdapter extends BaseEmailProviderAdapter {
   }
 
   /**
-   * Check if Brevo is available (API key configured and within limits)
+   * Check if Brevo is configured and available as a resilience fallback.
    * In test mode, always return true to allow tests to work without API keys
    */
   override async isAvailable(): Promise<boolean> {
@@ -125,8 +118,7 @@ export class BrevoProviderAdapter extends BaseEmailProviderAdapter {
       return false;
     }
 
-    // Check if we're within free tier limits
-    return await super.isAvailable();
+    return true;
   }
 }
 

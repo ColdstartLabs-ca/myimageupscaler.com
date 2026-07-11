@@ -219,7 +219,7 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
   }
 
   /**
-   * Check if provider is available (within free tier limits)
+   * Check if the provider is configured and operationally available.
    * In test mode, always return true to allow tests to work without API keys
    */
   async isAvailable(): Promise<boolean> {

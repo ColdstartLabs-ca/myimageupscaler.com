@@ -146,7 +146,7 @@ export class CloudflareEmailProviderAdapter extends BaseEmailProviderAdapter {
         ? 'queued'
         : 'accepted';
 
-    return `cloudflare-${recipientStatus}-${to}`;
+    return `cloudflare-${recipientStatus}-${crypto.randomUUID()}`;
   }
 }
 

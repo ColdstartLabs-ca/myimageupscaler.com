@@ -311,6 +311,14 @@ describe('EmailLifecycleService', () => {
   });
 
   it('should queue checkout recovery with click tracking', async () => {
+    sendEmailMock.mockResolvedValueOnce({
+      success: true,
+      messageId: 'msg_fallback',
+      provider: 'brevo',
+      attemptedProviders: ['cloudflare', 'brevo'],
+      unavailableProviders: [],
+      fallbackReasons: ['provider_unavailable'],
+    });
     dueQueueRows = [
       {
         id: 'queue_recovery_1',
@@ -346,6 +354,16 @@ describe('EmailLifecycleService', () => {
     );
     expect(sendEmailMock.mock.calls[0][0].data.ctaUrl).toContain('queue_recovery_1');
     expect(sendEmailMock.mock.calls[0][0].data.ctaUrl).toContain('token=');
+    expect(eventInserts).toContainEqual(
+      expect.objectContaining({
+        event_type: 'sent',
+        metadata: expect.objectContaining({
+          provider: 'brevo',
+          attemptedProviders: ['cloudflare', 'brevo'],
+          fallbackReasons: ['provider_unavailable'],
+        }),
+      })
+    );
   });
 
   it('should process revenue-critical rows before education rows', async () => {

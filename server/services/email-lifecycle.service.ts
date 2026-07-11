@@ -413,7 +413,13 @@ export class EmailLifecycleService {
             userId: row.user_id,
             campaignKey: row.campaign_key,
             eventType: 'sent',
-            metadata: { provider: sendResult.provider, messageId: sendResult.messageId },
+            metadata: {
+              provider: sendResult.provider,
+              messageId: sendResult.messageId,
+              attemptedProviders: sendResult.attemptedProviders,
+              unavailableProviders: sendResult.unavailableProviders,
+              fallbackReasons: sendResult.fallbackReasons,
+            },
           });
           await this.trackLifecycleAnalytics('email_lifecycle_sent', row.user_id, campaign, {
             cta_destination: row.metadata?.cta_destination,

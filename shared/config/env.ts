@@ -276,11 +276,11 @@ const serverEnvSchema = z.object({
   // ==========================================
   // EMAIL PROVIDERS
   // ==========================================
-  // Cloudflare Email Service (Primary) - 3,000 included emails/month on Workers Paid
+  // Cloudflare Email Service (paid primary route)
   CLOUDFLARE_EMAIL_API_TOKEN: z.string().default(''),
-  // Brevo (Fallback) - 9,000 free emails/month
+  // Brevo (resilience fallback)
   BREVO_API_KEY: z.string().default(''),
-  // Resend (Final fallback) - 3,000 free emails/month
+  // Resend (final resilience fallback)
   RESEND_API_KEY: z.string().default(''),
   // Common email settings
   EMAIL_FROM_ADDRESS: z.string().email().default('noreply@myimageupscaler.com'),
