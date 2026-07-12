@@ -65,6 +65,13 @@ BEGIN
     UPDATE public.email_lifecycle_queue AS q
     SET status = 'pending',
         reason = NULL,
+        recipient_value_score = NULL,
+        recipient_value_band = NULL,
+        recipient_value_decision = NULL,
+        recipient_value_reasons = '[]'::jsonb,
+        recipient_value_policy_version = NULL,
+        recipient_value_classified_at = NULL,
+        recipient_value_run_id = NULL,
         updated_at = pg_catalog.now()
     WHERE q.recipient_value_run_id = p_run_id
       AND q.recipient_value_decision = 'cancel'

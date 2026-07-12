@@ -28,6 +28,8 @@ describe('recipient-value queue migrations', () => {
     expect(migration).toContain("reason = 'recipient_value_pruned'");
     expect(migration).toContain("mode = 'rolled_back'");
     expect(migration).toContain('recipient_value_run_id = p_run_id');
+    expect(migration).toContain('recipient_value_decision = NULL');
+    expect(migration).toContain('recipient_value_run_id = NULL');
     expect(migration).toContain('REVOKE ALL ON FUNCTION public.apply_email_recipient_value_run');
   });
 
