@@ -11,6 +11,7 @@ import {
   getRevenueRecoveryService,
   type IQueueRecoveryEligibilityResult,
 } from '@server/services/revenue-recovery.service';
+import type { RecipientValueBand } from '@server/services/email-recipient-value.service';
 import { EmailProviderSendError } from '@server/services/email-providers/base-email-provider-adapter';
 
 export type LifecycleEventType =
@@ -57,6 +58,16 @@ interface IQueueRow {
   subscription_id?: string | null;
   processing_claim_id?: string | null;
   processing_claimed_at?: string | null;
+  recipient_value_score?: number | null;
+  recipient_value_band?: RecipientValueBand | null;
+  recipient_value_decision?:
+    | 'protected'
+    | 'keep_high'
+    | 'keep_medium'
+    | 'hold_experiment'
+    | 'cancel'
+    | null;
+  recipient_value_policy_version?: string | null;
   campaign_name?: string;
   campaign_category?: string;
   campaign_template_name?: string;
@@ -93,6 +104,27 @@ export interface IProcessLifecycleQueueResult {
   failed: number;
   eligible: number;
   dryRun: boolean;
+  recipientValueBandCounts: Record<RecipientValueBand, number>;
+  stoppedByHealth: boolean;
+}
+
+function createRecipientValueBandCounts(): Record<RecipientValueBand, number> {
+  return {
+    protected: 0,
+    high: 0,
+    medium: 0,
+    experiment: 0,
+    cancel: 0,
+  };
+}
+
+function getQueueRowRecipientValueBand(row: IQueueRow): RecipientValueBand {
+  if (row.recipient_value_band) return row.recipient_value_band;
+  if (row.recipient_value_decision === 'protected') return 'protected';
+  if (row.recipient_value_decision === 'keep_high') return 'high';
+  if (row.recipient_value_decision === 'hold_experiment') return 'experiment';
+  if (row.recipient_value_decision === 'cancel') return 'cancel';
+  return 'medium';
 }
 
 export interface IEmailLifecycleQueueHealth {
@@ -349,7 +381,27 @@ export class EmailLifecycleService {
       failed: 0,
       eligible: 0,
       dryRun,
+      recipientValueBandCounts: createRecipientValueBandCounts(),
+      stoppedByHealth: false,
     };
+
+    if (!dryRun) {
+      const { data: health, error: healthError } = await supabaseAdmin.rpc(
+        'get_email_lifecycle_health',
+        { p_since: daysAgo(7) }
+      );
+      if (healthError) {
+        throw new Error(`Failed to check lifecycle delivery health: ${healthError.message}`);
+      }
+      if (
+        ((health || []) as Array<{ stop_recommended?: boolean }>).some(
+          row => row.stop_recommended === true
+        )
+      ) {
+        result.stoppedByHealth = true;
+        return result;
+      }
+    }
 
     const { data, error } = await supabaseAdmin.rpc('get_due_email_lifecycle_queue', {
       p_limit: batchSize,
@@ -360,10 +412,16 @@ export class EmailLifecycleService {
       throw new Error(`Failed to fetch lifecycle queue: ${error.message}`);
     }
 
-    const rows = ((data || []) as IQueueRow[]).filter(Boolean);
+    const rows = ((data || []) as IQueueRow[]).filter(
+      row =>
+        Boolean(row) &&
+        row.recipient_value_decision !== 'hold_experiment' &&
+        row.recipient_value_decision !== 'cancel'
+    );
     result.eligible = rows.length;
 
     for (const row of rows) {
+      result.recipientValueBandCounts[getQueueRowRecipientValueBand(row)]++;
       const campaign = this.getCampaignFromQueueRow(row);
       if (!campaign) {
         await this.markQueueRow(row.id, 'skipped', 'campaign_missing');

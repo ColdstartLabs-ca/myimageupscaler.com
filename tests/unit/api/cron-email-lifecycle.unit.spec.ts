@@ -71,6 +71,14 @@ describe('POST /api/cron/email-lifecycle', () => {
         failed: 0,
         eligible: 4,
         dryRun: true,
+        recipientValueBandCounts: {
+          protected: 0,
+          high: 2,
+          medium: 2,
+          experiment: 0,
+          cancel: 0,
+        },
+        stoppedByHealth: false,
       }),
       getQueueHealth: vi.fn().mockResolvedValue({
         duePending: 12,
@@ -112,6 +120,14 @@ describe('POST /api/cron/email-lifecycle', () => {
       queued: 5,
       sent: 0,
       skipped: 1,
+      recipientValueBandCounts: {
+        protected: 0,
+        high: 2,
+        medium: 2,
+        experiment: 0,
+        cancel: 0,
+      },
+      stoppedByHealth: false,
       duePending: 12,
       oldestPendingScheduledFor: '2026-07-08T00:00:00.000Z',
       recoveryEligibility: {

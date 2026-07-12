@@ -73,6 +73,14 @@ describe('POST /api/cron/email-lifecycle throughput controls', () => {
         failed: 1,
         eligible: 13,
         dryRun: false,
+        recipientValueBandCounts: {
+          protected: 1,
+          high: 7,
+          medium: 5,
+          experiment: 0,
+          cancel: 0,
+        },
+        stoppedByHealth: false,
       }),
       getQueueHealth: vi.fn().mockResolvedValue({
         duePending: 87,
@@ -132,6 +140,14 @@ describe('POST /api/cron/email-lifecycle throughput controls', () => {
       sent: 10,
       skipped: 2,
       failed: 1,
+      recipientValueBandCounts: {
+        protected: 1,
+        high: 7,
+        medium: 5,
+        experiment: 0,
+        cancel: 0,
+      },
+      stoppedByHealth: false,
     });
     expect(body.durationMs).toEqual(expect.any(Number));
   });
