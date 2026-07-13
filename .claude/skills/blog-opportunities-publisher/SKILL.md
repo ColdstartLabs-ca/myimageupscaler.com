@@ -35,6 +35,12 @@ Optional:
 
 ## Workflow
 
+### Stateful backlog discipline
+
+Before selecting or changing anything, reconstruct the actual current state from `docs/SEO/maintenance/seo-changes-backlog.md`, `docs/SEO/maintenance/gsc-request-indexing-backlog.md`, `.claude/skills/blog-changelog.md`, the prior two relevant reports, and recent git history for the affected URLs. Treat recorded deploy dates, indexing status, measurement-lag windows, next-action dates, and prior rationale as authoritative context. Do not repeat an edit, indexing recommendation, or experiment because an older report omitted a newer backlog entry.
+
+After completing an action, update the canonical state in the same run. Append the evidence, concrete action, reason, affected URLs/files, verification, commit, deploy state, and exact next trigger/date to `seo-changes-backlog.md`; update existing indexing-backlog rows in place rather than duplicating them; and update `blog-changelog.md` for content/metadata changes. A dated report may supplement these files but never replaces them.
+
 1. **Read publishing context**
    - Read `.claude/skills/blog-publish/SKILL.md` before publishing.
    - Read `.claude/skills/blog-changelog.md` if present.

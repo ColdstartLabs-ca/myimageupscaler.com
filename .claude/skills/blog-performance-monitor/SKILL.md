@@ -122,6 +122,12 @@ Optional:
 
 ## Workflow
 
+### Stateful backlog discipline
+
+Before classifying a page or query, reconstruct its current state from `docs/SEO/maintenance/seo-changes-backlog.md`, `docs/SEO/maintenance/gsc-request-indexing-backlog.md`, `.claude/skills/blog-changelog.md`, the prior two relevant monitor reports, and recent git history. Respect recorded deploy/indexing dates, measurement-lag windows, previous rationale, and exact next-action triggers. Never recommend or apply a repeated edit from stale report context.
+
+After any applied fix or material decision that changes the next-action state, update the canonical backlogs in the same run. Record what was done and why, evidence, affected URLs/files, tests/verification, commit, deploy state, and exact follow-up trigger/date in `seo-changes-backlog.md`; update indexing rows in place without duplicates; and append `blog-changelog.md` for blog content/metadata changes. Dated monitor reports are optional supporting artifacts, not the source of truth.
+
 1. **Fetch GSC blog-only data**
    - Use page+query+date dimensions where possible.
    - Filter to URLs matching `/blog/`.
