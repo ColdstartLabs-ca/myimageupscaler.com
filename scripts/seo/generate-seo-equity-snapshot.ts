@@ -11,6 +11,7 @@ import {
 
 interface IGscExport {
   meta?: {
+    dateRange?: { startDate?: string; endDate?: string; days?: number };
     dateRanges?: {
       current?: { startDate?: string; endDate?: string; days?: number };
     };
@@ -48,16 +49,19 @@ if (!gscPath) {
 
 const config = seoEquityConfigSchema.parse(configRaw);
 const gscExport = JSON.parse(readFileSync(gscPath, 'utf8')) as IGscExport;
-const pages = (gscExport.topPages ?? []).map(toGscPage).filter((page): page is ISeoEquityGscPage => Boolean(page));
+const pages = (gscExport.topPages ?? [])
+  .map(toGscPage)
+  .filter((page): page is ISeoEquityGscPage => Boolean(page));
 
 if (pages.length === 0) {
   throw new Error(`No topPages rows found in saved GSC export: ${gscPath}`);
 }
 
+const dateRange = gscExport.meta?.dateRanges?.current ?? gscExport.meta?.dateRange;
 const window = {
-  startDate: gscExport.meta?.dateRanges?.current?.startDate ?? '1970-01-01',
-  endDate: gscExport.meta?.dateRanges?.current?.endDate ?? '1970-01-01',
-  days: gscExport.meta?.dateRanges?.current?.days ?? 1,
+  startDate: dateRange?.startDate ?? '1970-01-01',
+  endDate: dateRange?.endDate ?? '1970-01-01',
+  days: dateRange?.days ?? 1,
 };
 const snapshot = buildSeoEquitySnapshot({
   config,

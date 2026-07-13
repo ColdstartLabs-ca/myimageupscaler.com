@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-06-07T00:00:00.000Z",
+  "generatedAt": "2026-07-13T18:31:00.000Z",
   "source": {
-    "gscExport": "gsc-miu-seo-equity-prd.json",
+    "gscExport": "gsc-opportunities-current.json",
     "window": {
-      "startDate": "2026-03-07",
-      "endDate": "2026-06-04",
+      "startDate": "2026-04-14",
+      "endDate": "2026-07-10",
       "days": 90
     }
   },
@@ -15,201 +15,14 @@
   },
   "entities": [
     {
-      "url": "/blog/fix-blurry-photos-ai-methods-guide",
+      "url": "/blog/poster-size-dimensions-pixels",
       "type": "blog",
-      "canonicalCluster": "fix-blurry-photos",
       "canonicalWinner": true,
-      "score": 94.65,
+      "score": 86.82,
       "scoreBreakdown": {
         "impressions": 25,
-        "position": 22,
-        "ctrGap": 23.65,
-        "businessValue": 12,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/upscale-image-for-print-300-dpi-guide",
-      "type": "blog",
-      "canonicalCluster": "print-dpi-upscaling",
-      "canonicalWinner": true,
-      "score": 92.83,
-      "scoreBreakdown": {
-        "impressions": 25,
-        "position": 22,
-        "ctrGap": 21.83,
-        "businessValue": 12,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/ai-image-upscaling-vs-sharpening-explained",
-      "type": "blog",
-      "canonicalCluster": "ai-upscaling-vs-sharpening",
-      "canonicalWinner": true,
-      "score": 92.71,
-      "scoreBreakdown": {
-        "impressions": 25,
-        "position": 22,
-        "ctrGap": 23.71,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/how-to-upscale-anime-images-with-ai",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 91.49,
-      "scoreBreakdown": {
-        "impressions": 25,
-        "position": 22,
-        "ctrGap": 22.49,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/how-to-upscale-midjourney-images-for-print",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 89.33,
-      "scoreBreakdown": {
-        "impressions": 23.12,
-        "position": 22,
-        "ctrGap": 22.21,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/best-free-ai-image-upscaler-tools-2026",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 89.06,
-      "scoreBreakdown": {
-        "impressions": 23.14,
-        "position": 22,
-        "ctrGap": 21.92,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/keep-text-sharp-when-upscaling-product-photos",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 88.43,
-      "scoreBreakdown": {
-        "impressions": 21.46,
-        "position": 22,
-        "ctrGap": 22.97,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/upscale-image-online-free",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 88.36,
-      "scoreBreakdown": {
-        "impressions": 21.76,
-        "position": 22,
-        "ctrGap": 22.6,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/how-to-upscale-old-photos-with-ai",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 87.6,
-      "scoreBreakdown": {
-        "impressions": 21.26,
-        "position": 22,
-        "ctrGap": 22.34,
+        "position": 16,
+        "ctrGap": 23.82,
         "businessValue": 10,
         "freshness": 4,
         "cannibalization": 8,
@@ -228,152 +41,11 @@
       "url": "/blog/how-to-upscale-youtube-thumbnails",
       "type": "blog",
       "canonicalWinner": true,
-      "score": 86.03,
+      "score": 86.53,
       "scoreBreakdown": {
-        "impressions": 25,
+        "impressions": 24.04,
         "position": 22,
-        "ctrGap": 17.03,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/poster-size-dimensions-pixels",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 86.01,
-      "scoreBreakdown": {
-        "impressions": 20.29,
-        "position": 22,
-        "ctrGap": 21.72,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/how-to-upscale-images-without-losing-quality",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 85.99,
-      "scoreBreakdown": {
-        "impressions": 24.88,
-        "position": 16,
-        "ctrGap": 23.11,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/ai-image-upscaler-for-etsy-sellers",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 85.46,
-      "scoreBreakdown": {
-        "impressions": 19.98,
-        "position": 22,
-        "ctrGap": 21.48,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/gif-upscaler",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 85.36,
-      "scoreBreakdown": {
-        "impressions": 20.69,
-        "position": 22,
-        "ctrGap": 20.67,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/best-free-ai-image-upscaler-2026-tested-compared",
-      "type": "blog",
-      "canonicalCluster": "best-free-ai-image-upscaler-2026",
-      "canonicalWinner": true,
-      "score": 85.16,
-      "scoreBreakdown": {
-        "impressions": 25,
-        "position": 22,
-        "ctrGap": 22.16,
-        "businessValue": 16,
-        "freshness": -8,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": [
-        "recently-edited"
-      ]
-    },
-    {
-      "url": "/blog/how-to-upscale-dalle-images",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 85.13,
-      "scoreBreakdown": {
-        "impressions": 20.88,
-        "position": 22,
-        "ctrGap": 20.25,
+        "ctrGap": 18.49,
         "businessValue": 10,
         "freshness": 4,
         "cannibalization": 8,
@@ -392,57 +64,11 @@
       "url": "/blog/photoshop-upscale-image",
       "type": "blog",
       "canonicalWinner": true,
-      "score": 84.89,
+      "score": 83.17,
       "scoreBreakdown": {
-        "impressions": 24.06,
+        "impressions": 21.31,
         "position": 16,
-        "ctrGap": 22.83,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/best-ai-image-quality-enhancer-free",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 83.72,
-      "scoreBreakdown": {
-        "impressions": 25,
-        "position": 16,
-        "ctrGap": 20.72,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/anime-upscaling-4k-art-guide",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 83.55,
-      "scoreBreakdown": {
-        "impressions": 18.39,
-        "position": 22,
-        "ctrGap": 21.16,
+        "ctrGap": 23.86,
         "businessValue": 10,
         "freshness": 4,
         "cannibalization": 8,
@@ -461,11 +87,11 @@
       "url": "/blog/topaz-denoise-ai",
       "type": "blog",
       "canonicalWinner": true,
-      "score": 83.42,
+      "score": 81.13,
       "scoreBreakdown": {
-        "impressions": 23.05,
+        "impressions": 19.13,
         "position": 16,
-        "ctrGap": 22.37,
+        "ctrGap": 24,
         "businessValue": 10,
         "freshness": 4,
         "cannibalization": 8,
@@ -481,14 +107,60 @@
       "guardrails": []
     },
     {
-      "url": "/blog/how-to-upscale-images-for-instagram",
+      "url": "/blog/photo-restoration-programs",
       "type": "blog",
       "canonicalWinner": true,
-      "score": 82.37,
+      "score": 80.4,
       "scoreBreakdown": {
-        "impressions": 20.58,
+        "impressions": 12.4,
         "position": 22,
-        "ctrGap": 17.79,
+        "ctrGap": 24,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/pixelcut-ai-photo-editor",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 78.45,
+      "scoreBreakdown": {
+        "impressions": 21.01,
+        "position": 16,
+        "ctrGap": 19.44,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/best-ai-photo-enhancer-reddit",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 76.49,
+      "scoreBreakdown": {
+        "impressions": 14.55,
+        "position": 22,
+        "ctrGap": 17.94,
         "businessValue": 10,
         "freshness": 4,
         "cannibalization": 8,
@@ -508,283 +180,97 @@
       "type": "blog",
       "canonicalCluster": "topaz-video-upscaler",
       "canonicalWinner": true,
-      "score": 81.79,
+      "score": 76,
       "scoreBreakdown": {
         "impressions": 25,
-        "position": 22,
-        "ctrGap": 23.79,
+        "position": 16,
+        "ctrGap": 24,
         "businessValue": 11,
         "freshness": -8,
         "cannibalization": 8,
         "conversion": 0
       },
       "eligibleSurfaces": [],
-      "guardrails": [
-        "recently-edited"
-      ]
+      "guardrails": ["recently-edited"]
     },
     {
-      "url": "/blog/best-ai-image-enhancer",
+      "url": "/blog/how-to-upscale-anime-images-with-ai",
       "type": "blog",
       "canonicalWinner": true,
-      "score": 81.59,
+      "score": 74.64,
       "scoreBreakdown": {
-        "impressions": 21.94,
+        "impressions": 20.74,
+        "position": 22,
+        "ctrGap": 9.9,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/best-photo-restoration-software",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 72.24,
+      "scoreBreakdown": {
+        "impressions": 20.24,
+        "position": 6,
+        "ctrGap": 24,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/upscale-midjourney-images-4k-8k-print-guide",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 72.21,
+      "scoreBreakdown": {
+        "impressions": 4.21,
+        "position": 22,
+        "ctrGap": 24,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/animation-maker-for-minecraft",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 72.18,
+      "scoreBreakdown": {
+        "impressions": 19.94,
         "position": 16,
-        "ctrGap": 21.65,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/best-image-upscaler",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 80.59,
-      "scoreBreakdown": {
-        "impressions": 25,
-        "position": 16,
-        "ctrGap": 17.59,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/how-to-upscale-heic-images-iphone",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 80.37,
-      "scoreBreakdown": {
-        "impressions": 18.27,
-        "position": 22,
-        "ctrGap": 18.1,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/how-to-increase-dpi-of-image",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 79.27,
-      "scoreBreakdown": {
-        "impressions": 20.75,
-        "position": 16,
-        "ctrGap": 20.52,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/why-photos-blurry-when-printed",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 78.84,
-      "scoreBreakdown": {
-        "impressions": 16.37,
-        "position": 22,
-        "ctrGap": 18.47,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/ai-frame-interpolation",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 78.7,
-      "scoreBreakdown": {
-        "impressions": 21.2,
-        "position": 16,
-        "ctrGap": 19.5,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/dalle-3-image-enhancement-guide",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 77.64,
-      "scoreBreakdown": {
-        "impressions": 16.81,
-        "position": 22,
-        "ctrGap": 16.83,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/how-to-upscale-passport-photos-with-ai",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 77.56,
-      "scoreBreakdown": {
-        "impressions": 15.94,
-        "position": 22,
-        "ctrGap": 17.62,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/free-upscaler-no-sign-up",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 75.53,
-      "scoreBreakdown": {
-        "impressions": 16.23,
-        "position": 22,
-        "ctrGap": 15.3,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/how-to-upscale-images",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 74.47,
-      "scoreBreakdown": {
-        "impressions": 15.04,
-        "position": 22,
-        "ctrGap": 15.43,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/ai-image-enhancement-ecommerce-guide",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 73.44,
-      "scoreBreakdown": {
-        "impressions": 18.57,
-        "position": 16,
-        "ctrGap": 16.87,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/how-to-upscale-webp-images",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 73.32,
-      "scoreBreakdown": {
-        "impressions": 16.9,
-        "position": 22,
-        "ctrGap": 12.42,
+        "ctrGap": 14.24,
         "businessValue": 10,
         "freshness": 4,
         "cannibalization": 8,
@@ -803,11 +289,11 @@
       "url": "/blog/topaz-labs-free-trial",
       "type": "blog",
       "canonicalWinner": true,
-      "score": 72.57,
+      "score": 71.7,
       "scoreBreakdown": {
-        "impressions": 22.25,
+        "impressions": 25,
         "position": 16,
-        "ctrGap": 12.32,
+        "ctrGap": 8.7,
         "businessValue": 10,
         "freshness": 4,
         "cannibalization": 8,
@@ -823,14 +309,14 @@
       "guardrails": []
     },
     {
-      "url": "/blog/how-to-fix-blurry-photos-with-ai",
+      "url": "/blog/what-resolution-for-print",
       "type": "blog",
       "canonicalWinner": true,
-      "score": 72.42,
+      "score": 71.09,
       "scoreBreakdown": {
-        "impressions": 19.18,
-        "position": 16,
-        "ctrGap": 15.24,
+        "impressions": 19.09,
+        "position": 6,
+        "ctrGap": 24,
         "businessValue": 10,
         "freshness": 4,
         "cannibalization": 8,
@@ -846,14 +332,60 @@
       "guardrails": []
     },
     {
-      "url": "/blog/best-ai-image-quality-enhancer",
+      "url": "/blog/image-resolution-guide-everything-you-need-to-know",
       "type": "blog",
       "canonicalWinner": true,
-      "score": 70.91,
+      "score": 71.07,
       "scoreBreakdown": {
-        "impressions": 18.81,
-        "position": 16,
-        "ctrGap": 14.1,
+        "impressions": 19.07,
+        "position": 6,
+        "ctrGap": 24,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/best-batch-photo-editing-software",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 70.69,
+      "scoreBreakdown": {
+        "impressions": 18.69,
+        "position": 6,
+        "ctrGap": 24,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/free-online-image-enlarger",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 70.32,
+      "scoreBreakdown": {
+        "impressions": 20.78,
+        "position": 6,
+        "ctrGap": 21.54,
         "businessValue": 10,
         "freshness": 4,
         "cannibalization": 8,
@@ -872,11 +404,126 @@
       "url": "/blog/image-resolution-for-printing-complete-guide",
       "type": "blog",
       "canonicalWinner": true,
-      "score": 70.87,
+      "score": 68.81,
       "scoreBreakdown": {
-        "impressions": 23.33,
+        "impressions": 22.81,
+        "position": 0,
+        "ctrGap": 24,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/how-to-digitize-photos",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 68.39,
+      "scoreBreakdown": {
+        "impressions": 22.47,
+        "position": 0,
+        "ctrGap": 23.92,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/how-to-remove-background-from-photo",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 68.32,
+      "scoreBreakdown": {
+        "impressions": 6.32,
+        "position": 16,
+        "ctrGap": 24,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/best-ai-image-enhancer",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 66.97,
+      "scoreBreakdown": {
+        "impressions": 18.76,
+        "position": 16,
+        "ctrGap": 10.21,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/damaged-old-photographs",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 65.39,
+      "scoreBreakdown": {
+        "impressions": 19.39,
+        "position": 0,
+        "ctrGap": 24,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/ai-enhance-photo",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 63.5,
+      "scoreBreakdown": {
+        "impressions": 11.5,
         "position": 6,
-        "ctrGap": 19.54,
+        "ctrGap": 24,
         "businessValue": 10,
         "freshness": 4,
         "cannibalization": 8,
@@ -892,180 +539,17 @@
       "guardrails": []
     },
     {
-      "url": "/blog/change-frame-rate-video",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 68.58,
-      "scoreBreakdown": {
-        "impressions": 14.75,
-        "position": 22,
-        "ctrGap": 9.83,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/how-to-upscale-avif-images-without-losing-quality",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 68.22,
-      "scoreBreakdown": {
-        "impressions": 15.41,
-        "position": 22,
-        "ctrGap": 8.81,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/image-out-of-focus",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 65.87,
-      "scoreBreakdown": {
-        "impressions": 16.77,
-        "position": 16,
-        "ctrGap": 11.1,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/fix-pixelated-image",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 64.76,
-      "scoreBreakdown": {
-        "impressions": 19.34,
-        "position": 16,
-        "ctrGap": 7.42,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/image-to-line-art",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 62.86,
-      "scoreBreakdown": {
-        "impressions": 16.24,
-        "position": 16,
-        "ctrGap": 8.62,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/free-photo-restoration-app",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 61.83,
-      "scoreBreakdown": {
-        "impressions": 17.86,
-        "position": 16,
-        "ctrGap": 5.97,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/free-ai-upscaler-no-watermark",
+      "url": "/blog/best-free-ai-image-upscaler-2026-tested-compared",
       "type": "blog",
       "canonicalCluster": "best-free-ai-image-upscaler-2026",
-      "canonicalWinner": false,
-      "score": 61.6,
+      "canonicalWinner": true,
+      "score": 63,
       "scoreBreakdown": {
         "impressions": 25,
         "position": 22,
-        "ctrGap": 21.6,
-        "businessValue": 14,
-        "freshness": 4,
-        "cannibalization": -25,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": [
-        "canonical-loser"
-      ]
-    },
-    {
-      "url": "/blog/best-app-to-restore-old-photos",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 61.35,
-      "scoreBreakdown": {
-        "impressions": 22.22,
-        "position": 6,
-        "ctrGap": 11.13,
-        "businessValue": 10,
-        "freshness": 4,
+        "ctrGap": 0,
+        "businessValue": 16,
+        "freshness": -8,
         "cannibalization": 8,
         "conversion": 0
       },
@@ -1076,17 +560,178 @@
         "blogFooterRelated",
         "pseoRelatedBlogPosts"
       ],
-      "guardrails": []
+      "guardrails": ["recently-edited"]
     },
     {
       "url": "/blog/how-to-change-the-resolution-of-a-video",
       "type": "blog",
       "canonicalWinner": true,
-      "score": 61.11,
+      "score": 62.31,
       "scoreBreakdown": {
-        "impressions": 18.82,
+        "impressions": 15.8,
+        "position": 6,
+        "ctrGap": 18.51,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/best-image-upscaler",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 61.45,
+      "scoreBreakdown": {
+        "impressions": 25,
+        "position": 6,
+        "ctrGap": 8.45,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/best-app-to-restore-old-photos",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 60.27,
+      "scoreBreakdown": {
+        "impressions": 21.79,
+        "position": 0,
+        "ctrGap": 16.48,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/image-upscaler-8x",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 60.02,
+      "scoreBreakdown": {
+        "impressions": 8.02,
+        "position": 6,
+        "ctrGap": 24,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/how-to-convert-png-to-4k",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 59.54,
+      "scoreBreakdown": {
+        "impressions": 15.54,
+        "position": 22,
+        "ctrGap": 0,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/4-k-video-upscaler",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 59.17,
+      "scoreBreakdown": {
+        "impressions": 13.17,
+        "position": 0,
+        "ctrGap": 24,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/ai-frame-interpolation",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 57.25,
+      "scoreBreakdown": {
+        "impressions": 19.25,
         "position": 16,
-        "ctrGap": 4.29,
+        "ctrGap": 0,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/how-to-upscale-midjourney-images-for-print",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 56.53,
+      "scoreBreakdown": {
+        "impressions": 15.58,
+        "position": 16,
+        "ctrGap": 2.95,
         "businessValue": 10,
         "freshness": 4,
         "cannibalization": 8,
@@ -1106,11 +751,11 @@
       "type": "blog",
       "canonicalCluster": "best-free-ai-image-upscaler-2026",
       "canonicalWinner": false,
-      "score": 60.56,
+      "score": 54.99,
       "scoreBreakdown": {
         "impressions": 25,
-        "position": 22,
-        "ctrGap": 23.56,
+        "position": 16,
+        "ctrGap": 23.99,
         "businessValue": 11,
         "freshness": 4,
         "cannibalization": -25,
@@ -1123,19 +768,17 @@
         "blogFooterRelated",
         "pseoRelatedBlogPosts"
       ],
-      "guardrails": [
-        "canonical-loser"
-      ]
+      "guardrails": ["canonical-loser"]
     },
     {
-      "url": "/blog/how-to-convert-png-to-4k",
+      "url": "/blog/ai-photo-retouch",
       "type": "blog",
       "canonicalWinner": true,
-      "score": 60.36,
+      "score": 54.11,
       "scoreBreakdown": {
-        "impressions": 16.36,
-        "position": 22,
-        "ctrGap": 0,
+        "impressions": 2.11,
+        "position": 6,
+        "ctrGap": 24,
         "businessValue": 10,
         "freshness": 4,
         "cannibalization": 8,
@@ -1154,75 +797,9 @@
       "url": "/blog/ai-upscaler-muryou-osusume",
       "type": "blog",
       "canonicalWinner": true,
-      "score": 60.12,
+      "score": 53.52,
       "scoreBreakdown": {
-        "impressions": 16.12,
-        "position": 22,
-        "ctrGap": 0,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/photo-enhancement-upscaling-vs-quality",
-      "type": "blog",
-      "canonicalCluster": "ai-upscaling-vs-sharpening",
-      "canonicalWinner": false,
-      "score": 59.8,
-      "scoreBreakdown": {
-        "impressions": 25,
-        "position": 22,
-        "ctrGap": 23.8,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": -25,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [],
-      "guardrails": [
-        "canonical-loser"
-      ]
-    },
-    {
-      "url": "/blog/text-image-enhancer",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 57.45,
-      "scoreBreakdown": {
-        "impressions": 19.45,
-        "position": 16,
-        "ctrGap": 0,
-        "businessValue": 10,
-        "freshness": 4,
-        "cannibalization": 8,
-        "conversion": 0
-      },
-      "eligibleSurfaces": [
-        "homepageBlogPicks",
-        "blogIndexFeatured",
-        "blogStartHere",
-        "blogFooterRelated",
-        "pseoRelatedBlogPosts"
-      ],
-      "guardrails": []
-    },
-    {
-      "url": "/blog/ai-image-extender",
-      "type": "blog",
-      "canonicalWinner": true,
-      "score": 55.24,
-      "scoreBreakdown": {
-        "impressions": 17.24,
+        "impressions": 15.52,
         "position": 16,
         "ctrGap": 0,
         "businessValue": 10,
@@ -1263,14 +840,83 @@
       "guardrails": []
     },
     {
-      "url": "/blog/best-free-photo-restoration-services-online",
+      "url": "/blog/best-ai-image-quality-enhancer-free",
       "type": "blog",
       "canonicalWinner": true,
-      "score": 51.79,
+      "score": 52.83,
       "scoreBreakdown": {
-        "impressions": 18.91,
+        "impressions": 24.83,
         "position": 6,
-        "ctrGap": 4.88,
+        "ctrGap": 0,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/16x-upscaling-does-it-work",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 52.68,
+      "scoreBreakdown": {
+        "impressions": 6.68,
+        "position": 0,
+        "ctrGap": 24,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/dalle-3-image-enhancement-guide",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 52.23,
+      "scoreBreakdown": {
+        "impressions": 8.23,
+        "position": 22,
+        "ctrGap": 0,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/best-ai-photo-enhancer",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 51.06,
+      "scoreBreakdown": {
+        "impressions": 23.06,
+        "position": 6,
+        "ctrGap": 0,
         "businessValue": 10,
         "freshness": 4,
         "cannibalization": 8,
@@ -1289,9 +935,148 @@
       "url": "/blog/mejorar-calidad-imagen-ia-gratis",
       "type": "blog",
       "canonicalWinner": true,
-      "score": 49.74,
+      "score": 49.32,
       "scoreBreakdown": {
-        "impressions": 21.74,
+        "impressions": 21.32,
+        "position": 6,
+        "ctrGap": 0,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/best-app-for-unblurring-photos",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 45.49,
+      "scoreBreakdown": {
+        "impressions": 17.49,
+        "position": 6,
+        "ctrGap": 0,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/how-to-upscale-images-without-losing-quality",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 44.15,
+      "scoreBreakdown": {
+        "impressions": 16.15,
+        "position": 6,
+        "ctrGap": 0,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/how-to-upscale-webp-images",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 43.45,
+      "scoreBreakdown": {
+        "impressions": 5.45,
+        "position": 16,
+        "ctrGap": 0,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/best-free-photo-restoration-services-online",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 41.59,
+      "scoreBreakdown": {
+        "impressions": 19.59,
+        "position": 0,
+        "ctrGap": 0,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/free-ai-upscaler-no-watermark",
+      "type": "blog",
+      "canonicalCluster": "best-free-ai-image-upscaler-2026",
+      "canonicalWinner": false,
+      "score": 41.41,
+      "scoreBreakdown": {
+        "impressions": 24.79,
+        "position": 22,
+        "ctrGap": 1.62,
+        "businessValue": 14,
+        "freshness": 4,
+        "cannibalization": -25,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": ["canonical-loser"]
+    },
+    {
+      "url": "/blog/restore-old-photos-in-photoshop",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 38.98,
+      "scoreBreakdown": {
+        "impressions": 10.98,
         "position": 6,
         "ctrGap": 0,
         "businessValue": 10,
@@ -1312,9 +1097,32 @@
       "url": "/blog/free-photo-enhancer-no-signup",
       "type": "blog",
       "canonicalWinner": true,
-      "score": 43.9,
+      "score": 34.74,
       "scoreBreakdown": {
-        "impressions": 15.9,
+        "impressions": 12.74,
+        "position": 0,
+        "ctrGap": 0,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/why-upscaled-text-looks-blurry-how-to-fix",
+      "type": "blog",
+      "canonicalWinner": true,
+      "score": 33.92,
+      "scoreBreakdown": {
+        "impressions": 5.92,
         "position": 6,
         "ctrGap": 0,
         "businessValue": 10,
@@ -1332,13 +1140,85 @@
       "guardrails": []
     },
     {
-      "url": "/blog/free-online-image-enlarger",
+      "url": "/blog/turn-image-into-illustration",
       "type": "blog",
       "canonicalWinner": true,
-      "score": 43.49,
+      "score": 32.02,
       "scoreBreakdown": {
-        "impressions": 15.49,
-        "position": 6,
+        "impressions": 10.02,
+        "position": 0,
+        "ctrGap": 0,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/fix-blurry-photos-ai-methods-guide",
+      "type": "blog",
+      "canonicalCluster": "fix-blurry-photos",
+      "canonicalWinner": true,
+      "score": 24,
+      "scoreBreakdown": {
+        "impressions": 0,
+        "position": 0,
+        "ctrGap": 0,
+        "businessValue": 12,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/upscale-image-for-print-300-dpi-guide",
+      "type": "blog",
+      "canonicalCluster": "print-dpi-upscaling",
+      "canonicalWinner": true,
+      "score": 24,
+      "scoreBreakdown": {
+        "impressions": 0,
+        "position": 0,
+        "ctrGap": 0,
+        "businessValue": 12,
+        "freshness": 4,
+        "cannibalization": 8,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [
+        "homepageBlogPicks",
+        "blogIndexFeatured",
+        "blogStartHere",
+        "blogFooterRelated",
+        "pseoRelatedBlogPosts"
+      ],
+      "guardrails": []
+    },
+    {
+      "url": "/blog/ai-image-upscaling-vs-sharpening-explained",
+      "type": "blog",
+      "canonicalCluster": "ai-upscaling-vs-sharpening",
+      "canonicalWinner": true,
+      "score": 22,
+      "scoreBreakdown": {
+        "impressions": 0,
+        "position": 0,
         "ctrGap": 0,
         "businessValue": 10,
         "freshness": 4,
@@ -1359,11 +1239,11 @@
       "type": "blog",
       "canonicalCluster": "fix-blurry-photos",
       "canonicalWinner": false,
-      "score": -23,
+      "score": 21.57,
       "scoreBreakdown": {
-        "impressions": 0,
-        "position": 0,
-        "ctrGap": 0,
+        "impressions": 25,
+        "position": 6,
+        "ctrGap": 13.57,
         "businessValue": 10,
         "freshness": -8,
         "cannibalization": -25,
@@ -1376,334 +1256,327 @@
         "blogFooterRelated",
         "pseoRelatedBlogPosts"
       ],
-      "guardrails": [
-        "recently-edited",
-        "canonical-loser"
-      ]
+      "guardrails": ["recently-edited", "canonical-loser"]
+    },
+    {
+      "url": "/blog/photo-enhancement-upscaling-vs-quality",
+      "type": "blog",
+      "canonicalCluster": "ai-upscaling-vs-sharpening",
+      "canonicalWinner": false,
+      "score": -11,
+      "scoreBreakdown": {
+        "impressions": 0,
+        "position": 0,
+        "ctrGap": 0,
+        "businessValue": 10,
+        "freshness": 4,
+        "cannibalization": -25,
+        "conversion": 0
+      },
+      "eligibleSurfaces": [],
+      "guardrails": ["canonical-loser"]
     }
   ],
   "surfaces": {
     "homepageBlogPicks": [
       "/blog/best-free-ai-image-upscaler-2026-tested-compared",
-      "/blog/fix-blurry-photos-ai-methods-guide",
-      "/blog/upscale-image-for-print-300-dpi-guide",
-      "/blog/ai-image-upscaling-vs-sharpening-explained"
+      "/blog/poster-size-dimensions-pixels",
+      "/blog/how-to-upscale-youtube-thumbnails",
+      "/blog/photoshop-upscale-image"
     ],
-    "blogIndexFeatured": [
-      "/blog/best-free-ai-image-upscaler-2026-tested-compared"
-    ],
+    "blogIndexFeatured": ["/blog/best-free-ai-image-upscaler-2026-tested-compared"],
     "blogStartHere": [
       {
-        "label": "Fix Blurry Photos Ai Methods Guide",
-        "href": "/blog/fix-blurry-photos-ai-methods-guide",
+        "label": "Poster Size Dimensions Pixels",
+        "href": "/blog/poster-size-dimensions-pixels",
         "description": "Start with this high-value guide from the SEO equity snapshot."
       },
       {
-        "label": "Upscale Image For Print 300 Dpi Guide",
-        "href": "/blog/upscale-image-for-print-300-dpi-guide",
+        "label": "How To Upscale Youtube Thumbnails",
+        "href": "/blog/how-to-upscale-youtube-thumbnails",
         "description": "Start with this high-value guide from the SEO equity snapshot."
       },
       {
-        "label": "Ai Image Upscaling Vs Sharpening Explained",
-        "href": "/blog/ai-image-upscaling-vs-sharpening-explained",
+        "label": "Photoshop Upscale Image",
+        "href": "/blog/photoshop-upscale-image",
         "description": "Start with this high-value guide from the SEO equity snapshot."
       }
     ],
     "blogFooterRelated": {
-      "/blog/fix-blurry-photos-ai-methods-guide": [
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained",
-        "/blog/how-to-upscale-anime-images-with-ai"
-      ],
-      "/blog/upscale-image-for-print-300-dpi-guide": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained",
-        "/blog/how-to-upscale-anime-images-with-ai"
-      ],
-      "/blog/ai-image-upscaling-vs-sharpening-explained": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/how-to-upscale-anime-images-with-ai"
-      ],
-      "/blog/how-to-upscale-anime-images-with-ai": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/how-to-upscale-midjourney-images-for-print": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/best-free-ai-image-upscaler-tools-2026": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/keep-text-sharp-when-upscaling-product-photos": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/upscale-image-online-free": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/how-to-upscale-old-photos-with-ai": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
+      "/blog/poster-size-dimensions-pixels": [
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image",
+        "/blog/topaz-denoise-ai"
       ],
       "/blog/how-to-upscale-youtube-thumbnails": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/poster-size-dimensions-pixels": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/how-to-upscale-images-without-losing-quality": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/ai-image-upscaler-for-etsy-sellers": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/gif-upscaler": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/best-free-ai-image-upscaler-2026-tested-compared": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/how-to-upscale-dalle-images": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/photoshop-upscale-image",
+        "/blog/topaz-denoise-ai"
       ],
       "/blog/photoshop-upscale-image": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/best-ai-image-quality-enhancer-free": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/anime-upscaling-4k-art-guide": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/topaz-denoise-ai"
       ],
       "/blog/topaz-denoise-ai": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
       ],
-      "/blog/how-to-upscale-images-for-instagram": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
+      "/blog/photo-restoration-programs": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/pixelcut-ai-photo-editor": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/best-ai-photo-enhancer-reddit": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
       ],
       "/blog/topaz-video-upscaler": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
       ],
-      "/blog/best-ai-image-enhancer": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
+      "/blog/how-to-upscale-anime-images-with-ai": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
       ],
-      "/blog/best-image-upscaler": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
+      "/blog/best-photo-restoration-software": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
       ],
-      "/blog/how-to-upscale-heic-images-iphone": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
+      "/blog/upscale-midjourney-images-4k-8k-print-guide": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
       ],
-      "/blog/how-to-increase-dpi-of-image": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/why-photos-blurry-when-printed": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/ai-frame-interpolation": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/dalle-3-image-enhancement-guide": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/how-to-upscale-passport-photos-with-ai": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/free-upscaler-no-sign-up": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/how-to-upscale-images": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/ai-image-enhancement-ecommerce-guide": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/how-to-upscale-webp-images": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
+      "/blog/animation-maker-for-minecraft": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
       ],
       "/blog/topaz-labs-free-trial": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
       ],
-      "/blog/how-to-fix-blurry-photos-with-ai": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
+      "/blog/what-resolution-for-print": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
       ],
-      "/blog/best-ai-image-quality-enhancer": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
+      "/blog/image-resolution-guide-everything-you-need-to-know": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
       ],
-      "/blog/image-resolution-for-printing-complete-guide": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/change-frame-rate-video": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/how-to-upscale-avif-images-without-losing-quality": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/image-out-of-focus": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/fix-pixelated-image": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/image-to-line-art": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/free-photo-restoration-app": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/free-ai-upscaler-no-watermark": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/best-app-to-restore-old-photos": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/how-to-change-the-resolution-of-a-video": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/best-ai-upscaler": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/how-to-convert-png-to-4k": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/ai-upscaler-muryou-osusume": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/photo-enhancement-upscaling-vs-quality": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/text-image-enhancer": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/ai-image-extender": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/best-free-ai-photo-enhancer-online": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/best-free-photo-restoration-services-online": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/mejorar-calidad-imagen-ia-gratis": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
-      ],
-      "/blog/free-photo-enhancer-no-signup": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
+      "/blog/best-batch-photo-editing-software": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
       ],
       "/blog/free-online-image-enlarger": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/image-resolution-for-printing-complete-guide": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/how-to-digitize-photos": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/how-to-remove-background-from-photo": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/best-ai-image-enhancer": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/damaged-old-photographs": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/ai-enhance-photo": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/best-free-ai-image-upscaler-2026-tested-compared": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/how-to-change-the-resolution-of-a-video": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/best-image-upscaler": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/best-app-to-restore-old-photos": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/image-upscaler-8x": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/how-to-convert-png-to-4k": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/4-k-video-upscaler": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/ai-frame-interpolation": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/how-to-upscale-midjourney-images-for-print": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/best-ai-upscaler": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/ai-photo-retouch": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/ai-upscaler-muryou-osusume": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/best-free-ai-photo-enhancer-online": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/best-ai-image-quality-enhancer-free": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/16x-upscaling-does-it-work": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/dalle-3-image-enhancement-guide": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/best-ai-photo-enhancer": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/mejorar-calidad-imagen-ia-gratis": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/best-app-for-unblurring-photos": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/how-to-upscale-images-without-losing-quality": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/how-to-upscale-webp-images": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/best-free-photo-restoration-services-online": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/free-ai-upscaler-no-watermark": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/restore-old-photos-in-photoshop": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/free-photo-enhancer-no-signup": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/why-upscaled-text-looks-blurry-how-to-fix": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/turn-image-into-illustration": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/fix-blurry-photos-ai-methods-guide": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/upscale-image-for-print-300-dpi-guide": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/ai-image-upscaling-vs-sharpening-explained": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
       ],
       "/blog/fixing-pixelated-photos": [
-        "/blog/fix-blurry-photos-ai-methods-guide",
-        "/blog/upscale-image-for-print-300-dpi-guide",
-        "/blog/ai-image-upscaling-vs-sharpening-explained"
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
+      ],
+      "/blog/photo-enhancement-upscaling-vs-quality": [
+        "/blog/poster-size-dimensions-pixels",
+        "/blog/how-to-upscale-youtube-thumbnails",
+        "/blog/photoshop-upscale-image"
       ]
     },
     "pseoRelatedBlogPosts": {
@@ -1715,7 +1588,7 @@
       "/free/ai-image-upscaler": [
         "/blog/best-free-ai-image-upscaler-2026-tested-compared",
         "/blog/free-ai-upscaler-no-watermark",
-        "/blog/fix-blurry-photos-ai-methods-guide"
+        "/blog/poster-size-dimensions-pixels"
       ]
     },
     "hubSpokeLinks": {}

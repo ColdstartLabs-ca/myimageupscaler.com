@@ -5,6 +5,7 @@ import {
   getHomepageBlogPicks,
   getPseoRelatedBlogPosts,
   getRelatedPostsForSlug,
+  getSeoEquitySnapshot,
   validateSeoEquityPromotedUrls,
 } from '@lib/seo/seo-equity';
 import type { ISeoEquitySnapshot } from '@lib/seo/seo-equity.schema';
@@ -27,8 +28,22 @@ const snapshot: ISeoEquitySnapshot = {
       canonicalCluster: 'a',
       canonicalWinner: true,
       score: 90,
-      scoreBreakdown: { impressions: 1, position: 1, ctrGap: 1, businessValue: 1, freshness: 0, cannibalization: 1, conversion: 0 },
-      eligibleSurfaces: ['homepageBlogPicks', 'blogIndexFeatured', 'blogStartHere', 'blogFooterRelated', 'pseoRelatedBlogPosts'],
+      scoreBreakdown: {
+        impressions: 1,
+        position: 1,
+        ctrGap: 1,
+        businessValue: 1,
+        freshness: 0,
+        cannibalization: 1,
+        conversion: 0,
+      },
+      eligibleSurfaces: [
+        'homepageBlogPicks',
+        'blogIndexFeatured',
+        'blogStartHere',
+        'blogFooterRelated',
+        'pseoRelatedBlogPosts',
+      ],
       guardrails: [],
     },
     {
@@ -37,7 +52,15 @@ const snapshot: ISeoEquitySnapshot = {
       canonicalCluster: 'b',
       canonicalWinner: true,
       score: 80,
-      scoreBreakdown: { impressions: 1, position: 1, ctrGap: 1, businessValue: 1, freshness: 0, cannibalization: 1, conversion: 0 },
+      scoreBreakdown: {
+        impressions: 1,
+        position: 1,
+        ctrGap: 1,
+        businessValue: 1,
+        freshness: 0,
+        cannibalization: 1,
+        conversion: 0,
+      },
       eligibleSurfaces: ['homepageBlogPicks', 'blogFooterRelated', 'pseoRelatedBlogPosts'],
       guardrails: [],
     },
@@ -67,7 +90,9 @@ describe('seo equity loader/selectors', () => {
 
   it('returns blog index featured and start-here links', () => {
     expect(getBlogIndexFeatured(snapshot, 1)).toEqual(['a']);
-    expect(getBlogStartHere(snapshot, 1)).toEqual([{ label: 'A', href: '/blog/a', description: 'Read A' }]);
+    expect(getBlogStartHere(snapshot, 1)).toEqual([
+      { label: 'A', href: '/blog/a', description: 'Read A' },
+    ]);
   });
 
   it('excludes the current post from related posts', () => {
@@ -80,7 +105,38 @@ describe('seo equity loader/selectors', () => {
   });
 
   it('validates promoted URLs against known routes', () => {
-    expect(validateSeoEquityPromotedUrls(snapshot, { blogSlugs: ['a', 'b'], routes: ['/tools/ai-image-upscaler'] })).toEqual([]);
-    expect(validateSeoEquityPromotedUrls(snapshot, { blogSlugs: ['a'], routes: ['/tools/ai-image-upscaler'] })).toContain('/blog/b');
+    expect(
+      validateSeoEquityPromotedUrls(snapshot, {
+        blogSlugs: ['a', 'b'],
+        routes: ['/tools/ai-image-upscaler'],
+      })
+    ).toEqual([]);
+    expect(
+      validateSeoEquityPromotedUrls(snapshot, {
+        blogSlugs: ['a'],
+        routes: ['/tools/ai-image-upscaler'],
+      })
+    ).toContain('/blog/b');
+  });
+
+  it('ships the current GSC-backed promotion window for high-opportunity blog URLs', () => {
+    const liveSnapshot = getSeoEquitySnapshot();
+
+    expect(liveSnapshot.source.window).toEqual({
+      startDate: '2026-04-14',
+      endDate: '2026-07-10',
+      days: 90,
+    });
+    expect(liveSnapshot.surfaces.homepageBlogPicks).toContain(
+      '/blog/poster-size-dimensions-pixels'
+    );
+    expect(liveSnapshot.surfaces.homepageBlogPicks).toContain(
+      '/blog/how-to-upscale-youtube-thumbnails'
+    );
+    expect(liveSnapshot.surfaces.blogStartHere.map(link => link.href)).toEqual([
+      '/blog/poster-size-dimensions-pixels',
+      '/blog/how-to-upscale-youtube-thumbnails',
+      '/blog/photoshop-upscale-image',
+    ]);
   });
 });

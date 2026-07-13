@@ -19,6 +19,26 @@ Maintenance rules:
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
 
+## 2026-07-13
+
+### GSC-Backed SEO Equity Internal-Link Promotion
+
+Changes:
+
+- Refreshed `content/seo-equity.json` from fresh 90-day GSC data through 2026-07-10 so homepage/blog/start-here/related-post internal-link surfaces now promote active opportunities instead of the stale June set.
+- Promoted `/blog/poster-size-dimensions-pixels`, `/blog/how-to-upscale-youtube-thumbnails`, and `/blog/photoshop-upscale-image` into high-equity blog surfaces; `/blog/poster-size-dimensions-pixels` also now receives related-post links from 54 blog pages.
+- Fixed `scripts/seo/generate-seo-equity-snapshot.ts` to preserve the current GSC export shape's `meta.dateRange` window instead of falling back to `1970-01-01` metadata.
+
+Validation:
+
+- Fresh GSC fetch completed: 18,475 query/page rows, 90-day window 2026-04-14 to 2026-07-10.
+- `content/seo-equity.json` readback confirmed homepage picks and blog start-here links include the promoted opportunity URLs.
+- Added unit coverage for the current snapshot window and promoted URLs.
+
+Follow-up:
+
+- After deploy, request indexing for `/` and `/blog`; the promoted target pages are already open in the GSC request-indexing backlog.
+
 ## 2026-07-10
 
 ### Homepage Blog Selection Test Maintenance
