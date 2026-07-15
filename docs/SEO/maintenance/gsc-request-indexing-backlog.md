@@ -11,7 +11,7 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 ## 2026-07-13 SEO Equity Internal-Link Promotion
 
 - [ ] `https://myimageupscaler.com/`
-- [ ] `https://myimageupscaler.com/blog`
+- [x] `https://myimageupscaler.com/blog`
 
 ## 2026-07-10 SEO Growth Plan Execution
 
