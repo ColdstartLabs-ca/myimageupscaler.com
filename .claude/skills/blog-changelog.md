@@ -322,3 +322,14 @@ Intent mismatch fixes (seo_title only):
 - `topaz-labs-free-trial` — replaced outdated legacy trial claims with current 2026 Topaz Photo subscription and two-day refund terms, distinguished desktop, legacy, and web offers, and refreshed metadata.
 - `topaz-video-upscaler`, `topaz-denoise-ai`, `best-ai-image-enhancer` — added relevant inbound links to the refreshed trial guide.
 - `pixelcut-ai-photo-editor` — replaced the narrative opening with a direct official-tool link, comparison disclosure, current plan summary, and quick verdict.
+
+## 2026-07-14
+
+### SEO: Trending-Down CTR Recovery
+
+**Affected:** best-image-upscaler, how-to-upscale-youtube-thumbnails
+**Why:** Fresh GSC showed persistent weak CTR for the image-upscaling software cluster and rising impressions with falling page-one CTR for blurry/low-quality YouTube thumbnail queries.
+**Changes:**
+
+- `best-image-upscaler` — refreshed title and description fields around 12 free/pro image upscaling tools for 2026 and replaced the generic opening with a direct workflow answer.
+- `how-to-upscale-youtube-thumbnails` — refreshed title and description fields around blurry/low-quality intent and replaced the opening H1/intro with a direct cause-and-fix answer.

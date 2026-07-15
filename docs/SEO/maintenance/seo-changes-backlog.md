@@ -19,6 +19,27 @@ Maintenance rules:
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
 
+## 2026-07-14
+
+### Trending-Down Blog CTR Recovery
+
+Changes:
+
+- Investigated five Search Console trending-down blog URLs with fresh 28-day GSC data through 2026-07-11 and classified the losses by ranking, CTR, and demand.
+- Refreshed `/blog/best-image-upscaler` title, SEO title, description fields, and direct-answer opening around `best image upscaling software 2026` after its persistent sub-0.2% CTR escalation matured.
+- Refreshed `/blog/how-to-upscale-youtube-thumbnails` title, SEO title, description fields, H1, and direct-answer opening around blurry/low-quality YouTube thumbnail queries after impressions increased while page-one CTR fell.
+- Left `/blog/best-free-ai-photo-enhancer-online` unchanged until its scheduled 2026-07-19 evaluation, and avoided speculative edits to the improving Spanish page and low-volume frame-rate article.
+
+Validation:
+
+- Added `tests/unit/seo/trending-down-blog-recovery.unit.spec.ts` for SERP lengths, query-language alignment, and distinct intent targeting.
+- Blog API PATCH and GET readback confirmed both records; production HTML renders the new metadata on `200`, indexable, self-canonical pages.
+
+Follow-up:
+
+- Manually request indexing for both refreshed URLs using their existing unchecked entries in [GSC request indexing backlog](./gsc-request-indexing-backlog.md).
+- Compare page/query CTR after 14 complete GSC days, with a stronger 28-day decision window; retain the 2026-07-19 photo-enhancer checkpoint.
+
 ## 2026-07-13
 
 ### GSC-Backed SEO Equity Internal-Link Promotion
