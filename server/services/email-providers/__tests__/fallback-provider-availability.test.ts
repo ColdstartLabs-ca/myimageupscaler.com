@@ -9,7 +9,6 @@ vi.mock('@shared/config/env', () => ({
   },
   serverEnv: {
     BREVO_API_KEY: 'brevo-test-key',
-    RESEND_API_KEY: 'resend-test-key',
     EMAIL_FROM_ADDRESS: 'noreply@example.com',
     BASE_URL: 'https://example.com',
     SUPPORT_EMAIL: 'support@example.com',
@@ -31,7 +30,6 @@ vi.mock('@server/services/provider-credit-tracker.service', () => ({
 }));
 
 import { BrevoProviderAdapter } from '../brevo.provider-adapter';
-import { ResendProviderAdapter } from '../resend.provider-adapter';
 
 describe('email resilience fallback availability', () => {
   beforeEach(() => {
@@ -39,19 +37,11 @@ describe('email resilience fallback availability', () => {
     isProviderAvailableMock.mockResolvedValue(false);
   });
 
-  it('should keep configured Brevo available regardless of local quota counters', async () => {
+  it('should stop using Brevo when its tracked daily capacity is exhausted', async () => {
     const adapter = new BrevoProviderAdapter();
 
-    await expect(adapter.isAvailable()).resolves.toBe(true);
+    await expect(adapter.isAvailable()).resolves.toBe(false);
     expect(adapter.getConfig().freeTier).toBeUndefined();
-    expect(isProviderAvailableMock).not.toHaveBeenCalled();
-  });
-
-  it('should keep configured Resend available regardless of local quota counters', async () => {
-    const adapter = new ResendProviderAdapter();
-
-    await expect(adapter.isAvailable()).resolves.toBe(true);
-    expect(adapter.getConfig().freeTier).toBeUndefined();
-    expect(isProviderAvailableMock).not.toHaveBeenCalled();
+    expect(isProviderAvailableMock).toHaveBeenCalledWith('brevo');
   });
 });

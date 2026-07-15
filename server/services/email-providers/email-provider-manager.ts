@@ -7,7 +7,8 @@
  * Provider priority:
  * 1. Cloudflare Email Service (paid primary)
  * 2. Brevo (resilience fallback)
- * 3. Resend (final resilience fallback)
+ * Marketing email is sent by Brevo only. Cloudflare Email Service is reserved
+ * for transactional email, with Brevo as its resilience fallback.
  */
 
 import type {
@@ -20,7 +21,6 @@ import type {
 import { EmailProvider } from '@shared/types/provider-adapter.types';
 import { createCloudflareEmailAdapter } from './cloudflare.provider-adapter';
 import { createBrevoAdapter } from './brevo.provider-adapter';
-import { createResendAdapter } from './resend.provider-adapter';
 import {
   EmailError as EmailTemplateError,
   EmailProviderSendError,
@@ -39,17 +39,35 @@ export class EmailProviderManager implements IEmailProviderManager {
     // Register default providers
     this.registerProvider(createCloudflareEmailAdapter());
     this.registerProvider(createBrevoAdapter());
-    this.registerProvider(createResendAdapter());
   }
 
   /**
    * Get best available email provider based on priority and availability
    */
-  async getProvider(): Promise<IEmailProviderAdapter> {
-    // Sort providers by priority (lower number = higher priority)
-    const availableProviders = Array.from(this.providers.values())
+  async getProvider(context?: {
+    userId?: string;
+    type?: 'transactional' | 'marketing';
+  }): Promise<IEmailProviderAdapter> {
+    return this.getProviderForType(context?.type ?? 'transactional');
+  }
+
+  private getEligibleProviders(
+    type: 'transactional' | 'marketing'
+  ): IEmailProviderAdapter[] {
+    return Array.from(this.providers.values())
       .filter(adapter => adapter.getConfig().enabled)
+      .filter(adapter => adapter.getProviderName() !== EmailProvider.RESEND)
+      .filter(
+        adapter => type !== 'marketing' || adapter.getProviderName() !== EmailProvider.CLOUDFLARE
+      )
       .sort((a, b) => a.getConfig().priority - b.getConfig().priority);
+  }
+
+  private async getProviderForType(
+    type: 'transactional' | 'marketing'
+  ): Promise<IEmailProviderAdapter> {
+    // Sort providers by priority (lower number = higher priority)
+    const availableProviders = this.getEligibleProviders(type);
 
     // Find first available provider
     for (const adapter of availableProviders) {
@@ -76,9 +94,7 @@ export class EmailProviderManager implements IEmailProviderManager {
     const fallbackReasons: string[] = [];
 
     // Try providers in priority order
-    const sortedProviders = Array.from(this.providers.values())
-      .filter(adapter => adapter.getConfig().enabled)
-      .sort((a, b) => a.getConfig().priority - b.getConfig().priority);
+    const sortedProviders = this.getEligibleProviders(params.type ?? 'transactional');
 
     for (const adapter of sortedProviders) {
       try {

@@ -43,7 +43,6 @@ step_secrets() {
         CLOUDFLARE_EMAIL_API_TOKEN
         EMAIL_FROM_ADDRESS
         BREVO_API_KEY
-        RESEND_API_KEY
         CRON_SECRET
     )
 

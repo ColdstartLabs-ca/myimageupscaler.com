@@ -3,6 +3,7 @@ import { EmailLifecycleService } from '@server/services/email-lifecycle.service'
 
 const sendMock = vi.hoisted(() => vi.fn());
 const healthStop = vi.hoisted(() => ({ value: false }));
+const healthSince = vi.hoisted(() => [] as string[]);
 const dueRows = vi.hoisted(() => [
   {
     id: 'queue-high',
@@ -116,8 +117,9 @@ vi.mock('@server/services/revenue-recovery.service', () => ({
 }));
 vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: {
-    rpc: vi.fn((name: string) => {
+    rpc: vi.fn((name: string, args?: { p_since?: string }) => {
       if (name === 'get_email_lifecycle_health') {
+        if (args?.p_since) healthSince.push(args.p_since);
         return Promise.resolve({ data: [{ stop_recommended: healthStop.value }], error: null });
       }
       if (name === 'get_due_email_lifecycle_queue')
@@ -153,6 +155,7 @@ describe('EmailLifecycleService recipient-value delivery integration', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     healthStop.value = false;
+    healthSince.length = 0;
     sendMock.mockResolvedValue({
       skipped: false,
       provider: 'test',
@@ -204,5 +207,16 @@ describe('EmailLifecycleService recipient-value delivery integration', () => {
     expect(result.stoppedByHealth).toBe(true);
     expect(result.eligible).toBe(0);
     expect(sendMock).not.toHaveBeenCalled();
+  });
+
+  it('should evaluate a one-day recovery window so a repaired provider can resume', async () => {
+    const before = Date.now();
+
+    await new EmailLifecycleService().processDueQueue({ batchSize: 10 });
+
+    const since = Date.parse(healthSince[0]);
+    const ageHours = (before - since) / (60 * 60 * 1000);
+    expect(ageHours).toBeGreaterThanOrEqual(23.99);
+    expect(ageHours).toBeLessThanOrEqual(24.01);
   });
 });

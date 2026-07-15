@@ -81,6 +81,7 @@ describe('POST /api/cron/email-lifecycle throughput controls', () => {
           cancel: 0,
         },
         stoppedByHealth: false,
+        stoppedByProviderCapacity: false,
       }),
       getQueueHealth: vi.fn().mockResolvedValue({
         duePending: 87,
@@ -148,6 +149,7 @@ describe('POST /api/cron/email-lifecycle throughput controls', () => {
         cancel: 0,
       },
       stoppedByHealth: false,
+      stoppedByProviderCapacity: false,
     });
     expect(body.durationMs).toEqual(expect.any(Number));
   });

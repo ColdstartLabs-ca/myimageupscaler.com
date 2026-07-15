@@ -11,7 +11,6 @@ export {
   createCloudflareEmailAdapter,
 } from './cloudflare.provider-adapter';
 export { BrevoProviderAdapter, createBrevoAdapter } from './brevo.provider-adapter';
-export { ResendProviderAdapter, createResendAdapter } from './resend.provider-adapter';
 export {
   EmailProviderManager,
   getEmailProviderManager,

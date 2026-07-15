@@ -280,8 +280,6 @@ const serverEnvSchema = z.object({
   CLOUDFLARE_EMAIL_API_TOKEN: z.string().default(''),
   // Brevo (resilience fallback)
   BREVO_API_KEY: z.string().default(''),
-  // Resend (final resilience fallback)
-  RESEND_API_KEY: z.string().default(''),
   // Common email settings
   EMAIL_FROM_ADDRESS: z.string().email().default('noreply@myimageupscaler.com'),
   SUPPORT_EMAIL: z.string().email().default('support@myimageupscaler.com'),
@@ -433,7 +431,6 @@ function loadServerEnv(): IServerEnv {
     // Email Providers
     CLOUDFLARE_EMAIL_API_TOKEN: process.env.CLOUDFLARE_EMAIL_API_TOKEN || '',
     BREVO_API_KEY: process.env.BREVO_API_KEY || '',
-    RESEND_API_KEY: process.env.RESEND_API_KEY || '',
     EMAIL_FROM_ADDRESS: process.env.EMAIL_FROM_ADDRESS || 'noreply@myimageupscaler.com',
     SUPPORT_EMAIL:
       process.env.SUPPORT_EMAIL ||

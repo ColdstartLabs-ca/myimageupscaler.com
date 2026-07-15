@@ -1,20 +1,5 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 
-// Create the mock function upfront
-const mockResendSend = vi.fn().mockResolvedValue({
-  data: { id: 'test-email-id' },
-});
-
-// Mock Resend with the shared send function
-vi.mock('resend', () => ({
-  Resend: class {
-    emails = {
-      send: mockResendSend,
-    };
-    constructor(_apiKey: string) {}
-  },
-}));
-
 // Mock supabaseAdmin - must use factory function
 vi.mock('@server/supabase/supabaseAdmin', () => {
   const mockInsert = vi.fn(() => ({ error: null }));
@@ -42,7 +27,6 @@ vi.mock('@server/supabase/supabaseAdmin', () => {
 const mockIsDevelopment = vi.fn(() => false);
 vi.mock('@shared/config/env', () => ({
   serverEnv: {
-    RESEND_API_KEY: 'test-api-key',
     EMAIL_FROM_ADDRESS: 'test@example.com',
     BASE_URL: 'http://localhost:3000',
     SUPPORT_EMAIL: 'support@example.com',
@@ -81,9 +65,6 @@ describe('EmailService', () => {
 
   beforeEach(() => {
     // Reset all mocks to default behavior
-    mockResendSend.mockResolvedValue({
-      data: { id: 'test-email-id' },
-    });
     mockIsDevelopment.mockReturnValue(false);
     vi.clearAllMocks();
     emailService = new EmailService();
@@ -401,7 +382,6 @@ describe('EmailService', () => {
 
       expect(result.success).toBe(true);
       expect(result.messageId).toMatch(/^dev-\d+$/);
-      expect(mockResendSend).not.toHaveBeenCalled();
       expect(consoleSpy).toHaveBeenCalledWith(
         '[EMAIL_TEST_MODE] Email would be sent:',
         expect.objectContaining({

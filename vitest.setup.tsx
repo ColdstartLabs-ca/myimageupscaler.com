@@ -149,8 +149,6 @@ process.env.SUPPORT_EMAIL = 'support@test.com';
 process.env.APP_NAME = 'TestApp';
 // Email provider API keys
 // eslint-disable-next-line no-restricted-syntax
-process.env.RESEND_API_KEY = 'test-resend-key';
-// eslint-disable-next-line no-restricted-syntax
 process.env.SENDPULSE_API_USER_ID = 'test-user-id';
 // eslint-disable-next-line no-restricted-syntax
 process.env.SENDPULSE_API_SECRET = 'test-secret';

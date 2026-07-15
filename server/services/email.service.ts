@@ -21,9 +21,8 @@ export class EmailError extends Error {
  * Email service for sending transactional and marketing emails via provider manager.
  *
  * Provider priority:
- * 1. Cloudflare Email Service (paid primary)
- * 2. Brevo (resilience fallback for transient failures)
- * 3. Resend (final resilience fallback for transient failures)
+ * Transactional: Cloudflare Email Service, then Brevo on eligible failures.
+ * Marketing: Brevo only.
  *
  * The service automatically handles:
  * - Provider selection and fallback

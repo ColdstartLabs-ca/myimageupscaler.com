@@ -318,6 +318,40 @@ describe('EmailLifecycleService', () => {
     expect(sendEmailMock).not.toHaveBeenCalled();
   });
 
+  it('pauses the batch without recording a delivery failure when provider capacity is exhausted', async () => {
+    sendEmailMock.mockRejectedValueOnce(
+      new EmailProviderSendError(
+        'No configured email providers are currently available.',
+        'provider_unavailable',
+        true
+      )
+    );
+    dueQueueRows = ['first', 'second'].map(id => ({
+      id: `queue_${id}`,
+      campaign_key: 'low-credits',
+      user_id: `user_${id}`,
+      recipient_email: `${id}@example.com`,
+      scheduled_for: new Date(Date.now() - 1000).toISOString(),
+      status: 'pending',
+      template_data: {},
+      metadata: {},
+      created_at: new Date().toISOString(),
+    }));
+
+    const result = await new EmailLifecycleService().processDueQueue({ batchSize: 2 });
+
+    expect(sendEmailMock).toHaveBeenCalledTimes(1);
+    expect(result.failed).toBe(0);
+    expect(result.stoppedByProviderCapacity).toBe(true);
+    expect(queueUpdates).toContainEqual(
+      expect.objectContaining({
+        status: 'pending',
+        reason: expect.stringContaining('provider_capacity_exhausted'),
+      })
+    );
+    expect(eventInserts).not.toContainEqual(expect.objectContaining({ event_type: 'failed' }));
+  });
+
   it('does not apply bounce suppression to transactional campaigns', async () => {
     emailLogRows = [
       {
@@ -519,7 +553,7 @@ describe('EmailLifecycleService', () => {
       },
     ];
     sendEmailMock.mockRejectedValueOnce(
-      new EmailProviderSendError('provider unavailable', 'provider_unavailable', true)
+      new EmailProviderSendError('provider unavailable', 'provider_error', true, ['brevo'])
     );
     const result = await new EmailLifecycleService().processDueQueue({ batchSize: 1 });
     expect(result.failed).toBe(1);

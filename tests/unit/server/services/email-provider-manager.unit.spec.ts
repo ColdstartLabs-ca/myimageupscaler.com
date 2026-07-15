@@ -19,7 +19,6 @@ let mockServerEnv = {
   CLOUDFLARE_EMAIL_API_TOKEN: 'test-cloudflare-token',
   CLOUDFLARE_ACCOUNT_ID: 'test-account-id',
   BREVO_API_KEY: 'test-brevo-key',
-  RESEND_API_KEY: 'test-resend-key',
   EMAIL_FROM_ADDRESS: 'test@example.com',
   BASE_URL: 'https://example.com',
   SUPPORT_EMAIL: 'support@example.com',
@@ -69,19 +68,6 @@ const mockCloudflareConfig: IEmailProviderConfig = {
     resetTimezone: 'UTC',
   },
   fallbackProvider: EmailProvider.BREVO,
-};
-
-const mockResendConfig: IEmailProviderConfig = {
-  provider: EmailProvider.RESEND,
-  tier: 'hybrid' as const,
-  priority: 3,
-  enabled: true,
-  freeTier: {
-    dailyRequests: 100,
-    monthlyCredits: 3000,
-    hardLimit: true,
-    resetTimezone: 'UTC',
-  },
 };
 
 // Create mock adapter factory
@@ -136,15 +122,6 @@ vi.mock('@server/services/email-providers/brevo.provider-adapter', () => ({
     }),
 }));
 
-vi.mock('@server/services/email-providers/resend.provider-adapter', () => ({
-  createResendAdapter: () =>
-    createMockAdapter(EmailProvider.RESEND, mockResendConfig, true, {
-      success: true,
-      messageId: 'resend-id',
-      provider: EmailProvider.RESEND,
-    }),
-}));
-
 describe('EmailProviderManager', () => {
   let EmailProviderManager: (typeof import('@server/services/email-providers/email-provider-manager'))['EmailProviderManager'];
   let getEmailProviderManager: (typeof import('@server/services/email-providers/email-provider-manager'))['getEmailProviderManager'];
@@ -180,11 +157,10 @@ describe('EmailProviderManager', () => {
       const manager = new EmailProviderManager();
       const providers = manager.getAllProviders();
 
-      expect(providers).toHaveLength(3);
+      expect(providers).toHaveLength(2);
       expect(providers.map(p => p.getProviderName())).toEqual([
         EmailProvider.CLOUDFLARE,
         EmailProvider.BREVO,
-        EmailProvider.RESEND,
       ]);
     });
 
@@ -192,11 +168,10 @@ describe('EmailProviderManager', () => {
       const manager = new EmailProviderManager();
       const cloudflare = manager.getProviderByType(EmailProvider.CLOUDFLARE);
       const brevo = manager.getProviderByType(EmailProvider.BREVO);
-      const resend = manager.getProviderByType(EmailProvider.RESEND);
 
       expect(cloudflare?.getConfig().priority).toBe(1);
       expect(brevo?.getConfig().priority).toBe(2);
-      expect(resend?.getConfig().priority).toBe(3);
+      expect(manager.getProviderByType(EmailProvider.RESEND)).toBeUndefined();
     });
 
     test('should have all providers enabled by default', async () => {
@@ -268,7 +243,7 @@ describe('EmailProviderManager', () => {
       manager.updateProviderConfig(EmailProvider.RESEND, { priority: 1 });
 
       const provider = await manager.getProvider();
-      expect(provider.getProviderName()).toBe(EmailProvider.RESEND);
+      expect(provider.getProviderName()).toBe(EmailProvider.BREVO);
     });
   });
 
@@ -359,7 +334,7 @@ describe('EmailProviderManager', () => {
       }
 
       await expect(manager.send(mockEmailParams)).rejects.toThrow(
-        'All email providers failed. Last error: Resend API error'
+        'All email providers failed. Last error: Brevo API error'
       );
     });
 
@@ -458,7 +433,7 @@ describe('EmailProviderManager', () => {
       manager.registerProvider(customAdapter);
 
       const providers = manager.getAllProviders();
-      expect(providers).toHaveLength(4);
+      expect(providers).toHaveLength(3);
       expect(providers.map(p => p.getProviderName())).toContain('custom');
     });
 
@@ -484,7 +459,7 @@ describe('EmailProviderManager', () => {
       const manager = new EmailProviderManager();
       const providers = manager.getAllProviders();
 
-      expect(providers).toHaveLength(3);
+      expect(providers).toHaveLength(2);
       expect(providers.every(p => typeof p.getProviderName === 'function')).toBe(true);
       expect(providers.every(p => typeof p.getConfig === 'function')).toBe(true);
     });
@@ -502,7 +477,7 @@ describe('EmailProviderManager', () => {
       manager.registerProvider(customAdapter);
 
       const providers = manager.getAllProviders();
-      expect(providers).toHaveLength(4);
+      expect(providers).toHaveLength(3);
     });
   });
 
@@ -516,7 +491,7 @@ describe('EmailProviderManager', () => {
 
       expect(cloudflare?.getProviderName()).toBe(EmailProvider.CLOUDFLARE);
       expect(brevo?.getProviderName()).toBe(EmailProvider.BREVO);
-      expect(resend?.getProviderName()).toBe(EmailProvider.RESEND);
+      expect(resend).toBeUndefined();
     });
 
     test('should return undefined for non-existent provider', async () => {
@@ -541,14 +516,13 @@ describe('EmailProviderManager', () => {
     test('should update multiple config fields', async () => {
       const manager = new EmailProviderManager();
 
-      manager.updateProviderConfig(EmailProvider.RESEND, {
+      manager.updateProviderConfig(EmailProvider.BREVO, {
         enabled: false,
         priority: 10,
         tier: 'paid',
       });
 
-      const resend = manager.getProviderByType(EmailProvider.RESEND);
-      const config = resend?.getConfig();
+      const config = manager.getProviderByType(EmailProvider.BREVO)?.getConfig();
 
       expect(config?.enabled).toBe(false);
       expect(config?.priority).toBe(10);
@@ -587,11 +561,10 @@ describe('EmailProviderManager', () => {
 
       expect(usage).toHaveProperty(EmailProvider.CLOUDFLARE);
       expect(usage).toHaveProperty(EmailProvider.BREVO);
-      expect(usage).toHaveProperty(EmailProvider.RESEND);
+      expect(usage).not.toHaveProperty(EmailProvider.RESEND);
 
       expect(usage[EmailProvider.CLOUDFLARE].provider).toBe(EmailProvider.CLOUDFLARE);
       expect(usage[EmailProvider.BREVO].provider).toBe(EmailProvider.BREVO);
-      expect(usage[EmailProvider.RESEND].provider).toBe(EmailProvider.RESEND);
     });
 
     test('should include all usage fields', async () => {
@@ -659,7 +632,7 @@ describe('EmailProviderManager', () => {
       const sameManager = getEmailProviderManager();
       const providers = sameManager.getAllProviders();
 
-      expect(providers).toHaveLength(4);
+      expect(providers).toHaveLength(3);
       expect(providers.map(p => p.getProviderName())).toContain('custom');
     });
   });
@@ -827,7 +800,7 @@ describe('EmailProviderManager', () => {
         vi.spyOn(resend, 'isAvailable').mockResolvedValue(true);
       }
 
-      await expect(manager.send(mockEmailParams)).rejects.toThrow('null');
+      await expect(manager.send(mockEmailParams)).rejects.toThrow('Second error');
     });
 
     test('should convert null error to string', async () => {
@@ -860,7 +833,7 @@ describe('EmailProviderManager', () => {
         vi.spyOn(resend, 'isAvailable').mockResolvedValue(true);
       }
 
-      await expect(manager.send(mockEmailParams)).rejects.toThrow('undefined');
+      await expect(manager.send(mockEmailParams)).rejects.toThrow('Second error');
     });
   });
 });

@@ -143,7 +143,6 @@
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
     "replicate": "^1.4.0",
-    "resend": "^6.7.0",
     "sendpulse-api": "1.1.7",
     "sharp": "^0.34.5",
     "stripe": "^20.0.0",

@@ -106,6 +106,7 @@ export interface IProcessLifecycleQueueResult {
   dryRun: boolean;
   recipientValueBandCounts: Record<RecipientValueBand, number>;
   stoppedByHealth: boolean;
+  stoppedByProviderCapacity: boolean;
 }
 
 function createRecipientValueBandCounts(): Record<RecipientValueBand, number> {
@@ -383,12 +384,13 @@ export class EmailLifecycleService {
       dryRun,
       recipientValueBandCounts: createRecipientValueBandCounts(),
       stoppedByHealth: false,
+      stoppedByProviderCapacity: false,
     };
 
     if (!dryRun) {
       const { data: health, error: healthError } = await supabaseAdmin.rpc(
         'get_email_lifecycle_health',
-        { p_since: daysAgo(7) }
+        { p_since: daysAgo(1) }
       );
       if (healthError) {
         throw new Error(`Failed to check lifecycle delivery health: ${healthError.message}`);
@@ -516,6 +518,15 @@ export class EmailLifecycleService {
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Unknown email send failure';
         const transient = error instanceof EmailProviderSendError && error.transient;
+        const providerCapacityExhausted =
+          error instanceof EmailProviderSendError &&
+          error.classification === 'provider_unavailable' &&
+          error.attemptedProviders.length === 0;
+        if (providerCapacityExhausted) {
+          await this.rescheduleQueueRow(row.id, message, 'provider_capacity_exhausted');
+          result.stoppedByProviderCapacity = true;
+          break;
+        }
         if (transient) {
           await this.rescheduleQueueRow(row.id, message);
         } else {
@@ -1102,12 +1113,16 @@ export class EmailLifecycleService {
     return data === true;
   }
 
-  private async rescheduleQueueRow(queueId: string, reason: string): Promise<void> {
+  private async rescheduleQueueRow(
+    queueId: string,
+    reason: string,
+    category = 'transient_provider_failure'
+  ): Promise<void> {
     const { error } = await supabaseAdmin
       .from('email_lifecycle_queue')
       .update({
         status: 'pending',
-        reason: `transient_provider_failure:${reason}`,
+        reason: `${category}:${reason}`,
         scheduled_for: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
         processing_claim_id: null,
         processing_claimed_at: null,

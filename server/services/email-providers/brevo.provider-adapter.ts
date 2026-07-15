@@ -36,7 +36,6 @@ const BREVO_CONFIG: IEmailProviderConfig = {
   tier: ProviderTier.HYBRID,
   priority: 2,
   enabled: true,
-  fallbackProvider: EmailProvider.RESEND,
 };
 
 const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
@@ -118,7 +117,7 @@ export class BrevoProviderAdapter extends BaseEmailProviderAdapter {
       return false;
     }
 
-    return true;
+    return await this.creditTracker.isProviderAvailable(EmailProvider.BREVO);
   }
 }
 
