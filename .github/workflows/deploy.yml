@@ -17,6 +17,18 @@ jobs:
   quality:
     name: Code Quality
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: test
+        ports:
+          - 54329:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -43,6 +55,7 @@ jobs:
         run: yarn vitest run tests/unit/server/services/email-recipient-value-performance-postgres.unit.spec.ts --maxWorkers=1
         env:
           RUN_POSTGRES_TESTS: '1'
+          POSTGRES_TEST_URL: postgresql://postgres:test@127.0.0.1:54329/postgres
 
       - name: Check cron worker setup
         run: yarn cron:check

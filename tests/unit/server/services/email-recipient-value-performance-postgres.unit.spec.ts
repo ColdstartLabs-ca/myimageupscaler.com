@@ -6,42 +6,51 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 const dockerAvailable = spawnSync('docker', ['info'], { stdio: 'ignore' }).status === 0;
 const postgresTestEnabled = process.env.RUN_POSTGRES_TESTS === '1';
+const externalPostgresUrl = process.env.POSTGRES_TEST_URL;
 const containerName = `miu-recipient-performance-${randomUUID()}`;
 let client: Client | undefined;
+let managedContainer = false;
 
-describe.runIf(dockerAvailable && postgresTestEnabled)(
+describe.runIf((dockerAvailable || Boolean(externalPostgresUrl)) && postgresTestEnabled)(
   'recipient-value performance migration on PostgreSQL 16',
   () => {
     beforeAll(async () => {
-      execFileSync('docker', [
-        'run',
-        '--rm',
-        '-d',
-        '--name',
-        containerName,
-        '-e',
-        'POSTGRES_PASSWORD=test',
-        '-P',
-        'postgres:16-alpine',
-      ]);
+      let connectionString = externalPostgresUrl;
+      if (!connectionString) {
+        execFileSync('docker', [
+          'run',
+          '--rm',
+          '-d',
+          '--name',
+          containerName,
+          '-e',
+          'POSTGRES_PASSWORD=test',
+          '-P',
+          'postgres:16-alpine',
+        ]);
+        managedContainer = true;
 
-      for (let attempt = 0; attempt < 30; attempt += 1) {
-        const ready =
-          spawnSync('docker', ['exec', containerName, 'pg_isready', '-U', 'postgres'], {
-            stdio: 'ignore',
-          }).status === 0;
-        if (ready) break;
-        await new Promise(resolve => setTimeout(resolve, 250));
+        const mapping = execFileSync('docker', ['port', containerName, '5432/tcp'], {
+          encoding: 'utf8',
+        }).trim();
+        const port = Number(mapping.slice(mapping.lastIndexOf(':') + 1));
+        connectionString = `postgresql://postgres:test@127.0.0.1:${port}/postgres`;
       }
 
-      const mapping = execFileSync('docker', ['port', containerName, '5432/tcp'], {
-        encoding: 'utf8',
-      }).trim();
-      const port = Number(mapping.slice(mapping.lastIndexOf(':') + 1));
-      client = new Client({
-        connectionString: `postgresql://postgres:test@127.0.0.1:${port}/postgres`,
-      });
-      await client.connect();
+      let lastConnectionError: unknown;
+      for (let attempt = 0; attempt < 30; attempt += 1) {
+        const candidate = new Client({ connectionString });
+        try {
+          await candidate.connect();
+          client = candidate;
+          break;
+        } catch (error) {
+          lastConnectionError = error;
+          await candidate.end().catch(() => undefined);
+          await new Promise(resolve => setTimeout(resolve, 250));
+        }
+      }
+      if (!client) throw lastConnectionError ?? new Error('PostgreSQL test connection failed');
       await client.query(`
       CREATE ROLE anon;
       CREATE ROLE authenticated;
@@ -74,7 +83,9 @@ describe.runIf(dockerAvailable && postgresTestEnabled)(
 
     afterAll(async () => {
       await client?.end();
-      spawnSync('docker', ['rm', '-f', containerName], { stdio: 'ignore' });
+      if (managedContainer) {
+        spawnSync('docker', ['rm', '-f', containerName], { stdio: 'ignore' });
+      }
     });
 
     it('applies and preserves privacy, attribution, failure correlation, and grants', async () => {
