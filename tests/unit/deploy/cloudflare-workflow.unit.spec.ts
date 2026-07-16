@@ -12,6 +12,8 @@ describe('Cloudflare deployment workflow', () => {
     expect(workflow).toContain('npx next build --webpack');
     expect(workflow).toContain('npx opennextjs-cloudflare build --skipNextBuild');
     expect(workflow).not.toMatch(/run: npx opennextjs-cloudflare build\s*$/m);
+    expect(workflow).toContain('Run PostgreSQL migration test in isolation');
+    expect(workflow).toContain("RUN_POSTGRES_TESTS: '1'");
     expect(workflow).toContain('command: deploy --config wrangler.json');
     expect(workflow).not.toContain('command: opennextjs-cloudflare deploy');
   });

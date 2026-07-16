@@ -39,6 +39,11 @@ jobs:
       - name: Run unit tests
         run: yarn test:unit
 
+      - name: Run PostgreSQL migration test in isolation
+        run: yarn vitest run tests/unit/server/services/email-recipient-value-performance-postgres.unit.spec.ts --maxWorkers=1
+        env:
+          RUN_POSTGRES_TESTS: '1'
+
       - name: Check cron worker setup
         run: yarn cron:check
 
