@@ -90,7 +90,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: opennextjs-cloudflare deploy
+          command: deploy --config wrangler.json
 
       - name: Deploy cron worker
         uses: cloudflare/wrangler-action@v3
