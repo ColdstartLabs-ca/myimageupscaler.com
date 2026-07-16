@@ -12,6 +12,7 @@ For SEO-facing tasks, use `.Codex/skills/seo-changes-backlog/` and skim `docs/SE
 - **Colors**: Never hardcode - use Tailwind config tokens only.
 - **Docs**: No auto-generated .md files unless explicitly requested.
 - **Environment Variables**: NEVER use `process.env` directly. Use `clientEnv` or `serverEnv` from `@shared/config/env`.
+- **Production Database Safety**: Before any potentially destructive production database action (including schema changes, migrations, data updates/deletes, restores, or bulk operations), create and verify a fresh backup. Record the backup path or provider snapshot identifier before proceeding. If a backup cannot be completed, stop and ask the user before changing the database.
 
 ## Before Starting
 
