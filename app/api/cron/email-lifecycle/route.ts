@@ -2,10 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { serverEnv } from '@shared/config/env';
 import { getEmailLifecycleService } from '@server/services/email-lifecycle.service';
 
-const DEFAULT_BATCH_SIZE = 50;
 const DEFAULT_SCAN_LIMIT = 100;
-const MAX_BATCH_SIZE = 250;
 const MAX_SCAN_LIMIT = 1000;
+const MAX_SEND_LIMIT = 1;
 
 function parseBoundedInteger(value: string | null, fallback: number, max: number): number {
   const parsed = Number(value ?? fallback);
@@ -22,43 +21,50 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   const url = new URL(request.url);
   const dryRun = url.searchParams.get('dryRun') === 'true';
-  const batchSize = parseBoundedInteger(
-    url.searchParams.get('batchSize'),
-    DEFAULT_BATCH_SIZE,
-    MAX_BATCH_SIZE
-  );
+  const drainOnly = url.searchParams.get('drainOnly') === 'true';
   const scanLimit = parseBoundedInteger(
-    url.searchParams.get('scanLimit'),
+    url.searchParams.get('scanLimit') ?? url.searchParams.get('batchSize'),
     DEFAULT_SCAN_LIMIT,
     MAX_SCAN_LIMIT
   );
+  const sendLimit = parseBoundedInteger(url.searchParams.get('sendLimit'), 1, MAX_SEND_LIMIT);
   const lifecycleService = getEmailLifecycleService();
   const startedAt = Date.now();
 
   try {
     console.log('[CRON] Email lifecycle started', {
       dryRun,
-      batchSize,
+      drainOnly,
       scanLimit,
+      sendLimit,
     });
 
-    const eligibility = await lifecycleService.queueDailyEligibilityDetailed({
-      dryRun,
-      limit: scanLimit,
-    });
+    const eligibility = drainOnly
+      ? {
+          queued: 0,
+          lifecycleQueued: 0,
+          suppressionsRecorded: 0,
+          suppressionsReused: 0,
+          recovery: null,
+        }
+      : await lifecycleService.queueDailyEligibilityDetailed({ dryRun, limit: scanLimit });
     const processed = await lifecycleService.processDueQueue({
       dryRun,
-      batchSize,
+      scanLimit,
+      sendLimit,
     });
     const queueHealth = await lifecycleService.getQueueHealth();
     const durationMs = Date.now() - startedAt;
 
     console.log('[CRON] Email lifecycle completed', {
       dryRun,
-      batchSize,
+      drainOnly,
       scanLimit,
+      sendLimit,
       queuedFromEligibility: eligibility.queued,
       lifecycleQueuedFromEligibility: eligibility.lifecycleQueued,
+      suppressionsRecordedFromEligibility: eligibility.suppressionsRecorded,
+      suppressionsReusedFromEligibility: eligibility.suppressionsReused,
       recoveryEligibility: eligibility.recovery,
       sent: processed.sent,
       skipped: processed.skipped,
@@ -66,6 +72,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       recipientValueBandCounts: processed.recipientValueBandCounts,
       stoppedByHealth: processed.stoppedByHealth,
       stoppedByProviderCapacity: processed.stoppedByProviderCapacity,
+      stoppedByProvider: processed.stoppedByProvider,
+      rescheduled: processed.rescheduled,
+      providerClassification: processed.providerClassification,
+      attemptedProviders: processed.attemptedProviders,
+      unavailableProviders: processed.unavailableProviders,
+      fallbackReasons: processed.fallbackReasons,
+      unclassifiedDueReturned: processed.unclassifiedDueReturned,
+      providerIoMs: processed.providerIoMs,
       duePending: queueHealth.duePending,
       oldestPendingScheduledFor: queueHealth.oldestPendingScheduledFor,
       durationMs,
@@ -74,11 +88,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({
       success: true,
       dryRun,
-      batchSize,
+      drainOnly,
       scanLimit,
+      sendLimit,
       queued: eligibility.queued + processed.queued,
       queuedFromEligibility: eligibility.queued,
       lifecycleQueuedFromEligibility: eligibility.lifecycleQueued,
+      suppressionsRecordedFromEligibility: eligibility.suppressionsRecorded,
+      suppressionsReusedFromEligibility: eligibility.suppressionsReused,
       recoveryEligibility: eligibility.recovery,
       sent: processed.sent,
       skipped: processed.skipped,
@@ -87,6 +104,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       recipientValueBandCounts: processed.recipientValueBandCounts,
       stoppedByHealth: processed.stoppedByHealth,
       stoppedByProviderCapacity: processed.stoppedByProviderCapacity,
+      stoppedByProvider: processed.stoppedByProvider,
+      rescheduled: processed.rescheduled,
+      providerClassification: processed.providerClassification,
+      attemptedProviders: processed.attemptedProviders,
+      unavailableProviders: processed.unavailableProviders,
+      fallbackReasons: processed.fallbackReasons,
+      unclassifiedDueReturned: processed.unclassifiedDueReturned,
+      providerIoMs: processed.providerIoMs,
       duePending: queueHealth.duePending,
       oldestPendingScheduledFor: queueHealth.oldestPendingScheduledFor,
       durationMs,
@@ -96,8 +121,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     console.error('[CRON] Email lifecycle failed', {
       message,
       dryRun,
-      batchSize,
+      drainOnly,
       scanLimit,
+      sendLimit,
       durationMs: Date.now() - startedAt,
     });
     return NextResponse.json({ success: false, error: message }, { status: 500 });

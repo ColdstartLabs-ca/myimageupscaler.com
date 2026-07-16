@@ -2,8 +2,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 interface ITestState {
   queueRows: Array<Record<string, unknown>>;
+  queueError: { message: string } | null;
   queuePageCalls: number;
   queueLimits: number[];
+  signalLimits: number[];
   runInsert?: Record<string, unknown>;
   runUpdate?: Record<string, unknown>;
   itemInserts: Array<Array<Record<string, unknown>>>;
@@ -14,8 +16,10 @@ interface ITestState {
 
 const testState = vi.hoisted<ITestState>(() => ({
   queueRows: [],
+  queueError: null,
   queuePageCalls: 0,
   queueLimits: [],
+  signalLimits: [],
   itemInserts: [],
   queueUpdates: 0,
   rpcCalls: [],
@@ -27,7 +31,16 @@ function makeChain(table: string, operation: string, _selectColumns = '') {
   const methods = ['eq', 'gt', 'gte', 'in', 'order', 'limit', 'select'];
   for (const method of methods) {
     chain[method] = vi.fn((...args: unknown[]) => {
-      if (method === 'limit' && typeof args[0] === 'number') testState.queueLimits.push(args[0]);
+      if (table === 'email_lifecycle_queue' && method === 'limit' && typeof args[0] === 'number') {
+        testState.queueLimits.push(args[0]);
+      }
+      if (
+        ['revenue_recovery_intents', 'email_lifecycle_events', 'email_logs'].includes(table) &&
+        method === 'limit' &&
+        typeof args[0] === 'number'
+      ) {
+        testState.signalLimits.push(args[0]);
+      }
       return chain;
     });
   }
@@ -64,7 +77,9 @@ function makeChain(table: string, operation: string, _selectColumns = '') {
     } else if (table === 'email_queue_pruning_run_items' && operation === 'insert') {
       data = [];
     }
-    return Promise.resolve(resolve({ data, error: null }));
+    const error =
+      table === 'email_lifecycle_queue' && operation === 'select' ? testState.queueError : null;
+    return Promise.resolve(resolve({ data, error }));
   };
   return chain;
 }
@@ -90,6 +105,9 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
     })),
     rpc: vi.fn((name: string, args: Record<string, unknown>) => {
       testState.rpcCalls.push({ name, args });
+      if (name === 'get_email_recipient_value_transaction_signals') {
+        return Promise.resolve({ data: [], error: null });
+      }
       if (name === 'get_email_recipient_value_performance') {
         return Promise.resolve({
           data: [
@@ -132,6 +150,11 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
 }));
 
 import { EmailRecipientValueService } from '@server/services/email-recipient-value.service';
+import {
+  compareLifecycleDueQueueRows,
+  isLifecycleDueQueueRowEligible,
+  type ILifecycleDueQueuePolicyRow,
+} from '@server/services/email-lifecycle.service';
 
 describe('EmailRecipientValueService persistence boundaries', () => {
   beforeEach(() => {
@@ -159,8 +182,10 @@ describe('EmailRecipientValueService persistence boundaries', () => {
         processing_claimed_at: null,
       },
     ];
+    testState.queueError = null;
     testState.queuePageCalls = 0;
     testState.queueLimits = [];
+    testState.signalLimits = [];
     testState.runInsert = undefined;
     testState.runUpdate = undefined;
     testState.itemInserts = [];
@@ -174,7 +199,11 @@ describe('EmailRecipientValueService persistence boundaries', () => {
   });
 
   it('should page candidate reads and persist checksum/classification summaries without queue status updates', async () => {
-    const result = await new EmailRecipientValueService().auditQueue({ pageSize: 1 });
+    const onProgress = vi.fn();
+    const result = await new EmailRecipientValueService().auditQueue({
+      pageSize: 1,
+      onProgress,
+    });
 
     expect(result.summary.candidateCount).toBe(2);
     expect(result.summary.byCountry).toMatchObject({ PH: 1, UNKNOWN: 1 });
@@ -186,6 +215,14 @@ describe('EmailRecipientValueService persistence boundaries', () => {
       candidate_checksum: result.summary.candidateChecksum,
     });
     expect(testState.queueUpdates).toBe(0);
+    expect(onProgress.mock.calls).toEqual([[1], [2]]);
+    expect(testState.signalLimits).toHaveLength(3);
+    expect(testState.signalLimits.every(limit => limit === 100)).toBe(true);
+    expect(
+      testState.rpcCalls.filter(
+        call => call.name === 'get_email_recipient_value_transaction_signals'
+      )
+    ).toHaveLength(1);
   });
 
   it('should refuse an apply when the persisted expected count differs and call the guarded RPC when it matches', async () => {
@@ -235,5 +272,80 @@ describe('EmailRecipientValueService persistence boundaries', () => {
       name: 'get_email_recipient_value_performance',
       args: { p_since: '2026-07-01T00:00:00.000Z' },
     });
+  });
+
+  it('should return keep_high before keep_medium and exclude disabled held and active claims', () => {
+    const now = new Date('2026-07-15T12:00:00.000Z');
+    const base = {
+      scheduled_for: '2026-07-15T00:00:00.000Z',
+      campaign_email_type: 'marketing' as const,
+      campaign_enabled: true,
+      campaign_priority: 'revenue_critical' as const,
+      campaign_sort_priority: 90,
+      recipient_value_policy_version: 'v1',
+      recipient_value_score: 50,
+    };
+    const rows: ILifecycleDueQueuePolicyRow[] = [
+      { ...base, id: 'medium', recipient_value_decision: 'keep_medium' },
+      { ...base, id: 'high', recipient_value_decision: 'keep_high' },
+      { ...base, id: 'held', recipient_value_decision: 'hold_experiment' },
+      { ...base, id: 'unclassified', recipient_value_decision: null },
+      { ...base, id: 'disabled', campaign_enabled: false, recipient_value_decision: 'keep_high' },
+      {
+        ...base,
+        id: 'active-claim',
+        recipient_value_decision: 'keep_high',
+        processing_claim_id: 'claim-active',
+        processing_claimed_at: '2026-07-15T11:55:00.000Z',
+      },
+      {
+        ...base,
+        id: 'stale-claim',
+        recipient_value_decision: 'keep_high',
+        processing_claim_id: 'claim-stale',
+        processing_claimed_at: '2026-07-15T11:40:00.000Z',
+      },
+      {
+        ...base,
+        id: 'claim-without-timestamp',
+        recipient_value_decision: 'keep_high',
+        processing_claim_id: 'claim-missing-time',
+        processing_claimed_at: null,
+      },
+      {
+        ...base,
+        id: 'claim-with-invalid-timestamp',
+        recipient_value_decision: 'keep_high',
+        processing_claim_id: 'claim-invalid-time',
+        processing_claimed_at: 'not-a-timestamp',
+      },
+    ];
+
+    const eligible = rows
+      .filter(row => isLifecycleDueQueueRowEligible(row, now))
+      .sort(compareLifecycleDueQueueRows);
+
+    expect(eligible.map(row => row.id)).toEqual(['high', 'stale-claim', 'medium']);
+  });
+
+  it('should allow transactional rows without recipient classification', () => {
+    expect(
+      isLifecycleDueQueueRowEligible({
+        id: 'transactional',
+        scheduled_for: '2026-07-15T00:00:00.000Z',
+        campaign_email_type: 'transactional',
+        campaign_enabled: true,
+        recipient_value_decision: null,
+        recipient_value_policy_version: null,
+      })
+    ).toBe(true);
+  });
+
+  it('should return actionable bounded guidance when a queue page times out', async () => {
+    testState.queueError = { message: 'canceling statement due to statement timeout' };
+
+    await expect(new EmailRecipientValueService().auditQueue({ pageSize: 25 })).rejects.toThrow(
+      /smaller --page-size/
+    );
   });
 });

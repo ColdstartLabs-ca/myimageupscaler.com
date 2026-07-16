@@ -42,6 +42,83 @@ describe('recipient-value queue migrations', () => {
     expect(migration).toContain('c.sort_priority DESC NULLS LAST');
   });
 
+  it('should exclude unclassified marketing rows from the due queue', () => {
+    const migration = readMigration('20260715000100_restore_lifecycle_delivery_queue.sql');
+
+    expect(migration).toContain("c.email_type = 'marketing'");
+    expect(migration).toContain('q.recipient_value_decision IS NOT NULL');
+    expect(migration).toContain(
+      "q.recipient_value_decision IN ('protected', 'keep_high', 'keep_medium')"
+    );
+    expect(migration).toContain("q.recipient_value_policy_version = 'v1'");
+    expect(migration).not.toContain("COALESCE(q.recipient_value_decision, 'keep_medium')");
+  });
+
+  it('should allow transactional rows without recipient classification', () => {
+    const migration = readMigration('20260715000100_restore_lifecycle_delivery_queue.sql');
+
+    expect(migration).toContain("c.email_type = 'transactional'");
+    expect(migration).toMatch(
+      /c\.email_type = 'transactional'\s+OR \(\s+c\.email_type = 'marketing'/
+    );
+  });
+
+  it('should exclude disabled and active-claim rows while preserving stale-claim release', () => {
+    const migration = readMigration('20260715000100_restore_lifecycle_delivery_queue.sql');
+
+    expect(migration).toContain('c.enabled IS TRUE');
+    expect(migration).toContain('q.processing_claim_id IS NULL');
+    expect(migration).toContain(
+      "q.processing_claimed_at < pg_catalog.now() - INTERVAL '10 minutes'"
+    );
+  });
+
+  it('should preserve deterministic value ordering and add bounded lookup indexes', () => {
+    const migration = readMigration('20260715000100_restore_lifecycle_delivery_queue.sql');
+
+    expect(migration).toContain("WHEN 'keep_high' THEN 1");
+    expect(migration).toContain("WHEN 'keep_medium' THEN 2");
+    expect(migration).toContain('q.recipient_value_score DESC NULLS LAST');
+    expect(migration).toContain('q.scheduled_for ASC');
+    expect(migration).toContain('q.id ASC');
+    expect(migration).toContain('idx_email_lifecycle_queue_due_claim');
+    expect(migration).toContain('idx_email_lifecycle_queue_pending_audit');
+    expect(migration).toContain('idx_email_lifecycle_queue_user_sent_history');
+    expect(migration).toContain('idx_email_lifecycle_queue_suppression_observation');
+    expect(migration).toContain('idx_email_lifecycle_queue_value_due_order');
+  });
+
+  it('should atomically enforce suppression idempotency and the 200 per day marketing budget', () => {
+    const migration = readMigration('20260715000100_restore_lifecycle_delivery_queue.sql');
+    expect(migration).toContain('record_email_lifecycle_suppression');
+    expect(migration).toContain('pg_advisory_xact_lock');
+    expect(migration).toContain("q.created_at >= pg_catalog.now() - INTERVAL '24 hours'");
+    expect(migration).toContain('claim_email_lifecycle_queue_row_for_delivery');
+    expect(migration).toContain('p_marketing_daily_limit INTEGER DEFAULT 200');
+    expect(migration).toContain("RETURN 'capacity_exhausted'");
+  });
+
+  it('should aggregate transaction signals per user and provide exact rollback statements', () => {
+    const migration = readMigration('20260715000100_restore_lifecycle_delivery_queue.sql');
+
+    expect(migration).toContain('get_email_recipient_value_transaction_signals');
+    expect(migration).toContain('GROUP BY t.user_id');
+    expect(migration).toContain("pg_catalog.bool_or(t.type = 'purchase')");
+    expect(migration).toContain("WHERE t.type = 'usage' AND t.amount < 0");
+    expect(migration).toContain(
+      'DROP FUNCTION IF EXISTS public.get_email_recipient_value_transaction_signals(UUID[])'
+    );
+    for (const index of [
+      'idx_email_lifecycle_queue_due_claim',
+      'idx_email_lifecycle_queue_pending_audit',
+      'idx_email_lifecycle_queue_user_sent_history',
+      'idx_email_lifecycle_queue_suppression_observation',
+      'idx_email_lifecycle_queue_value_due_order',
+    ]) {
+      expect(migration).toContain(`DROP INDEX IF EXISTS public.${index}`);
+    }
+  });
+
   it('privacy-filters regional performance and exposes Wilson evidence fields', () => {
     const migration = readMigration('20260712000400_email_recipient_value_performance.sql');
 
@@ -55,5 +132,27 @@ describe('recipient-value queue migrations', () => {
     expect(migration).toContain(
       'REVOKE ALL ON FUNCTION public.get_email_recipient_value_performance'
     );
+  });
+
+  it('should bound production performance reporting to sent rows and exact provider messages', () => {
+    const migration = readMigration('20260716000100_optimize_recipient_value_performance.sql');
+
+    expect(migration).toContain('q.sent_at >= p_since');
+    expect(migration).not.toContain('q.created_at >= p_since');
+    expect(migration).toContain("e.metadata ->> 'messageId'");
+    expect(migration).toContain("l.provider_response ->> 'messageId' = se.message_id");
+    expect(migration).toContain('idx_email_lifecycle_events_type_time_queue');
+    expect(migration).toContain('idx_email_logs_failed_message_time');
+    expect(migration).toContain('WHERE g.sent_count >= 20');
+    expect(migration).not.toContain('pg_catalog.greatest');
+
+    expect(migration).toContain(
+      'DROP INDEX IF EXISTS public.idx_email_lifecycle_events_type_time_queue'
+    );
+    expect(migration).toContain('DROP INDEX IF EXISTS public.idx_email_logs_failed_message_time');
+    expect(migration).toContain(
+      'DROP INDEX IF EXISTS public.idx_email_lifecycle_queue_sent_report'
+    );
+    expect(migration).toContain('\\ir 20260712000400_email_recipient_value_performance.sql');
   });
 });

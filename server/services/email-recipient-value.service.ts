@@ -70,6 +70,7 @@ export interface IRecipientValueHoldoutCandidate {
 
 export interface IRecipientValueAuditOptions {
   pageSize?: number;
+  onProgress?: (processedCount: number) => void;
 }
 
 export interface IRecipientValueSummary {
@@ -174,6 +175,13 @@ interface ICreditTransactionSignal {
   amount: number;
 }
 
+interface ITransactionSignalSummary {
+  user_id: string;
+  prior_pack_purchase: boolean;
+  prior_subscription_transaction: boolean;
+  credits_consumed: number;
+}
+
 interface ILifecycleEventSignal {
   user_id: string | null;
   event_type: string;
@@ -221,6 +229,7 @@ const AUDIT_PAGE_SIZE = 250;
 const INTENT_WINDOW_DAYS = 14;
 const ENGAGEMENT_WINDOW_DAYS = 90;
 const HOLDOUT_DAILY_LIMIT = 100;
+const MAX_RECENT_SIGNALS_PER_USER = 100;
 
 const ISO_UNKNOWN_COUNTRY_CODES = new Set(['', 'XX', 'ZZ', 'UN', UNKNOWN_RECIPIENT_COUNTRY]);
 
@@ -684,6 +693,8 @@ export class EmailRecipientValueService {
       if (itemError)
         throw new Error(`Failed to persist recipient-value run page: ${itemError.message}`);
 
+      options.onProgress?.(summary.candidateCount);
+
       lastId = rows[rows.length - 1].id;
       if (rows.length < pageSize) break;
     }
@@ -777,7 +788,12 @@ export class EmailRecipientValueService {
       .limit(pageSize);
     if (lastId) query = query.gt('id', lastId);
     const { data, error } = await query;
-    if (error) throw new Error(`Failed to page pending lifecycle queue: ${error.message}`);
+    if (error) {
+      const timeoutHint = /statement timeout|canceling statement/i.test(error.message)
+        ? ' Retry with a smaller --page-size; the audit remains count-only and resumable by a new run.'
+        : '';
+      throw new Error(`Failed to page pending lifecycle queue: ${error.message}.${timeoutHint}`);
+    }
     return (data ?? []) as IQueueCandidate[];
   }
 
@@ -790,6 +806,7 @@ export class EmailRecipientValueService {
       Date.now() - ENGAGEMENT_WINDOW_DAYS * 24 * 60 * 60 * 1000
     ).toISOString();
     const cutoff14 = new Date(Date.now() - INTENT_WINDOW_DAYS * 24 * 60 * 60 * 1000).toISOString();
+    const boundedSignalLimit = Math.max(rows.length * MAX_RECENT_SIGNALS_PER_USER, 1);
 
     const [
       campaignRows,
@@ -830,14 +847,14 @@ export class EmailRecipientValueService {
               .in('user_id', userIds)
               .in('status', ['active', 'queued'])
               .gte('last_seen_at', cutoff14)
+              .limit(boundedSignalLimit)
           )
         : Promise.resolve([]),
       userIds.length
-        ? getRows<ICreditTransactionSignal>(
-            supabaseAdmin
-              .from('credit_transactions')
-              .select('user_id, type, amount')
-              .in('user_id', userIds)
+        ? getRows<ITransactionSignalSummary>(
+            supabaseAdmin.rpc('get_email_recipient_value_transaction_signals', {
+              p_user_ids: userIds,
+            })
           )
         : Promise.resolve([]),
       userIds.length
@@ -848,6 +865,8 @@ export class EmailRecipientValueService {
               .in('user_id', userIds)
               .in('event_type', ['clicked', 'returned'])
               .gte('occurred_at', cutoff90)
+              .order('occurred_at', { ascending: false })
+              .limit(boundedSignalLimit)
           )
         : Promise.resolve([]),
       userIds.length
@@ -858,6 +877,8 @@ export class EmailRecipientValueService {
               .in('user_id', userIds)
               .eq('status', 'failed')
               .gte('sent_at', cutoff90)
+              .order('sent_at', { ascending: false })
+              .limit(boundedSignalLimit)
           )
         : Promise.resolve([]),
     ]);
@@ -870,8 +891,20 @@ export class EmailRecipientValueService {
     }
     const transactions = new Map<string, ICreditTransactionSignal[]>();
     for (const row of transactionRows) {
-      const values = transactions.get(row.user_id) ?? [];
-      values.push(row);
+      const values: ICreditTransactionSignal[] = [];
+      if (row.prior_pack_purchase) {
+        values.push({ user_id: row.user_id, type: 'purchase', amount: 0 });
+      }
+      if (row.prior_subscription_transaction) {
+        values.push({ user_id: row.user_id, type: 'subscription', amount: 0 });
+      }
+      if (Number(row.credits_consumed) > 0) {
+        values.push({
+          user_id: row.user_id,
+          type: 'usage',
+          amount: -Number(row.credits_consumed),
+        });
+      }
       transactions.set(row.user_id, values);
     }
     const events = new Map<string, ILifecycleEventSignal[]>();

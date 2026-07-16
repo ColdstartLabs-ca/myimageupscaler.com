@@ -13,6 +13,7 @@ import { EmailProviderManager } from '../email-provider-manager';
 import { EmailProvider } from '@shared/types/provider-adapter.types';
 import type { IEmailProviderAdapter } from '@shared/types/provider-adapter.types';
 import { CloudflareEmailProviderAdapter } from '../cloudflare.provider-adapter';
+import { createBrevoSendError } from '../brevo.provider-adapter';
 import {
   EmailProviderSendError,
   normalizeEmailProviderError,
@@ -219,6 +220,36 @@ describe('EmailProviderManager', () => {
       expect(brevoSend).toHaveBeenCalledOnce();
     });
 
+    test('should preserve Brevo authentication failure as non-transient provider-scoped terminal error', async () => {
+      const brevo = manager.getProviderByType(EmailProvider.BREVO)!;
+      vi.spyOn(brevo, 'send').mockRejectedValue(
+        new EmailProviderSendError(
+          'Brevo authentication failed',
+          'provider_authentication',
+          false,
+          [],
+          false
+        )
+      );
+
+      await expect(
+        manager.send({
+          to: 'internal@example.com',
+          template: 'welcome',
+          type: 'marketing',
+          data: {},
+        })
+      ).rejects.toMatchObject({
+        classification: 'provider_authentication',
+        scope: 'provider',
+        transient: false,
+        fallbackEligible: false,
+        attemptedProviders: [EmailProvider.BREVO],
+        unavailableProviders: [],
+        fallbackReasons: ['provider_authentication'],
+      });
+    });
+
     test('should never attempt Resend when Cloudflare and Brevo fail', async () => {
       const cloudflare = manager.getProviderByType(EmailProvider.CLOUDFLARE)!;
       const brevo = manager.getProviderByType(EmailProvider.BREVO)!;
@@ -310,7 +341,11 @@ describe('EmailProviderManager', () => {
 
       await expect(
         manager.send({ to: 'invalid', template: 'welcome', data: {} })
-      ).rejects.toMatchObject({ classification: 'invalid_recipient', transient: false });
+      ).rejects.toMatchObject({
+        classification: 'invalid_recipient',
+        scope: 'recipient',
+        transient: false,
+      });
       expect(brevoSend).not.toHaveBeenCalled();
     });
 
@@ -374,7 +409,9 @@ describe('BaseEmailProviderAdapter', () => {
     });
 
     test('should classify provider auth failures as fallback eligible', () => {
-      expect(normalizeEmailProviderError(new Error('API error (401): invalid token'))).toMatchObject({
+      expect(
+        normalizeEmailProviderError(new Error('API error (401): invalid token'))
+      ).toMatchObject({
         classification: 'provider_authentication',
         transient: false,
         fallbackEligible: true,
@@ -412,4 +449,25 @@ describe('BaseEmailProviderAdapter', () => {
       expect(cloudflare.getConfig().provider).toBe(EmailProvider.CLOUDFLARE);
     });
   });
+});
+
+describe('BrevoProviderAdapter failure classification', () => {
+  test.each([
+    [401, {}, 'provider_authentication', false],
+    [403, {}, 'provider_authentication', false],
+    [402, {}, 'provider_configuration', false],
+    [429, {}, 'rate_limited', true],
+    [408, {}, 'timeout', true],
+    [503, {}, 'provider_unavailable', true],
+    [400, { message: 'invalid recipient email' }, 'invalid_recipient', false],
+    [400, { message: 'email address is invalid' }, 'invalid_recipient', false],
+    [400, { message: 'recipient hard bounce' }, 'invalid_recipient', false],
+    [400, { message: 'account is suspended' }, 'provider_configuration', false],
+    [400, { code: 'configuration_error' }, 'provider_configuration', false],
+  ])(
+    'should classify HTTP %s without exposing provider response details',
+    (status, body, classification, transient) => {
+      expect(createBrevoSendError(status, body)).toMatchObject({ classification, transient });
+    }
+  );
 });

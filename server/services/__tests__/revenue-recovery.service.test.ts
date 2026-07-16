@@ -396,6 +396,37 @@ describe('RevenueRecoveryService', () => {
     );
   });
 
+  it('should report reused suppression audits in recovery eligibility totals', async () => {
+    recoveryIntentRows = [
+      {
+        user_id: 'user_1',
+        audience_key: 'credit_wall_dismissed',
+        source: 'first_party_event',
+        source_id: 'session_1',
+        last_seen_at: new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString(),
+      },
+    ];
+    queueLifecycleEmail.mockResolvedValueOnce({
+      queued: false,
+      skipped: true,
+      reason: 'suppressed_preference',
+      queueId: 'existing-suppression',
+      suppressionRecorded: false,
+    });
+    const service = new RevenueRecoveryService({
+      amplitudeService: { downloadCohortMembers: vi.fn() } as never,
+      lifecycleService: { queueLifecycleEmail, cancelPendingForUser } as never,
+    });
+
+    const result = await service.queueEligibleRecoveryEmails({ dryRun: false, limit: 10 });
+
+    expect(result).toMatchObject({
+      queued: 0,
+      suppressionsRecorded: 0,
+      suppressionsReused: 1,
+    });
+  });
+
   it('should include selected plan and trigger context in upgrade recovery CTA destinations', async () => {
     recoveryIntentRows = [
       {

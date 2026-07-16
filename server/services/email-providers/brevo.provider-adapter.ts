@@ -13,7 +13,7 @@ import type { ReactElement } from 'react';
 import { render } from '@react-email/render';
 import { EmailProvider, ProviderTier } from '@shared/types/provider-adapter.types';
 import type { IEmailProviderConfig } from '@shared/types/provider-adapter.types';
-import { BaseEmailProviderAdapter } from './base-email-provider-adapter';
+import { BaseEmailProviderAdapter, EmailProviderSendError } from './base-email-provider-adapter';
 import { isTest, serverEnv } from '@shared/config/env';
 
 /**
@@ -40,6 +40,70 @@ const BREVO_CONFIG: IEmailProviderConfig = {
 
 const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
 
+export function createBrevoSendError(
+  status: number,
+  body: IBrevoErrorResponse
+): EmailProviderSendError {
+  const code = String(body.code ?? '').toLowerCase();
+  const detail = String(body.message ?? '').toLowerCase();
+  const providerDetail = `${code} ${detail}`;
+  if (status === 401 || status === 403) {
+    return new EmailProviderSendError(
+      'Brevo authentication failed',
+      'provider_authentication',
+      false,
+      [],
+      false
+    );
+  }
+  if (status === 429) {
+    return new EmailProviderSendError('Brevo rate limit reached', 'rate_limited', true, [], false);
+  }
+  if (status === 408 || status >= 500) {
+    return new EmailProviderSendError(
+      'Brevo is temporarily unavailable',
+      status === 408 ? 'timeout' : 'provider_unavailable',
+      true,
+      [],
+      false
+    );
+  }
+  if (
+    /invalid.*(recipient|email|address)|(?:recipient|email(?: address)?|to address).*invalid|hard.?bounce|permanent.?bounce/.test(
+      providerDetail
+    )
+  ) {
+    return new EmailProviderSendError(
+      'Brevo rejected the recipient',
+      'invalid_recipient',
+      false,
+      [],
+      false
+    );
+  }
+  if (
+    status === 402 ||
+    /not enough credit|account (?:is )?(?:disabled|suspended|not activated)|sender.*not configured|configuration_error/.test(
+      providerDetail
+    )
+  ) {
+    return new EmailProviderSendError(
+      'Brevo account configuration failed',
+      'provider_configuration',
+      false,
+      [],
+      false
+    );
+  }
+  return new EmailProviderSendError(
+    'Brevo rejected the request',
+    'provider_request',
+    false,
+    [],
+    false
+  );
+}
+
 /**
  * Adapter for Brevo email provider
  * Uses direct REST API calls for Cloudflare Workers compatibility
@@ -64,7 +128,13 @@ export class BrevoProviderAdapter extends BaseEmailProviderAdapter {
     reactElement: ReactElement
   ): Promise<{ messageId: string; [key: string]: unknown }> {
     if (!this.apiKey) {
-      throw new Error('BREVO_API_KEY is not configured');
+      throw new EmailProviderSendError(
+        'Brevo is not configured',
+        'provider_configuration',
+        false,
+        [],
+        false
+      );
     }
 
     // Convert React element to HTML string using @react-email/render
@@ -89,9 +159,7 @@ export class BrevoProviderAdapter extends BaseEmailProviderAdapter {
 
     if (!response.ok) {
       const errorBody = (await response.json().catch(() => ({}))) as IBrevoErrorResponse;
-      throw new Error(
-        `Brevo API error (${response.status}): ${errorBody.message || response.statusText}`
-      );
+      throw createBrevoSendError(response.status, errorBody);
     }
 
     const result = (await response.json()) as IBrevoSendResponse;

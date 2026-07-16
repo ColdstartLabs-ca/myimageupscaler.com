@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
 import { pathToFileURL } from 'url';
 import dayjs from 'dayjs';
+import { serverEnv } from '@shared/config/env';
 import { getEmailService } from '@server/services/email.service';
 import { getEmailLifecycleService } from '@server/services/email-lifecycle.service';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
@@ -48,6 +49,61 @@ export function assertControlledDeliveryArgs(args: IControlledDeliveryArgs): voi
   }
   if (!args.email) {
     throw new Error('--email is required so the controlled recipient is explicit');
+  }
+}
+
+export function assertControlledDeliveryProvider(provider: string | undefined): void {
+  if (provider !== 'brevo') {
+    throw new Error('Controlled marketing delivery did not use Brevo');
+  }
+}
+
+interface IClickRouteResponse {
+  status: number;
+  headers: Pick<Headers, 'get'>;
+}
+
+type ControlledClickFetcher = (
+  input: string,
+  init: { redirect: 'manual' }
+) => Promise<IClickRouteResponse>;
+
+export function assertControlledClickResponse(response: IClickRouteResponse): string {
+  const redirectUrl = response.headers.get('location');
+  if (
+    response.status !== 302 ||
+    !redirectUrl ||
+    !redirectUrl.includes('utm_source=email') ||
+    !redirectUrl.includes(CAMPAIGN_KEY)
+  ) {
+    throw new Error('Controlled signed click route did not return the attributed redirect');
+  }
+  return redirectUrl;
+}
+
+export async function requestControlledClickRoute(
+  clickUrl: string,
+  fetcher: ControlledClickFetcher = fetch,
+  baseUrl: string = serverEnv.BASE_URL
+): Promise<string> {
+  const response = await fetcher(new URL(clickUrl, baseUrl).toString(), {
+    redirect: 'manual',
+  });
+  return assertControlledClickResponse(response);
+}
+
+export function assertVerifierCleanupResult(
+  operation: string,
+  error: { message?: string } | null,
+  remainingCount?: number | null
+): void {
+  if (error) {
+    throw new Error(
+      `Controlled verifier cleanup failed during ${operation}: ${error.message ?? 'unknown error'}`
+    );
+  }
+  if (remainingCount !== undefined && remainingCount !== null && remainingCount !== 0) {
+    throw new Error(`Controlled verifier cleanup left a remaining row after ${operation}`);
   }
 }
 
@@ -162,8 +218,27 @@ async function countVerifierEvents(queueId: string): Promise<Record<string, numb
 
 async function cleanupVerifierRows(queueId?: string): Promise<void> {
   if (!queueId) return;
-  await supabaseAdmin.from('email_lifecycle_events').delete().eq('queue_id', queueId);
-  await supabaseAdmin.from('email_lifecycle_queue').delete().eq('id', queueId);
+  const eventDelete = await supabaseAdmin
+    .from('email_lifecycle_events')
+    .delete()
+    .eq('queue_id', queueId);
+  assertVerifierCleanupResult('event deletion', eventDelete.error);
+
+  const queueDelete = await supabaseAdmin.from('email_lifecycle_queue').delete().eq('id', queueId);
+  assertVerifierCleanupResult('queue deletion', queueDelete.error);
+
+  const [eventCheck, queueCheck] = await Promise.all([
+    supabaseAdmin
+      .from('email_lifecycle_events')
+      .select('id', { count: 'exact', head: true })
+      .eq('queue_id', queueId),
+    supabaseAdmin
+      .from('email_lifecycle_queue')
+      .select('id', { count: 'exact', head: true })
+      .eq('id', queueId),
+  ]);
+  assertVerifierCleanupResult('event verification', eventCheck.error, eventCheck.count);
+  assertVerifierCleanupResult('queue verification', queueCheck.error, queueCheck.count);
 }
 
 async function main(): Promise<void> {
@@ -234,6 +309,7 @@ Options:
     if (sendResult.skipped) {
       throw new Error('Controlled recovery email was skipped by provider/preferences');
     }
+    assertControlledDeliveryProvider(sendResult.provider);
 
     await recordSentEvent({
       queueId,
@@ -243,15 +319,7 @@ Options:
       runId,
     });
 
-    const { redirectUrl } = await lifecycleService.recordClick({
-      queueId,
-      destination: CTA_DESTINATION,
-    });
-    if (!redirectUrl.includes('utm_source=email') || !redirectUrl.includes(CAMPAIGN_KEY)) {
-      throw new Error(
-        `Controlled click redirect missing lifecycle attribution params: ${redirectUrl}`
-      );
-    }
+    const redirectUrl = await requestControlledClickRoute(clickUrl);
 
     const eventCounts = await countVerifierEvents(queueId);
     for (const eventType of ['sent', 'clicked', 'returned']) {

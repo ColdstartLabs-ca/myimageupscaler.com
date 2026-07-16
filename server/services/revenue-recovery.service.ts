@@ -67,6 +67,8 @@ export interface IQueueRecoveryEligibilityResult {
   skippedPurchased: number;
   skippedPriority: number;
   skippedMissingEmail: number;
+  suppressionsRecorded: number;
+  suppressionsReused: number;
   dryRun: boolean;
   byAudience: Record<
     RecoveryAudienceKey,
@@ -253,6 +255,8 @@ export class RevenueRecoveryService {
       skippedPurchased: 0,
       skippedPriority: 0,
       skippedMissingEmail: 0,
+      suppressionsRecorded: 0,
+      suppressionsReused: 0,
       dryRun,
       byAudience: this.createEmptyAudienceCounts(),
     };
@@ -329,6 +333,8 @@ export class RevenueRecoveryService {
         audienceCounts.queued++;
         await this.markIntentQueued(intent.userId, intent.audienceKey);
       }
+      if (queueResult.suppressionRecorded === true) result.suppressionsRecorded++;
+      if (queueResult.suppressionRecorded === false) result.suppressionsReused++;
     }
 
     return result;

@@ -91,7 +91,8 @@ export class CloudflareEmailProviderAdapter extends BaseEmailProviderAdapter {
       const recipientScoped400 =
         response.status === 400 && /recipient|email|bounce/i.test(errorMessage || '');
       const providerScopedFallback =
-        [401, 402, 403].includes(response.status) || (response.status === 400 && !recipientScoped400);
+        [401, 402, 403].includes(response.status) ||
+        (response.status === 400 && !recipientScoped400);
       throw new EmailProviderSendError(
         message,
         response.status === 429
@@ -117,7 +118,7 @@ export class CloudflareEmailProviderAdapter extends BaseEmailProviderAdapter {
 
     if (result.result?.permanent_bounces?.length) {
       throw new EmailProviderSendError(
-        `Cloudflare Email Service permanent bounce: ${result.result.permanent_bounces.join(', ')}`,
+        'Cloudflare Email Service rejected a recipient',
         'invalid_recipient',
         false
       );

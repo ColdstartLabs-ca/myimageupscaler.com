@@ -62,7 +62,10 @@ describe('audit-email-recipient-value CLI', () => {
     });
 
     await runAuditEmailRecipientValue({ pageSize: 10 });
-    expect(auditQueueMock).toHaveBeenCalledWith({ pageSize: 10 });
+    expect(auditQueueMock).toHaveBeenCalledWith({
+      pageSize: 10,
+      onProgress: expect.any(Function),
+    });
   });
 
   it('should use serverEnv-backed configuration rather than direct process environment access', () => {

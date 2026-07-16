@@ -16,6 +16,7 @@ step_verify() {
             log_success "Health check passed"
             _verify_webhook_secret "$url"
             _verify_recovery_lifecycle_dry_run "$url"
+            _verify_email_delivery_readiness
             _check_subscription_reconciliation
             _run_smoke_tests "$url"
             return 0
@@ -25,6 +26,16 @@ step_verify() {
     done
 
     log_warn "Health check didn't return 200 (may still be propagating)"
+}
+
+_verify_email_delivery_readiness() {
+    log_info "Verifying no-send email delivery readiness..."
+    cd "$PROJECT_ROOT"
+    if yarn email:delivery:readiness:prod; then
+        log_success "Email delivery readiness verified"
+        return 0
+    fi
+    log_error "Email delivery readiness failed"
 }
 
 _verify_cron_schedules() {

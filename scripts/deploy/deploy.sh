@@ -51,6 +51,16 @@ source "$SCRIPT_DIR/steps/00-fetch-secrets.sh" && step_fetch_secrets
 # Load production environment variables
 source "$PROJECT_ROOT/scripts/load-env.sh" --prod
 
+# Capture a verified schema + data backup before every production deployment.
+echo -e "${CYAN}▸ Backing up production database...${NC}"
+cd "$PROJECT_ROOT"
+if ! yarn db:backup; then
+    echo -e "${RED}✗ Production database backup failed. Deployment blocked.${NC}"
+    exit 1
+fi
+echo -e "${GREEN}✓ Production database backup complete${NC}"
+echo ""
+
 # Run tests unless skipped
 if [ "$SKIP_TESTS" = "false" ]; then
     echo -e "${CYAN}▸ Running tests...${NC}"

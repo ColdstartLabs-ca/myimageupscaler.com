@@ -20,6 +20,8 @@ describe('POST /api/cron/email-lifecycle', () => {
       queueDailyEligibilityDetailed: vi.fn().mockResolvedValue({
         queued: 2,
         lifecycleQueued: 1,
+        suppressionsRecorded: 0,
+        suppressionsReused: 0,
         recovery: {
           scanned: 2,
           eligible: 1,
@@ -80,6 +82,7 @@ describe('POST /api/cron/email-lifecycle', () => {
         },
         stoppedByHealth: false,
         stoppedByProviderCapacity: false,
+        providerIoMs: 0,
       }),
       getQueueHealth: vi.fn().mockResolvedValue({
         duePending: 12,
@@ -109,7 +112,11 @@ describe('POST /api/cron/email-lifecycle', () => {
     const body = await response.json();
 
     const service = vi.mocked(getEmailLifecycleService).mock.results[0].value;
-    expect(service.processDueQueue).toHaveBeenCalledWith({ dryRun: true, batchSize: 50 });
+    expect(service.processDueQueue).toHaveBeenCalledWith({
+      dryRun: true,
+      scanLimit: 100,
+      sendLimit: 1,
+    });
     expect(service.queueDailyEligibilityDetailed).toHaveBeenCalledWith({
       dryRun: true,
       limit: 100,
@@ -130,6 +137,7 @@ describe('POST /api/cron/email-lifecycle', () => {
       },
       stoppedByHealth: false,
       stoppedByProviderCapacity: false,
+      providerIoMs: 0,
       duePending: 12,
       oldestPendingScheduledFor: '2026-07-08T00:00:00.000Z',
       recoveryEligibility: {
@@ -145,5 +153,51 @@ describe('POST /api/cron/email-lifecycle', () => {
         },
       },
     });
+  });
+
+  it('should cap production sendLimit at one', async () => {
+    await POST(
+      new NextRequest('http://localhost/api/cron/email-lifecycle?sendLimit=999', {
+        method: 'POST',
+        headers: { 'x-cron-secret': 'test-cron-secret' },
+      })
+    );
+
+    const service = vi.mocked(getEmailLifecycleService).mock.results[0].value;
+    expect(service.processDueQueue).toHaveBeenCalledWith({
+      dryRun: false,
+      scanLimit: 100,
+      sendLimit: 1,
+    });
+  });
+
+  it('should skip eligibility when drainOnly is true', async () => {
+    await POST(
+      new NextRequest('http://localhost/api/cron/email-lifecycle?drainOnly=true', {
+        method: 'POST',
+        headers: { 'x-cron-secret': 'test-cron-secret' },
+      })
+    );
+
+    const service = vi.mocked(getEmailLifecycleService).mock.results[0].value;
+    expect(service.queueDailyEligibilityDetailed).not.toHaveBeenCalled();
+    expect(service.processDueQueue).toHaveBeenCalledOnce();
+  });
+
+  it('should skip eligibility and cap production sendLimit at one when draining', async () => {
+    const response = await POST(
+      new NextRequest(
+        'http://localhost/api/cron/email-lifecycle?drainOnly=true&scanLimit=20&sendLimit=999',
+        { method: 'POST', headers: { 'x-cron-secret': 'test-cron-secret' } }
+      )
+    );
+    const service = vi.mocked(getEmailLifecycleService).mock.results[0].value;
+    expect(service.queueDailyEligibilityDetailed).not.toHaveBeenCalled();
+    expect(service.processDueQueue).toHaveBeenCalledWith({
+      dryRun: false,
+      scanLimit: 20,
+      sendLimit: 1,
+    });
+    await expect(response.json()).resolves.toMatchObject({ drainOnly: true, sendLimit: 1 });
   });
 });

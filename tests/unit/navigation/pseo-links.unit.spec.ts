@@ -5,68 +5,51 @@
 
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
+const readRepositoryFile = (relativePath: string): string =>
+  readFileSync(resolve(process.cwd(), relativePath), 'utf-8');
 
 describe('Navigation pSEO Hub Links', () => {
   describe('Footer Component', () => {
     it('should include link to guides hub page', async () => {
-      const footerContent = readFileSync(
-        '/home/joao/projects/myimageupscaler.com/client/components/layout/Footer.tsx',
-        'utf-8'
-      );
+      const footerContent = readRepositoryFile('client/components/layout/Footer.tsx');
 
       expect(footerContent).toContain('/guides');
     });
 
     it('should include link to formats hub page', async () => {
-      const footerContent = readFileSync(
-        '/home/joao/projects/myimageupscaler.com/client/components/layout/Footer.tsx',
-        'utf-8'
-      );
+      const footerContent = readRepositoryFile('client/components/layout/Footer.tsx');
 
       expect(footerContent).toContain('/formats');
     });
 
     it('should include link to scale hub page', async () => {
-      const footerContent = readFileSync(
-        '/home/joao/projects/myimageupscaler.com/client/components/layout/Footer.tsx',
-        'utf-8'
-      );
+      const footerContent = readRepositoryFile('client/components/layout/Footer.tsx');
 
       expect(footerContent).toContain('/scale');
     });
 
     it('should include link to compare hub page', async () => {
-      const footerContent = readFileSync(
-        '/home/joao/projects/myimageupscaler.com/client/components/layout/Footer.tsx',
-        'utf-8'
-      );
+      const footerContent = readRepositoryFile('client/components/layout/Footer.tsx');
 
       expect(footerContent).toContain('/compare');
     });
 
     it('should include link to use-cases hub page', async () => {
-      const footerContent = readFileSync(
-        '/home/joao/projects/myimageupscaler.com/client/components/layout/Footer.tsx',
-        'utf-8'
-      );
+      const footerContent = readRepositoryFile('client/components/layout/Footer.tsx');
 
       expect(footerContent).toContain('/use-cases');
     });
 
     it('should include link to tools hub page', async () => {
-      const footerContent = readFileSync(
-        '/home/joao/projects/myimageupscaler.com/client/components/layout/Footer.tsx',
-        'utf-8'
-      );
+      const footerContent = readRepositoryFile('client/components/layout/Footer.tsx');
 
       expect(footerContent).toContain('/tools');
     });
 
     it('should have "Tools & Guides" section', async () => {
-      const footerContent = readFileSync(
-        '/home/joao/projects/myimageupscaler.com/client/components/layout/Footer.tsx',
-        'utf-8'
-      );
+      const footerContent = readRepositoryFile('client/components/layout/Footer.tsx');
 
       expect(footerContent).toContain('Tools & Guides');
     });
@@ -74,55 +57,37 @@ describe('Navigation pSEO Hub Links', () => {
 
   describe('NavBar Resources Dropdown', () => {
     it('should include "Guides & Resources" section', async () => {
-      const navContent = readFileSync(
-        '/home/joao/projects/myimageupscaler.com/client/components/navigation/NavBar.tsx',
-        'utf-8'
-      );
+      const navContent = readRepositoryFile('client/components/navigation/NavBar.tsx');
 
       expect(navContent).toContain('Guides & Resources');
     });
 
     it('should include guides link in resources dropdown', async () => {
-      const navContent = readFileSync(
-        '/home/joao/projects/myimageupscaler.com/client/components/navigation/NavBar.tsx',
-        'utf-8'
-      );
+      const navContent = readRepositoryFile('client/components/navigation/NavBar.tsx');
 
       expect(navContent).toContain('/guides');
     });
 
     it('should include format guides link in resources dropdown', async () => {
-      const navContent = readFileSync(
-        '/home/joao/projects/myimageupscaler.com/client/components/navigation/NavBar.tsx',
-        'utf-8'
-      );
+      const navContent = readRepositoryFile('client/components/navigation/NavBar.tsx');
 
       expect(navContent).toContain('/formats');
     });
 
     it('should include comparisons link in resources dropdown', async () => {
-      const navContent = readFileSync(
-        '/home/joao/projects/myimageupscaler.com/client/components/navigation/NavBar.tsx',
-        'utf-8'
-      );
+      const navContent = readRepositoryFile('client/components/navigation/NavBar.tsx');
 
       expect(navContent).toContain('/compare');
     });
 
     it('should include use cases link in resources dropdown', async () => {
-      const navContent = readFileSync(
-        '/home/joao/projects/myimageupscaler.com/client/components/navigation/NavBar.tsx',
-        'utf-8'
-      );
+      const navContent = readRepositoryFile('client/components/navigation/NavBar.tsx');
 
       expect(navContent).toContain('/use-cases');
     });
 
     it('should include scale link in resources dropdown', async () => {
-      const navContent = readFileSync(
-        '/home/joao/projects/myimageupscaler.com/client/components/navigation/NavBar.tsx',
-        'utf-8'
-      );
+      const navContent = readRepositoryFile('client/components/navigation/NavBar.tsx');
 
       expect(navContent).toContain('/scale');
     });
@@ -130,46 +95,31 @@ describe('Navigation pSEO Hub Links', () => {
 
   describe('Mobile Menu pSEO Links', () => {
     it('should include guides link in mobile menu', async () => {
-      const navContent = readFileSync(
-        '/home/joao/projects/myimageupscaler.com/client/components/navigation/NavBar.tsx',
-        'utf-8'
-      );
+      const navContent = readRepositoryFile('client/components/navigation/NavBar.tsx');
 
       expect(navContent).toContain('/guides');
     });
 
     it('should include formats link in mobile menu', async () => {
-      const navContent = readFileSync(
-        '/home/joao/projects/myimageupscaler.com/client/components/navigation/NavBar.tsx',
-        'utf-8'
-      );
+      const navContent = readRepositoryFile('client/components/navigation/NavBar.tsx');
 
       expect(navContent).toContain('/formats');
     });
 
     it('should include compare link in mobile menu', async () => {
-      const navContent = readFileSync(
-        '/home/joao/projects/myimageupscaler.com/client/components/navigation/NavBar.tsx',
-        'utf-8'
-      );
+      const navContent = readRepositoryFile('client/components/navigation/NavBar.tsx');
 
       expect(navContent).toContain('/compare');
     });
 
     it('should include use-cases link in mobile menu', async () => {
-      const navContent = readFileSync(
-        '/home/joao/projects/myimageupscaler.com/client/components/navigation/NavBar.tsx',
-        'utf-8'
-      );
+      const navContent = readRepositoryFile('client/components/navigation/NavBar.tsx');
 
       expect(navContent).toContain('/use-cases');
     });
 
     it('should include scale link in mobile menu', async () => {
-      const navContent = readFileSync(
-        '/home/joao/projects/myimageupscaler.com/client/components/navigation/NavBar.tsx',
-        'utf-8'
-      );
+      const navContent = readRepositoryFile('client/components/navigation/NavBar.tsx');
 
       expect(navContent).toContain('/scale');
     });

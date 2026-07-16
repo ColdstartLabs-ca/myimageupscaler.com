@@ -8,13 +8,18 @@
 #   ./scripts/db-backup.sh export [--sql] [--data-only] [--schema-only]
 #   ./scripts/db-backup.sh import <file>
 #   ./scripts/db-backup.sh list
+#   ./scripts/db-backup.sh cleanup [retention-count]
+#   ./scripts/db-backup.sh compress-existing
 #   ./scripts/db-backup.sh --help
 
 set -euo pipefail
+umask 077
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-BACKUPS_DIR="$PROJECT_ROOT/backups"
+BACKUPS_DIR="${BACKUPS_DIR:-$PROJECT_ROOT/backups}"
+RESTORE_TEMP_DIR=""
+RESTORE_FILEPATH=""
 
 # GCloud Secret Manager config (matches deploy/steps/00-fetch-secrets.sh)
 GCLOUD_PROJECT="myimageupscaler-auth"
@@ -43,12 +48,128 @@ usage() {
     echo "  yarn db:export -- --schema-only           Export schema only (no data)"
     echo "  yarn db:import -- <file>                  Restore from backup file"
     echo "  yarn db:backups                           List available backups"
+    echo "  yarn db:backups:cleanup                   Keep the five newest backup sets"
+    echo "  yarn db:backups:compress                  Compress and verify retained raw backups"
     echo ""
     echo -e "${BOLD}Examples:${NC}"
     echo "  yarn db:backup"
     echo "  yarn db:export -- --sql"
     echo "  yarn db:import -- backups/backup_2026-03-31_14-30-00.dump"
     exit 0
+}
+
+cleanup_old_backups() {
+    local retention_count="${1:-${BACKUP_RETENTION_COUNT:-5}}"
+    if ! [[ "$retention_count" =~ ^[1-9][0-9]*$ ]]; then
+        log_error "Backup retention count must be a positive integer"
+    fi
+
+    mkdir -p "$BACKUPS_DIR"
+    local prefixes=()
+    mapfile -t prefixes < <(
+        find "$BACKUPS_DIR" -maxdepth 1 -type f \
+            \( -name 'backup_*.dump' -o -name 'backup_*.sql' -o -name 'backup_*.dump.gz' -o -name 'backup_*.sql.gz' \) -printf '%f\n' \
+        | sed -nE 's/^(backup_[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}-[0-9]{2}-[0-9]{2}).*/\1/p' \
+        | sort -ru
+    )
+
+    if (( ${#prefixes[@]} <= retention_count )); then
+        log_info "Backup retention: ${#prefixes[@]} set(s), nothing to prune"
+        return 0
+    fi
+
+    local removed=0
+    for prefix in "${prefixes[@]:retention_count}"; do
+        find "$BACKUPS_DIR" -maxdepth 1 -type f -name "${prefix}*" -delete
+        removed=$((removed + 1))
+    done
+    log_success "Backup retention pruned $removed old set(s); kept $retention_count"
+}
+
+# Compress atomically, then test-extract and byte-compare before deleting raw data.
+compress_and_verify_backup() {
+    local filepath="$1"
+    if [[ ! -s "$filepath" ]]; then
+        log_error "Cannot compress missing or empty backup: $filepath"
+    fi
+    if ! command -v gzip &>/dev/null || ! command -v cmp &>/dev/null; then
+        log_error "gzip and cmp are required to verify compressed backups"
+    fi
+
+    local archive="${filepath}.gz"
+    local pending_archive="${archive}.tmp"
+    local verify_dir
+    verify_dir=$(mktemp -d "${TMPDIR:-/tmp}/db-backup-verify.XXXXXX")
+    local extracted="$verify_dir/$(basename "$filepath")"
+
+    rm -f "$pending_archive"
+    if ! gzip -1 -c -- "$filepath" > "$pending_archive"; then
+        rm -rf "$verify_dir" "$pending_archive"
+        log_error "Compression failed; raw backup retained: $filepath"
+    fi
+    if ! gzip -t -- "$pending_archive" || ! gzip -dc -- "$pending_archive" > "$extracted"; then
+        rm -rf "$verify_dir" "$pending_archive"
+        log_error "Archive test extraction failed; raw backup retained: $filepath"
+    fi
+    if ! cmp -s -- "$filepath" "$extracted"; then
+        rm -rf "$verify_dir" "$pending_archive"
+        log_error "Extracted archive differs from source; raw backup retained: $filepath"
+    fi
+
+    mv -f -- "$pending_archive" "$archive"
+    chmod 600 "$archive"
+    rm -f -- "$filepath"
+    rm -rf "$verify_dir"
+    log_success "Compressed backup verified by test extraction: $(basename "$archive") ($(du -sh "$archive" | cut -f1))"
+}
+
+cmd_compress_existing() {
+    mkdir -p "$BACKUPS_DIR"
+    local files=()
+    mapfile -d '' -t files < <(
+        find "$BACKUPS_DIR" -maxdepth 1 -type f \
+            \( -name 'backup_*.dump' -o -name 'backup_*.sql' \) -print0 | sort -z
+    )
+
+    if (( ${#files[@]} == 0 )); then
+        log_info "No raw backups require compression"
+        return 0
+    fi
+
+    local filepath
+    for filepath in "${files[@]}"; do
+        compress_and_verify_backup "$filepath"
+    done
+    cleanup_old_backups
+}
+
+cleanup_restore_temp_dir() {
+    if [[ -n "$RESTORE_TEMP_DIR" ]]; then
+        rm -rf -- "$RESTORE_TEMP_DIR"
+        RESTORE_TEMP_DIR=""
+    fi
+}
+
+prepare_backup_for_restore() {
+    local filepath="$1"
+    RESTORE_FILEPATH="$filepath"
+    cleanup_restore_temp_dir
+
+    if [[ "$filepath" != *.gz ]]; then
+        return 0
+    fi
+    if ! gzip -t -- "$filepath"; then
+        log_error "Compressed backup failed integrity validation: $filepath"
+    fi
+
+    RESTORE_TEMP_DIR=$(mktemp -d "${TMPDIR:-/tmp}/db-backup-restore.XXXXXX")
+    trap cleanup_restore_temp_dir EXIT
+    RESTORE_FILEPATH="$RESTORE_TEMP_DIR/$(basename "${filepath%.gz}")"
+    if ! gzip -dc -- "$filepath" > "$RESTORE_FILEPATH"; then
+        log_error "Failed to extract compressed backup: $filepath"
+    fi
+    chmod 600 "$RESTORE_FILEPATH"
+    log_success "Compressed backup validated and extracted for this restore"
 }
 
 # Fetch DB credentials from GCloud Secret Manager
@@ -122,7 +243,7 @@ resolve_pg_tool() {
     elif command -v "$tool" &>/dev/null; then
         echo "$tool"
     else
-        log_error "$tool is not installed. Install postgresql-client-17: sudo apt-get install postgresql-client-17"
+        return 1
     fi
 }
 
@@ -143,10 +264,10 @@ cmd_export() {
         shift
     done
 
-    local pg_dump_bin
-    pg_dump_bin=$(resolve_pg_tool pg_dump)
-
     load_environment
+
+    local pg_dump_bin=""
+    pg_dump_bin=$(resolve_pg_tool pg_dump || true)
 
     local conn
     conn=$(build_connection_string)
@@ -157,6 +278,35 @@ cmd_export() {
     timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
     local filename="backup_${timestamp}.${ext}"
     local filepath="$BACKUPS_DIR/$filename"
+
+    if [[ -z "$pg_dump_bin" ]]; then
+        log_warning "pg_dump is unavailable; using Supabase CLI backup fallback"
+        local base_filepath="$BACKUPS_DIR/backup_${timestamp}"
+        if [[ " ${pg_flags[*]} " == *" --data-only "* ]]; then
+            filepath="${base_filepath}.data.sql"
+            npx supabase db dump --linked --password "$SUPABASE_DB_PASSWORD" \
+                --data-only --use-copy --file "$filepath"
+            test -s "$filepath"
+            compress_and_verify_backup "$filepath"
+            cleanup_old_backups
+            return 0
+        fi
+
+        filepath="${base_filepath}.schema.sql"
+        npx supabase db dump --linked --password "$SUPABASE_DB_PASSWORD" --file "$filepath"
+        test -s "$filepath"
+        compress_and_verify_backup "$filepath"
+
+        if [[ " ${pg_flags[*]} " != *" --schema-only "* ]]; then
+            local data_filepath="${base_filepath}.data.sql"
+            npx supabase db dump --linked --password "$SUPABASE_DB_PASSWORD" \
+                --data-only --use-copy --file "$data_filepath"
+            test -s "$data_filepath"
+            compress_and_verify_backup "$data_filepath"
+        fi
+        cleanup_old_backups
+        return 0
+    fi
 
     log_step "Exporting database"
     log_info "Format: $format"
@@ -177,9 +327,9 @@ cmd_export() {
             --file="$filepath"
     fi
 
-    local size
-    size=$(du -sh "$filepath" | cut -f1)
-    log_success "Export complete: $filename ($size)"
+    test -s "$filepath"
+    compress_and_verify_backup "$filepath"
+    cleanup_old_backups
 }
 
 # Import subcommand
@@ -197,9 +347,6 @@ cmd_import() {
         log_error "File not found: $filepath"
     fi
 
-    # Detect format
-    local ext="${filepath##*.}"
-
     echo ""
     echo -e "${RED}${BOLD}⚠  WARNING: DESTRUCTIVE OPERATION ⚠${NC}"
     echo -e "${YELLOW}This will overwrite data in the production database.${NC}"
@@ -214,6 +361,11 @@ cmd_import() {
     fi
 
     load_environment
+
+    prepare_backup_for_restore "$filepath"
+    local restore_filepath="$RESTORE_FILEPATH"
+
+    local ext="${restore_filepath##*.}"
 
     local conn
     conn=$(build_connection_string)
@@ -231,7 +383,7 @@ cmd_import() {
             --no-owner \
             --no-privileges \
             --dbname="$conn" \
-            "$filepath"
+            "$restore_filepath"
     else
         local psql_bin
         psql_bin=$(resolve_pg_tool psql)
@@ -239,9 +391,11 @@ cmd_import() {
         PGPASSWORD="${SUPABASE_DB_PASSWORD}" "$psql_bin" \
             --no-password \
             "$conn" \
-            < "$filepath"
+            < "$restore_filepath"
     fi
 
+    cleanup_restore_temp_dir
+    trap - EXIT
     log_success "Restore complete"
 }
 
@@ -249,25 +403,36 @@ cmd_import() {
 cmd_list() {
     mkdir -p "$BACKUPS_DIR"
 
-    local files
-    files=$(ls -lt "$BACKUPS_DIR"/*.{dump,sql} 2>/dev/null || true)
+    local files=()
+    mapfile -d '' -t files < <(
+        find "$BACKUPS_DIR" -maxdepth 1 -type f \
+            \( -name 'backup_*.dump' -o -name 'backup_*.sql' -o -name 'backup_*.dump.gz' -o -name 'backup_*.sql.gz' \) \
+            -print0 | sort -z
+    )
 
-    if [[ -z "$files" ]]; then
+    if (( ${#files[@]} == 0 )); then
         echo "No backups found in $BACKUPS_DIR"
-        exit 0
+        return 0
     fi
 
     echo -e "${BOLD}Available backups in backups/:${NC}"
     echo ""
-    ls -lht "$BACKUPS_DIR"/*.{dump,sql} 2>/dev/null | awk '{print $5, $6, $7, $8, $9}' | sed "s|$BACKUPS_DIR/||"
+    ls -lht -- "${files[@]}" | awk '{print $5, $6, $7, $8, $9}' | sed "s|$BACKUPS_DIR/||"
 }
 
-# Main
-case "${1:-}" in
-    export)     shift; cmd_export "$@" ;;
-    import)     shift; cmd_import "$@" ;;
-    list)       cmd_list ;;
-    --help|-h)  usage ;;
-    "")         usage ;;
-    *)          echo -e "${RED}Unknown command: $1${NC}"; usage ;;
-esac
+main() {
+    case "${1:-}" in
+        export)     shift; cmd_export "$@" ;;
+        import)     shift; cmd_import "$@" ;;
+        list)       cmd_list ;;
+        cleanup)    shift; cleanup_old_backups "${1:-}" ;;
+        compress-existing) cmd_compress_existing ;;
+        --help|-h)  usage ;;
+        "")         usage ;;
+        *)          echo -e "${RED}Unknown command: $1${NC}"; usage ;;
+    esac
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    main "$@"
+fi

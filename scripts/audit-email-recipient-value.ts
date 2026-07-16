@@ -72,7 +72,12 @@ export function buildAuditEmailRecipientValueOutput(result: {
 export async function runAuditEmailRecipientValue(
   args: IAuditEmailRecipientValueArgs = { pageSize: MAX_PAGE_SIZE }
 ): Promise<Record<string, unknown>> {
-  const result = await getEmailRecipientValueService().auditQueue({ pageSize: args.pageSize });
+  const result = await getEmailRecipientValueService().auditQueue({
+    pageSize: args.pageSize,
+    onProgress: processedCount => {
+      console.error(JSON.stringify({ audit_progress: true, processed_count: processedCount }));
+    },
+  });
   return buildAuditEmailRecipientValueOutput(result);
 }
 

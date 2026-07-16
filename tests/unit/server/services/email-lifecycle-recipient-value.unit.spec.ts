@@ -18,6 +18,7 @@ const dueRows = vi.hoisted(() => [
     recipient_value_score: 120,
     recipient_value_band: 'high',
     recipient_value_decision: 'keep_high',
+    recipient_value_policy_version: 'v1',
     campaign_name: 'High campaign',
     campaign_category: 'revenue_recovery',
     campaign_template_name: 'checkout-recovery',
@@ -41,6 +42,7 @@ const dueRows = vi.hoisted(() => [
     recipient_value_score: 50,
     recipient_value_band: 'medium',
     recipient_value_decision: 'keep_medium',
+    recipient_value_policy_version: 'v1',
     campaign_name: 'Medium campaign',
     campaign_category: 'product_lifecycle',
     campaign_template_name: 'feature-reminder',
@@ -64,6 +66,7 @@ const dueRows = vi.hoisted(() => [
     recipient_value_score: 20,
     recipient_value_band: 'experiment',
     recipient_value_decision: 'hold_experiment',
+    recipient_value_policy_version: 'v1',
     campaign_name: 'Held campaign',
     campaign_category: 'blog_education',
     campaign_template_name: 'blog-education',
@@ -87,6 +90,7 @@ const dueRows = vi.hoisted(() => [
     recipient_value_score: -20,
     recipient_value_band: 'cancel',
     recipient_value_decision: 'cancel',
+    recipient_value_policy_version: 'v1',
     campaign_name: 'Cancelled campaign',
     campaign_category: 'blog_education',
     campaign_template_name: 'blog-education',
@@ -124,8 +128,8 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
       }
       if (name === 'get_due_email_lifecycle_queue')
         return Promise.resolve({ data: dueRows, error: null });
-      if (name === 'claim_email_lifecycle_queue_row')
-        return Promise.resolve({ data: true, error: null });
+      if (name === 'claim_email_lifecycle_queue_row_for_delivery')
+        return Promise.resolve({ data: 'claimed', error: null });
       return Promise.resolve({ data: null, error: null });
     }),
     from: vi.fn(() => {
@@ -166,24 +170,22 @@ describe('EmailLifecycleService recipient-value delivery integration', () => {
     });
   });
 
-  it('should never select held or cancelled rows and should report processed value bands', async () => {
+  it('should send keep_high first and leave keep_medium for a later invocation', async () => {
     const result = await new EmailLifecycleService().processDueQueue({ batchSize: 10 });
 
-    expect(sendMock.mock.calls.map(call => call[0].to)).toEqual([
-      'high@example.com',
-      'medium@example.com',
-    ]);
+    expect(sendMock.mock.calls.map(call => call[0].to)).toEqual(['high@example.com']);
     expect(result.eligible).toBe(2);
+    expect(result.sent).toBe(1);
     expect(result.recipientValueBandCounts).toEqual({
       protected: 0,
       high: 1,
-      medium: 1,
+      medium: 0,
       experiment: 0,
       cancel: 0,
     });
   });
 
-  it('should preserve unclassified rollout rows as medium', async () => {
+  it('should exclude unclassified rollout rows from delivery', async () => {
     dueRows.splice(0, dueRows.length, {
       ...dueRows[1],
       recipient_value_band: null,
@@ -195,8 +197,9 @@ describe('EmailLifecycleService recipient-value delivery integration', () => {
       batchSize: 10,
     });
 
-    expect(result.recipientValueBandCounts.medium).toBe(1);
-    expect(result.queued).toBe(1);
+    expect(result.recipientValueBandCounts.medium).toBe(0);
+    expect(result.eligible).toBe(0);
+    expect(result.queued).toBe(0);
   });
 
   it('should stop non-dry-run delivery when the existing health thresholds recommend stopping', async () => {

@@ -28,6 +28,68 @@ export interface IEnv {
   CRON_SERVICE_NAME?: string;
 }
 
+interface ILifecycleDrainResponse {
+  success?: boolean;
+  eligible?: number;
+  sent?: number;
+  skipped?: number;
+  stoppedByHealth?: boolean;
+  stoppedByProvider?: boolean;
+  stoppedByProviderCapacity?: boolean;
+  durationMs?: number;
+  providerIoMs?: number;
+}
+
+const LIFECYCLE_DRAINS_PER_SCHEDULE = 10;
+
+function shouldStopLifecycleDrain(result: ILifecycleDrainResponse): boolean {
+  return (
+    result.success !== true ||
+    result.stoppedByHealth === true ||
+    result.stoppedByProvider === true ||
+    result.stoppedByProviderCapacity === true ||
+    result.eligible === 0 ||
+    (result.sent === 0 && (result.skipped ?? 0) === 0)
+  );
+}
+
+async function postCron(
+  env: IEnv,
+  endpoint: string
+): Promise<{ ok: boolean; status: number; data: unknown }> {
+  const response = await fetch(`${env.API_BASE_URL}${endpoint}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-cron-secret': env.CRON_SECRET,
+    },
+  });
+  return { ok: response.ok, status: response.status, data: await response.json() };
+}
+
+async function runLifecycleSequence(env: IEnv, includeEligibility: boolean): Promise<void> {
+  for (let index = 0; index < LIFECYCLE_DRAINS_PER_SCHEDULE; index++) {
+    const drainOnly = !includeEligibility || index > 0;
+    const endpoint = `/api/cron/email-lifecycle?drainOnly=${drainOnly}&scanLimit=25&sendLimit=1`;
+    const { ok, data } = await postCron(env, endpoint);
+    const result = data as ILifecycleDrainResponse;
+    console.log('[CRON] Email Lifecycle drain completed', {
+      invocation: index + 1,
+      drainOnly,
+      ok,
+      eligible: result.eligible ?? 0,
+      sent: result.sent ?? 0,
+      skipped: result.skipped ?? 0,
+      stoppedByHealth: result.stoppedByHealth === true,
+      stoppedByProvider: result.stoppedByProvider === true,
+      stoppedByProviderCapacity: result.stoppedByProviderCapacity === true,
+      wallTimeMs: result.durationMs ?? null,
+      providerIoMs: result.providerIoMs ?? null,
+    });
+    if (!ok || shouldStopLifecycleDrain(result)) return;
+  }
+}
+
 export default {
   /**
    * Scheduled event handler - triggered by cron patterns defined in wrangler.toml
@@ -40,6 +102,7 @@ export default {
     // Map cron pattern to API endpoint
     let endpoint: string;
     let jobName: string;
+    let lifecycleIncludeEligibility: boolean | null = null;
 
     if (cronPattern === '*/15 * * * *') {
       endpoint = '/api/cron/recover-webhooks';
@@ -57,11 +120,13 @@ export default {
       endpoint = '/api/cron/gallery-cleanup';
       jobName = 'Gallery Cleanup';
     } else if (cronPattern === '10 * * * *') {
-      endpoint = '/api/cron/email-lifecycle?batchSize=100&scanLimit=250';
+      endpoint = '/api/cron/email-lifecycle?drainOnly=false&scanLimit=25&sendLimit=1';
       jobName = 'Email Lifecycle';
+      lifecycleIncludeEligibility = true;
     } else if (cronPattern === '40 * * * *') {
-      endpoint = '/api/cron/email-lifecycle?batchSize=250&scanLimit=500';
+      endpoint = '/api/cron/email-lifecycle?drainOnly=true&scanLimit=25&sendLimit=1';
       jobName = 'Email Lifecycle Catch-up';
+      lifecycleIncludeEligibility = false;
     } else {
       console.error(`[CRON] Unknown cron pattern: ${cronPattern}`);
       return;
@@ -75,20 +140,15 @@ export default {
     ctx.waitUntil(
       (async () => {
         try {
-          const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'x-cron-secret': env.CRON_SECRET,
-            },
-          });
-
-          const data = await response.json();
-
-          if (response.ok) {
+          if (lifecycleIncludeEligibility !== null) {
+            await runLifecycleSequence(env, lifecycleIncludeEligibility);
+            return;
+          }
+          const { ok, status, data } = await postCron(env, endpoint);
+          if (ok) {
             console.log(`[CRON] ${jobName} completed successfully:`, data);
           } else {
-            console.error(`[CRON] ${jobName} failed with status ${response.status}:`, data);
+            console.error(`[CRON] ${jobName} failed with status ${status}:`, data);
           }
         } catch (error) {
           console.error(`[CRON] ${jobName} error:`, error);

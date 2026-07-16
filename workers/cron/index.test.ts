@@ -165,7 +165,7 @@ describe('Cloudflare Cron Worker', () => {
       );
     });
 
-    it('should route email lifecycle catch-up schedule with bounded params', async () => {
+    it('should route email lifecycle catch-up schedule with single-send params', async () => {
       const event = {
         cron: '40 * * * *',
         scheduledTime: Date.now(),
@@ -174,7 +174,7 @@ describe('Cloudflare Cron Worker', () => {
       const fetchMock = vi.fn().mockResolvedValue({
         ok: true,
         status: 200,
-        json: async () => ({ success: true, sent: 25 }),
+        json: async () => ({ success: true, eligible: 0, sent: 0 }),
       });
       global.fetch = fetchMock;
 
@@ -185,7 +185,7 @@ describe('Cloudflare Cron Worker', () => {
       await waitUntilPromise;
 
       expect(fetchMock).toHaveBeenCalledWith(
-        'https://api.example.com/api/cron/email-lifecycle?batchSize=250&scanLimit=500',
+        'https://api.example.com/api/cron/email-lifecycle?drainOnly=true&scanLimit=25&sendLimit=1',
         expect.objectContaining({
           method: 'POST',
           headers: expect.objectContaining({
@@ -193,6 +193,82 @@ describe('Cloudflare Cron Worker', () => {
           }),
         })
       );
+      expect(fetchMock).toHaveBeenCalledOnce();
+    });
+
+    it('should invoke drain requests sequentially', async () => {
+      const event = { cron: '10 * * * *', scheduledTime: Date.now() } as ScheduledEvent;
+      let concurrent = 0;
+      let maxConcurrent = 0;
+      const resolvers: Array<() => void> = [];
+      const fetchMock = vi.fn(async () => {
+        concurrent++;
+        maxConcurrent = Math.max(maxConcurrent, concurrent);
+        await new Promise<void>(resolve => resolvers.push(resolve));
+        concurrent--;
+        return {
+          ok: true,
+          json: async () => ({ success: true, eligible: 1, sent: 1, skipped: 0 }),
+        };
+      });
+      global.fetch = fetchMock;
+
+      await worker.scheduled(event, mockEnv, mockCtx as unknown);
+      const work = mockCtx.waitUntil.mock.calls[0][0] as Promise<void>;
+      for (let expectedCalls = 1; expectedCalls <= 10; expectedCalls++) {
+        await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(expectedCalls));
+        expect(resolvers).toHaveLength(1);
+        resolvers.shift()?.();
+      }
+      await work;
+
+      expect(maxConcurrent).toBe(1);
+      expect(fetchMock.mock.calls[0][0]).toContain('drainOnly=false');
+      expect(
+        fetchMock.mock.calls.slice(1).every(call => String(call[0]).includes('drainOnly=true'))
+      ).toBe(true);
+    });
+
+    it('should stop drain sequence on provider incident', async () => {
+      const event = { cron: '10 * * * *', scheduledTime: Date.now() } as ScheduledEvent;
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          success: true,
+          eligible: 1,
+          sent: 0,
+          skipped: 0,
+          stoppedByProvider: true,
+        }),
+      });
+      global.fetch = fetchMock;
+
+      await worker.scheduled(event, mockEnv, mockCtx as unknown);
+      await mockCtx.waitUntil.mock.calls[0][0];
+
+      expect(fetchMock).toHaveBeenCalledOnce();
+    });
+
+    it.each([
+      ['health stop', { success: true, eligible: 1, stoppedByHealth: true }],
+      [
+        'provider capacity or daily budget stop',
+        { success: true, eligible: 1, stoppedByProviderCapacity: true },
+      ],
+      ['no progress', { success: true, eligible: 1, sent: 0, skipped: 0 }],
+    ])('should stop drain sequence on %s', async (_name, result) => {
+      const event = { cron: '10 * * * *', scheduledTime: Date.now() } as ScheduledEvent;
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => result,
+      });
+      global.fetch = fetchMock;
+
+      await worker.scheduled(event, mockEnv, mockCtx as unknown);
+      await mockCtx.waitUntil.mock.calls[0][0];
+
+      expect(fetchMock).toHaveBeenCalledOnce();
     });
 
     it('should handle unknown cron patterns', async () => {

@@ -51,9 +51,7 @@ export class EmailProviderManager implements IEmailProviderManager {
     return this.getProviderForType(context?.type ?? 'transactional');
   }
 
-  private getEligibleProviders(
-    type: 'transactional' | 'marketing'
-  ): IEmailProviderAdapter[] {
+  private getEligibleProviders(type: 'transactional' | 'marketing'): IEmailProviderAdapter[] {
     return Array.from(this.providers.values())
       .filter(adapter => adapter.getConfig().enabled)
       .filter(adapter => adapter.getProviderName() !== EmailProvider.RESEND)
@@ -142,7 +140,10 @@ export class EmailProviderManager implements IEmailProviderManager {
             lastError.classification,
             false,
             attemptedProviders,
-            false
+            lastError.fallbackEligible,
+            unavailableProviders,
+            fallbackReasons,
+            lastError.scope
           );
         }
         continue;
@@ -152,8 +153,12 @@ export class EmailProviderManager implements IEmailProviderManager {
     const terminalError = new EmailProviderSendError(
       `All email providers failed. Last error: ${lastError?.message || 'Unknown error'}`,
       lastError?.classification ?? 'provider_unavailable',
-      true,
-      attemptedProviders
+      lastError?.transient ?? true,
+      attemptedProviders,
+      lastError?.fallbackEligible ?? true,
+      unavailableProviders,
+      fallbackReasons,
+      lastError?.scope ?? 'provider'
     );
     console.error('Email delivery terminated', {
       classification: terminalError.classification,

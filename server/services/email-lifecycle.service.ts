@@ -11,7 +11,10 @@ import {
   getRevenueRecoveryService,
   type IQueueRecoveryEligibilityResult,
 } from '@server/services/revenue-recovery.service';
-import type { RecipientValueBand } from '@server/services/email-recipient-value.service';
+import {
+  RECIPIENT_VALUE_POLICY_VERSION,
+  type RecipientValueBand,
+} from '@server/services/email-recipient-value.service';
 import { EmailProviderSendError } from '@server/services/email-providers/base-email-provider-adapter';
 
 export type LifecycleEventType =
@@ -28,7 +31,12 @@ export type LifecycleEventType =
 
 type EmailPreferenceKey = 'marketing_emails' | 'product_updates' | 'low_credit_alerts';
 type LifecycleQueueStatus = 'pending' | 'sent' | 'failed' | 'skipped' | 'cancelled';
+type LifecycleHistoryMode = 'enqueue' | 'send';
 export type CampaignPriority = 'transactional' | 'revenue_critical' | 'lifecycle' | 'education';
+export const LIFECYCLE_DELIVERED_HISTORY_STATUS = 'sent' as const;
+
+/** The zero-credit alert is the only caller allowed to bypass frequency windows. */
+export type LifecycleForceFrequencyOverride = 'zero_credit_alert';
 
 interface ICampaign {
   key: string;
@@ -43,23 +51,12 @@ interface ICampaign {
   sort_priority: number;
 }
 
-interface IQueueRow {
+export interface ILifecycleDueQueuePolicyRow {
   id: string;
-  campaign_key: string;
-  user_id: string | null;
-  recipient_email: string;
   scheduled_for: string;
-  status: LifecycleQueueStatus;
-  reason: string | null;
-  template_data: Record<string, unknown>;
-  metadata: Record<string, unknown>;
-  sent_at: string | null;
-  created_at: string;
-  subscription_id?: string | null;
   processing_claim_id?: string | null;
   processing_claimed_at?: string | null;
   recipient_value_score?: number | null;
-  recipient_value_band?: RecipientValueBand | null;
   recipient_value_decision?:
     | 'protected'
     | 'keep_high'
@@ -68,15 +65,29 @@ interface IQueueRow {
     | 'cancel'
     | null;
   recipient_value_policy_version?: string | null;
+  campaign_email_type?: 'transactional' | 'marketing';
+  campaign_enabled?: boolean;
+  campaign_priority?: CampaignPriority;
+  campaign_sort_priority?: number;
+}
+
+interface IQueueRow extends ILifecycleDueQueuePolicyRow {
+  campaign_key: string;
+  user_id: string | null;
+  recipient_email: string;
+  status: LifecycleQueueStatus;
+  reason: string | null;
+  template_data: Record<string, unknown>;
+  metadata: Record<string, unknown>;
+  sent_at: string | null;
+  created_at: string;
+  subscription_id?: string | null;
+  recipient_value_band?: RecipientValueBand | null;
   campaign_name?: string;
   campaign_category?: string;
   campaign_template_name?: string;
-  campaign_email_type?: 'transactional' | 'marketing';
   campaign_preference_key?: EmailPreferenceKey | null;
-  campaign_enabled?: boolean;
   campaign_cooldown_days?: number;
-  campaign_priority?: CampaignPriority;
-  campaign_sort_priority?: number;
 }
 
 export interface IQueueLifecycleEmailInput {
@@ -87,7 +98,7 @@ export interface IQueueLifecycleEmailInput {
   templateData?: Record<string, unknown>;
   metadata?: Record<string, unknown>;
   subscriptionId?: string;
-  forceFrequency?: boolean;
+  forceFrequency?: LifecycleForceFrequencyOverride;
 }
 
 export interface IQueueLifecycleEmailResult {
@@ -95,6 +106,7 @@ export interface IQueueLifecycleEmailResult {
   skipped: boolean;
   queueId?: string;
   reason?: string;
+  suppressionRecorded?: boolean;
 }
 
 export interface IProcessLifecycleQueueResult {
@@ -107,6 +119,14 @@ export interface IProcessLifecycleQueueResult {
   recipientValueBandCounts: Record<RecipientValueBand, number>;
   stoppedByHealth: boolean;
   stoppedByProviderCapacity: boolean;
+  stoppedByProvider: boolean;
+  rescheduled: number;
+  providerClassification?: string;
+  attemptedProviders: string[];
+  unavailableProviders: string[];
+  fallbackReasons: string[];
+  unclassifiedDueReturned: number;
+  providerIoMs: number;
 }
 
 function createRecipientValueBandCounts(): Record<RecipientValueBand, number> {
@@ -128,6 +148,92 @@ function getQueueRowRecipientValueBand(row: IQueueRow): RecipientValueBand {
   return 'medium';
 }
 
+export function hasPermanentEmailFailureSignal(value: unknown): boolean {
+  if (!value || typeof value !== 'object') return false;
+  if (Array.isArray(value)) return value.some(item => hasPermanentEmailFailureSignal(item));
+
+  for (const [key, candidate] of Object.entries(value as Record<string, unknown>)) {
+    const normalizedKey = key.toLowerCase().replace(/[^a-z]/g, '');
+    if (/permanentbounce|hardbounce|complaint|complained/.test(normalizedKey)) {
+      if (candidate === true) return true;
+      if (Array.isArray(candidate) && candidate.length > 0) return true;
+      if (
+        typeof candidate === 'string' &&
+        candidate.trim() !== '' &&
+        !['false', 'none', '0', '[]'].includes(candidate.trim().toLowerCase())
+      ) {
+        return true;
+      }
+    }
+    if (
+      typeof candidate === 'string' &&
+      /^(event|status|classification|error|message|reason)$/.test(normalizedKey) &&
+      /hard.?bounce|permanent.?bounce|complaint|complained|invalid.?recipient/i.test(candidate)
+    ) {
+      return true;
+    }
+    if (candidate && typeof candidate === 'object' && hasPermanentEmailFailureSignal(candidate)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+const CAMPAIGN_PRIORITY_RANK: Record<CampaignPriority, number> = {
+  transactional: 0,
+  revenue_critical: 1,
+  lifecycle: 2,
+  education: 3,
+};
+
+const RECIPIENT_VALUE_DECISION_RANK: Record<string, number> = {
+  protected: 0,
+  keep_high: 1,
+  keep_medium: 2,
+};
+
+export function isLifecycleDueQueueRowEligible(
+  row: ILifecycleDueQueuePolicyRow,
+  now: Date = new Date()
+): boolean {
+  if (row.campaign_enabled !== true || !row.campaign_email_type) return false;
+  if (row.processing_claim_id) {
+    const claimedAt = row.processing_claimed_at ? Date.parse(row.processing_claimed_at) : NaN;
+    if (!Number.isFinite(claimedAt) || claimedAt >= now.getTime() - 10 * 60 * 1000) {
+      return false;
+    }
+  }
+  if (row.campaign_email_type === 'transactional') return true;
+  return (
+    row.recipient_value_policy_version === RECIPIENT_VALUE_POLICY_VERSION &&
+    row.recipient_value_decision !== null &&
+    row.recipient_value_decision !== undefined &&
+    ['protected', 'keep_high', 'keep_medium'].includes(row.recipient_value_decision)
+  );
+}
+
+export function compareLifecycleDueQueueRows(
+  left: ILifecycleDueQueuePolicyRow,
+  right: ILifecycleDueQueuePolicyRow
+): number {
+  const priorityDelta =
+    (left.campaign_priority ? CAMPAIGN_PRIORITY_RANK[left.campaign_priority] : 4) -
+    (right.campaign_priority ? CAMPAIGN_PRIORITY_RANK[right.campaign_priority] : 4);
+  if (priorityDelta !== 0) return priorityDelta;
+  const decisionDelta =
+    (RECIPIENT_VALUE_DECISION_RANK[left.recipient_value_decision ?? ''] ?? 3) -
+    (RECIPIENT_VALUE_DECISION_RANK[right.recipient_value_decision ?? ''] ?? 3);
+  if (decisionDelta !== 0) return decisionDelta;
+  const scoreDelta = (right.recipient_value_score ?? -1) - (left.recipient_value_score ?? -1);
+  if (scoreDelta !== 0) return scoreDelta;
+  const campaignSortDelta =
+    (right.campaign_sort_priority ?? -1) - (left.campaign_sort_priority ?? -1);
+  if (campaignSortDelta !== 0) return campaignSortDelta;
+  const scheduledDelta = Date.parse(left.scheduled_for) - Date.parse(right.scheduled_for);
+  if (scheduledDelta !== 0) return scheduledDelta;
+  return left.id.localeCompare(right.id);
+}
+
 export interface IEmailLifecycleQueueHealth {
   duePending: number;
   oldestPendingScheduledFor: string | null;
@@ -136,6 +242,8 @@ export interface IEmailLifecycleQueueHealth {
 export interface IQueueDailyEligibilityResult {
   queued: number;
   lifecycleQueued: number;
+  suppressionsRecorded: number;
+  suppressionsReused: number;
   recovery: IQueueRecoveryEligibilityResult;
 }
 
@@ -216,19 +324,43 @@ export class EmailLifecycleService {
     }
 
     const suppression = await this.getSuppressionReason(campaign, input.userId, {
-      forceFrequency: input.forceFrequency,
+      historyMode: 'enqueue',
+      forceFrequency: Boolean(input.forceFrequency),
     });
     if (suppression) {
-      const queueId = await this.insertQueueRow({
+      const existingQueueId = await this.getRecentSuppressionQueueId(
+        input.userId,
+        campaign.key,
+        suppression
+      );
+      if (existingQueueId) {
+        return {
+          queued: false,
+          skipped: true,
+          queueId: existingQueueId,
+          reason: suppression,
+          suppressionRecorded: false,
+        };
+      }
+      const suppressionRecord = await this.recordSuppressionDecision({
         campaign,
         user,
-        status: 'skipped',
         reason: suppression,
         scheduledFor: input.scheduledFor ?? new Date(),
         templateData: input.templateData,
         metadata: input.metadata,
         subscriptionId: input.subscriptionId,
       });
+      const queueId = suppressionRecord.queueId;
+      if (!suppressionRecord.recorded) {
+        return {
+          queued: false,
+          skipped: true,
+          queueId,
+          reason: suppression,
+          suppressionRecorded: false,
+        };
+      }
       await this.recordLifecycleEvent({
         queueId,
         userId: input.userId,
@@ -242,7 +374,13 @@ export class EmailLifecycleService {
       await this.trackLifecycleAnalytics('email_lifecycle_skipped', input.userId, campaign, {
         reason: suppression,
       });
-      return { queued: false, skipped: true, queueId, reason: suppression };
+      return {
+        queued: false,
+        skipped: true,
+        queueId,
+        reason: suppression,
+        suppressionRecorded: true,
+      };
     }
 
     const queueId = await this.insertQueueRow({
@@ -301,7 +439,7 @@ export class EmailLifecycleService {
       campaignKey,
       userId: params.userId,
       scheduledFor: reason === 'insufficient' ? addMinutes(new Date(), 10) : new Date(),
-      forceFrequency: reason === 'zero',
+      forceFrequency: reason === 'zero' ? 'zero_credit_alert' : undefined,
       templateData: {
         creditsRemaining: Math.max(params.creditsRemaining, 0),
         requiredCredits: params.requiredCredits,
@@ -371,10 +509,14 @@ export class EmailLifecycleService {
 
   async processDueQueue(options?: {
     dryRun?: boolean;
+    scanLimit?: number;
+    sendLimit?: number;
+    /** @deprecated Use scanLimit. Retained for internal caller compatibility. */
     batchSize?: number;
   }): Promise<IProcessLifecycleQueueResult> {
     const dryRun = options?.dryRun ?? false;
-    const batchSize = options?.batchSize ?? 50;
+    const scanLimit = Math.min(Math.max(1, options?.scanLimit ?? options?.batchSize ?? 50), 250);
+    const sendLimit = Math.min(Math.max(1, options?.sendLimit ?? 1), 1);
     const result: IProcessLifecycleQueueResult = {
       queued: 0,
       sent: 0,
@@ -385,6 +527,13 @@ export class EmailLifecycleService {
       recipientValueBandCounts: createRecipientValueBandCounts(),
       stoppedByHealth: false,
       stoppedByProviderCapacity: false,
+      stoppedByProvider: false,
+      rescheduled: 0,
+      attemptedProviders: [],
+      unavailableProviders: [],
+      fallbackReasons: [],
+      providerIoMs: 0,
+      unclassifiedDueReturned: 0,
     };
 
     if (!dryRun) {
@@ -406,7 +555,7 @@ export class EmailLifecycleService {
     }
 
     const { data, error } = await supabaseAdmin.rpc('get_due_email_lifecycle_queue', {
-      p_limit: batchSize,
+      p_limit: scanLimit,
       p_due_before: new Date().toISOString(),
     });
 
@@ -414,13 +563,15 @@ export class EmailLifecycleService {
       throw new Error(`Failed to fetch lifecycle queue: ${error.message}`);
     }
 
-    const rows = ((data || []) as IQueueRow[]).filter(
-      row =>
-        Boolean(row) &&
-        row.recipient_value_decision !== 'hold_experiment' &&
-        row.recipient_value_decision !== 'cancel'
-    );
+    const rawRows = (data || []) as IQueueRow[];
+    result.unclassifiedDueReturned = rawRows.filter(
+      row => row.campaign_email_type === 'marketing' && !row.recipient_value_decision
+    ).length;
+    const rows = rawRows
+      .filter(row => Boolean(row) && isLifecycleDueQueueRowEligible(row))
+      .sort(compareLifecycleDueQueueRows);
     result.eligible = rows.length;
+    let providerSubmissions = 0;
 
     for (const row of rows) {
       result.recipientValueBandCounts[getQueueRowRecipientValueBand(row)]++;
@@ -435,7 +586,7 @@ export class EmailLifecycleService {
       try {
         suppression = row.user_id
           ? await this.getSuppressionReason(campaign, row.user_id, {
-              ignoreExistingPending: true,
+              historyMode: 'send',
               queueId: row.id,
             })
           : null;
@@ -474,15 +625,23 @@ export class EmailLifecycleService {
       }
 
       try {
-        if (!(await this.claimQueueRow(row.id))) continue;
+        const claimResult = await this.claimQueueRow(row.id);
+        if (claimResult === 'capacity_exhausted') {
+          result.stoppedByProviderCapacity = true;
+          break;
+        }
+        if (claimResult !== 'claimed') continue;
       } catch (error) {
         console.error('[EMAIL_LIFECYCLE_QUEUE_CLAIM_FAILED]', error);
         result.failed++;
         continue;
       }
 
+      let providerStartedAt: number | null = null;
       try {
         const templateData = await this.prepareTemplateData(row, campaign);
+        providerStartedAt = Date.now();
+        providerSubmissions++;
         const sendResult = await this.emailService.send({
           to: row.recipient_email,
           template: campaign.template_name,
@@ -490,6 +649,8 @@ export class EmailLifecycleService {
           userId: row.user_id ?? undefined,
           data: templateData,
         });
+        result.providerIoMs += Date.now() - providerStartedAt;
+        providerStartedAt = null;
 
         if (sendResult.skipped) {
           await this.markQueueRow(row.id, 'skipped', 'provider_preference_skip');
@@ -515,35 +676,56 @@ export class EmailLifecycleService {
           });
           result.sent++;
         }
+        if (providerSubmissions >= sendLimit) break;
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Unknown email send failure';
-        const transient = error instanceof EmailProviderSendError && error.transient;
-        const providerCapacityExhausted =
-          error instanceof EmailProviderSendError &&
-          error.classification === 'provider_unavailable' &&
-          error.attemptedProviders.length === 0;
-        if (providerCapacityExhausted) {
-          await this.rescheduleQueueRow(row.id, message, 'provider_capacity_exhausted');
-          result.stoppedByProviderCapacity = true;
-          break;
+        if (providerStartedAt !== null) {
+          result.providerIoMs += Date.now() - providerStartedAt;
         }
-        if (transient) {
-          await this.rescheduleQueueRow(row.id, message);
+        const message = error instanceof Error ? error.message : 'Unknown email send failure';
+        const providerError = error instanceof EmailProviderSendError ? error : null;
+        const isProviderStop = providerError?.scope === 'provider';
+        const isCapacityStop =
+          providerError?.classification === 'rate_limited' ||
+          (providerError?.classification === 'provider_unavailable' &&
+            providerError.attemptedProviders.length === 0);
+        if (isProviderStop) {
+          const category = isCapacityStop
+            ? 'provider_capacity_exhausted'
+            : `provider_incident_${providerError.classification}`;
+          await this.rescheduleQueueRow(row.id, providerError.classification, category);
+          result.rescheduled++;
+          result.stoppedByProvider = true;
+          result.stoppedByProviderCapacity = isCapacityStop;
+          result.providerClassification = providerError.classification;
+          result.attemptedProviders = [...providerError.attemptedProviders];
+          result.unavailableProviders = [...providerError.unavailableProviders];
+          result.fallbackReasons = providerError.fallbackReasons.length
+            ? [...providerError.fallbackReasons]
+            : [providerError.classification];
         } else {
-          await this.markQueueRow(row.id, 'failed', message);
+          await this.markQueueRow(row.id, 'failed', providerError?.classification ?? message);
         }
         await this.recordLifecycleEvent({
           queueId: row.id,
           userId: row.user_id,
           campaignKey: row.campaign_key,
           eventType: 'failed',
-          metadata: { error: message },
+          metadata: {
+            classification: providerError?.classification ?? 'application_error',
+            scope: providerError?.scope ?? 'recipient',
+            transient: providerError?.transient ?? false,
+            attemptedProviders: providerError?.attemptedProviders ?? [],
+            unavailableProviders: providerError?.unavailableProviders ?? [],
+            fallbackReasons: providerError?.fallbackReasons ?? [],
+          },
         });
         await this.trackLifecycleAnalytics('email_lifecycle_skipped', row.user_id, campaign, {
           reason: 'failed',
-          error: message,
+          classification: providerError?.classification ?? 'application_error',
+          scope: providerError?.scope ?? 'recipient',
         });
-        result.failed++;
+        if (!isProviderStop) result.failed++;
+        if (providerSubmissions >= sendLimit) break;
       }
     }
 
@@ -605,6 +787,8 @@ export class EmailLifecycleService {
     }
 
     let lifecycleQueued = 0;
+    let suppressionsRecorded = 0;
+    let suppressionsReused = 0;
     for (const profile of (data || []) as Array<Record<string, unknown>>) {
       const userId = String(profile.id);
       const email = await this.resolveUserEmail(userId);
@@ -838,6 +1022,8 @@ export class EmailLifecycleService {
         }
         const outcome = await this.queueLifecycleEmail(candidate);
         if (outcome.queued) lifecycleQueued++;
+        if (outcome.suppressionRecorded === true) suppressionsRecorded++;
+        if (outcome.suppressionRecorded === false) suppressionsReused++;
       }
     }
 
@@ -849,6 +1035,8 @@ export class EmailLifecycleService {
     return {
       queued: lifecycleQueued + recoveryResult.queued,
       lifecycleQueued,
+      suppressionsRecorded: suppressionsRecorded + recoveryResult.suppressionsRecorded,
+      suppressionsReused: suppressionsReused + recoveryResult.suppressionsReused,
       recovery: recoveryResult,
     };
   }
@@ -1079,6 +1267,35 @@ export class EmailLifecycleService {
     return String(data.id);
   }
 
+  private async recordSuppressionDecision(params: {
+    campaign: ICampaign;
+    user: IUserEmailContext;
+    scheduledFor: Date;
+    reason: string;
+    templateData?: Record<string, unknown>;
+    metadata?: Record<string, unknown>;
+    subscriptionId?: string;
+  }): Promise<{ queueId: string; recorded: boolean }> {
+    const { data, error } = await supabaseAdmin.rpc('record_email_lifecycle_suppression', {
+      p_campaign_key: params.campaign.key,
+      p_user_id: params.user.id,
+      p_recipient_email: params.user.email,
+      p_scheduled_for: params.scheduledFor.toISOString(),
+      p_reason: params.reason,
+      p_template_data: {
+        userName: params.user.userName ?? 'there',
+        ...(params.templateData ?? {}),
+      },
+      p_metadata: params.metadata ?? {},
+      p_subscription_id: params.subscriptionId ?? null,
+    });
+    const row = (data as Array<{ queue_id?: string; inserted?: boolean }> | null)?.[0];
+    if (error || !row?.queue_id) {
+      throw new Error(`Failed to record lifecycle suppression: ${error?.message ?? 'missing row'}`);
+    }
+    return { queueId: String(row.queue_id), recorded: row.inserted === true };
+  }
+
   private async markQueueRow(
     queueId: string,
     status: LifecycleQueueStatus,
@@ -1102,15 +1319,21 @@ export class EmailLifecycleService {
     }
   }
 
-  private async claimQueueRow(queueId: string): Promise<boolean> {
-    const { data, error } = await supabaseAdmin.rpc('claim_email_lifecycle_queue_row', {
-      p_queue_id: queueId,
-      p_claim_id: crypto.randomUUID(),
-    });
+  private async claimQueueRow(
+    queueId: string
+  ): Promise<'claimed' | 'not_claimed' | 'capacity_exhausted'> {
+    const { data, error } = await supabaseAdmin.rpc(
+      'claim_email_lifecycle_queue_row_for_delivery',
+      {
+        p_queue_id: queueId,
+        p_claim_id: crypto.randomUUID(),
+        p_marketing_daily_limit: 200,
+      }
+    );
     if (error) {
       throw new Error(`Failed to claim lifecycle queue row: ${error.message}`);
     }
-    return data === true;
+    return data === 'claimed' || data === 'capacity_exhausted' ? data : 'not_claimed';
   }
 
   private async rescheduleQueueRow(
@@ -1149,51 +1372,64 @@ export class EmailLifecycleService {
   private async getSuppressionReason(
     campaign: ICampaign,
     userId: string,
-    options?: { forceFrequency?: boolean; ignoreExistingPending?: boolean; queueId?: string }
+    options: {
+      historyMode: LifecycleHistoryMode;
+      forceFrequency?: boolean;
+      queueId?: string;
+    }
   ): Promise<string | null> {
     if (campaign.email_type === 'transactional') return null;
+
+    if (!campaign.enabled) return 'campaign_disabled';
 
     if (campaign.preference_key) {
       const allowed = await this.isPreferenceAllowed(userId, campaign.preference_key);
       if (!allowed) return 'suppressed_preference';
     }
 
-    if (options?.forceFrequency) return null;
-
     if (await this.hasBounceOrComplaintStatus(userId)) {
       return 'suppressed_email_status';
     }
 
-    const recentSame = await this.hasRecentQueueRow(
+    if (
+      options.historyMode === 'enqueue' &&
+      (await this.hasPendingCampaignRow(userId, campaign.key, options.queueId))
+    ) {
+      return 'suppressed_campaign_cooldown';
+    }
+
+    if (options.forceFrequency) return null;
+
+    const recentSame = await this.hasRecentSentCampaignRow(
       userId,
       campaign.key,
       campaign.cooldown_days,
-      options?.queueId
+      options.queueId
     );
     if (recentSame) return 'suppressed_campaign_cooldown';
 
     const allMarketingLast7Days = await this.countRecentMarketing(
       userId,
       MARKETING_CAP_DAYS,
-      options?.queueId
+      options.queueId
     );
     const revenueCriticalLast72Hours = await this.countRecentMarketingByPriorities(
       userId,
       ['revenue_critical'],
       REVENUE_CRITICAL_CAP_HOURS / 24,
-      options?.queueId
+      options.queueId
     );
     const revenueCriticalLast7Days = await this.countRecentMarketingByPriorities(
       userId,
       ['revenue_critical'],
       MARKETING_CAP_DAYS,
-      options?.queueId
+      options.queueId
     );
     const lifecycleEducationLast7Days = await this.countRecentMarketingByPriorities(
       userId,
       ['lifecycle', 'education'],
       MARKETING_CAP_DAYS,
-      options?.queueId
+      options.queueId
     );
 
     return evaluateCampaignFrequencyCap({
@@ -1222,7 +1458,46 @@ export class EmailLifecycleService {
     return (data as Record<EmailPreferenceKey, boolean> | null)?.[preferenceKey] !== false;
   }
 
-  private async hasRecentQueueRow(
+  private async getRecentSuppressionQueueId(
+    userId: string,
+    campaignKey: string,
+    reason: string
+  ): Promise<string | null> {
+    const { data, error } = await supabaseAdmin
+      .from('email_lifecycle_queue')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('campaign_key', campaignKey)
+      .eq('status', 'skipped')
+      .eq('reason', reason)
+      .gte('created_at', daysAgo(1))
+      .order('created_at', { ascending: false })
+      .limit(1);
+    if (error) {
+      throw new Error(`Failed to check lifecycle suppression audit: ${error.message}`);
+    }
+    return data?.[0]?.id ? String(data[0].id) : null;
+  }
+
+  private async hasPendingCampaignRow(
+    userId: string,
+    campaignKey: string,
+    excludeQueueId?: string
+  ): Promise<boolean> {
+    let query = supabaseAdmin
+      .from('email_lifecycle_queue')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('campaign_key', campaignKey)
+      .eq('status', 'pending')
+      .limit(1);
+    if (excludeQueueId) query = query.neq('id', excludeQueueId);
+    const { data, error } = await query;
+    if (error) throw new Error(`Failed to check pending lifecycle campaign: ${error.message}`);
+    return !!data?.length;
+  }
+
+  private async hasRecentSentCampaignRow(
     userId: string,
     campaignKey: string,
     days: number,
@@ -1233,7 +1508,7 @@ export class EmailLifecycleService {
       .select('id')
       .eq('user_id', userId)
       .eq('campaign_key', campaignKey)
-      .in('status', ['pending', 'sent'])
+      .eq('status', LIFECYCLE_DELIVERED_HISTORY_STATUS)
       .gte('created_at', daysAgo(days))
       .limit(1);
     if (excludeQueueId) query = query.neq('id', excludeQueueId);
@@ -1255,7 +1530,7 @@ export class EmailLifecycleService {
       .select('id')
       .eq('user_id', userId)
       .in('campaign_key', campaignKeys)
-      .in('status', ['pending', 'sent'])
+      .eq('status', LIFECYCLE_DELIVERED_HISTORY_STATUS)
       .gte('created_at', daysAgo(days))
       .limit(1);
     if (excludeQueueId) query = query.neq('id', excludeQueueId);
@@ -1276,7 +1551,7 @@ export class EmailLifecycleService {
       .select('id')
       .eq('user_id', userId)
       .in('campaign_key', campaignKeys)
-      .in('status', ['pending', 'sent'])
+      .eq('status', LIFECYCLE_DELIVERED_HISTORY_STATUS)
       .gte('created_at', daysAgo(days));
     if (excludeQueueId) query = query.neq('id', excludeQueueId);
     const { data, error } = await query;
@@ -1306,7 +1581,7 @@ export class EmailLifecycleService {
       .select('id')
       .eq('user_id', userId)
       .in('campaign_key', campaignKeys)
-      .in('status', ['pending', 'sent'])
+      .eq('status', LIFECYCLE_DELIVERED_HISTORY_STATUS)
       .gte('created_at', daysAgo(days));
     if (excludeQueueId) query = query.neq('id', excludeQueueId);
     const { data, error } = await query;
@@ -1345,15 +1620,7 @@ export class EmailLifecycleService {
       throw new Error(`Failed to check lifecycle email status suppression: ${error.message}`);
     }
 
-    return (data || []).some(row => {
-      const response = JSON.stringify(row.provider_response ?? {}).toLowerCase();
-      return (
-        response.includes('permanent_bounce') ||
-        response.includes('bounce') ||
-        response.includes('complaint') ||
-        response.includes('complained')
-      );
-    });
+    return (data || []).some(row => hasPermanentEmailFailureSignal(row.provider_response));
   }
 
   private getCampaignFromQueueRow(row: IQueueRow): ICampaign | null {

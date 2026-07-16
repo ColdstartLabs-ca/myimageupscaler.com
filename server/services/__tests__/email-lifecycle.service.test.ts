@@ -4,15 +4,21 @@ import { EmailProviderSendError } from '@server/services/email-providers/base-em
 
 const queueInserts: Record<string, unknown>[] = [];
 const eventInserts: Record<string, unknown>[] = [];
-const { sendEmailMock } = vi.hoisted(() => ({
+const { sendEmailMock, trackServerEventMock } = vi.hoisted(() => ({
   sendEmailMock: vi.fn(),
+  trackServerEventMock: vi.fn().mockResolvedValue(true),
 }));
 let preferences: Record<string, boolean> = {
   marketing_emails: true,
   product_updates: true,
   low_credit_alerts: true,
 };
-let recentMarketingRows: Array<{ id: string }> = [];
+let recentMarketingRows: Array<{
+  id: string;
+  status?: string;
+  campaign_key?: string;
+  reason?: string;
+}> = [];
 let dueQueueRows: Array<Record<string, unknown>> = [];
 let emailLogRows: Array<Record<string, unknown>> = [];
 let emailLogError: { message: string } | null = null;
@@ -27,7 +33,7 @@ vi.mock('@shared/config/env', () => ({
 }));
 
 vi.mock('@server/analytics', () => ({
-  trackServerEvent: vi.fn().mockResolvedValue(true),
+  trackServerEvent: trackServerEventMock,
 }));
 
 vi.mock('@server/services/email.service', () => ({
@@ -43,8 +49,14 @@ function makeSelectChain(table: string, selectColumns?: string) {
       state[field] = value;
       return chain;
     }),
-    neq: vi.fn(() => chain),
-    in: vi.fn(() => chain),
+    neq: vi.fn((field: string, value: unknown) => {
+      state[`not_${field}`] = value;
+      return chain;
+    }),
+    in: vi.fn((field: string, value: unknown) => {
+      state[field] = value;
+      return chain;
+    }),
     gte: vi.fn(() => chain),
     lte: vi.fn(() => chain),
     order: vi.fn(() => chain),
@@ -106,11 +118,20 @@ function makeSelectChain(table: string, selectColumns?: string) {
           resolve({ data: dueQueueRows, error: null });
           return;
         }
-        if (state.campaign_key) {
-          resolve({ data: [], error: null });
-          return;
-        }
-        resolve({ data: recentMarketingRows, error: null });
+        const rows = recentMarketingRows.filter(row => {
+          const status = row.status ?? 'sent';
+          const campaignKey = row.campaign_key ?? 'low-credits';
+          const campaignMatches = Array.isArray(state.campaign_key)
+            ? state.campaign_key.includes(campaignKey)
+            : !state.campaign_key || campaignKey === state.campaign_key;
+          return (
+            (!state.status || status === state.status) &&
+            campaignMatches &&
+            (!state.reason || row.reason === state.reason) &&
+            (!state.not_id || row.id !== state.not_id)
+          );
+        });
+        resolve({ data: rows, error: null });
         return;
       }
       if (table === 'email_logs') {
@@ -139,44 +160,64 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
         }),
       },
     },
-    rpc: vi.fn(async (name: string, args: { p_limit?: number }) => {
-      if (name === 'claim_email_lifecycle_queue_row') return { data: true, error: null };
+    rpc: vi.fn(async (name: string, args: Record<string, unknown>) => {
+      if (name === 'claim_email_lifecycle_queue_row_for_delivery') {
+        return { data: 'claimed', error: null };
+      }
+      if (name === 'record_email_lifecycle_suppression') {
+        queueInserts.push({
+          campaign_key: args.p_campaign_key,
+          user_id: args.p_user_id,
+          recipient_email: args.p_recipient_email,
+          scheduled_for: args.p_scheduled_for,
+          status: 'skipped',
+          reason: args.p_reason,
+          template_data: args.p_template_data,
+          metadata: args.p_metadata,
+        });
+        return {
+          data: [{ queue_id: `queue_${queueInserts.length}`, inserted: true }],
+          error: null,
+        };
+      }
       return {
-      data: dueQueueRows
-        .map(row => {
-          const education = row.campaign_key === 'blog-education-face-restore';
-          const recovery = String(row.campaign_key).includes('checkout-abandoned');
-          return {
-            ...row,
-            campaign_name: education
-              ? 'Photo restoration guide'
-              : recovery
-                ? 'Checkout recovery'
-                : 'Low credits',
-            campaign_category: education
-              ? 'blog_education'
-              : recovery
-                ? 'revenue_recovery'
-                : 'low_credit',
-            campaign_template_name: education
-              ? 'blog-education'
-              : recovery
-                ? 'checkout-recovery'
-                : 'low-credits',
-            campaign_email_type: 'marketing',
-            campaign_preference_key: education ? 'marketing_emails' : 'low_credit_alerts',
-            campaign_enabled: true,
-            campaign_cooldown_days: 7,
-            campaign_priority: education ? 'education' : 'revenue_critical',
-            campaign_sort_priority: education ? 40 : 90,
-          };
-        })
-        .sort((a, b) => {
-          const rank = { revenue_critical: 1, education: 3 } as const;
-          return rank[a.campaign_priority] - rank[b.campaign_priority];
-        })
-        .slice(0, args.p_limit ?? 50),
-      error: null,
+        data: dueQueueRows
+          .map(row => {
+            const education = row.campaign_key === 'blog-education-face-restore';
+            const recovery = String(row.campaign_key).includes('checkout-abandoned');
+            return {
+              ...row,
+              campaign_name: education
+                ? 'Photo restoration guide'
+                : recovery
+                  ? 'Checkout recovery'
+                  : 'Low credits',
+              campaign_category: education
+                ? 'blog_education'
+                : recovery
+                  ? 'revenue_recovery'
+                  : 'low_credit',
+              campaign_template_name: education
+                ? 'blog-education'
+                : recovery
+                  ? 'checkout-recovery'
+                  : 'low-credits',
+              campaign_email_type: 'marketing',
+              campaign_preference_key: education ? 'marketing_emails' : 'low_credit_alerts',
+              campaign_enabled: true,
+              campaign_cooldown_days: 7,
+              campaign_priority: education ? 'education' : 'revenue_critical',
+              campaign_sort_priority: education ? 40 : 90,
+              recipient_value_decision: row.recipient_value_decision ?? 'keep_high',
+              recipient_value_policy_version: row.recipient_value_policy_version ?? 'v1',
+            };
+          })
+          .sort((a, b) => {
+            const rank = { revenue_critical: 1, education: 3 } as const;
+            return rank[a.campaign_priority] - rank[b.campaign_priority];
+          })
+          .slice(0, Number(args.p_limit ?? 50)),
+        error: null,
       };
     }),
     from: vi.fn((table: string) => ({
@@ -241,7 +282,7 @@ describe('EmailLifecycleService', () => {
   });
 
   it('applies weekly frequency cap', async () => {
-    recentMarketingRows = [{ id: 'sent_1' }];
+    recentMarketingRows = [{ id: 'sent_1', status: 'sent', campaign_key: 'zero-credits' }];
     const service = new EmailLifecycleService();
 
     const result = await service.queueLifecycleEmail({
@@ -256,6 +297,136 @@ describe('EmailLifecycleService', () => {
       status: 'skipped',
       reason: 'suppressed_revenue_72h_cap',
     });
+  });
+
+  it('should not count another pending campaign as sent history when processing a due row', async () => {
+    recentMarketingRows = [
+      { id: 'pending_other', status: 'pending', campaign_key: 'zero-credits' },
+    ];
+    dueQueueRows = [
+      {
+        id: 'queue_due',
+        campaign_key: 'low-credits',
+        user_id: 'user_123',
+        recipient_email: 'user@example.com',
+        scheduled_for: new Date(Date.now() - 1000).toISOString(),
+        status: 'pending',
+        template_data: {},
+        metadata: {},
+        created_at: new Date().toISOString(),
+      },
+    ];
+
+    const result = await new EmailLifecycleService().processDueQueue({ batchSize: 1 });
+
+    expect(sendEmailMock).toHaveBeenCalledOnce();
+    expect(result.sent).toBe(1);
+  });
+
+  it('should report one eligible dry-run candidate for two pending campaigns with no sends', async () => {
+    recentMarketingRows = [
+      { id: 'pending_other', status: 'pending', campaign_key: 'zero-credits' },
+    ];
+    dueQueueRows = [
+      {
+        id: 'queue_due_dry_run',
+        campaign_key: 'low-credits',
+        user_id: 'user_123',
+        recipient_email: 'user@example.com',
+        scheduled_for: new Date(Date.now() - 1000).toISOString(),
+        status: 'pending',
+        template_data: {},
+        metadata: {},
+        created_at: new Date().toISOString(),
+      },
+    ];
+
+    const result = await new EmailLifecycleService().processDueQueue({
+      dryRun: true,
+      batchSize: 1,
+    });
+
+    expect(result).toMatchObject({ eligible: 1, queued: 1, skipped: 0, sent: 0 });
+    expect(sendEmailMock).not.toHaveBeenCalled();
+  });
+
+  it('should report the expected cap in dry-run when a prior sent row exists', async () => {
+    recentMarketingRows = [{ id: 'sent_other', status: 'sent', campaign_key: 'zero-credits' }];
+    dueQueueRows = [
+      {
+        id: 'queue_due_after_send',
+        campaign_key: 'low-credits',
+        user_id: 'user_123',
+        recipient_email: 'user@example.com',
+        scheduled_for: new Date(Date.now() - 1000).toISOString(),
+        status: 'pending',
+        template_data: {},
+        metadata: {},
+        created_at: new Date().toISOString(),
+      },
+    ];
+
+    const result = await new EmailLifecycleService().processDueQueue({
+      dryRun: true,
+      batchSize: 1,
+    });
+
+    expect(result).toMatchObject({ eligible: 1, queued: 0, skipped: 1, sent: 0 });
+    expect(sendEmailMock).not.toHaveBeenCalled();
+  });
+
+  it('should deduplicate the same pending campaign when enqueueing', async () => {
+    recentMarketingRows = [{ id: 'pending_same', status: 'pending', campaign_key: 'low-credits' }];
+
+    const result = await new EmailLifecycleService().queueLifecycleEmail({
+      campaignKey: 'low-credits',
+      userId: 'user_123',
+    });
+
+    expect(result).toMatchObject({ skipped: true, reason: 'suppressed_campaign_cooldown' });
+    expect(queueInserts).not.toContainEqual(expect.objectContaining({ status: 'pending' }));
+  });
+
+  it('should not bypass a complaint when forceFrequency is true', async () => {
+    emailLogRows = [
+      {
+        provider_response: { complaint: true },
+        status: 'failed',
+        sent_at: new Date().toISOString(),
+      },
+    ];
+
+    const result = await new EmailLifecycleService().queueLifecycleEmail({
+      campaignKey: 'zero-credits',
+      userId: 'user_123',
+      forceFrequency: 'zero_credit_alert',
+    });
+
+    expect(result).toMatchObject({ skipped: true, reason: 'suppressed_email_status' });
+  });
+
+  it('should reuse a recent identical suppression audit record', async () => {
+    preferences.low_credit_alerts = false;
+    recentMarketingRows = [
+      {
+        id: 'existing_suppression',
+        status: 'skipped',
+        campaign_key: 'low-credits',
+        reason: 'suppressed_preference',
+      },
+    ];
+
+    const result = await new EmailLifecycleService().queueLifecycleEmail({
+      campaignKey: 'low-credits',
+      userId: 'user_123',
+    });
+
+    expect(result).toMatchObject({
+      queueId: 'existing_suppression',
+      suppressionRecorded: false,
+    });
+    expect(queueInserts).toHaveLength(0);
+    expect(eventInserts).toHaveLength(0);
   });
 
   it('does not suppress a recipient for a complaint older than 90 days', async () => {
@@ -280,6 +451,40 @@ describe('EmailLifecycleService', () => {
     });
 
     expect(result.queued).toBe(true);
+  });
+
+  it('should not treat an empty Cloudflare permanent-bounces field as a bounce', async () => {
+    emailLogRows = [
+      {
+        provider_response: { provider: 'cloudflare', permanent_bounces: [] },
+        status: 'sent',
+        sent_at: new Date().toISOString(),
+      },
+    ];
+
+    const result = await new EmailLifecycleService().queueLifecycleEmail({
+      campaignKey: 'low-credits',
+      userId: 'user_123',
+    });
+
+    expect(result).toMatchObject({ queued: true, skipped: false });
+  });
+
+  it('should suppress a recipient when Cloudflare reports a non-empty permanent bounce', async () => {
+    emailLogRows = [
+      {
+        provider_response: { provider: 'cloudflare', permanent_bounces: ['redacted'] },
+        status: 'sent',
+        sent_at: new Date().toISOString(),
+      },
+    ];
+
+    const result = await new EmailLifecycleService().queueLifecycleEmail({
+      campaignKey: 'low-credits',
+      userId: 'user_123',
+    });
+
+    expect(result).toMatchObject({ skipped: true, reason: 'suppressed_email_status' });
   });
 
   it('suppresses a recent complaint but only scans a bounded recent window', async () => {
@@ -318,12 +523,16 @@ describe('EmailLifecycleService', () => {
     expect(sendEmailMock).not.toHaveBeenCalled();
   });
 
-  it('pauses the batch without recording a delivery failure when provider capacity is exhausted', async () => {
+  it('should reschedule once and stop when Brevo is rate limited', async () => {
     sendEmailMock.mockRejectedValueOnce(
       new EmailProviderSendError(
-        'No configured email providers are currently available.',
-        'provider_unavailable',
-        true
+        'Brevo rate limit reached',
+        'rate_limited',
+        true,
+        ['brevo'],
+        false,
+        [],
+        ['rate_limited']
       )
     );
     dueQueueRows = ['first', 'second'].map(id => ({
@@ -342,6 +551,8 @@ describe('EmailLifecycleService', () => {
 
     expect(sendEmailMock).toHaveBeenCalledTimes(1);
     expect(result.failed).toBe(0);
+    expect(result.rescheduled).toBe(1);
+    expect(result.stoppedByProvider).toBe(true);
     expect(result.stoppedByProviderCapacity).toBe(true);
     expect(queueUpdates).toContainEqual(
       expect.objectContaining({
@@ -349,7 +560,17 @@ describe('EmailLifecycleService', () => {
         reason: expect.stringContaining('provider_capacity_exhausted'),
       })
     );
-    expect(eventInserts).not.toContainEqual(expect.objectContaining({ event_type: 'failed' }));
+    expect(eventInserts).toContainEqual(
+      expect.objectContaining({
+        event_type: 'failed',
+        metadata: expect.objectContaining({
+          classification: 'rate_limited',
+          attemptedProviders: ['brevo'],
+          unavailableProviders: [],
+          fallbackReasons: ['rate_limited'],
+        }),
+      })
+    );
   });
 
   it('does not apply bounce suppression to transactional campaigns', async () => {
@@ -470,7 +691,7 @@ describe('EmailLifecycleService', () => {
     );
   });
 
-  it('should process revenue-critical rows before education rows', async () => {
+  it('should submit only the highest-priority row per invocation', async () => {
     const scheduledFor = new Date(Date.now() - 1000).toISOString();
     dueQueueRows = [
       ...Array.from({ length: 251 }, (_, index) => ({
@@ -500,15 +721,86 @@ describe('EmailLifecycleService', () => {
 
     await service.processDueQueue({ batchSize: 2 });
 
-    expect(sendEmailMock).toHaveBeenCalledTimes(2);
+    expect(sendEmailMock).toHaveBeenCalledTimes(1);
     expect(sendEmailMock.mock.calls[0][0]).toMatchObject({
       to: 'buyer@example.com',
       template: 'low-credits',
     });
-    expect(sendEmailMock.mock.calls[1][0]).toMatchObject({
-      to: 'user@example.com',
-      template: 'blog-education',
+  });
+
+  it('should fail only the rejected recipient and not stop future drains', async () => {
+    const scheduledFor = new Date(Date.now() - 1000).toISOString();
+    dueQueueRows = ['rejected', 'untouched'].map((id, index) => ({
+      id: `queue_${id}`,
+      campaign_key: 'low-credits',
+      user_id: `user_${id}`,
+      recipient_email: `${id}@example.com`,
+      scheduled_for: scheduledFor,
+      status: 'pending',
+      template_data: {},
+      metadata: {},
+      created_at: new Date(Date.now() + index).toISOString(),
+    }));
+    sendEmailMock.mockRejectedValueOnce(
+      new EmailProviderSendError('recipient rejected', 'invalid_recipient', false, ['brevo'], false)
+    );
+
+    const result = await new EmailLifecycleService().processDueQueue({
+      scanLimit: 2,
+      sendLimit: 1,
     });
+
+    expect(sendEmailMock).toHaveBeenCalledOnce();
+    expect(result).toMatchObject({ failed: 1, sent: 0, stoppedByProvider: false });
+    expect(queueUpdates.filter(update => update.status === 'failed')).toHaveLength(1);
+  });
+
+  it('should reschedule a provider-scoped request failure without leaking raw content', async () => {
+    const sensitive = 'person@example.com Subject: Private payload-marker-123';
+    dueQueueRows = [
+      {
+        id: 'queue_provider_request',
+        campaign_key: 'low-credits',
+        user_id: 'user_123',
+        recipient_email: 'user@example.com',
+        scheduled_for: new Date(Date.now() - 1000).toISOString(),
+        status: 'pending',
+        template_data: {},
+        metadata: {},
+        created_at: new Date().toISOString(),
+      },
+    ];
+    sendEmailMock.mockRejectedValueOnce(
+      new EmailProviderSendError(
+        sensitive,
+        'provider_request',
+        false,
+        ['brevo'],
+        false,
+        [],
+        ['provider_request']
+      )
+    );
+
+    const result = await new EmailLifecycleService().processDueQueue({ sendLimit: 1 });
+    const recorded = JSON.stringify({
+      queueUpdates,
+      eventInserts,
+      analytics: trackServerEventMock.mock.calls,
+    });
+
+    expect(result).toMatchObject({ rescheduled: 1, stoppedByProvider: true, failed: 0 });
+    expect(recorded).not.toContain('person@example.com');
+    expect(recorded).not.toContain('Private');
+    expect(recorded).not.toContain('payload-marker-123');
+    expect(eventInserts).toContainEqual(
+      expect.objectContaining({
+        metadata: expect.objectContaining({
+          classification: 'provider_request',
+          scope: 'provider',
+        }),
+      })
+    );
   });
 
   it('should honor marketing opt out for recovery campaigns', async () => {
@@ -556,9 +848,14 @@ describe('EmailLifecycleService', () => {
       new EmailProviderSendError('provider unavailable', 'provider_error', true, ['brevo'])
     );
     const result = await new EmailLifecycleService().processDueQueue({ batchSize: 1 });
-    expect(result.failed).toBe(1);
+    expect(result.failed).toBe(0);
+    expect(result.rescheduled).toBe(1);
+    expect(result.stoppedByProvider).toBe(true);
     expect(queueUpdates).toContainEqual(
-      expect.objectContaining({ status: 'pending', reason: expect.stringContaining('transient') })
+      expect.objectContaining({
+        status: 'pending',
+        reason: expect.stringContaining('provider_incident_provider_error'),
+      })
     );
   });
 });

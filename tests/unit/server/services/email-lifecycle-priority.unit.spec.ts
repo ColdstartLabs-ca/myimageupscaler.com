@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { evaluateCampaignFrequencyCap } from '@server/services/email-lifecycle.service';
+import {
+  evaluateCampaignFrequencyCap,
+  LIFECYCLE_DELIVERED_HISTORY_STATUS,
+  type CampaignPriority,
+} from '@server/services/email-lifecycle.service';
 
 const emptyHistory = {
   revenueCriticalLast72Hours: 0,
@@ -7,6 +11,30 @@ const emptyHistory = {
   lifecycleEducationLast7Days: 0,
   allMarketingLast7Days: 0,
 };
+
+interface IHistoryFixture {
+  status: 'pending' | 'sent';
+  priority: Exclude<CampaignPriority, 'transactional'>;
+  ageHours: number;
+}
+
+function evaluateFixture(priority: CampaignPriority, rows: IHistoryFixture[]): string | null {
+  const sent = rows.filter(row => row.status === LIFECYCLE_DELIVERED_HISTORY_STATUS);
+  return evaluateCampaignFrequencyCap({
+    priority,
+    revenueCriticalLast72Hours: sent.filter(
+      row => row.priority === 'revenue_critical' && row.ageHours <= 72
+    ).length,
+    revenueCriticalLast7Days: sent.filter(
+      row => row.priority === 'revenue_critical' && row.ageHours <= 7 * 24
+    ).length,
+    lifecycleEducationLast7Days: sent.filter(
+      row =>
+        (row.priority === 'lifecycle' || row.priority === 'education') && row.ageHours <= 7 * 24
+    ).length,
+    allMarketingLast7Days: sent.filter(row => row.ageHours <= 7 * 24).length,
+  });
+}
 
 describe('lifecycle campaign priority caps', () => {
   it('should allow revenue-critical email after 72 hours', () => {
@@ -59,5 +87,39 @@ describe('lifecycle campaign priority caps', () => {
         allMarketingLast7Days: 10,
       })
     ).toBeNull();
+  });
+
+  it('should exclude pending rows at the delivered-history query boundary', () => {
+    expect(LIFECYCLE_DELIVERED_HISTORY_STATUS).toBe('sent');
+    expect(
+      evaluateFixture('revenue_critical', [
+        { status: 'pending', priority: 'revenue_critical', ageHours: 1 },
+      ])
+    ).toBeNull();
+  });
+
+  it('should count only sent rows for revenue lifecycle and emergency cap matrix', () => {
+    expect(
+      evaluateFixture('revenue_critical', [
+        { status: 'pending', priority: 'revenue_critical', ageHours: 1 },
+        { status: 'sent', priority: 'revenue_critical', ageHours: 1 },
+      ])
+    ).toBe('suppressed_revenue_72h_cap');
+
+    expect(
+      evaluateFixture('education', [
+        { status: 'pending', priority: 'education', ageHours: 1 },
+        { status: 'sent', priority: 'lifecycle', ageHours: 1 },
+      ])
+    ).toBe('suppressed_lifecycle_weekly_cap');
+
+    expect(
+      evaluateFixture('revenue_critical', [
+        { status: 'pending', priority: 'education', ageHours: 1 },
+        { status: 'sent', priority: 'education', ageHours: 1 },
+        { status: 'sent', priority: 'lifecycle', ageHours: 2 },
+        { status: 'sent', priority: 'revenue_critical', ageHours: 80 },
+      ])
+    ).toBe('suppressed_emergency_ceiling');
   });
 });

@@ -71,6 +71,8 @@
     "email:queue:audit:prod": "bash -c 'source ./scripts/load-env.sh --prod && npx tsx scripts/audit-email-recipient-value.ts \"$@\"' --",
     "email:queue:apply:prod": "bash -c 'source ./scripts/load-env.sh --prod && npx tsx scripts/apply-email-recipient-value.ts \"$@\"' --",
     "email:queue:report:prod": "bash -c 'source ./scripts/load-env.sh --prod && npx tsx scripts/report-email-recipient-value.ts \"$@\"' --",
+    "email:delivery:readiness": "bash -c 'source ./scripts/load-env.sh && npx tsx scripts/check-email-delivery-readiness.ts \"$@\"' --",
+    "email:delivery:readiness:prod": "bash -c 'source ./scripts/load-env.sh --prod && npx tsx scripts/check-email-delivery-readiness.ts --prod \"$@\"' --",
     "i18n:check": "tsx scripts/check-translations.ts",
     "i18n:icu": "tsx scripts/check-translations.ts --icu-only",
     "i18n:helper": "tsx scripts/translation-helper.ts",
@@ -91,7 +93,9 @@
     "db:backup": "chmod +x ./scripts/db-backup.sh && ./scripts/db-backup.sh export",
     "db:export": "chmod +x ./scripts/db-backup.sh && ./scripts/db-backup.sh export",
     "db:import": "chmod +x ./scripts/db-backup.sh && ./scripts/db-backup.sh import",
-    "db:backups": "chmod +x ./scripts/db-backup.sh && ./scripts/db-backup.sh list"
+    "db:backups": "chmod +x ./scripts/db-backup.sh && ./scripts/db-backup.sh list",
+    "db:backups:cleanup": "chmod +x ./scripts/db-backup.sh && ./scripts/db-backup.sh cleanup",
+    "db:backups:compress": "chmod +x ./scripts/db-backup.sh && ./scripts/db-backup.sh compress-existing"
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^2.31.3",

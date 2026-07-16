@@ -43,6 +43,18 @@ export type EmailProviderFailureClassification =
   | 'provider_request'
   | 'permanent_rejection';
 
+export type EmailProviderFailureScope = 'provider' | 'recipient';
+
+export function getEmailProviderFailureScope(
+  classification: EmailProviderFailureClassification
+): EmailProviderFailureScope {
+  return ['invalid_recipient', 'unsubscribed', 'complaint', 'permanent_rejection'].includes(
+    classification
+  )
+    ? 'recipient'
+    : 'provider';
+}
+
 /** A provider-neutral failure contract used to decide whether fallback is safe. */
 export class EmailProviderSendError extends Error {
   constructor(
@@ -50,7 +62,10 @@ export class EmailProviderSendError extends Error {
     public readonly classification: EmailProviderFailureClassification,
     public readonly transient: boolean,
     public readonly attemptedProviders: string[] = [],
-    public readonly fallbackEligible: boolean = transient
+    public readonly fallbackEligible: boolean = transient,
+    public readonly unavailableProviders: string[] = [],
+    public readonly fallbackReasons: string[] = [],
+    public readonly scope: EmailProviderFailureScope = getEmailProviderFailureScope(classification)
   ) {
     super(message);
     this.name = 'EmailProviderSendError';
@@ -89,7 +104,9 @@ export function normalizeEmailProviderError(error: unknown): EmailProviderSendEr
   if (/\b400\b/.test(normalized)) {
     return new EmailProviderSendError(message, 'provider_request', false, [], true);
   }
-  return new EmailProviderSendError(message, 'permanent_rejection', false);
+  // Unknown rejection shapes are not safe fallback signals. Fail closed so an
+  // unclassified provider/library failure cannot duplicate delivery elsewhere.
+  return new EmailProviderSendError(message, 'provider_error', false, [], false);
 }
 
 /**
@@ -202,17 +219,25 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
         provider: this.config.provider,
       };
     } catch (error) {
-      // Log error and rethrow
-      const message = error instanceof Error ? error.message : 'Unknown error';
+      const normalized = normalizeEmailProviderError(error);
       await this.logEmail({
         to,
         template,
         status: 'failed',
         userId,
         type,
-        response: { error: message },
+        response: {
+          classification: normalized.classification,
+          scope: normalized.scope,
+          transient: normalized.transient,
+        },
       });
-      console.error(`Email provider ${this.config.provider} error:`, error);
+      console.error('Email provider attempt failed', {
+        provider: this.config.provider,
+        classification: normalized.classification,
+        scope: normalized.scope,
+        transient: normalized.transient,
+      });
       throw error;
     }
   }
