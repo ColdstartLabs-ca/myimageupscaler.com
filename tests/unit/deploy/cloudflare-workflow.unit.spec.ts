@@ -14,6 +14,8 @@ describe('Cloudflare deployment workflow', () => {
     expect(workflow).not.toMatch(/run: npx opennextjs-cloudflare build\s*$/m);
     expect(workflow).toContain('Run PostgreSQL migration test in isolation');
     expect(workflow).toContain("RUN_POSTGRES_TESTS: '1'");
+    expect(workflow).toContain('Verify deployed Worker through Cloudflare API');
+    expect(workflow).toContain('/workers/scripts/myimageupscaler/deployments');
     expect(workflow).toContain('command: deploy --config wrangler.json');
     expect(workflow).not.toContain('command: opennextjs-cloudflare deploy');
   });
