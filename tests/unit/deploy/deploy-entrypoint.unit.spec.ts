@@ -16,12 +16,15 @@ describe('yarn deploy safety gates', () => {
     expect(deployScript.indexOf(guard)).toBeLessThan(deployScript.indexOf('step_build'));
   });
 
-  test('allows skipping the test suite without bypassing production safety checks', () => {
+  test('allows skipping tests and i18n without bypassing production safety checks', () => {
     expect(deployScript).toContain(
       '--skip-tests) SKIP_TESTS="true" ;;'
     );
+    expect(deployScript).toContain(
+      '--skip-i18n) SKIP_I18N="true" ;;'
+    );
     expect(deployScript).toContain('if [ "$SKIP_TESTS" = "false" ]; then');
-    expect(deployScript).not.toContain('--skip-i18n');
+    expect(deployScript).toContain('if [ "$SKIP_I18N" = "false" ]; then');
     expect(deployScript).not.toContain('--skip-seo-guard');
     expect(deployScript).not.toContain('--skip-smoke');
     expect(deployScript).toContain('yarn test');

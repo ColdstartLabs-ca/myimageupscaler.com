@@ -5,14 +5,16 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$(dirname "$SCRIPT_DIR")")"
 
 export SKIP_TESTS="false"
+export SKIP_I18N="false"
 export PURGE_CACHE="false"
 for arg in "$@"; do
     case $arg in
         --skip-tests) SKIP_TESTS="true" ;;
+        --skip-i18n) SKIP_I18N="true" ;;
         --purge) PURGE_CACHE="true" ;;
         *)
             echo "Unsupported deploy option: $arg" >&2
-            echo "Only --skip-tests and --purge are allowed." >&2
+            echo "Only --skip-tests, --skip-i18n, and --purge are allowed." >&2
             exit 2
             ;;
     esac
@@ -112,14 +114,19 @@ fi
 echo -e "${GREEN}✓ SEO guard passed${NC}"
 echo ""
 
-echo -e "${CYAN}▸ Checking translations...${NC}"
-if ! yarn i18n:check --no-pseo; then
-    echo -e "${RED}✗ Translation check failed. Deployment blocked.${NC}"
-    echo -e "${YELLOW}  Run 'yarn i18n:check' to see details${NC}"
-    exit 1
+if [ "$SKIP_I18N" = "false" ]; then
+    echo -e "${CYAN}▸ Checking translations...${NC}"
+    if ! yarn i18n:check --no-pseo; then
+        echo -e "${RED}✗ Translation check failed. Deployment blocked.${NC}"
+        echo -e "${YELLOW}  Run 'yarn i18n:check' to see details${NC}"
+        exit 1
+    fi
+    echo -e "${GREEN}✓ All translations valid${NC}"
+    echo ""
+else
+    echo -e "${YELLOW}▸ Skipping i18n checks (--skip-i18n flag)${NC}"
+    echo ""
 fi
-echo -e "${GREEN}✓ All translations valid${NC}"
-echo ""
 
 # Validate SEO data integrity (static validation - no server required)
 echo -e "${CYAN}▸ Validating SEO data...${NC}"
