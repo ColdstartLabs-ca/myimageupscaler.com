@@ -149,6 +149,14 @@ describe('Subscription Configuration', () => {
       expect(credits).toBe(5);
     });
 
+    test('free credits are a one-time allocation and never refresh', () => {
+      const { freeUser } = getSubscriptionConfig();
+
+      expect(freeUser.initialCredits).toBe(5);
+      expect(freeUser.maxBalance).toBe(freeUser.initialCredits);
+      expect(freeUser.monthlyRefresh).toBe(false);
+    });
+
     test('getLowCreditThreshold returns warning threshold', () => {
       const threshold = getLowCreditThreshold();
       expect(threshold).toBe(4);

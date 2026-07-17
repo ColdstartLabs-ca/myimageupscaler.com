@@ -4,10 +4,10 @@
     {
       "slug": "ai-image-upscaler",
       "title": "AI Image Upscaler",
-      "metaTitle": "Free AI Image Upscaler - Enlarge to 8x, No Signup",
-      "metaDescription": "Upscale images up to 8x with AI. Free online - no signup, no watermarks. Preserves text and details. Upload a photo and get instant HD results.",
+      "metaTitle": "Free AI Image Upscaler - Enlarge Images to 8x",
+      "metaDescription": "Upscale images up to 8x with AI. Create an account for 5 one-time credits, process without watermarks, and preserve text and details.",
       "h1": "Free AI Image Upscaler - Enlarge Images Up to 8x Online",
-      "intro": "Use this free AI image upscaler to enlarge photos up to 8x online with no signup and no watermarks. The AI preserves sharpness and adds realistic detail instead of just stretching pixels.",
+      "intro": "Use this AI image upscaler to enlarge photos up to 8x online without watermarks. Create an account for 5 one-time credits. The AI preserves sharpness and adds realistic detail instead of just stretching pixels.",
       "primaryKeyword": "ai image upscaler",
       "secondaryKeywords": [
         "image upscaler",
@@ -127,7 +127,7 @@
         },
         {
           "question": "How many images can I upscale for free?",
-          "answer": "10 images per month on the free tier, with no watermarks. Paid plans start at $9/month for higher limits."
+          "answer": "New accounts receive 5 one-time free credits with no watermarks. Purchase credits or a paid plan to continue after they are used."
         },
         {
           "question": "Are my images stored on your servers?",
@@ -137,7 +137,7 @@
       "faq": [
         {
           "question": "Is the AI image upscaler free?",
-          "answer": "Yes, 10 free credits per month with no watermarks. Each upscale uses 1 credit. Paid plans start at $9/month for more credits."
+          "answer": "Yes. New accounts receive 5 one-time free credits with no watermarks. Free credits do not renew; purchase credits or a paid plan to continue."
         },
         {
           "question": "What formats are supported?",
@@ -300,7 +300,7 @@
       "faq": [
         {
           "question": "Is the photo enhancer free?",
-          "answer": "Yes, 10 free enhancements per month with no watermarks. Paid plans offer more credits."
+          "answer": "Yes. New accounts receive 5 one-time free credits with no watermarks. Purchase credits or a paid plan to continue after they are used."
         },
         {
           "question": "What types of photos work best?",

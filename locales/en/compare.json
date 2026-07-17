@@ -21,7 +21,7 @@
         {
           "name": "MyImageUpscaler",
           "type": "Web-based",
-          "pricing": "Free (10/mo) | $9-$49/mo",
+          "pricing": "5 one-time free credits | paid credits and plans",
           "rating": 4.5,
           "tagline": "Best for quick, everyday upscaling",
           "description": "Web-based upscaler with no installation required. Good balance of quality and convenience for most users.",
@@ -37,7 +37,7 @@
             "textPreservation": "Good",
             "processingSpeed": "30-60 seconds",
             "watermark": "Never",
-            "freeTier": "10 credits/month"
+            "freeTier": "5 one-time credits"
           },
           "pros": [
             "No software installation needed",
@@ -271,7 +271,7 @@
       "faq": [
         {
           "question": "What's the best free AI upscaler?",
-          "answer": "For quality without watermarks, MyImageUpscaler offers 10 free credits monthly. For unlimited low-resolution upscaling, Upscale.media is more generous. Let's Enhance adds watermarks to free outputs."
+          "answer": "For quality without watermarks, MyImageUpscaler gives new accounts 5 one-time free credits. For unlimited low-resolution upscaling, Upscale.media is more generous. Let's Enhance adds watermarks to free outputs."
         },
         {
           "question": "Is Topaz worth $99?",
@@ -299,7 +299,7 @@
         {
           "name": "MyImageUpscaler",
           "type": "Web-based",
-          "pricing": "Free (10/mo) | $9-$49/mo subscription",
+          "pricing": "5 one-time free credits | paid credits and plans",
           "features": {
             "maxUpscale": "8x",
             "batchProcessing": "Up to 50",

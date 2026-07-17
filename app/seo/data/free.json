@@ -5,19 +5,19 @@
       "slug": "free-image-upscaler",
       "title": "Free Image Upscaler",
       "metaTitle": "Free Image Upscaler - Enhance Photos Online",
-      "metaDescription": "Free online image upscaler with AI. Upscale images to 4K with 10 free credits. No signup required, no watermarks. Start enhancing photos now. Free to start.",
+      "metaDescription": "Free online AI image upscaler. Create an account for 5 one-time credits, upscale images without watermarks, then buy credits to continue.",
       "h1": "Free Image Upscaler - Enhance Photos Online with AI",
-      "intro": "Get professional image upscaling completely free. 10 credits to start, no signup required, and zero watermarks on your enhanced images.",
+      "intro": "Create an account and start with 5 one-time image upscaling credits. Enhanced images have no watermarks.",
       "primaryKeyword": "free image upscaler",
       "secondaryKeywords": ["free photo upscaler", "upscale image free", "free ai upscaler"],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "free",
       "toolName": "Free Image Upscaler",
-      "description": "Experience professional-grade AI image upscaling at no cost. Our free tier gives you 10 credits to upscale images to 4K resolution with the same powerful AI technology used by professionals worldwide.",
+      "description": "Try professional-grade AI image upscaling with 5 one-time credits for new accounts and no watermarks.",
       "features": [
         {
-          "title": "10 Free Credits",
-          "description": "Start immediately with 10 free image upscaling credits. No credit card, no signup required."
+          "title": "5 Free Credits",
+          "description": "Create an account and start with 5 one-time image upscaling credits. No credit card is required."
         },
         {
           "title": "No Watermarks",
@@ -33,7 +33,7 @@
         }
       ],
       "limitations": [
-        "10 images per month on free tier",
+        "5 one-time credits for new accounts",
         "Standard processing speed (30-60 seconds)",
         "One image at a time (no batch processing)"
       ],
@@ -45,7 +45,7 @@
       "faq": [
         {
           "question": "Is it really free?",
-          "answer": "Yes! You get 10 free image upscaling credits every month, no credit card required. These credits renew monthly."
+          "answer": "Yes. New accounts receive 5 one-time image upscaling credits with no credit card required. Free credits do not renew."
         },
         {
           "question": "Will there be watermarks on my images?",
@@ -53,7 +53,7 @@
         },
         {
           "question": "What happens when I run out of free credits?",
-          "answer": "You can upgrade to a premium plan for unlimited credits, or wait until next month when your free credits renew."
+          "answer": "Purchase credits or a paid plan to continue. Free credits do not renew."
         }
       ],
       "relatedFree": ["free-photo-enhancer", "free-image-enhancer"],
@@ -63,7 +63,7 @@
       "slug": "free-photo-enhancer",
       "title": "Free Photo Enhancer",
       "metaTitle": "Free Photo Enhancer - AI Enhancement Tool | MyImageUpscaler",
-      "metaDescription": "Enhance photos free with AI. Fix blur, improve colors, and sharpen details. 10 free enhancements monthly, no signup required, batch processing. Free to start.",
+      "metaDescription": "Enhance photos with AI. Create an account for 5 one-time credits to fix blur, improve colors, and sharpen details without watermarks.",
       "h1": "Free Photo Enhancer - AI-Powered Photo Enhancement",
       "intro": "Transform your photos with professional AI enhancement. Fix blur, optimize colors, and enhance details—all for free with no watermarks.",
       "primaryKeyword": "free photo enhancer",
@@ -71,7 +71,7 @@
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "free",
       "toolName": "Free Photo Enhancer",
-      "description": "Bring your photos to life with AI-powered enhancement. Our free tier provides 10 monthly enhancements with the same professional-grade technology trusted by photographers worldwide.",
+      "description": "Bring your photos to life with 5 one-time enhancement credits for new accounts and professional-grade AI technology.",
       "features": [
         {
           "title": "Automatic Enhancement",
@@ -91,7 +91,7 @@
         }
       ],
       "limitations": [
-        "10 photo enhancements per month",
+        "5 one-time credits for new accounts",
         "Single photo processing",
         "Standard processing speed"
       ],
@@ -111,7 +111,7 @@
         },
         {
           "question": "Do I need to create an account?",
-          "answer": "No account needed for the free tier. Just visit the site and start enhancing. Create an account only if you want to track your usage or upgrade."
+          "answer": "Yes. Create an account to receive 5 one-time credits, then upload an image and start enhancing."
         }
       ],
       "relatedFree": ["free-image-upscaler", "free-ai-photo-enhancer"],
@@ -121,7 +121,7 @@
       "slug": "free-image-enhancer",
       "title": "Free Image Enhancer",
       "metaTitle": "Free Image Enhancer - Improve Image Online",
-      "metaDescription": "Free AI image enhancer to improve quality online. Fix blur, enhance colors, sharpen details. 10 free enhancements monthly, no signup, batch processing. Try f.",
+      "metaDescription": "Free AI image enhancer to improve quality online. Create an account for 5 one-time credits to fix blur, enhance colors, and sharpen details.",
       "h1": "Free Image Enhancer - Improve Any Image with AI",
       "intro": "Enhance any image for free with professional AI technology. Improve quality, fix blur, and optimize colors in seconds.",
       "primaryKeyword": "free image enhancer",
@@ -133,7 +133,7 @@
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "free",
       "toolName": "Free Image Enhancer",
-      "description": "Professional image enhancement without the professional price tag. Get 10 free enhancements monthly with enterprise-grade AI that rivals Photoshop's results.",
+      "description": "Try professional image enhancement with 5 one-time credits for new accounts and enterprise-grade AI.",
       "features": [
         {
           "title": "One-Click Enhancement",
@@ -153,7 +153,7 @@
         }
       ],
       "limitations": [
-        "10 image enhancements monthly",
+        "5 one-time credits for new accounts",
         "Max 25MB per image",
         "Single image processing"
       ],
@@ -183,9 +183,9 @@
       "slug": "free-ai-photo-enhancer",
       "title": "Free AI Photo Enhancer",
       "metaTitle": "Free AI Photo Enhancer - Enhance Photos with AI",
-      "metaDescription": "Free AI photo enhancer with neural network technology. Enhance photos automatically, fix quality issues, no signup. 10 free enhancements monthly with batch p.",
+      "metaDescription": "Free AI photo enhancer with neural network technology. Create an account for 5 one-time credits to enhance photos and fix quality issues.",
       "h1": "Free AI Photo Enhancer - Neural Network Photo Enhancement",
-      "intro": "Harness the power of AI to enhance your photos professionally. Free tier includes 10 monthly credits with full-quality enhancement and no watermarks.",
+      "intro": "Harness the power of AI to enhance your photos professionally. New accounts receive 5 one-time credits with no watermarks.",
       "primaryKeyword": "free ai photo enhancer",
       "secondaryKeywords": ["ai enhance photo free", "free photo ai", "ai photo enhancement free"],
       "lastUpdated": "2025-12-10T00:00:00Z",
@@ -211,7 +211,7 @@
         }
       ],
       "limitations": [
-        "10 AI enhancements monthly",
+        "5 one-time credits for new accounts",
         "Standard processing priority",
         "Single photo upload"
       ],
@@ -241,9 +241,9 @@
       "slug": "free-ai-upscaler",
       "title": "Free AI Upscaler",
       "metaTitle": "Free AI Upscaler - Upscale Images with AI | MyImageUpscaler",
-      "metaDescription": "Free AI image upscaler. Increase resolution with neural networks. 10 free upscales monthly, up to 4K resolution, no signup. Instant HD results with batch. Tr.",
+      "metaDescription": "Free AI image upscaler. Create an account for 5 one-time credits to increase resolution with neural networks and no watermarks.",
       "h1": "Free AI Upscaler - Neural Network Image Upscaling",
-      "intro": "Upscale your images to 4K resolution using advanced AI. Get 10 free upscales every month with the same technology used by professionals.",
+      "intro": "Upscale images using advanced AI. New accounts receive 5 one-time credits with the same technology used by professionals.",
       "primaryKeyword": "free ai upscaler",
       "secondaryKeywords": ["ai upscale free", "free neural upscaler", "ai image upscaling free"],
       "lastUpdated": "2025-12-10T00:00:00Z",
@@ -269,7 +269,7 @@
         }
       ],
       "limitations": [
-        "10 upscales per month",
+        "5 one-time credits for new accounts",
         "Maximum 4x resolution increase",
         "One image at a time"
       ],

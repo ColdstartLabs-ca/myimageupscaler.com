@@ -130,7 +130,7 @@
         },
         {
           "question": "How many images can I upscale for free?",
-          "answer": "10 images per month on the free tier, with no watermarks. Paid plans start at $9/month for higher limits."
+          "answer": "New accounts receive 5 one-time free credits with no watermarks. Purchase credits or a paid plan to continue after they are used."
         },
         {
           "question": "Are my images stored on your servers?",
@@ -140,7 +140,7 @@
       "faq": [
         {
           "question": "Is the AI image upscaler free?",
-          "answer": "Yes, 10 free credits per month with no watermarks. Each upscale uses 1 credit. Paid plans start at $9/month for more credits."
+          "answer": "Yes. New accounts receive 5 one-time free credits with no watermarks. Free credits do not renew; purchase credits or a paid plan to continue."
         },
         {
           "question": "What formats are supported?",
@@ -342,7 +342,7 @@
       "faq": [
         {
           "question": "Is the photo enhancer free?",
-          "answer": "Yes, 10 free enhancements per month with no watermarks. Paid plans offer more credits."
+          "answer": "Yes. New accounts receive 5 one-time free credits with no watermarks. Purchase credits or a paid plan to continue after they are used."
         },
         {
           "question": "What types of photos work best?",
