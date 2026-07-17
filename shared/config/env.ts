@@ -60,14 +60,14 @@ const clientEnvSchema = z.object({
   // Stripe
   STRIPE_PUBLISHABLE_KEY: z.string().default(''),
   // Stripe Subscription Price IDs
-  NEXT_PUBLIC_STRIPE_PRICE_STARTER: z.string().default('price_1TPoss1I7KzZir1ikF1Wk48f'),
-  NEXT_PUBLIC_STRIPE_PRICE_HOBBY: z.string().default('price_1TPost1I7KzZir1i5qcAA7sd'),
-  NEXT_PUBLIC_STRIPE_PRICE_PRO: z.string().default('price_1TPost1I7KzZir1iEOqgekjL'),
-  NEXT_PUBLIC_STRIPE_PRICE_BUSINESS: z.string().default('price_1TPosu1I7KzZir1iDgCGxD3a'),
+  NEXT_PUBLIC_STRIPE_PRICE_STARTER: z.string().default('price_1TPosy17DctxcZv22g6Xu1Wa'),
+  NEXT_PUBLIC_STRIPE_PRICE_HOBBY: z.string().default('price_1TPosz17DctxcZv2QG1AtrSP'),
+  NEXT_PUBLIC_STRIPE_PRICE_PRO: z.string().default('price_1TPot017DctxcZv2c2DslVnu'),
+  NEXT_PUBLIC_STRIPE_PRICE_BUSINESS: z.string().default('price_1TPot017DctxcZv2nxctZb0T'),
   // Stripe Credit Pack Price IDs
-  NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL: z.string().default('price_1TPosv1I7KzZir1iSG8zQsKe'),
-  NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM: z.string().default('price_1TPosw1I7KzZir1iK7fFzJMF'),
-  NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE: z.string().default('price_1TPosw1I7KzZir1ikxamcgxq'),
+  NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL: z.string().default('price_1TPot117DctxcZv2KUEH1W9J'),
+  NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM: z.string().default('price_1TPot217DctxcZv2IKxmddAT'),
+  NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE: z.string().default('price_1TPot217DctxcZv2s68hbBIv'),
 });
 
 export type IClientEnv = z.infer<typeof clientEnvSchema>;
@@ -120,32 +120,32 @@ function loadClientEnv(): IClientEnv {
     NEXT_PUBLIC_STRIPE_PRICE_STARTER:
       process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER ||
       process.env.STRIPE_PRICE_STARTER ||
-      'price_1TPoss1I7KzZir1ikF1Wk48f',
+      'price_1TPosy17DctxcZv22g6Xu1Wa',
     NEXT_PUBLIC_STRIPE_PRICE_HOBBY:
       process.env.NEXT_PUBLIC_STRIPE_PRICE_HOBBY ||
       process.env.STRIPE_PRICE_HOBBY ||
-      'price_1TPost1I7KzZir1i5qcAA7sd',
+      'price_1TPosz17DctxcZv2QG1AtrSP',
     NEXT_PUBLIC_STRIPE_PRICE_PRO:
       process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO ||
       process.env.STRIPE_PRICE_PRO ||
-      'price_1TPost1I7KzZir1iEOqgekjL',
+      'price_1TPot017DctxcZv2c2DslVnu',
     NEXT_PUBLIC_STRIPE_PRICE_BUSINESS:
       process.env.NEXT_PUBLIC_STRIPE_PRICE_BUSINESS ||
       process.env.STRIPE_PRICE_BUSINESS ||
-      'price_1TPosu1I7KzZir1iDgCGxD3a',
+      'price_1TPot017DctxcZv2nxctZb0T',
     // Stripe Credit Pack Price IDs
     NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL:
       process.env.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL ||
       process.env.STRIPE_PRICE_CREDITS_SMALL ||
-      'price_1TPosv1I7KzZir1iSG8zQsKe',
+      'price_1TPot117DctxcZv2KUEH1W9J',
     NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM:
       process.env.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM ||
       process.env.STRIPE_PRICE_CREDITS_MEDIUM ||
-      'price_1TPosw1I7KzZir1iK7fFzJMF',
+      'price_1TPot217DctxcZv2IKxmddAT',
     NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE:
       process.env.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE ||
       process.env.STRIPE_PRICE_CREDITS_LARGE ||
-      'price_1TPosw1I7KzZir1ikxamcgxq',
+      'price_1TPot217DctxcZv2s68hbBIv',
   };
 
   return clientEnvSchema.parse(env);
@@ -209,12 +209,12 @@ const serverEnvSchema = z.object({
   // See: https://www.indexnow.org/documentation.html
   INDEXNOW_KEY: z.string().default(''),
   // Stripe Price IDs
-  STRIPE_PRICE_STARTER: z.string().default('price_1Sz0fNL1vUl00LlZX1XClz95'),
+  STRIPE_PRICE_STARTER: z.string().default('price_1TPosy17DctxcZv22g6Xu1Wa'),
   // Engagement-Based First-Purchase Discount Coupon (20% off)
   STRIPE_ENGAGEMENT_DISCOUNT_COUPON_ID: z.string().default(''),
-  STRIPE_PRICE_HOBBY: z.string().default('price_1Sz0fNL1vUl00LlZT6MMTxAg'),
-  STRIPE_PRICE_PRO: z.string().default('price_1Sz0fOL1vUl00LlZ7bbM2cDs'),
-  STRIPE_PRICE_BUSINESS: z.string().default('price_1Sz0fOL1vUl00LlZP3y5zdFx'),
+  STRIPE_PRICE_HOBBY: z.string().default('price_1TPosz17DctxcZv2QG1AtrSP'),
+  STRIPE_PRICE_PRO: z.string().default('price_1TPot017DctxcZv2c2DslVnu'),
+  STRIPE_PRICE_BUSINESS: z.string().default('price_1TPot017DctxcZv2nxctZb0T'),
   // Gemini AI
   GEMINI_API_KEY: z.string().default(''),
   // Replicate AI (Image Upscaling)
@@ -367,12 +367,12 @@ function loadServerEnv(): IServerEnv {
     PAGESPEED_API_KEY: process.env.PAGESPEED_API_KEY || '',
     INDEXNOW_KEY: process.env.INDEXNOW_KEY || '',
     // Stripe Price IDs
-    STRIPE_PRICE_STARTER: process.env.STRIPE_PRICE_STARTER || 'price_1Sz0fNL1vUl00LlZX1XClz95',
+    STRIPE_PRICE_STARTER: process.env.STRIPE_PRICE_STARTER || 'price_1TPosy17DctxcZv22g6Xu1Wa',
     // Engagement-Based First-Purchase Discount Coupon
     STRIPE_ENGAGEMENT_DISCOUNT_COUPON_ID: process.env.STRIPE_ENGAGEMENT_DISCOUNT_COUPON_ID || '',
-    STRIPE_PRICE_HOBBY: process.env.STRIPE_PRICE_HOBBY || 'price_1Sz0fNL1vUl00LlZT6MMTxAg',
-    STRIPE_PRICE_PRO: process.env.STRIPE_PRICE_PRO || 'price_1Sz0fOL1vUl00LlZ7bbM2cDs',
-    STRIPE_PRICE_BUSINESS: process.env.STRIPE_PRICE_BUSINESS || 'price_1Sz0fOL1vUl00LlZP3y5zdFx',
+    STRIPE_PRICE_HOBBY: process.env.STRIPE_PRICE_HOBBY || 'price_1TPosz17DctxcZv2QG1AtrSP',
+    STRIPE_PRICE_PRO: process.env.STRIPE_PRICE_PRO || 'price_1TPot017DctxcZv2c2DslVnu',
+    STRIPE_PRICE_BUSINESS: process.env.STRIPE_PRICE_BUSINESS || 'price_1TPot017DctxcZv2nxctZb0T',
     // Gemini AI
     GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
     // Replicate AI

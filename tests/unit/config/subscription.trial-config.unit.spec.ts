@@ -9,7 +9,7 @@ import {
 describe('Trial Configuration', () => {
   describe('getTrialConfig', () => {
     it('should return null when trial is disabled for a plan', () => {
-      const config = getTrialConfig('price_1TPost1I7KzZir1i5qcAA7sd'); // Hobby plan
+      const config = getTrialConfig('price_1TPosz17DctxcZv2QG1AtrSP'); // Hobby plan
       expect(config).toBe(null);
     });
 
@@ -23,22 +23,22 @@ describe('Trial Configuration', () => {
       const config = getSubscriptionConfig();
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const planIndex = config.plans.findIndex(
-        p => p.stripePriceId === 'price_1TPost1I7KzZir1iEOqgekjL'
+        p => p.stripePriceId === 'price_1TPot017DctxcZv2c2DslVnu'
       ); // Pro plan
 
       // The trial is currently disabled, so we should get null
-      const disabledConfig = getTrialConfig('price_1TPost1I7KzZir1iEOqgekjL');
+      const disabledConfig = getTrialConfig('price_1TPot017DctxcZv2c2DslVnu');
       expect(disabledConfig).toBe(null);
     });
   });
 
   describe('getPlanConfig', () => {
     it('should return plan configuration for valid price ID', () => {
-      const plan = getPlanConfig('price_1TPost1I7KzZir1i5qcAA7sd'); // Hobby plan
+      const plan = getPlanConfig('price_1TPosz17DctxcZv2QG1AtrSP'); // Hobby plan
       expect(plan).toBeTruthy();
       expect(plan?.key).toBe('hobby');
       expect(plan?.name).toBe('Hobby');
-      expect(plan?.stripePriceId).toBe('price_1TPost1I7KzZir1i5qcAA7sd');
+      expect(plan?.stripePriceId).toBe('price_1TPosz17DctxcZv2QG1AtrSP');
     });
 
     it('should return null for invalid price ID', () => {
@@ -47,7 +47,7 @@ describe('Trial Configuration', () => {
     });
 
     it('should return plan with trial configuration', () => {
-      const plan = getPlanConfig('price_1TPost1I7KzZir1iEOqgekjL'); // Pro plan
+      const plan = getPlanConfig('price_1TPot017DctxcZv2c2DslVnu'); // Pro plan
       expect(plan).toBeTruthy();
       expect(plan?.trial).toBeDefined();
       expect(plan?.trial.enabled).toBe(false); // Currently disabled
@@ -57,7 +57,7 @@ describe('Trial Configuration', () => {
 
   describe('isTrialEnabled', () => {
     it('should return false when trial is disabled', () => {
-      const isEnabled = isTrialEnabled('price_1TPost1I7KzZir1i5qcAA7sd'); // Hobby plan
+      const isEnabled = isTrialEnabled('price_1TPosz17DctxcZv2QG1AtrSP'); // Hobby plan
       expect(isEnabled).toBe(false);
     });
 
@@ -67,7 +67,7 @@ describe('Trial Configuration', () => {
     });
 
     it('should return false when trial exists but is disabled', () => {
-      const isEnabled = isTrialEnabled('price_1TPost1I7KzZir1iEOqgekjL'); // Pro plan
+      const isEnabled = isTrialEnabled('price_1TPot017DctxcZv2c2DslVnu'); // Pro plan
       expect(isEnabled).toBe(false);
     });
   });

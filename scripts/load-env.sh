@@ -65,9 +65,9 @@ fi
 
 echo "✅ All environment variables loaded successfully"
 
-# Keep public Stripe price IDs aligned with the active Stripe account.
-# If the client env file omits them, inherit from the server-side Stripe price IDs
-# so Next.js and the checkout API target the same Stripe account.
+# Keep public Stripe price IDs aligned with the active server Stripe account.
+# Server-side values are authoritative during deployment, even if the client
+# secret still contains stale IDs from a previous Stripe account.
 sync_public_stripe_prices() {
     local mappings=(
         "NEXT_PUBLIC_STRIPE_PRICE_STARTER:STRIPE_PRICE_STARTER"
@@ -82,10 +82,9 @@ sync_public_stripe_prices() {
     for mapping in "${mappings[@]}"; do
         local public_var="${mapping%%:*}"
         local server_var="${mapping##*:}"
-        local current_public="${!public_var:-}"
         local current_server="${!server_var:-}"
 
-        if [[ -z "$current_public" && -n "$current_server" ]]; then
+        if [[ -n "$current_server" ]]; then
             export "$public_var=$current_server"
         fi
     done

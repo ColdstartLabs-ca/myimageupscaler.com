@@ -28,6 +28,7 @@
 
 import type { IAnalyticsEvent } from '@server/analytics/types';
 import { serverEnv } from '@shared/config/env';
+import { TIMEOUTS } from '@shared/config/timeouts.config';
 import { GA4_EVENT_MAP, GA4_CONVERSION_EVENTS } from '@shared/analytics/types';
 
 // =============================================================================
@@ -40,6 +41,32 @@ export interface IServerTrackOptions {
   deviceId?: string;
   /** Amplitude session_id (Unix ms) — stitches server events to the browser session that triggered them */
   sessionId?: number;
+}
+
+export async function fetchAnalyticsWithTimeout(
+  url: string,
+  init: Parameters<typeof fetch>[1],
+  timeoutMs = TIMEOUTS.ANALYTICS_BATCH_TIMEOUT,
+  fetchImplementation: typeof fetch = fetch
+): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutError = new Error(`Analytics request timed out after ${timeoutMs}ms`);
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeout = setTimeout(() => {
+      controller.abort(timeoutError);
+      reject(timeoutError);
+    }, timeoutMs);
+  });
+
+  try {
+    return await Promise.race([
+      fetchImplementation(url, { ...init, signal: controller.signal }),
+      timeoutPromise,
+    ]);
+  } finally {
+    if (timeout) clearTimeout(timeout);
+  }
 }
 
 /**
@@ -141,7 +168,7 @@ export async function trackServerEvent(
   }
 
   try {
-    const response = await fetch('https://api2.amplitude.com/2/httpapi', {
+    const response = await fetchAnalyticsWithTimeout('https://api2.amplitude.com/2/httpapi', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -205,7 +232,7 @@ async function trackGA4ServerEvent(
   }
 
   try {
-    const response = await fetch(
+    const response = await fetchAnalyticsWithTimeout(
       `https://www.google-analytics.com/mp/collect?measurement_id=${measurementId}&api_secret=${apiSecret}`,
       {
         method: 'POST',

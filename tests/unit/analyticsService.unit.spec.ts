@@ -61,6 +61,26 @@ describe('Analytics Service', () => {
     });
   });
 
+  describe('fetchAnalyticsWithTimeout', () => {
+    test('should reject instead of hanging when analytics never responds', async () => {
+      vi.useFakeTimers();
+      const fetchImplementation = vi.fn(() => new Promise<Response>(() => {}));
+      const { fetchAnalyticsWithTimeout } = await import('../../server/analytics/analyticsService');
+
+      const request = fetchAnalyticsWithTimeout(
+        'https://analytics.example.test/events',
+        { method: 'POST' },
+        100,
+        fetchImplementation
+      );
+      const assertion = expect(request).rejects.toThrow('Analytics request timed out after 100ms');
+
+      await vi.advanceTimersByTimeAsync(100);
+      await assertion;
+      vi.useRealTimers();
+    });
+  });
+
   // Test hashEmail utility
   describe('hashEmail utility', () => {
     test('should consistently hash the same email', async () => {
