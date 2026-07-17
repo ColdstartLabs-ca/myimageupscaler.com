@@ -19,6 +19,7 @@
     "next:cache:clear": "rm -rf .next/cache && echo 'Next.js cache cleared'",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "./scripts/deploy/deploy.sh",
+    "deploy:stripe:guard": "tsx scripts/deploy/verify-stripe-deployment-config.ts",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "format": "prettier --write --log-level silent \"{client,server,shared,app}/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix",

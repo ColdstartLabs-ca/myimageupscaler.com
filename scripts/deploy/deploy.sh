@@ -4,24 +4,25 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$(dirname "$SCRIPT_DIR")")"
 
-# Parse flags
-export SKIP_SECRETS="false"
-export SKIP_TESTS="false"
-export SKIP_I18N="false"
-export SKIP_SEO_GUARD="false"
 export PURGE_CACHE="false"
 for arg in "$@"; do
     case $arg in
-        --skip-secrets) SKIP_SECRETS="true" ;;
-        --skip-tests) SKIP_TESTS="true" ;;
-        --skip-i18n) SKIP_I18N="true" ;;
-        --skip-seo-guard) SKIP_SEO_GUARD="true" ;;
-        --skip-smoke) export SKIP_SMOKE="true" ;;
         --purge) PURGE_CACHE="true" ;;
+        *)
+            echo "Unsupported deploy option: $arg" >&2
+            echo "Production safety checks cannot be skipped. Only --purge is allowed." >&2
+            exit 2
+            ;;
     esac
 done
 
 source "$SCRIPT_DIR/common.sh"
+
+assert_clean_worktree() {
+    if [[ -n "$(git -C "$PROJECT_ROOT" status --porcelain)" ]]; then
+        log_error "Working tree is not clean. Commit or stash changes before deploying."
+    fi
+}
 
 # Cleanup function - removes temporary production secrets
 cleanup_prod_secrets() {
@@ -45,8 +46,24 @@ echo ""
 
 START_TIME=$(date +%s)
 
+# A deploy must correspond to committed source. Generated production secret files are
+# fetched after this check and are ignored by Git.
+assert_clean_worktree
+
 # Fetch production secrets from GCloud Secret Manager
 source "$SCRIPT_DIR/steps/00-fetch-secrets.sh" && step_fetch_secrets
+
+# This check reads the two source secret files before load-env can reconcile them.
+# It has no bypass option and prevents a cross-account Stripe configuration from
+# reaching either the build or Cloudflare.
+echo -e "${CYAN}▸ Verifying production Stripe configuration...${NC}"
+cd "$PROJECT_ROOT"
+if ! yarn deploy:stripe:guard --client-env-file .env.client.prod --server-env-file .env.api.prod; then
+    echo -e "${RED}✗ Stripe production configuration is unsafe. Deployment blocked.${NC}"
+    exit 1
+fi
+echo -e "${GREEN}✓ Production Stripe configuration verified${NC}"
+echo ""
 
 # Load production environment variables
 source "$PROJECT_ROOT/scripts/load-env.sh" --prod
@@ -61,59 +78,41 @@ fi
 echo -e "${GREEN}✓ Production database backup complete${NC}"
 echo ""
 
-# Run tests unless skipped
-if [ "$SKIP_TESTS" = "false" ]; then
-    echo -e "${CYAN}▸ Running tests...${NC}"
-    cd "$PROJECT_ROOT"
-    if ! yarn test; then
-        echo -e "${RED}✗ Tests failed. Deployment blocked.${NC}"
-        echo -e "${YELLOW}  Use --skip-tests to bypass test checking${NC}"
-        exit 1
-    fi
-    echo -e "${GREEN}✓ All tests passed${NC}"
-    echo ""
-else
-    echo -e "${YELLOW}▸ Skipping tests (--skip-tests flag)${NC}"
-    echo ""
+echo -e "${CYAN}▸ Running tests...${NC}"
+cd "$PROJECT_ROOT"
+if ! yarn test; then
+    echo -e "${RED}✗ Tests failed. Deployment blocked.${NC}"
+    exit 1
 fi
+echo -e "${GREEN}✓ All tests passed${NC}"
+echo ""
 
-# SEO Guard - runs unless explicitly skipped
-if [ "$SKIP_SEO_GUARD" = "false" ]; then
-    echo -e "${CYAN}▸ Running SEO guard...${NC}"
-    cd "$PROJECT_ROOT"
-    if ! yarn test:seo-guard; then
-        echo -e "${RED}✗ SEO guard failed. Deployment blocked.${NC}"
-        echo -e "${YELLOW}  SEO regressions detected. Fix issues before deploying.${NC}"
-        echo -e "${YELLOW}  Run 'yarn test:seo-guard' locally to debug.${NC}"
-        exit 1
-    fi
-    echo -e "${GREEN}✓ SEO guard passed${NC}"
-    echo ""
-else
-    echo -e "${YELLOW}⚠ ╔════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${YELLOW}⚠ ║  WARNING: Skipping SEO guard (--skip-seo-guard flag)        ║${NC}"
-    echo -e "${YELLOW}⚠ ║                                                            ║${NC}"
-    echo -e "${YELLOW}⚠ ║  Make sure you have run 'yarn test:seo-guard' locally     ║${NC}"
-    echo -e "${YELLOW}⚠ ║  and verified all tests pass before deploying!           ║${NC}"
-    echo -e "${YELLOW}⚠ ╚════════════════════════════════════════════════════════════╝${NC}"
-    echo ""
+echo -e "${CYAN}▸ Running required verification...${NC}"
+if ! yarn verify; then
+    echo -e "${RED}✗ Verification failed. Deployment blocked.${NC}"
+    exit 1
 fi
+echo -e "${GREEN}✓ Verification passed${NC}"
+echo ""
 
-# Check translations
-if [ "$SKIP_I18N" = "false" ]; then
-    echo -e "${CYAN}▸ Checking translations...${NC}"
-    cd "$PROJECT_ROOT"
-    if ! yarn i18n:check --no-pseo; then
-        echo -e "${RED}✗ Translation check failed. Deployment blocked.${NC}"
-        echo -e "${YELLOW}  Run 'yarn i18n:check' to see details${NC}"
-        exit 1
-    fi
-    echo -e "${GREEN}✓ All translations valid${NC}"
-    echo ""
-else
-    echo -e "${YELLOW}▸ Skipping i18n checks (--skip-i18n flag)${NC}"
-    echo ""
+echo -e "${CYAN}▸ Running SEO guard...${NC}"
+if ! yarn test:seo-guard; then
+    echo -e "${RED}✗ SEO guard failed. Deployment blocked.${NC}"
+    echo -e "${YELLOW}  SEO regressions detected. Fix issues before deploying.${NC}"
+    echo -e "${YELLOW}  Run 'yarn test:seo-guard' locally to debug.${NC}"
+    exit 1
 fi
+echo -e "${GREEN}✓ SEO guard passed${NC}"
+echo ""
+
+echo -e "${CYAN}▸ Checking translations...${NC}"
+if ! yarn i18n:check --no-pseo; then
+    echo -e "${RED}✗ Translation check failed. Deployment blocked.${NC}"
+    echo -e "${YELLOW}  Run 'yarn i18n:check' to see details${NC}"
+    exit 1
+fi
+echo -e "${GREEN}✓ All translations valid${NC}"
+echo ""
 
 # Validate SEO data integrity (static validation - no server required)
 echo -e "${CYAN}▸ Validating SEO data...${NC}"
@@ -125,6 +124,10 @@ if ! yarn validate:seo:all; then
 fi
 echo -e "${GREEN}✓ SEO data valid${NC}"
 echo ""
+
+# yarn verify runs ESLint with --fix. Refuse to deploy any change it (or another
+# required check) leaves behind after the initial clean-tree gate.
+assert_clean_worktree
 
 source "$SCRIPT_DIR/steps/01-preflight.sh" && step_preflight
 source "$SCRIPT_DIR/steps/02-build.sh" && step_build

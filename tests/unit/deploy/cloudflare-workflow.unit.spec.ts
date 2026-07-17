@@ -26,6 +26,11 @@ describe('Cloudflare deployment workflow', () => {
     expect(workflow).toContain('--retry-all-errors');
     expect(workflow).toContain('command: deploy --config wrangler.json');
     expect(workflow).not.toContain('command: opennextjs-cloudflare deploy');
+    expect(workflow).toContain('Verify production Stripe configuration');
+    expect(workflow).toContain('run: yarn deploy:stripe:guard');
+    expect(workflow.indexOf('Verify production Stripe configuration')).toBeLessThan(
+      workflow.indexOf('Build for Cloudflare Workers (OpenNext)')
+    );
   });
 
   it('keeps the checkout smoke fallback aligned with the corp Stripe account', () => {
