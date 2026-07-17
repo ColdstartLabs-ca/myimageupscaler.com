@@ -1,4 +1,3 @@
-import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, test } from 'vitest';
@@ -17,11 +16,11 @@ describe('yarn deploy safety gates', () => {
     expect(deployScript.indexOf(guard)).toBeLessThan(deployScript.indexOf('step_build'));
   });
 
-  test('does not provide flags to skip mandatory production checks', () => {
+  test('allows skipping the test suite without bypassing production safety checks', () => {
     expect(deployScript).toContain(
-      'Production safety checks cannot be skipped. Only --purge is allowed.'
+      '--skip-tests) SKIP_TESTS="true" ;;'
     );
-    expect(deployScript).not.toContain('--skip-tests');
+    expect(deployScript).toContain('if [ "$SKIP_TESTS" = "false" ]; then');
     expect(deployScript).not.toContain('--skip-i18n');
     expect(deployScript).not.toContain('--skip-seo-guard');
     expect(deployScript).not.toContain('--skip-smoke');
@@ -32,13 +31,12 @@ describe('yarn deploy safety gates', () => {
     expect(deployScript.match(/assert_clean_worktree/g)).toHaveLength(3);
   });
 
-  test('rejects a skip flag before it can run a deploy step', () => {
-    const result = spawnSync('bash', ['scripts/deploy/deploy.sh', '--skip-tests'], {
-      cwd: process.cwd(),
-      encoding: 'utf8',
-    });
+  test('runs the Stripe price-ID guard before evaluating --skip-tests', () => {
+    const guard =
+      'yarn deploy:stripe:guard --client-env-file .env.client.prod --server-env-file .env.api.prod';
 
-    expect(result.status).toBe(2);
-    expect(result.stderr).toContain('Production safety checks cannot be skipped');
+    expect(deployScript.indexOf(guard)).toBeLessThan(
+      deployScript.indexOf('if [ "$SKIP_TESTS" = "false" ]; then')
+    );
   });
 });

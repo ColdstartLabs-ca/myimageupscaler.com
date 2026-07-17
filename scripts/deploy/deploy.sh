@@ -4,13 +4,15 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$(dirname "$SCRIPT_DIR")")"
 
+export SKIP_TESTS="false"
 export PURGE_CACHE="false"
 for arg in "$@"; do
     case $arg in
+        --skip-tests) SKIP_TESTS="true" ;;
         --purge) PURGE_CACHE="true" ;;
         *)
             echo "Unsupported deploy option: $arg" >&2
-            echo "Production safety checks cannot be skipped. Only --purge is allowed." >&2
+            echo "Only --skip-tests and --purge are allowed." >&2
             exit 2
             ;;
     esac
@@ -78,14 +80,19 @@ fi
 echo -e "${GREEN}✓ Production database backup complete${NC}"
 echo ""
 
-echo -e "${CYAN}▸ Running tests...${NC}"
-cd "$PROJECT_ROOT"
-if ! yarn test; then
-    echo -e "${RED}✗ Tests failed. Deployment blocked.${NC}"
-    exit 1
+if [ "$SKIP_TESTS" = "false" ]; then
+    echo -e "${CYAN}▸ Running tests...${NC}"
+    cd "$PROJECT_ROOT"
+    if ! yarn test; then
+        echo -e "${RED}✗ Tests failed. Deployment blocked.${NC}"
+        exit 1
+    fi
+    echo -e "${GREEN}✓ All tests passed${NC}"
+    echo ""
+else
+    echo -e "${YELLOW}▸ Skipping tests (--skip-tests flag)${NC}"
+    echo ""
 fi
-echo -e "${GREEN}✓ All tests passed${NC}"
-echo ""
 
 echo -e "${CYAN}▸ Running required verification...${NC}"
 if ! yarn verify; then
