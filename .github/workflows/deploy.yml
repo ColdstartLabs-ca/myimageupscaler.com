@@ -146,3 +146,15 @@ jobs:
             "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/workers/scripts/myimageupscaler/deployments")
           echo "$RESPONSE" | jq -e '.success == true and (.result.deployments | length) > 0' >/dev/null
           echo "Cloudflare reports an active myimageupscaler Worker deployment."
+
+      - name: Verify live application health
+        env:
+          PRODUCTION_BASE_URL: ${{ vars.NEXT_PUBLIC_BASE_URL }}
+        run: |
+          test -n "$PRODUCTION_BASE_URL"
+          curl --fail --silent --show-error \
+            --retry 5 \
+            --retry-delay 10 \
+            --retry-all-errors \
+            --max-time 20 \
+            "${PRODUCTION_BASE_URL%/}/api/health" >/dev/null

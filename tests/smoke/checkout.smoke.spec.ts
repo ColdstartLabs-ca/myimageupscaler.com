@@ -23,7 +23,7 @@ const STARTER_PRICE_ID =
   process.env.SMOKE_PRICE_ID ||
   process.env.STRIPE_PRICE_STARTER ||
   process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER ||
-  'price_1TPoss1I7KzZir1ikF1Wk48f';
+  'price_1TPosy17DctxcZv22g6Xu1Wa';
 
 test.describe('Checkout smoke tests', () => {
   test('pricing page loads with plan CTAs', async ({ page }) => {

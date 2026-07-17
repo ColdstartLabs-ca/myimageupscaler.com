@@ -48,8 +48,7 @@ function shouldStopLifecycleDrain(result: ILifecycleDrainResponse): boolean {
     result.stoppedByHealth === true ||
     result.stoppedByProvider === true ||
     result.stoppedByProviderCapacity === true ||
-    result.eligible === 0 ||
-    (result.sent === 0 && (result.skipped ?? 0) === 0)
+    result.eligible === 0
   );
 }
 

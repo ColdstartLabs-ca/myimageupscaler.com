@@ -83,7 +83,10 @@ export function normalizeEmailProviderError(error: unknown): EmailProviderSendEr
   if (/timeout|timed out|aborterror/.test(normalized)) {
     return new EmailProviderSendError(message, 'timeout', true);
   }
-  if (/\b5\d\d\b|unavailable|not configured|network|fetch failed/.test(normalized)) {
+  if (/not configured|configuration error/.test(normalized)) {
+    return new EmailProviderSendError(message, 'provider_configuration', false, [], true);
+  }
+  if (/\b5\d\d\b|unavailable|network|fetch failed/.test(normalized)) {
     return new EmailProviderSendError(message, 'provider_unavailable', true);
   }
   if (/invalid (recipient|email)|permanent bounce/.test(normalized)) {

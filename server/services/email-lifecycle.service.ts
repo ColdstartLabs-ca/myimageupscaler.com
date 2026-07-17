@@ -139,6 +139,14 @@ function createRecipientValueBandCounts(): Record<RecipientValueBand, number> {
   };
 }
 
+function getLifecycleFailureAnalyticsSignal(classification: string): string {
+  if (classification === 'complaint') return 'complaint';
+  if (classification === 'invalid_recipient' || classification === 'permanent_rejection') {
+    return 'hard_bounce';
+  }
+  return classification;
+}
+
 function getQueueRowRecipientValueBand(row: IQueueRow): RecipientValueBand {
   if (row.recipient_value_band) return row.recipient_value_band;
   if (row.recipient_value_decision === 'protected') return 'protected';
@@ -683,7 +691,7 @@ export class EmailLifecycleService {
         }
         const message = error instanceof Error ? error.message : 'Unknown email send failure';
         const providerError = error instanceof EmailProviderSendError ? error : null;
-        const isProviderStop = providerError?.scope === 'provider';
+        const isProviderStop = providerError?.scope === 'provider' && providerError.transient;
         const isCapacityStop =
           providerError?.classification === 'rate_limited' ||
           (providerError?.classification === 'provider_unavailable' &&
@@ -712,6 +720,9 @@ export class EmailLifecycleService {
           eventType: 'failed',
           metadata: {
             classification: providerError?.classification ?? 'application_error',
+            error: getLifecycleFailureAnalyticsSignal(
+              providerError?.classification ?? 'application_error'
+            ),
             scope: providerError?.scope ?? 'recipient',
             transient: providerError?.transient ?? false,
             attemptedProviders: providerError?.attemptedProviders ?? [],

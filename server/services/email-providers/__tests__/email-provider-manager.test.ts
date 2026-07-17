@@ -389,6 +389,7 @@ describe('BaseEmailProviderAdapter', () => {
       ['Provider API error (429): rate limit', 'rate_limited', true],
       ['Request timed out', 'timeout', true],
       ['Provider API error (503): unavailable', 'provider_unavailable', true],
+      ['Email provider is not configured', 'provider_configuration', false],
       ['Invalid recipient address', 'invalid_recipient', false],
       ['Permanent bounce for recipient', 'invalid_recipient', false],
     ])('should classify %s', (message, classification, transient) => {

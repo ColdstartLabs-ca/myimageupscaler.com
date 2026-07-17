@@ -255,7 +255,6 @@ describe('Cloudflare Cron Worker', () => {
         'provider capacity or daily budget stop',
         { success: true, eligible: 1, stoppedByProviderCapacity: true },
       ],
-      ['no progress', { success: true, eligible: 1, sent: 0, skipped: 0 }],
     ])('should stop drain sequence on %s', async (_name, result) => {
       const event = { cron: '10 * * * *', scheduledTime: Date.now() } as ScheduledEvent;
       const fetchMock = vi.fn().mockResolvedValue({
@@ -269,6 +268,28 @@ describe('Cloudflare Cron Worker', () => {
       await mockCtx.waitUntil.mock.calls[0][0];
 
       expect(fetchMock).toHaveBeenCalledOnce();
+    });
+
+    it('should continue draining after one row fails permanently', async () => {
+      const event = { cron: '10 * * * *', scheduledTime: Date.now() } as ScheduledEvent;
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: async () => ({ success: true, eligible: 2, sent: 0, skipped: 0, failed: 1 }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: async () => ({ success: true, eligible: 0, sent: 0, skipped: 0, failed: 0 }),
+        });
+      global.fetch = fetchMock;
+
+      await worker.scheduled(event, mockEnv, mockCtx as unknown);
+      await mockCtx.waitUntil.mock.calls[0][0];
+
+      expect(fetchMock).toHaveBeenCalledTimes(2);
     });
 
     it('should handle unknown cron patterns', async () => {

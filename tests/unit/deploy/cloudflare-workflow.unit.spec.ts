@@ -20,7 +20,21 @@ describe('Cloudflare deployment workflow', () => {
     );
     expect(workflow).toContain('Verify deployed Worker through Cloudflare API');
     expect(workflow).toContain('/workers/scripts/myimageupscaler/deployments');
+    expect(workflow).toContain('Verify live application health');
+    expect(workflow).toContain('PRODUCTION_BASE_URL: ${{ vars.NEXT_PUBLIC_BASE_URL }}');
+    expect(workflow).toContain('${PRODUCTION_BASE_URL%/}/api/health');
+    expect(workflow).toContain('--retry-all-errors');
     expect(workflow).toContain('command: deploy --config wrangler.json');
     expect(workflow).not.toContain('command: opennextjs-cloudflare deploy');
+  });
+
+  it('keeps the checkout smoke fallback aligned with the corp Stripe account', () => {
+    const smokeTest = readFileSync(
+      path.resolve(process.cwd(), 'tests/smoke/checkout.smoke.spec.ts'),
+      'utf8'
+    );
+
+    expect(smokeTest).toContain('price_1TPosy17DctxcZv22g6Xu1Wa');
+    expect(smokeTest).not.toContain('price_1TPoss1I7KzZir1ikF1Wk48f');
   });
 });

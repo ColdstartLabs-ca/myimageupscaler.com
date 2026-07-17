@@ -54,6 +54,18 @@ describe('recipient-value queue migrations', () => {
     expect(migration).not.toContain("COALESCE(q.recipient_value_decision, 'keep_medium')");
   });
 
+  it('keeps the due-queue SQL policy version aligned with the TypeScript policy', () => {
+    const migration = readMigration('20260715000100_restore_lifecycle_delivery_queue.sql');
+    const policySource = readFileSync(
+      join(process.cwd(), 'server/services/email-recipient-value.service.ts'),
+      'utf8'
+    );
+    const policyVersion = policySource.match(/RECIPIENT_VALUE_POLICY_VERSION\s*=\s*'([^']+)'/)?.[1];
+
+    expect(policyVersion).toBeDefined();
+    expect(migration).toContain(`q.recipient_value_policy_version = '${policyVersion}'`);
+  });
+
   it('should allow transactional rows without recipient classification', () => {
     const migration = readMigration('20260715000100_restore_lifecycle_delivery_queue.sql');
 

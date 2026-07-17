@@ -22,6 +22,7 @@ let recentMarketingRows: Array<{
 let dueQueueRows: Array<Record<string, unknown>> = [];
 let emailLogRows: Array<Record<string, unknown>> = [];
 let emailLogError: { message: string } | null = null;
+let lifecycleEventInsertError: { message: string } | null = null;
 const queueUpdates: Record<string, unknown>[] = [];
 
 vi.mock('@shared/config/env', () => ({
@@ -226,6 +227,7 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
         if (table === 'email_lifecycle_queue') queueInserts.push(payload);
         if (table === 'email_lifecycle_events') eventInserts.push(payload);
         return {
+          error: table === 'email_lifecycle_events' ? lifecycleEventInsertError : null,
           select: vi.fn(() => ({
             single: vi
               .fn()
@@ -255,6 +257,7 @@ describe('EmailLifecycleService', () => {
     dueQueueRows = [];
     emailLogRows = [];
     emailLogError = null;
+    lifecycleEventInsertError = null;
     queueUpdates.length = 0;
     sendEmailMock.mockResolvedValue({ success: true, messageId: 'msg_test' });
   });
@@ -691,6 +694,34 @@ describe('EmailLifecycleService', () => {
     );
   });
 
+  it('keeps a delivered row sent when recording its lifecycle event fails', async () => {
+    lifecycleEventInsertError = { message: 'event store unavailable' };
+    dueQueueRows = [
+      {
+        id: 'queue_delivered_event_failure',
+        campaign_key: 'low-credits',
+        user_id: 'user_123',
+        recipient_email: 'user@example.com',
+        scheduled_for: new Date(Date.now() - 1000).toISOString(),
+        status: 'pending',
+        template_data: {},
+        metadata: {},
+        created_at: new Date().toISOString(),
+      },
+    ];
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    const result = await new EmailLifecycleService().processDueQueue({ sendLimit: 1 });
+
+    expect(result).toMatchObject({ sent: 1, failed: 0 });
+    expect(queueUpdates).toContainEqual(expect.objectContaining({ status: 'sent' }));
+    expect(queueUpdates).not.toContainEqual(expect.objectContaining({ status: 'failed' }));
+    expect(consoleSpy).toHaveBeenCalledWith(
+      'Failed to record lifecycle email event',
+      lifecycleEventInsertError
+    );
+  });
+
   it('should submit only the highest-priority row per invocation', async () => {
     const scheduledFor = new Date(Date.now() - 1000).toISOString();
     dueQueueRows = [
@@ -753,9 +784,18 @@ describe('EmailLifecycleService', () => {
     expect(sendEmailMock).toHaveBeenCalledOnce();
     expect(result).toMatchObject({ failed: 1, sent: 0, stoppedByProvider: false });
     expect(queueUpdates.filter(update => update.status === 'failed')).toHaveLength(1);
+    expect(eventInserts).toContainEqual(
+      expect.objectContaining({
+        event_type: 'failed',
+        metadata: expect.objectContaining({
+          classification: 'invalid_recipient',
+          error: 'hard_bounce',
+        }),
+      })
+    );
   });
 
-  it('should reschedule a provider-scoped request failure without leaking raw content', async () => {
+  it('should dead-letter a permanent provider request failure without leaking raw content', async () => {
     const sensitive = 'person@example.com Subject: Private payload-marker-123';
     dueQueueRows = [
       {
@@ -789,7 +829,10 @@ describe('EmailLifecycleService', () => {
       analytics: trackServerEventMock.mock.calls,
     });
 
-    expect(result).toMatchObject({ rescheduled: 1, stoppedByProvider: true, failed: 0 });
+    expect(result).toMatchObject({ rescheduled: 0, stoppedByProvider: false, failed: 1 });
+    expect(queueUpdates).toContainEqual(
+      expect.objectContaining({ status: 'failed', reason: 'provider_request' })
+    );
     expect(recorded).not.toContain('person@example.com');
     expect(recorded).not.toContain('Private');
     expect(recorded).not.toContain('payload-marker-123');
