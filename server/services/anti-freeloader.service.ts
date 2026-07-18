@@ -26,7 +26,10 @@ export function getRequestCountry(req: NextRequest): string | null {
   return (
     req.headers.get('CF-IPCountry') ||
     req.headers.get('cf-ipcountry') ||
-    (serverEnv.ENV !== 'production' ? req.headers.get('x-test-country') : null)
+    (serverEnv.ENV !== 'production' ? req.headers.get('x-test-country') : null) ||
+    // Local dev has no Cloudflare edge to set CF-IPCountry; without a country the
+    // setup route must return ACCOUNT_SETUP_PENDING forever. Never applies in prod/test.
+    (serverEnv.ENV === 'development' ? 'US' : null)
   );
 }
 

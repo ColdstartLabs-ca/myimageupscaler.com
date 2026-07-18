@@ -6,7 +6,7 @@ const migration = readFileSync(
   'utf8'
 );
 const restorePolicyMigration = readFileSync(
-  'supabase/migrations/20260718190000_restore_five_credit_grant_policy.sql',
+  'supabase/migrations/20260718194900_restore_five_credit_grant_policy.sql',
   'utf8'
 );
 

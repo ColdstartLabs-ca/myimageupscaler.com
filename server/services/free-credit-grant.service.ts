@@ -1,6 +1,7 @@
 import { getFreeCreditsForTier, type RegionTier } from '@/lib/anti-freeloader/region-classifier';
 import { getRequestIp } from '@server/services/anti-freeloader.service';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
+import { serverEnv } from '@shared/config/env';
 import { NextRequest } from 'next/server';
 
 export interface IFreeCreditGrantResult {
@@ -40,7 +41,13 @@ export async function claimFreeCreditGrant(
   userId: string,
   tier: RegionTier
 ): Promise<IFreeCreditGrantResult> {
-  const identity = getFreeCreditGrantIdentity(req);
+  // In local development every signup comes from the same machine, so the
+  // shared-identity gate would deny credits after two test accounts. Use a
+  // per-user identity instead; prod/test keep the real request identity.
+  const identity =
+    serverEnv.ENV === 'development'
+      ? { ip: `dev-${userId}`, userAgent: '' }
+      : getFreeCreditGrantIdentity(req);
   const { data, error } = await supabaseAdmin.rpc('claim_free_credit_grant', {
     p_user_id: userId,
     p_ip: identity.ip,
