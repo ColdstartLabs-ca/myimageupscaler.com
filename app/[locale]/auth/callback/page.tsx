@@ -5,35 +5,16 @@ import { useSearchParams } from 'next/navigation';
 import { createClient } from '@shared/utils/supabase/client';
 import { handleAuthRedirect, setAuthIntent } from '@client/utils/authRedirectManager';
 
-/**
- * Load FingerprintJS and return the visitor hash.
- * Best-effort — returns null on any failure.
- */
-async function getFingerprint(): Promise<string | null> {
-  try {
-    // eslint-disable-next-line no-restricted-syntax -- FingerprintJS is lazy-loaded intentionally
-    const FingerprintJS = await import('@fingerprintjs/fingerprintjs');
-    const fp = await FingerprintJS.load();
-    const result = await fp.get();
-    return result.visitorId;
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Call /api/users/setup with fingerprint hash. Awaited so it completes before redirect.
- */
+/** Call /api/users/setup. Awaited so it completes before redirect. */
 async function callSetup(accessToken: string): Promise<void> {
   try {
-    const fingerprintHash = await getFingerprint();
     await fetch('/api/users/setup', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`,
       },
-      body: JSON.stringify({ fingerprintHash }),
+      body: JSON.stringify({}),
     });
   } catch {
     // Best effort — don't block redirect on setup failure

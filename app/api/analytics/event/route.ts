@@ -51,6 +51,9 @@ const ALLOWED_EVENTS = [
   'upgrade_prompt_dismissed',
   'upgrade_prompt_tab_toggled',
   'upgrade_plans_viewed',
+  'free_credits_reduced',
+  'free_limit_gate_shown',
+  'free_limit_gate_upgrade_clicked',
 
   // Checkout events
   'checkout_started',

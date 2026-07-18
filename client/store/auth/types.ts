@@ -25,11 +25,7 @@ export interface IAuthState {
 
   // Auth operations
   signInWithEmail: (email: string, password: string) => Promise<void>;
-  signUpWithEmail: (
-    email: string,
-    password: string,
-    fingerprintHash?: string | null
-  ) => Promise<ISignUpResult>;
+  signUpWithEmail: (email: string, password: string) => Promise<ISignUpResult>;
   signOut: () => Promise<void>;
   initializeAuth: () => Promise<void>;
 

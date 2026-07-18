@@ -6,7 +6,7 @@ import {
 } from '@/shared/types/coreflow.types';
 import { useToastStore } from '@client/store/toastStore';
 import { useUserData, useUserStore } from '@client/store/userStore';
-import { BatchLimitError, processImage } from '@client/utils/api-client';
+import { BatchLimitError, FreeLimitExceededError, processImage } from '@client/utils/api-client';
 import { prepareFileForProcessing } from '@client/utils/upscale-file-preprocessing';
 import { getBatchLimit } from '@shared/config/subscription.utils';
 import { TIMEOUTS } from '@shared/config/timeouts.config';
@@ -31,7 +31,7 @@ interface IUseBatchQueueReturn {
   batchLimit: number;
   batchLimitExceeded: { attempted: number; limit: number; serverEnforced?: boolean } | null;
   setActiveId: (id: string) => void;
-  addFiles: (files: File[], source?: 'drag_drop' | 'file_picker' | 'paste' | 'url') => void;
+  addFiles: (files: File[], _source?: 'drag_drop' | 'file_picker' | 'paste' | 'url') => void;
   /** Inject a pre-processed sample — shows before/after without calling the API */
   addSampleItem: (beforeSrc: string, afterSrc: string, label: string) => Promise<void>;
   removeItem: (id: string) => void;
@@ -70,7 +70,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
   const completedCount = queue.filter(i => i.status === ProcessingStatus.COMPLETED).length;
 
   const addFiles = useCallback(
-    (files: File[], source: 'drag_drop' | 'file_picker' | 'paste' | 'url' = 'file_picker') => {
+    (files: File[], _source: 'drag_drop' | 'file_picker' | 'paste' | 'url' = 'file_picker') => {
       const currentCount = queue.length;
       const availableSlots = Math.max(0, batchLimit - currentCount);
 
@@ -104,33 +104,6 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         return updated;
       });
 
-      // Track image_uploaded event for each file added
-      // Load dimensions asynchronously and track events
-      const isGuest = !profile?.id;
-      filesToAdd.forEach(async (file, index) => {
-        let dimensions: { width: number; height: number } | null = null;
-        try {
-          dimensions = await loadImageDimensions(file);
-          setQueue(prev =>
-            prev.map(item =>
-              item.file === file ? { ...item, inputDimensions: dimensions ?? undefined } : item
-            )
-          );
-        } catch {
-          // If we can't load dimensions, still track the event without them
-        }
-
-        analytics.track('image_uploaded', {
-          fileSize: file.size,
-          fileType: file.type,
-          inputWidth: dimensions?.width,
-          inputHeight: dimensions?.height,
-          source,
-          isGuest,
-          batchPosition: currentCount + index,
-        });
-      });
-
       // Show modal if some files were rejected due to limit
       if (rejectedCount > 0) {
         setBatchLimitExceeded({
@@ -139,7 +112,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         });
       }
     },
-    [activeId, queue.length, batchLimit, profile?.id]
+    [activeId, queue.length, batchLimit]
   );
 
   /**
@@ -286,12 +259,45 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         useUserStore.getState().updateCreditsFromProcessing(result.creditsRemaining);
       }
 
+      analytics.track('image_uploaded', {
+        fileSize: fileToProcess.size,
+        fileType: fileToProcess.type,
+        inputWidth,
+        inputHeight,
+        source: 'completed_processing',
+        isGuest: false,
+        batchPosition: 0,
+      });
+
       success = true;
     } catch (error: unknown) {
       const errorMessage = serializeError(error);
 
       // Determine error type for analytics
-      if (error instanceof BatchLimitError) {
+      if (error instanceof FreeLimitExceededError) {
+        errorType = 'free_limit_exceeded';
+        analytics.track('error_occurred', {
+          errorType,
+          errorMessage: error.message,
+          context: {
+            fileName: item.file.name,
+            fileSize: item.file.size,
+            requiredCredits: error.requiredCredits,
+            availableCredits: error.availableCredits,
+          },
+        });
+        updateItemStatus(item.id, {
+          status: ProcessingStatus.ERROR,
+          error: 'Free limit reached. Upgrade to continue processing.',
+          stage: undefined,
+        });
+        showToast({
+          message: 'You have used all of your free credits. Upgrade to continue.',
+          type: 'error',
+          duration: TIMEOUTS.TOAST_LONG_AUTO_CLOSE_DELAY,
+        });
+        return;
+      } else if (error instanceof BatchLimitError) {
         errorType = 'batch_limit_exceeded';
 
         // Track error_occurred event for batch limit

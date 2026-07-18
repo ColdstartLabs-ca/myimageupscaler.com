@@ -18,7 +18,6 @@ import { ForgotPasswordSetNewPasswordForm } from '@client/components/modal/auth/
 import { ILoginForm, LoginForm } from '@client/components/modal/auth/LoginForm';
 import { IRegisterForm, RegisterForm } from '@client/components/modal/auth/RegisterForm';
 import { useRegionTier } from '@client/hooks/useRegionTier';
-import { useFingerprint } from '@client/hooks/useFingerprint';
 
 const MODAL_ID = 'authenticationModal';
 
@@ -51,7 +50,6 @@ export const AuthenticationModal: React.FC = () => {
   const { showToast } = useToastStore();
   const t = useTranslations('auth');
   const { isRestricted, isPaywalled, isLoading: isGeoLoading } = useRegionTier();
-  const fingerprintHash = useFingerprint();
 
   const {
     register: loginRegister,
@@ -100,7 +98,7 @@ export const AuthenticationModal: React.FC = () => {
 
   const onRegisterSubmit = async (data: IRegisterForm) => {
     try {
-      const result = await signUpWithEmail(data.email, data.password, fingerprintHash);
+      const result = await signUpWithEmail(data.email, data.password);
 
       if (result.emailConfirmationRequired) {
         showToast({

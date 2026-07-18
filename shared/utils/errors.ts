@@ -17,6 +17,7 @@ export const ErrorCodes = {
   UNAUTHORIZED: 'UNAUTHORIZED',
   FORBIDDEN: 'FORBIDDEN',
   NOT_FOUND: 'NOT_FOUND',
+  FREE_LIMIT_EXCEEDED: 'FREE_LIMIT_EXCEEDED',
   INSUFFICIENT_CREDITS: 'INSUFFICIENT_CREDITS',
   RATE_LIMITED: 'RATE_LIMITED',
   BATCH_LIMIT_EXCEEDED: 'BATCH_LIMIT_EXCEEDED',
@@ -154,6 +155,10 @@ export const ErrorStatusMap: Record<ErrorCode, { status: number; defaultMessage:
   [ErrorCodes.INSUFFICIENT_CREDITS]: {
     status: 402,
     defaultMessage: 'You do not have enough credits for this action.',
+  },
+  [ErrorCodes.FREE_LIMIT_EXCEEDED]: {
+    status: 402,
+    defaultMessage: 'You have used all of your free credits. Upgrade to continue.',
   },
   [ErrorCodes.PAYMENT_REQUIRED]: {
     status: 402,

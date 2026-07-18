@@ -1,6 +1,7 @@
 import { IUpscaleConfig, ProcessingStage } from '@/shared/types/coreflow.types';
 import { TIMEOUTS } from '@shared/config/timeouts.config';
 import { createClient } from '@shared/utils/supabase/client';
+import { analytics } from '@client/analytics';
 
 /**
  * Error class for batch limit violations
@@ -28,6 +29,19 @@ export class BatchLimitError extends Error {
     this.limit = options.limit;
     this.resetAt = options.resetAt;
     this.upgradeUrl = options.upgradeUrl;
+  }
+}
+
+/** Server-confirmed free-tier depletion. This must not be inferred from copy. */
+export class FreeLimitExceededError extends Error {
+  public readonly requiredCredits?: number;
+  public readonly availableCredits?: number;
+
+  constructor(options: { message?: string; requiredCredits?: number; availableCredits?: number }) {
+    super(options.message || 'You have used all of your free credits. Upgrade to continue.');
+    this.name = 'FreeLimitExceededError';
+    this.requiredCredits = options.requiredCredits;
+    this.availableCredits = options.availableCredits;
   }
 }
 
@@ -177,6 +191,13 @@ export const processImage = async (
 
       if (!deductRes.ok) {
         const errorData = await deductRes.json().catch(() => null);
+        if (errorData?.error?.code === 'FREE_LIMIT_EXCEEDED') {
+          throw new FreeLimitExceededError({
+            message: errorData.error.message,
+            requiredCredits: errorData.error.details?.required,
+            availableCredits: errorData.error.details?.available,
+          });
+        }
         const message =
           errorData?.error?.message || 'Failed to deduct credits for background removal';
         throw new Error(message);
@@ -186,6 +207,13 @@ export const processImage = async (
 
       const { processBackgroundRemoval } = await import('@/client/utils/bg-removal');
       const result = await processBackgroundRemoval(file, onProgress);
+      analytics.track('image_upscaled', {
+        qualityTier: 'bg-removal',
+        mode: 'bg-removal',
+        creditsUsed: deductData.creditsUsed,
+        creditsRemaining: deductData.creditsRemaining,
+        source: 'completed_processing',
+      });
       return {
         imageUrl: result.imageUrl,
         imageData: undefined,
@@ -256,6 +284,14 @@ export const processImage = async (
 
     if (!response.ok) {
       const errorData = await response.json();
+
+      if (errorData.error?.code === 'FREE_LIMIT_EXCEEDED') {
+        throw new FreeLimitExceededError({
+          message: errorData.error.message,
+          requiredCredits: errorData.error.details?.required,
+          availableCredits: errorData.error.details?.available,
+        });
+      }
 
       // Handle batch limit exceeded errors specifically
       if (errorData.error?.code === 'BATCH_LIMIT_EXCEEDED') {

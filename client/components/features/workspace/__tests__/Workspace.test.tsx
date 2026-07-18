@@ -193,12 +193,14 @@ vi.mock('@client/components/stripe/PurchaseModal', () => ({
     outOfCredits,
     requiredCredits,
     currentBalance,
+    hardGate,
   }: {
     isOpen: boolean;
     trigger?: string;
     outOfCredits?: boolean;
     requiredCredits?: number;
     currentBalance?: number;
+    hardGate?: boolean;
   }) =>
     isOpen ? (
       <div
@@ -207,6 +209,7 @@ vi.mock('@client/components/stripe/PurchaseModal', () => ({
         data-out-of-credits={String(Boolean(outOfCredits))}
         data-required-credits={requiredCredits}
         data-current-balance={currentBalance}
+        data-hard-gate={String(Boolean(hardGate))}
       />
     ) : null,
 }));
@@ -556,6 +559,7 @@ describe('Workspace Quality Tier Logic', () => {
     expect(screen.getByTestId('purchase-modal')).toHaveAttribute('data-out-of-credits', 'true');
     expect(screen.getByTestId('purchase-modal')).toHaveAttribute('data-required-credits', '1');
     expect(screen.getByTestId('purchase-modal')).toHaveAttribute('data-current-balance', '0');
+    expect(screen.getByTestId('purchase-modal')).toHaveAttribute('data-hard-gate', 'true');
   });
 
   test('should still process when balance covers selected model cost', async () => {

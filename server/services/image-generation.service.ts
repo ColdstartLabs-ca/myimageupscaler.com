@@ -18,10 +18,18 @@ import { creditManager } from './replicate/utils/credit-manager';
  * Custom error class for insufficient credits
  */
 export class InsufficientCreditsError extends Error {
-  constructor(message = 'Insufficient credits') {
+  public readonly availableCredits?: number;
+
+  constructor(message = 'Insufficient credits', availableCredits?: number) {
     super(message);
     this.name = 'InsufficientCreditsError';
+    this.availableCredits = availableCredits;
   }
+}
+
+function getAvailableCreditsFromError(message: string): number | undefined {
+  const match = /Available:\s*(\d+)/i.exec(message);
+  return match ? Number(match[1]) : undefined;
 }
 
 /**
@@ -215,7 +223,10 @@ export class ImageGenerationService implements IImageProcessor {
     if (creditError) {
       // Check if it's an insufficient credits error
       if (creditError.message?.includes('Insufficient credits')) {
-        throw new InsufficientCreditsError(creditError.message);
+        throw new InsufficientCreditsError(
+          creditError.message,
+          getAvailableCreditsFromError(creditError.message)
+        );
       }
       throw new Error(`Failed to deduct credits: ${creditError.message}`);
     }

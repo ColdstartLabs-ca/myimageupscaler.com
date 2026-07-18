@@ -56,8 +56,8 @@ export function createSignInWithEmail(
  */
 export function createSignUpWithEmail(
   supabase: SupabaseClient
-): (email: string, password: string, fingerprintHash?: string | null) => Promise<ISignUpResult> {
-  return async (email: string, password: string, fingerprintHash?: string | null) => {
+): (email: string, password: string) => Promise<ISignUpResult> {
+  return async (email: string, password: string) => {
     return await withLoading(async () => {
       // Track signup started
       analytics.track('signup_started', { method: 'email' });
@@ -90,7 +90,7 @@ export function createSignUpWithEmail(
             'Content-Type': 'application/json',
             Authorization: `Bearer ${data.session.access_token}`,
           },
-          body: JSON.stringify({ fingerprintHash: fingerprintHash ?? null }),
+          body: JSON.stringify({}),
         }).catch(() => {});
       }
 

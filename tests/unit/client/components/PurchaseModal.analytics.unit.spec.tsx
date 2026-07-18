@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { PurchaseModal } from '@client/components/stripe/PurchaseModal';
@@ -220,7 +220,9 @@ describe('PurchaseModal analytics', () => {
       />
     );
 
-    await waitFor(() => expect(screen.getByRole('button', { name: /buy 50 credits/i })).toBeVisible());
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: /buy 50 credits/i })).toBeVisible()
+    );
     expect(screen.queryByRole('checkbox', { name: /automatically buy/i })).not.toBeInTheDocument();
   });
 
@@ -359,6 +361,76 @@ describe('PurchaseModal analytics', () => {
         })
       );
     });
+  });
+
+  test('keeps the zero-credit gate open and tracks its display', async () => {
+    const onClose = vi.fn();
+    render(
+      <PurchaseModal
+        isOpen={true}
+        onClose={onClose}
+        onPurchaseComplete={vi.fn()}
+        trigger="free_limit_exceeded"
+        outOfCredits={true}
+        hardGate={true}
+      />
+    );
+
+    await waitFor(() => {
+      expect(mockTrack).toHaveBeenCalledWith(
+        'free_limit_gate_shown',
+        expect.objectContaining({ trigger: 'free_limit_exceeded' })
+      );
+    });
+    expect(screen.queryByRole('button', { name: 'notNow' })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /buy 50 credits/i }));
+    expect(mockTrack).toHaveBeenCalledWith(
+      'free_limit_gate_upgrade_clicked',
+      expect.objectContaining({ trigger: 'free_limit_exceeded', destination: 'credits' })
+    );
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  test('requires a five-second confirmation before a fourth upgrade-prompt dismissal', async () => {
+    const store = new Map<string, string>([['miu_upgrade_prompt_dismiss_count:user-1', '3']]);
+    vi.stubGlobal('localStorage', {
+      getItem: (key: string) => store.get(key) ?? null,
+      setItem: (key: string, value: string) => store.set(key, value),
+      removeItem: (key: string) => store.delete(key),
+      clear: () => store.clear(),
+      get length() {
+        return store.size;
+      },
+      key: (index: number) => Array.from(store.keys())[index] ?? null,
+    });
+    const onClose = vi.fn();
+
+    try {
+      render(
+        <PurchaseModal
+          isOpen={true}
+          onClose={onClose}
+          onPurchaseComplete={vi.fn()}
+          trigger="workspace"
+        />
+      );
+
+      await screen.findByRole('button', { name: 'notNow' });
+      vi.useFakeTimers();
+      fireEvent.click(screen.getByRole('button', { name: 'notNow' }));
+      const continueButton = screen.getByRole('button', { name: /continue with free plan/i });
+      expect(continueButton).toBeDisabled();
+
+      await act(async () => {
+        vi.advanceTimersByTime(5000);
+      });
+      fireEvent.click(continueButton);
+
+      expect(onClose).toHaveBeenCalledOnce();
+    } finally {
+      vi.useRealTimers();
+      vi.unstubAllGlobals();
+    }
   });
 
   test('renders compact credit picker arm', async () => {

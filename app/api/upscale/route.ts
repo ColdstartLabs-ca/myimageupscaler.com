@@ -24,6 +24,7 @@ import {
   getModelForTier,
 } from '@shared/config/subscription.utils';
 import { isFreeleaderBlocked } from '@/lib/anti-freeloader/check-freeloader';
+import { getCreditLimitErrorCode } from '@shared/utils/credit-limit';
 import { ErrorCodes, createErrorResponse, serializeError } from '@shared/utils/errors';
 import {
   decodeImageDimensions,
@@ -168,6 +169,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const logger = createLogger(req, 'upscale-api');
   const startTime = Date.now();
   let creditCost = 1; // Default, will be updated after validation
+  let effectiveTotalCredits: number | undefined;
+  let isPaidUser = false;
   let userId: string | undefined;
   let requestedQualityTier: QualityTier | undefined;
   let requestedScale: 2 | 4 | 8 | undefined;
@@ -292,7 +295,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const { data: rawProfile } = await supabaseAdmin
       .from('profiles')
       .select(
-        'subscription_status, subscription_tier, subscription_credits_balance, purchased_credits_balance, is_flagged_freeloader, region_tier, signup_country, signup_ip, created_at'
+        'subscription_status, subscription_tier, subscription_credits_balance, purchased_credits_balance, is_flagged_freeloader, region_tier, signup_country, created_at'
       )
       .eq('id', userId)
       .single();
@@ -326,7 +329,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         is_flagged_freeloader: false,
         region_tier: null,
         signup_country: null,
-        signup_ip: null,
         created_at: new Date().toISOString(),
       };
     })();
@@ -355,9 +357,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const subscriptionStatus = profile?.subscription_status ?? null;
     const hasActiveSubscription = isPaidSubscriptionStatus(subscriptionStatus);
     const hasPurchasedCredits = (profile?.purchased_credits_balance ?? 0) > 0;
+    const hasPaidPlanHistory =
+      profile?.subscription_tier !== null &&
+      profile?.subscription_tier !== undefined &&
+      profile.subscription_tier !== 'free';
 
-    // User is considered "paid" if they have an active subscription OR purchased credits
-    const isPaidUser = hasActiveSubscription || hasPurchasedCredits;
+    // Never apply the free-tier hard gate to a current or former paid plan.
+    isPaidUser = hasActiveSubscription || hasPurchasedCredits || hasPaidPlanHistory;
 
     // Determine tier: subscription tier takes precedence, otherwise 'hobby' for credit purchasers
     const userTier = hasActiveSubscription
@@ -778,18 +784,21 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     creditCost = providerAware.finalCredits;
 
-    const effectiveTotalCredits =
+    effectiveTotalCredits =
       (profile?.subscription_credits_balance ?? 0) + (profile?.purchased_credits_balance ?? 0);
     if (effectiveTotalCredits < creditCost) {
       logFailure('insufficient_effective_credits', {
         requiredCredits: creditCost,
         effectiveTotalCredits,
       });
+      const errorCode = getCreditLimitErrorCode(effectiveTotalCredits, creditCost, !isPaidUser);
       const { body, status } = createErrorResponse(
-        ErrorCodes.INSUFFICIENT_CREDITS,
-        `You have insufficient credits. This operation requires ${creditCost} credit${creditCost > 1 ? 's' : ''}.`,
+        errorCode,
+        errorCode === ErrorCodes.FREE_LIMIT_EXCEEDED
+          ? 'You have used all of your free credits. Upgrade to continue.'
+          : `You have insufficient credits. This operation requires ${creditCost} credit${creditCost > 1 ? 's' : ''}.`,
         402,
-        { required: creditCost }
+        { required: creditCost, available: effectiveTotalCredits }
       );
       return NextResponse.json(body, { status });
     }
@@ -989,11 +998,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Handle insufficient credits
     if (error instanceof InsufficientCreditsError) {
       logFailure('insufficient_credits', { requiredCredits: creditCost });
+      const availableCredits = error.availableCredits ?? effectiveTotalCredits ?? 1;
+      const errorCode = getCreditLimitErrorCode(availableCredits, creditCost, !isPaidUser);
       const { body, status } = createErrorResponse(
-        ErrorCodes.INSUFFICIENT_CREDITS,
-        `You have insufficient credits. This operation requires ${creditCost} credit${creditCost > 1 ? 's' : ''}.`,
+        errorCode,
+        errorCode === ErrorCodes.FREE_LIMIT_EXCEEDED
+          ? 'You have used all of your free credits. Upgrade to continue.'
+          : `You have insufficient credits. This operation requires ${creditCost} credit${creditCost > 1 ? 's' : ''}.`,
         402,
-        { required: creditCost }
+        { required: creditCost, available: availableCredits }
       );
       return NextResponse.json(body, { status });
     }

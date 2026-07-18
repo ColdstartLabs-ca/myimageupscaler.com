@@ -5,8 +5,8 @@ import { ensureAntiFreeloaderProfile } from '@server/services/anti-freeloader.se
 import { creditManager } from '@server/services/replicate/utils/credit-manager';
 import { InsufficientCreditsError } from '@server/services/image-generation.service';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
-import { serverEnv, isProduction } from '@shared/config/env';
-import { trackServerEvent } from '@server/analytics';
+import { isProduction } from '@shared/config/env';
+import { getCreditLimitErrorCode } from '@shared/utils/credit-limit';
 import { ErrorCodes, createErrorResponse } from '@shared/utils/errors';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -21,6 +21,8 @@ const BG_REMOVAL_CREDIT_COST = 1;
  */
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const logger = createLogger(req, 'bg-removal-deduct');
+  let effectiveTotalCredits: number | undefined;
+  let isPaidUser = false;
 
   try {
     const userId = req.headers.get('X-User-Id') || undefined;
@@ -37,7 +39,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const { data: rawProfile } = await supabaseAdmin
       .from('profiles')
       .select(
-        'is_flagged_freeloader, subscription_status, subscription_tier, subscription_credits_balance, purchased_credits_balance, region_tier, signup_country, signup_ip, created_at'
+        'is_flagged_freeloader, subscription_status, subscription_tier, subscription_credits_balance, purchased_credits_balance, region_tier, signup_country, created_at'
       )
       .eq('id', userId)
       .single();
@@ -60,14 +62,28 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const effectiveTotalCredits =
+    effectiveTotalCredits =
       (profile?.subscription_credits_balance ?? 0) + (profile?.purchased_credits_balance ?? 0);
+    isPaidUser =
+      profile?.subscription_status === 'active' ||
+      profile?.subscription_status === 'trialing' ||
+      (profile?.purchased_credits_balance ?? 0) > 0 ||
+      (profile?.subscription_tier !== null &&
+        profile?.subscription_tier !== undefined &&
+        profile.subscription_tier !== 'free');
     if (effectiveTotalCredits < BG_REMOVAL_CREDIT_COST) {
+      const errorCode = getCreditLimitErrorCode(
+        effectiveTotalCredits,
+        BG_REMOVAL_CREDIT_COST,
+        !isPaidUser
+      );
       const { body, status } = createErrorResponse(
-        ErrorCodes.INSUFFICIENT_CREDITS,
-        `You have insufficient credits. Background removal requires ${BG_REMOVAL_CREDIT_COST} credit.`,
+        errorCode,
+        errorCode === ErrorCodes.FREE_LIMIT_EXCEEDED
+          ? 'You have used all of your free credits. Upgrade to continue.'
+          : `You have insufficient credits. Background removal requires ${BG_REMOVAL_CREDIT_COST} credit.`,
         402,
-        { required: BG_REMOVAL_CREDIT_COST }
+        { required: BG_REMOVAL_CREDIT_COST, available: effectiveTotalCredits }
       );
       return NextResponse.json(body, { status });
     }
@@ -90,18 +106,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       'bg-removal'
     );
 
-    // Track event
-    await trackServerEvent(
-      'image_upscaled',
-      {
-        qualityTier: 'bg-removal',
-        mode: 'bg-removal',
-        creditsUsed: BG_REMOVAL_CREDIT_COST,
-        creditsRemaining: newBalance,
-      },
-      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-    );
-
     logger.info('BG removal credit deducted', {
       userId,
       creditsUsed: BG_REMOVAL_CREDIT_COST,
@@ -115,11 +119,19 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     });
   } catch (error) {
     if (error instanceof InsufficientCreditsError) {
+      const availableCredits = error.availableCredits ?? effectiveTotalCredits ?? 1;
+      const errorCode = getCreditLimitErrorCode(
+        availableCredits,
+        BG_REMOVAL_CREDIT_COST,
+        !isPaidUser
+      );
       const { body, status } = createErrorResponse(
-        ErrorCodes.INSUFFICIENT_CREDITS,
-        `You have insufficient credits. Background removal requires ${BG_REMOVAL_CREDIT_COST} credit.`,
+        errorCode,
+        errorCode === ErrorCodes.FREE_LIMIT_EXCEEDED
+          ? 'You have used all of your free credits. Upgrade to continue.'
+          : `You have insufficient credits. Background removal requires ${BG_REMOVAL_CREDIT_COST} credit.`,
         402,
-        { required: BG_REMOVAL_CREDIT_COST }
+        { required: BG_REMOVAL_CREDIT_COST, available: availableCredits }
       );
       return NextResponse.json(body, { status });
     }

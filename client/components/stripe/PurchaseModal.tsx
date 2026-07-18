@@ -23,6 +23,10 @@ import {
   getRepeatPurchaseContext,
 } from '@client/utils/purchaseModalDefaults';
 import type { IPurchaseModalBanditConfig } from '@client/utils/purchaseModalDefaults';
+import {
+  recordUpgradePromptDismissal,
+  requiresFreePlanConfirmation,
+} from '@client/utils/upgrade-prompt-dismissals';
 import { getEnabledCreditPacks, getEnabledPlans } from '@shared/config/subscription.utils';
 import type { IExperimentAssignment } from '@shared/types/experiments.types';
 import type { ICreditPack, IPlanConfig } from '@shared/config/subscription.types';
@@ -37,6 +41,8 @@ export interface IPurchaseModalProps {
   currentBalance?: number;
   /** Where in the UI this modal was triggered from */
   trigger?: string;
+  /** Prevent dismissal when the server confirms that free credits are exhausted. */
+  hardGate?: boolean;
 }
 
 // ------------------------------------------------------------------------------
@@ -129,10 +135,12 @@ export function PurchaseModal({
   requiredCredits,
   currentBalance,
   trigger = 'unknown',
+  hardGate = false,
 }: IPurchaseModalProps): JSX.Element | null {
   const t = useTranslations('stripe.outOfCredits');
   const { pricingRegion, discountPercent } = useRegionTier();
   const openTimeRef = useRef<number>(0);
+  const hardGateTrackedRef = useRef(false);
   const { isAuthenticated, user } = useUserStore();
   const { openAuthRequiredModal } = useModalStore();
 
@@ -170,6 +178,40 @@ export function PurchaseModal({
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [planChangePriceId, setPlanChangePriceId] = useState<string | null>(null);
   const [isPlanChangeModalOpen, setIsPlanChangeModalOpen] = useState(false);
+  const [requiresFreePlanConfirm, setRequiresFreePlanConfirm] = useState(false);
+  const [showFreePlanConfirmation, setShowFreePlanConfirmation] = useState(false);
+  const [isFreePlanConfirmationReady, setIsFreePlanConfirmationReady] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) {
+      hardGateTrackedRef.current = false;
+      setShowFreePlanConfirmation(false);
+      setIsFreePlanConfirmationReady(false);
+      return;
+    }
+
+    setRequiresFreePlanConfirm(!hardGate && requiresFreePlanConfirmation(user?.id));
+    setShowFreePlanConfirmation(false);
+    setIsFreePlanConfirmationReady(false);
+  }, [hardGate, isOpen, user?.id]);
+
+  useEffect(() => {
+    if (!isOpen || !hardGate || hardGateTrackedRef.current) return;
+
+    hardGateTrackedRef.current = true;
+    analytics.track('free_limit_gate_shown', {
+      trigger,
+      requiredCredits,
+      currentBalance,
+    });
+  }, [currentBalance, hardGate, isOpen, requiredCredits, trigger]);
+
+  useEffect(() => {
+    if (!showFreePlanConfirmation) return;
+
+    const timer = window.setTimeout(() => setIsFreePlanConfirmationReady(true), 5000);
+    return () => window.clearTimeout(timer);
+  }, [showFreePlanConfirmation]);
 
   // Data (memoized to avoid re-renders)
   const creditPacks = useMemo(() => getEnabledCreditPacks(), []);
@@ -301,8 +343,9 @@ export function PurchaseModal({
 
   const lockToCredits = trigger === 'model_gate';
 
-  const handleDismiss = useCallback(
+  const completeDismiss = useCallback(
     (method: 'backdrop' | 'close_button' | 'not_now') => {
+      const dismissalCount = recordUpgradePromptDismissal(user?.id);
       analytics.track('upgrade_prompt_dismissed', {
         trigger,
         method,
@@ -310,6 +353,7 @@ export function PurchaseModal({
         outOfCredits,
         pricingRegion: pricingRegion || 'standard',
         timeOpenMs: Date.now() - openTimeRef.current,
+        dismissalCount,
         ...getExperimentAnalyticsProps(purchaseExperiment.assignment),
       });
 
@@ -347,6 +391,20 @@ export function PurchaseModal({
       showCheckoutModal,
       currentPlan,
     ]
+  );
+
+  const handleDismiss = useCallback(
+    (method: 'backdrop' | 'close_button' | 'not_now') => {
+      if (hardGate) return;
+
+      if (requiresFreePlanConfirm && !showFreePlanConfirmation) {
+        setShowFreePlanConfirmation(true);
+        return;
+      }
+
+      completeDismiss(method);
+    },
+    [completeDismiss, hardGate, requiresFreePlanConfirm, showFreePlanConfirmation]
   );
 
   const handleModeChange = useCallback(
@@ -444,6 +502,15 @@ export function PurchaseModal({
       ...getExperimentAnalyticsProps(purchaseExperiment.assignment),
     });
 
+    if (hardGate) {
+      analytics.track('free_limit_gate_upgrade_clicked', {
+        trigger,
+        destination,
+        requiredCredits,
+        currentBalance,
+      });
+    }
+
     // Existing subscriber changing plans
     if (selectedPlan && isPaidUser && currentPriceId && priceId !== currentPriceId) {
       setPlanChangePriceId(priceId);
@@ -522,6 +589,9 @@ export function PurchaseModal({
     isAuthenticated,
     openAuthRequiredModal,
     purchaseExperiment.assignment,
+    hardGate,
+    requiredCredits,
+    currentBalance,
   ]);
 
   const getCTALabel = useCallback(() => {
@@ -566,7 +636,7 @@ export function PurchaseModal({
         {/* Backdrop */}
         <div
           className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
-          onClick={() => handleDismiss('backdrop')}
+          onClick={hardGate ? undefined : () => handleDismiss('backdrop')}
         />
 
         {/* Modal */}
@@ -588,13 +658,15 @@ export function PurchaseModal({
                     height={28}
                     className="h-6 w-auto object-contain"
                   />
-                  <button
-                    onClick={() => handleDismiss('close_button')}
-                    className="w-8 h-8 rounded-full border border-text-muted/30 flex items-center justify-center text-text-muted hover:text-text-primary hover:border-text-muted/50 transition-colors"
-                    aria-label={t('notNow')}
-                  >
-                    <X size={16} />
-                  </button>
+                  {!hardGate && (
+                    <button
+                      onClick={() => handleDismiss('close_button')}
+                      className="w-8 h-8 rounded-full border border-text-muted/30 flex items-center justify-center text-text-muted hover:text-text-primary hover:border-text-muted/50 transition-colors"
+                      aria-label={t('notNow')}
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
                 </div>
 
                 {/* Title row with coin image */}
@@ -902,44 +974,44 @@ export function PurchaseModal({
               {autoTopUpEligible &&
                 selectedPack &&
                 ['small', 'medium'].includes(selectedPack.key) && (
-                <div className="mb-3 rounded-xl border border-border bg-surface-light/30 p-3 text-left">
-                  <label className="flex items-start gap-2 text-sm text-text-primary">
-                    <input
-                      type="checkbox"
-                      checked={autoTopUpEnabled}
-                      onChange={event => setAutoTopUpEnabled(event.target.checked)}
-                      className="mt-0.5"
-                    />
-                    <span>
-                      Automatically buy {selectedPack.name} for{' '}
-                      {formatPrice(selectedPack.priceInCents, discountPercent)} when my balance is
-                      low
-                    </span>
-                  </label>
-                  {autoTopUpEnabled && (
-                    <>
-                      <label className="mt-2 flex items-center justify-between gap-3 text-xs text-text-secondary">
-                        Refill below
-                        <select
-                          value={autoTopUpThreshold}
-                          onChange={event => setAutoTopUpThreshold(Number(event.target.value))}
-                          className="rounded-lg border border-border bg-surface px-2 py-1 text-text-primary"
-                        >
-                          {[10, 25, 50].map(value => (
-                            <option key={value} value={value}>
-                              {value} credits
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                      <p className="mt-2 text-xs text-text-tertiary">
-                        We will repeatedly charge your saved payment method off-session. Disable
-                        anytime in Billing.
-                      </p>
-                    </>
-                  )}
-                </div>
-              )}
+                  <div className="mb-3 rounded-xl border border-border bg-surface-light/30 p-3 text-left">
+                    <label className="flex items-start gap-2 text-sm text-text-primary">
+                      <input
+                        type="checkbox"
+                        checked={autoTopUpEnabled}
+                        onChange={event => setAutoTopUpEnabled(event.target.checked)}
+                        className="mt-0.5"
+                      />
+                      <span>
+                        Automatically buy {selectedPack.name} for{' '}
+                        {formatPrice(selectedPack.priceInCents, discountPercent)} when my balance is
+                        low
+                      </span>
+                    </label>
+                    {autoTopUpEnabled && (
+                      <>
+                        <label className="mt-2 flex items-center justify-between gap-3 text-xs text-text-secondary">
+                          Refill below
+                          <select
+                            value={autoTopUpThreshold}
+                            onChange={event => setAutoTopUpThreshold(Number(event.target.value))}
+                            className="rounded-lg border border-border bg-surface px-2 py-1 text-text-primary"
+                          >
+                            {[10, 25, 50].map(value => (
+                              <option key={value} value={value}>
+                                {value} credits
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                        <p className="mt-2 text-xs text-text-tertiary">
+                          We will repeatedly charge your saved payment method off-session. Disable
+                          anytime in Billing.
+                        </p>
+                      </>
+                    )}
+                  </div>
+                )}
               <button
                 onClick={handleCTA}
                 disabled={!selectedPack && !selectedPlan}
@@ -958,6 +1030,33 @@ export function PurchaseModal({
                 </div>
               </button>
             </div>
+
+            {showFreePlanConfirmation && (
+              <div
+                className="absolute inset-0 z-10 flex items-center justify-center bg-surface/95 p-6 text-center"
+                role="dialog"
+                aria-label="Continue with free plan"
+              >
+                <div className="max-w-sm space-y-4">
+                  <h3 className="text-lg font-bold text-text-primary">
+                    Continue with the free plan?
+                  </h3>
+                  <p className="text-sm text-text-secondary">
+                    You can keep the free plan. Please confirm after a short pause.
+                  </p>
+                  <button
+                    type="button"
+                    disabled={!isFreePlanConfirmationReady}
+                    onClick={() => completeDismiss('not_now')}
+                    className="w-full rounded-xl bg-accent px-4 py-3 font-bold text-text-primary transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {isFreePlanConfirmationReady
+                      ? 'Continue with free plan'
+                      : 'Continue with free plan (5 seconds)'}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

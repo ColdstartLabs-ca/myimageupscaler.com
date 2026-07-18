@@ -48,7 +48,10 @@ export class CreditManager {
     if (creditError) {
       if (creditError.message?.includes('Insufficient credits')) {
         await this.queueInsufficientCreditAlert(userId, amount);
-        throw new InsufficientCreditsError(creditError.message);
+        throw new InsufficientCreditsError(
+          creditError.message,
+          this.getAvailableCreditsFromError(creditError.message)
+        );
       }
       throw new Error(`Failed to deduct credits: ${creditError.message}`);
     }
@@ -142,6 +145,11 @@ export class CreditManager {
     } catch (error) {
       console.error('Failed to queue insufficient credit lifecycle email:', error);
     }
+  }
+
+  private getAvailableCreditsFromError(message: string): number | undefined {
+    const match = /Available:\s*(\d+)/i.exec(message);
+    return match ? Number(match[1]) : undefined;
   }
 }
 

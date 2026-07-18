@@ -48,8 +48,7 @@ export interface IUserState {
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signUpWithEmail: (
     email: string,
-    password: string,
-    fingerprintHash?: string | null
+    password: string
   ) => Promise<{ emailConfirmationRequired: boolean }>;
   signOut: () => Promise<void>;
 
@@ -256,7 +255,7 @@ export const useUserStore = create<IUserState>((set, get) => ({
     if (error) throw error;
   },
 
-  signUpWithEmail: async (email, password, fingerprintHash) => {
+  signUpWithEmail: async (email, password) => {
     enablePostAuthRedirect();
     const { data, error } = await getSupabase().auth.signUp({
       email,
@@ -272,7 +271,7 @@ export const useUserStore = create<IUserState>((set, get) => ({
           'Content-Type': 'application/json',
           Authorization: `Bearer ${data.session.access_token}`,
         },
-        body: JSON.stringify({ fingerprintHash: fingerprintHash ?? null }),
+        body: JSON.stringify({}),
       }).catch(() => {});
     }
     return { emailConfirmationRequired: !!data.user && !data.session };

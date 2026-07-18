@@ -429,6 +429,21 @@ describe('ImageGenerationService', () => {
       await expect(service.processImage(userId, input)).rejects.toThrow(InsufficientCreditsError);
     });
 
+    it('keeps the atomically reported zero balance for a stale route precheck', async () => {
+      const userId = 'user-123';
+      const input = createMockInput();
+
+      mockSupabaseRpc.mockResolvedValueOnce({
+        data: null,
+        error: { message: 'Insufficient credits. Required: 1, Available: 0' },
+      });
+
+      await expect(service.processImage(userId, input)).rejects.toMatchObject({
+        name: 'InsufficientCreditsError',
+        availableCredits: 0,
+      });
+    });
+
     it('should not track event when credits are insufficient', async () => {
       // Arrange
       const userId = 'user-123';
@@ -1055,6 +1070,12 @@ describe('ImageGenerationService', () => {
     it('InsufficientCreditsError should accept custom message', () => {
       const error = new InsufficientCreditsError('Not enough credits for this operation');
       expect(error.message).toBe('Not enough credits for this operation');
+    });
+
+    it('InsufficientCreditsError should retain the balance reported by an atomic deduction', () => {
+      const error = new InsufficientCreditsError('Insufficient credits', 0);
+
+      expect(error.availableCredits).toBe(0);
     });
 
     it('AIGenerationError should have correct name and include finishReason', () => {

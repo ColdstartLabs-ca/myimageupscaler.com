@@ -167,7 +167,7 @@ export class UserRepository
   ): Promise<IUserProfileDB> {
     const defaultData: ICreateUserProfile = {
       id: userId,
-      subscription_credits_balance: 10, // Default subscription credits
+      subscription_credits_balance: 0, // Free credits are granted only after server-side setup
       purchased_credits_balance: 0, // No purchased credits initially
       subscription_status: null,
       subscription_tier: null,
