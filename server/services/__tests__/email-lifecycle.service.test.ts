@@ -23,7 +23,29 @@ let dueQueueRows: Array<Record<string, unknown>> = [];
 let emailLogRows: Array<Record<string, unknown>> = [];
 let emailLogError: { message: string } | null = null;
 let lifecycleEventInsertError: { message: string } | null = null;
+let currentCreditProfile: Record<string, number> | null = {
+  subscription_credits_balance: 0,
+  purchased_credits_balance: 0,
+};
+let profileReadError: { message: string } | null = null;
 const queueUpdates: Record<string, unknown>[] = [];
+
+function makeDueQueueRow(
+  campaignKey: string,
+  templateData: Record<string, unknown>
+): Record<string, unknown> {
+  return {
+    id: `queue_${campaignKey}`,
+    campaign_key: campaignKey,
+    user_id: 'user_123',
+    recipient_email: 'user@example.com',
+    scheduled_for: new Date(Date.now() - 1000).toISOString(),
+    status: 'pending',
+    template_data: templateData,
+    metadata: {},
+    created_at: new Date().toISOString(),
+  };
+}
 
 vi.mock('@shared/config/env', () => ({
   serverEnv: {
@@ -106,6 +128,9 @@ function makeSelectChain(table: string, selectColumns?: string) {
       }
       if (table === 'email_lifecycle_queue') {
         return { data: null, error: null };
+      }
+      if (table === 'profiles') {
+        return { data: currentCreditProfile, error: profileReadError };
       }
       return { data: null, error: null };
     }),
@@ -258,6 +283,11 @@ describe('EmailLifecycleService', () => {
     emailLogRows = [];
     emailLogError = null;
     lifecycleEventInsertError = null;
+    currentCreditProfile = {
+      subscription_credits_balance: 0,
+      purchased_credits_balance: 0,
+    };
+    profileReadError = null;
     queueUpdates.length = 0;
     sendEmailMock.mockResolvedValue({ success: true, messageId: 'msg_test' });
   });
@@ -324,6 +354,176 @@ describe('EmailLifecycleService', () => {
 
     expect(sendEmailMock).toHaveBeenCalledOnce();
     expect(result.sent).toBe(1);
+  });
+
+  it('cancels a stale zero-credit email when the user now has credits', async () => {
+    currentCreditProfile = {
+      subscription_credits_balance: 10,
+      purchased_credits_balance: 29,
+    };
+    dueQueueRows = [makeDueQueueRow('zero-credits', {})];
+
+    const result = await new EmailLifecycleService().processDueQueue({ batchSize: 1 });
+
+    expect(result).toMatchObject({ sent: 0, skipped: 1 });
+    expect(sendEmailMock).not.toHaveBeenCalled();
+    expect(queueUpdates).toContainEqual(
+      expect.objectContaining({ status: 'cancelled', reason: 'stale_balance_not_zero' })
+    );
+  });
+
+  it('refreshes the low-credit balance immediately before provider submission', async () => {
+    currentCreditProfile = {
+      subscription_credits_balance: 2,
+      purchased_credits_balance: 0,
+    };
+    dueQueueRows = [makeDueQueueRow('low-credits', { creditsRemaining: 0 })];
+
+    const result = await new EmailLifecycleService().processDueQueue({ batchSize: 1 });
+
+    expect(result.sent).toBe(1);
+    expect(sendEmailMock).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ creditsRemaining: 2 }) })
+    );
+  });
+
+  it('cancels a low-credit email at the four-credit enqueue boundary', async () => {
+    currentCreditProfile = {
+      subscription_credits_balance: 4,
+      purchased_credits_balance: 0,
+    };
+    dueQueueRows = [makeDueQueueRow('low-credits', { creditsRemaining: 3 })];
+
+    const result = await new EmailLifecycleService().processDueQueue({ batchSize: 1 });
+
+    expect(result).toMatchObject({ sent: 0, skipped: 1 });
+    expect(sendEmailMock).not.toHaveBeenCalled();
+    expect(queueUpdates).toContainEqual(
+      expect.objectContaining({
+        status: 'cancelled',
+        reason: 'stale_balance_above_low_credit_threshold',
+      })
+    );
+  });
+
+  it('cancels an insufficient-credit email when the current balance is sufficient', async () => {
+    currentCreditProfile = {
+      subscription_credits_balance: 10,
+      purchased_credits_balance: 0,
+    };
+    dueQueueRows = [makeDueQueueRow('insufficient-credits-finish-image', { requiredCredits: 5 })];
+
+    const result = await new EmailLifecycleService().processDueQueue({ batchSize: 1 });
+
+    expect(result).toMatchObject({ sent: 0, skipped: 1 });
+    expect(sendEmailMock).not.toHaveBeenCalled();
+    expect(queueUpdates).toContainEqual(
+      expect.objectContaining({ status: 'cancelled', reason: 'stale_balance_now_sufficient' })
+    );
+  });
+
+  it('reschedules a balance-sensitive email when the current balance cannot be read', async () => {
+    profileReadError = { message: 'database unavailable' };
+    dueQueueRows = [makeDueQueueRow('zero-credits', {})];
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    const result = await new EmailLifecycleService().processDueQueue({ batchSize: 1 });
+
+    expect(result).toMatchObject({ sent: 0, rescheduled: 1 });
+    expect(sendEmailMock).not.toHaveBeenCalled();
+    expect(queueUpdates).toContainEqual(
+      expect.objectContaining({
+        status: 'pending',
+        reason: 'balance_revalidation_failed:balance_lookup_failed',
+      })
+    );
+    consoleSpy.mockRestore();
+  });
+
+  it('sends an eligible zero-credit email with a fresh zero balance', async () => {
+    dueQueueRows = [makeDueQueueRow('zero-credits', { creditsRemaining: 39 })];
+
+    const result = await new EmailLifecycleService().processDueQueue({ batchSize: 1 });
+
+    expect(result.sent).toBe(1);
+    expect(sendEmailMock).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ creditsRemaining: 0 }) })
+    );
+  });
+
+  it('cancels a low-credit email when the current balance is above the threshold', async () => {
+    currentCreditProfile = {
+      subscription_credits_balance: 5,
+      purchased_credits_balance: 0,
+    };
+    dueQueueRows = [makeDueQueueRow('low-credits', { creditsRemaining: 2 })];
+
+    const result = await new EmailLifecycleService().processDueQueue({ batchSize: 1 });
+
+    expect(result.skipped).toBe(1);
+    expect(sendEmailMock).not.toHaveBeenCalled();
+  });
+
+  it('refreshes an insufficient-credit email when the balance remains insufficient', async () => {
+    currentCreditProfile = {
+      subscription_credits_balance: 2,
+      purchased_credits_balance: 1,
+    };
+    dueQueueRows = [
+      makeDueQueueRow('insufficient-credits-finish-image', {
+        requiredCredits: 5,
+        creditsRemaining: 0,
+      }),
+    ];
+
+    const result = await new EmailLifecycleService().processDueQueue({ batchSize: 1 });
+
+    expect(result.sent).toBe(1);
+    expect(sendEmailMock).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ creditsRemaining: 3 }) })
+    );
+  });
+
+  it('uses purchased credits for unused-credit eligibility and rendering', async () => {
+    currentCreditProfile = {
+      subscription_credits_balance: 10,
+      purchased_credits_balance: 7,
+    };
+    dueQueueRows = [makeDueQueueRow('unused-credits-14d', { creditsRemaining: 50 })];
+
+    const result = await new EmailLifecycleService().processDueQueue({ batchSize: 1 });
+
+    expect(result.sent).toBe(1);
+    expect(sendEmailMock).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ creditsRemaining: 7 }) })
+    );
+  });
+
+  it('cancels unused-credit and credit-holder winback emails when relevant balances are empty', async () => {
+    dueQueueRows = [makeDueQueueRow('unused-credits-14d', { creditsRemaining: 50 })];
+    const service = new EmailLifecycleService();
+    expect(await service.processDueQueue({ batchSize: 1 })).toMatchObject({ skipped: 1, sent: 0 });
+
+    vi.clearAllMocks();
+    queueUpdates.length = 0;
+    dueQueueRows = [makeDueQueueRow('winback-credit-holder-21d', { creditsRemaining: 10 })];
+    expect(await service.processDueQueue({ batchSize: 1 })).toMatchObject({ skipped: 1, sent: 0 });
+    expect(sendEmailMock).not.toHaveBeenCalled();
+  });
+
+  it('renders the current total for a credit-holder winback email', async () => {
+    currentCreditProfile = {
+      subscription_credits_balance: 10,
+      purchased_credits_balance: 4,
+    };
+    dueQueueRows = [makeDueQueueRow('winback-credit-holder-21d', { creditsRemaining: 1 })];
+
+    const result = await new EmailLifecycleService().processDueQueue({ batchSize: 1 });
+
+    expect(result.sent).toBe(1);
+    expect(sendEmailMock).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ creditsRemaining: 14 }) })
+    );
   });
 
   it('should report one eligible dry-run candidate for two pending campaigns with no sends', async () => {

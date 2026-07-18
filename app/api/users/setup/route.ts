@@ -49,12 +49,20 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   let grant;
-  if (
+  const isUnsubscribedFreeProfile =
     isFreeTierProfile(profile.subscription_tier) &&
     profile.subscription_status !== 'active' &&
-    profile.subscription_status !== 'trialing' &&
-    isRegionTier(resolvedProfile?.region_tier)
-  ) {
+    profile.subscription_status !== 'trialing';
+
+  if (isUnsubscribedFreeProfile && !isRegionTier(resolvedProfile?.region_tier)) {
+    await logger.flush();
+    return NextResponse.json(
+      { success: false, setupStatus: 'pending', retryable: true },
+      { status: 202 }
+    );
+  }
+
+  if (isUnsubscribedFreeProfile && isRegionTier(resolvedProfile?.region_tier)) {
     try {
       grant = await claimFreeCreditGrant(req, userId, resolvedProfile.region_tier);
     } catch (error) {
@@ -95,5 +103,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   await logger.flush();
-  return NextResponse.json({ success: true, ...(alreadySetup ? { alreadySetup: true } : {}) });
+  return NextResponse.json({
+    success: true,
+    setupStatus: 'complete',
+    ...(alreadySetup || grant?.existingGrant ? { alreadySetup: true } : {}),
+  });
 }

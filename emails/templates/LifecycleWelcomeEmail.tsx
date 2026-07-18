@@ -37,7 +37,7 @@ export function LifecycleWelcomeEmail({
             <Text style={logo}>{appName}</Text>
           </Section>
           <Section style={content}>
-            <Text style={heading}>Your first 10 credits are ready</Text>
+            <Text style={heading}>Your first 5 credits are ready</Text>
             <Text style={paragraph}>Hi {userName},</Text>
             <Text style={paragraph}>
               Start with one image and compare the before and after. Most images take under a minute

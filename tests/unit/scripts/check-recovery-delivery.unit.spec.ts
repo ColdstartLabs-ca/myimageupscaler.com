@@ -8,6 +8,7 @@ import {
   buildDeliveryClickUrl,
   parseControlledDeliveryArgs,
   requestControlledClickRoute,
+  summarizeStaleBalanceCancellations,
 } from '@/scripts/check-recovery-delivery';
 
 describe('check-recovery-delivery script helpers', () => {
@@ -105,5 +106,20 @@ describe('check-recovery-delivery script helpers', () => {
       'remaining row'
     );
     expect(() => assertVerifierCleanupResult('queue verification', null, 0)).not.toThrow();
+  });
+
+  it('reports stale balance cancellation counts without recipient data', () => {
+    const report = summarizeStaleBalanceCancellations([
+      { reason: 'stale_balance_not_zero' },
+      { reason: 'stale_balance_not_zero' },
+      { reason: 'stale_balance_now_sufficient' },
+    ]);
+    const output = JSON.stringify(report);
+
+    expect(report).toEqual({
+      stale_balance_not_zero: 2,
+      stale_balance_now_sufficient: 1,
+    });
+    expect(output).not.toContain('@');
   });
 });

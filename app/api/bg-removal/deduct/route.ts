@@ -1,4 +1,4 @@
-import { isFreeleaderBlocked } from '@/lib/anti-freeloader/check-freeloader';
+import { isAccountSetupPending, isFreeleaderBlocked } from '@/lib/anti-freeloader/check-freeloader';
 import { createLogger } from '@server/monitoring/logger';
 import { upscaleRateLimit } from '@server/rateLimit';
 import { ensureAntiFreeloaderProfile } from '@server/services/anti-freeloader.service';
@@ -35,8 +35,25 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json(body, { status });
     }
 
-    // Block flagged freeloaders before any credit-consuming work
-    const { data: rawProfile } = await supabaseAdmin
+    // Read the durable grant decision first so a concurrent setup commit cannot
+    // pair a stale zero-credit profile with a newly-created decision.
+    const { data: grantDecision, error: grantDecisionError } = await supabaseAdmin
+      .from('free_credit_grants')
+      .select('user_id')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (grantDecisionError) {
+      const { body, status } = createErrorResponse(
+        ErrorCodes.INTERNAL_ERROR,
+        'Unable to verify account setup. Please try again shortly.',
+        503
+      );
+      return NextResponse.json(body, { status });
+    }
+
+    // Block flagged freeloaders before any credit-consuming work.
+    const { data: rawProfile, error: profileError } = await supabaseAdmin
       .from('profiles')
       .select(
         'is_flagged_freeloader, subscription_status, subscription_tier, subscription_credits_balance, purchased_credits_balance, region_tier, signup_country, created_at'
@@ -44,9 +61,27 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       .eq('id', userId)
       .single();
 
+    if (profileError) {
+      const { body, status } = createErrorResponse(
+        ErrorCodes.INTERNAL_ERROR,
+        'Unable to verify account setup. Please try again shortly.',
+        503
+      );
+      return NextResponse.json(body, { status });
+    }
+
     const profile = await ensureAntiFreeloaderProfile(req, userId, rawProfile, {
       persist: false,
     });
+
+    if (isAccountSetupPending(profile, Boolean(grantDecision))) {
+      const { body, status } = createErrorResponse(
+        ErrorCodes.ACCOUNT_SETUP_PENDING,
+        'Your account setup is still completing. Please try again shortly.',
+        409
+      );
+      return NextResponse.json(body, { status });
+    }
 
     if (isProduction() && isFreeleaderBlocked(profile)) {
       logger.warn('Blocked flagged freeloader', { userId });

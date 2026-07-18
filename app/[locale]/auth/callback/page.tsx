@@ -4,22 +4,7 @@ import { useEffect, useState, Suspense, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { createClient } from '@shared/utils/supabase/client';
 import { handleAuthRedirect, setAuthIntent } from '@client/utils/authRedirectManager';
-
-/** Call /api/users/setup. Awaited so it completes before redirect. */
-async function callSetup(accessToken: string): Promise<void> {
-  try {
-    await fetch('/api/users/setup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({}),
-    });
-  } catch {
-    // Best effort — don't block redirect on setup failure
-  }
-}
+import { completeAccountSetup } from '@client/utils/account-setup';
 
 function AuthCallbackContent() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
@@ -43,14 +28,18 @@ function AuthCallbackContent() {
       const handleSuccess = async (session?: { access_token?: string } | null) => {
         if (hasRedirected.current) return;
         hasRedirected.current = true;
-        setStatus('success');
-
-        // Await setup call for region tier + fingerprint registration
-        if (session?.access_token) {
-          await callSetup(session.access_token);
+        if (!session?.access_token) {
+          setStatus('error');
+          return;
         }
 
-        await handleAuthRedirect();
+        try {
+          await completeAccountSetup(session.access_token);
+          setStatus('success');
+          await handleAuthRedirect();
+        } catch {
+          setStatus('error');
+        }
       };
 
       // Listen for auth state changes
@@ -115,7 +104,10 @@ function AuthCallbackContent() {
             </svg>
           </div>
           <h1 className="text-xl font-semibold mb-2">Sign In Error</h1>
-          <p className="text-muted-foreground mb-4">There was an error completing your sign in.</p>
+          <p className="text-muted-foreground mb-4">
+            We could not finish setting up your account after several attempts. Please try signing
+            in again or contact support.
+          </p>
           <button
             onClick={() => (window.location.href = '/')}
             className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-hover transition-colors"

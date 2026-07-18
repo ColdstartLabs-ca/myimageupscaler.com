@@ -45,8 +45,8 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
         warningDaysBefore: 0,
       },
       features: [
-        `${CREDIT_COSTS.DEFAULT_FREE_CREDITS} credits per month`,
-        `Credits roll over (up to ${CREDIT_COSTS.DEFAULT_FREE_CREDITS * 6})`,
+        `${CREDIT_COSTS.DEFAULT_FREE_CREDITS} credits`,
+        'Free credits do not renew',
         'Quick & Face Restore quality',
         '2x & 4x upscaling',
         '5MB file limit',
@@ -285,7 +285,7 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
   },
 
   freeUser: {
-    initialCredits: CREDIT_COSTS.DEFAULT_FREE_CREDITS, // One-time credits on signup
+    initialCredits: CREDIT_COSTS.DEFAULT_FREE_CREDITS, // Credits granted on signup
     monthlyRefresh: false, // Free users don't get monthly refresh
     monthlyCredits: CREDIT_COSTS.DEFAULT_TRIAL_CREDITS, // Only for paid subscriptions
     maxBalance: CREDIT_COSTS.DEFAULT_FREE_CREDITS, // Free users capped at initial credits

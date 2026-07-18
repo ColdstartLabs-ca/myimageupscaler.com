@@ -5,19 +5,19 @@
       "slug": "free-image-upscaler",
       "title": "Free Image Upscaler",
       "metaTitle": "Free Image Upscaler - Enhance Photos Online | MyImageUpscaler",
-      "metaDescription": "Free online AI image upscaler. Create an account for 5 one-time credits, upscale images without watermarks, then buy credits to continue.",
+      "metaDescription": "Free online AI image upscaler. Create an account for 5 credits, upscale images without watermarks, then buy credits to continue.",
       "h1": "Free Image Upscaler - Enhance Photos Online with AI",
-      "intro": "Create an account and start with 5 one-time image upscaling credits. Enhanced images have no watermarks.",
+      "intro": "Create an account and start with 5 free credits. Enhanced images have no watermarks.",
       "primaryKeyword": "free image upscaler",
       "secondaryKeywords": ["free photo upscaler", "upscale image free", "free ai upscaler"],
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "free",
       "toolName": "Free Image Upscaler",
-      "description": "Try professional-grade AI image upscaling with 5 one-time credits for new accounts and no watermarks.",
+      "description": "Try professional-grade AI image upscaling with 5 credits for new accounts and no watermarks.",
       "features": [
         {
           "title": "5 Free Credits",
-          "description": "Create an account and start with 5 one-time image upscaling credits. No credit card is required."
+          "description": "Create an account and start with 5 free credits. No credit card is required."
         },
         {
           "title": "No Watermarks",
@@ -33,7 +33,7 @@
         }
       ],
       "limitations": [
-        "5 one-time credits for new accounts",
+        "5 credits for new accounts",
         "Standard processing speed (30-60 seconds)",
         "One image at a time (no batch processing)"
       ],
@@ -45,7 +45,7 @@
       "faq": [
         {
           "question": "Is it really free?",
-          "answer": "Yes. New accounts receive 5 one-time image upscaling credits with no credit card required. Free credits do not renew."
+          "answer": "Yes. New accounts receive 5 free credits with no credit card required. Free credits do not renew."
         },
         {
           "question": "Will there be watermarks on my images?",
@@ -63,7 +63,7 @@
       "slug": "free-photo-enhancer",
       "title": "Free Photo Enhancer",
       "metaTitle": "Free Photo Enhancer - AI Enhancement Tool | MyImageUpscaler",
-      "metaDescription": "Enhance photos with AI. Create an account for 5 one-time credits to fix blur, improve colors, and sharpen details without watermarks.",
+      "metaDescription": "Enhance photos with AI. Create an account for 5 credits to fix blur, improve colors, and sharpen details without watermarks.",
       "h1": "Free Photo Enhancer - AI-Powered Photo Enhancement",
       "intro": "Transform your photos with professional AI enhancement. Fix blur, optimize colors, and enhance details—all for free with no watermarks.",
       "primaryKeyword": "free photo enhancer",
@@ -71,7 +71,7 @@
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "free",
       "toolName": "Free Photo Enhancer",
-      "description": "Bring your photos to life with 5 one-time enhancement credits for new accounts and professional-grade AI technology.",
+      "description": "Bring your photos to life with 5 free credits for new accounts and professional-grade AI technology.",
       "features": [
         {
           "title": "Automatic Enhancement",
@@ -91,7 +91,7 @@
         }
       ],
       "limitations": [
-        "5 one-time credits for new accounts",
+        "5 credits for new accounts",
         "Single photo processing",
         "Standard processing speed"
       ],
@@ -111,7 +111,7 @@
         },
         {
           "question": "Do I need to create an account?",
-          "answer": "Yes. Create an account to receive 5 one-time credits, then upload an image and start enhancing."
+          "answer": "Yes. Create an account to receive 5 credits, then upload an image and start enhancing."
         }
       ],
       "relatedFree": ["free-image-upscaler", "free-ai-photo-enhancer"],
@@ -121,7 +121,7 @@
       "slug": "free-image-enhancer",
       "title": "Free Image Enhancer",
       "metaTitle": "Free Image Enhancer - Improve Image Quality Online | MyImageUpscaler",
-      "metaDescription": "Free AI image enhancer to improve quality online. Create an account for 5 one-time credits to fix blur, enhance colors, and sharpen details.",
+      "metaDescription": "Free AI image enhancer to improve quality online. Create an account for 5 credits to fix blur, enhance colors, and sharpen details.",
       "h1": "Free Image Enhancer - Improve Any Image with AI",
       "intro": "Enhance any image for free with professional AI technology. Improve quality, fix blur, and optimize colors in seconds.",
       "primaryKeyword": "free image enhancer",
@@ -133,7 +133,7 @@
       "lastUpdated": "2025-12-10T00:00:00Z",
       "category": "free",
       "toolName": "Free Image Enhancer",
-      "description": "Try professional image enhancement with 5 one-time credits for new accounts and enterprise-grade AI.",
+      "description": "Try professional image enhancement with 5 credits for new accounts and enterprise-grade AI.",
       "features": [
         {
           "title": "One-Click Enhancement",
@@ -153,12 +153,12 @@
         }
       ],
       "limitations": [
-        "5 one-time credits for new accounts",
+        "5 credits for new accounts",
         "Max 25MB per image",
         "Single image processing"
       ],
       "upgradePoints": [
-        "Unlimited credits per month",
+        "More credits with paid plans",
         "100MB maximum file size (vs 25MB free)",
         "API access for automation"
       ],
@@ -183,9 +183,9 @@
       "slug": "free-ai-photo-enhancer",
       "title": "Free AI Photo Enhancer",
       "metaTitle": "Free AI Photo Enhancer - Enhance Photos with AI | MyImageUpscaler",
-      "metaDescription": "Free AI photo enhancer with neural network technology. Create an account for 5 one-time credits to enhance photos and fix quality issues.",
+      "metaDescription": "Free AI photo enhancer with neural network technology. Create an account for 5 credits to enhance photos and fix quality issues.",
       "h1": "Free AI Photo Enhancer - Neural Network Photo Enhancement",
-      "intro": "Harness the power of AI to enhance your photos professionally. New accounts receive 5 one-time credits with no watermarks.",
+      "intro": "Harness the power of AI to enhance your photos professionally. New accounts receive 5 credits with no watermarks.",
       "primaryKeyword": "free ai photo enhancer",
       "secondaryKeywords": ["ai enhance photo free", "free photo ai", "ai photo enhancement free"],
       "lastUpdated": "2025-12-10T00:00:00Z",
@@ -211,7 +211,7 @@
         }
       ],
       "limitations": [
-        "5 one-time credits for new accounts",
+        "5 credits for new accounts",
         "Standard processing priority",
         "Single photo upload"
       ],
@@ -241,9 +241,9 @@
       "slug": "free-ai-upscaler",
       "title": "Free AI Upscaler",
       "metaTitle": "Free AI Upscaler - Upscale Images with AI | MyImageUpscaler",
-      "metaDescription": "Free AI image upscaler. Create an account for 5 one-time credits to increase image resolution with neural networks and no watermarks.",
+      "metaDescription": "Free AI image upscaler. Create an account for 5 credits to increase image resolution with neural networks and no watermarks.",
       "h1": "Free AI Upscaler - Neural Network Image Upscaling",
-      "intro": "Upscale images using advanced AI. New accounts receive 5 one-time credits with the same technology used by professionals.",
+      "intro": "Upscale images using advanced AI. New accounts receive 5 credits with the same technology used by professionals.",
       "primaryKeyword": "free ai upscaler",
       "secondaryKeywords": ["ai upscale free", "free neural upscaler", "ai image upscaling free"],
       "lastUpdated": "2025-12-10T00:00:00Z",
@@ -269,7 +269,7 @@
         }
       ],
       "limitations": [
-        "5 one-time credits for new accounts",
+        "5 credits for new accounts",
         "Maximum 4x resolution increase",
         "One image at a time"
       ],
@@ -315,7 +315,7 @@
       "description": "Professional background removal at zero cost. Our AI model runs entirely in your browser, so there are no usage limits, no watermarks, and your images never leave your device.",
       "features": [
         {
-          "title": "Unlimited Free Use",
+          "title": "Five Free Credits",
           "description": "No credits, no limits. Remove backgrounds from as many images as you want, completely free."
         },
         {

@@ -36,3 +36,23 @@ export function isFreeleaderBlocked(
   if ((profile.purchased_credits_balance ?? 0) > 0) return false;
   return true;
 }
+
+export function isAccountSetupPending(
+  profile: {
+    subscription_status?: string | null;
+    subscription_tier?: string | null;
+    subscription_credits_balance?: number | null;
+    purchased_credits_balance?: number | null;
+  } | null,
+  hasGrantDecision: boolean
+): boolean {
+  if (!profile || hasGrantDecision) return false;
+  if (profile.subscription_status === 'active' || profile.subscription_status === 'trialing') {
+    return false;
+  }
+  if (!isFreeTierProfile(profile.subscription_tier)) return false;
+
+  return (
+    (profile.subscription_credits_balance ?? 0) + (profile.purchased_credits_balance ?? 0) === 0
+  );
+}

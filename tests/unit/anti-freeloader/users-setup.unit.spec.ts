@@ -130,6 +130,19 @@ describe('POST /api/users/setup', () => {
     expect(mockClaimFreeCreditGrant).not.toHaveBeenCalled();
   });
 
+  it('returns a retryable pending response when a free profile cannot be classified', async () => {
+    const res = await POST(makeRequest({ userId: 'user-123' }));
+
+    expect(res.status).toBe(202);
+    await expect(res.json()).resolves.toEqual({
+      success: false,
+      setupStatus: 'pending',
+      retryable: true,
+    });
+    expect(mockClaimFreeCreditGrant).not.toHaveBeenCalled();
+    expect(mockTrackServerEvent).not.toHaveBeenCalled();
+  });
+
   it('tracks a reduced grant without storing a raw IP or browser fingerprint', async () => {
     mockClaimFreeCreditGrant.mockResolvedValue({
       grantedCredits: 3,

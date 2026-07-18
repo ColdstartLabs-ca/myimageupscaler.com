@@ -18,6 +18,7 @@ export const ErrorCodes = {
   FORBIDDEN: 'FORBIDDEN',
   NOT_FOUND: 'NOT_FOUND',
   FREE_LIMIT_EXCEEDED: 'FREE_LIMIT_EXCEEDED',
+  ACCOUNT_SETUP_PENDING: 'ACCOUNT_SETUP_PENDING',
   INSUFFICIENT_CREDITS: 'INSUFFICIENT_CREDITS',
   RATE_LIMITED: 'RATE_LIMITED',
   BATCH_LIMIT_EXCEEDED: 'BATCH_LIMIT_EXCEEDED',
@@ -159,6 +160,10 @@ export const ErrorStatusMap: Record<ErrorCode, { status: number; defaultMessage:
   [ErrorCodes.FREE_LIMIT_EXCEEDED]: {
     status: 402,
     defaultMessage: 'You have used all of your free credits. Upgrade to continue.',
+  },
+  [ErrorCodes.ACCOUNT_SETUP_PENDING]: {
+    status: 409,
+    defaultMessage: 'Your account setup is still completing. Please try again shortly.',
   },
   [ErrorCodes.PAYMENT_REQUIRED]: {
     status: 402,

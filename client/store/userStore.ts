@@ -7,6 +7,7 @@ import { create } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
 import { handlePostAuthRedirect } from './auth/postAuthRedirect';
 import { analytics } from '@client/analytics';
+import { completeAccountSetup } from '@client/utils/account-setup';
 
 // Cache keys
 const USER_CACHE_KEY = `${clientEnv.CACHE_USER_KEY_PREFIX}_user_cache`;
@@ -251,8 +252,12 @@ export const useUserStore = create<IUserState>((set, get) => ({
 
   signInWithEmail: async (email, password) => {
     enablePostAuthRedirect();
-    const { error } = await getSupabase().auth.signInWithPassword({ email, password });
+    const { data, error } = await getSupabase().auth.signInWithPassword({ email, password });
     if (error) throw error;
+    if (!data.session?.access_token) {
+      throw new Error('Sign in did not return an authenticated session');
+    }
+    await completeAccountSetup(data.session.access_token);
   },
 
   signUpWithEmail: async (email, password) => {
@@ -263,16 +268,9 @@ export const useUserStore = create<IUserState>((set, get) => ({
       options: { emailRedirectTo: `${window.location.origin}/auth/confirm` },
     });
     if (error) throw error;
-    // Fire-and-forget setup call when we have a session (immediate signup without email confirmation)
+    // Immediate-session signup is complete only after the server records a terminal setup decision.
     if (data.session?.access_token) {
-      await fetch('/api/users/setup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${data.session.access_token}`,
-        },
-        body: JSON.stringify({}),
-      }).catch(() => {});
+      await completeAccountSetup(data.session.access_token);
     }
     return { emailConfirmationRequired: !!data.user && !data.session };
   },
@@ -350,7 +348,7 @@ function clearUserCache(): void {
 // Only run client-side initialization
 if (typeof window !== 'undefined') {
   // Auth state listener (single source of truth)
-  getSupabase().auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
+  getSupabase().auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
     const store = useUserStore.getState();
 
     if (event === 'SIGNED_OUT' || !session) {
@@ -417,7 +415,14 @@ if (typeof window !== 'undefined') {
       // OAuth redirects directly to /dashboard via redirectTo option
       if (shouldRedirectToDashboard) {
         shouldRedirectToDashboard = false;
-        handlePostAuthRedirect();
+        try {
+          await completeAccountSetup(session.access_token);
+          await handlePostAuthRedirect();
+        } catch {
+          useUserStore.setState({
+            error: 'We could not finish setting up your account. Please try signing in again.',
+          });
+        }
       }
     }
   });

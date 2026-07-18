@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { readFileSync, readdirSync } from 'node:fs';
 
 import comparisonData from '@/app/seo/data/comparison.json';
 import freeData from '@/app/seo/data/free.json';
@@ -9,7 +10,19 @@ import localeFreeData from '@/locales/en/free.json';
 import localeToolsData from '@/locales/en/tools.json';
 
 const renewalClaim =
-  /\b10 (?:free )?(?:credits|enhancements|upscales|images)\b|free (?:credits|enhancements|upscales|images).*?(?:monthly|per month|every month)|credits renew monthly|wait until next month/i;
+  /\b10 (?:free )?(?:credits|enhancements|upscales|images)\b|(?:5|10) credits\/(?:month|mo)|free (?:credits|enhancements|upscales|images).*?(?:monthly|per month|every month)|credits renew monthly|wait until next month/i;
+
+const ownedPolicyCopy = [
+  ...readdirSync('app/seo/data').map(file => `app/seo/data/${file}`),
+  ...readdirSync('locales/en').map(file => `locales/en/${file}`),
+  'server/services/email-providers/base-email-provider-adapter.ts',
+  'emails/templates/LifecycleWelcomeEmail.tsx',
+  'lib/seo/schema-generator.ts',
+  'shared/config/subscription.config.ts',
+]
+  .filter(file => file.endsWith('.json') || file.endsWith('.ts') || file.endsWith('.tsx'))
+  .map(file => readFileSync(file, 'utf8'))
+  .join('\n');
 
 function relevantFreePages(data: typeof freeData): string {
   return JSON.stringify(data.pages.filter(page => page.slug !== 'free-background-remover'));
@@ -37,7 +50,7 @@ function namedMyImageUpscaler(value: unknown): unknown[] {
 }
 
 describe('free-credit policy copy', () => {
-  test('free and upscaler pages describe five one-time credits without renewal claims', () => {
+  test('free and upscaler pages describe five credits without renewal claims', () => {
     const surfaces = [
       relevantFreePages(freeData),
       relevantFreePages(localeFreeData),
@@ -46,7 +59,7 @@ describe('free-credit policy copy', () => {
     ];
 
     for (const surface of surfaces) {
-      expect(surface).toContain('5 one-time');
+      expect(surface).toContain('5 free credits');
       for (const text of textValues(JSON.parse(surface) as unknown)) {
         expect(text).not.toMatch(renewalClaim);
       }
@@ -61,5 +74,18 @@ describe('free-credit policy copy', () => {
         expect(text).not.toMatch(/free \(10\/mo\)|10 credits\/month|free credits monthly/i);
       }
     }
+  });
+
+  test('owned English and SEO copy never promises ten or recurring welcome credits', () => {
+    expect(ownedPolicyCopy).not.toMatch(/\b10 free credits\b/i);
+    expect(ownedPolicyCopy).not.toMatch(/\b10 credits\/(?:month|mo)\b/i);
+    expect(ownedPolicyCopy).not.toMatch(/MyImageUpscaler.{0,160}\b10 free images\b/i);
+    expect(ownedPolicyCopy).not.toMatch(/MyImageUpscaler.{0,160}\bunlimited free\b/i);
+    expect(ownedPolicyCopy).not.toContain('Your first 10 credits are ready');
+    expect(ownedPolicyCopy).not.toContain('Free tier with 10 credits');
+    expect(ownedPolicyCopy).not.toMatch(/5 one-time (?:free )?credits/i);
+    expect(ownedPolicyCopy).not.toContain(
+      '`${CREDIT_COSTS.DEFAULT_FREE_CREDITS} credits per month`'
+    );
   });
 });

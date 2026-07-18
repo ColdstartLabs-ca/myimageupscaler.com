@@ -4,6 +4,7 @@ import { handlePostAuthRedirect } from './postAuthRedirect';
 import { saveAuthCache } from './authCache';
 import { useProfileStore } from '@client/store/profileStore';
 import type { IAuthState } from './types';
+import { completeAccountSetup } from '@client/utils/account-setup';
 
 const PROFILE_FETCH_TIMEOUT = 1500; // Reduced from 3000ms
 
@@ -83,7 +84,12 @@ async function handleUserSession(
 
   // Handle post-auth actions for new sign-ins
   if (event === 'SIGNED_IN' && !wasAuthenticated && typeof window !== 'undefined') {
-    await handlePostAuthRedirect();
+    try {
+      await completeAccountSetup(session.access_token);
+      await handlePostAuthRedirect();
+    } catch {
+      // The initiating auth action or auth completion page owns the user-visible error.
+    }
   }
 }
 

@@ -5,6 +5,10 @@ const migration = readFileSync(
   'supabase/migrations/20260718021253_free_tier_credit_grants.sql',
   'utf8'
 );
+const restorePolicyMigration = readFileSync(
+  'supabase/migrations/20260718190000_restore_five_credit_grant_policy.sql',
+  'utf8'
+);
 
 describe('free credit grant migration', () => {
   it('grants only once per user and serializes same-identity accounts', () => {
@@ -47,5 +51,34 @@ describe('free credit grant migration', () => {
       'subscription_credits_balance = COALESCE(subscription_credits_balance, 0) + v_granted_credits'
     );
     expect(migration).not.toContain('purchased_credits_balance =');
+  });
+});
+
+describe('five-credit policy restore migration', () => {
+  it('restores the exact supported 5/3/0 amounts and identity fallback', () => {
+    expect(restorePolicyMigration).toContain('p_requested_credits NOT IN (0, 3, 5)');
+    expect(restorePolicyMigration).toContain(
+      'WHEN v_matched_account_count = 1 THEN LEAST(p_requested_credits, 3)'
+    );
+    expect(restorePolicyMigration).not.toContain("'ten_credit_unique_v1'");
+  });
+
+  it('preserves idempotent existing decisions and service-role-only execution', () => {
+    expect(restorePolicyMigration).toContain('IF FOUND THEN');
+    expect(restorePolicyMigration).toContain(
+      'REVOKE ALL ON FUNCTION public.claim_free_credit_grant(UUID, TEXT, TEXT, INTEGER) FROM authenticated'
+    );
+    expect(restorePolicyMigration).toContain(
+      'GRANT EXECUTE ON FUNCTION public.claim_free_credit_grant(UUID, TEXT, TEXT, INTEGER) TO service_role'
+    );
+  });
+
+  it('removes the executed one-off SECURITY DEFINER repair and cancellation functions', () => {
+    expect(restorePolicyMigration).toContain(
+      'DROP FUNCTION IF EXISTS public.repair_free_credit_incident_user('
+    );
+    expect(restorePolicyMigration).toContain(
+      'DROP FUNCTION IF EXISTS public.cancel_stale_balance_email(UUID, UUID, TEXT, INTEGER, INTEGER)'
+    );
   });
 });

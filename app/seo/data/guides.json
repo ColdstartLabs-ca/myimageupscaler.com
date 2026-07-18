@@ -30,7 +30,7 @@
         {
           "step": 2,
           "title": "Select Your Upscaling Tool",
-          "content": "Choose an AI upscaling tool based on your needs. MyImageUpscaler offers excellent text preservation, fast processing, and generous free tier.\n\nConsider these factors when choosing:\n- Free tier generosity (MyImageUpscaler: 10 credits/month, no watermarks)\n- Processing speed (MyImageUpscaler: 30-60 seconds)\n- Maximum upscale level (2x, 4x, 8x)\n- Special features (batch processing, text preservation)\n- API access for automation"
+          "content": "Choose an AI upscaling tool based on your needs. MyImageUpscaler offers excellent text preservation, fast processing, and generous free tier.\n\nConsider these factors when choosing:\n- Free tier generosity (MyImageUpscaler: 5 credits, no watermarks)\n- Processing speed (MyImageUpscaler: 30-60 seconds)\n- Maximum upscale level (2x, 4x, 8x)\n- Special features (batch processing, text preservation)\n- API access for automation"
         },
         {
           "step": 3,

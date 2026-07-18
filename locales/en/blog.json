@@ -20,10 +20,10 @@
     "description": "Join over 10,000 businesses using {appName} to enhance their images. Start your free trial today.",
     "primaryButton": "Start Free Trial",
     "secondaryButton": "View Pricing",
-    "disclaimer": "No credit card required • 10 free credits • Cancel anytime",
+    "disclaimer": "No credit card required • 5 free credits • Cancel anytime",
     "try": {
       "title": "Try It Yourself",
-      "description": "Upload your image and see the AI enhancement in action. Start with 10 free credits.",
+      "description": "Upload your image and see the AI enhancement in action. Start with 5 free credits.",
       "button": "Try Free Now"
     },
     "demo": {
@@ -36,7 +36,7 @@
     },
     "pricing": {
       "title": "Ready to Transform Your Images?",
-      "description": "Start with 10 free credits. No credit card required. Cancel anytime.",
+      "description": "Start with 5 free credits. No credit card required. Cancel anytime.",
       "button": "View Pricing"
     },
     "tool": {
@@ -44,7 +44,7 @@
       "description": "AI-powered enhancement in 30 seconds. Keep text sharp.",
       "button": "Try Free"
     },
-    "trustIndicators": ["10 free credits", "Quick signup", "Instant results"]
+    "trustIndicators": ["5 free credits", "Quick signup", "Instant results"]
   },
   "article": {
     "by": "By",

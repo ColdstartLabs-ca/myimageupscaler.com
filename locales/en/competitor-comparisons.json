@@ -289,7 +289,7 @@
           "pricing": "Free tier, $9.99/month Pro",
           "rating": 4.8,
           "tagline": "Fast, reliable AI upscaling with generous free tier",
-          "description": "Premium online AI upscaler offering excellent quality with unlimited free processing and affordable Pro features.",
+          "description": "Premium online AI upscaler offering excellent quality with 5 free credits and affordable Pro features.",
           "isRecommended": true,
           "features": {
             "price": "$9.99/month",
@@ -301,7 +301,7 @@
             "customer_support": "24/7"
           },
           "pros": [
-            "Truly unlimited free tier",
+            "5 free credits",
             "Higher quality results",
             "Faster processing speeds",
             "Better customer support",
@@ -375,14 +375,14 @@
         }
       ],
       "verdict": {
-        "summary": "MyImageUpscaler clearly wins with its unlimited free tier, superior quality, faster processing, and better customer support. VanceAI's limited free tier makes it difficult to thoroughly test before committing.",
+        "summary": "MyImageUpscaler clearly wins with its 5 free credits, superior quality, faster processing, and better customer support. VanceAI's limited free tier makes it difficult to thoroughly test before committing.",
         "winner": "MyImageUpscaler",
-        "reason": "Unlimited free tier, better quality results, faster processing, and more transparent pricing make it the superior choice."
+        "reason": "5 free credits, better quality results, faster processing, and more transparent pricing make it the superior choice."
       },
       "faq": [
         {
           "question": "How does the Free tier comparison between the two services?",
-          "answer": "MyImageUpscaler offers truly unlimited Free processing, while VanceAI only provides 3 credits per month, making it difficult to test thoroughly."
+          "answer": "MyImageUpscaler offers 5 free credits after signup, while VanceAI only provides 3 credits per month, making it difficult to test thoroughly."
         },
         {
           "question": "Which one produces better image quality?",
@@ -394,7 +394,7 @@
         },
         {
           "question": "Can I switch from VanceAI to MyImageUpscaler easily?",
-          "answer": "Yes! MyImageUpscaler's unlimited Free tier makes it easy to test without commitment, and the interface is more intuitive for upscaling specifically."
+          "answer": "Yes! MyImageUpscaler's 5 free credits make it easy to test without commitment, and the interface is more intuitive for upscaling specifically."
         }
       ]
     },
@@ -564,7 +564,7 @@
           },
           "pros": [
             "Much more affordable",
-            "Unlimited free processing",
+            "5 free credits",
             "Better customer support",
             "Faster processing",
             "Easy API integration",
@@ -652,7 +652,7 @@
         },
         {
           "question": "Can I try both before deciding?",
-          "answer": "MyImageUpscaler offers unlimited Free processing for thorough testing. Let's Enhance has limited Free credits, making comparison difficult."
+          "answer": "MyImageUpscaler offers 5 free credits for thorough testing. Let's Enhance has limited Free credits, making comparison difficult."
         },
         {
           "question": "What enterprise features does Let's Enhance offer?",
@@ -681,7 +681,7 @@
           "name": "MyImageUpscaler",
           "pricing": "Free tier, $9.99/month Pro",
           "rating": 4.8,
-          "tagline": "Premium AI upscaling with unlimited free access",
+          "tagline": "Premium AI upscaling with 5 free credits",
           "description": "Advanced AI upscaler offering professional quality with generous free tier and affordable premium features.",
           "isRecommended": true,
           "features": {
@@ -693,7 +693,7 @@
             "customer_support": "24/7"
           },
           "pros": [
-            "Unlimited free processing",
+            "5 free credits",
             "Higher quality results",
             "Faster processing speeds",
             "Better customer support",
@@ -765,14 +765,14 @@
         }
       ],
       "verdict": {
-        "summary": "MyImageUpscaler vastly outperforms BigJPG with unlimited free access, better quality, faster speeds, and professional-grade features. BigJPG may be suitable for very casual, limited use.",
+        "summary": "MyImageUpscaler vastly outperforms BigJPG with 5 free credits, better quality, faster speeds, and professional-grade features. BigJPG may be suitable for very casual, limited use.",
         "winner": "MyImageUpscaler",
-        "reason": "Superior in every metric: unlimited free usage, better quality, faster processing, and professional support at a reasonable price point."
+        "reason": "Superior in every metric: 5 free credits, better quality, faster processing, and professional support at a reasonable price point."
       },
       "faq": [
         {
           "question": "Is BigJPG completely Free?",
-          "answer": "No, BigJPG only offers 5 Free images per day, which is very limited for any serious use. MyImageUpscaler offers truly unlimited Free processing."
+          "answer": "No, BigJPG only offers 5 Free images per day, which is very limited for any serious use. MyImageUpscaler offers 5 free credits after signup."
         },
         {
           "question": "Which one is better for large JPG files?",
@@ -810,7 +810,7 @@
           "pricing": "Free tier, $9.99/month Pro",
           "rating": 4.8,
           "tagline": "Professional AI upscaling with comprehensive features",
-          "description": "Full-featured AI upscaler offering professional quality enhancement with unlimited free access and premium features.",
+          "description": "Full-featured AI upscaler offering professional quality enhancement with 5 free credits and premium features.",
           "isRecommended": true,
           "features": {
             "price": "$9.99/month",
@@ -821,7 +821,7 @@
             "support_quality": "Excellent"
           },
           "pros": [
-            "Unlimited free processing",
+            "5 free credits",
             "Superior upscaling quality",
             "More comprehensive features",
             "Better customer support",
@@ -832,14 +832,14 @@
         },
         {
           "name": "SmartMagnify",
-          "pricing": "Free 10 credits/month, $19/month Premium",
+          "pricing": "Free 5 credits, $19/month Premium",
           "rating": 4.1,
           "tagline": "AI-powered image enhancement platform",
           "description": "AI enhancement service offering basic upscaling along with other image processing tools with a credit-based pricing model.",
           "isRecommended": false,
           "features": {
             "price": "$19/month",
-            "free_tier": "10 credits/month",
+            "free_tier": "5 credits",
             "upscaling_quality": "Good",
             "additional_features": true,
             "processing_speed": "Medium",
@@ -893,9 +893,9 @@
         }
       ],
       "verdict": {
-        "summary": "MyImageUpscaler offers significantly better value with superior upscaling quality, unlimited free access, and much lower pricing. SmartMagnify is expensive and doesn't justify the cost for upscaling specifically.",
+        "summary": "MyImageUpscaler offers significantly better value with superior upscaling quality, 5 free credits, and much lower pricing. SmartMagnify is expensive and doesn't justify the cost for upscaling specifically.",
         "winner": "MyImageUpscaler",
-        "reason": "90% lower cost for better upscaling quality with unlimited free access makes it the clear winner for upscaling needs."
+        "reason": "90% lower cost for better upscaling quality with 5 free credits make it the clear winner for upscaling needs."
       },
       "faq": [
         {
@@ -904,7 +904,7 @@
         },
         {
           "question": "Can I get unlimited processing with SmartMagnify?",
-          "answer": "No, SmartMagnify uses a credit-based system even with their premium plan, unlike MyImageUpscaler's unlimited Free tier."
+          "answer": "No, SmartMagnify uses a credit-based system even with their premium plan, unlike MyImageUpscaler's 5 free credits."
         },
         {
           "question": "Is SmartMagnify's quality worth the price?",
@@ -938,7 +938,7 @@
           "pricing": "Free tier, $9.99/month Pro",
           "rating": 4.8,
           "tagline": "Professional online AI upscaling with unlimited access",
-          "description": "Web-based AI upscaler delivering professional quality results with unlimited free processing and premium features.",
+          "description": "Web-based AI upscaler delivering professional quality results with 5 free credits and premium features.",
           "isRecommended": true,
           "features": {
             "price": "$9.99/month",
@@ -950,7 +950,7 @@
           },
           "pros": [
             "Much higher quality results",
-            "Unlimited free processing",
+            "5 free credits",
             "More powerful processing",
             "Works on all devices",
             "No app installation required",
@@ -1022,9 +1022,9 @@
         }
       ],
       "verdict": {
-        "summary": "PhotoEnhancer offers mobile convenience, but MyImageUpscaler provides vastly superior quality, unlimited free access, and professional-grade capabilities. Choose based on your quality vs convenience priorities.",
+        "summary": "PhotoEnhancer offers mobile convenience, but MyImageUpscaler provides vastly superior quality, 5 free credits, and professional-grade capabilities. Choose based on your quality vs convenience priorities.",
         "winner": "MyImageUpscaler",
-        "reason": "Delivers professional-quality results with unlimited free access, making it better value despite lacking mobile app convenience."
+        "reason": "Delivers professional-quality results with 5 free credits, making it better value despite lacking mobile app convenience."
       },
       "faq": [
         {
@@ -1067,7 +1067,7 @@
           "pricing": "Completely free",
           "rating": 4.8,
           "tagline": "Best overall free AI upscaler",
-          "description": "Professional-quality AI upscaler offering completely unlimited free processing with no restrictions or watermarks.",
+          "description": "Professional-quality AI upscaler offering 5 free credits with no watermarks.",
           "isRecommended": true,
           "features": {
             "price": "Free",
@@ -1078,7 +1078,7 @@
             "customer_support": "Free"
           },
           "pros": [
-            "Truly unlimited free usage",
+            "5 free credits",
             "Professional quality results",
             "No watermarks or restrictions",
             "Excellent customer support",
@@ -1172,18 +1172,18 @@
         }
       ],
       "verdict": {
-        "summary": "MyImageUpscaler stands out as the clear winner with truly unlimited free usage, professional quality, and excellent support. Other options either have severe limitations or specialized use cases.",
+        "summary": "MyImageUpscaler stands out as the clear winner with 5 free credits, professional quality, and excellent support. Other options either have severe limitations or specialized use cases.",
         "winner": "MyImageUpscaler",
         "reason": "Only free upscaler offering unlimited professional-quality processing with no restrictions and excellent customer support."
       },
       "faq": [
         {
           "question": "Are there any truly unlimited Free AI upscalers?",
-          "answer": "Yes! MyImageUpscaler offers genuinely unlimited Free processing with no restrictions, watermarks, or hidden limitations."
+          "answer": "Yes! MyImageUpscaler offers 5 free credits with no watermarks."
         },
         {
           "question": "Do Free AI upscalers add watermarks?",
-          "answer": "Many do, but MyImageUpscaler and some others like wAIfu2x provide unlimited Free processing without any watermarks."
+          "answer": "Many do, but MyImageUpscaler and some others like wAIfu2x provide 5 free credits without any watermarks."
         },
         {
           "question": "Can Free AI upscalers match pAId quality?",
@@ -1216,8 +1216,8 @@
           "name": "MyImageUpscaler",
           "pricing": "Free tier, $9.99/month Pro",
           "rating": 4.8,
-          "tagline": "Leading modern AI upscaler with unlimited free access",
-          "description": "State-of-the-art AI upscaler using the latest neural network technology with unlimited free processing and premium features.",
+          "tagline": "Leading modern AI upscaler with 5 free credits",
+          "description": "State-of-the-art AI upscaler using the latest neural network technology with 5 free credits and premium features.",
           "isRecommended": true,
           "features": {
             "price": "$9.99/month",
@@ -1228,7 +1228,7 @@
             "customer_support": "24/7"
           },
           "pros": [
-            "Truly unlimited free processing",
+            "5 free credits",
             "Latest AI technology",
             "Faster processing speeds",
             "Superior user experience",
@@ -1299,9 +1299,9 @@
         }
       ],
       "verdict": {
-        "summary": "MyImageUpscaler provides superior value with unlimited free access, better AI technology, faster processing, and excellent support. Upscay's limited free tier and higher pricing make it less appealing.",
+        "summary": "MyImageUpscaler provides superior value with 5 free credits, better AI technology, faster processing, and excellent support. Upscay's limited free tier and higher pricing make it less appealing.",
         "winner": "MyImageUpscaler",
-        "reason": "Unlimited free access to superior AI technology at 33% lower price with better support makes it the clear winner."
+        "reason": "5 free credits to superior AI technology at 33% lower price with better support makes it the clear winner."
       },
       "faq": [
         {
@@ -1310,11 +1310,11 @@
         },
         {
           "question": "Can I test Upscay thoroughly before paying?",
-          "answer": "No, Upscay only offers 10 Free images total, which is insufficient for thorough testing. MyImageUpscaler offers unlimited Free processing."
+          "answer": "No, Upscay only offers 10 Free images total, which is insufficient for thorough testing. MyImageUpscaler offers 5 free credits."
         },
         {
           "question": "Is Upscay worth $15/month?",
-          "answer": "Given that MyImageUpscaler offers better quality and unlimited Free access at $9.99/month, Upscay is difficult to justify at its price point."
+          "answer": "Given that MyImageUpscaler offers better quality and 5 free credits at $9.99/month, Upscay is difficult to justify at its price point."
         },
         {
           "question": "Which has better customer support?",
@@ -1356,7 +1356,7 @@
           },
           "pros": [
             "More advanced AI technology",
-            "Truly unlimited free usage",
+            "5 free credits",
             "Extremely easy to use",
             "Consistent quality results",
             "Automatic improvements and updates",
@@ -1472,8 +1472,8 @@
           "name": "MyImageUpscaler",
           "pricing": "Free tier, $9.99/month Pro",
           "rating": 4.8,
-          "tagline": "Specialized AI upscaling with unlimited free access",
-          "description": "Professional AI upscaler focused on delivering the highest quality upscaling results with unlimited free processing.",
+          "tagline": "Specialized AI upscaling with 5 free credits",
+          "description": "Professional AI upscaler focused on delivering the highest quality upscaling results with 5 free credits.",
           "isRecommended": true,
           "features": {
             "price": "$9.99/month",
@@ -1484,7 +1484,7 @@
             "no_watermarks": true
           },
           "pros": [
-            "Truly unlimited free processing",
+            "5 free credits",
             "Superior upscaling quality",
             "Professional-grade results",
             "Excellent for all photo types",
@@ -1557,9 +1557,9 @@
         }
       ],
       "verdict": {
-        "summary": "MyImageUpscaler excels at upscaling with superior quality and unlimited free access. Remini offers general enhancement but falls short for professional upscaling needs.",
+        "summary": "MyImageUpscaler excels at upscaling with superior quality and 5 free credits. Remini offers general enhancement but falls short for professional upscaling needs.",
         "winner": "MyImageUpscaler",
-        "reason": "Specialized focus on upscaling delivers better results, unlimited free access, and professional-grade quality without watermarks."
+        "reason": "Specialized focus on upscaling delivers better results, 5 free credits, and professional-grade quality without watermarks."
       },
       "faq": [
         {
@@ -1601,8 +1601,8 @@
           "name": "MyImageUpscaler",
           "pricing": "Free tier, $9.99/month Pro",
           "rating": 4.8,
-          "tagline": "Professional AI upscaler with unlimited free access",
-          "description": "Specialized AI upscaler delivering professional quality results with unlimited free processing and no limitations.",
+          "tagline": "Professional AI upscaler with 5 free credits",
+          "description": "Specialized AI upscaler delivering professional quality results with 5 free credits and no limitations.",
           "isRecommended": true,
           "features": {
             "price": "$9.99/month",
@@ -1613,7 +1613,7 @@
             "customer_support": "24/7"
           },
           "pros": [
-            "Unlimited free processing",
+            "5 free credits",
             "Superior upscaling quality",
             "Much faster processing",
             "Professional-grade results",
@@ -1686,9 +1686,9 @@
         }
       ],
       "verdict": {
-        "summary": "For pure upscaling needs, MyImageUpscaler is vastly superior with better quality, speed, and unlimited free access. Fotor is better for comprehensive editing but overpriced for just upscaling.",
+        "summary": "For pure upscaling needs, MyImageUpscaler is vastly superior with better quality, speed, and 5 free credits. Fotor is better for comprehensive editing but overpriced for just upscaling.",
         "winner": "MyImageUpscaler",
-        "reason": "Delivers better upscaling results at lower cost with unlimited free access and superior speed and support."
+        "reason": "Delivers better upscaling results at lower cost with 5 free credits and superior speed and support."
       },
       "faq": [
         {
@@ -1697,7 +1697,7 @@
         },
         {
           "question": "Can I use Fotor for Free upscaling?",
-          "answer": "Fotor has very limited Free usage and processing. MyImageUpscaler offers truly unlimited Free upscaling with better quality."
+          "answer": "Fotor has very limited Free usage and processing. MyImageUpscaler offers 5 free credits with better quality."
         },
         {
           "question": "Which is better value for money?",
@@ -1730,8 +1730,8 @@
           "name": "MyImageUpscaler",
           "pricing": "Free tier, $9.99/month Pro",
           "rating": 4.8,
-          "tagline": "Professional AI upscaler with unlimited free tier",
-          "description": "Professional AI upscaler offering unlimited free processing with superior quality and customer support.",
+          "tagline": "Professional AI upscaler with 5 free credits",
+          "description": "Professional AI upscaler offering 5 free credits with superior quality and customer support.",
           "isRecommended": true,
           "features": {
             "price": "$9.99/month",
@@ -1742,7 +1742,7 @@
             "no_registration": false
           },
           "pros": [
-            "Truly unlimited free processing",
+            "5 free credits",
             "Professional AI quality",
             "Specialized upscaling focus",
             "Excellent customer support",
@@ -1815,9 +1815,9 @@
         }
       ],
       "verdict": {
-        "summary": "While Photoshop Express has the Adobe brand advantage, MyImageUpscaler provides vastly superior upscaling quality with unlimited free access and better support at the same price point.",
+        "summary": "While Photoshop Express has the Adobe brand advantage, MyImageUpscaler provides vastly superior upscaling quality with 5 free credits and better support at the same price point.",
         "winner": "MyImageUpscaler",
-        "reason": "Delivers superior AI upscaling quality with unlimited free access, making it better value than Photoshop Express for upscaling needs."
+        "reason": "Delivers superior AI upscaling quality with 5 free credits, making it better value than Photoshop Express for upscaling needs."
       },
       "faq": [
         {
@@ -1834,7 +1834,7 @@
         },
         {
           "question": "Does Adobe brand justify choosing Photoshop Express?",
-          "answer": "While the Adobe brand is reputable, MyImageUpscaler's superior quality and unlimited Free access make it the better choice for upscaling specifically."
+          "answer": "While the Adobe brand is reputable, MyImageUpscaler's superior quality and 5 free credits make it the better choice for upscaling specifically."
         }
       ]
     },
@@ -1859,8 +1859,8 @@
           "name": "MyImageUpscaler",
           "pricing": "Free tier, $9.99/month Pro",
           "rating": 4.8,
-          "tagline": "Professional AI upscaler with unlimited free access",
-          "description": "Specialized AI upscaler delivering professional quality results with unlimited free processing and excellent customer support.",
+          "tagline": "Professional AI upscaler with 5 free credits",
+          "description": "Specialized AI upscaler delivering professional quality results with 5 free credits and excellent customer support.",
           "isRecommended": true,
           "features": {
             "price": "$9.99/month",
@@ -1871,7 +1871,7 @@
             "processing_speed": "Fast"
           },
           "pros": [
-            "Truly unlimited free processing",
+            "5 free credits",
             "Superior AI upscaling quality",
             "Simple, focused interface",
             "Professional-grade results",
@@ -1944,9 +1944,9 @@
         }
       ],
       "verdict": {
-        "summary": "MyImageUpscaler delivers superior AI upscaling quality with unlimited free access. Pixlr offers comprehensive editing but lacks professional upscaling capabilities.",
+        "summary": "MyImageUpscaler delivers superior AI upscaling quality with 5 free credits. Pixlr offers comprehensive editing but lacks professional upscaling capabilities.",
         "winner": "MyImageUpscaler",
-        "reason": "Specialized AI upscaler delivering professional results with unlimited free access versus general editor with basic AI features."
+        "reason": "Specialized AI upscaler delivering professional results with 5 free credits versus general editor with basic AI features."
       },
       "faq": [
         {
@@ -1988,8 +1988,8 @@
           "name": "MyImageUpscaler",
           "pricing": "Free tier, $9.99/month Pro",
           "rating": 4.8,
-          "tagline": "Professional AI upscaler with unlimited free access",
-          "description": "Specialized AI upscaler delivering professional-quality results with unlimited free processing and advanced AI technology.",
+          "tagline": "Professional AI upscaler with 5 free credits",
+          "description": "Specialized AI upscaler delivering professional-quality results with 5 free credits and advanced AI technology.",
           "isRecommended": true,
           "features": {
             "price": "$9.99/month",
@@ -2000,7 +2000,7 @@
             "batch_processing": true
           },
           "pros": [
-            "Unlimited free processing",
+            "5 free credits",
             "Superior AI upscaling quality",
             "Professional-grade results",
             "Fast processing speeds",
@@ -2073,9 +2073,9 @@
         }
       ],
       "verdict": {
-        "summary": "MyImageUpscaler vastly outperforms Canva in AI upscaling quality with unlimited free access. Canva is better for comprehensive design but overpriced for AI enhancement.",
+        "summary": "MyImageUpscaler vastly outperforms Canva in AI upscaling quality with 5 free credits. Canva is better for comprehensive design but overpriced for AI enhancement.",
         "winner": "MyImageUpscaler",
-        "reason": "33% lower cost with superior AI upscaling quality and unlimited free access makes it the clear winner for image enhancement."
+        "reason": "33% lower cost with superior AI upscaling quality and 5 free credits make it the clear winner for image enhancement."
       },
       "faq": [
         {
@@ -2084,7 +2084,7 @@
         },
         {
           "question": "Is Canva's AI enhancement Free?",
-          "answer": "Canva's AI features are very limited in the Free tier. MyImageUpscaler offers unlimited Free AI upscaling with results."
+          "answer": "Canva's AI features are very limited in the Free tier. MyImageUpscaler offers 5 free credits with results."
         },
         {
           "question": "Which is better for marketing materials?",
@@ -2117,8 +2117,8 @@
           "name": "MyImageUpscaler",
           "pricing": "Free tier, $9.99/month Pro",
           "rating": 4.8,
-          "tagline": "Best overall AI upscaler with unlimited free access",
-          "description": "Professional AI upscaler delivering exceptional quality with unlimited free processing and excellent customer support.",
+          "tagline": "Best overall AI upscaler with 5 free credits",
+          "description": "Professional AI upscaler delivering exceptional quality with 5 free credits and excellent customer support.",
           "isRecommended": true,
           "features": {
             "price": "$9.99/month",
@@ -2129,7 +2129,7 @@
             "ease_of_use": "Excellent"
           },
           "pros": [
-            "Unlimited free processing",
+            "5 free credits",
             "Professional AI quality",
             "Excellent customer support",
             "Fast processing speeds",
@@ -2227,9 +2227,9 @@
         }
       ],
       "verdict": {
-        "summary": "MyImageUpscaler stands out as the best overall AI upscaler with professional quality, unlimited free access, and excellent support. Traditional options offer advanced features but at much higher costs and complexity.",
+        "summary": "MyImageUpscaler stands out as the best overall AI upscaler with professional quality, 5 free credits, and excellent support. Traditional options offer advanced features but at much higher costs and complexity.",
         "winner": "MyImageUpscaler",
-        "reason": "Combines professional quality, unlimited free access, and excellent support at the most affordable price point among professional options."
+        "reason": "Combines professional quality, 5 free credits, and excellent support at the most affordable price point among professional options."
       },
       "faq": [
         {
@@ -2271,7 +2271,7 @@
           "name": "MyImageUpscaler",
           "pricing": "Free tier, $9.99/month Pro",
           "rating": 4.8,
-          "tagline": "Premium AI upscaling with unlimited free access",
+          "tagline": "Premium AI upscaling with 5 free credits",
           "description": "Advanced AI upscaler offering professional quality with generous free tier and affordable premium features.",
           "isRecommended": true,
           "features": {
@@ -2283,7 +2283,7 @@
             "customer_support": "24/7"
           },
           "pros": [
-            "Unlimited free processing",
+            "5 free credits",
             "Higher quality results",
             "Faster processing speeds",
             "Better customer support",
@@ -2355,14 +2355,14 @@
         }
       ],
       "verdict": {
-        "summary": "MyImageUpscaler vastly outperforms Upscale.media with unlimited free access, better quality, faster speeds, and professional-grade features. Upscale.media may be suitable for very casual, limited use.",
+        "summary": "MyImageUpscaler vastly outperforms Upscale.media with 5 free credits, better quality, faster speeds, and professional-grade features. Upscale.media may be suitable for very casual, limited use.",
         "winner": "MyImageUpscaler",
-        "reason": "Superior in every metric: unlimited free usage, better quality, faster processing, and professional support at a reasonable price point."
+        "reason": "Superior in every metric: 5 free credits, better quality, faster processing, and professional support at a reasonable price point."
       },
       "faq": [
         {
           "question": "Is Upscale.media completely Free?",
-          "answer": "No, Upscale.media only offers 5 Free images per day, which is very limited for any serious use. MyImageUpscaler offers truly unlimited Free processing."
+          "answer": "No, Upscale.media only offers 5 Free images per day, which is very limited for any serious use. MyImageUpscaler offers 5 free credits after signup."
         },
         {
           "question": "Which one is better for large image files?",
@@ -2399,8 +2399,8 @@
           "name": "MyImageUpscaler",
           "pricing": "Free tier, $9.99/month Pro",
           "rating": 4.8,
-          "tagline": "Best overall AI upscaler with unlimited free access",
-          "description": "Professional AI upscaler delivering exceptional quality with unlimited free processing and excellent customer support.",
+          "tagline": "Best overall AI upscaler with 5 free credits",
+          "description": "Professional AI upscaler delivering exceptional quality with 5 free credits and excellent customer support.",
           "isRecommended": true,
           "features": {
             "price": "$9.99/month",
@@ -2411,7 +2411,7 @@
             "ease_of_use": "Excellent"
           },
           "pros": [
-            "Unlimited free processing",
+            "5 free credits",
             "Professional AI quality",
             "Excellent customer support",
             "Fast processing speeds",
@@ -2509,14 +2509,14 @@
         }
       ],
       "verdict": {
-        "summary": "MyImageUpscaler stands out as the best overall AI upscaler with professional quality, unlimited free access, and excellent support. Traditional options offer advanced features but at much higher costs and complexity.",
+        "summary": "MyImageUpscaler stands out as the best overall AI upscaler with professional quality, 5 free credits, and excellent support. Traditional options offer advanced features but at much higher costs and complexity.",
         "winner": "MyImageUpscaler",
-        "reason": "Combines professional quality, unlimited free access, and excellent support at the most affordable price point among professional options."
+        "reason": "Combines professional quality, 5 free credits, and excellent support at the most affordable price point among professional options."
       },
       "faq": [
         {
           "question": "What is the AI upscaler overall?",
-          "answer": "MyImageUpscaler is the overall AI upscaler due to its quality, unlimited Free access, fast processing, and excellent customer support."
+          "answer": "MyImageUpscaler is the overall AI upscaler due to its quality, 5 free credits, fast processing, and excellent customer support."
         },
         {
           "question": "Are pAId AI upscalers worth the cost?",
@@ -2554,7 +2554,7 @@
           "pricing": "Completely free",
           "rating": 4.8,
           "tagline": "Best overall free AI photo enhancer",
-          "description": "Professional-quality AI photo enhancer offering completely unlimited free processing with no restrictions or watermarks.",
+          "description": "Professional-quality AI photo enhancer offering 5 free credits with no watermarks.",
           "isRecommended": true,
           "features": {
             "price": "Free",
@@ -2565,7 +2565,7 @@
             "customer_support": "Free"
           },
           "pros": [
-            "Truly unlimited free usage",
+            "5 free credits",
             "Professional quality results",
             "No watermarks or restrictions",
             "Excellent customer support",
@@ -2664,18 +2664,18 @@
         }
       ],
       "verdict": {
-        "summary": "MyImageUpscaler stands out as the clear winner with truly unlimited free usage, professional quality, and excellent support. Other options either have severe limitations or watermarks.",
+        "summary": "MyImageUpscaler stands out as the clear winner with 5 free credits, professional quality, and excellent support. Other options either have severe limitations or watermarks.",
         "winner": "MyImageUpscaler",
         "reason": "Only free AI photo enhancer offering unlimited professional-quality processing with no restrictions, watermarks, or hidden costs."
       },
       "faq": [
         {
           "question": "Are there any truly unlimited Free AI photoexpandedtoolss?",
-          "answer": "Yes! MyImageUpscaler offers genuinely unlimited Free photo enhancement with no restrictions, watermarks, or hidden limitations."
+          "answer": "Yes! MyImageUpscaler offers 5 free credits with no watermarks."
         },
         {
           "question": "Do Free AI photoexpandedtoolss add watermarks?",
-          "answer": "Many do, but MyImageUpscaler provides unlimited Free photo enhancement without any watermarks or restrictions."
+          "answer": "Many do, but MyImageUpscaler provides 5 free credits without any watermarks or restrictions."
         },
         {
           "question": "Can Free AI photoexpandedtoolss match pAId quality?",
@@ -2797,7 +2797,7 @@
       "faq": [
         {
           "question": "Is Icons8 Smart Upscaler completely Free?",
-          "answer": "No, Icons8 Smart Upscaler requires a subscription with limited Free access. MyImageUpscaler offers 10 Free images monthly to start."
+          "answer": "No, Icons8 Smart Upscaler requires a subscription with limited Free access. MyImageUpscaler offers 5 free credits after signup."
         },
         {
           "question": "Which is better for batch processing?",
@@ -2924,7 +2924,7 @@
       "faq": [
         {
           "question": "Is Clipdrop completely Free?",
-          "answer": "No, Clipdrop has limited Free functionality and requires a subscription for full access. MyImageUpscaler offers 10 Free images monthly."
+          "answer": "No, Clipdrop has limited Free functionality and requires a subscription for full access. MyImageUpscaler offers 5 free credits after signup."
         },
         {
           "question": "Which is better for upscaling only?",

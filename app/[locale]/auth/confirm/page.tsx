@@ -5,25 +5,12 @@ import { createClient } from '@shared/utils/supabase/client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { handleAuthRedirect, setAuthIntent } from '@client/utils/authRedirectManager';
 import { useTranslations } from 'next-intl';
-
-/** Call /api/users/setup. Best-effort, doesn't throw. */
-async function callSetup(accessToken: string): Promise<void> {
-  try {
-    await fetch('/api/users/setup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({}),
-    });
-  } catch {
-    // Best effort
-  }
-}
+import { completeAccountSetup } from '@client/utils/account-setup';
 
 function AuthConfirmContent() {
-  const [status, setStatus] = useState<'loading' | 'success' | 'verified_please_login'>('loading');
+  const [status, setStatus] = useState<
+    'loading' | 'success' | 'verified_please_login' | 'setup_error'
+  >('loading');
   const [message, setMessage] = useState('Confirming your email...');
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -31,6 +18,20 @@ function AuthConfirmContent() {
 
   useEffect(() => {
     const supabase = createClient();
+
+    const finishAccountSetup = async (accessToken: string): Promise<void> => {
+      try {
+        await completeAccountSetup(accessToken);
+        setStatus('success');
+        setMessage(t('emailConfirmed'));
+        await handleAuthRedirect();
+      } catch {
+        setStatus('setup_error');
+        setMessage(
+          'We could not finish setting up your account. Please sign in again or contact support.'
+        );
+      }
+    };
 
     // Check if we have a next parameter from the original signup flow
     const nextUrl = searchParams.get('next');
@@ -53,13 +54,7 @@ function AuthConfirmContent() {
       console.log('Auth state change:', event, session?.user?.email);
 
       if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session) {
-        setStatus('success');
-        setMessage(t('emailConfirmed'));
-        // Run setup (region tier + fingerprint) then redirect
-        await callSetup(session.access_token);
-        setTimeout(async () => {
-          await handleAuthRedirect();
-        }, 1000);
+        await finishAccountSetup(session.access_token);
       }
     });
 
@@ -81,12 +76,7 @@ function AuthConfirmContent() {
 
       if (session) {
         console.log('[Auth Confirm] Already authenticated, running setup...');
-        setStatus('success');
-        setMessage(t('emailConfirmed'));
-        await callSetup(session.access_token);
-        setTimeout(async () => {
-          await handleAuthRedirect();
-        }, 1000);
+        await finishAccountSetup(session.access_token);
         return;
       }
 
@@ -103,12 +93,7 @@ function AuthConfirmContent() {
 
           if (data.session) {
             console.log('[Auth Confirm] Code exchange succeeded, running setup...');
-            setStatus('success');
-            setMessage(t('emailConfirmed'));
-            await callSetup(data.session.access_token);
-            setTimeout(async () => {
-              await handleAuthRedirect();
-            }, 1000);
+            await finishAccountSetup(data.session.access_token);
             return;
           }
 
@@ -143,7 +128,7 @@ function AuthConfirmContent() {
     return () => {
       subscription.unsubscribe();
     };
-  }, [router, status, searchParams]);
+  }, [router, searchParams, t]);
 
   const handleLoginClick = () => {
     // Store the intent to return here after login
@@ -161,14 +146,30 @@ function AuthConfirmContent() {
           {/* Icon based on status */}
           <div
             className={`w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center ${
-              status === 'success'
-                ? 'bg-gradient-to-r from-success to-success/80'
-                : status === 'verified_please_login'
+              status === 'setup_error'
+                ? 'bg-destructive'
+                : status === 'success'
                   ? 'bg-gradient-to-r from-success to-success/80'
-                  : 'bg-accent glow-blue'
+                  : status === 'verified_please_login'
+                    ? 'bg-gradient-to-r from-success to-success/80'
+                    : 'bg-accent glow-blue'
             }`}
           >
-            {status === 'success' || status === 'verified_please_login' ? (
+            {status === 'setup_error' ? (
+              <svg
+                className="w-8 h-8 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            ) : status === 'success' || status === 'verified_please_login' ? (
               <svg
                 className="w-8 h-8 text-white"
                 fill="none"
@@ -188,11 +189,13 @@ function AuthConfirmContent() {
           </div>
 
           <h1 className="text-2xl font-bold text-foreground mb-2">
-            {status === 'success'
-              ? t('emailConfirmedTitle')
-              : status === 'verified_please_login'
+            {status === 'setup_error'
+              ? 'Account Setup Error'
+              : status === 'success'
                 ? t('emailConfirmedTitle')
-                : t('confirmingEmailTitle')}
+                : status === 'verified_please_login'
+                  ? t('emailConfirmedTitle')
+                  : t('confirmingEmailTitle')}
           </h1>
 
           <p className="text-muted-foreground mb-6">{message}</p>
@@ -205,7 +208,7 @@ function AuthConfirmContent() {
             </div>
           )}
 
-          {status === 'verified_please_login' && (
+          {(status === 'verified_please_login' || status === 'setup_error') && (
             <div className="space-y-3 mt-4">
               <button
                 onClick={handleLoginClick}

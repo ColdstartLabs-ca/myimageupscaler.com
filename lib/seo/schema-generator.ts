@@ -854,7 +854,7 @@ export function generateHomepageSchema(locale: Locale = 'en'): Record<string, un
         price: 0,
         priceCurrency: 'USD',
         availability: 'https://schema.org/InStock',
-        description: 'Free tier with 10 credits',
+        description: 'Free tier with 5 credits',
       },
       author: organizationRef,
       publisher: organizationRef,

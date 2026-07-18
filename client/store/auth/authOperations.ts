@@ -4,6 +4,7 @@ import { analytics } from '@client/analytics';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { clearAuthCache, loadAuthCache, saveAuthCache } from './authCache';
 import type { IAuthState, IAuthUser, ISignUpResult } from './types';
+import { completeAccountSetup } from '@client/utils/account-setup';
 
 const AUTH_INIT_TIMEOUT = 5000; // Increased to prevent premature timeouts
 
@@ -30,6 +31,10 @@ export function createSignInWithEmail(
     await withLoading(async () => {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
+      if (!data.session?.access_token) {
+        throw new Error('Sign in did not return an authenticated session');
+      }
+      await completeAccountSetup(data.session.access_token);
 
       // Track login event
       analytics.track('login', { method: 'email' });
@@ -82,16 +87,9 @@ export function createSignUpWithEmail(
       // Track signup completed (user created, even if email confirmation pending)
       analytics.track('signup_completed', { method: 'email' });
 
-      // Fire-and-forget setup call when we have a session (immediate signup without email confirmation)
+      // Immediate-session signup is complete only after the server records a terminal setup decision.
       if (data.session?.access_token) {
-        await fetch('/api/users/setup', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${data.session.access_token}`,
-          },
-          body: JSON.stringify({}),
-        }).catch(() => {});
+        await completeAccountSetup(data.session.access_token);
       }
 
       return { emailConfirmationRequired };

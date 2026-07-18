@@ -107,6 +107,32 @@ export function assertVerifierCleanupResult(
   }
 }
 
+export function summarizeStaleBalanceCancellations(
+  rows: Array<{ reason: string | null }>
+): Record<string, number> {
+  return rows.reduce<Record<string, number>>((counts, row) => {
+    const reason = row.reason || 'unknown';
+    counts[reason] = (counts[reason] || 0) + 1;
+    return counts;
+  }, {});
+}
+
+async function loadStaleBalanceCancellationCounts(): Promise<Record<string, number>> {
+  const { data, error } = await supabaseAdmin
+    .from('email_lifecycle_queue')
+    .select('reason')
+    .eq('status', 'cancelled')
+    .in('reason', [
+      'stale_balance_not_zero',
+      'stale_balance_above_low_credit_threshold',
+      'stale_balance_now_sufficient',
+      'stale_purchased_balance_empty',
+      'stale_total_balance_empty',
+    ]);
+  if (error) throw new Error(`Failed to report stale balance cancellations: ${error.message}`);
+  return summarizeStaleBalanceCancellations(data || []);
+}
+
 export function buildDeliveryClickUrl(params: {
   queueId: string;
   destination?: string;
@@ -328,8 +354,10 @@ Options:
       }
     }
 
+    const staleBalanceCancellations = await loadStaleBalanceCancellationCounts();
+
     console.log(
-      `OK controlled recovery delivery: runId=${runId} queue=${queueId} provider=${sendResult.provider} messageId=${sendResult.messageId} redirect=${redirectUrl}`
+      `OK controlled recovery delivery: runId=${runId} queue=${queueId} provider=${sendResult.provider} messageId=${sendResult.messageId} redirect=${redirectUrl} staleBalanceCancellations=${JSON.stringify(staleBalanceCancellations)}`
     );
   } finally {
     if (!args.keepRows) {

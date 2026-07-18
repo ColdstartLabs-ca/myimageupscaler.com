@@ -19,6 +19,26 @@ Maintenance rules:
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
 
+## 2026-07-18
+
+### Production Welcome-Credit Policy Correction
+
+Source: [production incident remediation PRD](../../PRDs/production-credit-checkout-email-processing-incident-remediation.md)
+
+Changes:
+
+- Corrected stale English locale, SEO/pSEO, pricing-feature, and lifecycle-email claims from 10 or unlimited recurring free credits to the standing five-credit welcome policy.
+- Preserved the regional grant contract of 5 standard / 3 restricted / 0 paywalled credits; URLs, metadata ownership, canonicals, and indexability are unchanged.
+
+Validation:
+
+- Expanded `tests/unit/seo/free-credit-policy-copy.unit.spec.ts` to scan all owned English locale and SEO data plus pricing/email source copy for revoked 10-credit and recurring-free-credit promises.
+- Ran the focused SEO/config tests and repository verification gates recorded with the incident remediation.
+
+Follow-up:
+
+- No GSC request-indexing or IndexNow action is required because this is a product-terms correction without URL, canonical, sitemap, or indexability changes.
+
 ## 2026-07-17
 
 ### One-Time Free-Credit Copy Alignment
@@ -26,7 +46,7 @@ Maintenance rules:
 Changes:
 
 - Corrected free-category, AI upscaler, and comparison copy that incorrectly described recurring monthly free credits or no-signup access.
-- Aligned English SEO data and locale mirrors with the product policy: new accounts receive five one-time credits, credits do not renew, and users must purchase credits or a paid plan to continue.
+- Aligned English SEO data and locale mirrors with the product policy: new accounts receive five free credits, credits do not renew, and users must purchase credits or a paid plan to continue.
 
 Validation:
 

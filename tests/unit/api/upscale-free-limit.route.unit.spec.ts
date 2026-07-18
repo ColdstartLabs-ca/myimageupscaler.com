@@ -15,6 +15,7 @@ const mocks = vi.hoisted(() => ({
   },
   processImage: vi.fn(),
   rateLimit: vi.fn(),
+  setupPending: vi.fn(),
   track: vi.fn(),
 }));
 
@@ -70,7 +71,10 @@ vi.mock('@shared/config/subscription.utils', () => ({
   calculateFinalProviderAwareCredits: () => ({ finalCredits: 1 }),
   getModelForTier: () => 'real-esrgan',
 }));
-vi.mock('@/lib/anti-freeloader/check-freeloader', () => ({ isFreeleaderBlocked: () => false }));
+vi.mock('@/lib/anti-freeloader/check-freeloader', () => ({
+  isAccountSetupPending: mocks.setupPending,
+  isFreeleaderBlocked: () => false,
+}));
 vi.mock('@shared/validation/upscale.schema', () => ({
   upscaleSchema: {
     parse: () => ({
@@ -118,6 +122,7 @@ describe('POST /api/upscale free limit errors', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.rateLimit.mockResolvedValue({ success: true, remaining: 4, reset: Date.now() + 60_000 });
+    mocks.setupPending.mockReturnValue(false);
     mocks.batchCheck.mockResolvedValue({
       allowed: true,
       current: 0,
@@ -126,10 +131,52 @@ describe('POST /api/upscale free limit errors', () => {
     });
     mocks.from.mockImplementation(() => ({
       select: () => ({
-        eq: () => ({ single: async () => ({ data: profile(), error: null }) }),
+        eq: () => ({
+          single: async () => ({ data: profile(), error: null }),
+          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
+        }),
       }),
     }));
     mocks.ensureProfile.mockImplementation((_req, _userId, rawProfile) => rawProfile);
+  });
+
+  it('returns account setup pending for a provisional zero profile', async () => {
+    mocks.setupPending.mockReturnValue(true);
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(409);
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: 'ACCOUNT_SETUP_PENDING' },
+    });
+    expect(mocks.rateLimit).not.toHaveBeenCalled();
+    expect(mocks.batchCheck).not.toHaveBeenCalled();
+    expect(mocks.processImage).not.toHaveBeenCalled();
+    expect(mocks.track).not.toHaveBeenCalled();
+  });
+
+  it('reads the grant decision before the credit profile', async () => {
+    const reads: string[] = [];
+    mocks.from.mockImplementation((table: string) => ({
+      select: () => ({
+        eq: () => ({
+          single: async () => {
+            reads.push(table);
+            return { data: profile(), error: null };
+          },
+          maybeSingle: async () => {
+            reads.push(table);
+            return { data: null, error: null };
+          },
+        }),
+      }),
+    }));
+    mocks.setupPending.mockReturnValue(true);
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(409);
+    expect(reads).toEqual(['free_credit_grants', 'profiles']);
   });
 
   it('returns FREE_LIMIT_EXCEEDED at zero free credits', async () => {
@@ -145,7 +192,10 @@ describe('POST /api/upscale free limit errors', () => {
     const paidZeroProfile = profile({ subscription_status: 'active', subscription_tier: 'hobby' });
     mocks.from.mockImplementation(() => ({
       select: () => ({
-        eq: () => ({ single: async () => ({ data: paidZeroProfile, error: null }) }),
+        eq: () => ({
+          single: async () => ({ data: paidZeroProfile, error: null }),
+          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
+        }),
       }),
     }));
 
@@ -164,7 +214,10 @@ describe('POST /api/upscale free limit errors', () => {
     });
     mocks.from.mockImplementation(() => ({
       select: () => ({
-        eq: () => ({ single: async () => ({ data: formerPaidProfile, error: null }) }),
+        eq: () => ({
+          single: async () => ({ data: formerPaidProfile, error: null }),
+          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
+        }),
       }),
     }));
 
@@ -179,7 +232,10 @@ describe('POST /api/upscale free limit errors', () => {
     const oneCreditProfile = profile({ subscription_credits_balance: 1 });
     mocks.from.mockImplementation(() => ({
       select: () => ({
-        eq: () => ({ single: async () => ({ data: oneCreditProfile, error: null }) }),
+        eq: () => ({
+          single: async () => ({ data: oneCreditProfile, error: null }),
+          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
+        }),
       }),
     }));
     mocks.processImage.mockRejectedValue(

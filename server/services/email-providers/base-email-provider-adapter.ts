@@ -371,7 +371,7 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
       'payment-success': d => `Payment confirmed - ${d.amount || 'Receipt'}`,
       'subscription-update': 'Your subscription has been updated',
       'low-credits': 'Running low on credits',
-      'lifecycle-welcome': 'Your first 10 credits are ready',
+      'lifecycle-welcome': 'Your first 5 credits are ready',
       'feature-reminder': d => String(d.subject || d.headline || 'Try your next image workflow'),
       'blog-education': d => `Guide: ${d.articleTitle || 'Get better image results'}`,
       'unused-credits': 'You still have credits waiting',

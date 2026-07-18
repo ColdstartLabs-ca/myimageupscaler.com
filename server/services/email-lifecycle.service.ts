@@ -16,6 +16,7 @@ import {
   type RecipientValueBand,
 } from '@server/services/email-recipient-value.service';
 import { EmailProviderSendError } from '@server/services/email-providers/base-email-provider-adapter';
+import { CREDIT_COSTS } from '@shared/config/credits.config';
 
 export type LifecycleEventType =
   | 'queued'
@@ -260,6 +261,22 @@ interface IUserEmailContext {
   email: string;
   userName?: string;
 }
+
+type BalanceRevalidationResult =
+  | { action: 'send'; templateData: Record<string, unknown> }
+  | { action: 'cancel'; reason: string };
+
+export const BALANCE_SENSITIVE_CAMPAIGNS = [
+  'zero-credits',
+  'low-credits',
+  'insufficient-credits-finish-image',
+  'unused-credits-14d',
+  'winback-credit-holder-21d',
+] as const;
+type BalanceSensitiveCampaign = (typeof BALANCE_SENSITIVE_CAMPAIGNS)[number];
+const BALANCE_SENSITIVE_CAMPAIGN_SET: ReadonlySet<BalanceSensitiveCampaign> = new Set(
+  BALANCE_SENSITIVE_CAMPAIGNS
+);
 
 const REVENUE_CRITICAL_CAP_HOURS = 72;
 const MARKETING_CAP_DAYS = 7;
@@ -647,7 +664,29 @@ export class EmailLifecycleService {
 
       let providerStartedAt: number | null = null;
       try {
-        const templateData = await this.prepareTemplateData(row, campaign);
+        let revalidation: BalanceRevalidationResult;
+        try {
+          revalidation = await this.revalidateBalanceSensitiveCampaign(row);
+        } catch (error) {
+          console.error('[EMAIL_LIFECYCLE_BALANCE_REVALIDATION_FAILED]', error);
+          await this.rescheduleQueueRow(
+            row.id,
+            'balance_lookup_failed',
+            'balance_revalidation_failed'
+          );
+          result.rescheduled++;
+          continue;
+        }
+        if (revalidation.action === 'cancel') {
+          await this.markQueueRow(row.id, 'cancelled', revalidation.reason);
+          result.skipped++;
+          continue;
+        }
+
+        const templateData = await this.prepareTemplateData(
+          { ...row, template_data: revalidation.templateData },
+          campaign
+        );
         providerStartedAt = Date.now();
         providerSubmissions++;
         const sendResult = await this.emailService.send({
@@ -1228,6 +1267,67 @@ export class EmailLifecycleService {
       productCtaUrl: withClick(data.productCtaUrl),
       preferenceUrl: withClick(data.preferenceUrl ?? '/dashboard/settings'),
     };
+  }
+
+  private async revalidateBalanceSensitiveCampaign(
+    row: IQueueRow
+  ): Promise<BalanceRevalidationResult> {
+    const templateData = { ...(row.template_data || {}) };
+    if (!BALANCE_SENSITIVE_CAMPAIGN_SET.has(row.campaign_key as BalanceSensitiveCampaign)) {
+      return { action: 'send', templateData };
+    }
+    if (!row.user_id) {
+      throw new Error('Balance-sensitive lifecycle row is missing a user ID');
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from('profiles')
+      .select('subscription_credits_balance, purchased_credits_balance')
+      .eq('id', row.user_id)
+      .maybeSingle();
+    if (error || !data) {
+      throw new Error(
+        `Failed to load current credit balance: ${error?.message ?? 'profile missing'}`
+      );
+    }
+
+    const subscriptionCredits = Number(data.subscription_credits_balance ?? 0);
+    const purchasedCredits = Number(data.purchased_credits_balance ?? 0);
+    const totalCredits = subscriptionCredits + purchasedCredits;
+
+    if (row.campaign_key === 'zero-credits') {
+      return totalCredits > 0
+        ? { action: 'cancel', reason: 'stale_balance_not_zero' }
+        : { action: 'send', templateData: { ...templateData, creditsRemaining: 0 } };
+    }
+    if (row.campaign_key === 'low-credits') {
+      return totalCredits >= CREDIT_COSTS.LOW_CREDIT_WARNING_THRESHOLD
+        ? { action: 'cancel', reason: 'stale_balance_above_low_credit_threshold' }
+        : { action: 'send', templateData: { ...templateData, creditsRemaining: totalCredits } };
+    }
+    if (row.campaign_key === 'insufficient-credits-finish-image') {
+      const requiredCredits = Number(templateData.requiredCredits);
+      if (!Number.isFinite(requiredCredits)) {
+        throw new Error('Insufficient-credit lifecycle row is missing requiredCredits');
+      }
+      return totalCredits >= requiredCredits
+        ? { action: 'cancel', reason: 'stale_balance_now_sufficient' }
+        : { action: 'send', templateData: { ...templateData, creditsRemaining: totalCredits } };
+    }
+    if (row.campaign_key === 'unused-credits-14d') {
+      return purchasedCredits <= 0
+        ? { action: 'cancel', reason: 'stale_purchased_balance_empty' }
+        : {
+            action: 'send',
+            templateData: { ...templateData, creditsRemaining: purchasedCredits },
+          };
+    }
+    if (row.campaign_key === 'winback-credit-holder-21d') {
+      return totalCredits <= 0
+        ? { action: 'cancel', reason: 'stale_total_balance_empty' }
+        : { action: 'send', templateData: { ...templateData, creditsRemaining: totalCredits } };
+    }
+    throw new Error(`Unhandled balance-sensitive campaign: ${row.campaign_key}`);
   }
 
   private async insertQueueRow(params: {

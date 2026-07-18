@@ -23,7 +23,7 @@ import {
   calculateFinalProviderAwareCredits,
   getModelForTier,
 } from '@shared/config/subscription.utils';
-import { isFreeleaderBlocked } from '@/lib/anti-freeloader/check-freeloader';
+import { isAccountSetupPending, isFreeleaderBlocked } from '@/lib/anti-freeloader/check-freeloader';
 import { getCreditLimitErrorCode } from '@shared/utils/credit-limit';
 import { ErrorCodes, createErrorResponse, serializeError } from '@shared/utils/errors';
 import {
@@ -250,55 +250,45 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json(body, { status });
     }
 
-    // 2. Apply stricter rate limit for image processing (5 req/min)
-    const { success: rateLimitOk, remaining, reset } = await upscaleRateLimit.limit(userId);
-    if (!rateLimitOk) {
-      logFailure('rate_limited', {
-        remaining,
-        resetAt: new Date(reset).toISOString(),
-      });
-
-      // Track rate limit exceeded event
-      await trackServerEvent(
-        'rate_limit_exceeded',
-        {
-          errorType: 'rate_limited',
-          limit: 5,
-          windowMs: 60000,
-          retryAfter: Math.ceil((reset - Date.now()) / 1000),
-        },
-        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-      );
-
-      const retryAfter = Math.ceil((reset - Date.now()) / 1000);
-      const { body, status } = createErrorResponse(
-        ErrorCodes.RATE_LIMITED,
-        'Too many image processing requests. Please wait before trying again.',
-        429,
-        { retryAfter }
-      );
-      return NextResponse.json(body, {
-        status,
-        headers: {
-          'X-RateLimit-Limit': '5',
-          'X-RateLimit-Remaining': remaining.toString(),
-          'X-RateLimit-Reset': new Date(reset).toISOString(),
-          'Retry-After': retryAfter.toString(),
-        },
-      });
-    }
-
     logger.info('Processing upscale request', { userId });
 
-    // 3. Get user's subscription status and tier to determine limits
-    // Also check purchased_credits_balance to grant paid model access to credit purchasers
-    const { data: rawProfile } = await supabaseAdmin
+    // Read the durable grant decision first. If setup commits concurrently, the
+    // following profile read will see either the granted balance or remain pending.
+    const { data: grantDecision, error: grantDecisionError } = await supabaseAdmin
+      .from('free_credit_grants')
+      .select('user_id')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (grantDecisionError && !(serverEnv.ENV === 'test' && userId.startsWith('mock_user_'))) {
+      logFailure('account_setup_decision_lookup_failed', {}, 'error');
+      const { body, status } = createErrorResponse(
+        ErrorCodes.INTERNAL_ERROR,
+        'Unable to verify account setup. Please try again shortly.',
+        503
+      );
+      return NextResponse.json(body, { status });
+    }
+
+    // 3. Get user's subscription status and tier to determine limits.
+    // Also check purchased_credits_balance to grant paid model access to credit purchasers.
+    const { data: rawProfile, error: profileError } = await supabaseAdmin
       .from('profiles')
       .select(
         'subscription_status, subscription_tier, subscription_credits_balance, purchased_credits_balance, is_flagged_freeloader, region_tier, signup_country, created_at'
       )
       .eq('id', userId)
       .single();
+
+    if (profileError && !(serverEnv.ENV === 'test' && userId.startsWith('mock_user_'))) {
+      logFailure('account_profile_lookup_failed', {}, 'error');
+      const { body, status } = createErrorResponse(
+        ErrorCodes.INTERNAL_ERROR,
+        'Unable to verify account setup. Please try again shortly.',
+        503
+      );
+      return NextResponse.json(body, { status });
+    }
 
     // In test mode, mock users don't exist in the database.
     // Build a synthetic profile so that tests don't get 402 due to missing credits.
@@ -336,6 +326,53 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const profile = await ensureAntiFreeloaderProfile(req, userId, effectiveRawProfile, {
       persist: false,
     });
+
+    if (isAccountSetupPending(profile, Boolean(grantDecision))) {
+      logFailure('account_setup_pending');
+      const { body, status } = createErrorResponse(
+        ErrorCodes.ACCOUNT_SETUP_PENDING,
+        'Your account setup is still completing. Please try again shortly.',
+        409
+      );
+      return NextResponse.json(body, { status });
+    }
+
+    // Apply rate limits only after setup has reached a terminal decision.
+    const { success: rateLimitOk, remaining, reset } = await upscaleRateLimit.limit(userId);
+    if (!rateLimitOk) {
+      logFailure('rate_limited', {
+        remaining,
+        resetAt: new Date(reset).toISOString(),
+      });
+
+      await trackServerEvent(
+        'rate_limit_exceeded',
+        {
+          errorType: 'rate_limited',
+          limit: 5,
+          windowMs: 60000,
+          retryAfter: Math.ceil((reset - Date.now()) / 1000),
+        },
+        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+      );
+
+      const retryAfter = Math.ceil((reset - Date.now()) / 1000);
+      const { body, status } = createErrorResponse(
+        ErrorCodes.RATE_LIMITED,
+        'Too many image processing requests. Please wait before trying again.',
+        429,
+        { retryAfter }
+      );
+      return NextResponse.json(body, {
+        status,
+        headers: {
+          'X-RateLimit-Limit': '5',
+          'X-RateLimit-Remaining': remaining.toString(),
+          'X-RateLimit-Reset': new Date(reset).toISOString(),
+          'Retry-After': retryAfter.toString(),
+        },
+      });
+    }
 
     // 3a. Block flagged free-tier users before any credit-consuming work
     // Dev bypass: fingerprint detection fires on localhost/dev where IPs are shared,

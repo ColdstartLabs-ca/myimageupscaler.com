@@ -6,6 +6,7 @@ const mocks = vi.hoisted(() => ({
   ensureProfile: vi.fn(),
   from: vi.fn(),
   rateLimit: vi.fn(),
+  setupPending: vi.fn(),
 }));
 
 vi.mock('@server/monitoring/logger', () => ({
@@ -30,7 +31,10 @@ vi.mock('@server/services/image-generation.service', () => ({
 }));
 vi.mock('@server/supabase/supabaseAdmin', () => ({ supabaseAdmin: { from: mocks.from } }));
 vi.mock('@shared/config/env', () => ({ isProduction: () => false }));
-vi.mock('@/lib/anti-freeloader/check-freeloader', () => ({ isFreeleaderBlocked: () => false }));
+vi.mock('@/lib/anti-freeloader/check-freeloader', () => ({
+  isAccountSetupPending: mocks.setupPending,
+  isFreeleaderBlocked: () => false,
+}));
 
 import { POST } from '@/app/api/bg-removal/deduct/route';
 import { InsufficientCreditsError } from '@server/services/image-generation.service';
@@ -60,12 +64,53 @@ describe('POST /api/bg-removal/deduct free limit errors', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.rateLimit.mockResolvedValue({ success: true });
+    mocks.setupPending.mockReturnValue(false);
     mocks.from.mockImplementation(() => ({
       select: () => ({
-        eq: () => ({ single: async () => ({ data: profile(), error: null }) }),
+        eq: () => ({
+          single: async () => ({ data: profile(), error: null }),
+          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
+        }),
       }),
     }));
     mocks.ensureProfile.mockImplementation((_req, _userId, rawProfile) => rawProfile);
+  });
+
+  it('does not deduct while the welcome grant decision is pending', async () => {
+    mocks.setupPending.mockReturnValue(true);
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(409);
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: 'ACCOUNT_SETUP_PENDING' },
+    });
+    expect(mocks.rateLimit).not.toHaveBeenCalled();
+    expect(mocks.deductCredits).not.toHaveBeenCalled();
+  });
+
+  it('reads the grant decision before the credit profile', async () => {
+    const reads: string[] = [];
+    mocks.from.mockImplementation((table: string) => ({
+      select: () => ({
+        eq: () => ({
+          single: async () => {
+            reads.push(table);
+            return { data: profile(), error: null };
+          },
+          maybeSingle: async () => {
+            reads.push(table);
+            return { data: null, error: null };
+          },
+        }),
+      }),
+    }));
+    mocks.setupPending.mockReturnValue(true);
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(409);
+    expect(reads).toEqual(['free_credit_grants', 'profiles']);
   });
 
   it('returns the typed free limit error at zero credits', async () => {
@@ -82,7 +127,10 @@ describe('POST /api/bg-removal/deduct free limit errors', () => {
     const paidZeroProfile = profile({ subscription_status: 'active', subscription_tier: 'hobby' });
     mocks.from.mockImplementation(() => ({
       select: () => ({
-        eq: () => ({ single: async () => ({ data: paidZeroProfile, error: null }) }),
+        eq: () => ({
+          single: async () => ({ data: paidZeroProfile, error: null }),
+          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
+        }),
       }),
     }));
 
@@ -101,7 +149,10 @@ describe('POST /api/bg-removal/deduct free limit errors', () => {
     });
     mocks.from.mockImplementation(() => ({
       select: () => ({
-        eq: () => ({ single: async () => ({ data: formerPaidProfile, error: null }) }),
+        eq: () => ({
+          single: async () => ({ data: formerPaidProfile, error: null }),
+          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
+        }),
       }),
     }));
 
@@ -116,7 +167,10 @@ describe('POST /api/bg-removal/deduct free limit errors', () => {
     const oneCreditProfile = profile({ subscription_credits_balance: 1 });
     mocks.from.mockImplementation(() => ({
       select: () => ({
-        eq: () => ({ single: async () => ({ data: oneCreditProfile, error: null }) }),
+        eq: () => ({
+          single: async () => ({ data: oneCreditProfile, error: null }),
+          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
+        }),
       }),
     }));
     mocks.deductCredits.mockRejectedValue(
