@@ -34,7 +34,7 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 
 ## 2026-06-29 Blog Growth Maintenance CTR Description Test
 
-- [ ] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared`
+- [ ] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared` — refreshed again 2026-07-20 with a narrow SERP title test; request indexing for the latest version after deploy/cache refresh.
 
 ## 2026-06-29 Localized Homepage Metadata Fallback Fix
 

@@ -3,6 +3,13 @@ import { createBlogPostSchema } from '@shared/validation/blog.schema';
 
 const RECOVERY_METADATA = [
   {
+    slug: 'best-free-ai-image-upscaler-2026-tested-compared',
+    targetTerms: ['best', 'free', 'ai', 'image', 'upscaler', '2026'],
+    title: 'Best Free AI Image Upscaler 2026: Only 3 Worked',
+    description:
+      'Best free AI image upscaler 2026: we tested 12 tools for quality, speed, no signup, no watermark, and 4K/8K output. See winners and try free.',
+  },
+  {
     slug: 'best-image-upscaler',
     targetTerms: ['best', 'image', 'upscaling', 'software', '2026'],
     title: 'Best Image Upscaling Software 2026: 12 Tools Compared',

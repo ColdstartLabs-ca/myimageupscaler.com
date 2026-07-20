@@ -1,5 +1,15 @@
 # Blog Changelog
 
+## 2026-07-20
+
+### SEO: Best-Free Upscaler SERP Title Test
+
+**Affected:** best-free-ai-image-upscaler-2026-tested-compared
+**Why:** Fresh GSC data through 2026-07-17 showed the exact `best free ai image upscaler 2026` cluster still at page-one positions with zero clicks after the 2026-06-29 description test: 2,189 impressions / 0 clicks / avg position 5.95 in the latest 28 days, and 7,048 impressions / 0 clicks in the 90-day view.
+**Changes:**
+
+- `best-free-ai-image-upscaler-2026-tested-compared` — changed `title` and `seo_title` to `Best Free AI Image Upscaler 2026: Only 3 Worked`; left description, H1/body, canonical, and indexability unchanged for a narrow title-only CTR test.
+
 ## 2026-07-03
 
 ### SEO: CTR / Ranking Lift Pass

@@ -12,14 +12,43 @@ Maintenance rules:
 ## Open Follow-Ups
 
 - [ ] After next deploy, complete [GSC request indexing backlog](./gsc-request-indexing-backlog.md).
-- [ ] On or after 2026-07-19, compare `/blog/best-free-ai-photo-enhancer-online` for 2026-06-22 through 2026-07-07 against the next complete 16-day GSC window; inspect query and competing-URL losses before any further edit.
+- [ ] On or after 2026-07-19, compare `/blog/best-free-ai-photo-enhancer-online` for 2026-06-22 through 2026-07-07 against the next complete 16-day GSC window; inspect query and competing-URL losses before any further edit. A 2026-07-20 fresh 28-day check found this URL at 2,985 impressions, 21 clicks, avg position 38.93; no edit was made because the stronger matured CTR action was on `/blog/best-free-ai-image-upscaler-2026-tested-compared`.
 - [ ] Around 2026-07-20, run the early GSC check for the 2026-07-03 edits to `/blog/fixing-pixelated-photos`, `/blog/topaz-video-upscaler`, and `/blog/best-ai-upscaler`; use early August for the stronger 28-day evaluation and do not rewrite during the window.
 - [ ] After the 2026-06-29 Spanish homepage metadata has matured, evaluate `/es` query movement and add natural Spanish internal links only if visibility still needs support.
 - [x] After next deploy, verify `https://myimageupscaler.com/sitemap-static.xml` includes `/de`, `/es`, `/fr`, `/it`, `/ja`, and `/pt`. Verified 2026-05-13.
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
 
-## 2026-07-18
+## 2026-07-20
+
+### Blog SERP Title Test: Best Free AI Image Upscaler 2026
+
+Source: fresh 28-day and 90-day GSC exports through 2026-07-17 plus GA4 organic export through 2026-07-19.
+
+Changes:
+
+- Ran the autonomous blog growth operator against current GSC/GA evidence, recent reports, SEO/indexing backlogs, blog changelog, and recent git history.
+- Applied the matured 2026-06-29 CTR escalation on `/blog/best-free-ai-image-upscaler-2026-tested-compared`: changed `title` and `seo_title` from `Best Free AI Image Upscaler Online 2026: 12 Tested` to `Best Free AI Image Upscaler 2026: Only 3 Worked`.
+- Kept description, H1, body content, canonical, and indexability unchanged so this remains a narrow SERP-title test, not another broad rewrite.
+- Updated the existing GSC request-indexing backlog row in place rather than duplicating the URL.
+
+Why:
+
+- Fresh 28-day GSC data shows the exact query cluster still leaking clicks after the 2026-06-29 description test: `best free ai image upscaler 2026` has 2,189 impressions, 0 clicks, avg position 5.95; `best free ai image upscaler online 2026` has 854 impressions, 0 clicks, avg position 4.50; `best ai image upscaling tools 2026` has 953 impressions, 0 clicks, avg position 5.96. The 90-day view confirms this is persistent, with 7,048 / 2,808 / 2,299 impressions respectively and still zero clicks for the same canonical page rows.
+- GA4 organic sessions are up overall, so this action targets a SERP CTR leak on a page-one blog URL rather than publishing duplicate coverage.
+
+Validation:
+
+- Blog API PATCH returned `200`; GET readback confirmed the new title/SEO title and `published` status.
+- Production HTML returned `200`, `index, follow`, self-canonical, and rendered `Best Free AI Image Upscaler 2026: Only 3 Worked | MyImageUpscaler`.
+- Added SEO unit coverage in `tests/unit/seo/trending-down-blog-recovery.unit.spec.ts` and ran focused tests plus `yarn verify`.
+
+Follow-up:
+
+- Commit: pending in this run until verification/commit completes.
+- Deploy state: production blog API content updated immediately; repo test/backlog changes are local until the commit is deployed.
+- Manual action: request indexing for the existing unchecked URL in [GSC request indexing backlog](./gsc-request-indexing-backlog.md).
+- Next trigger: on or after 2026-08-04, compare query-level CTR for the exact 2026 best-free-upscaler cluster over 14 complete GSC days after the 2026-07-20 update; if position remains 3-10 with zero clicks, escalate to a proof-led snippet/body support pass instead of another title-only test.
 
 ### Production Welcome-Credit Policy Correction
 
