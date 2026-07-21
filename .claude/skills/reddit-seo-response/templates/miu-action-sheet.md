@@ -16,7 +16,8 @@
 - **Confidence/status:** <Post-ready or Best-effort, manual check before posting>
 - **Link decision:** <No link or Transparent link-share candidate>
 - **Target page:** <none for no-link; exact GSC-backed https://myimageupscaler.com/blog/... URL for linked; homepage/tool URLs forbidden>
-- **GSC evidence:** <linked candidate only: fresh GSC date range; query="<exact top query>"; impressions; clicks; position>
+- **GSC evidence:** <linked candidate only: fresh GSC date range; query="<exact top query>"; query impressions=<actual>; query clicks=<actual>; query position=<actual>. Query must be position 4-20, have at least 50 impressions, and CTR below 5%.>
+- **Relevance evidence:** <linked candidate only: state what the Reddit question asks and why that exact GSC query/blog page directly answers it; include the exact GSC query text>
 
 ```text
 <Exact public Reddit reply. No internal labels. No URL when Link decision is No link. The single linked reply must disclose João's affiliation and may include one relevant MIU URL.>

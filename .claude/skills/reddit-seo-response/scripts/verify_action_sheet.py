@@ -14,6 +14,42 @@ DISCLOSURE_RE = re.compile(
     r"\b(?:full disclosure|I (?:built|run|work on|made)|my (?:site|tool|product))\b",
     re.I,
 )
+MIN_BUMP_IMPRESSIONS = 50
+MIN_BUMP_POSITION = 4.0
+MAX_BUMP_POSITION = 20.0
+MAX_BUMP_CTR = 0.05
+GENERIC_RELEVANCE_TOKENS = {
+    "a",
+    "an",
+    "and",
+    "are",
+    "best",
+    "for",
+    "help",
+    "how",
+    "image",
+    "images",
+    "in",
+    "is",
+    "looking",
+    "need",
+    "of",
+    "on",
+    "photo",
+    "photos",
+    "quality",
+    "question",
+    "recommendation",
+    "recommendations",
+    "the",
+    "this",
+    "to",
+    "upscale",
+    "upscaler",
+    "what",
+    "with",
+    "workflow",
+}
 
 
 def _count(pattern: str, text: str, label: str, errors: list[str]) -> int:
@@ -29,6 +65,14 @@ def _normalize_url(raw: str) -> str:
     parts = urlsplit(raw)
     path = parts.path.rstrip("/") or "/"
     return urlunsplit((parts.scheme.lower(), parts.netloc.lower(), path, "", ""))
+
+
+def _meaningful_tokens(text: str) -> set[str]:
+    return {
+        token
+        for token in re.findall(r"[a-z0-9]+", text.casefold())
+        if len(token) >= 3 and token not in GENERIC_RELEVANCE_TOKENS
+    }
 
 
 def _load_gsc_pages(path: Path | None, errors: list[str]) -> tuple[dict[str, dict], str]:
@@ -162,20 +206,69 @@ def main() -> int:
                 if not gsc_row or gsc_row.get("impressions", 0) <= 0:
                     errors.append(f"item {index} linked blog target is absent from the fresh GSC web page export: {target_url}")
                 evidence_match = re.search(r"-\s*\*\*GSC evidence:\*\*\s*(.+)", item, re.I)
+                relevance_match = re.search(r"-\s*\*\*Relevance evidence:\*\*\s*(.+)", item, re.I)
+                if not relevance_match:
+                    errors.append(f"item {index} linked candidate lacks Relevance evidence metadata")
                 if not evidence_match:
                     errors.append(f"item {index} linked candidate lacks GSC evidence metadata")
                 elif gsc_row:
                     evidence = evidence_match.group(1)
+                    evidence_query = ""
+                    selected_query_row: dict | None = None
                     query_match = re.search(r"query\s*[=:]\s*[\"']?([^;|·]+)", evidence, re.I)
                     if not query_match:
                         errors.append(f"item {index} GSC evidence must name the target query")
                     else:
                         evidence_query = query_match.group(1).strip(" \"'").casefold()
-                        gsc_queries = {str(q.get("query", "")).casefold() for q in gsc_row.get("topQueries", [])}
-                        if evidence_query not in gsc_queries:
-                            errors.append(f"item {index} GSC evidence query is not a top query for {target_url}: {evidence_query}")
+                        gsc_query_map = {
+                            str(query_row.get("query", "")).casefold(): query_row
+                            for query_row in gsc_row.get("topQueries", [])
+                        }
+                        selected_query_row = gsc_query_map.get(evidence_query)
+                        if not selected_query_row:
+                            errors.append(
+                                f"item {index} GSC evidence query is not a top query for {target_url}: {evidence_query}"
+                            )
                     if gsc_date_range and gsc_date_range not in evidence:
                         errors.append(f"item {index} GSC evidence must include fresh range {gsc_date_range}")
+                    if selected_query_row:
+                        query_impressions = int(selected_query_row.get("impressions", 0))
+                        query_clicks = int(selected_query_row.get("clicks", 0))
+                        query_position = float(selected_query_row.get("position", 0))
+                        query_ctr = query_clicks / query_impressions if query_impressions else 0.0
+                        if query_impressions < MIN_BUMP_IMPRESSIONS:
+                            errors.append(
+                                f"item {index} GSC query is not worth a bump: {query_impressions} impressions < {MIN_BUMP_IMPRESSIONS}"
+                            )
+                        if not MIN_BUMP_POSITION <= query_position <= MAX_BUMP_POSITION:
+                            errors.append(
+                                f"item {index} GSC query is outside the striking-distance position band "
+                                f"{MIN_BUMP_POSITION:g}-{MAX_BUMP_POSITION:g}: {query_position:.2f}"
+                            )
+                        if query_ctr >= MAX_BUMP_CTR:
+                            errors.append(
+                                f"item {index} GSC query does not need a Reddit capture bump: CTR {query_ctr:.2%} >= {MAX_BUMP_CTR:.0%}"
+                            )
+                        reported_impressions = re.search(r"query impressions\s*[=:]\s*([\d,]+)", evidence, re.I)
+                        reported_clicks = re.search(r"query clicks\s*[=:]\s*([\d,]+)", evidence, re.I)
+                        reported_position = re.search(r"query position\s*[=:]\s*([\d.]+)", evidence, re.I)
+                        if not reported_impressions or int(reported_impressions.group(1).replace(",", "")) != query_impressions:
+                            errors.append(f"item {index} GSC evidence must report actual query impressions {query_impressions}")
+                        if not reported_clicks or int(reported_clicks.group(1).replace(",", "")) != query_clicks:
+                            errors.append(f"item {index} GSC evidence must report actual query clicks {query_clicks}")
+                        if not reported_position or abs(float(reported_position.group(1)) - query_position) > 0.01:
+                            errors.append(f"item {index} GSC evidence must report actual query position {query_position:.2f}")
+                        heading = item.splitlines()[0]
+                        thread_title = heading.rsplit("—", 1)[-1].strip()
+                        shared_terms = _meaningful_tokens(thread_title) & _meaningful_tokens(evidence_query)
+                        if not shared_terms:
+                            errors.append(
+                                f"item {index} Reddit question and GSC query lack a concrete shared problem term"
+                            )
+                        if relevance_match and evidence_query not in relevance_match.group(1).casefold():
+                            errors.append(
+                                f"item {index} Relevance evidence must explicitly map the exact GSC query: {evidence_query}"
+                            )
             normalized_reply_urls = [_normalize_url(url) for url in reply_urls]
             if len(normalized_reply_urls) != 1:
                 errors.append(f"item {index} link-share reply must contain exactly one MIU URL")

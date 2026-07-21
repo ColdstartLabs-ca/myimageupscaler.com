@@ -1,7 +1,7 @@
 ---
 name: reddit-seo-response
 description: Combine GSC, GA4, SEO growth-plan data, Reddit thread discovery, and the Humanizer skill to produce ranked Reddit reply opportunities for lifting blog clicks, impressions, and qualified organic traffic. Use when deciding which Reddit threads to answer, what URL or blog post to support, and what humanized reply to post.
-version: 2.0.0
+version: 2.1.0
 ---
 
 # Reddit SEO Response
@@ -18,6 +18,8 @@ The job is not "drop links on Reddit." The job is to find threads where people a
 - The public reply must contain exactly the same blog URL declared in `Target page` and no second MIU URL.
 - If fresh GSC cannot be fetched, fail the linked-candidate step. Do not guess a target from topical similarity and do not fall back to the homepage.
 - Run generate → project-validator → error-guided correction for at most 3 attempts. Never weaken the validator; after attempt 3, report failure instead of delivering a partial or invalid sheet.
+- A linked page is worth a Reddit bump only when the exact matching GSC query is in the striking-distance band: **position 4-20, at least 50 impressions in the fresh 28-day window, and CTR below 5%**. Positions 4-10 are weak-capture first-page pushes; positions 11-20 are credible top-10 candidates. Do not use aggregate page position as a substitute for the matching query's metrics.
+- The Reddit question and selected GSC query must share a concrete problem term, and the action sheet must state the semantic mapping in `Relevance evidence`. A high-opportunity page that does not answer that exact question is not a valid bump target.
 
 ## Regression Lock — Version-Controlled Contract
 
@@ -28,7 +30,7 @@ The canonical executable contract lives under `.claude/skills/reddit-seo-respons
 - Canonical action-sheet template: `.claude/skills/reddit-seo-response/templates/miu-action-sheet.md`
 - Contract test: `tests/unit/seo/reddit-seo-contract.unit.spec.ts`
 
-Any change to batch shape, GSC targeting, permitted link paths, disclosure, dedupe, or retry behavior must update the relevant tests in the same commit. The cron must invoke the project validator with `--gsc`; do not point it to an unversioned copy under `~/.hermes/skills`.
+Any change to batch shape, GSC targeting, bump-worthiness thresholds, question relevance, permitted link paths, disclosure, dedupe, or retry behavior must update the relevant tests in the same commit. The cron must invoke the project validator with `--gsc`; do not point it to an unversioned copy under `~/.hermes/skills`.
 
 This skill is reusable across projects. It can run from this repo's `seo-growth-plan` output, or from a standalone target JSON when another project does not have the same GSC/GA scripts.
 
