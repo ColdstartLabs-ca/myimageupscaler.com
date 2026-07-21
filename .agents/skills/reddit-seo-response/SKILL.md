@@ -9,6 +9,14 @@ Use this skill to generate referral traffic and support SEO signals for blog pos
 
 The job is not "drop links on Reddit." The job is to find threads where people are already asking about problems a target blog post answers, then give a useful custom response and only include the blog link when it fits the thread and subreddit rules.
 
+## Hard Linked-Target Contract
+
+- The linked candidate must use a relevant existing `https://myimageupscaler.com/blog/...` URL selected from fresh GSC query/page evidence.
+- Never use the homepage, dashboard, `/tools/`, `/free/`, or another product surface as the Reddit self-link. The campaign exists to distribute blog pages that already have measurable search demand.
+- Record the fresh GSC date range, exact target query, target page, impressions, clicks, and average position in the action-sheet metadata.
+- The public reply must contain exactly the same blog URL declared in `Target page` and no second MIU URL.
+- If fresh GSC cannot be fetched, fail the linked-candidate step. Do not guess a target from topical similarity and do not fall back to the homepage.
+
 This skill is reusable across projects. It can run from this repo's `seo-growth-plan` output, or from a standalone target JSON when another project does not have the same GSC/GA scripts.
 
 When this skill activates: `Reddit SEO Response: combining GSC, GA4, SEO plan, Reddit discovery, and Humanizer...`
