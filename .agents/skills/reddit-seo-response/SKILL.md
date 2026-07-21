@@ -1,6 +1,7 @@
 ---
 name: reddit-seo-response
 description: Combine GSC, GA4, SEO growth-plan data, Reddit thread discovery, and the Humanizer skill to produce ranked Reddit reply opportunities for lifting blog clicks, impressions, and qualified organic traffic. Use when deciding which Reddit threads to answer, what URL or blog post to support, and what humanized reply to post.
+version: 2.0.0
 ---
 
 # Reddit SEO Response
@@ -16,6 +17,18 @@ The job is not "drop links on Reddit." The job is to find threads where people a
 - Record the fresh GSC date range, exact target query, target page, impressions, clicks, and average position in the action-sheet metadata.
 - The public reply must contain exactly the same blog URL declared in `Target page` and no second MIU URL.
 - If fresh GSC cannot be fetched, fail the linked-candidate step. Do not guess a target from topical similarity and do not fall back to the homepage.
+- Run generate → project-validator → error-guided correction for at most 3 attempts. Never weaken the validator; after attempt 3, report failure instead of delivering a partial or invalid sheet.
+
+## Regression Lock — Version-Controlled Contract
+
+The canonical executable contract lives under `.claude/skills/reddit-seo-response/`. This agent-facing copy must preserve the same hard linked-target rules and must not weaken them.
+
+- Canonical validator: `.claude/skills/reddit-seo-response/scripts/verify_action_sheet.py`
+- Behavioral tests: `.claude/skills/reddit-seo-response/scripts/test_verify_action_sheet.py`
+- Canonical action-sheet template: `.claude/skills/reddit-seo-response/templates/miu-action-sheet.md`
+- Contract test: `tests/unit/seo/reddit-seo-contract.unit.spec.ts`
+
+Any change to batch shape, GSC targeting, permitted link paths, disclosure, dedupe, or retry behavior must update the relevant tests in the same commit. The cron must invoke the project validator with `--gsc`; do not point it to an unversioned copy under `~/.hermes/skills`.
 
 This skill is reusable across projects. It can run from this repo's `seo-growth-plan` output, or from a standalone target JSON when another project does not have the same GSC/GA scripts.
 
