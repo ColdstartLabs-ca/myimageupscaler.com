@@ -154,6 +154,16 @@ export async function cleanupOldTestUsers(): Promise<number> {
         user.email !== FIXED_TEST_USER.email;
 
       if (isTestUser) {
+        const [grantResult, transactionResult] = await Promise.all([
+          supabase.from('free_credit_grants').delete().eq('user_id', user.id),
+          supabase.from('credit_transactions').delete().eq('user_id', user.id),
+        ]);
+        if (grantResult.error || transactionResult.error) {
+          throw new Error(
+            `Failed to clean up test credit data: ${grantResult.error?.message ?? transactionResult.error?.message}`
+          );
+        }
+
         await supabase.auth.admin.deleteUser(user.id);
         deletedCount++;
 

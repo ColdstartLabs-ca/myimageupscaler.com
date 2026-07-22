@@ -161,4 +161,41 @@ describe('POST /api/users/setup', () => {
     expect(JSON.stringify(mockTrackServerEvent.mock.calls)).not.toContain('203.0.113.42');
     expect(JSON.stringify(mockTrackServerEvent.mock.calls)).not.toContain('fingerprint');
   });
+
+  it('emits account_created once without request identity data when an auth page replays', async () => {
+    const userId = '00000000-0000-4000-8000-000000000001';
+    const identity = { country: 'US', ip: '203.0.113.42', userAgent: 'private-test-agent' };
+
+    const initial = await POST(makeRequest({ userId, ...identity }));
+    mockProfile(makeProfile({ region_tier: 'standard', signup_country: 'US' }));
+    mockClaimFreeCreditGrant.mockResolvedValueOnce({
+      grantedCredits: 5,
+      existingGrant: true,
+      matchedAccountCount: 0,
+      newTotalBalance: 5,
+    });
+    const replay = await POST(makeRequest({ userId, ...identity }));
+
+    const accountCreatedEvents = mockTrackServerEvent.mock.calls.filter(
+      ([eventName]) => eventName === 'account_created'
+    );
+
+    expect(initial.status).toBe(200);
+    expect(replay.status).toBe(200);
+    expect(accountCreatedEvents).toEqual([
+      [
+        'account_created',
+        { method: 'email', hasEmail: true, pricingRegion: 'standard' },
+        expect.objectContaining({ userId }),
+      ],
+    ]);
+
+    const serialized = JSON.stringify({
+      responses: [await initial.json(), await replay.json()],
+      events: accountCreatedEvents,
+    });
+    expect(serialized).not.toContain(identity.ip);
+    expect(serialized).not.toContain(identity.userAgent);
+    expect(serialized).not.toContain('identity_hash');
+  });
 });

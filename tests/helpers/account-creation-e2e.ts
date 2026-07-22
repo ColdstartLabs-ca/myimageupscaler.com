@@ -1,6 +1,12 @@
 import { readFileSync } from 'node:fs';
 import { createClient, type Session, type SupabaseClient } from '@supabase/supabase-js';
-import { expect, type APIRequestContext, type APIResponse, type Page } from '@playwright/test';
+import {
+  expect,
+  type APIRequestContext,
+  type APIResponse,
+  type Page,
+  type Route,
+} from '@playwright/test';
 import { clientEnv, serverEnv } from '@shared/config/env';
 
 const TEST_PASSWORD = 'AccountCreationE2E!123';
@@ -20,11 +26,15 @@ export interface IAccountCreationIdentity {
 
 export interface IAccountCreationState {
   profile: {
+    id: string;
     region_tier: string | null;
     subscription_credits_balance: number | null;
     purchased_credits_balance: number | null;
     subscription_status: string | null;
     subscription_tier: string | null;
+    role: 'user' | 'admin';
+    created_at: string;
+    updated_at: string;
   };
   grants: Array<{
     user_id: string | null;
@@ -43,6 +53,7 @@ interface ICreateUserOptions {
 interface ICompleteBrowserSetupOptions {
   pauseSetup?: boolean;
   setupStatus?: number;
+  expectSetupError?: boolean;
 }
 
 interface IDeferred {
@@ -96,6 +107,8 @@ export function createSpoofedIpAllocator(): () => string {
 export class AccountCreationHarness {
   private readonly admin: SupabaseClient;
   private readonly auth: SupabaseClient;
+  private readonly activeDashboardReads = new Set<Promise<void>>();
+  private readonly dashboardRoutePages = new Set<Page>();
   private readonly userIds = new Set<string>();
   private pausedSetup?: IDeferred;
 
@@ -189,9 +202,20 @@ export class AccountCreationHarness {
 
   async assertDashboardCredits(page: Page, credits: number): Promise<void> {
     await page.waitForURL(/\/dashboard/, { timeout: SETUP_TIMEOUT_MS });
-    const display = page.getByTestId('credits-display');
+    const display = page.locator('aside').getByTestId('credits-display');
     await expect(display).toBeVisible({ timeout: SETUP_TIMEOUT_MS });
     await expect(display.getByText(String(credits), { exact: true })).toBeVisible();
+  }
+
+  async clearSetupRoute(page: Page): Promise<void> {
+    await page.unroute('**/api/users/setup');
+  }
+
+  async openDashboard(page: Page, user: IAccountCreationUser): Promise<void> {
+    const session = await this.signIn(user);
+    await this.installBrowserSession(page, session);
+    await this.stubDashboardUserData(page, user.id);
+    await page.goto('/dashboard');
   }
 
   async assertDecision(
@@ -236,7 +260,7 @@ export class AccountCreationHarness {
       this.admin
         .from('profiles')
         .select(
-          'region_tier, subscription_credits_balance, purchased_credits_balance, subscription_status, subscription_tier'
+          'id, region_tier, subscription_credits_balance, purchased_credits_balance, subscription_status, subscription_tier, role, created_at, updated_at'
         )
         .eq('id', userId)
         .single(),
@@ -325,6 +349,8 @@ export class AccountCreationHarness {
   }
 
   async cleanup(): Promise<void> {
+    await this.stopDashboardHydration();
+
     const userIds = [...this.userIds];
     this.userIds.clear();
 
@@ -358,6 +384,7 @@ export class AccountCreationHarness {
   ): Promise<void> {
     const session = await this.signIn(user);
     await this.installBrowserSession(page, session);
+    await this.stubDashboardUserData(page, user.id);
     await page.setExtraHTTPHeaders({
       'x-test-env': 'true',
       'x-playwright-test': 'true',
@@ -391,7 +418,7 @@ export class AccountCreationHarness {
 
     await page.goto(path);
 
-    if (options.setupStatus) {
+    if (options.setupStatus || options.expectSetupError) {
       return;
     }
 
@@ -409,6 +436,59 @@ export class AccountCreationHarness {
       },
       { key: storageKey, authSession: session, cookieValue: encodedSession }
     );
+  }
+
+  /**
+   * The dedicated Supabase test project does not allow the randomly allocated
+   * Playwright localhost origin to call its browser RPC endpoint. Setup itself
+   * remains live; only dashboard hydration is served from the just-verified
+   * service-role state so browser assertions retain their production UI path.
+   */
+  private async stubDashboardUserData(page: Page, userId: string): Promise<void> {
+    this.dashboardRoutePages.add(page);
+    await page.route('**/rest/v1/rpc/get_user_data', async route => {
+      const request = this.fulfillDashboardUserData(route, userId);
+      this.activeDashboardReads.add(request);
+      try {
+        await request;
+      } finally {
+        this.activeDashboardReads.delete(request);
+      }
+    });
+  }
+
+  private async fulfillDashboardUserData(route: Route, userId: string): Promise<void> {
+    const state = await this.readState(userId);
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: { 'access-control-allow-origin': '*' },
+      body: JSON.stringify({
+        profile: {
+          id: state.profile.id,
+          stripe_customer_id: null,
+          subscription_credits_balance: state.profile.subscription_credits_balance ?? 0,
+          purchased_credits_balance: state.profile.purchased_credits_balance ?? 0,
+          subscription_status: state.profile.subscription_status,
+          subscription_tier: state.profile.subscription_tier,
+          role: state.profile.role,
+          created_at: state.profile.created_at,
+          updated_at: state.profile.updated_at,
+        },
+        subscription: null,
+      }),
+    });
+  }
+
+  private async stopDashboardHydration(): Promise<void> {
+    const pages = [...this.dashboardRoutePages];
+    this.dashboardRoutePages.clear();
+    await Promise.all(
+      pages.map(page =>
+        page.isClosed() ? Promise.resolve() : page.unroute('**/rest/v1/rpc/get_user_data')
+      )
+    );
+    await Promise.all([...this.activeDashboardReads]);
   }
 
   private async signIn(user: IAccountCreationUser): Promise<Session> {

@@ -58,22 +58,25 @@ export function CreditsDisplay({ onUpgrade }: ICreditsDisplayProps = {}): JSX.El
     setRepeatPackKey(null);
     if (user?.id) setRepeatPurchaseContext(user.id, null);
     if (!isProfileLoading && creditBalance <= LOW_CREDIT_THRESHOLD) {
-      void supabase.auth.getSession().then(async ({ data }) => {
-        if (!data.session?.access_token || !user?.id) return;
-        const response = await fetch('/api/auto-top-up/settings', {
-          headers: { authorization: `Bearer ${data.session.access_token}` },
+      void supabase.auth
+        .getSession()
+        .then(async ({ data }) => {
+          if (!data.session?.access_token || !user?.id) return;
+          const response = await fetch('/api/auto-top-up/settings', {
+            headers: { authorization: `Bearer ${data.session.access_token}` },
+          });
+          if (!response.ok || cancelled) return;
+          const payload = (await response.json()) as { repeatPackKey?: string | null };
+          if (cancelled) return;
+          const packKey = payload.repeatPackKey ?? null;
+          setRepeatPurchaseContext(user.id, packKey);
+          setRepeatPackKey(packKey);
+        })
+        .catch(error => {
+          if (!cancelled) {
+            console.warn('[REPEAT_PURCHASE_PROMPT] Failed to load repeat pack', error);
+          }
         });
-        if (!response.ok || cancelled) return;
-        const payload = (await response.json()) as { repeatPackKey?: string | null };
-        if (cancelled) return;
-        const packKey = payload.repeatPackKey ?? null;
-        setRepeatPurchaseContext(user.id, packKey);
-        setRepeatPackKey(packKey);
-      }).catch(error => {
-        if (!cancelled) {
-          console.warn('[REPEAT_PURCHASE_PROMPT] Failed to load repeat pack', error);
-        }
-      });
     } else {
       setRepeatPackKey(null);
     }
@@ -181,7 +184,10 @@ export function CreditsDisplay({ onUpgrade }: ICreditsDisplayProps = {}): JSX.El
   );
 
   const creditsElement = (
-    <div className="flex items-center gap-2 bg-surface-light px-3 py-1.5 rounded-full relative">
+    <div
+      className="flex items-center gap-2 bg-surface-light px-3 py-1.5 rounded-full relative"
+      data-testid="credits-display"
+    >
       {/* Warning indicator for low/no credits */}
       {(isLowCredits || isNoCredits) && (
         <div className="absolute -top-1 -right-1 z-10">

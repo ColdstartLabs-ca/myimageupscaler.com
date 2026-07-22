@@ -56,7 +56,7 @@ test.describe('Account creation free-credit hardening', () => {
     await harness.completeEmailConfirmation(page, user, identity);
 
     await harness.assertDashboardCredits(page, 0);
-    await expect(page.getByTestId('nav-upgrade-button')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'View Plans' }).first()).toBeVisible();
     await harness.assertDecision(user.id, {
       tier: 'paywalled',
       grantedCredits: 0,
@@ -82,7 +82,7 @@ test.describe('Account creation free-credit hardening', () => {
     });
   });
 
-  test('should keep a setup retry idempotent', async ({ request }) => {
+  test('should keep a setup retry idempotent', async ({ page, request }) => {
     const user = await harness.createUser();
     const identity = { country: 'US', ip: nextIp() };
 
@@ -100,9 +100,11 @@ test.describe('Account creation free-credit hardening', () => {
       grantedCredits: 5,
       transactionCount: 1,
     });
+    await harness.openDashboard(page, user);
+    await harness.assertDashboardCredits(page, 5);
   });
 
-  test('should issue one grant when setup requests race', async ({ request }) => {
+  test('should issue one grant when setup requests race', async ({ page, request }) => {
     const user = await harness.createUser();
     const identity = { country: 'US', ip: nextIp() };
 
@@ -118,6 +120,8 @@ test.describe('Account creation free-credit hardening', () => {
       grantedCredits: 5,
       transactionCount: 1,
     });
+    await harness.openDashboard(page, user);
+    await harness.assertDashboardCredits(page, 5);
   });
 
   test('should not duplicate a grant when the callback page is reloaded', async ({ page }) => {
@@ -132,9 +136,11 @@ test.describe('Account creation free-credit hardening', () => {
       grantedCredits: 5,
       transactionCount: 1,
     });
+    await harness.assertDashboardCredits(page, 5);
   });
 
   test('should apply the 5/3/0 identity ladder without retroactively reducing the first account', async ({
+    page,
     request,
   }) => {
     const sharedIp = nextIp();
@@ -164,12 +170,13 @@ test.describe('Account creation free-credit hardening', () => {
       grantedCredits: 0,
       transactionCount: 0,
     });
+    await harness.openDashboard(page, third);
+    await harness.assertDashboardCredits(page, 0);
     await harness.expectCheckoutCreated(request, third, identity);
   });
 
   test('should keep the confirmation page in an error state after setup returns 500, then grant on retry', async ({
     page,
-    request,
   }) => {
     const user = await harness.createUser();
     const identity = { country: 'US', ip: nextIp() };
@@ -180,7 +187,9 @@ test.describe('Account creation free-credit hardening', () => {
     await expect(page.getByRole('heading', { name: 'Account Setup Error' })).toBeVisible();
     await harness.assertNoDecision(user.id);
 
-    await harness.expectSetupComplete(request, user, identity);
+    await harness.clearSetupRoute(page);
+    await harness.completeEmailConfirmation(page, user, identity);
+    await harness.assertDashboardCredits(page, 5);
     await harness.assertDecision(user.id, {
       tier: 'standard',
       grantedCredits: 5,
@@ -195,13 +204,23 @@ test.describe('Account creation free-credit hardening', () => {
     const user = await harness.createUser();
     const ip = nextIp();
 
-    await harness.completeOAuthCallback(page, user, { ip });
+    const pending = await harness.setup(request, user, { ip });
+    expect(pending.status()).toBe(202);
+    await expect(pending.json()).resolves.toMatchObject({
+      success: false,
+      setupStatus: 'pending',
+      retryable: true,
+    });
+    await harness.assertNoDecision(user.id);
+
+    await harness.completeOAuthCallback(page, user, { ip }, { expectSetupError: true });
 
     await expect(page).not.toHaveURL(/\/dashboard/);
     await expect(page.getByRole('heading', { name: 'Sign In Error' })).toBeVisible();
     await harness.assertNoDecision(user.id);
 
-    await harness.expectSetupComplete(request, user, { country: 'US', ip });
+    await harness.completeOAuthCallback(page, user, { country: 'US', ip });
+    await harness.assertDashboardCredits(page, 5);
     await harness.assertDecision(user.id, {
       tier: 'standard',
       grantedCredits: 5,
@@ -210,9 +229,15 @@ test.describe('Account creation free-credit hardening', () => {
   });
 
   test('should return ACCOUNT_SETUP_PENDING without mutations before a decision exists', async ({
+    page,
     request,
   }) => {
     const user = await harness.createUser();
+    const identity = { ip: nextIp() };
+
+    await harness.completeOAuthCallback(page, user, identity, { expectSetupError: true });
+    await expect(page.getByRole('heading', { name: 'Sign In Error' })).toBeVisible();
+    await harness.assertNoDecision(user.id);
     const before = await harness.readState(user.id);
 
     const [upscale, backgroundRemoval] = await Promise.all([
@@ -226,12 +251,19 @@ test.describe('Account creation free-credit hardening', () => {
   });
 
   test('should return the purchase gate, not pending, for a terminal-zero account', async ({
+    page,
     request,
   }) => {
     const user = await harness.createUser();
     const identity = { country: 'IN', ip: nextIp() };
 
-    await harness.expectSetupComplete(request, user, identity);
+    await harness.completeEmailConfirmation(page, user, identity);
+    await harness.assertDashboardCredits(page, 0);
+    await harness.assertDecision(user.id, {
+      tier: 'paywalled',
+      grantedCredits: 0,
+      transactionCount: 0,
+    });
     const before = await harness.readState(user.id);
     const upscale = await harness.upscale(request, user);
 
@@ -260,6 +292,7 @@ test.describe('Account creation free-credit hardening', () => {
   });
 
   test('should reject unauthenticated setup and ignore a forged X-User-Id header', async ({
+    page,
     request,
   }) => {
     const [authenticatedUser, forgedUser] = await Promise.all([
@@ -283,9 +316,11 @@ test.describe('Account creation free-credit hardening', () => {
       transactionCount: 1,
     });
     await harness.assertNoDecision(forgedUser.id);
+    await harness.openDashboard(page, authenticatedUser);
+    await harness.assertDashboardCredits(page, 5);
   });
 
-  test('should not expose request identity in setup responses', async ({ request }) => {
+  test('should not expose request identity in setup responses', async ({ page, request }) => {
     const user = await harness.createUser();
     const identity = { country: 'US', ip: nextIp() };
     const response = await harness.setup(request, user, identity, {
@@ -297,9 +332,19 @@ test.describe('Account creation free-credit hardening', () => {
     expect(serializedResponse).not.toContain(identity.ip);
     expect(serializedResponse).not.toContain('account-creation-e2e-private-agent');
     expect(serializedResponse).not.toContain('identity_hash');
+    await harness.assertDecision(user.id, {
+      tier: 'standard',
+      grantedCredits: 5,
+      transactionCount: 1,
+    });
+    await harness.openDashboard(page, user);
+    await harness.assertDashboardCredits(page, 5);
   });
 
-  test('should not issue a welcome grant to active or trialing accounts', async ({ request }) => {
+  test('should not issue a welcome grant to active or trialing accounts', async ({
+    page,
+    request,
+  }) => {
     const scenarios: Array<{
       status: 'active' | 'trialing';
       user: IAccountCreationUser;
@@ -315,5 +360,8 @@ test.describe('Account creation free-credit hardening', () => {
       expect(state.profile.subscription_status).toBe(status);
       expect(state.transactions).toHaveLength(0);
     }
+
+    await harness.openDashboard(page, scenarios[0].user);
+    await harness.assertDashboardCredits(page, 0);
   });
 });
