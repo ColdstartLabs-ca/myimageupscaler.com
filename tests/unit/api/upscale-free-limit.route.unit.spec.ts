@@ -179,12 +179,12 @@ describe('POST /api/upscale free limit errors', () => {
     expect(reads).toEqual(['free_credit_grants', 'profiles']);
   });
 
-  it('returns FREE_LIMIT_EXCEEDED at zero free credits', async () => {
+  it('returns INSUFFICIENT_CREDITS at zero free credits', async () => {
     const response = await POST(request());
 
     expect(response.status).toBe(402);
     await expect(response.json()).resolves.toMatchObject({
-      error: { code: 'FREE_LIMIT_EXCEEDED', details: { required: 1, available: 0 } },
+      error: { code: 'INSUFFICIENT_CREDITS', details: { required: 1, available: 0 } },
     });
   });
 
@@ -246,7 +246,7 @@ describe('POST /api/upscale free limit errors', () => {
 
     expect(response.status).toBe(402);
     await expect(response.json()).resolves.toMatchObject({
-      error: { code: 'FREE_LIMIT_EXCEEDED', details: { required: 1, available: 0 } },
+      error: { code: 'INSUFFICIENT_CREDITS', details: { required: 1, available: 0 } },
     });
   });
 });

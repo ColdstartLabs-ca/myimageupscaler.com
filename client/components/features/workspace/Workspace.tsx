@@ -101,7 +101,6 @@ const Workspace: React.FC = () => {
 
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [upgradeModalOutOfCredits, setUpgradeModalOutOfCredits] = useState(false);
-  const [upgradeModalHardGate, setUpgradeModalHardGate] = useState(false);
   const [upgradeModalTrigger, setUpgradeModalTrigger] = useState('workspace');
   const [upgradeModalCreditContext, setUpgradeModalCreditContext] = useState<{
     requiredCredits: number;
@@ -111,11 +110,9 @@ const Workspace: React.FC = () => {
   const openUpgradeModal = (
     outOfCredits = false,
     trigger = 'workspace',
-    creditContext?: { requiredCredits: number; currentBalance: number },
-    hardGate = false
+    creditContext?: { requiredCredits: number; currentBalance: number }
   ) => {
     setUpgradeModalOutOfCredits(outOfCredits);
-    setUpgradeModalHardGate(hardGate);
     setUpgradeModalTrigger(trigger);
     setUpgradeModalCreditContext(creditContext ?? null);
     setShowUpgradeModal(true);
@@ -123,7 +120,6 @@ const Workspace: React.FC = () => {
   const closeUpgradeModal = () => {
     setShowUpgradeModal(false);
     setUpgradeModalOutOfCredits(false);
-    setUpgradeModalHardGate(false);
     setUpgradeModalCreditContext(null);
   };
   const [postAuthCheckoutPriceId, setPostAuthCheckoutPriceId] = useState<string | null>(null);
@@ -286,15 +282,10 @@ const Workspace: React.FC = () => {
       if (item.error && !globalErrors.some(error => error.id === item.id)) {
         let errorTitle = t('workspace.errors.title');
 
-        if (item.error?.toLowerCase().includes('free limit reached')) {
-          errorTitle = t('workspace.errors.insufficientCredits');
-          openUpgradeModal(
-            true,
-            'free_limit_exceeded',
-            { requiredCredits: 1, currentBalance: 0 },
-            true
-          );
-        } else if (item.error?.toLowerCase().includes('insufficient credits')) {
+        if (
+          item.error?.toLowerCase().includes('free limit reached') ||
+          item.error?.toLowerCase().includes('insufficient credits')
+        ) {
           errorTitle = t('workspace.errors.insufficientCredits');
           // Auto-open upgrade modal with outOfCredits: true
           openUpgradeModal(true, 'insufficient_credits');
@@ -463,15 +454,10 @@ const Workspace: React.FC = () => {
 
     const requiredCredits = getRequiredCreditsForPendingQueue();
     if (requiredCredits > totalCredits) {
-      openUpgradeModal(
-        true,
-        'insufficient_credits',
-        {
-          requiredCredits,
-          currentBalance: totalCredits,
-        },
-        isFreeUser && totalCredits === 0
-      );
+      openUpgradeModal(true, 'insufficient_credits', {
+        requiredCredits,
+        currentBalance: totalCredits,
+      });
       return;
     }
 
@@ -642,7 +628,6 @@ const Workspace: React.FC = () => {
           onClose={closeUpgradeModal}
           onPurchaseComplete={closeUpgradeModal}
           outOfCredits={upgradeModalOutOfCredits}
-          hardGate={upgradeModalHardGate}
           trigger={upgradeModalTrigger}
         />
 
@@ -968,7 +953,6 @@ const Workspace: React.FC = () => {
         onClose={closeUpgradeModal}
         onPurchaseComplete={closeUpgradeModal}
         outOfCredits={upgradeModalOutOfCredits}
-        hardGate={upgradeModalHardGate}
         trigger={upgradeModalTrigger}
         requiredCredits={upgradeModalCreditContext?.requiredCredits}
         currentBalance={upgradeModalCreditContext?.currentBalance}

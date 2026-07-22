@@ -250,7 +250,7 @@ test.describe('Account creation free-credit hardening', () => {
     await harness.expectStateUnchanged(user.id, before);
   });
 
-  test('should return the purchase gate, not pending, for a terminal-zero account', async ({
+  test('should return insufficient credits, not pending, for a terminal-zero account', async ({
     page,
     request,
   }) => {
@@ -267,7 +267,7 @@ test.describe('Account creation free-credit hardening', () => {
     const before = await harness.readState(user.id);
     const upscale = await harness.upscale(request, user);
 
-    await harness.expectErrorCode(upscale, 'FREE_LIMIT_EXCEEDED');
+    await harness.expectErrorCode(upscale, 'INSUFFICIENT_CREDITS');
     await harness.expectStateUnchanged(user.id, before);
   });
 

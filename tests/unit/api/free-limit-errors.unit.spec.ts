@@ -16,11 +16,12 @@ describe('getCreditLimitErrorCode', () => {
     expect(getCreditLimitErrorCode(0, 1, false)).toBe(ErrorCodes.INSUFFICIENT_CREDITS);
   });
 
-  it('uses the typed limit code in every credit-consuming processing route', () => {
-    const processingRoutes = ['app/api/upscale/route.ts', 'app/api/bg-removal/deduct/route.ts'];
+  it('should stop applying the typed free-limit gate to the upscale route', () => {
+    const upscaleRoute = readFileSync('app/api/upscale/route.ts', 'utf8');
+    const backgroundRemovalRoute = readFileSync('app/api/bg-removal/deduct/route.ts', 'utf8');
 
-    for (const route of processingRoutes) {
-      expect(readFileSync(route, 'utf8')).toContain('getCreditLimitErrorCode');
-    }
+    expect(upscaleRoute).not.toContain('getCreditLimitErrorCode');
+    expect(upscaleRoute).toContain('ErrorCodes.INSUFFICIENT_CREDITS');
+    expect(backgroundRemovalRoute).toContain('getCreditLimitErrorCode');
   });
 });

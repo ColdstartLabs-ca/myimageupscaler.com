@@ -41,8 +41,6 @@ export interface IPurchaseModalProps {
   currentBalance?: number;
   /** Where in the UI this modal was triggered from */
   trigger?: string;
-  /** Prevent dismissal when the server confirms that free credits are exhausted. */
-  hardGate?: boolean;
 }
 
 // ------------------------------------------------------------------------------
@@ -135,12 +133,10 @@ export function PurchaseModal({
   requiredCredits,
   currentBalance,
   trigger = 'unknown',
-  hardGate = false,
 }: IPurchaseModalProps): JSX.Element | null {
   const t = useTranslations('stripe.outOfCredits');
   const { pricingRegion, discountPercent } = useRegionTier();
   const openTimeRef = useRef<number>(0);
-  const hardGateTrackedRef = useRef(false);
   const { isAuthenticated, user } = useUserStore();
   const { openAuthRequiredModal } = useModalStore();
 
@@ -184,27 +180,15 @@ export function PurchaseModal({
 
   useEffect(() => {
     if (!isOpen) {
-      hardGateTrackedRef.current = false;
       setShowFreePlanConfirmation(false);
       setIsFreePlanConfirmationReady(false);
       return;
     }
 
-    setRequiresFreePlanConfirm(!hardGate && requiresFreePlanConfirmation(user?.id));
+    setRequiresFreePlanConfirm(requiresFreePlanConfirmation(user?.id));
     setShowFreePlanConfirmation(false);
     setIsFreePlanConfirmationReady(false);
-  }, [hardGate, isOpen, user?.id]);
-
-  useEffect(() => {
-    if (!isOpen || !hardGate || hardGateTrackedRef.current) return;
-
-    hardGateTrackedRef.current = true;
-    analytics.track('free_limit_gate_shown', {
-      trigger,
-      requiredCredits,
-      currentBalance,
-    });
-  }, [currentBalance, hardGate, isOpen, requiredCredits, trigger]);
+  }, [isOpen, user?.id]);
 
   useEffect(() => {
     if (!showFreePlanConfirmation) return;
@@ -395,8 +379,6 @@ export function PurchaseModal({
 
   const handleDismiss = useCallback(
     (method: 'backdrop' | 'close_button' | 'not_now') => {
-      if (hardGate) return;
-
       if (requiresFreePlanConfirm && !showFreePlanConfirmation) {
         setShowFreePlanConfirmation(true);
         return;
@@ -404,7 +386,7 @@ export function PurchaseModal({
 
       completeDismiss(method);
     },
-    [completeDismiss, hardGate, requiresFreePlanConfirm, showFreePlanConfirmation]
+    [completeDismiss, requiresFreePlanConfirm, showFreePlanConfirmation]
   );
 
   const handleModeChange = useCallback(
@@ -502,15 +484,6 @@ export function PurchaseModal({
       ...getExperimentAnalyticsProps(purchaseExperiment.assignment),
     });
 
-    if (hardGate) {
-      analytics.track('free_limit_gate_upgrade_clicked', {
-        trigger,
-        destination,
-        requiredCredits,
-        currentBalance,
-      });
-    }
-
     // Existing subscriber changing plans
     if (selectedPlan && isPaidUser && currentPriceId && priceId !== currentPriceId) {
       setPlanChangePriceId(priceId);
@@ -589,9 +562,6 @@ export function PurchaseModal({
     isAuthenticated,
     openAuthRequiredModal,
     purchaseExperiment.assignment,
-    hardGate,
-    requiredCredits,
-    currentBalance,
   ]);
 
   const getCTALabel = useCallback(() => {
@@ -636,7 +606,7 @@ export function PurchaseModal({
         {/* Backdrop */}
         <div
           className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
-          onClick={hardGate ? undefined : () => handleDismiss('backdrop')}
+          onClick={() => handleDismiss('backdrop')}
         />
 
         {/* Modal */}
@@ -658,15 +628,13 @@ export function PurchaseModal({
                     height={28}
                     className="h-6 w-auto object-contain"
                   />
-                  {!hardGate && (
-                    <button
-                      onClick={() => handleDismiss('close_button')}
-                      className="w-8 h-8 rounded-full border border-text-muted/30 flex items-center justify-center text-text-muted hover:text-text-primary hover:border-text-muted/50 transition-colors"
-                      aria-label={t('notNow')}
-                    >
-                      <X size={16} />
-                    </button>
-                  )}
+                  <button
+                    onClick={() => handleDismiss('close_button')}
+                    className="w-8 h-8 rounded-full border border-text-muted/30 flex items-center justify-center text-text-muted hover:text-text-primary hover:border-text-muted/50 transition-colors"
+                    aria-label={t('notNow')}
+                  >
+                    <X size={16} />
+                  </button>
                 </div>
 
                 {/* Title row with coin image */}

@@ -363,32 +363,25 @@ describe('PurchaseModal analytics', () => {
     });
   });
 
-  test('keeps the zero-credit gate open and tracks its display', async () => {
+  test('should always render a working close button for zero-credit users', async () => {
     const onClose = vi.fn();
     render(
       <PurchaseModal
         isOpen={true}
         onClose={onClose}
         onPurchaseComplete={vi.fn()}
-        trigger="free_limit_exceeded"
+        trigger="insufficient_credits"
         outOfCredits={true}
-        hardGate={true}
       />
     );
 
-    await waitFor(() => {
-      expect(mockTrack).toHaveBeenCalledWith(
-        'free_limit_gate_shown',
-        expect.objectContaining({ trigger: 'free_limit_exceeded' })
-      );
-    });
-    expect(screen.queryByRole('button', { name: 'notNow' })).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: /buy 50 credits/i }));
-    expect(mockTrack).toHaveBeenCalledWith(
+    fireEvent.click(await screen.findByRole('button', { name: 'notNow' }));
+    expect(onClose).toHaveBeenCalledOnce();
+    expect(mockTrack).not.toHaveBeenCalledWith('free_limit_gate_shown', expect.anything());
+    expect(mockTrack).not.toHaveBeenCalledWith(
       'free_limit_gate_upgrade_clicked',
-      expect.objectContaining({ trigger: 'free_limit_exceeded', destination: 'credits' })
+      expect.anything()
     );
-    expect(onClose).not.toHaveBeenCalled();
   });
 
   test('requires a five-second confirmation before a fourth upgrade-prompt dismissal', async () => {

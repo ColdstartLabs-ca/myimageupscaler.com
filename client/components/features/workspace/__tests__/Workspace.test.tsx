@@ -193,14 +193,14 @@ vi.mock('@client/components/stripe/PurchaseModal', () => ({
     outOfCredits,
     requiredCredits,
     currentBalance,
-    hardGate,
+    onClose,
   }: {
     isOpen: boolean;
     trigger?: string;
     outOfCredits?: boolean;
     requiredCredits?: number;
     currentBalance?: number;
-    hardGate?: boolean;
+    onClose: () => void;
   }) =>
     isOpen ? (
       <div
@@ -209,8 +209,9 @@ vi.mock('@client/components/stripe/PurchaseModal', () => ({
         data-out-of-credits={String(Boolean(outOfCredits))}
         data-required-credits={requiredCredits}
         data-current-balance={currentBalance}
-        data-hard-gate={String(Boolean(hardGate))}
-      />
+      >
+        <button onClick={onClose}>Dismiss purchase modal</button>
+      </div>
     ) : null,
 }));
 
@@ -535,7 +536,7 @@ describe('Workspace Quality Tier Logic', () => {
     ).not.toBeInTheDocument();
   });
 
-  test('should open insufficient_credits modal before processing when balance is too low', async () => {
+  test('should open dismissible upgrade modal when credits are insufficient', async () => {
     mockTotalCredits = 0;
     mockBatchQueueState.queue = [
       {
@@ -559,7 +560,8 @@ describe('Workspace Quality Tier Logic', () => {
     expect(screen.getByTestId('purchase-modal')).toHaveAttribute('data-out-of-credits', 'true');
     expect(screen.getByTestId('purchase-modal')).toHaveAttribute('data-required-credits', '1');
     expect(screen.getByTestId('purchase-modal')).toHaveAttribute('data-current-balance', '0');
-    expect(screen.getByTestId('purchase-modal')).toHaveAttribute('data-hard-gate', 'true');
+    fireEvent.click(screen.getByRole('button', { name: 'Dismiss purchase modal' }));
+    expect(screen.queryByTestId('purchase-modal')).not.toBeInTheDocument();
   });
 
   test('should still process when balance covers selected model cost', async () => {

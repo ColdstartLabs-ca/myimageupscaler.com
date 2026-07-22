@@ -31,7 +31,7 @@ interface IUseBatchQueueReturn {
   batchLimit: number;
   batchLimitExceeded: { attempted: number; limit: number; serverEnforced?: boolean } | null;
   setActiveId: (id: string) => void;
-  addFiles: (files: File[], _source?: 'drag_drop' | 'file_picker' | 'paste' | 'url') => void;
+  addFiles: (files: File[], source?: 'drag_drop' | 'file_picker' | 'paste' | 'url') => void;
   /** Inject a pre-processed sample — shows before/after without calling the API */
   addSampleItem: (beforeSrc: string, afterSrc: string, label: string) => Promise<void>;
   removeItem: (id: string) => void;
@@ -70,7 +70,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
   const completedCount = queue.filter(i => i.status === ProcessingStatus.COMPLETED).length;
 
   const addFiles = useCallback(
-    (files: File[], _source: 'drag_drop' | 'file_picker' | 'paste' | 'url' = 'file_picker') => {
+    (files: File[], source: 'drag_drop' | 'file_picker' | 'paste' | 'url' = 'file_picker') => {
       const currentCount = queue.length;
       const availableSlots = Math.max(0, batchLimit - currentCount);
 
@@ -104,6 +104,31 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         return updated;
       });
 
+      const isGuest = !profile?.id;
+      filesToAdd.forEach(async (file, index) => {
+        let dimensions: { width: number; height: number } | null = null;
+        try {
+          dimensions = await loadImageDimensions(file);
+          setQueue(prev =>
+            prev.map(item =>
+              item.file === file ? { ...item, inputDimensions: dimensions ?? undefined } : item
+            )
+          );
+        } catch {
+          // Dimension loading is best-effort; the upload event still matters.
+        }
+
+        analytics.track('image_uploaded', {
+          fileSize: file.size,
+          fileType: file.type,
+          inputWidth: dimensions?.width,
+          inputHeight: dimensions?.height,
+          source,
+          isGuest,
+          batchPosition: currentCount + index,
+        });
+      });
+
       // Show modal if some files were rejected due to limit
       if (rejectedCount > 0) {
         setBatchLimitExceeded({
@@ -112,7 +137,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         });
       }
     },
-    [activeId, queue.length, batchLimit]
+    [activeId, queue.length, batchLimit, profile?.id]
   );
 
   /**
@@ -258,16 +283,6 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
       if (result.creditsUsed > 0) {
         useUserStore.getState().updateCreditsFromProcessing(result.creditsRemaining);
       }
-
-      analytics.track('image_uploaded', {
-        fileSize: fileToProcess.size,
-        fileType: fileToProcess.type,
-        inputWidth,
-        inputHeight,
-        source: 'completed_processing',
-        isGuest: false,
-        batchPosition: 0,
-      });
 
       success = true;
     } catch (error: unknown) {

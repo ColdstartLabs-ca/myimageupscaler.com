@@ -24,7 +24,6 @@ import {
   getModelForTier,
 } from '@shared/config/subscription.utils';
 import { isAccountSetupPending, isFreeleaderBlocked } from '@/lib/anti-freeloader/check-freeloader';
-import { getCreditLimitErrorCode } from '@shared/utils/credit-limit';
 import { ErrorCodes, createErrorResponse, serializeError } from '@shared/utils/errors';
 import {
   decodeImageDimensions,
@@ -399,7 +398,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       profile?.subscription_tier !== undefined &&
       profile.subscription_tier !== 'free';
 
-    // Never apply the free-tier hard gate to a current or former paid plan.
+    // Current or former paid users retain paid model-access classification.
     isPaidUser = hasActiveSubscription || hasPurchasedCredits || hasPaidPlanHistory;
 
     // Determine tier: subscription tier takes precedence, otherwise 'hobby' for credit purchasers
@@ -828,12 +827,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         requiredCredits: creditCost,
         effectiveTotalCredits,
       });
-      const errorCode = getCreditLimitErrorCode(effectiveTotalCredits, creditCost, !isPaidUser);
       const { body, status } = createErrorResponse(
-        errorCode,
-        errorCode === ErrorCodes.FREE_LIMIT_EXCEEDED
-          ? 'You have used all of your free credits. Upgrade to continue.'
-          : `You have insufficient credits. This operation requires ${creditCost} credit${creditCost > 1 ? 's' : ''}.`,
+        ErrorCodes.INSUFFICIENT_CREDITS,
+        `You have insufficient credits. This operation requires ${creditCost} credit${creditCost > 1 ? 's' : ''}.`,
         402,
         { required: creditCost, available: effectiveTotalCredits }
       );
@@ -1036,12 +1032,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     if (error instanceof InsufficientCreditsError) {
       logFailure('insufficient_credits', { requiredCredits: creditCost });
       const availableCredits = error.availableCredits ?? effectiveTotalCredits ?? 1;
-      const errorCode = getCreditLimitErrorCode(availableCredits, creditCost, !isPaidUser);
       const { body, status } = createErrorResponse(
-        errorCode,
-        errorCode === ErrorCodes.FREE_LIMIT_EXCEEDED
-          ? 'You have used all of your free credits. Upgrade to continue.'
-          : `You have insufficient credits. This operation requires ${creditCost} credit${creditCost > 1 ? 's' : ''}.`,
+        ErrorCodes.INSUFFICIENT_CREDITS,
+        `You have insufficient credits. This operation requires ${creditCost} credit${creditCost > 1 ? 's' : ''}.`,
         402,
         { required: creditCost, available: availableCredits }
       );

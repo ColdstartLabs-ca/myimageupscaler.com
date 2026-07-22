@@ -9,6 +9,10 @@ const restorePolicyMigration = readFileSync(
   'supabase/migrations/20260718194900_restore_five_credit_grant_policy.sql',
   'utf8'
 );
+const disableSharedIdentityReductionMigration = readFileSync(
+  'supabase/migrations/20260722193018_disable_shared_identity_reduction.sql',
+  'utf8'
+);
 
 describe('free credit grant migration', () => {
   it('grants only once per user and serializes same-identity accounts', () => {
@@ -79,6 +83,31 @@ describe('five-credit policy restore migration', () => {
     );
     expect(restorePolicyMigration).toContain(
       'DROP FUNCTION IF EXISTS public.cancel_stale_balance_email(UUID, UUID, TEXT, INTEGER, INTEGER)'
+    );
+  });
+});
+
+describe('shared-identity reduction rollback migration', () => {
+  it('should grant full requested credits when identity matches prior grants', () => {
+    expect(disableSharedIdentityReductionMigration).toContain(
+      'v_granted_credits := p_requested_credits;'
+    );
+    expect(disableSharedIdentityReductionMigration).not.toContain('LEAST(');
+    expect(disableSharedIdentityReductionMigration).not.toMatch(
+      /v_granted_credits\s*:=\s*CASE[\s\S]*v_matched_account_count/
+    );
+    expect(disableSharedIdentityReductionMigration).toContain('v_matched_account_count');
+  });
+
+  it('should keep per-user idempotency and service-role-only execution', () => {
+    expect(disableSharedIdentityReductionMigration).toContain('IF FOUND THEN');
+    expect(disableSharedIdentityReductionMigration).toContain('v_existing_grant,');
+    expect(disableSharedIdentityReductionMigration).toContain('true,');
+    expect(disableSharedIdentityReductionMigration).toContain(
+      'REVOKE ALL ON FUNCTION public.claim_free_credit_grant(UUID, TEXT, TEXT, INTEGER) FROM authenticated'
+    );
+    expect(disableSharedIdentityReductionMigration).toContain(
+      'GRANT EXECUTE ON FUNCTION public.claim_free_credit_grant(UUID, TEXT, TEXT, INTEGER) TO service_role'
     );
   });
 });
