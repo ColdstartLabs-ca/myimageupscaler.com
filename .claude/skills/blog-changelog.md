@@ -343,3 +343,15 @@ Intent mismatch fixes (seo_title only):
 
 - `best-image-upscaler` — refreshed title and description fields around 12 free/pro image upscaling tools for 2026 and replaced the generic opening with a direct workflow answer.
 - `how-to-upscale-youtube-thumbnails` — refreshed title and description fields around blurry/low-quality intent and replaced the opening H1/intro with a direct cause-and-fix answer.
+
+## 2026-07-22
+
+### SEO: GSC Opportunity Recovery
+
+**Affected:** text-image-enhancer, poster-size-dimensions-pixels, photo-restoration-program
+**Why:** Fresh GSC data showed a ranking loss for text-image readability, a page-one poster CTR leak, and a striking-distance restoration comparison with zero clicks.
+**Changes:**
+
+- `text-image-enhancer` — aligned the H1 and SEO title to clarity/readability intent, added a direct-answer opening and five-problem table, separated human reading from OCR preparation, and linked the AI photo enhancer tool.
+- `poster-size-dimensions-pixels` — applied the approved 24×36/150–300 DPI snippet while preserving the existing first-screen table; corrected stale welcome-credit copy.
+- `photo-restoration-program` — added a four-option comparison by task, limits, pricing, privacy, and use case; removed an unsupported testing claim; aligned the visible year and welcome-credit copy.

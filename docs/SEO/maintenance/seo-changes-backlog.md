@@ -12,12 +12,58 @@ Maintenance rules:
 ## Open Follow-Ups
 
 - [ ] After next deploy, complete [GSC request indexing backlog](./gsc-request-indexing-backlog.md).
+- [ ] Measure the implemented [GSC SEO recovery PRD](../../PRDs/gsc-opportunity-recovery-2026-07-22.md): first complete 14-day comparison on or after 2026-08-05 and 28-day success-criteria evaluation on or after 2026-08-19. Keep the PRD outside `done/` until the 28-day evaluation is recorded.
 - [ ] On or after 2026-07-19, compare `/blog/best-free-ai-photo-enhancer-online` for 2026-06-22 through 2026-07-07 against the next complete 16-day GSC window; inspect query and competing-URL losses before any further edit. A 2026-07-20 fresh 28-day check found this URL at 2,985 impressions, 21 clicks, avg position 38.93; no edit was made because the stronger matured CTR action was on `/blog/best-free-ai-image-upscaler-2026-tested-compared`.
 - [ ] Around 2026-07-20, run the early GSC check for the 2026-07-03 edits to `/blog/fixing-pixelated-photos`, `/blog/topaz-video-upscaler`, and `/blog/best-ai-upscaler`; use early August for the stronger 28-day evaluation and do not rewrite during the window.
 - [ ] After the 2026-06-29 Spanish homepage metadata has matured, evaluate `/es` query movement and add natural Spanish internal links only if visibility still needs support.
 - [x] After next deploy, verify `https://myimageupscaler.com/sitemap-static.xml` includes `/de`, `/es`, `/fr`, `/it`, `/ja`, and `/pt`. Verified 2026-05-13.
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
+
+## 2026-07-22
+
+### GSC Opportunity Recovery Implementation
+
+Source: [GSC opportunity recovery PRD](../../PRDs/gsc-opportunity-recovery-2026-07-22.md)
+
+Changes:
+
+- Updated `/blog/text-image-enhancer` through the production blog API with the approved H1 and SEO title, a direct-answer opening, a five-problem clarity table, separate human-readability/OCR guidance, and a natural `/tools/ai-photo-enhancer` link.
+- Updated only the requested poster snippet fields on `/blog/poster-size-dimensions-pixels`; retained its existing first-screen 150/200/300 DPI table. Corrected all three stale 10-credit body references to five welcome credits without using one-time language.
+- Expanded `/blog/photo-restoration-program` with a published-evidence comparison across restoration tasks, limits, pricing model, privacy, and best use case; distinguished face restoration, scratch repair, colorization, and general enhancement; removed the unsupported `Tested & Ranked` snippet claim and corrected stale 10-credit copy.
+- Verified ownership signals already present for the GIF format page, canonical best-free-upscaler comparison, Spanish informational guide, AI photo enhancer tool, no-signup research page, and broad enhancer comparison; no new page, URL, redirect, canonical, sitemap, or robots change was introduced.
+- Deduplicated the GSC request-indexing backlog to one row per URL. Any URL with conflicting historical states remains pending; the three refreshed articles are pending until GSC UI confirmation.
+
+Validation:
+
+- Created and verified fresh backups before production writes: `backups/backup_2026-07-22_14-35-17.schema.sql.gz` and `backups/backup_2026-07-22_14-35-17.data.sql.gz`; `yarn db:backups` listed both and `gzip -t` passed for each.
+- Production blog API PATCH/GET readback returned published records with the intended metadata and content contracts.
+- Production HTML returned `200`, `index, follow`, self-canonicals, and the updated rendered titles for all three URLs.
+- Added `tests/unit/seo/gsc-opportunity-recovery.unit.spec.ts`; focused test and repository verification results are recorded with the implementation handoff.
+
+Follow-up:
+
+- Complete the pending manual requests in [GSC request indexing backlog](./gsc-request-indexing-backlog.md); do not check off a URL without GSC UI confirmation.
+- Compare complete GSC windows on or after 2026-08-05 and 2026-08-19. Move the PRD to `docs/PRDs/done/` only after the 28-day evaluation.
+
+### GSC SEO Recovery PRD
+
+Source: [GSC opportunity recovery PRD](../../PRDs/gsc-opportunity-recovery-2026-07-22.md)
+
+Changes:
+
+- Documented a focused response to the fresh GSC analysis: recover the text-image article, improve the poster snippet, clarify page ownership, expand the existing restoration comparison, and wait for recent edits to mature.
+- Recorded production backup, SEO testing, indexing, and measurement requirements for later implementation.
+- No production content, metadata, canonical, sitemap, robots, redirect, or indexing state changed in this planning step.
+
+Validation:
+
+- Cross-checked the PRD baselines and dates against the 2026-07-22 GSC export and recent SEO backlog entries.
+- Ran `yarn verify` after the documentation changes.
+
+Follow-up:
+
+- Begin implementation only after approval; keep the July 27, July 31, and August 4 recheck dates intact.
 
 ## 2026-07-20
 
