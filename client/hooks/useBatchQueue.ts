@@ -105,28 +105,28 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
       });
 
       const isGuest = !profile?.id;
-      filesToAdd.forEach(async (file, index) => {
-        let dimensions: { width: number; height: number } | null = null;
-        try {
-          dimensions = await loadImageDimensions(file);
-          setQueue(prev =>
-            prev.map(item =>
-              item.file === file ? { ...item, inputDimensions: dimensions ?? undefined } : item
-            )
-          );
-        } catch {
-          // Dimension loading is best-effort; the upload event still matters.
-        }
-
+      filesToAdd.forEach((file, index) => {
+        // Funnel telemetry must not depend on asynchronous image decoding. A user can
+        // navigate away before dimensions load, especially during the guest signup flow.
         analytics.track('image_uploaded', {
           fileSize: file.size,
           fileType: file.type,
-          inputWidth: dimensions?.width,
-          inputHeight: dimensions?.height,
           source,
           isGuest,
           batchPosition: currentCount + index,
         });
+
+        void loadImageDimensions(file)
+          .then(dimensions => {
+            setQueue(prev =>
+              prev.map(item =>
+                item.file === file ? { ...item, inputDimensions: dimensions } : item
+              )
+            );
+          })
+          .catch(() => {
+            // Dimension enrichment is best-effort; upload telemetry is already recorded.
+          });
       });
 
       // Show modal if some files were rejected due to limit
