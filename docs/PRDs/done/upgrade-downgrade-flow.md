@@ -22,7 +22,7 @@
 /home/joao/projects/myimageupscaler.com/client/services/stripeService.ts
 /home/joao/projects/myimageupscaler.com/server/stripe/stripeService.ts
 /home/joao/projects/myimageupscaler.com/shared/config/stripe.ts
-/home/joao/projects/myimageupscaler.com/supabase/migrations/20250120_create_subscriptions_table.sql
+/home/joao/projects/myimageupscaler.com/supabase/migrations/20250120000200_create_subscriptions_table.sql
 /home/joao/projects/myimageupscaler.com/docs/technical/systems/subscription-gaps.md
 ```
 

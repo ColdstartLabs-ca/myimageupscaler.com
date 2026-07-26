@@ -28,8 +28,8 @@
 | `app/api/webhooks/stripe/route.ts` | Main Stripe webhook handler (612 lines) |
 | `app/api/subscription/change/route.ts` | Subscription plan change endpoint |
 | `shared/config/stripe.ts` | Plan configuration (SUBSCRIPTION_PRICE_MAP) |
-| `supabase/migrations/20250120_create_subscriptions_table.sql` | Subscriptions schema |
-| `supabase/migrations/20250202_create_webhook_events_table.sql` | Idempotency tracking |
+| `supabase/migrations/20250120000200_create_subscriptions_table.sql` | Subscriptions schema |
+| `supabase/migrations/20250202000100_create_webhook_events_table.sql` | Idempotency tracking |
 | `docs/technical/systems/subscription-system.md` | Current system documentation |
 
 ### 1.2 Component & Dependency Overview
@@ -639,7 +639,7 @@ STRIPE_CRON_SECRET_KEY=${STRIPE_SECRET_KEY}
 
 ### Phase 1: Database Setup
 
-- [ ] Create migration `20250302_add_sync_tables.sql`
+- [ ] Create migration `20250302000000_add_sync_tables.sql`
 - [ ] Add `retry_count`, `last_retry_at`, `recoverable` columns to `webhook_events`
 - [ ] Create `sync_runs` table with proper indexes
 - [ ] Apply migration to development branch

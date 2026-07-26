@@ -43,7 +43,7 @@ describe('recipient-value queue migrations', () => {
   });
 
   it('should exclude unclassified marketing rows from the due queue', () => {
-    const migration = readMigration('20260715000100_restore_lifecycle_delivery_queue.sql');
+    const migration = readMigration('20260716062436_restore_lifecycle_delivery_queue.sql');
 
     expect(migration).toContain("c.email_type = 'marketing'");
     expect(migration).toContain('q.recipient_value_decision IS NOT NULL');
@@ -67,7 +67,7 @@ describe('recipient-value queue migrations', () => {
   });
 
   it('should allow transactional rows without recipient classification', () => {
-    const migration = readMigration('20260715000100_restore_lifecycle_delivery_queue.sql');
+    const migration = readMigration('20260716062436_restore_lifecycle_delivery_queue.sql');
 
     expect(migration).toContain("c.email_type = 'transactional'");
     expect(migration).toMatch(
@@ -76,7 +76,7 @@ describe('recipient-value queue migrations', () => {
   });
 
   it('should exclude disabled and active-claim rows while preserving stale-claim release', () => {
-    const migration = readMigration('20260715000100_restore_lifecycle_delivery_queue.sql');
+    const migration = readMigration('20260716062436_restore_lifecycle_delivery_queue.sql');
 
     expect(migration).toContain('c.enabled IS TRUE');
     expect(migration).toContain('q.processing_claim_id IS NULL');
@@ -86,7 +86,7 @@ describe('recipient-value queue migrations', () => {
   });
 
   it('should preserve deterministic value ordering and add bounded lookup indexes', () => {
-    const migration = readMigration('20260715000100_restore_lifecycle_delivery_queue.sql');
+    const migration = readMigration('20260716062436_restore_lifecycle_delivery_queue.sql');
 
     expect(migration).toContain("WHEN 'keep_high' THEN 1");
     expect(migration).toContain("WHEN 'keep_medium' THEN 2");
@@ -101,7 +101,7 @@ describe('recipient-value queue migrations', () => {
   });
 
   it('should atomically enforce suppression idempotency and the 200 per day marketing budget', () => {
-    const migration = readMigration('20260715000100_restore_lifecycle_delivery_queue.sql');
+    const migration = readMigration('20260716062436_restore_lifecycle_delivery_queue.sql');
     expect(migration).toContain('record_email_lifecycle_suppression');
     expect(migration).toContain('pg_advisory_xact_lock');
     expect(migration).toContain("q.created_at >= pg_catalog.now() - INTERVAL '24 hours'");
@@ -111,7 +111,7 @@ describe('recipient-value queue migrations', () => {
   });
 
   it('should aggregate transaction signals per user and provide exact rollback statements', () => {
-    const migration = readMigration('20260715000100_restore_lifecycle_delivery_queue.sql');
+    const migration = readMigration('20260716062436_restore_lifecycle_delivery_queue.sql');
 
     expect(migration).toContain('get_email_recipient_value_transaction_signals');
     expect(migration).toContain('GROUP BY t.user_id');

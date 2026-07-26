@@ -11,10 +11,10 @@
 
 ### 1.1 Files Analyzed
 
-- `supabase/migrations/20250202_add_credit_clawback_rpc.sql`
-- `supabase/migrations/20251205_separate_credit_pools.sql`
-- `supabase/migrations/20251205_update_credit_rpcs.sql`
-- `supabase/migrations/20250221_secure_credits.sql`
+- `supabase/migrations/20250202000400_add_credit_clawback_rpc.sql`
+- `supabase/migrations/20251205000200_separate_credit_pools.sql`
+- `supabase/migrations/20251205000300_update_credit_rpcs.sql`
+- `supabase/migrations/20250221000000_secure_credits.sql`
 - `app/api/webhooks/stripe/route.ts`
 - `app/api/webhooks/stripe/handlers/payment.handler.ts`
 - `app/api/webhooks/stripe/handlers/dispute.handler.ts`
@@ -121,7 +121,7 @@ flowchart LR
 
 ### 2.4 Data Model Changes
 
-**New migration: `20251229_fix_credit_clawback.sql`**
+**New migration: `20251229000100_fix_credit_clawback.sql`**
 
 ```sql
 -- Add credit_pool column to track source pool
@@ -217,7 +217,7 @@ sequenceDiagram
 
 ## 3. Detailed Implementation Spec
 
-### A. `supabase/migrations/20251229_fix_credit_clawback.sql`
+### A. `supabase/migrations/20251229000100_fix_credit_clawback.sql`
 
 **Changes Needed:**
 
@@ -417,7 +417,7 @@ static async handleInvoicePaymentRefunded(invoice: Stripe.Invoice): Promise<void
 
 ### Phase 1: Database Layer (Can be done independently)
 
-- [ ] Create migration `20251229_fix_credit_clawback.sql`
+- [ ] Create migration `20251229000100_fix_credit_clawback.sql`
 - [ ] Add `credit_pool` column to `credit_transactions`
 - [ ] Backfill existing transactions with pool info
 - [ ] Create `clawback_credits_v2` RPC

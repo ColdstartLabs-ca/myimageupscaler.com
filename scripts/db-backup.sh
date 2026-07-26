@@ -247,6 +247,16 @@ resolve_pg_tool() {
     fi
 }
 
+run_supabase_cli() {
+    env \
+        -u npm_config_argv \
+        -u npm_config_version_commit_hooks \
+        -u npm_config_version_git_message \
+        -u npm_config_version_git_tag \
+        -u npm_config_version_tag_prefix \
+        npx supabase "$@"
+}
+
 # Export subcommand
 cmd_export() {
     local format="custom"   # custom = .dump, sql = .sql
@@ -284,7 +294,7 @@ cmd_export() {
         local base_filepath="$BACKUPS_DIR/backup_${timestamp}"
         if [[ " ${pg_flags[*]} " == *" --data-only "* ]]; then
             filepath="${base_filepath}.data.sql"
-            npx supabase db dump --linked --password "$SUPABASE_DB_PASSWORD" \
+            run_supabase_cli db dump --linked --password "$SUPABASE_DB_PASSWORD" \
                 --data-only --use-copy --file "$filepath"
             test -s "$filepath"
             compress_and_verify_backup "$filepath"
@@ -293,13 +303,13 @@ cmd_export() {
         fi
 
         filepath="${base_filepath}.schema.sql"
-        npx supabase db dump --linked --password "$SUPABASE_DB_PASSWORD" --file "$filepath"
+        run_supabase_cli db dump --linked --password "$SUPABASE_DB_PASSWORD" --file "$filepath"
         test -s "$filepath"
         compress_and_verify_backup "$filepath"
 
         if [[ " ${pg_flags[*]} " != *" --schema-only "* ]]; then
             local data_filepath="${base_filepath}.data.sql"
-            npx supabase db dump --linked --password "$SUPABASE_DB_PASSWORD" \
+            run_supabase_cli db dump --linked --password "$SUPABASE_DB_PASSWORD" \
                 --data-only --use-copy --file "$data_filepath"
             test -s "$data_filepath"
             compress_and_verify_backup "$data_filepath"

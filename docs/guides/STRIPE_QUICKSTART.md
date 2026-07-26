@@ -12,13 +12,13 @@ This guide will get you up and running with Stripe integration quickly.
 
    ```sql
    -- 1. Profiles table
-   -- Copy contents of: supabase/migrations/20250120_create_profiles_table.sql
+   -- Copy contents of: supabase/migrations/20250120000000_create_profiles_table.sql
 
    -- 2. Subscriptions & Products
-   -- Copy contents of: supabase/migrations/20250120_create_subscriptions_table.sql
+   -- Copy contents of: supabase/migrations/20250120000200_create_subscriptions_table.sql
 
    -- 3. RPC Functions
-   -- Copy contents of: supabase/migrations/20250120_create_rpc_functions.sql
+   -- Copy contents of: supabase/migrations/20250120000100_create_rpc_functions.sql
    ```
 
 2. **Verify tables were created**

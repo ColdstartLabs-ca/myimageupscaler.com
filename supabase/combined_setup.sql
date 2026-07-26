@@ -13,7 +13,7 @@
 
 
 -- ========================================
--- Migration: 20250120_create_profiles_table.sql
+-- Migration: 20250120000000_create_profiles_table.sql
 -- ========================================
 
 -- Create profiles table to extend auth.users with Stripe data
@@ -87,7 +87,7 @@ CREATE TRIGGER on_profiles_updated
 
 
 -- ========================================
--- Migration: 20250120_create_subscriptions_table.sql
+-- Migration: 20250120000200_create_subscriptions_table.sql
 -- ========================================
 
 -- Create subscriptions table to mirror Stripe subscriptions
@@ -204,7 +204,7 @@ CREATE TRIGGER on_prices_updated
 
 
 -- ========================================
--- Migration: 20250121_create_credit_transactions_table.sql
+-- Migration: 20250121000000_create_credit_transactions_table.sql
 -- ========================================
 
 -- Credit transactions audit log table
@@ -244,7 +244,7 @@ CREATE POLICY "Service role has full access to transactions"
 
 
 -- ========================================
--- Migration: 20250121_create_processing_jobs_table.sql
+-- Migration: 20250121000100_create_processing_jobs_table.sql
 -- ========================================
 
 -- Processing jobs table for tracking image processing requests
@@ -301,7 +301,7 @@ CREATE TRIGGER on_processing_jobs_updated
 
 
 -- ========================================
--- Migration: 20250120_create_rpc_functions.sql
+-- Migration: 20250120000100_create_rpc_functions.sql
 -- ========================================
 
 -- Create secure RPC function to increment user credits
@@ -401,7 +401,7 @@ GRANT EXECUTE ON FUNCTION public.has_sufficient_credits(UUID, INTEGER) TO servic
 
 
 -- ========================================
--- Migration: 20250121_enhanced_credit_functions.sql
+-- Migration: 20250121000200_enhanced_credit_functions.sql
 -- ========================================
 
 -- Enhanced credit functions with transaction logging
@@ -519,7 +519,7 @@ GRANT EXECUTE ON FUNCTION public.refund_credits(UUID, INTEGER, TEXT) TO service_
 
 
 -- ========================================
--- Migration: 20250121_fix_initial_credits.sql
+-- Migration: 20250121000300_fix_initial_credits.sql
 -- ========================================
 
 -- Fix initial credits and add welcome bonus logging

@@ -24,7 +24,7 @@ Likelihood: High
 
 Evidence:
 - Client directly calls Supabase signup: `client/store/auth/authOperations.ts:61`, `client/store/userStore.ts:250`.
-- New-user trigger grants credits immediately: `supabase/migrations/20260120_fix_signup_trigger.sql:20`.
+- New-user trigger grants credits immediately: `supabase/migrations/20260120000200_fix_signup_trigger.sql:20`.
 - No `email_confirmed`/`email_verified` checks found in app/server/migrations for credit grant.
 
 Why this matters:
@@ -82,9 +82,9 @@ Impact: Critical
 Likelihood: Medium (needs direct Supabase API access with user JWT, which app already provides)
 
 Evidence:
-- Profiles UPDATE policy allows any authenticated user to update own row: `supabase/migrations/20250203_fix_admin_policy_recursion.sql:36`.
+- Profiles UPDATE policy allows any authenticated user to update own row: `supabase/migrations/20250203000000_fix_admin_policy_recursion.sql:36`.
 - Policy does not restrict mutable columns (including `role`).
-- `is_admin(auth.uid())` checks profile role directly: `supabase/migrations/20260115_security_fixes.sql:235`.
+- `is_admin(auth.uid())` checks profile role directly: `supabase/migrations/20260115000000_security_fixes.sql:235`.
 - Admin middleware trusts `profiles.role = 'admin'`: `server/middleware/requireAdmin.ts:40`.
 - Admin credit endpoint can set user balances via RPC: `app/api/admin/credits/adjust/route.ts:44`.
 
@@ -123,7 +123,7 @@ Why this matters:
 | 9 | Add anomaly monitoring + auto-action (suspend, require phone, reduce limits) | M | High | P1 |
 
 ## Recommended Immediate Actions (next 72 hours)
-1. ~~Patch RLS/admin escalation path first (`profiles.role` immutability for non-admin users).~~ **DONE 2026-02-14** — Migration `20260214_fix_profile_role_immutability.sql` adds BEFORE UPDATE trigger + RLS WITH CHECK. Test: `tests/unit/security/role-immutability.unit.spec.ts`.
+1. ~~Patch RLS/admin escalation path first (`profiles.role` immutability for non-admin users).~~ **DONE 2026-02-14** — Migration `20260214000100_fix_profile_role_immutability.sql` adds BEFORE UPDATE trigger + RLS WITH CHECK. Test: `tests/unit/security/role-immutability.unit.spec.ts`.
 2. Stop unconditional signup bonus issuance; gate bonus on verified email.
 3. Introduce server-side signup endpoint with Turnstile and per-IP/per-device velocity limits.
 4. Add temporary emergency throttles:

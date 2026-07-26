@@ -16,7 +16,7 @@ function readMigration(filename: string): string {
 }
 
 describe('Security Hardening (2026-02-14 audit)', () => {
-  const hardeningSql = readMigration('20260214_security_hardening.sql');
+  const hardeningSql = readMigration('20260214000200_security_hardening.sql');
 
   describe('SEC-01/02/03: Credit manipulation functions revoked', () => {
     const dangerousFunctions = [

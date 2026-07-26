@@ -30,7 +30,7 @@ Complexity: 6 -> MEDIUM mode
 - `app/api/webhooks/stripe/handlers/payment.handler.ts`
 - `app/api/webhooks/stripe/handlers/subscription.handler.ts`
 - `tests/unit/server/services/email-provider-manager.unit.spec.ts`
-- `supabase/migrations/20260120_fix_function_search_paths.sql`
+- `supabase/migrations/20260120000100_fix_function_search_paths.sql`
 
 **Current behavior:**
 
@@ -109,8 +109,8 @@ Complete these steps before enabling Cloudflare as the production primary provid
 - Updated Google Secret Manager `myimageupscaler-api-prod` by fetching the current production secret, modifying only Cloudflare token values, creating version 25, and disabling the bad blank-token version 24.
 - Uploaded Cloudflare Worker secrets for `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_EMAIL_API_TOKEN`, `EMAIL_FROM_ADDRESS`, `BREVO_API_KEY`, and `RESEND_API_KEY`.
 - Applied and recorded production migrations:
-  - `20260606_add_cloudflare_email_provider_usage.sql`
-  - `20260606_repair_email_audit_tables.sql`
+  - `20260606000000_add_cloudflare_email_provider_usage.sql`
+  - `20260606000100_repair_email_audit_tables.sql`
 - Deployed production with Cloudflare primary enabled and Brevo/Resend fallbacks still configured.
   - Main Worker version: `9eb5a87f-aa05-496b-aee3-aeda0692710e`.
   - Cron Worker version: `116cc52d-3272-41a3-99a7-fe09e09b0897`.

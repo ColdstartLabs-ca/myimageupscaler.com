@@ -1002,7 +1002,7 @@ If sync jobs cause issues:
 | `app/api/cron/recover-webhooks/route.ts`           | Webhook recovery endpoint                |
 | `app/api/cron/reconcile/route.ts`                  | Full reconciliation endpoint             |
 | `server/services/subscription-sync.service.ts`     | Shared sync helper functions             |
-| `supabase/migrations/20250302_add_sync_tables.sql` | Database schema for sync system          |
+| `supabase/migrations/20250302000000_add_sync_tables.sql` | Database schema for sync system          |
 | `docs/technical/cloudflare-cron-setup.md`          | Cloudflare cron configuration guide      |
 | `docs/PRDs/stripe-db-sync-prd.md`                  | Complete PRD with implementation details |
 
@@ -1528,9 +1528,9 @@ gantt
 
 ### Database Migrations
 
-- `supabase/migrations/20250120_create_profiles_table.sql`
-- `supabase/migrations/20250120_create_subscriptions_table.sql`
-- `supabase/migrations/20250121_create_credit_transactions_table.sql`
-- `supabase/migrations/20250120_create_rpc_functions.sql`
-- `supabase/migrations/20250302_add_sync_tables.sql` - sync_runs table
-- `supabase/migrations/20251205_add_trial_end_to_subscriptions.sql`
+- `supabase/migrations/20250120000000_create_profiles_table.sql`
+- `supabase/migrations/20250120000200_create_subscriptions_table.sql`
+- `supabase/migrations/20250121000000_create_credit_transactions_table.sql`
+- `supabase/migrations/20250120000100_create_rpc_functions.sql`
+- `supabase/migrations/20250302000000_add_sync_tables.sql` - sync_runs table
+- `supabase/migrations/20251205000100_add_trial_end_to_subscriptions.sql`

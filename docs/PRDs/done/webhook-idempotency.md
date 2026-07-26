@@ -14,9 +14,9 @@
 | Path | Purpose |
 |------|---------|
 | `/app/api/webhooks/stripe/route.ts` | Stripe webhook handler (main target) |
-| `/supabase/migrations/20250121_create_credit_transactions_table.sql` | Credit transaction schema |
-| `/supabase/migrations/20250121_enhanced_credit_functions.sql` | RPC functions for credit operations |
-| `/supabase/migrations/20250221_secure_credits.sql` | Credit security hardening |
+| `/supabase/migrations/20250121000000_create_credit_transactions_table.sql` | Credit transaction schema |
+| `/supabase/migrations/20250121000200_enhanced_credit_functions.sql` | RPC functions for credit operations |
+| `/supabase/migrations/20250221000000_secure_credits.sql` | Credit security hardening |
 | `/shared/types/stripe.ts` | Type definitions |
 | `/tests/helpers/stripe-webhook-mocks.ts` | Webhook test mocks |
 | `/tests/api/webhooks.api.spec.ts` | Webhook integration tests |

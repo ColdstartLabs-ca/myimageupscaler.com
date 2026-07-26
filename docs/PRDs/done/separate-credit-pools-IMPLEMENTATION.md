@@ -24,14 +24,14 @@ Successfully implemented the fix for the critical bug where purchased credits we
 
 **Files Created:**
 
-1. `supabase/migrations/20251205_separate_credit_pools.sql`
+1. `supabase/migrations/20251205000200_separate_credit_pools.sql`
    - Added `purchased_credits_balance` column
    - Backfilled purchased credits from transaction history
    - Renamed `credits_balance` → `subscription_credits_balance`
    - Updated `handle_new_user()` trigger
    - Created `user_credits` view for convenience
 
-2. `supabase/migrations/20251205_update_credit_rpcs.sql`
+2. `supabase/migrations/20251205000300_update_credit_rpcs.sql`
    - ✅ `add_subscription_credits()` - Adds to subscription pool
    - ✅ `add_purchased_credits()` - Adds to purchased pool
    - ✅ `consume_credits_v2()` - FIFO consumption logic
@@ -165,10 +165,10 @@ RENAME COLUMN credits_balance TO subscription_credits_balance;
 
 ```bash
 # Check migration syntax
-cat supabase/migrations/20251205_separate_credit_pools.sql | psql
+cat supabase/migrations/20251205000200_separate_credit_pools.sql | psql
 
 # Verify no syntax errors
-cat supabase/migrations/20251205_update_credit_rpcs.sql | psql
+cat supabase/migrations/20251205000300_update_credit_rpcs.sql | psql
 ```
 
 ### 2. Apply Migrations (Staging First!)
@@ -256,8 +256,8 @@ git revert <commit-hash>
 
 ### New Files (2)
 
-- `supabase/migrations/20251205_separate_credit_pools.sql`
-- `supabase/migrations/20251205_update_credit_rpcs.sql`
+- `supabase/migrations/20251205000200_separate_credit_pools.sql`
+- `supabase/migrations/20251205000300_update_credit_rpcs.sql`
 
 ### Modified Files (6)
 

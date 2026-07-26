@@ -15,9 +15,9 @@
 |------|---------|
 | `/app/dashboard/layout.tsx` | Dashboard layout with sidebar |
 | `/client/components/dashboard/DashboardSidebar.tsx` | Sidebar navigation component |
-| `/supabase/migrations/20250120_create_profiles_table.sql` | User profiles schema |
-| `/supabase/migrations/20250120_create_subscriptions_table.sql` | Subscriptions schema |
-| `/supabase/migrations/20250121_create_credit_transactions_table.sql` | Credit transactions |
+| `/supabase/migrations/20250120000000_create_profiles_table.sql` | User profiles schema |
+| `/supabase/migrations/20250120000200_create_subscriptions_table.sql` | Subscriptions schema |
+| `/supabase/migrations/20250121000000_create_credit_transactions_table.sql` | Credit transactions |
 | `/middleware.ts` | Route protection and auth |
 | `/server/middleware/getAuthenticatedUser.ts` | User authentication helper |
 | `/client/store/authStore.ts` | Auth state management |

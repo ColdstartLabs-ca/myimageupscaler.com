@@ -47,19 +47,19 @@ Execute the SQL migrations in your Supabase SQL Editor in this order:
 
 1. **Profiles Table**
    ```bash
-   # File: supabase/migrations/20250120_create_profiles_table.sql
+   # File: supabase/migrations/20250120000000_create_profiles_table.sql
    ```
    This creates the `profiles` table with Stripe customer ID and credits tracking.
 
 2. **Subscriptions & Pricing Tables**
    ```bash
-   # File: supabase/migrations/20250120_create_subscriptions_table.sql
+   # File: supabase/migrations/20250120000200_create_subscriptions_table.sql
    ```
    This creates `subscriptions`, `products`, and `prices` tables.
 
 3. **RPC Functions**
    ```bash
-   # File: supabase/migrations/20250120_create_rpc_functions.sql
+   # File: supabase/migrations/20250120000100_create_rpc_functions.sql
    ```
    This creates secure functions for credit management.
 

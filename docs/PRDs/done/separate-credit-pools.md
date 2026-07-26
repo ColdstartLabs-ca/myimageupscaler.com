@@ -13,9 +13,9 @@
 
 | File Path | Purpose |
 |-----------|---------|
-| `supabase/migrations/20250120_create_profiles_table.sql` | Profiles schema with `credits_balance` |
-| `supabase/migrations/20250121_enhanced_credit_functions.sql` | Credit increment/decrement RPCs |
-| `supabase/migrations/20250303_add_credit_expiration_support.sql` | Expiration logic (bug source) |
+| `supabase/migrations/20250120000000_create_profiles_table.sql` | Profiles schema with `credits_balance` |
+| `supabase/migrations/20250121000200_enhanced_credit_functions.sql` | Credit increment/decrement RPCs |
+| `supabase/migrations/20250303000000_add_credit_expiration_support.sql` | Expiration logic (bug source) |
 | `shared/config/subscription.config.ts` | Plan & credit pack configuration |
 | `shared/config/subscription.types.ts` | Type definitions |
 | `shared/config/subscription.utils.ts` | Expiration calculation helpers |

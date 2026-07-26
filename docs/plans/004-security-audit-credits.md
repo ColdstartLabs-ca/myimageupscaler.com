@@ -107,7 +107,7 @@ sequenceDiagram
 
 ### 3. Detailed Implementation Spec
 
-#### A. `supabase/migrations/20250221_secure_credits.sql`
+#### A. `supabase/migrations/20250221000000_secure_credits.sql`
 
 ```sql
 -- 1. Revoke access to sensitive RPCs
@@ -211,7 +211,7 @@ export class ImageGenerationService {
 
 #### Phase 1: Database Lockdown
 
-- [ ] Create and apply migration `20250221_secure_credits.sql`.
+- [ ] Create and apply migration `20250221000000_secure_credits.sql`.
 - [ ] Verify RPCs are inaccessible to authenticated users.
 
 #### Phase 2: Core Logic Implementation

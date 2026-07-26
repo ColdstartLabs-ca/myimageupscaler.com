@@ -167,13 +167,13 @@ Migrations must be applied in this exact order due to foreign key dependencies:
 
 | Order | File                                            | Description                     |
 | ----- | ----------------------------------------------- | ------------------------------- |
-| 1     | `20250120_create_profiles_table.sql`            | Core profiles table + trigger   |
-| 2     | `20250120_create_subscriptions_table.sql`       | Subscriptions, products, prices |
-| 3     | `20250121_create_credit_transactions_table.sql` | Credit audit log                |
-| 4     | `20250121_create_processing_jobs_table.sql`     | Job tracking                    |
-| 5     | `20250120_create_rpc_functions.sql`             | Basic RPC functions             |
-| 6     | `20250121_enhanced_credit_functions.sql`        | Logging RPC variants            |
-| 7     | `20250121_fix_initial_credits.sql`              | Bug fix + backfill              |
+| 1     | `20250120000000_create_profiles_table.sql`            | Core profiles table + trigger   |
+| 2     | `20250120000200_create_subscriptions_table.sql`       | Subscriptions, products, prices |
+| 3     | `20250121000000_create_credit_transactions_table.sql` | Credit audit log                |
+| 4     | `20250121000100_create_processing_jobs_table.sql`     | Job tracking                    |
+| 5     | `20250120000100_create_rpc_functions.sql`             | Basic RPC functions             |
+| 6     | `20250121000200_enhanced_credit_functions.sql`        | Logging RPC variants            |
+| 7     | `20250121000300_fix_initial_credits.sql`              | Bug fix + backfill              |
 
 ---
 
@@ -181,7 +181,7 @@ Migrations must be applied in this exact order due to foreign key dependencies:
 
 ### 3.1 Profiles Table (Migration 1)
 
-**File:** `/supabase/migrations/20250120_create_profiles_table.sql`
+**File:** `/supabase/migrations/20250120000000_create_profiles_table.sql`
 
 ```sql
 -- Profiles table extending auth.users
@@ -231,7 +231,7 @@ CREATE TRIGGER on_profiles_updated
 
 ### 3.2 Subscriptions & Products Tables (Migration 2)
 
-**File:** `/supabase/migrations/20250120_create_subscriptions_table.sql`
+**File:** `/supabase/migrations/20250120000200_create_subscriptions_table.sql`
 
 ```sql
 -- Products table (Stripe product cache)
@@ -329,7 +329,7 @@ CREATE TRIGGER on_subscriptions_updated
 
 ### 3.3 Credit Transactions Table (Migration 3)
 
-**File:** `/supabase/migrations/20250121_create_credit_transactions_table.sql`
+**File:** `/supabase/migrations/20250121000000_create_credit_transactions_table.sql`
 
 ```sql
 -- Credit transactions audit log
@@ -364,7 +364,7 @@ CREATE POLICY "Service role has full access to transactions"
 
 ### 3.4 Processing Jobs Table (Migration 4)
 
-**File:** `/supabase/migrations/20250121_create_processing_jobs_table.sql`
+**File:** `/supabase/migrations/20250121000100_create_processing_jobs_table.sql`
 
 ```sql
 -- Processing jobs table
@@ -412,7 +412,7 @@ CREATE TRIGGER on_processing_jobs_updated
 
 ### 3.5 Basic RPC Functions (Migration 5)
 
-**File:** `/supabase/migrations/20250120_create_rpc_functions.sql`
+**File:** `/supabase/migrations/20250120000100_create_rpc_functions.sql`
 
 ```sql
 -- Basic credit increment (no logging)
@@ -517,7 +517,7 @@ GRANT EXECUTE ON FUNCTION public.get_active_subscription TO service_role;
 
 ### 3.6 Enhanced Credit Functions with Logging (Migration 6)
 
-**File:** `/supabase/migrations/20250121_enhanced_credit_functions.sql`
+**File:** `/supabase/migrations/20250121000200_enhanced_credit_functions.sql`
 
 ```sql
 -- Increment credits with transaction logging
@@ -608,7 +608,7 @@ GRANT EXECUTE ON FUNCTION public.decrement_credits_with_log TO service_role;
 
 ### 3.7 Initial Credits Fix & User Trigger (Migration 7)
 
-**File:** `/supabase/migrations/20250121_fix_initial_credits.sql`
+**File:** `/supabase/migrations/20250121000300_fix_initial_credits.sql`
 
 ```sql
 -- Fix handle_new_user trigger to include initial credits and logging
@@ -818,13 +818,13 @@ log_success "Connected to Supabase project: $SUPABASE_PROJECT_REF"
 
 # Define migrations in order
 MIGRATIONS=(
-    "20250120_create_profiles_table.sql"
-    "20250120_create_subscriptions_table.sql"
-    "20250121_create_credit_transactions_table.sql"
-    "20250121_create_processing_jobs_table.sql"
-    "20250120_create_rpc_functions.sql"
-    "20250121_enhanced_credit_functions.sql"
-    "20250121_fix_initial_credits.sql"
+    "20250120000000_create_profiles_table.sql"
+    "20250120000200_create_subscriptions_table.sql"
+    "20250121000000_create_credit_transactions_table.sql"
+    "20250121000100_create_processing_jobs_table.sql"
+    "20250120000100_create_rpc_functions.sql"
+    "20250121000200_enhanced_credit_functions.sql"
+    "20250121000300_fix_initial_credits.sql"
 )
 
 log_info "Found ${#MIGRATIONS[@]} migrations to apply"
@@ -1028,13 +1028,13 @@ Navigate to: `https://supabase.com/dashboard/project/YOUR_PROJECT/sql`
 
 Copy and paste each migration file's content into the SQL Editor and run:
 
-1. `20250120_create_profiles_table.sql`
-2. `20250120_create_subscriptions_table.sql`
-3. `20250121_create_credit_transactions_table.sql`
-4. `20250121_create_processing_jobs_table.sql`
-5. `20250120_create_rpc_functions.sql`
-6. `20250121_enhanced_credit_functions.sql`
-7. `20250121_fix_initial_credits.sql`
+1. `20250120000000_create_profiles_table.sql`
+2. `20250120000200_create_subscriptions_table.sql`
+3. `20250121000000_create_credit_transactions_table.sql`
+4. `20250121000100_create_processing_jobs_table.sql`
+5. `20250120000100_create_rpc_functions.sql`
+6. `20250121000200_enhanced_credit_functions.sql`
+7. `20250121000300_fix_initial_credits.sql`
 
 ### Step 3: Enable Realtime
 

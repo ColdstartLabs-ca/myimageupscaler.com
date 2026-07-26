@@ -1,5 +1,15 @@
 #!/bin/bash
 
+run_supabase_cli() {
+    env \
+        -u npm_config_argv \
+        -u npm_config_version_commit_hooks \
+        -u npm_config_version_git_message \
+        -u npm_config_version_git_tag \
+        -u npm_config_version_tag_prefix \
+        npx supabase "$@"
+}
+
 deploy_database_migrations() {
     local linked_ref_path="$PROJECT_ROOT/supabase/.temp/project-ref"
     local expected_project_ref=""
@@ -28,7 +38,7 @@ deploy_database_migrations() {
         fi
     else
         log_info "Linking Supabase CLI to the production project..."
-        if ! npx supabase link \
+        if ! run_supabase_cli link \
             --project-ref "$expected_project_ref" \
             --password "$SUPABASE_DB_PASSWORD"; then
             log_error "Could not link the Supabase CLI to the production project. Deployment blocked."
@@ -48,7 +58,7 @@ deploy_database_migrations() {
     fi
 
     log_info "Checking production migration history..."
-    if ! npx supabase db push \
+    if ! run_supabase_cli db push \
         --linked \
         --password "$SUPABASE_DB_PASSWORD" \
         --dry-run; then
@@ -57,7 +67,7 @@ deploy_database_migrations() {
     fi
 
     log_info "Applying pending production migrations..."
-    if ! npx supabase db push \
+    if ! run_supabase_cli db push \
         --linked \
         --password "$SUPABASE_DB_PASSWORD" \
         --yes; then
@@ -66,7 +76,7 @@ deploy_database_migrations() {
     fi
 
     log_info "Confirming production migration history is synchronized..."
-    if ! npx supabase db push \
+    if ! run_supabase_cli db push \
         --linked \
         --password "$SUPABASE_DB_PASSWORD" \
         --dry-run; then

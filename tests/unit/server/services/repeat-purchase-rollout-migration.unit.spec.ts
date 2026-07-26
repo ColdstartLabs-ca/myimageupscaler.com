@@ -5,11 +5,11 @@ import { describe, expect, it } from 'vitest';
 describe('repeat purchase rollout migration', () => {
   it('starts staff-only before percentage rollout', () => {
     const createSql = readFileSync(
-      join(process.cwd(), 'supabase/migrations/20260711001000_repeat_purchase_rollout.sql'),
+      join(process.cwd(), 'supabase/migrations/20260711175452_repeat_purchase_rollout.sql'),
       'utf8'
     );
     const correctionSql = readFileSync(
-      join(process.cwd(), 'supabase/migrations/20260711001100_repeat_purchase_staff_only.sql'),
+      join(process.cwd(), 'supabase/migrations/20260711175844_repeat_purchase_staff_only.sql'),
       'utf8'
     );
 

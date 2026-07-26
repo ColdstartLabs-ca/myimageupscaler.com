@@ -27,9 +27,9 @@
 - `server/services/revenue-recovery.service.ts`
 - `app/api/cron/email-lifecycle/route.ts`
 - `supabase/migrations/20260607011814_create_email_lifecycle_tables.sql`
-- `supabase/migrations/20260710000100_email_campaign_priority.sql`
-- `supabase/migrations/20260710000300_email_lifecycle_health_report.sql`
-- `supabase/migrations/20260226_add_anti_freeloader.sql`
+- `supabase/migrations/20260711060036_email_campaign_priority.sql`
+- `supabase/migrations/20260711060702_email_lifecycle_health_report.sql`
+- `supabase/migrations/20260226000100_add_anti_freeloader.sql`
 - `shared/config/pricing-regions.ts`
 
 **Current behavior:**

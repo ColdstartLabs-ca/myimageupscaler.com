@@ -31,7 +31,7 @@ Total: 9 → HIGH mode
 - `client/components/modal/auth/RegisterForm.tsx`
 - `client/components/form/SocialLoginButton.tsx`
 - `client/store/auth/authOperations.ts`
-- `supabase/migrations/20260120_fix_signup_trigger.sql`
+- `supabase/migrations/20260120000200_fix_signup_trigger.sql`
 - `lib/i18n/country-locale-map.ts`
 - `middleware.ts`
 - `shared/config/security.ts`
@@ -339,7 +339,7 @@ curl http://localhost:3000/api/geo
 
 **Files:**
 
-- `supabase/migrations/20260226_add_anti_freeloader.sql` — new
+- `supabase/migrations/20260226000100_add_anti_freeloader.sql` — new
 
 **Implementation:**
 

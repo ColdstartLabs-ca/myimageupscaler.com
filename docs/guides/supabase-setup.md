@@ -152,13 +152,13 @@ Script options:
 
 1. Go to [Supabase Dashboard](https://supabase.com/dashboard) → **SQL Editor**
 2. Run migrations in order from `supabase/migrations/`:
-   - `20250120_create_profiles_table.sql`
-   - `20250120_create_subscriptions_table.sql`
-   - `20250121_create_credit_transactions_table.sql`
-   - `20250121_create_processing_jobs_table.sql`
-   - `20250120_create_rpc_functions.sql`
-   - `20250121_enhanced_credit_functions.sql`
-   - `20250121_fix_initial_credits.sql`
+   - `20250120000000_create_profiles_table.sql`
+   - `20250120000200_create_subscriptions_table.sql`
+   - `20250121000000_create_credit_transactions_table.sql`
+   - `20250121000100_create_processing_jobs_table.sql`
+   - `20250120000100_create_rpc_functions.sql`
+   - `20250121000200_enhanced_credit_functions.sql`
+   - `20250121000300_fix_initial_credits.sql`
 
 ### What Gets Created
 

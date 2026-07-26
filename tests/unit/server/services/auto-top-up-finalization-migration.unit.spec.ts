@@ -4,7 +4,7 @@ import path from 'node:path';
 
 describe('auto top-up finalization migration', () => {
   const sql = fs.readFileSync(
-    path.join(process.cwd(), 'supabase/migrations/20260711000600_finalize_auto_top_up_attempt.sql'),
+    path.join(process.cwd(), 'supabase/migrations/20260711101033_finalize_auto_top_up_attempt.sql'),
     'utf8'
   );
 

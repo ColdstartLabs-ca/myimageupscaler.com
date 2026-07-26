@@ -50,7 +50,7 @@ Top held markets are US (112), BR (91), DE (76), TR (69), ES (59), AR (58), IT (
 ### 1.2 Files Analyzed
 
 ```
-supabase/migrations/20260715000100_restore_lifecycle_delivery_queue.sql   # live due-queue fn + claim fn + 200/day cap
+supabase/migrations/20260716062436_restore_lifecycle_delivery_queue.sql   # live due-queue fn + claim fn + 200/day cap
 supabase/migrations/20260712000100_email_recipient_value_classification.sql # nullable columns, no trigger
 supabase/migrations/20260712000200_email_recipient_value_apply_rpc.sql    # whole-queue checksum guard
 supabase/migrations/20260712000300_email_recipient_value_due_queue.sql    # superseded fail-open version
@@ -66,7 +66,7 @@ scripts/check-email-delivery-readiness.ts                                # readi
 
 **Cause A — a fail-open default was changed to fail-closed, with nothing to classify new rows.**
 
-`20260712000300` originally used `COALESCE(recipient_value_decision, 'keep_medium')`, so unclassified rows _were_ deliverable. The live function (`20260715000100_restore_lifecycle_delivery_queue.sql:82-90`) replaced that with a strict predicate:
+`20260712000300` originally used `COALESCE(recipient_value_decision, 'keep_medium')`, so unclassified rows _were_ deliverable. The live function (`20260716062436_restore_lifecycle_delivery_queue.sql:82-90`) replaced that with a strict predicate:
 
 ```sql
 AND (

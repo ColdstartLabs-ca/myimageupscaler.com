@@ -5,7 +5,7 @@ import { join } from 'path';
 /**
  * Role Immutability Security Tests
  *
- * Validates that the migration 20260214_fix_profile_role_immutability.sql
+ * Validates that the migration 20260214000100_fix_profile_role_immutability.sql
  * contains the required protections against self-admin escalation.
  *
  * The actual DB-level enforcement is tested via integration tests against
@@ -20,7 +20,7 @@ function readMigration(filename: string): string {
 }
 
 describe('Profile Role Immutability (CVE: self-admin escalation)', () => {
-  const migrationSql = readMigration('20260214_fix_profile_role_immutability.sql');
+  const migrationSql = readMigration('20260214000100_fix_profile_role_immutability.sql');
 
   describe('Trigger-based protection', () => {
     it('should create prevent_role_self_mutation trigger function', () => {
@@ -81,7 +81,7 @@ describe('Profile Role Immutability (CVE: self-admin escalation)', () => {
   });
 
   describe('Original vulnerable policy should not exist standalone', () => {
-    const originalMigration = readMigration('20250203_fix_admin_policy_recursion.sql');
+    const originalMigration = readMigration('20250203000000_fix_admin_policy_recursion.sql');
 
     it('original policy had no WITH CHECK (confirming the vulnerability)', () => {
       // The original migration creates the policy with USING only, no WITH CHECK

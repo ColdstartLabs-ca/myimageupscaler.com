@@ -19,8 +19,8 @@
 - /home/joao/projects/myimageupscaler.com/app/dashboard/billing/page.tsx
 - /home/joao/projects/myimageupscaler.com/client/components/stripe/SubscriptionStatus.tsx
 - /home/joao/projects/myimageupscaler.com/app/success/page.tsx
-- /home/joao/projects/myimageupscaler.com/supabase/migrations/20250120_create_profiles_table.sql
-- /home/joao/projects/myimageupscaler.com/supabase/migrations/20250120_create_subscriptions_table.sql
+- /home/joao/projects/myimageupscaler.com/supabase/migrations/20250120000000_create_profiles_table.sql
+- /home/joao/projects/myimageupscaler.com/supabase/migrations/20250120000200_create_subscriptions_table.sql
 
 ### 1.2 Component & Dependency Overview
 

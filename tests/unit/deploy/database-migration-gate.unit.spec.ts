@@ -1,4 +1,11 @@
-import { chmodSync, mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import {
+  chmodSync,
+  mkdtempSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -102,6 +109,19 @@ deploy_database_migrations`,
 }
 
 describe('production database migration gate', () => {
+  test('keeps repository migrations canonical and uniquely versioned', () => {
+    const migrationFiles = readdirSync(path.join(projectRoot, 'supabase/migrations')).filter(
+      file => file.endsWith('.sql')
+    );
+    const invalidFiles = migrationFiles.filter(
+      file => !/^\d{14}_[a-z0-9_]+\.sql$/.test(file)
+    );
+    const versions = migrationFiles.map(file => file.slice(0, 14));
+
+    expect(invalidFiles).toEqual([]);
+    expect(new Set(versions).size).toBe(versions.length);
+  });
+
   test('links the expected production project, checks history, pushes, and verifies again', () => {
     const result = runGate();
 

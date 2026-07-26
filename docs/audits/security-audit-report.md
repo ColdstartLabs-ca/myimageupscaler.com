@@ -99,7 +99,7 @@ $ yarn vitest run client/components/seo/__tests__/JsonLd.test.tsx
 
 ### 1. `consume_credits_v2` Granted to `authenticated` Role
 
-**File:** `supabase/migrations/20251205_update_credit_rpcs.sql`
+**File:** `supabase/migrations/20251205000300_update_credit_rpcs.sql`
 **Lines:** 185-186
 
 ```sql
@@ -107,7 +107,7 @@ GRANT EXECUTE ON FUNCTION consume_credits_v2(UUID, INTEGER, TEXT, TEXT) TO authe
 GRANT EXECUTE ON FUNCTION consume_credits_v2(UUID, INTEGER, TEXT, TEXT) TO service_role;
 ```
 
-**Issue:** While other credit-modifying RPCs were correctly revoked from the `authenticated` role in migration `20250303_revoke_credit_rpc_from_authenticated.sql`, the newer `consume_credits_v2` function is still granted to authenticated users.
+**Issue:** While other credit-modifying RPCs were correctly revoked from the `authenticated` role in migration `20250303000100_revoke_credit_rpc_from_authenticated.sql`, the newer `consume_credits_v2` function is still granted to authenticated users.
 
 **Validation:** ✅ Valid — `consume_credits_v2` is granted to `authenticated` in this migration and not revoked later.
 
@@ -125,7 +125,7 @@ REVOKE EXECUTE ON FUNCTION public.consume_credits_v2(UUID, INTEGER, TEXT, TEXT) 
 
 ### 2. `admin_adjust_credits` References Deprecated Column
 
-**File:** `supabase/migrations/20250302_fix_admin_adjust_credits.sql`
+**File:** `supabase/migrations/20250302000100_fix_admin_adjust_credits.sql`
 **Lines:** 33-38
 
 ```sql
@@ -136,7 +136,7 @@ WHERE id = target_user_id
 RETURNING credits_balance INTO new_balance;
 ```
 
-**Issue:** The `admin_adjust_credits` function references the old `credits_balance` column, but the schema was migrated to dual-pool (`subscription_credits_balance` + `purchased_credits_balance`) in migration `20251205_separate_credit_pools.sql`.
+**Issue:** The `admin_adjust_credits` function references the old `credits_balance` column, but the schema was migrated to dual-pool (`subscription_credits_balance` + `purchased_credits_balance`) in migration `20251205000200_separate_credit_pools.sql`.
 
 **Validation:** ✅ Valid — the function still updates `credits_balance`, which was renamed in the dual-pool migration.
 
@@ -403,7 +403,7 @@ if (serverEnv.ENV === 'test') {
 
 ### 13. Missing Positive Amount Validation in clawback_credits_v2
 
-**File:** `supabase/migrations/20251229_fix_credit_clawback.sql`
+**File:** `supabase/migrations/20251229000100_fix_credit_clawback.sql`
 **Lines:** 69-158
 
 **Issue:** Function does not validate that `p_amount` is positive. Negative amount could add credits.
@@ -572,7 +572,7 @@ export function isTestEnvironment(): boolean {
 
 ### 22. Public is_admin Function Exposure
 
-**File:** `supabase/migrations/20250203_fix_admin_policy_recursion.sql`
+**File:** `supabase/migrations/20250203000000_fix_admin_policy_recursion.sql`
 **Lines:** 7-21
 
 ```sql
@@ -825,7 +825,7 @@ Automated tests to confirm fixes and prevent regressions:
 - `server/middleware/requireAdmin.ts`
 - `lib/middleware/auth.ts`
 - `middleware.ts`
-- `supabase/migrations/20250203_fix_admin_policy_recursion.sql`
+- `supabase/migrations/20250203000000_fix_admin_policy_recursion.sql`
 
 ### Payment & Billing
 

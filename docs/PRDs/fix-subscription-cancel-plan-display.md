@@ -22,7 +22,7 @@
 - `shared/config/stripe.ts` — `getPlanDisplayName()` (lines 372-447)
 - `app/[locale]/dashboard/billing/page.tsx` — billing page plan display (lines 194-199)
 - `client/store/userStore.ts` — user data fetch via `get_user_data` RPC
-- `supabase/migrations/20251209_get_user_data_rpc.sql` — RPC filters subscriptions to `active`/`trialing` only
+- `supabase/migrations/20251209000000_get_user_data_rpc.sql` — RPC filters subscriptions to `active`/`trialing` only
 - `shared/constants/billing.ts` — `BILLING_COPY.freePlan`
 
 **Current Behavior:**

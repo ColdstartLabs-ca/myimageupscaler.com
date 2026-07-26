@@ -27,15 +27,15 @@ Total: 5 → MEDIUM mode
 
 **Files Analyzed:**
 
-- `supabase/migrations/20260120_fix_signup_trigger.sql` — `handle_new_user()` trigger grants 10 credits unconditionally
+- `supabase/migrations/20260120000200_fix_signup_trigger.sql` — `handle_new_user()` trigger grants 10 credits unconditionally
 - `app/api/users/setup/route.ts` — reduces credits post-signup (race window)
-- `supabase/migrations/20260226_add_anti_freeloader.sql` — `register_fingerprint` RPC (threshold 5)
-- `supabase/migrations/20260317_ip_flagging_and_paywall.sql` — `check_signup_ip` RPC (threshold 5)
+- `supabase/migrations/20260226000100_add_anti_freeloader.sql` — `register_fingerprint` RPC (threshold 5)
+- `supabase/migrations/20260317000100_ip_flagging_and_paywall.sql` — `check_signup_ip` RPC (threshold 5)
 - `lib/anti-freeloader/region-classifier.ts` — PH is paywalled
 - `lib/anti-freeloader/check-freeloader.ts` — `isFreeleaderBlocked()` only blocks flagged free users
 - `shared/config/credits.config.ts` — `DEFAULT_FREE_CREDITS: 10`, `PAYWALLED_FREE_CREDITS: 0`
 - `shared/repositories/user.repository.ts` — `createWithDefaults` hardcodes 10 credits
-- `supabase/migrations/20251205_update_credit_rpcs.sql` — `consume_credits_v2` enforces hard stop at 0
+- `supabase/migrations/20251205000300_update_credit_rpcs.sql` — `consume_credits_v2` enforces hard stop at 0
 
 **Current Behavior:**
 

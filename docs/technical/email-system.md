@@ -177,7 +177,7 @@ await emailService.send({ ... });
 
 ## Database Schema
 
-**Migration**: `/home/joao/projects/pixelperfect/supabase/migrations/20260116_create_email_tables.sql`
+**Migration**: `/home/joao/projects/pixelperfect/supabase/migrations/20260116000100_create_email_tables.sql`
 
 ### email_preferences
 

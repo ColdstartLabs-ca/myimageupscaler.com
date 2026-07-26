@@ -107,7 +107,7 @@ import { STRIPE_PRICES } from '@shared/config/stripe';
 
 type TCheckoutSessionParams = Parameters<typeof stripe.checkout.sessions.create>[0];
 const autoTopUpMigration = readFileSync(
-  join(process.cwd(), 'supabase/migrations/20260711000400_auto_top_up_settings.sql'),
+  join(process.cwd(), 'supabase/migrations/20260711093626_auto_top_up_settings.sql'),
   'utf8'
 );
 

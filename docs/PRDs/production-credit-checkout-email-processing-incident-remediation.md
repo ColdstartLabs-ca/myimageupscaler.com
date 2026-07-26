@@ -7,7 +7,7 @@
 
 ## Confirmed Product Decision
 
-**Free welcome credits are 5 (standard) / 3 (restricted) / 0 (paywalled)** — the March 2026 policy (`0b08c682`, `20260331_reduce_free_credits_to_5.sql`) stands. The full PRD's 10-credit decision is REVOKED. Any copy promising 10 free credits is wrong and must say 5.
+**Free welcome credits are 5 (standard) / 3 (restricted) / 0 (paywalled)** — the March 2026 policy (`0b08c682`, `20260331000000_reduce_free_credits_to_5.sql`) stands. The full PRD's 10-credit decision is REVOKED. Any copy promising 10 free credits is wrong and must say 5.
 
 ## ⚠️ Production Database State (verified 2026-07-18 ~18:40 UTC)
 

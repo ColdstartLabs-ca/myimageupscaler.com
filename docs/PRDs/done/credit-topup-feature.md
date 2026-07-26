@@ -44,7 +44,7 @@
 /home/joao/projects/myimageupscaler.com/shared/config/subscription.config.ts
 /home/joao/projects/myimageupscaler.com/shared/config/subscription.types.ts
 /home/joao/projects/myimageupscaler.com/shared/types/stripe.ts
-/home/joao/projects/myimageupscaler.com/supabase/migrations/20250121_enhanced_credit_functions.sql
+/home/joao/projects/myimageupscaler.com/supabase/migrations/20250121000200_enhanced_credit_functions.sql
 /home/joao/projects/myimageupscaler.com/client/services/stripeService.ts
 /home/joao/projects/myimageupscaler.com/client/components/stripe/CreditsDisplay.tsx
 /home/joao/projects/myimageupscaler.com/client/components/stripe/CreditHistory.tsx

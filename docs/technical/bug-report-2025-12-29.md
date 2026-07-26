@@ -29,7 +29,7 @@ Security and bug analysis across 6 core systems. Issues validated against actual
 ### 3. Credit Clawback Uses Legacy Schema
 
 - **System:** Credits
-- **Location:** `supabase/migrations/20250202_add_credit_clawback_rpc.sql`
+- **Location:** `supabase/migrations/20250202000400_add_credit_clawback_rpc.sql`
 - **Impact:** Refund credit clawback completely broken
 - **Issue:** References old `credits_balance` column instead of `subscription_credits_balance` / `purchased_credits_balance`
 - **Fix:** Update `clawback_credits` and `clawback_credits_from_transaction` RPCs to use new dual-pool schema
@@ -37,7 +37,7 @@ Security and bug analysis across 6 core systems. Issues validated against actual
 ### 4. Refund Credits Routes to Wrong Pool
 
 - **System:** Credits
-- **Location:** `supabase/migrations/20250221_secure_credits.sql:110-129`
+- **Location:** `supabase/migrations/20250221000000_secure_credits.sql:110-129`
 - **Impact:** Processing failure refunds go to purchased pool instead of original pool
 - **Issue:** `refund_credits` calls `increment_credits_with_log` which routes non-subscription types to purchased credits
 - **Fix:** Track original pool in transaction metadata and restore to same pool
@@ -88,7 +88,7 @@ Security and bug analysis across 6 core systems. Issues validated against actual
 
 | System        | Issue                                               | Location                          |
 | ------------- | --------------------------------------------------- | --------------------------------- |
-| Billing       | Missing `balance_after` in credit transaction audit | `20251205_update_credit_rpcs.sql` |
+| Billing       | Missing `balance_after` in credit transaction audit | `20251205000300_update_credit_rpcs.sql` |
 | Billing       | Webhook returns success when profile not found      | `subscription.handler.ts:88-91`   |
 | Billing       | Scheduled downgrade overwrites rollover credits     | `subscription.handler.ts:629-666` |
 | Credits       | Scheduled downgrade bypasses trigger protection     | `subscription.handler.ts:643-650` |

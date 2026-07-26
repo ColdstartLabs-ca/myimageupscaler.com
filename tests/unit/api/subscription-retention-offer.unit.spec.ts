@@ -63,7 +63,7 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
 import { POST, PUT } from '@/app/api/subscriptions/retention-offer/route';
 
 const measurementMigration = readFileSync(
-  join(process.cwd(), 'supabase/migrations/20260711000200_subscription_retention_measurement.sql'),
+  join(process.cwd(), 'supabase/migrations/20260711092300_subscription_retention_measurement.sql'),
   'utf8'
 );
 

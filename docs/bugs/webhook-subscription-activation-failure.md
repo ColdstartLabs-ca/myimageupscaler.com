@@ -125,8 +125,8 @@ subscriptions row inserted with placeholder ID: manual_hobby_044c81c8
 
 - Webhook handler: `app/api/webhooks/stripe/handlers/subscription.handler.ts`
 - Webhook router: `app/api/webhooks/stripe/route.ts`
-- Credit RPC: `supabase/migrations/20251205_update_credit_rpcs.sql` (`add_subscription_credits`)
-- Security trigger: `supabase/migrations/20250221_secure_credits.sql` (`protect_credits_balance`)
+- Credit RPC: `supabase/migrations/20251205000300_update_credit_rpcs.sql` (`add_subscription_credits`)
+- Security trigger: `supabase/migrations/20250221000000_secure_credits.sql` (`protect_credits_balance`)
 - Customer created handler: `SubscriptionHandler.handleCustomerCreated()` in subscription.handler.ts
 - Checkout session creation: search for `stripe.checkout.sessions.create` to verify metadata is set
 

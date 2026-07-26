@@ -65,7 +65,7 @@ interface ICreditsExpirationConfig {
 
 ### Phase 2: Database Migration
 
-**Migration:** `supabase/migrations/20250303_add_credit_expiration_support.sql`
+**Migration:** `supabase/migrations/20250303000000_add_credit_expiration_support.sql`
 
 **Changes:**
 1. Added `'expired'` type to `credit_transactions` constraint
@@ -507,7 +507,7 @@ ORDER BY created_at DESC;
 - `shared/config/subscription.utils.ts` (4 new functions)
 
 ### Database
-- `supabase/migrations/20250303_add_credit_expiration_support.sql` (new migration)
+- `supabase/migrations/20250303000000_add_credit_expiration_support.sql` (new migration)
 
 ### Backend
 - `app/api/webhooks/stripe/route.ts` (expiration logic in renewal handler)
@@ -539,7 +539,7 @@ ORDER BY created_at DESC;
 - **PRD:** [docs/PRDs/credits-expiration-PRD.md](../../PRDs/credits-expiration-PRD.md)
 - **Parent PRD:** [docs/PRDs/subscription-config-system.md](../../PRDs/subscription-config-system.md)
 - **Subscription Config:** [shared/config/subscription.config.ts](/shared/config/subscription.config.ts)
-- **Migration:** [supabase/migrations/20250303_add_credit_expiration_support.sql](/supabase/migrations/20250303_add_credit_expiration_support.sql)
+- **Migration:** [supabase/migrations/20250303000000_add_credit_expiration_support.sql](/supabase/migrations/20250303000000_add_credit_expiration_support.sql)
 
 ---
 

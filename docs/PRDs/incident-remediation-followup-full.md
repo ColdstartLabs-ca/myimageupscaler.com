@@ -5,7 +5,7 @@
 
 > ## ⚠️ POLICY CORRECTION
 >
-> An earlier version of this document declared a "confirmed" 10-credit welcome grant. **That was wrong and is revoked.** The free welcome-credit policy is **5 (standard payer countries) / 3 (restricted) / 0 (paywalled)** — the deliberate March 2026 decision (`0b08c682`, `20260331_reduce_free_credits_to_5.sql`). Acting on the earlier version already caused an unauthorized production change (10-credit migrations + an 83-user repair at 10 credits, executed 2026-07-18; see the urgent PRD's "Production Database State" section). Nothing in this file authorizes any credit-amount change. If anything below implies 10 credits, it is stale — 5/3/0 wins.
+> An earlier version of this document declared a "confirmed" 10-credit welcome grant. **That was wrong and is revoked.** The free welcome-credit policy is **5 (standard payer countries) / 3 (restricted) / 0 (paywalled)** — the deliberate March 2026 decision (`0b08c682`, `20260331000000_reduce_free_credits_to_5.sql`). Acting on the earlier version already caused an unauthorized production change (10-credit migrations + an 83-user repair at 10 credits, executed 2026-07-18; see the urgent PRD's "Production Database State" section). Nothing in this file authorizes any credit-amount change. If anything below implies 10 credits, it is stale — 5/3/0 wins.
 
 ## Priority 1: Harden the deploy flow to fail early
 

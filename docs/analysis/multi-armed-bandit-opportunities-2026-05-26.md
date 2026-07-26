@@ -62,7 +62,7 @@ Near-term recommendation: implement the shared experiment primitive, then launch
 ### Already implemented
 
 - `lib/pricing-bandit/bandit.service.ts` uses Thompson Sampling for regional discount arms.
-- `supabase/migrations/20260408_pricing_bandit_arms.sql` stores regional arm impressions, conversions, and revenue.
+- `supabase/migrations/20260409003620_pricing_bandit_arms.sql` stores regional arm impressions, conversions, and revenue.
 - `app/api/geo/route.ts` returns `discountPercent` and `banditArmId`, then client-side `useRegionTier()` caches that decision for the session.
 - `app/api/checkout/route.ts` applies the bandit arm discount at checkout and preserves `bandit_arm_id` metadata.
 - `app/api/webhooks/stripe/handlers/payment.handler.ts` records successful payment revenue back to the selected arm.

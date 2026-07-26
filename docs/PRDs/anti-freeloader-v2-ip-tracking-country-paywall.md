@@ -29,7 +29,7 @@ Total: 6 → MEDIUM mode
 - `app/api/users/setup/route.ts`
 - `app/api/upscale/guest/route.ts`
 - `app/api/geo/route.ts`
-- `supabase/migrations/20260226_add_anti_freeloader.sql`
+- `supabase/migrations/20260226000100_add_anti_freeloader.sql`
 - `client/hooks/useRegionTier.ts`
 - `client/components/modal/auth/AuthenticationModal.tsx`
 - `shared/config/credits.config.ts`

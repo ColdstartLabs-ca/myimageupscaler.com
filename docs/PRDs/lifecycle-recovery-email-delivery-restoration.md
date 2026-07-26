@@ -76,8 +76,8 @@ Evidence was collected read-only on 2026-07-15/16. No marketing email was sent d
 - `scripts/deploy/steps/05-secrets.sh`
 - `scripts/deploy/steps/06-verify.sh`
 - `.github/workflows/deploy.yml`
-- `supabase/migrations/20260710000100_email_campaign_priority.sql`
-- `supabase/migrations/20260710000300_email_lifecycle_health_report.sql`
+- `supabase/migrations/20260711060036_email_campaign_priority.sql`
+- `supabase/migrations/20260711060702_email_lifecycle_health_report.sql`
 - `supabase/migrations/20260712000100_email_recipient_value_classification.sql`
 - `supabase/migrations/20260712000200_email_recipient_value_apply_rpc.sql`
 - `supabase/migrations/20260712000300_email_recipient_value_due_queue.sql`

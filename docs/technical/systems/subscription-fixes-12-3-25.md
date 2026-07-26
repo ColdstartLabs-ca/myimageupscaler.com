@@ -14,7 +14,7 @@ Applied all 5 critical fixes and 3 medium-priority quick wins to the subscriptio
 
 ### ✅ CRITICAL-1: RPC Cross-User Credit Manipulation (HIGH SEVERITY)
 
-**File:** `supabase/migrations/20250303_revoke_credit_rpc_from_authenticated.sql`
+**File:** `supabase/migrations/20250303000100_revoke_credit_rpc_from_authenticated.sql`
 **Status:** Applied to database
 
 **What Was Fixed:**
@@ -278,7 +278,7 @@ ref_id: `invoice_${invoice.id}`,
 
 | File                                                                    | Changes | Lines Modified |
 | ----------------------------------------------------------------------- | ------- | -------------- |
-| `supabase/migrations/20250303_revoke_credit_rpc_from_authenticated.sql` | NEW     | 112            |
+| `supabase/migrations/20250303000100_revoke_credit_rpc_from_authenticated.sql` | NEW     | 112            |
 | `app/api/webhooks/stripe/route.ts`                                      | 5 fixes | ~100           |
 | `app/api/subscription/change/route.ts`                                  | 1 fix   | ~30            |
 

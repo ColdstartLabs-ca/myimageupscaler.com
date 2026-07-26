@@ -15,8 +15,8 @@
 - `server/services/blogImageStorage.service.ts` - Upload to Supabase Storage (no metadata tracking)
 - `app/api/blog/images/upload/route.ts` - Upload endpoint (no metadata stored)
 - `shared/validation/blog.schema.ts` - Current schemas (no image catalog types)
-- `supabase/migrations/20260129_create_blog_posts.sql` - Blog posts table
-- `supabase/migrations/20260131_create_blog_images_bucket.sql` - Storage bucket (no metadata table)
+- `supabase/migrations/20260129000000_create_blog_posts.sql` - Blog posts table
+- `supabase/migrations/20260131000000_create_blog_images_bucket.sql` - Storage bucket (no metadata table)
 
 **Current Behavior:**
 
@@ -104,7 +104,7 @@ sequenceDiagram
 
 **Files (3):**
 
-- `supabase/migrations/20260212_create_blog_images_table.sql` - New migration
+- `supabase/migrations/20260212000100_create_blog_images_table.sql` - New migration
 - `shared/validation/blog.schema.ts` - Add image metadata types and schemas
 - `server/services/blogImageStorage.service.ts` - Add metadata CRUD functions
 

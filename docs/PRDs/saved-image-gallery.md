@@ -14,8 +14,8 @@
 - `client/components/dashboard/DashboardSidebar.tsx` — sidebar navigation items
 - `server/services/blogImageStorage.service.ts` — existing Supabase Storage pattern (blog-images bucket)
 - `server/services/cloudflareImages.service.ts` — current image delivery via Cloudflare CDN
-- `supabase/migrations/20250121_create_processing_jobs_table.sql` — processing jobs schema
-- `supabase/migrations/20260131_create_blog_images_bucket.sql` — bucket creation pattern
+- `supabase/migrations/20250121000100_create_processing_jobs_table.sql` — processing jobs schema
+- `supabase/migrations/20260131000000_create_blog_images_bucket.sql` — bucket creation pattern
 - `app/[locale]/dashboard/*/page.tsx` — existing dashboard routes
 
 **Current Behavior:**

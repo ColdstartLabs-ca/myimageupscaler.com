@@ -367,7 +367,7 @@ return result.data; // Extract { url } from { success, data: { url } }
 
 **Effort:** 2-3 days | **Impact:** Low (Current approach works) | **Priority:** #12
 
-**Location:** `supabase/migrations/20250120_create_subscriptions_table.sql`
+**Location:** `supabase/migrations/20250120000200_create_subscriptions_table.sql`
 
 **Issue:** `products` and `prices` tables unused. System uses hardcoded `SUBSCRIPTION_PRICE_MAP`.
 
@@ -604,7 +604,7 @@ static async createPortalSession(): Promise<{ url: string }>
 ### 3.1 Products/Prices Tables Not Synced
 
 **Severity:** Low
-**Location:** `supabase/migrations/20250120_create_subscriptions_table.sql`
+**Location:** `supabase/migrations/20250120000200_create_subscriptions_table.sql`
 
 **Issue:** The `products` and `prices` tables exist but are never populated. The system uses hardcoded `SUBSCRIPTION_PRICE_MAP` instead.
 
@@ -626,7 +626,7 @@ static async createPortalSession(): Promise<{ url: string }>
 ### 3.3 Credit Balance Can Go Negative
 
 **Severity:** Medium
-**Location:** `supabase/migrations/20250120_create_rpc_functions.sql`
+**Location:** `supabase/migrations/20250120000100_create_rpc_functions.sql`
 
 **Issue:** The `decrement_credits` RPC checks for sufficient credits but the check and decrement aren't atomic in a transaction lock.
 
@@ -808,6 +808,6 @@ Low Impact            →  High Effort
 - `client/components/stripe/SubscriptionStatus.tsx`
 - `server/stripe/stripeService.ts`
 - `shared/config/stripe.ts`
-- `supabase/migrations/20250120_create_profiles_table.sql`
-- `supabase/migrations/20250120_create_subscriptions_table.sql`
-- `supabase/migrations/20250121_create_credit_transactions_table.sql`
+- `supabase/migrations/20250120000000_create_profiles_table.sql`
+- `supabase/migrations/20250120000200_create_subscriptions_table.sql`
+- `supabase/migrations/20250121000000_create_credit_transactions_table.sql`

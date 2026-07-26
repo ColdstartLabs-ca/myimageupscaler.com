@@ -1024,4 +1024,4 @@ Out of scope for MVP but worth considering:
 - `docs/PRDs/done/email-notifications-prd.md` - Email infrastructure
 - `server/services/email.service.ts` - Email service implementation
 - `server/services/email-providers/base-email-provider-adapter.ts` - Provider adapter
-- `supabase/migrations/20260116_create_email_tables.sql` - Email tables
+- `supabase/migrations/20260116000100_create_email_tables.sql` - Email tables

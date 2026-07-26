@@ -43,7 +43,7 @@ This PRD is intentionally infrastructure-first. Product-specific bandits should 
 - `server/analytics/analyticsService.ts`
 - `server/analytics/dashboardApi.ts`
 - `shared/utils/pricing-geo-session.ts`
-- `supabase/migrations/20260408_pricing_bandit_arms.sql`
+- `supabase/migrations/20260409003620_pricing_bandit_arms.sql`
 - `tests/unit/pricing/bandit.service.unit.spec.ts`
 
 ### Current Behavior
