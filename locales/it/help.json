@@ -22,7 +22,7 @@
         "answerIntro": "Per iniziare:",
         "answerStep1": "Crea un account",
         "answerStep2": "usando email o Google",
-        "answerStep3": "Riceverai 10 crediti gratuiti per provare il servizio",
+        "answerStep3": "Riceverai 5 crediti gratuiti per provare il servizio",
         "answerStep4": "Naviga allo",
         "answerStep5": "Upscaler",
         "answerStep6": "Carica un'immagine (formato JPG, PNG o WEBP)",
@@ -58,9 +58,9 @@
     "faqs": {
       "whatAreCredits": {
         "question": "Cosa sono i crediti?",
-        "answerPart1": "I crediti sono valuta usata per elaborare immagini. Ogni miglioramento immagine consuma 1 credito, indipendentemente da fattore upscaling.",
+        "answerPart1": "I crediti sono la valuta usata per elaborare le immagini. Il costo varia in base al modello, alle dimensioni di output e alle opzioni selezionate, e l’app mostra il costo esatto prima dell’elaborazione.",
         "answerPart2": "Nuovi utenti ricevono",
-        "answerPart3": "10 crediti gratuiti",
+        "answerPart3": "5 crediti gratuiti",
         "answerPart4": "per provare il servizio."
       },
       "purchaseCredits": {

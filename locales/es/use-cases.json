@@ -144,7 +144,11 @@
       "h1": "Requisitos de Fotos de Listados Inmobiliarios",
       "intro": "Las diferentes plataformas inmobiliarias tienen especificaciones de imagen diferentes. Aquí tienes lo que necesitas para los principales sitios de listados.",
       "primaryKeyword": "fotos de listados inmobiliarios",
-      "secondaryKeywords": ["requisitos de fotos mls", "tamaño de imagen zillow", "fotografía inmobiliaria"],
+      "secondaryKeywords": [
+        "requisitos de fotos mls",
+        "tamaño de imagen zillow",
+        "fotografía inmobiliaria"
+      ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "casos-de-uso",
       "industry": "Bienes Raíces",
@@ -1346,13 +1350,13 @@
         },
         "facePro": {
           "name": "Rostro Pro",
-          "credits": 6,
+          "credits": 12,
           "model": "Flux-2-Pro",
           "description": "Mejora de retratos premium con mejora avanzada de detalles faciales"
         },
         "ultra": {
           "name": "Calidad Ultra",
-          "credits": 8,
+          "credits": 13,
           "model": "Nano Banana Pro",
           "description": "Máxima calidad 4K/8K para retratos profesionales"
         }
@@ -1400,7 +1404,7 @@
       "faq": [
         {
           "question": "¿Cuál es la diferencia entre Restauración de Rostro y Rostro Pro?",
-          "answer": "Restauración de Rostro (2 créditos) usa GFPGAN para restauración de fotos con reconstrucción de características faciales. Rostro Pro (6 créditos) usa Flux-2-Pro para mejora de retratos premium con mejora avanzada de detalles. Rostro Pro entrega resultados superiores para retratos profesionales."
+          "answer": "Restauración de Rostro (2 créditos) usa GFPGAN para restauración de fotos con reconstrucción de características faciales. Rostro Pro (2–12 créditos, según el tamaño de la imagen) usa Flux-2-Pro para mejora de retratos premium con mejora avanzada de detalles. Rostro Pro entrega resultados superiores para retratos profesionales."
         },
         {
           "question": "¿El escalador de retratos puede corregir rostros borrosos?",

@@ -259,18 +259,17 @@ describe('ImageGenerationService', () => {
       expect(cost).toBe(4); // 4 credits for hd-upscale
     });
 
-    it('should calculate cost for face-pro tier', () => {
+    it('should reject fallback billing for face-pro without dimensions', () => {
       const config = createMockInput().config;
       config.qualityTier = 'face-pro';
-      const cost = calculateCreditCost(config);
-      expect(cost).toBe(6); // 6 credits for face-pro
+      expect(() => calculateCreditCost(config)).toThrow(/Input dimensions are required/);
     });
 
     it('should calculate cost for ultra tier', () => {
       const config = createMockInput().config;
       config.qualityTier = 'ultra';
       const cost = calculateCreditCost(config);
-      expect(cost).toBe(8); // 8 credits for ultra
+      expect(cost).toBe(13);
     });
 
     it('should return 1 for auto tier (variable defaults to minimum cost)', () => {
@@ -387,6 +386,35 @@ describe('ImageGenerationService', () => {
         description: expect.stringContaining(`${preCalculatedCost} credits`),
       });
       expect(result.creditsRemaining).toBe(100);
+    });
+
+    it('should still resolve when cost telemetry insertion fails', async () => {
+      const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      const input = createMockInput();
+      mockSupabaseRpc.mockResolvedValueOnce({
+        data: [{ new_total_balance: 99 }],
+        error: null,
+      });
+      mockGenerateContent.mockResolvedValueOnce(createMockGeminiResponse());
+
+      const result = await service.processImage('user-123', input, {
+        creditCost: 1,
+        costAttribution: {
+          modelId: 'real-esrgan',
+          qualityTier: 'quick',
+          scale: 2,
+          providerCostUsd: 0.0017,
+          creditsCharged: 1,
+          pricingModel: 'flat',
+        },
+      });
+
+      expect(result.creditsRemaining).toBe(99);
+      expect(consoleError).toHaveBeenCalledWith(
+        'Failed to record processing cost telemetry:',
+        expect.any(TypeError)
+      );
+      consoleError.mockRestore();
     });
 
     it('should handle image data with data URL prefix', async () => {

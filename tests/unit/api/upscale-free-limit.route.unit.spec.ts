@@ -34,6 +34,12 @@ const mocks = vi.hoisted(() => ({
   rateLimit: vi.fn(),
   setupPending: vi.fn(),
   track: vi.fn(),
+  parseUpscale: vi.fn(),
+  getModel: vi.fn(),
+  getModelForTier: vi.fn(),
+  modelIdToTier: vi.fn(),
+  calculateCredits: vi.fn(),
+  resolveResolution: vi.fn(),
 }));
 
 vi.mock('@server/analytics', () => ({ trackServerEvent: mocks.track }));
@@ -42,7 +48,15 @@ vi.mock('@server/monitoring/logger', () => ({
 }));
 vi.mock('@server/rateLimit', () => ({ upscaleRateLimit: { limit: mocks.rateLimit } }));
 vi.mock('@server/services/batch-limit.service', () => ({
-  batchLimitCheck: { checkAndIncrement: mocks.batchCheck, release: mocks.batchRelease },
+  batchLimitCheck: {
+    checkAndIncrement: mocks.batchCheck,
+    getUsage: () => ({
+      current: 1,
+      limit: 5,
+      resetAt: new Date('2026-07-26T21:00:00.000Z'),
+    }),
+    release: mocks.batchRelease,
+  },
 }));
 vi.mock('@server/services/anti-freeloader.service', () => ({
   ensureAntiFreeloaderProfile: mocks.ensureProfile,
@@ -62,7 +76,7 @@ vi.mock('@server/services/model-registry', () => ({
   ModelRegistry: {
     getInstance: () => ({
       getMaxInputPixels: () => Number.MAX_SAFE_INTEGER,
-      getModel: () => ({ isEnabled: true, minTier: 'free', supportedScales: [2] }),
+      getModel: mocks.getModel,
       getModelsByTier: () => [],
     }),
   },
@@ -93,8 +107,11 @@ vi.mock('@shared/config/model-costs.config', () => ({
   MODEL_COSTS: { PREMIUM_QUALITY_TIERS: [], SMART_ANALYSIS_REQUIRES_PAID: false },
 }));
 vi.mock('@shared/config/subscription.utils', () => ({
-  calculateFinalProviderAwareCredits: () => ({ finalCredits: 1 }),
-  getModelForTier: () => 'real-esrgan',
+  calculateFinalProviderAwareCredits: mocks.calculateCredits,
+  calculateProviderAwareCredits: mocks.calculateCredits,
+  getModelForTier: mocks.getModelForTier,
+  modelIdToTier: mocks.modelIdToTier,
+  resolveEffectiveResolution: mocks.resolveResolution,
 }));
 vi.mock('@/lib/anti-freeloader/check-freeloader', () => ({
   isAccountSetupPending: mocks.setupPending,
@@ -102,15 +119,7 @@ vi.mock('@/lib/anti-freeloader/check-freeloader', () => ({
 }));
 vi.mock('@shared/validation/upscale.schema', () => ({
   upscaleSchema: {
-    parse: () => ({
-      imageData: 'aGVsbG8=',
-      mimeType: 'image/jpeg',
-      config: {
-        qualityTier: 'quick',
-        scale: 2,
-        additionalOptions: { smartAnalysis: false, enhance: true },
-      },
-    }),
+    parse: mocks.parseUpscale,
   },
   decodeImageDimensions: () => null,
   validateImageDimensions: () => ({ valid: true }),
@@ -122,6 +131,7 @@ vi.mock('@shared/validation/upscale.schema', () => ({
 }));
 
 import { POST } from '@/app/api/upscale/route';
+import { POST as estimateCredits } from '@/app/api/credit-estimate/route';
 import { InsufficientCreditsError } from '@server/services/image-generation.service';
 import { ReplicateError } from '@server/services/replicate.service';
 
@@ -130,6 +140,14 @@ function request(): NextRequest {
     method: 'POST',
     headers: { 'X-User-Id': 'user-1', 'content-type': 'application/json' },
     body: JSON.stringify({}),
+  });
+}
+
+function requestWithBody(path: string, body: unknown): NextRequest {
+  return new NextRequest(`http://localhost${path}`, {
+    method: 'POST',
+    headers: { 'X-User-Id': 'user-1', 'content-type': 'application/json' },
+    body: JSON.stringify(body),
   });
 }
 
@@ -177,6 +195,204 @@ describe('POST /api/upscale free limit errors', () => {
       }),
     }));
     mocks.ensureProfile.mockImplementation((_req, _userId, rawProfile) => rawProfile);
+    mocks.getModelForTier.mockReturnValue('real-esrgan');
+    mocks.modelIdToTier.mockReturnValue('quick');
+    mocks.calculateCredits.mockReturnValue({
+      finalCredits: 1,
+      credits: 1,
+      effectiveResolution: undefined,
+      pricingModel: 'flat',
+      providerCostUsd: 0.002,
+    });
+    mocks.resolveResolution.mockReturnValue(undefined);
+    mocks.getModel.mockReturnValue({
+      isEnabled: true,
+      minTier: 'free',
+      supportedScales: [2],
+      tierRestriction: null,
+    });
+    mocks.parseUpscale.mockReturnValue({
+      imageData: 'aGVsbG8=',
+      mimeType: 'image/jpeg',
+      config: {
+        qualityTier: 'quick',
+        scale: 2,
+        additionalOptions: { smartAnalysis: false, enhance: true },
+      },
+    });
+  });
+
+  it('charges the same 25 credits priced for an ultra 4K override', async () => {
+    const paidProfile = profile({
+      subscription_status: 'active',
+      subscription_tier: 'pro',
+      subscription_credits_balance: 100,
+    });
+    mocks.from.mockImplementation(() => ({
+      select: () => ({
+        eq: () => ({
+          single: async () => ({ data: paidProfile, error: null }),
+          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
+        }),
+      }),
+    }));
+    mocks.parseUpscale.mockReturnValue({
+      imageData: 'aGVsbG8=',
+      mimeType: 'image/jpeg',
+      config: {
+        qualityTier: 'ultra',
+        scale: 2,
+        additionalOptions: { smartAnalysis: false, enhance: true },
+        nanoBananaProConfig: { resolution: '4K' },
+      },
+    });
+    mocks.getModelForTier.mockReturnValue('nano-banana-pro');
+    mocks.getModel.mockReturnValue({
+      isEnabled: true,
+      minTier: 'pro',
+      supportedScales: [2, 4, 8],
+      tierRestriction: 'pro',
+      capabilities: ['upscale'],
+      displayName: 'Upscale Ultra',
+    });
+    mocks.resolveResolution.mockReturnValue('4K');
+    mocks.calculateCredits.mockReturnValue({
+      finalCredits: 25,
+      credits: 25,
+      effectiveResolution: '4K',
+      pricingModel: 'per-resolution',
+      providerCostUsd: 0.3,
+    });
+    mocks.processImage.mockResolvedValue({
+      imageData: 'result',
+      mimeType: 'image/png',
+      creditsRemaining: 75,
+    });
+
+    const response = await POST(request());
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.processing.creditsUsed).toBe(25);
+    expect(mocks.processImage).toHaveBeenCalledWith(
+      'user-1',
+      expect.anything(),
+      expect.objectContaining({
+        creditCost: 25,
+        costAttribution: expect.objectContaining({
+          effectiveResolution: '4K',
+          creditsCharged: 25,
+        }),
+      })
+    );
+  });
+
+  it('quotes and charges identically for the same smart-analysis 4K payload', async () => {
+    const payload = {
+      imageData: 'aGVsbG8=',
+      mimeType: 'image/jpeg',
+      config: {
+        qualityTier: 'ultra',
+        scale: 2,
+        additionalOptions: { smartAnalysis: true, enhance: true },
+        nanoBananaProConfig: { resolution: '4K' },
+      },
+    };
+    const paidProfile = profile({
+      subscription_status: 'active',
+      subscription_tier: 'pro',
+      subscription_credits_balance: 100,
+      credits_balance: 100,
+    });
+    mocks.from.mockImplementation(() => ({
+      select: () => ({
+        eq: () => ({
+          single: async () => ({ data: paidProfile, error: null }),
+          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
+        }),
+      }),
+    }));
+    mocks.parseUpscale.mockReturnValue(payload);
+    mocks.getModelForTier.mockReturnValue('nano-banana-pro');
+    mocks.modelIdToTier.mockReturnValue('ultra');
+    mocks.getModel.mockReturnValue({
+      isEnabled: true,
+      minTier: 'pro',
+      supportedScales: [2, 4, 8],
+      tierRestriction: 'pro',
+      capabilities: ['upscale'],
+      displayName: 'Upscale Ultra',
+      processingTimeMs: 30_000,
+    });
+    mocks.resolveResolution.mockReturnValue('4K');
+    mocks.calculateCredits.mockReturnValue({
+      finalCredits: 26,
+      credits: 26,
+      effectiveResolution: '4K',
+      pricingModel: 'per-resolution',
+      providerCostUsd: 0.3,
+    });
+    mocks.processImage.mockResolvedValue({
+      imageData: 'result',
+      mimeType: 'image/png',
+      creditsRemaining: 74,
+    });
+
+    const estimateResponse = await estimateCredits(
+      requestWithBody('/api/credit-estimate', payload)
+    );
+    const estimate = await estimateResponse.json();
+    const estimatePricingInput = mocks.calculateCredits.mock.calls.at(-1)?.[0];
+
+    const upscaleResponse = await POST(requestWithBody('/api/upscale', payload));
+    const upscale = await upscaleResponse.json();
+    const upscalePricingInput = mocks.calculateCredits.mock.calls.at(-1)?.[0];
+
+    expect(estimateResponse.status).toBe(200);
+    expect(upscaleResponse.status).toBe(200);
+    expect(estimate.breakdown.totalCredits).toBe(26);
+    expect(upscale.processing.creditsUsed).toBe(26);
+    expect(upscalePricingInput).toEqual(estimatePricingInput);
+  }, 15_000);
+
+  it('should reject scale 8 for seedream', async () => {
+    const paidProfile = profile({
+      subscription_status: 'active',
+      subscription_tier: 'hobby',
+      subscription_credits_balance: 100,
+    });
+    mocks.from.mockImplementation(() => ({
+      select: () => ({
+        eq: () => ({
+          single: async () => ({ data: paidProfile, error: null }),
+          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
+        }),
+      }),
+    }));
+    mocks.parseUpscale.mockReturnValue({
+      imageData: 'aGVsbG8=',
+      mimeType: 'image/jpeg',
+      config: {
+        qualityTier: 'seedream-edit',
+        scale: 8,
+        additionalOptions: { smartAnalysis: false, enhance: true },
+      },
+    });
+    mocks.getModelForTier.mockReturnValue('seedream');
+    mocks.getModel.mockReturnValue({
+      isEnabled: true,
+      minTier: 'hobby',
+      supportedScales: [],
+      tierRestriction: 'hobby',
+    });
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: 'VALIDATION_ERROR' },
+    });
+    expect(mocks.processImage).not.toHaveBeenCalled();
   });
 
   it('returns account setup pending for a provisional zero profile', async () => {

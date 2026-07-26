@@ -2,15 +2,7 @@ import { buildPrompt } from '../../utils/prompt.builder';
 import type { IModelInputContext } from '../model-input.types';
 import type { INanoBananaProInput } from '../model-input.types';
 import { BaseModelInputBuilder } from './base-model.builder';
-
-/**
- * Map scale to resolution for Nano Banana Pro
- */
-const SCALE_TO_RESOLUTION: Record<number, '0.5K' | '1K' | '2K' | '4K'> = {
-  2: '2K',
-  4: '4K',
-  8: '4K', // Max supported is 4K
-};
+import { resolveEffectiveResolution } from '@shared/config/subscription.utils';
 
 /**
  * Nano Banana Pro Model Input Builder
@@ -28,13 +20,21 @@ export class NanoBananaProBuilder extends BaseModelInputBuilder<INanoBananaProIn
     const prompt = buildPrompt(this.modelId, context);
 
     // Use config resolution if provided, otherwise map from scale
-    const resolution = nanoBananaProConfig?.resolution || SCALE_TO_RESOLUTION[scale] || '2K';
+    const resolution = resolveEffectiveResolution(
+      this.modelId,
+      scale,
+      nanoBananaProConfig?.resolution
+    );
+
+    if (!resolution) {
+      throw new Error(`Unable to resolve output resolution for ${this.modelId}`);
+    }
 
     return {
       prompt,
       image_input: [imageDataUrl],
       aspect_ratio: nanoBananaProConfig?.aspectRatio || 'match_input_image',
-      resolution,
+      resolution: resolution as INanoBananaProInput['resolution'],
       output_format: nanoBananaProConfig?.outputFormat || 'png',
       safety_filter_level: nanoBananaProConfig?.safetyFilterLevel || 'block_only_high',
     };

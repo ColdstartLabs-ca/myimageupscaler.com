@@ -151,7 +151,11 @@
       "h1": "Requisiti Foto Inserzioni Real Estate",
       "intro": "Diverse piattaforme real estate hanno diverse specifiche delle immagini. Ecco cosa ti serve per i principali siti di inserzione.",
       "primaryKeyword": "foto inserzioni real estate",
-      "secondaryKeywords": ["requisiti foto mls", "dimensione immagine zillow", "fotografia real estate"],
+      "secondaryKeywords": [
+        "requisiti foto mls",
+        "dimensione immagine zillow",
+        "fotografia real estate"
+      ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "casi-duso",
       "industry": "Immobiliare",
@@ -1353,13 +1357,13 @@
         },
         "facePro": {
           "name": "Viso Pro",
-          "credits": 6,
+          "credits": 12,
           "model": "Flux-2-Pro",
           "description": "Miglioramento ritratto premium con miglioramento dettagli viso avanzato"
         },
         "ultra": {
           "name": "Qualità Ultra",
-          "credits": 8,
+          "credits": 13,
           "model": "Nano Banana Pro",
           "description": "Massima qualità 4K/8K per ritratti professionali"
         }
@@ -1407,7 +1411,7 @@
       "faq": [
         {
           "question": "Qual è la differenza tra Ripristino Viso e Viso Pro?",
-          "answer": "Ripristino Viso (2 crediti) usa GFPGAN per ripristino foto con ricostruzione caratteristiche facciali. Viso Pro (6 crediti) usa Flux-2-Pro per miglioramento ritratto premium con miglioramento dettagli avanzato. Viso Pro consegna risultati superiori per ritratti professionali."
+          "answer": "Ripristino Viso (2 crediti) usa GFPGAN per ripristino foto con ricostruzione caratteristiche facciali. Viso Pro (2–12 crediti, in base alle dimensioni dell’immagine) usa Flux-2-Pro per miglioramento ritratto premium con miglioramento dettagli avanzato. Viso Pro consegna risultati superiori per ritratti professionali."
         },
         {
           "question": "L'upscaler ritratti può correggere visi sfocati?",

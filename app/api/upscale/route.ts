@@ -22,7 +22,10 @@ import { serverEnv, isProduction } from '@shared/config/env';
 import { MODEL_COSTS } from '@shared/config/model-costs.config';
 import {
   calculateFinalProviderAwareCredits,
+  calculateProviderAwareCredits,
   getModelForTier,
+  modelIdToTier,
+  resolveEffectiveResolution,
 } from '@shared/config/subscription.utils';
 import { isAccountSetupPending, isFreeleaderBlocked } from '@/lib/anti-freeloader/check-freeloader';
 import { ErrorCodes, createErrorResponse, serializeError } from '@shared/utils/errors';
@@ -173,28 +176,6 @@ async function analyzeImageForProcessing(
         enhance: false,
       },
     };
-  }
-}
-
-/**
- * Helper function to map model ID to quality tier
- */
-function modelIdToTier(modelId: string): QualityTier {
-  switch (modelId) {
-    case 'real-esrgan':
-      return 'quick';
-    case 'gfpgan':
-      return 'face-restore';
-    case 'clarity-upscaler':
-      return 'hd-upscale';
-    case 'flux-2-pro':
-      return 'face-pro';
-    case 'nano-banana-pro':
-      return 'ultra';
-    case 'nano-banana-2':
-      return 'nano-banana-2';
-    default:
-      return 'quick';
   }
 }
 
@@ -828,11 +809,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       }
     }
 
-    // Validate that the requested scale is supported by the selected model
-    // Enhancement-only models (flux-2-pro, qwen-image-edit, seedream)
-    // have empty supportedScales - skip validation for these models (scale is ignored)
+    // Enhancement-only models accept the neutral 2x request value only. Although
+    // they do not perform scaling, rejecting 4x/8x prevents those values from
+    // leaking into provider output-size parameters.
     const hasNoSupportedScales = selectedModel.supportedScales.length === 0;
-    if (!hasNoSupportedScales && !selectedModel.supportedScales.includes(config.scale)) {
+    const isUnsupportedEnhancementScale = hasNoSupportedScales && config.scale !== 2;
+    if (
+      isUnsupportedEnhancementScale ||
+      (!hasNoSupportedScales && !selectedModel.supportedScales.includes(config.scale))
+    ) {
       logFailure('scale_not_supported', {
         tier: resolvedTier,
         modelId: resolvedModelId,
@@ -846,8 +831,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       let errorMessage = `Scale ${config.scale}x is not available for ${resolvedTier} tier.`;
       if (is8xRequest && !supports8x) {
         errorMessage += ' Use HD Upscale tier for 8x upscaling.';
-      } else {
+      } else if (selectedModel.supportedScales.length > 0) {
         errorMessage += ` Supported scales: ${selectedModel.supportedScales.join('x, ')}x.`;
+      } else {
+        errorMessage += ' This enhancement-only tier requires the default 2x request setting.';
       }
 
       const { body: errorBody, status } = createErrorResponse(
@@ -904,6 +891,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     // Calculate credit cost using provider-aware pricing for new models,
     // falling back to tier-based scale multiplier for legacy models.
+    const effectiveResolution = resolveEffectiveResolution(
+      billingModelId,
+      config.scale,
+      config.nanoBananaProConfig?.resolution
+    );
     const providerAware = calculateFinalProviderAwareCredits({
       modelId: billingModelId,
       qualityTier: resolvedTier,
@@ -911,7 +903,25 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       inputWidth: inputDimensions?.width,
       inputHeight: inputDimensions?.height,
       smartAnalysis: config.additionalOptions.smartAnalysis,
+      targetResolution: config.targetResolution,
+      effectiveResolution,
     });
+    const providerCostPricing =
+      resolvedModelId === billingModelId
+        ? providerAware
+        : calculateProviderAwareCredits({
+            modelId: resolvedModelId,
+            qualityTier: resolvedTier,
+            scale: config.scale,
+            inputWidth: inputDimensions?.width,
+            inputHeight: inputDimensions?.height,
+            smartAnalysis: config.additionalOptions.smartAnalysis,
+            effectiveResolution: resolveEffectiveResolution(
+              resolvedModelId,
+              config.scale,
+              config.nanoBananaProConfig?.resolution
+            ),
+          });
 
     creditCost = providerAware.finalCredits;
 
@@ -1017,6 +1027,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const result = await Promise.race([
       processor.processImage(userId, legacyInputForProcessor as never, {
         creditCost,
+        costAttribution: {
+          modelId: resolvedModelId,
+          qualityTier: resolvedTier,
+          scale: config.scale,
+          effectiveResolution: providerCostPricing.effectiveResolution,
+          providerCostUsd: providerCostPricing.providerCostUsd,
+          creditsCharged: creditCost,
+          pricingModel: providerCostPricing.pricingModel,
+        },
         onCreditsDeducted: deduction => {
           creditDeduction = deduction;
         },

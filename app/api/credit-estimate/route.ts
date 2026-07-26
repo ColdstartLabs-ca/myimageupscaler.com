@@ -6,8 +6,11 @@ import { serverEnv } from '@shared/config/env';
 import {
   calculateFinalProviderAwareCredits,
   getCreditsForTierAtScale,
+  getModelForTier,
   modelIdToTier,
+  resolveEffectiveResolution,
 } from '@shared/config/subscription.utils';
+import { decodeImageDimensions } from '@shared/validation/upscale.schema';
 import { ErrorCodes, createErrorResponse } from '@shared/utils/errors';
 import { NextRequest, NextResponse } from 'next/server';
 import { ZodError, z } from 'zod';
@@ -35,8 +38,10 @@ function getMockUserProfile(userId: string) {
 
 // Request validation schema
 const creditEstimateSchema = z.object({
+  imageData: z.string().optional(),
+  mimeType: z.string().optional(),
   config: z.object({
-    mode: z.enum(['upscale', 'enhance', 'both', 'custom']),
+    mode: z.enum(['upscale', 'enhance', 'both', 'custom']).default('both'),
     scale: z.union([z.literal(2), z.literal(4), z.literal(8)]),
     qualityLevel: z.enum(['standard', 'enhanced', 'premium']).default('standard'),
     preserveText: z.boolean().default(false),
@@ -45,6 +50,34 @@ const creditEstimateSchema = z.object({
     autoModelSelection: z.boolean().default(true),
     preferredModel: z.string().optional(),
     targetResolution: z.enum(['2k', '4k', '8k']).optional(),
+    nanoBananaProConfig: z
+      .object({
+        resolution: z.enum(['1K', '2K', '4K']).default('2K'),
+      })
+      .passthrough()
+      .optional(),
+    qualityTier: z
+      .enum([
+        'auto',
+        'quick',
+        'face-restore',
+        'fast-edit',
+        'budget-edit',
+        'budget-old-photo',
+        'seedream-edit',
+        'anime-upscale',
+        'hd-upscale',
+        'face-pro',
+        'ultra',
+        'lighting-fix',
+        'resume-photo',
+        'photo-repair',
+        'clarity-pro',
+        'crisp-upscale',
+        'nano-banana-2',
+      ])
+      .optional(),
+    additionalOptions: z.object({ smartAnalysis: z.boolean().optional() }).passthrough().optional(),
     selectedModel: z
       .enum([
         'auto',
@@ -52,7 +85,13 @@ const creditEstimateSchema = z.object({
         'gfpgan',
         'nano-banana',
         'clarity-upscaler',
+        'flux-2-pro',
         'nano-banana-pro',
+        'qwen-image-edit',
+        'seedream',
+        'realesrgan-anime',
+        'p-image-edit',
+        'flux-kontext-fast',
         'clarity-pro-upscaler',
         'recraft-crisp-upscale',
         'nano-banana-2',
@@ -150,7 +189,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const modelRegistry = ModelRegistry.getInstance();
 
     // Determine which model will be used
-    let modelToUse: string = validatedInput.config.selectedModel;
+    const tierModel = validatedInput.config.qualityTier
+      ? getModelForTier(validatedInput.config.qualityTier)
+      : null;
+    let modelToUse: string =
+      validatedInput.config.qualityTier === 'auto'
+        ? 'auto'
+        : (tierModel ?? validatedInput.config.selectedModel);
 
     if (modelToUse === 'auto' || !modelToUse) {
       // Use analysis hint to recommend model
@@ -211,7 +256,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     // Check if model supports the requested scale
     const hasNoSupportedScales = model.supportedScales.length === 0;
-    if (!hasNoSupportedScales && !model.supportedScales.includes(validatedInput.config.scale)) {
+    const isUnsupportedEnhancementScale = hasNoSupportedScales && validatedInput.config.scale !== 2;
+    if (
+      isUnsupportedEnhancementScale ||
+      (!hasNoSupportedScales && !model.supportedScales.includes(validatedInput.config.scale))
+    ) {
       logger.warn('Model does not support scale', {
         userId,
         modelId: modelToUse,
@@ -250,15 +299,26 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     // Map resolved model to quality tier for tier-based credit calculation.
     const tier = modelIdToTier(modelToUse);
+    const decodedDimensions = validatedInput.imageData
+      ? decodeImageDimensions(validatedInput.imageData)
+      : null;
+    const inputWidth = decodedDimensions?.width ?? validatedInput.config.inputWidth;
+    const inputHeight = decodedDimensions?.height ?? validatedInput.config.inputHeight;
 
     // Use provider-aware pricing for new models, fallback to legacy tier-based for others
     const providerAware = calculateFinalProviderAwareCredits({
       modelId: modelToUse,
       qualityTier: tier,
       scale: validatedInput.config.scale,
-      inputWidth: validatedInput.config.inputWidth,
-      inputHeight: validatedInput.config.inputHeight,
+      inputWidth,
+      inputHeight,
+      smartAnalysis: validatedInput.config.additionalOptions?.smartAnalysis ?? false,
       targetResolution: validatedInput.config.targetResolution,
+      effectiveResolution: resolveEffectiveResolution(
+        modelToUse,
+        validatedInput.config.scale,
+        validatedInput.config.nanoBananaProConfig?.resolution
+      ),
     });
 
     const totalCredits = providerAware.finalCredits;

@@ -59,7 +59,7 @@
     "faqs": {
       "whatAreCredits": {
         "question": "What are credits?",
-        "answerPart1": "Credits are the currency used for processing images. Each image enhancement consumes 1 credit, regardless of upscale factor.",
+        "answerPart1": "Credits are the currency used for processing images. The cost varies by model, output size, and selected options, and the app shows the exact cost before processing.",
         "answerPart2": "New users receive",
         "answerPart3": "5 free credits",
         "answerPart4": "to try the service."

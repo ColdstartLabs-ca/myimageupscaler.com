@@ -369,7 +369,7 @@ export const QUALITY_TIER_SCALES: Record<QualityTier, (2 | 4 | 8)[]> = {
   'photo-repair': [], // seedream is enhancement-only (no upscale)
   'clarity-pro': [2, 4, 8], // clarity-pro-upscaler supports 2x, 4x, 8x for launch
   'crisp-upscale': [], // recraft-crisp-upscale is enhancement-only (no scale parameter)
-  'nano-banana-2': [2, 4], // nano-banana-2 is resolution-based (0.5K/1K/2K/4K)
+  'nano-banana-2': [2, 4], // nano-banana-2 is resolution-based (1K/2K/4K)
 };
 
 // Additional options (replaces mode + toggles)
@@ -503,7 +503,7 @@ export type NanoBananaProAspectRatio =
   | '16:9'
   | '21:9';
 
-export type NanoBananaProResolution = '0.5K' | '1K' | '2K' | '4K';
+export type NanoBananaProResolution = '1K' | '2K' | '4K';
 export type NanoBananaProOutputFormat = 'jpg' | 'png';
 export type NanoBananaProSafetyLevel =
   | 'block_low_and_above'

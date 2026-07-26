@@ -122,7 +122,7 @@ export interface INanoBananaProInput {
   prompt: string;
   image_input: string[];
   aspect_ratio: string;
-  resolution: '0.5K' | '1K' | '2K' | '4K';
+  resolution: '1K' | '2K' | '4K';
   output_format: string;
   safety_filter_level: string;
 }
@@ -134,7 +134,7 @@ export interface INanoBanana2Input {
   prompt: string;
   image_input: string[];
   aspect_ratio: string;
-  resolution: '0.5K' | '1K' | '2K' | '4K';
+  resolution: '1K' | '2K' | '4K';
   output_format: string;
 }
 

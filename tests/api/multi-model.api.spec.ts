@@ -120,6 +120,90 @@ test.describe('API: Multi-Model Architecture', () => {
       expect(data.breakdown.totalCredits).toBeGreaterThan(0);
     });
 
+    test('should estimate 25 credits for an ultra 4K resolution override', async () => {
+      const user = await ctx.createUser({
+        subscription: 'active',
+        tier: 'pro',
+        credits: 100,
+      });
+
+      const response = await api.withAuth(user.token).post('/api/credit-estimate', {
+        imageData: 'aGVsbG8=',
+        mimeType: 'image/jpeg',
+        config: {
+          qualityTier: 'ultra',
+          scale: 2,
+          additionalOptions: {
+            smartAnalysis: false,
+            enhance: true,
+            enhanceFaces: false,
+            preserveText: false,
+          },
+          nanoBananaProConfig: {
+            resolution: '4K',
+          },
+        },
+      });
+
+      response.expectStatus(200);
+      const data = await response.json();
+
+      expect(data.modelToBe).toBe('nano-banana-pro');
+      expect(data.breakdown.pricingModel).toBe('per-resolution');
+      expect(data.breakdown.totalCredits).toBe(25);
+    });
+
+    test('should include smart analysis in an explicit-tier estimate', async () => {
+      const user = await ctx.createUser({
+        subscription: 'active',
+        tier: 'pro',
+        credits: 100,
+      });
+
+      const response = await api.withAuth(user.token).post('/api/credit-estimate', {
+        config: {
+          qualityTier: 'ultra',
+          scale: 2,
+          additionalOptions: {
+            smartAnalysis: true,
+          },
+          nanoBananaProConfig: {
+            resolution: '4K',
+          },
+        },
+      });
+
+      response.expectStatus(200);
+      const data = await response.json();
+
+      expect(data.breakdown.totalCredits).toBe(26);
+    });
+
+    test('should derive megapixel pricing dimensions from the uploaded image', async () => {
+      const user = await ctx.createUser({
+        subscription: 'active',
+        tier: 'hobby',
+        credits: 100,
+      });
+
+      const response = await api.withAuth(user.token).post('/api/credit-estimate', {
+        imageData: createCanvas(1000, 1000),
+        mimeType: 'image/png',
+        config: {
+          mode: 'upscale',
+          scale: 2,
+          autoModelSelection: false,
+          selectedModel: 'clarity-pro-upscaler',
+        },
+      });
+
+      response.expectStatus(200);
+      const data = await response.json();
+
+      expect(data.breakdown.outputMegapixels).toBe(4);
+      expect(data.breakdown.totalCredits).toBe(10);
+    });
+
     test('should estimate output-megapixel pricing for Clarity Pro', async () => {
       const user = await ctx.createUser({
         subscription: 'active',
@@ -184,7 +268,7 @@ test.describe('API: Multi-Model Architecture', () => {
       expect(data.breakdown.totalCredits).toBe(160);
     });
 
-    test('should estimate fixed per-image pricing for Recraft Crisp regardless of scale', async () => {
+    test('should estimate Recraft Crisp at its neutral scale and reject scale 4', async () => {
       const user = await ctx.createUser({
         subscription: 'active',
         tier: 'hobby',
@@ -215,14 +299,12 @@ test.describe('API: Multi-Model Architecture', () => {
       });
 
       response2x.expectStatus(200);
-      response4x.expectStatus(200);
+      response4x.expectStatus(400);
       const data2x = await response2x.json();
-      const data4x = await response4x.json();
 
       expect(data2x.modelToBe).toBe('recraft-crisp-upscale');
       expect(data2x.breakdown.pricingModel).toBe('per-image');
       expect(data2x.breakdown.totalCredits).toBe(2);
-      expect(data4x.breakdown.totalCredits).toBe(data2x.breakdown.totalCredits);
     });
 
     test('should avoid double rounding legacy flat estimates with resolution multipliers', async () => {

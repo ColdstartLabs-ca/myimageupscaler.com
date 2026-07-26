@@ -9,7 +9,12 @@ import {
   type IUpscaleConfig,
   type QualityTier,
 } from '../types/coreflow.types';
-import { MODEL_SCALE_CREDIT_MULTIPLIERS } from './model-costs.config';
+import {
+  MODEL_RESOLUTION_PROVIDER_COSTS,
+  MODEL_CONFIG,
+  MODEL_SCALE_CREDIT_MULTIPLIERS,
+  MODEL_SCALE_TO_RESOLUTION,
+} from './model-costs.config';
 import { getSubscriptionConfig } from './subscription.config';
 import type {
   ICreditPack,
@@ -214,11 +219,47 @@ export const CLARITY_PRO_MAXIMUM_CREDITS = Math.ceil(
 );
 export const RECRAFT_CRISP_CREDITS = 2;
 export const RECRAFT_CRISP_PROVIDER_COST_USD = 0.006;
+export const FLUX_2_PRO_MEGAPIXEL_PRICE_USD = 0.015;
+export const FLUX_2_PRO_PER_RUN_PRICE_USD = 0.015;
 export const RESOLUTION_CREDIT_MULTIPLIERS: Record<'2k' | '4k' | '8k', number> = {
   '2k': 1.0,
   '4k': 1.5,
   '8k': 2.0,
 };
+
+export class ProviderPricingConfigurationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ProviderPricingConfigurationError';
+  }
+}
+
+export function resolveEffectiveResolution(
+  modelId: string,
+  scale: number,
+  requestedResolution?: string
+): string | undefined {
+  const resolutionCosts = MODEL_RESOLUTION_PROVIDER_COSTS[modelId];
+  if (!resolutionCosts) return undefined;
+
+  if (requestedResolution) {
+    if (!(requestedResolution in resolutionCosts)) {
+      throw new ProviderPricingConfigurationError(
+        `Unsupported resolution "${requestedResolution}" for per-resolution model "${modelId}"`
+      );
+    }
+    return requestedResolution;
+  }
+
+  const mappedResolution = MODEL_SCALE_TO_RESOLUTION[modelId]?.[scale];
+  if (!mappedResolution || !(mappedResolution in resolutionCosts)) {
+    throw new ProviderPricingConfigurationError(
+      `No provider price configured for model "${modelId}" at scale ${scale}`
+    );
+  }
+
+  return mappedResolution;
+}
 
 /**
  * Calculate provider-aware credits for any model.
@@ -235,16 +276,52 @@ export function calculateProviderAwareCredits(params: {
   inputWidth?: number;
   inputHeight?: number;
   smartAnalysis?: boolean;
+  effectiveResolution?: string;
 }): {
   credits: number;
   providerCostUsd: number;
-  pricingModel: 'flat' | 'per-image' | 'output-megapixel';
+  pricingModel: 'flat' | 'per-image' | 'per-resolution' | 'output-megapixel';
   outputMegapixels?: number;
+  effectiveResolution?: string;
 } {
-  const { modelId, qualityTier, scale, inputWidth, inputHeight, smartAnalysis } = params;
+  const {
+    modelId,
+    qualityTier,
+    scale,
+    inputWidth,
+    inputHeight,
+    smartAnalysis,
+    effectiveResolution: requestedEffectiveResolution,
+  } = params;
 
   // Smart analysis adds +1 credit on explicit tiers (not auto)
   const smartAnalysisCost = qualityTier !== 'auto' && smartAnalysis ? 1 : 0;
+
+  const resolutionCosts = MODEL_RESOLUTION_PROVIDER_COSTS[modelId];
+  if (resolutionCosts) {
+    const effectiveResolution = resolveEffectiveResolution(
+      modelId,
+      scale,
+      requestedEffectiveResolution
+    );
+    const providerCostUsd = effectiveResolution ? resolutionCosts[effectiveResolution] : undefined;
+
+    if (providerCostUsd === undefined) {
+      throw new ProviderPricingConfigurationError(
+        `Unsupported resolution "${effectiveResolution ?? 'unknown'}" for per-resolution model "${modelId}"`
+      );
+    }
+
+    return {
+      credits:
+        Math.ceil(
+          (providerCostUsd * PROVIDER_COST_MARGIN_MULTIPLIER) / PROVIDER_COST_CREDIT_VALUE_USD
+        ) + smartAnalysisCost,
+      providerCostUsd,
+      pricingModel: 'per-resolution',
+      effectiveResolution,
+    };
+  }
 
   // --- Recraft Crisp Upscale: fixed per-image pricing ---
   if (modelId === 'recraft-crisp-upscale') {
@@ -255,17 +332,39 @@ export function calculateProviderAwareCredits(params: {
     };
   }
 
-  // --- Clarity Pro Upscaler: output-megapixel dynamic pricing ---
-  if (modelId === 'clarity-pro-upscaler') {
+  // --- Clarity Pro / Flux 2 Pro: output-megapixel dynamic pricing ---
+  if (modelId === 'clarity-pro-upscaler' || modelId === 'flux-2-pro') {
+    if (!inputWidth || !inputHeight) {
+      throw new ProviderPricingConfigurationError(
+        `Input dimensions are required to price output-megapixel model "${modelId}"`
+      );
+    }
+
+    if (modelId === 'flux-2-pro') {
+      const inputMegapixels = (inputWidth * inputHeight) / 1_000_000;
+      const outputMegapixels = inputMegapixels;
+      const providerCostUsd =
+        FLUX_2_PRO_MEGAPIXEL_PRICE_USD * (inputMegapixels + outputMegapixels) +
+        FLUX_2_PRO_PER_RUN_PRICE_USD;
+      const credits = Math.ceil(
+        (providerCostUsd * PROVIDER_COST_MARGIN_MULTIPLIER) / PROVIDER_COST_CREDIT_VALUE_USD
+      );
+
+      return {
+        credits: credits + smartAnalysisCost,
+        providerCostUsd,
+        pricingModel: 'output-megapixel',
+        outputMegapixels,
+      };
+    }
+
     let outputMegapixels = 0;
 
-    if (inputWidth && inputHeight) {
-      const outputWidth = inputWidth * scale;
-      const outputHeight = inputHeight * scale;
-      outputMegapixels = (outputWidth * outputHeight) / 1_000_000;
-      // Cap at 64MP per Replicate model limit
-      outputMegapixels = Math.min(outputMegapixels, CLARITY_PRO_MAX_OUTPUT_MEGAPIXELS);
-    }
+    const outputWidth = inputWidth * scale;
+    const outputHeight = inputHeight * scale;
+    outputMegapixels = (outputWidth * outputHeight) / 1_000_000;
+    // Cap at 64MP per Replicate model limit
+    outputMegapixels = Math.min(outputMegapixels, CLARITY_PRO_MAX_OUTPUT_MEGAPIXELS);
 
     const providerCostUsd = Math.max(
       CLARITY_PRO_MINIMUM_PROVIDER_COST_USD,
@@ -280,7 +379,7 @@ export function calculateProviderAwareCredits(params: {
       credits: credits + smartAnalysisCost,
       providerCostUsd,
       pricingModel: 'output-megapixel',
-      outputMegapixels: outputMegapixels > 0 ? outputMegapixels : undefined,
+      outputMegapixels,
     };
   }
 
@@ -291,7 +390,7 @@ export function calculateProviderAwareCredits(params: {
 
   return {
     credits: credits + smartAnalysisCost,
-    providerCostUsd: 0, // Not tracked for flat-priced models
+    providerCostUsd: MODEL_CONFIG[modelId as keyof typeof MODEL_CONFIG]?.cost ?? 0,
     pricingModel: 'flat',
   };
 }
@@ -309,6 +408,7 @@ export function calculateFinalProviderAwareCredits(params: {
   inputHeight?: number;
   smartAnalysis?: boolean;
   targetResolution?: '2k' | '4k' | '8k';
+  effectiveResolution?: string;
 }): ReturnType<typeof calculateProviderAwareCredits> & {
   finalCredits: number;
   scaleMultiplier: number;
@@ -332,9 +432,7 @@ export function calculateFinalProviderAwareCredits(params: {
 
   const { creditCosts } = getSubscriptionConfig();
   finalCredits = Math.max(finalCredits, creditCosts.minimumCost);
-  if (providerAware.pricingModel === 'flat') {
-    finalCredits = Math.min(finalCredits, creditCosts.maximumCost);
-  }
+  finalCredits = Math.min(finalCredits, creditCosts.maximumCost);
 
   return {
     ...providerAware,
@@ -362,6 +460,19 @@ export function getCreditsForTierAtScale(tier: QualityTier, scale: number): numb
   const baseCost = getCreditsForTier(tier);
   const modelId = QUALITY_TIER_CONFIG[tier].modelId;
   if (!modelId) return baseCost; // Auto/bg-removal — no model-specific multiplier
+  if (modelId === 'flux-2-pro') {
+    const maximumProviderCost = FLUX_2_PRO_MEGAPIXEL_PRICE_USD * 8 + FLUX_2_PRO_PER_RUN_PRICE_USD;
+    return Math.ceil(
+      (maximumProviderCost * PROVIDER_COST_MARGIN_MULTIPLIER) / PROVIDER_COST_CREDIT_VALUE_USD
+    );
+  }
+  if (MODEL_RESOLUTION_PROVIDER_COSTS[modelId]) {
+    return calculateFinalProviderAwareCredits({
+      modelId,
+      qualityTier: tier,
+      scale,
+    }).finalCredits;
+  }
   const multiplier = getScaleCreditMultiplier(modelId, scale);
   return Math.ceil(baseCost * multiplier);
 }
@@ -378,6 +489,24 @@ export function getCreditRangeForTier(tier: QualityTier): number | { min: number
   const baseCost = getCreditsForTier(tier);
   const modelId = QUALITY_TIER_CONFIG[tier].modelId;
   if (!modelId) return baseCost;
+
+  if (modelId === 'flux-2-pro') {
+    const minimumCredits = Math.ceil(
+      (FLUX_2_PRO_PER_RUN_PRICE_USD * PROVIDER_COST_MARGIN_MULTIPLIER) /
+        PROVIDER_COST_CREDIT_VALUE_USD
+    );
+    return { min: minimumCredits, max: getCreditsForTierAtScale(tier, 2) };
+  }
+
+  const resolutionCosts = MODEL_RESOLUTION_PROVIDER_COSTS[modelId];
+  if (resolutionCosts) {
+    const credits = Object.values(resolutionCosts).map(providerCost =>
+      Math.ceil((providerCost * PROVIDER_COST_MARGIN_MULTIPLIER) / PROVIDER_COST_CREDIT_VALUE_USD)
+    );
+    const min = Math.min(...credits);
+    const max = Math.max(...credits);
+    return min === max ? min : { min, max };
+  }
 
   const scaleMultipliers = MODEL_SCALE_CREDIT_MULTIPLIERS[modelId];
   if (!scaleMultipliers) return baseCost;
@@ -418,7 +547,7 @@ export function getCreditDisplayForTier(
   unit: CreditLabelUnit = 'credits'
 ): string {
   if (QUALITY_TIER_CONFIG[tier].credits === 'variable') {
-    if (!QUALITY_TIER_CONFIG[tier].modelId) return unit === 'CR' ? '1-8 CR' : '1-8 credits';
+    if (!QUALITY_TIER_CONFIG[tier].modelId) return unit === 'CR' ? '1-25 CR' : '1-25 credits';
     return formatCreditRangeLabel(getCreditRangeForTier(tier), unit);
   }
 
@@ -537,15 +666,18 @@ export function calculateBatchCost(imageCount: number, costPerImage: number): nu
  * dimensions; without them, the resolver falls back to the model minimum.
  */
 export function calculateBatchProviderAwareCreditCost(params: {
-  config: Pick<IUpscaleConfig, 'qualityTier' | 'scale' | 'additionalOptions'>;
+  config: Pick<
+    IUpscaleConfig,
+    'qualityTier' | 'scale' | 'additionalOptions' | 'nanoBananaProConfig'
+  >;
   items: Pick<IBatchItem, 'inputDimensions'>[];
 }): { perItemCredits: number[]; totalCredits: number } {
   const { qualityTier, scale, additionalOptions } = params.config;
 
   const perItemCredits = params.items.map(item => {
     if (qualityTier === 'auto') {
-      // Auto mode uses variable cost — use upper bound (ultra = 8 CR) to avoid understating.
-      return 8;
+      // Auto mode uses variable cost — use the upper bound to avoid understating.
+      return 25;
     }
 
     const modelId = QUALITY_TIER_CONFIG[qualityTier].modelId;
@@ -557,6 +689,11 @@ export function calculateBatchProviderAwareCreditCost(params: {
         inputWidth: item.inputDimensions?.width,
         inputHeight: item.inputDimensions?.height,
         smartAnalysis: additionalOptions?.smartAnalysis,
+        effectiveResolution: resolveEffectiveResolution(
+          modelId,
+          scale,
+          params.config.nanoBananaProConfig?.resolution
+        ),
       }).finalCredits;
     }
 

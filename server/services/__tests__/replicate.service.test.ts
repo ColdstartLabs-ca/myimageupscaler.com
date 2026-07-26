@@ -26,6 +26,15 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
 }));
 
 vi.mock('@shared/config/env', () => ({
+  clientEnv: {
+    NEXT_PUBLIC_STRIPE_PRICE_STARTER: 'price_starter_monthly',
+    NEXT_PUBLIC_STRIPE_PRICE_HOBBY: 'price_hobby_monthly',
+    NEXT_PUBLIC_STRIPE_PRICE_PRO: 'price_pro_monthly',
+    NEXT_PUBLIC_STRIPE_PRICE_BUSINESS: 'price_business_monthly',
+    NEXT_PUBLIC_STRIPE_PRICE_CREDITS_SMALL: 'price_credits_small',
+    NEXT_PUBLIC_STRIPE_PRICE_CREDITS_MEDIUM: 'price_credits_medium',
+    NEXT_PUBLIC_STRIPE_PRICE_CREDITS_LARGE: 'price_credits_large',
+  },
   serverEnv: {
     REPLICATE_API_TOKEN: 'test-replicate-token',
     REPLICATE_MODEL_VERSION: 'nightmareai/real-esrgan:test-version',
@@ -1140,6 +1149,26 @@ describe('ReplicateService', () => {
         creditsRemaining: 90,
       });
       expect(result.expiresAt).toBeGreaterThan(Date.now());
+    });
+
+    test('should complete successfully when cost telemetry insertion fails', async () => {
+      mockReplicateRun.mockResolvedValue('https://replicate-output.com/result.png');
+
+      const result = await service.processImage('user-123', createUpscaleInput(), {
+        creditCost: 13,
+        costAttribution: {
+          modelId: 'nano-banana-2',
+          qualityTier: 'nano-banana-2',
+          scale: 4,
+          effectiveResolution: '4K',
+          providerCostUsd: 0.151,
+          creditsCharged: 13,
+          pricingModel: 'per-resolution',
+        },
+      });
+
+      expect(result.imageUrl).toBe('https://replicate-output.com/result.png');
+      expect(result.creditsRemaining).toBe(90);
     });
 
     test('should detect PNG mimeType from URL', async () => {

@@ -23,7 +23,7 @@
         "answerIntro": "So starten Sie:",
         "answerStep1": "Konto erstellen",
         "answerStep2": "mit E-Mail oder Google",
-        "answerStep3": "Sie erhalten 10 kostenlose Guthaben, um den Service zu testen",
+        "answerStep3": "Sie erhalten 5 kostenlose Guthaben, um den Service zu testen",
         "answerStep4": "Navigieren Sie zum",
         "answerStep5": "Upscaler",
         "answerStep6": "Laden Sie ein Bild hoch (JPG-, PNG- oder WEBP-Format)",
@@ -59,9 +59,9 @@
     "faqs": {
       "whatAreCredits": {
         "question": "Was sind Guthaben?",
-        "answerPart1": "Guthaben ist die Währung, die für die Bildverarbeitung verwendet wird. Jede Bildverbesserung verbraucht 1 Guthaben, unabhängig vom Upscale-Faktor.",
+        "answerPart1": "Guthaben ist die Währung für die Bildverarbeitung. Die Kosten variieren je nach Modell, Ausgabegröße und gewählten Optionen; die App zeigt die genauen Kosten vor der Verarbeitung an.",
         "answerPart2": "Neue Benutzer erhalten",
-        "answerPart3": "10 kostenlose Guthaben",
+        "answerPart3": "5 kostenlose Guthaben",
         "answerPart4": "um den Service zu testen."
       },
       "purchaseCredits": {

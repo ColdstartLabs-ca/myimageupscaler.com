@@ -22,7 +22,7 @@
         "answerIntro": "開始するには：",
         "answerStep1": "アカウントを作成する",
         "answerStep2": "メールまたはGoogleを使用",
-        "answerStep3": "サービスを試すために10回の無料クレジットを受け取ります",
+        "answerStep3": "サービスを試すために5回の無料クレジットを受け取ります",
         "answerStep4": "以下に移動します",
         "answerStep5": "アップスケーラー",
         "answerStep6": "画像をアップロード（JPG、PNG、またはWEBP形式）",
@@ -58,9 +58,9 @@
     "faqs": {
       "whatAreCredits": {
         "question": "クレジットとは何ですか？",
-        "answerPart1": "クレジットは画像処理に使用される通貨です。各画像強化はアップスケール倍率に関係なく1クレジットを消費します。",
+        "answerPart1": "クレジットは画像処理に使用する通貨です。料金はモデル、出力サイズ、選択したオプションによって異なり、処理前にアプリで正確な料金を確認できます。",
         "answerPart2": "新規ユーザーは",
-        "answerPart3": "10回の無料クレジット",
+        "answerPart3": "5回の無料クレジット",
         "answerPart4": "サービスを試すために受け取ります。"
       },
       "purchaseCredits": {

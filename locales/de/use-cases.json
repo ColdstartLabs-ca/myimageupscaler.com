@@ -1346,13 +1346,13 @@
         },
         "facePro": {
           "name": "Gesicht Pro",
-          "credits": 6,
+          "credits": 12,
           "model": "Flux-2-Pro",
           "description": "Premium-Portraitverbesserung mit fortgeschrittener Gesichtsdetail-Verbesserung"
         },
         "ultra": {
           "name": "Ultra-Qualitaet",
-          "credits": 8,
+          "credits": 13,
           "model": "Nano Banana Pro",
           "description": "Maximale 4K/8K-Qualitaet fuer professionelle Portraits"
         }
@@ -1400,7 +1400,7 @@
       "faq": [
         {
           "question": "Was ist der Unterschied zwischen Gesichtswiederherstellung und Gesicht Pro?",
-          "answer": "Gesichtswiederherstellung (2 Credits) verwendet GFPGAN fuer Fotorestaurierung mit Gesichtszug-Rekonstruktion. Gesicht Pro (6 Credits) verwendet Flux-2-Pro fuer Premium-Portraitverbesserung mit fortgeschrittener Detailverbesserung. Gesicht Pro liefert ueberlegene Ergebnisse fuer professionelle Portraits."
+          "answer": "Gesichtswiederherstellung (2 Credits) verwendet GFPGAN fuer Fotorestaurierung mit Gesichtszug-Rekonstruktion. Gesicht Pro (2–12 Credits, abhängig von der Bildgröße) verwendet Flux-2-Pro fuer Premium-Portraitverbesserung mit fortgeschrittener Detailverbesserung. Gesicht Pro liefert ueberlegene Ergebnisse fuer professionelle Portraits."
         },
         {
           "question": "Kann Portrait-Upscaler unscharfe Gesichter reparieren?",

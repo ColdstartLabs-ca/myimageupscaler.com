@@ -224,6 +224,7 @@ export const upscaleSchema = z.object({
       ])
       .default('auto'),
     scale: z.union([z.literal(2), z.literal(4), z.literal(8)]).default(2),
+    targetResolution: z.enum(['2k', '4k', '8k']).optional(),
 
     // Additional options (replaces mode + toggles)
     additionalOptions: z

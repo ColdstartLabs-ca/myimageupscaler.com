@@ -418,7 +418,7 @@ export class ModelRegistry {
         maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
         maxInputPixels: MODEL_MAX_INPUT_PIXELS['nano-banana-2'],
         maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
-        supportedScales: [2, 4], // Resolution-based (0.5K/1K/2K/4K)
+        supportedScales: [2, 4], // Resolution-based (1K/2K/4K)
         isEnabled: serverEnv.ENABLE_PREMIUM_MODELS,
         tierRestriction: 'hobby',
       },

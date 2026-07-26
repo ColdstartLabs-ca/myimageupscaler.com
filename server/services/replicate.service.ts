@@ -18,6 +18,7 @@ import { getEmailLifecycleService } from '@server/services/email-lifecycle.servi
 import { replicateErrorMapper } from './replicate/utils/error-mapper';
 import { ReplicateError } from './replicate/utils/error-mapper';
 import { parseReplicateResponse } from './replicate/utils/output-parser';
+import { recordProcessingCostTelemetry } from './cost-telemetry.service';
 
 /**
  * Re-export ReplicateError for backward compatibility
@@ -103,6 +104,14 @@ export class ReplicateService implements IImageProcessor {
       // Step 2: Call Replicate API
       const result = await this.callReplicate(input);
       await this.recordLifecycleActivation(userId);
+      if (options?.costAttribution) {
+        await recordProcessingCostTelemetry({
+          userId,
+          jobId: deduction.jobId,
+          outputImagePath: result.imageUrl,
+          attribution: options.costAttribution,
+        });
+      }
 
       return {
         ...result,

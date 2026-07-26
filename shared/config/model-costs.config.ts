@@ -24,6 +24,20 @@ export const MODEL_MAX_INPUT_PIXELS: Record<string, number> = {
   'nano-banana-2': 4_000_000, // 4M pixels - capable model
 } as const;
 
+/**
+ * Replicate per-output-image pricing verified against June/July 2026 invoices.
+ * Resolution keys intentionally mirror the provider API values.
+ */
+export const MODEL_RESOLUTION_PROVIDER_COSTS: Record<string, Record<string, number>> = {
+  'nano-banana-pro': { '1K': 0.15, '2K': 0.15, '4K': 0.3 },
+  'nano-banana-2': { '1K': 0.067, '2K': 0.101, '4K': 0.151 },
+};
+
+export const MODEL_SCALE_TO_RESOLUTION: Record<string, Record<number, string>> = {
+  'nano-banana-pro': { 2: '2K', 4: '4K', 8: '4K' },
+  'nano-banana-2': { 2: '2K', 4: '4K', 8: '4K' },
+};
+
 export const MODEL_COSTS = {
   // Cost per run for each model (USD)
   REAL_ESRGAN_COST: 0.0017,
@@ -32,10 +46,9 @@ export const MODEL_COSTS = {
   CLARITY_UPSCALER_COST: 0.017,
   CLARITY_PRO_UPSCALER_COST: 0.03, // philz1337x/clarity-pro-upscaler - per output megapixel, $0.03 minimum
   RECRAFT_CRISP_UPSCALE_COST: 0.006, // recraft-ai/recraft-crisp-upscale - fixed per image
-  FLUX_2_PRO_COST: 0.05, // black-forest-labs/flux-2-pro - premium face restoration
-  // Replicate google/nano-banana-pro pricing verified 2026-07-26: $0.15/output at 1K/2K.
-  NANO_BANANA_PRO_COST: 0.15,
-  NANO_BANANA_2_COST: 0.08, // google/nano-banana-2 - fast image generation and editing
+  FLUX_2_PRO_COST: 0.135, // Worst case at the configured 4MP input cap; billed dynamically per input/output MP
+  NANO_BANANA_PRO_COST: MODEL_RESOLUTION_PROVIDER_COSTS['nano-banana-pro']['2K'],
+  NANO_BANANA_2_COST: MODEL_RESOLUTION_PROVIDER_COSTS['nano-banana-2']['2K'],
   QWEN_IMAGE_EDIT_COST: 0.03, // qwen/qwen-image-edit-2511 - budget image editing
   SEEDREAM_COST: 0.04, // bytedance/seedream-4.5 - image editing
   REALESRGAN_ANIME_COST: 0.0022, // xinntao/realesrgan - anime upscaling
@@ -325,7 +338,7 @@ export const MODEL_CONFIG = {
     processingTime: MODEL_COSTS.PROCESSING_TIME_MEDIUM,
     maxInputResolution: MODEL_COSTS.MAX_INPUT_RESOLUTION,
     maxOutputResolution: MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
-    supportedScales: [MODEL_COSTS.DEFAULT_SCALE, MODEL_COSTS.MAX_SCALE_STANDARD], // Resolution-based (0.5K/1K/2K/4K)
+    supportedScales: [MODEL_COSTS.DEFAULT_SCALE, MODEL_COSTS.MAX_SCALE_STANDARD], // Resolution-based (1K/2K/4K)
     tierRestriction: 'hobby',
   },
 } as const;

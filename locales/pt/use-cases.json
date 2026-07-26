@@ -144,7 +144,11 @@
       "h1": "Requisitos de Foto de Listagem de Imóveis",
       "intro": "Diferentes plataformas de imóveis têm especificações de imagem diferentes. Aqui está o que você precisa para os principais sites de listagem.",
       "primaryKeyword": "fotos de listagem de imóveis",
-      "secondaryKeywords": ["requisitos de foto mls", "tamanho de imagem zillow", "fotografia de imóveis"],
+      "secondaryKeywords": [
+        "requisitos de foto mls",
+        "tamanho de imagem zillow",
+        "fotografia de imóveis"
+      ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "casos-de-uso",
       "industry": "Imóveis",
@@ -1346,13 +1350,13 @@
         },
         "facePro": {
           "name": "Rosto Pro",
-          "credits": 6,
+          "credits": 12,
           "model": "Flux-2-Pro",
           "description": "Melhoria de retrato premium com melhoria avançada de detalhe facial"
         },
         "ultra": {
           "name": "Qualidade Ultra",
-          "credits": 8,
+          "credits": 13,
           "model": "Nano Banana Pro",
           "description": "Qualidade máxima 4K/8K para retratos profissionais"
         }
@@ -1400,7 +1404,7 @@
       "faq": [
         {
           "question": "Qual é a diferença entre Restauração de Rosto e Rosto Pro?",
-          "answer": "Restauração de Rosto (2 créditos) usa GFPGAN para restauração de foto com reconstrução de características faciais. Rosto Pro (6 créditos) usa Flux-2-Pro para melhoria de retrato premium com melhoria avançada de detalhe. Rosto Pro entrega resultados superiores para retratos profissionais."
+          "answer": "Restauração de Rosto (2 créditos) usa GFPGAN para restauração de foto com reconstrução de características faciais. Rosto Pro (2–12 créditos, conforme o tamanho da imagem) usa Flux-2-Pro para melhoria de retrato premium com melhoria avançada de detalhe. Rosto Pro entrega resultados superiores para retratos profissionais."
         },
         {
           "question": "Ampliador de retrato pode consertar rostos borrados?",

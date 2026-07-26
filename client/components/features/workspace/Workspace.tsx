@@ -29,7 +29,10 @@ import { useModalStore } from '@client/store/modalStore';
 import { cn } from '@client/utils/cn';
 import { EngagementDiscountBanner } from '@client/components/engagement-discount';
 import { clientEnv } from '@shared/config/env';
-import { calculateBatchProviderAwareCreditCost } from '@shared/config/subscription.utils';
+import {
+  calculateBatchProviderAwareCreditCost,
+  getCreditDisplayForTier,
+} from '@shared/config/subscription.utils';
 import { getMaxPixelsForQualityTier } from '@shared/validation/upscale.schema';
 import { downloadSingle } from '@client/utils/download';
 import { getCheckoutUiMode } from '@client/utils/checkoutUiMode';
@@ -904,11 +907,7 @@ const Workspace: React.FC = () => {
           </div>
           <div className="flex items-center gap-2 relative z-10">
             <span className="text-[10px] font-black tracking-widest uppercase text-white/60 bg-black/20 border border-white/10 px-2 py-0.5 rounded-lg">
-              {(() => {
-                const credits = QUALITY_TIER_CONFIG[config.qualityTier].credits;
-                if (credits === 'variable') return '1-4 CR';
-                return `${credits} CR`;
-              })()}
+              {getCreditDisplayForTier(config.qualityTier, 'CR')}
             </span>
             <span className="text-[10px] font-bold uppercase tracking-wide text-accent">
               Change

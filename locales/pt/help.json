@@ -22,7 +22,7 @@
         "answerIntro": "Para começar:",
         "answerStep1": "Crie uma conta",
         "answerStep2": "usando e-mail ou Google",
-        "answerStep3": "Você receberá 10 créditos grátis para experimentar o serviço",
+        "answerStep3": "Você receberá 5 créditos grátis para experimentar o serviço",
         "answerStep4": "Navegue até o",
         "answerStep5": "Ampliador",
         "answerStep6": "Carregue uma imagem (formato JPG, PNG ou WEBP)",
@@ -58,9 +58,9 @@
     "faqs": {
       "whatAreCredits": {
         "question": "O que são créditos?",
-        "answerPart1": "Créditos são a moeda usada para processar imagens. Cada aprimoramento de imagem consome 1 crédito, independentemente do fator de ampliação.",
+        "answerPart1": "Créditos são a moeda usada para processar imagens. O custo varia conforme o modelo, o tamanho da saída e as opções selecionadas, e o aplicativo mostra o custo exato antes do processamento.",
         "answerPart2": "Novos usuários recebem",
-        "answerPart3": "10 créditos grátis",
+        "answerPart3": "5 créditos grátis",
         "answerPart4": "para experimentar o serviço."
       },
       "purchaseCredits": {

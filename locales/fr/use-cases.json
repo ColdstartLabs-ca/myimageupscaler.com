@@ -144,7 +144,11 @@
       "h1": "Exigences des photos d'annonces immobilières",
       "intro": "Différentes plateformes immobilières ont des spécifications d'image différentes. Voici ce dont vous avez besoin pour les principaux sites d'annonces.",
       "primaryKeyword": "photos annonces immobilières",
-      "secondaryKeywords": ["exigences photos mls", "taille image zillow", "photographie immobilire"],
+      "secondaryKeywords": [
+        "exigences photos mls",
+        "taille image zillow",
+        "photographie immobilire"
+      ],
       "lastUpdated": "2025-12-19T00:00:00Z",
       "category": "cas-d-utilisation",
       "industry": "Immobilier",
@@ -1346,13 +1350,13 @@
         },
         "facePro": {
           "name": "Visage Pro",
-          "credits": 6,
+          "credits": 12,
           "model": "Flux-2-Pro",
           "description": "Amélioration portrait premium avec amélioration avancée des détails faciaux"
         },
         "ultra": {
           "name": "Qualité Ultra",
-          "credits": 8,
+          "credits": 13,
           "model": "Nano Banana Pro",
           "description": "Qualité maximum 4K/8K pour les portraits professionnels"
         }
@@ -1400,7 +1404,7 @@
       "faq": [
         {
           "question": "Quelle est la différence entre Restauration Visage et Visage Pro ?",
-          "answer": "Restauration Visage (2 crédits) utilise GFPGAN pour la restauration photo avec reconstruction des traits faciaux. Visage Pro (6 crédits) utilise Flux-2-Pro pour l'amélioration portrait premium avec amélioration de détail avancée. Visage Pro fournit des résultats supérieurs pour les portraits professionnels."
+          "answer": "Restauration Visage (2 crédits) utilise GFPGAN pour la restauration photo avec reconstruction des traits faciaux. Visage Pro (2–12 crédits, selon la taille de l’image) utilise Flux-2-Pro pour l'amélioration portrait premium avec amélioration de détail avancée. Visage Pro fournit des résultats supérieurs pour les portraits professionnels."
         },
         {
           "question": "L'agrandisseur de portrait peut-il corriger les visages flous ?",

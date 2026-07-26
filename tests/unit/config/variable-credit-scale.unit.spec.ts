@@ -126,13 +126,13 @@ describe('getCreditsForTierAtScale — the main pricing function', () => {
     });
   });
 
-  describe('ultra tier (nano-banana-pro, per-image) — no change', () => {
-    it('charges 8 credits at 2x', () => {
-      expect(getCreditsForTierAtScale('ultra', 2)).toBe(8);
+  describe('ultra tier (nano-banana-pro, per-resolution)', () => {
+    it('charges 13 credits at 2x / 2K', () => {
+      expect(getCreditsForTierAtScale('ultra', 2)).toBe(13);
     });
 
-    it('charges 8 credits at 4x — same as 2x (per-image billing)', () => {
-      expect(getCreditsForTierAtScale('ultra', 4)).toBe(8);
+    it('charges 25 credits at 4x / 4K', () => {
+      expect(getCreditsForTierAtScale('ultra', 4)).toBe(25);
     });
   });
 
@@ -147,9 +147,9 @@ describe('getCreditsForTierAtScale — the main pricing function', () => {
   });
 
   describe('enhancement-only tiers — scale irrelevant, no multiplier', () => {
-    it('face-pro: always 6 credits', () => {
-      expect(getCreditsForTierAtScale('face-pro', 2)).toBe(6);
-      expect(getCreditsForTierAtScale('face-pro', 4)).toBe(6);
+    it('face-pro: uses the 12-credit safe static estimate', () => {
+      expect(getCreditsForTierAtScale('face-pro', 2)).toBe(12);
+      expect(getCreditsForTierAtScale('face-pro', 4)).toBe(12);
     });
 
     it('budget-edit: always 3 credits', () => {
@@ -186,38 +186,37 @@ describe('getCreditRangeForTier — drives ModelCard badge', () => {
     expect(getCreditRangeForTier('face-restore')).toBe(2);
   });
 
-  it('returns flat 8 for ultra (shows "8 CR" in UI)', () => {
-    expect(getCreditRangeForTier('ultra')).toBe(8);
+  it('returns { min: 13, max: 25 } for ultra', () => {
+    expect(getCreditRangeForTier('ultra')).toEqual({ min: 13, max: 25 });
   });
 
-  it('returns flat 6 for face-pro (shows "6 CR" in UI)', () => {
-    expect(getCreditRangeForTier('face-pro')).toBe(6);
+  it('returns the dimension-priced range for face-pro', () => {
+    expect(getCreditRangeForTier('face-pro')).toEqual({ min: 2, max: 12 });
   });
 
-  it('hd-upscale is the ONLY tier with a range — all others are flat', () => {
-    const allTiers = [
+  it('hd-upscale and ultra return ranges while the remaining tiers are flat', () => {
+    const flatTiers = [
       'quick',
       'face-restore',
       'budget-edit',
-      'face-pro',
       'seedream-edit',
       'fast-edit',
       'budget-old-photo',
       'anime-upscale',
-      'ultra',
       'bg-removal',
       'lighting-fix',
       'resume-photo',
       'photo-repair',
     ] as const;
 
-    for (const tier of allTiers) {
+    for (const tier of flatTiers) {
       const range = getCreditRangeForTier(tier);
       expect(typeof range, `${tier} should be flat (number), not a range`).toBe('number');
     }
 
-    // Only hd-upscale should return a range
     expect(typeof getCreditRangeForTier('hd-upscale')).toBe('object');
+    expect(typeof getCreditRangeForTier('ultra')).toBe('object');
+    expect(typeof getCreditRangeForTier('face-pro')).toBe('object');
   });
 
   it('returns provider-aware min/max bounds for clarity-pro instead of 0', () => {
@@ -235,9 +234,9 @@ describe('Regression: no unintended credit cost changes', () => {
     { tier: 'face-restore', scale: 4, expectedCredits: 2 },
     { tier: 'budget-edit', scale: 2, expectedCredits: 3 },
     { tier: 'fast-edit', scale: 2, expectedCredits: 2 },
-    { tier: 'face-pro', scale: 2, expectedCredits: 6 },
-    { tier: 'ultra', scale: 2, expectedCredits: 8 },
-    { tier: 'ultra', scale: 4, expectedCredits: 8 },
+    { tier: 'face-pro', scale: 2, expectedCredits: 12 },
+    { tier: 'ultra', scale: 2, expectedCredits: 13 },
+    { tier: 'ultra', scale: 4, expectedCredits: 25 },
     { tier: 'anime-upscale', scale: 2, expectedCredits: 1 },
     { tier: 'anime-upscale', scale: 4, expectedCredits: 1 },
     { tier: 'hd-upscale', scale: 2, expectedCredits: 4 }, // unchanged at 2x

@@ -65,9 +65,9 @@ describe('getCreditsForTierAtScale', () => {
     expect(getCreditsForTierAtScale('face-restore', 4)).toBe(2);
   });
 
-  it('should return flat cost for ultra at any scale', () => {
-    expect(getCreditsForTierAtScale('ultra', 2)).toBe(8);
-    expect(getCreditsForTierAtScale('ultra', 4)).toBe(8);
+  it('should return resolution-priced cost for ultra at each scale', () => {
+    expect(getCreditsForTierAtScale('ultra', 2)).toBe(13);
+    expect(getCreditsForTierAtScale('ultra', 4)).toBe(25);
   });
 
   it('should return base cost for auto tier', () => {
@@ -80,9 +80,9 @@ describe('getCreditsForTierAtScale', () => {
   });
 
   it('should return flat cost for enhancement-only tiers', () => {
-    // face-pro uses flux-2-pro (no scale support, no multiplier)
-    expect(getCreditsForTierAtScale('face-pro', 2)).toBe(6);
-    expect(getCreditsForTierAtScale('face-pro', 4)).toBe(6);
+    // face-pro uses a conservative static maximum; exact billing uses dimensions.
+    expect(getCreditsForTierAtScale('face-pro', 2)).toBe(12);
+    expect(getCreditsForTierAtScale('face-pro', 4)).toBe(12);
   });
 });
 
@@ -100,12 +100,12 @@ describe('getCreditRangeForTier', () => {
     expect(getCreditRangeForTier('face-restore')).toBe(2);
   });
 
-  it('should return flat number for ultra', () => {
-    expect(getCreditRangeForTier('ultra')).toBe(8);
+  it('should return the provider-aware range for ultra', () => {
+    expect(getCreditRangeForTier('ultra')).toEqual({ min: 13, max: 25 });
   });
 
   it('should return flat number for enhancement-only tiers', () => {
-    expect(getCreditRangeForTier('face-pro')).toBe(6);
+    expect(getCreditRangeForTier('face-pro')).toEqual({ min: 2, max: 12 });
     expect(getCreditRangeForTier('budget-edit')).toBe(3);
   });
 

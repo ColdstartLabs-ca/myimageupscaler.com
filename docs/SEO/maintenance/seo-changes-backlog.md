@@ -20,6 +20,26 @@ Maintenance rules:
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
 
+## 2026-07-26
+
+### Credit Economy Copy and pSEO Parity
+
+Source: [Credit economy correctness PRD](../../PRDs/credit-economy-correctness.md)
+
+Changes:
+
+- Updated the portrait-upscaler pSEO tier data and FAQ copy so Face Pro and Ultra credit claims match the provider-aware pricing configuration.
+- Updated all seven locale mirrors and help-center credit explanations; no URL, metadata, canonical, hreflang, robots, sitemap, or redirect changed.
+
+Validation:
+
+- Added `tests/unit/seo/use-cases-credits.unit.spec.ts` to verify the pSEO values and rendered `FAQPage` schema.
+- Added locale and shared credit-display parity coverage; focused tests passed.
+
+Follow-up:
+
+- No GSC request-indexing or IndexNow action is needed for this copy-only change. Recheck the public FAQ schema after the next normal deployment.
+
 ## 2026-07-22
 
 ### GSC Opportunity Recovery Implementation

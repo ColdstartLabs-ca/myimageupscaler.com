@@ -1341,13 +1341,13 @@
         },
         "facePro": {
           "name": "Face Pro",
-          "credits": 6,
+          "credits": 12,
           "model": "Flux-2-Pro",
           "description": "Premium portrait enhancement with advanced facial detail improvement"
         },
         "ultra": {
           "name": "Ultra Quality",
-          "credits": 8,
+          "credits": 13,
           "model": "Nano Banana Pro",
           "description": "Maximum 4K/8K quality for professional portraits"
         }
@@ -1395,7 +1395,7 @@
       "faq": [
         {
           "question": "What's the difference between Face Restore and Face Pro?",
-          "answer": "Face Restore (2 credits) uses GFPGAN for photo restoration with facial feature reconstruction. Face Pro (6 credits) uses Flux-2-Pro for premium portrait enhancement with advanced detail improvement. Face Pro delivers superior results for professional portraits."
+          "answer": "Face Restore (2 credits) uses GFPGAN for photo restoration with facial feature reconstruction. Face Pro (2–12 credits, based on image size) uses Flux-2-Pro for premium portrait enhancement with advanced detail improvement. Face Pro delivers superior results for professional portraits."
         },
         {
           "question": "Can portrait upscaler fix blurry faces?",

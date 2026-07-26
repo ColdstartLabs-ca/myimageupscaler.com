@@ -1,4 +1,5 @@
 import type { IUpscaleInput } from '@shared/validation/upscale.schema';
+import type { IProcessingCostAttribution } from './cost-telemetry.service';
 
 /**
  * Result from a successful image processing operation
@@ -25,6 +26,8 @@ export interface ICreditDeduction {
 export interface IProcessImageOptions {
   /** Pre-calculated credit cost from the route. If provided, processor uses this instead of recalculating. */
   creditCost?: number;
+  /** Provider-cost details resolved by the API route from the same inputs used for billing. */
+  costAttribution?: IProcessingCostAttribution;
   /**
    * Called immediately after credits are deducted. API routes use this to refund
    * if a later route-level failure occurs after the provider has already charged.

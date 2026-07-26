@@ -1,10 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import { buildModelInput } from '@server/services/replicate/builders/model-input.builder';
+import {
+  calculateFinalProviderAwareCredits,
+  resolveEffectiveResolution,
+} from '@shared/config/subscription.utils';
 import type { IUpscaleInput } from '@shared/validation/upscale.schema';
 
 describe('Replicate Builders: New Upscalers', () => {
   const baseInput: IUpscaleInput = {
-    imageData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+    imageData:
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
     mimeType: 'image/png',
     config: {
       qualityTier: 'auto',
@@ -76,5 +81,41 @@ describe('Replicate Builders: New Upscalers', () => {
       });
       expect(input4x).toHaveProperty('resolution', '4K');
     });
+  });
+
+  describe('Nano Banana resolution billing parity', () => {
+    it.each([
+      ['nano-banana-pro', 'ultra'],
+      ['nano-banana-2', 'nano-banana-2'],
+    ] as const)(
+      'should send the same resolution the biller priced for %s',
+      (modelId, qualityTier) => {
+        const input = {
+          ...baseInput,
+          config: {
+            ...baseInput.config,
+            qualityTier,
+            scale: 2 as const,
+            nanoBananaProConfig: {
+              aspectRatio: 'match_input_image' as const,
+              resolution: '4K' as const,
+              outputFormat: 'png' as const,
+              safetyFilterLevel: 'block_only_high' as const,
+            },
+          },
+        };
+        const providerInput = buildModelInput(modelId, input);
+        const effectiveResolution = resolveEffectiveResolution(modelId, 2, '4K');
+        const billing = calculateFinalProviderAwareCredits({
+          modelId,
+          qualityTier,
+          scale: 2,
+          effectiveResolution,
+        });
+
+        expect(providerInput).toHaveProperty('resolution', effectiveResolution);
+        expect(billing.effectiveResolution).toBe(providerInput.resolution);
+      }
+    );
   });
 });

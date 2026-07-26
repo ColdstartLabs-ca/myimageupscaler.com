@@ -13,6 +13,7 @@ import type {
   IProcessImageOptions,
 } from './image-processor.interface';
 import { creditManager } from './replicate/utils/credit-manager';
+import { recordProcessingCostTelemetry } from './cost-telemetry.service';
 
 /**
  * Custom error class for insufficient credits
@@ -257,6 +258,13 @@ export class ImageGenerationService implements IImageProcessor {
     try {
       // Step 2: Generate the image
       const result = await this.callGemini(input);
+      if (options?.costAttribution) {
+        await recordProcessingCostTelemetry({
+          userId,
+          jobId,
+          attribution: options.costAttribution,
+        });
+      }
 
       return {
         ...result,

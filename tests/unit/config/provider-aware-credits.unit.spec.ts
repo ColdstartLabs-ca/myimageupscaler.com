@@ -6,7 +6,10 @@ import {
   CLARITY_PRO_MAX_OUTPUT_MEGAPIXELS,
   getCreditDisplayForTier,
   getCreditDisplayForTierAtScale,
+  modelIdToTier,
 } from '@shared/config/subscription.utils';
+import { MAXIMUM_CREDITS_PER_OPERATION } from '@shared/config/subscription.config';
+import { MODEL_CONFIG } from '@shared/config/model-costs.config';
 
 describe('Provider-Aware Credits', () => {
   describe('Recraft Crisp Upscale', () => {
@@ -109,17 +112,14 @@ describe('Provider-Aware Credits', () => {
       expect(result.credits).toBe(11); // 10 + 1
     });
 
-    it('returns minimum credits when dimensions are missing', () => {
-      const result = calculateProviderAwareCredits({
-        modelId: 'clarity-pro-upscaler',
-        qualityTier: 'clarity-pro',
-        scale: 4,
-      });
-      // Without dimensions, outputMegapixels = 0
-      // providerCost = max(0.03, 0) = 0.03
-      // credits = ceil(0.03 * 2.5 / 0.03) = 3
-      expect(result.credits).toBe(3);
-      expect(result.outputMegapixels).toBeUndefined();
+    it('should throw when clarity-pro is billed without input dimensions', () => {
+      expect(() =>
+        calculateProviderAwareCredits({
+          modelId: 'clarity-pro-upscaler',
+          qualityTier: 'clarity-pro',
+          scale: 4,
+        })
+      ).toThrow(/Input dimensions are required/);
     });
 
     it('finalized credits preserve dynamic pricing without applying the legacy maximum', () => {
@@ -133,6 +133,19 @@ describe('Provider-Aware Credits', () => {
 
       expect(result.finalCredits).toBe(160);
       expect(result.pricingModel).toBe('output-megapixel');
+    });
+
+    it('should apply the cap to output-megapixel pricing', () => {
+      const result = calculateFinalProviderAwareCredits({
+        modelId: 'clarity-pro-upscaler',
+        qualityTier: 'clarity-pro',
+        scale: 8,
+        inputWidth: 4000,
+        inputHeight: 4000,
+        smartAnalysis: true,
+      });
+
+      expect(result.finalCredits).toBeLessThanOrEqual(MAXIMUM_CREDITS_PER_OPERATION);
     });
 
     it('batch estimate uses per-image dimensions so Clarity Pro 8x display matches billing', () => {
@@ -168,6 +181,52 @@ describe('Provider-Aware Credits', () => {
         })
       ).toBe('3-160 CR');
     });
+  });
+
+  describe('Flux 2 Pro', () => {
+    it('should charge 12 credits for a 4MP flux-2-pro run', () => {
+      const result = calculateFinalProviderAwareCredits({
+        modelId: 'flux-2-pro',
+        qualityTier: 'face-pro',
+        scale: 2,
+        inputWidth: 2000,
+        inputHeight: 2000,
+      });
+
+      expect(result.providerCostUsd).toBeCloseTo(0.135);
+      expect(result.finalCredits).toBe(12);
+      expect(result.pricingModel).toBe('output-megapixel');
+    });
+
+    it('should hold flux-2-pro margin above 55% at the max input bound', () => {
+      const result = calculateFinalProviderAwareCredits({
+        modelId: 'flux-2-pro',
+        qualityTier: 'face-pro',
+        scale: 2,
+        inputWidth: 2000,
+        inputHeight: 2000,
+      });
+      const revenue = result.finalCredits * 0.0298;
+      const margin = (revenue - result.providerCostUsd) / revenue;
+
+      expect(margin).toBeGreaterThan(0.55);
+    });
+  });
+
+  it('should map every configured model id to its own tier', () => {
+    for (const modelId of Object.keys(MODEL_CONFIG)) {
+      const tier = modelIdToTier(modelId);
+
+      if (
+        modelId === 'real-esrgan' ||
+        modelId === 'nano-banana' ||
+        modelId === 'flux-kontext-fast'
+      ) {
+        expect(tier).toBe('quick');
+      } else {
+        expect(tier, modelId).not.toBe('quick');
+      }
+    }
   });
 
   describe('Legacy flat-priced models', () => {

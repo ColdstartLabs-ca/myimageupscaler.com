@@ -12,6 +12,8 @@ import type { ISubscriptionConfig } from './subscription.types';
 import { TIMEOUTS } from './timeouts.config';
 import type { PricingRegion } from './pricing-regions';
 
+export const MAXIMUM_CREDITS_PER_OPERATION = 200;
+
 /**
  * Default subscription configuration
  * Modify this to change subscription behavior
@@ -281,7 +283,7 @@ export const SUBSCRIPTION_CONFIG: ISubscriptionConfig = {
       batchPerImage: 0, // No extra cost per batch image
     },
     minimumCost: CREDIT_COSTS.BASE_UPSCALE_COST, // At least 1 credit per operation
-    maximumCost: CREDIT_COSTS.NANO_BANANA_PRO_MULTIPLIER * CREDIT_COSTS.BASE_ENHANCE_COST * 1.25, // Safety cap for premium models
+    maximumCost: MAXIMUM_CREDITS_PER_OPERATION,
   },
 
   freeUser: {
