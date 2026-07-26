@@ -40,6 +40,7 @@ export type EmailProviderFailureClassification =
   | 'complaint'
   | 'provider_authentication'
   | 'provider_configuration'
+  | 'provider_blocked'
   | 'provider_request'
   | 'permanent_rejection';
 

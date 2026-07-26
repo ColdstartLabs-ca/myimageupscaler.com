@@ -463,7 +463,8 @@ describe('BrevoProviderAdapter failure classification', () => {
     [400, { message: 'invalid recipient email' }, 'invalid_recipient', false],
     [400, { message: 'email address is invalid' }, 'invalid_recipient', false],
     [400, { message: 'recipient hard bounce' }, 'invalid_recipient', false],
-    [400, { message: 'account is suspended' }, 'provider_configuration', false],
+    [400, { message: 'account is suspended' }, 'provider_blocked', false],
+    [400, { message: 'account is blocked' }, 'provider_blocked', false],
     [400, { code: 'configuration_error' }, 'provider_configuration', false],
   ])(
     'should classify HTTP %s without exposing provider response details',

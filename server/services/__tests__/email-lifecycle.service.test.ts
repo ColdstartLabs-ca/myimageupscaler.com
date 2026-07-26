@@ -28,6 +28,7 @@ let currentCreditProfile: Record<string, number> | null = {
   purchased_credits_balance: 0,
 };
 let profileReadError: { message: string } | null = null;
+let purchaseTransactionRows: Array<Record<string, unknown>> = [];
 const queueUpdates: Record<string, unknown>[] = [];
 
 function makeDueQueueRow(
@@ -170,6 +171,10 @@ function makeSelectChain(table: string, selectColumns?: string) {
         });
         return;
       }
+      if (table === 'credit_transactions') {
+        resolve({ data: purchaseTransactionRows, error: null });
+        return;
+      }
       resolve({ data: [], error: null });
     },
   };
@@ -189,6 +194,12 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
     rpc: vi.fn(async (name: string, args: Record<string, unknown>) => {
       if (name === 'claim_email_lifecycle_queue_row_for_delivery') {
         return { data: 'claimed', error: null };
+      }
+      if (
+        name === 'cancel_expired_email_lifecycle_queue' ||
+        name === 'release_email_recipient_value_holdout'
+      ) {
+        return { data: 0, error: null };
       }
       if (name === 'record_email_lifecycle_suppression') {
         queueInserts.push({
@@ -288,6 +299,7 @@ describe('EmailLifecycleService', () => {
       purchased_credits_balance: 0,
     };
     profileReadError = null;
+    purchaseTransactionRows = [];
     queueUpdates.length = 0;
     sendEmailMock.mockResolvedValue({ success: true, messageId: 'msg_test' });
   });
@@ -654,6 +666,47 @@ describe('EmailLifecycleService', () => {
     });
 
     expect(result.queued).toBe(true);
+    expect(queueInserts.at(-1)).toMatchObject({
+      status: 'pending',
+      recipient_value_decision: expect.any(String),
+      recipient_value_policy_version: 'v1',
+      recipient_value_reasons: expect.any(Array),
+    });
+  });
+
+  it('should leave a transactional enqueue independent of recipient-value classification', async () => {
+    const result = await new EmailLifecycleService().queueLifecycleEmail({
+      campaignKey: 'payment-success',
+      userId: 'user_123',
+    });
+
+    expect(result).toMatchObject({ queued: true, skipped: false });
+    expect(queueInserts.at(-1)).toMatchObject({ status: 'pending' });
+    expect(queueInserts.at(-1)).not.toHaveProperty('recipient_value_decision');
+    expect(queueInserts.at(-1)).not.toHaveProperty('recipient_value_policy_version');
+  });
+
+  it('should cancel a released holdout when the recipient purchased after classification', async () => {
+    purchaseTransactionRows = [{ id: 'purchase-after-hold' }];
+    dueQueueRows = [
+      {
+        ...makeDueQueueRow('low-credits', { creditsRemaining: 0 }),
+        recipient_value_score: 20,
+        recipient_value_band: 'experiment',
+        recipient_value_decision: 'hold_experiment',
+      recipient_value_policy_version: 'v1',
+        recipient_value_classified_at: '2026-07-20T00:00:00.000Z',
+        recipient_value_holdout_released_at: new Date().toISOString(),
+      },
+    ];
+
+    const result = await new EmailLifecycleService().processDueQueue({ batchSize: 1 });
+
+    expect(result).toMatchObject({ sent: 0, skipped: 1 });
+    expect(sendEmailMock).not.toHaveBeenCalled();
+    expect(queueUpdates).toContainEqual(
+      expect.objectContaining({ status: 'cancelled', reason: 'holdout_recipient_purchased' })
+    );
   });
 
   it('should not treat an empty Cloudflare permanent-bounces field as a bounce', async () => {
@@ -772,6 +825,43 @@ describe('EmailLifecycleService', () => {
           unavailableProviders: [],
           fallbackReasons: ['rate_limited'],
         }),
+      })
+    );
+  });
+
+  it('should stop immediately when Brevo reports an account block', async () => {
+    sendEmailMock.mockRejectedValueOnce(
+      new EmailProviderSendError(
+        'Brevo account is blocked',
+        'provider_blocked',
+        false,
+        ['brevo'],
+        false
+      )
+    );
+    dueQueueRows = [
+      {
+        id: 'queue_blocked',
+        campaign_key: 'low-credits',
+        user_id: 'user_blocked',
+        recipient_email: 'blocked@example.com',
+        scheduled_for: new Date(Date.now() - 1000).toISOString(),
+        status: 'pending',
+        template_data: {},
+        metadata: {},
+        created_at: new Date().toISOString(),
+      },
+    ];
+
+    const result = await new EmailLifecycleService().processDueQueue({ batchSize: 1 });
+
+    expect(result.stoppedByProvider).toBe(true);
+    expect(result.stoppedByProviderCapacity).toBe(false);
+    expect(result.rescheduled).toBe(1);
+    expect(eventInserts).toContainEqual(
+      expect.objectContaining({
+        event_type: 'failed',
+        metadata: expect.objectContaining({ classification: 'provider_blocked' }),
       })
     );
   });

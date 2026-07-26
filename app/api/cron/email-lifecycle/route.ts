@@ -55,6 +55,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     });
     const queueHealth = await lifecycleService.getQueueHealth();
     const durationMs = Date.now() - startedAt;
+    if (queueHealth.unclassified > 0) {
+      console.error('[CRON] Lifecycle queue contains structurally invalid unclassified rows', {
+        unclassifiedPending: queueHealth.unclassified,
+      });
+    }
 
     console.log('[CRON] Email lifecycle completed', {
       dryRun,
@@ -80,7 +85,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       fallbackReasons: processed.fallbackReasons,
       unclassifiedDueReturned: processed.unclassifiedDueReturned,
       providerIoMs: processed.providerIoMs,
+      expiredCancelled: processed.expiredCancelled,
+      holdoutReleased: processed.holdoutReleased,
+      pending: queueHealth.pending,
       duePending: queueHealth.duePending,
+      eligiblePending: queueHealth.eligible,
+      heldPending: queueHealth.held,
+      unclassifiedPending: queueHealth.unclassified,
+      eligibilityStalled: queueHealth.eligibilityStalled,
       oldestPendingScheduledFor: queueHealth.oldestPendingScheduledFor,
       durationMs,
     });
@@ -112,7 +124,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       fallbackReasons: processed.fallbackReasons,
       unclassifiedDueReturned: processed.unclassifiedDueReturned,
       providerIoMs: processed.providerIoMs,
+      expiredCancelled: processed.expiredCancelled,
+      holdoutReleased: processed.holdoutReleased,
+      pending: queueHealth.pending,
       duePending: queueHealth.duePending,
+      eligiblePending: queueHealth.eligible,
+      heldPending: queueHealth.held,
+      unclassifiedPending: queueHealth.unclassified,
+      eligibilityStalled: queueHealth.eligibilityStalled,
       oldestPendingScheduledFor: queueHealth.oldestPendingScheduledFor,
       durationMs,
     });

@@ -205,7 +205,12 @@ describe('POST /api/cron/email-lifecycle throughput controls', () => {
         stoppedByProviderCapacity: false,
       }),
       getQueueHealth: vi.fn().mockResolvedValue({
+        pending: 100,
         duePending: 87,
+        eligible: 12,
+        held: 88,
+        unclassified: 0,
+        eligibilityStalled: false,
         oldestPendingScheduledFor: '2026-07-08T00:00:00.000Z',
       }),
     } as never);
@@ -237,7 +242,12 @@ describe('POST /api/cron/email-lifecycle throughput controls', () => {
       },
     });
     vi.spyOn(actualService, 'getQueueHealth').mockResolvedValue({
+      pending: 1,
       duePending: 1,
+      eligible: 1,
+      held: 0,
+      unclassified: 0,
+      eligibilityStalled: false,
       oldestPendingScheduledFor: '2026-07-15T00:00:00.000Z',
     });
     vi.mocked(getEmailLifecycleService).mockReturnValue(actualService);
@@ -296,7 +306,12 @@ describe('POST /api/cron/email-lifecycle throughput controls', () => {
     expect(body).toMatchObject({
       success: true,
       dryRun: true,
+      pending: 100,
       duePending: 87,
+      eligiblePending: 12,
+      heldPending: 88,
+      unclassifiedPending: 0,
+      eligibilityStalled: false,
       oldestPendingScheduledFor: '2026-07-08T00:00:00.000Z',
       recoveryEligibility: {
         queued: 3,

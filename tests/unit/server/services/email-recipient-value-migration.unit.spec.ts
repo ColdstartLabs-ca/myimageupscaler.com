@@ -55,7 +55,7 @@ describe('recipient-value queue migrations', () => {
   });
 
   it('keeps the due-queue SQL policy version aligned with the TypeScript policy', () => {
-    const migration = readMigration('20260715000100_restore_lifecycle_delivery_queue.sql');
+    const migration = readMigration('20260725000100_restore_email_queue_eligibility.sql');
     const policySource = readFileSync(
       join(process.cwd(), 'server/services/email-recipient-value.service.ts'),
       'utf8'

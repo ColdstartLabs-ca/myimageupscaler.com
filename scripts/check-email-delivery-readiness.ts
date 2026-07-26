@@ -31,7 +31,14 @@ export interface IReadinessSummary {
     dailyLimit: number | null;
   };
   cloudflare: { sendingDomainEnabled: boolean };
-  cron: { authenticated: boolean; duePending: number; unclassifiedDueReturned: number };
+  cron: {
+    authenticated: boolean;
+    duePending: number;
+    eligiblePending: number;
+    heldPending: number;
+    unclassifiedPending: number;
+    unclassifiedDueReturned: number;
+  };
   queue: {
     pending: number;
     due: number;
@@ -58,6 +65,17 @@ export function assertReadinessEnvironment(args: IReadinessArgs): void {
   ].filter(([, value]) => !value);
   if (missing.length)
     throw new Error(`Missing readiness configuration: ${missing.map(([key]) => key).join(', ')}`);
+  if (args.production) assertProductionBaseUrl(serverEnv.BASE_URL);
+}
+
+export function assertProductionBaseUrl(baseUrl: string): void {
+  const url = new URL(baseUrl);
+  if (
+    url.protocol !== 'https:' ||
+    ['localhost', '127.0.0.1', '::1'].includes(url.hostname.toLowerCase())
+  ) {
+    throw new Error('Production readiness requires a non-local HTTPS BASE_URL');
+  }
 }
 
 export function summarizeBrevoAccount(body: unknown): {
@@ -110,6 +128,9 @@ export function assertBrevoSenderReadiness(
 
 export function assertCronReadinessResponse(body: unknown): {
   duePending: number;
+  eligiblePending: number;
+  heldPending: number;
+  unclassifiedPending: number;
   unclassifiedDueReturned: number;
 } {
   const result = body as {
@@ -118,6 +139,9 @@ export function assertCronReadinessResponse(body: unknown): {
     drainOnly?: boolean;
     sendLimit?: number;
     duePending?: number;
+    eligiblePending?: number;
+    heldPending?: number;
+    unclassifiedPending?: number;
     unclassifiedDueReturned?: number;
   };
   if (result.success !== true || result.dryRun !== true) {
@@ -130,13 +154,28 @@ export function assertCronReadinessResponse(body: unknown): {
   ) {
     throw new Error('Lifecycle cron does not expose the current bounded drain contract');
   }
-  if (!Number.isInteger(result.duePending))
-    throw new Error('Lifecycle cron dry-run omitted duePending');
+  if (
+    !Number.isInteger(result.duePending) ||
+    !Number.isInteger(result.eligiblePending) ||
+    !Number.isInteger(result.heldPending) ||
+    !Number.isInteger(result.unclassifiedPending)
+  ) {
+    throw new Error('Lifecycle cron dry-run omitted queue eligibility health');
+  }
   const unclassifiedDueReturned = result.unclassifiedDueReturned as number;
   if (unclassifiedDueReturned !== 0) {
     throw new Error('Lifecycle due queue returned unclassified marketing rows');
   }
-  return { duePending: result.duePending as number, unclassifiedDueReturned };
+  if (result.unclassifiedPending !== 0) {
+    throw new Error('Lifecycle queue contains unclassified pending marketing rows');
+  }
+  return {
+    duePending: result.duePending as number,
+    eligiblePending: result.eligiblePending as number,
+    heldPending: result.heldPending as number,
+    unclassifiedPending: result.unclassifiedPending as number,
+    unclassifiedDueReturned,
+  };
 }
 
 export function formatReadinessSummary(summary: IReadinessSummary): string {

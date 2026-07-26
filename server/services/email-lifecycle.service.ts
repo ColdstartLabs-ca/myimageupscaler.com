@@ -12,6 +12,7 @@ import {
   type IQueueRecoveryEligibilityResult,
 } from '@server/services/revenue-recovery.service';
 import {
+  getEmailRecipientValueService,
   RECIPIENT_VALUE_POLICY_VERSION,
   type RecipientValueBand,
 } from '@server/services/email-recipient-value.service';
@@ -66,6 +67,8 @@ export interface ILifecycleDueQueuePolicyRow {
     | 'cancel'
     | null;
   recipient_value_policy_version?: string | null;
+  recipient_value_classified_at?: string | null;
+  recipient_value_holdout_released_at?: string | null;
   campaign_email_type?: 'transactional' | 'marketing';
   campaign_enabled?: boolean;
   campaign_priority?: CampaignPriority;
@@ -128,6 +131,8 @@ export interface IProcessLifecycleQueueResult {
   fallbackReasons: string[];
   unclassifiedDueReturned: number;
   providerIoMs: number;
+  expiredCancelled: number;
+  holdoutReleased: number;
 }
 
 function createRecipientValueBandCounts(): Record<RecipientValueBand, number> {
@@ -213,8 +218,14 @@ export function isLifecycleDueQueueRowEligible(
     }
   }
   if (row.campaign_email_type === 'transactional') return true;
+  if (row.recipient_value_policy_version !== RECIPIENT_VALUE_POLICY_VERSION) return false;
+  if (row.recipient_value_decision === 'hold_experiment') {
+    const releasedAt = row.recipient_value_holdout_released_at
+      ? Date.parse(row.recipient_value_holdout_released_at)
+      : NaN;
+    return Number.isFinite(releasedAt) && releasedAt <= now.getTime();
+  }
   return (
-    row.recipient_value_policy_version === RECIPIENT_VALUE_POLICY_VERSION &&
     row.recipient_value_decision !== null &&
     row.recipient_value_decision !== undefined &&
     ['protected', 'keep_high', 'keep_medium'].includes(row.recipient_value_decision)
@@ -244,7 +255,12 @@ export function compareLifecycleDueQueueRows(
 }
 
 export interface IEmailLifecycleQueueHealth {
+  pending: number;
   duePending: number;
+  eligible: number;
+  held: number;
+  unclassified: number;
+  eligibilityStalled: boolean;
   oldestPendingScheduledFor: string | null;
 }
 
@@ -277,6 +293,13 @@ type BalanceSensitiveCampaign = (typeof BALANCE_SENSITIVE_CAMPAIGNS)[number];
 const BALANCE_SENSITIVE_CAMPAIGN_SET: ReadonlySet<BalanceSensitiveCampaign> = new Set(
   BALANCE_SENSITIVE_CAMPAIGNS
 );
+const PURCHASE_INVALIDATED_HOLDOUT_CAMPAIGNS = new Set([
+  'first-result-followup',
+  'low-credits',
+  'zero-credits',
+  'high-usage-free-user',
+  'checkout-abandoned-24h',
+]);
 
 const REVENUE_CRITICAL_CAP_HOURS = 72;
 const MARKETING_CAP_DAYS = 7;
@@ -559,6 +582,8 @@ export class EmailLifecycleService {
       fallbackReasons: [],
       providerIoMs: 0,
       unclassifiedDueReturned: 0,
+      expiredCancelled: 0,
+      holdoutReleased: 0,
     };
 
     if (!dryRun) {
@@ -577,6 +602,27 @@ export class EmailLifecycleService {
         result.stoppedByHealth = true;
         return result;
       }
+    }
+
+    if (!dryRun) {
+      const { data: expired, error: expiredError } = await supabaseAdmin.rpc(
+        'cancel_expired_email_lifecycle_queue'
+      );
+      if (expiredError) {
+        throw new Error(`Failed to cancel expired lifecycle rows: ${expiredError.message}`);
+      }
+      const { data: released, error: releaseError } = await supabaseAdmin.rpc(
+        'release_email_recipient_value_holdout',
+        {
+          p_release_date: new Date().toISOString().slice(0, 10),
+          p_daily_limit: 100,
+        }
+      );
+      if (releaseError) {
+        throw new Error(`Failed to release recipient-value holdout: ${releaseError.message}`);
+      }
+      result.expiredCancelled = Number(expired ?? 0);
+      result.holdoutReleased = Number(released ?? 0);
     }
 
     const { data, error } = await supabaseAdmin.rpc('get_due_email_lifecycle_queue', {
@@ -730,7 +776,9 @@ export class EmailLifecycleService {
         }
         const message = error instanceof Error ? error.message : 'Unknown email send failure';
         const providerError = error instanceof EmailProviderSendError ? error : null;
-        const isProviderStop = providerError?.scope === 'provider' && providerError.transient;
+        const isProviderStop =
+          providerError?.scope === 'provider' &&
+          (providerError.transient || providerError.classification === 'provider_blocked');
         const isCapacityStop =
           providerError?.classification === 'rate_limited' ||
           (providerError?.classification === 'provider_unavailable' &&
@@ -783,33 +831,24 @@ export class EmailLifecycleService {
   }
 
   async getQueueHealth(now: Date = new Date()): Promise<IEmailLifecycleQueueHealth> {
-    const dueCutoff = now.toISOString();
-    const { count, error: countError } = await supabaseAdmin
-      .from('email_lifecycle_queue')
-      .select('id', { count: 'exact', head: true })
-      .eq('status', 'pending')
-      .lte('scheduled_for', dueCutoff);
-
-    if (countError) {
-      throw new Error(`Failed to count due lifecycle queue: ${countError.message}`);
-    }
-
-    const { data, error: oldestError } = await supabaseAdmin
-      .from('email_lifecycle_queue')
-      .select('scheduled_for')
-      .eq('status', 'pending')
-      .lte('scheduled_for', dueCutoff)
-      .order('scheduled_for', { ascending: true })
-      .limit(1)
-      .maybeSingle();
-
-    if (oldestError) {
-      throw new Error(`Failed to load oldest due lifecycle queue row: ${oldestError.message}`);
-    }
+    const { data, error } = await supabaseAdmin.rpc('get_email_lifecycle_queue_health', {
+      p_due_before: now.toISOString(),
+    });
+    if (error) throw new Error(`Failed to load lifecycle queue health: ${error.message}`);
+    const row = ((data ?? []) as Array<Record<string, unknown>>)[0] ?? {};
+    const overdue = Number(row.overdue_count ?? 0);
+    const eligible = Number(row.eligible_count ?? 0);
 
     return {
-      duePending: count ?? 0,
-      oldestPendingScheduledFor: data?.scheduled_for ? String(data.scheduled_for) : null,
+      pending: Number(row.pending_count ?? 0),
+      duePending: overdue,
+      eligible,
+      held: Number(row.held_count ?? 0),
+      unclassified: Number(row.unclassified_count ?? 0),
+      eligibilityStalled: overdue > 0 && eligible === 0,
+      oldestPendingScheduledFor: row.oldest_pending_scheduled_for
+        ? String(row.oldest_pending_scheduled_for)
+        : null,
     };
   }
 
@@ -1273,6 +1312,14 @@ export class EmailLifecycleService {
     row: IQueueRow
   ): Promise<BalanceRevalidationResult> {
     const templateData = { ...(row.template_data || {}) };
+    if (
+      row.recipient_value_holdout_released_at &&
+      row.user_id &&
+      PURCHASE_INVALIDATED_HOLDOUT_CAMPAIGNS.has(row.campaign_key) &&
+      (await this.userPurchasedAfterClassification(row))
+    ) {
+      return { action: 'cancel', reason: 'holdout_recipient_purchased' };
+    }
     if (!BALANCE_SENSITIVE_CAMPAIGN_SET.has(row.campaign_key as BalanceSensitiveCampaign)) {
       return { action: 'send', templateData };
     }
@@ -1330,6 +1377,19 @@ export class EmailLifecycleService {
     throw new Error(`Unhandled balance-sensitive campaign: ${row.campaign_key}`);
   }
 
+  private async userPurchasedAfterClassification(row: IQueueRow): Promise<boolean> {
+    if (!row.user_id || !row.recipient_value_classified_at) return false;
+    const { data, error } = await supabaseAdmin
+      .from('credit_transactions')
+      .select('id')
+      .eq('user_id', row.user_id)
+      .in('type', ['purchase', 'subscription'])
+      .gte('created_at', row.recipient_value_classified_at)
+      .limit(1);
+    if (error) throw new Error(`Failed to revalidate holdout purchase: ${error.message}`);
+    return Boolean(data?.length);
+  }
+
   private async insertQueueRow(params: {
     campaign: ICampaign;
     user: IUserEmailContext;
@@ -1340,6 +1400,14 @@ export class EmailLifecycleService {
     metadata?: Record<string, unknown>;
     subscriptionId?: string;
   }): Promise<string> {
+    const classification =
+      params.status === 'pending' && params.campaign.email_type === 'marketing'
+        ? await getEmailRecipientValueService().classifyEnqueue({
+            campaignKey: params.campaign.key,
+            userId: params.user.id,
+            scheduledFor: params.scheduledFor,
+          })
+        : null;
     const { data, error } = await supabaseAdmin
       .from('email_lifecycle_queue')
       .insert({
@@ -1355,6 +1423,16 @@ export class EmailLifecycleService {
         },
         metadata: params.metadata ?? {},
         subscription_id: params.subscriptionId ?? null,
+        ...(classification
+          ? {
+              recipient_value_score: classification.score,
+              recipient_value_band: classification.band,
+              recipient_value_decision: classification.decision,
+              recipient_value_reasons: classification.reasons,
+              recipient_value_policy_version: classification.policyVersion,
+              recipient_value_classified_at: new Date().toISOString(),
+            }
+          : {}),
       })
       .select('id')
       .single();

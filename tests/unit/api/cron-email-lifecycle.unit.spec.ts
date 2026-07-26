@@ -85,7 +85,12 @@ describe('POST /api/cron/email-lifecycle', () => {
         providerIoMs: 0,
       }),
       getQueueHealth: vi.fn().mockResolvedValue({
+        pending: 15,
         duePending: 12,
+        eligible: 4,
+        held: 11,
+        unclassified: 0,
+        eligibilityStalled: false,
         oldestPendingScheduledFor: '2026-07-08T00:00:00.000Z',
       }),
     } as never);
@@ -138,7 +143,12 @@ describe('POST /api/cron/email-lifecycle', () => {
       stoppedByHealth: false,
       stoppedByProviderCapacity: false,
       providerIoMs: 0,
+      pending: 15,
       duePending: 12,
+      eligiblePending: 4,
+      heldPending: 11,
+      unclassifiedPending: 0,
+      eligibilityStalled: false,
       oldestPendingScheduledFor: '2026-07-08T00:00:00.000Z',
       recoveryEligibility: {
         dryRun: true,

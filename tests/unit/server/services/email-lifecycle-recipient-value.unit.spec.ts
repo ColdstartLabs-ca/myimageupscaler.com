@@ -4,6 +4,19 @@ import { EmailLifecycleService } from '@server/services/email-lifecycle.service'
 const sendMock = vi.hoisted(() => vi.fn());
 const healthStop = vi.hoisted(() => ({ value: false }));
 const healthSince = vi.hoisted(() => [] as string[]);
+const queueHealthRows = vi.hoisted(
+  () =>
+    [
+      {
+        pending_count: 20,
+        overdue_count: 12,
+        eligible_count: 0,
+        held_count: 8,
+        unclassified_count: 0,
+        oldest_pending_scheduled_for: '2026-07-10T00:00:00.000Z',
+      },
+    ] as Array<Record<string, unknown>>
+);
 const dueRows = vi.hoisted(() => [
   {
     id: 'queue-high',
@@ -128,6 +141,8 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
       }
       if (name === 'get_due_email_lifecycle_queue')
         return Promise.resolve({ data: dueRows, error: null });
+      if (name === 'get_email_lifecycle_queue_health')
+        return Promise.resolve({ data: queueHealthRows, error: null });
       if (name === 'claim_email_lifecycle_queue_row_for_delivery')
         return Promise.resolve({ data: 'claimed', error: null });
       return Promise.resolve({ data: null, error: null });
@@ -202,6 +217,27 @@ describe('EmailLifecycleService recipient-value delivery integration', () => {
     expect(result.queued).toBe(0);
   });
 
+  it('should keep a previously released holdout eligible until it is processed', async () => {
+    dueRows.splice(0, dueRows.length, {
+      ...dueRows[0],
+      id: 'queue-held-release',
+      recipient_value_score: 20,
+      recipient_value_band: 'experiment',
+      recipient_value_decision: 'hold_experiment',
+      recipient_value_policy_version: 'v1',
+      recipient_value_holdout_released_at: '2026-07-11T00:00:00.000Z',
+    });
+
+    const result = await new EmailLifecycleService().processDueQueue({
+      dryRun: true,
+      batchSize: 10,
+    });
+
+    expect(result.eligible).toBe(1);
+    expect(result.queued).toBe(1);
+    expect(result.recipientValueBandCounts.experiment).toBe(1);
+  });
+
   it('should stop non-dry-run delivery when the existing health thresholds recommend stopping', async () => {
     healthStop.value = true;
 
@@ -221,5 +257,21 @@ describe('EmailLifecycleService recipient-value delivery integration', () => {
     const ageHours = (before - since) / (60 * 60 * 1000);
     expect(ageHours).toBeGreaterThanOrEqual(23.99);
     expect(ageHours).toBeLessThanOrEqual(24.01);
+  });
+
+  it('should report eligible separately and flag an overdue queue with no eligibility', async () => {
+    const health = await new EmailLifecycleService().getQueueHealth(
+      new Date('2026-07-25T12:00:00.000Z')
+    );
+
+    expect(health).toEqual({
+      pending: 20,
+      duePending: 12,
+      eligible: 0,
+      held: 8,
+      unclassified: 0,
+      eligibilityStalled: true,
+      oldestPendingScheduledFor: '2026-07-10T00:00:00.000Z',
+    });
   });
 });

@@ -60,14 +60,6 @@ export interface IRecipientValueClassification {
   normalizedCountry: string;
 }
 
-export interface IRecipientValueHoldoutCandidate {
-  userId: string;
-  campaignKey: string;
-  country?: string | null;
-  decision: RecipientValueDecision;
-  suppressed?: boolean;
-}
-
 export interface IRecipientValueAuditOptions {
   pageSize?: number;
   onProgress?: (processedCount: number) => void;
@@ -103,6 +95,12 @@ export interface IApplyRecipientValueRunResult {
   cancelledCount: number;
   heldCount: number;
   keptCount: number;
+}
+
+export interface IClassifyRecipientValueEnqueueInput {
+  campaignKey: string;
+  userId: string;
+  scheduledFor: Date;
 }
 
 export interface IEmailRecipientValuePerformanceRow {
@@ -228,7 +226,6 @@ const CLAIM_LEASE_MINUTES = 10;
 const AUDIT_PAGE_SIZE = 250;
 const INTENT_WINDOW_DAYS = 14;
 const ENGAGEMENT_WINDOW_DAYS = 90;
-const HOLDOUT_DAILY_LIMIT = 100;
 const MAX_RECENT_SIGNALS_PER_USER = 100;
 
 const ISO_UNKNOWN_COUNTRY_CODES = new Set(['', 'XX', 'ZZ', 'UN', UNKNOWN_RECIPIENT_COUNTRY]);
@@ -522,44 +519,6 @@ export function classifyRecipient(input: IRecipientValueInput): IRecipientValueC
   };
 }
 
-function holdoutHash(candidate: IRecipientValueHoldoutCandidate, dateKey: string): string {
-  return createHash('sha256')
-    .update(
-      `${RECIPIENT_VALUE_POLICY_VERSION}|${dateKey}|${candidate.userId}|${candidate.country ?? UNKNOWN_RECIPIENT_COUNTRY}|${candidate.campaignKey}`
-    )
-    .digest('hex');
-}
-
-export function selectRecipientValueHoldout(
-  candidates: readonly IRecipientValueHoldoutCandidate[],
-  dateKey: string
-): IRecipientValueHoldoutCandidate[] {
-  const byStratum = new Map<string, IRecipientValueHoldoutCandidate[]>();
-  for (const candidate of candidates) {
-    if (candidate.decision !== 'hold_experiment' || candidate.suppressed) continue;
-    const country = normalizeRecipientCountry(candidate.country);
-    const key = `${country}|${candidate.campaignKey}`;
-    const values = byStratum.get(key) ?? [];
-    values.push({ ...candidate, country });
-    byStratum.set(key, values);
-  }
-
-  const selected: IRecipientValueHoldoutCandidate[] = [];
-  for (const values of byStratum.values()) {
-    const ordered = [...values].sort((a, b) =>
-      holdoutHash(a, dateKey).localeCompare(holdoutHash(b, dateKey))
-    );
-    const count = Math.floor(ordered.length * 0.1);
-    selected.push(...ordered.slice(0, count));
-  }
-
-  return selected
-    .sort((a, b) => holdoutHash(a, dateKey).localeCompare(holdoutHash(b, dateKey)))
-    .slice(0, HOLDOUT_DAILY_LIMIT);
-}
-
-export const selectDeterministicRecipientValueHoldout = selectRecipientValueHoldout;
-
 function ensurePriority(value: unknown): RecipientValueCampaignPriority {
   if (
     value === 'transactional' ||
@@ -622,6 +581,25 @@ async function getRows<T>(
 }
 
 export class EmailRecipientValueService {
+  async classifyEnqueue(
+    input: IClassifyRecipientValueEnqueueInput
+  ): Promise<IRecipientValueClassification> {
+    const now = new Date();
+    const row: IQueueCandidate = {
+      id: randomUUID(),
+      campaign_key: input.campaignKey,
+      user_id: input.userId,
+      scheduled_for: input.scheduledFor.toISOString(),
+      created_at: now.toISOString(),
+      updated_at: now.toISOString(),
+      status: 'pending',
+      processing_claim_id: null,
+      processing_claimed_at: null,
+    };
+    const signals = await this.loadPageSignals([row]);
+    return this.classifyQueueCandidate(row, signals);
+  }
+
   async auditQueue(options: IRecipientValueAuditOptions = {}): Promise<IRecipientValueAuditResult> {
     const pageSize = Math.min(
       Math.max(Math.floor(options.pageSize ?? AUDIT_PAGE_SIZE), 1),

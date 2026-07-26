@@ -292,6 +292,33 @@ describe('Cloudflare Cron Worker', () => {
       expect(fetchMock).toHaveBeenCalledTimes(2);
     });
 
+    it('should alert and stop after eligibility is stalled for two drain cycles', async () => {
+      const event = { cron: '10 * * * *', scheduledTime: Date.now() } as ScheduledEvent;
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          success: true,
+          eligible: 0,
+          sent: 0,
+          eligibilityStalled: true,
+          duePending: 12,
+          eligiblePending: 0,
+        }),
+      });
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      global.fetch = fetchMock;
+
+      await worker.scheduled(event, mockEnv, mockCtx as unknown);
+      await mockCtx.waitUntil.mock.calls[0][0];
+
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('eligibility stalled'),
+        expect.objectContaining({ duePending: 12, eligiblePending: 0 })
+      );
+    });
+
     it('should handle unknown cron patterns', async () => {
       const event = {
         cron: '* * * * *',

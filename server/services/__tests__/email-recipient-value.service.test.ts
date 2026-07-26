@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
   classifyRecipient,
-  selectRecipientValueHoldout,
   type IRecipientValueInput,
 } from '@server/services/email-recipient-value.service';
 
@@ -77,6 +76,21 @@ describe('classifyRecipient policy v1', () => {
 
     expect(result.decision).toBe('hold_experiment');
     expect(result.band).toBe('experiment');
+  });
+
+  it('should preserve the score-band hold until outcome evidence supports a new policy', () => {
+    const result = classifyRecipient(
+      makeInput({
+        campaignKey: 'first-result-followup',
+        campaignPriority: 'lifecycle',
+        country: 'DE',
+      })
+    );
+
+    expect(result.score).toBeGreaterThanOrEqual(10);
+    expect(result.score).toBeLessThan(40);
+    expect(result.decision).toBe('hold_experiment');
+    expect(result.policyVersion).toBe('v1');
   });
 
   it('should keep recent US checkout abandoner as high value', () => {
@@ -228,22 +242,5 @@ describe('classifyRecipient policy v1', () => {
       classifyRecipient(makeInput({ suppressedReason: 'suppressed_preference' })).decision
     ).toBe('protected');
     expect(classifyRecipient(makeInput({ concurrentClaim: true })).decision).toBe('protected');
-  });
-});
-
-describe('recipient-value holdout selection', () => {
-  it('should select a stable ten-percent holdout and enforce the daily ceiling', () => {
-    const candidates = Array.from({ length: 1_500 }, (_, index) => ({
-      userId: `user-${index}`,
-      campaignKey: `campaign-${index % 3}`,
-      country: index % 2 ? 'US' : 'PH',
-      decision: 'hold_experiment' as const,
-    }));
-
-    const first = selectRecipientValueHoldout(candidates, '2026-07-11');
-    const second = selectRecipientValueHoldout(candidates, '2026-07-11');
-
-    expect(first).toEqual(second);
-    expect(first.length).toBeLessThanOrEqual(100);
   });
 });

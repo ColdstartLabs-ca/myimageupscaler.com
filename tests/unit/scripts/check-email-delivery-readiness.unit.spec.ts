@@ -18,6 +18,7 @@ import {
   assertBrevoSenderReadiness,
   assertQueueDistribution,
   assertCronReadinessResponse,
+  assertProductionBaseUrl,
   formatReadinessSummary,
   summarizeBrevoAccount,
 } from '@/scripts/check-email-delivery-readiness';
@@ -70,9 +71,18 @@ describe('check-email-delivery-readiness helpers', () => {
         drainOnly: true,
         sendLimit: 1,
         duePending: 10,
+        eligiblePending: 2,
+        heldPending: 8,
+        unclassifiedPending: 0,
         unclassifiedDueReturned: 1,
       })
     ).toThrow('unclassified marketing rows');
+  });
+
+  it('should reject a local or insecure production readiness target', () => {
+    expect(() => assertProductionBaseUrl('http://localhost:3000')).toThrow('non-local HTTPS');
+    expect(() => assertProductionBaseUrl('http://example.com')).toThrow('non-local HTTPS');
+    expect(() => assertProductionBaseUrl('https://example.com')).not.toThrow();
   });
 
   it('should redact credentials account identity and recipients from output', () => {
@@ -86,7 +96,14 @@ describe('check-email-delivery-readiness helpers', () => {
         dailyLimit: 300,
       },
       cloudflare: { sendingDomainEnabled: true },
-      cron: { authenticated: true, duePending: 10, unclassifiedDueReturned: 0 },
+      cron: {
+        authenticated: true,
+        duePending: 10,
+        eligiblePending: 2,
+        heldPending: 8,
+        unclassifiedPending: 0,
+        unclassifiedDueReturned: 0,
+      },
       queue: {
         pending: 12,
         due: 10,

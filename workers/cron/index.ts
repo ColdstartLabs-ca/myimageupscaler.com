@@ -38,17 +38,25 @@ interface ILifecycleDrainResponse {
   stoppedByProviderCapacity?: boolean;
   durationMs?: number;
   providerIoMs?: number;
+  eligibilityStalled?: boolean;
+  eligiblePending?: number;
+  duePending?: number;
+  unclassifiedPending?: number;
 }
 
 const LIFECYCLE_DRAINS_PER_SCHEDULE = 10;
 
-function shouldStopLifecycleDrain(result: ILifecycleDrainResponse): boolean {
+function shouldStopLifecycleDrain(
+  result: ILifecycleDrainResponse,
+  consecutiveEligibilityStalls: number
+): boolean {
   return (
     result.success !== true ||
     result.stoppedByHealth === true ||
     result.stoppedByProvider === true ||
     result.stoppedByProviderCapacity === true ||
-    result.eligible === 0
+    (result.eligible === 0 && result.eligibilityStalled !== true) ||
+    consecutiveEligibilityStalls >= 2
   );
 }
 
@@ -67,11 +75,14 @@ async function postCron(
 }
 
 async function runLifecycleSequence(env: IEnv, includeEligibility: boolean): Promise<void> {
+  let consecutiveEligibilityStalls = 0;
   for (let index = 0; index < LIFECYCLE_DRAINS_PER_SCHEDULE; index++) {
     const drainOnly = !includeEligibility || index > 0;
     const endpoint = `/api/cron/email-lifecycle?drainOnly=${drainOnly}&scanLimit=25&sendLimit=1`;
     const { ok, data } = await postCron(env, endpoint);
     const result = data as ILifecycleDrainResponse;
+    consecutiveEligibilityStalls =
+      result.eligibilityStalled === true ? consecutiveEligibilityStalls + 1 : 0;
     console.log('[CRON] Email Lifecycle drain completed', {
       invocation: index + 1,
       drainOnly,
@@ -84,8 +95,17 @@ async function runLifecycleSequence(env: IEnv, includeEligibility: boolean): Pro
       stoppedByProviderCapacity: result.stoppedByProviderCapacity === true,
       wallTimeMs: result.durationMs ?? null,
       providerIoMs: result.providerIoMs ?? null,
+      eligiblePending: result.eligiblePending ?? 0,
+      duePending: result.duePending ?? 0,
+      unclassifiedPending: result.unclassifiedPending ?? 0,
     });
-    if (!ok || shouldStopLifecycleDrain(result)) return;
+    if (consecutiveEligibilityStalls >= 2) {
+      console.error('[CRON] Lifecycle eligibility stalled for consecutive drain cycles', {
+        duePending: result.duePending ?? 0,
+        eligiblePending: result.eligiblePending ?? 0,
+      });
+    }
+    if (!ok || shouldStopLifecycleDrain(result, consecutiveEligibilityStalls)) return;
   }
 }
 
