@@ -454,6 +454,12 @@ const Workspace: React.FC = () => {
 
     const requiredCredits = getRequiredCreditsForPendingQueue();
     if (requiredCredits > totalCredits) {
+      analytics.track('credit_wall_shown', {
+        source: 'preflight_batch',
+        requiredCredits,
+        currentBalance: totalCredits,
+        deficit: requiredCredits - totalCredits,
+      });
       openUpgradeModal(true, 'insufficient_credits', {
         requiredCredits,
         currentBalance: totalCredits,
