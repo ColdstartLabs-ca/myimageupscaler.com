@@ -3,10 +3,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 const migration = readFileSync(
-  join(
-    process.cwd(),
-    'supabase/migrations/20260725000100_restore_email_queue_eligibility.sql'
-  ),
+  join(process.cwd(), 'supabase/migrations/20260725000100_restore_email_queue_eligibility.sql'),
   'utf8'
 );
 
@@ -30,7 +27,9 @@ describe('lifecycle queue eligibility restoration migration', () => {
       "i.recipient_value_decision = 'keep_high' AND i.recipient_value_band <> 'high'"
     );
     expect(migration).not.toContain('Recipient-value queue snapshot changed; refusing mutation');
-    expect(migration).not.toMatch(/FROM public\.email_lifecycle_queue AS q\s+WHERE q\.status = 'pending';/);
+    expect(migration).not.toMatch(
+      /FROM public\.email_lifecycle_queue AS q\s+WHERE q\.status = 'pending';/
+    );
   });
 
   it('should release a deterministic bounded holdout and expose it to the due queue', () => {
@@ -61,10 +60,26 @@ describe('lifecycle queue eligibility restoration migration', () => {
     expect(migration).toContain('q.scheduled_for ASC');
     expect(migration).toContain('unsubscribe_rate');
     expect(migration).toContain('provider_block_count > 0');
-    expect(migration).toContain("g.unsubscribe_count::NUMERIC / NULLIF(g.sent_count, 0) > 0.03");
-    expect(migration).toContain(
-      "m.hard_bounce_count::NUMERIC / NULLIF(m.sent_count, 0) > 0.02"
-    );
+    expect(migration).toContain('g.unsubscribe_count::NUMERIC / NULLIF(g.sent_count, 0) > 0.03');
+    expect(migration).toContain('m.hard_bounce_count::NUMERIC / NULLIF(m.sent_count, 0) > 0.02');
+  });
+
+  it('should keep every stop_recommended rate threshold behind the 500-send window', () => {
+    // PRD section 10 step 8: the 2% bounce / 0.1% complaint / 5% failure thresholds
+    // are only meaningful over a rolling 500-send window. The gate runs on a 24h
+    // window, so an unguarded rate would halt all lifecycle email -- transactional
+    // included -- after a handful of bounces or unsubscribes at normal volume.
+    const gate = migration.slice(migration.indexOf('g.provider_block_count > 0'));
+    const floorIndex = gate.indexOf('m.sent_count + m.provider_failure_count >= 500');
+    expect(floorIndex).toBeGreaterThan(-1);
+
+    for (const rateCheck of [
+      'm.hard_bounce_count::NUMERIC / NULLIF(m.sent_count, 0) > 0.02',
+      'g.unsubscribe_count::NUMERIC / NULLIF(g.sent_count, 0) > 0.03',
+      'm.complaint_count::NUMERIC / NULLIF(m.sent_count, 0) > 0.001',
+    ]) {
+      expect(gate.indexOf(rateCheck)).toBeGreaterThan(floorIndex);
+    }
   });
 
   it('should cancel expired triggers instead of delivering stale backlog rows', () => {

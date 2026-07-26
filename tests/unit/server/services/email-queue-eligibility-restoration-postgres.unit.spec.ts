@@ -9,40 +9,38 @@ const containerName = `miu-email-eligibility-${randomUUID()}`;
 let client: Client | undefined;
 let connectionString: string | undefined;
 
-describe.runIf(dockerAvailable)(
-  'lifecycle queue eligibility restoration on PostgreSQL 16',
-  () => {
-    beforeAll(async () => {
-      execFileSync('docker', [
-        'run',
-        '--rm',
-        '-d',
-        '--name',
-        containerName,
-        '-e',
-        'POSTGRES_PASSWORD=test',
-        '-P',
-        'postgres:16-alpine',
-      ]);
-      const mapping = execFileSync('docker', ['port', containerName, '5432/tcp'], {
-        encoding: 'utf8',
-      }).trim();
-      connectionString = `postgresql://postgres:test@127.0.0.1:${mapping.split(':').at(-1)}/postgres`;
+describe.runIf(dockerAvailable)('lifecycle queue eligibility restoration on PostgreSQL 16', () => {
+  beforeAll(async () => {
+    execFileSync('docker', [
+      'run',
+      '--rm',
+      '-d',
+      '--name',
+      containerName,
+      '-e',
+      'POSTGRES_PASSWORD=test',
+      '-P',
+      'postgres:16-alpine',
+    ]);
+    const mapping = execFileSync('docker', ['port', containerName, '5432/tcp'], {
+      encoding: 'utf8',
+    }).trim();
+    connectionString = `postgresql://postgres:test@127.0.0.1:${mapping.split(':').at(-1)}/postgres`;
 
-      for (let attempt = 0; attempt < 60; attempt += 1) {
-        const candidate = new Client({ connectionString });
-        try {
-          await candidate.connect();
-          client = candidate;
-          break;
-        } catch {
-          await candidate.end().catch(() => undefined);
-          await new Promise(resolve => setTimeout(resolve, 500));
-        }
+    for (let attempt = 0; attempt < 60; attempt += 1) {
+      const candidate = new Client({ connectionString });
+      try {
+        await candidate.connect();
+        client = candidate;
+        break;
+      } catch {
+        await candidate.end().catch(() => undefined);
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
-      if (!client) throw new Error('PostgreSQL test connection failed');
+    }
+    if (!client) throw new Error('PostgreSQL test connection failed');
 
-      await client.query(`
+    await client.query(`
         CREATE ROLE anon;
         CREATE ROLE authenticated;
         CREATE ROLE service_role;
@@ -124,41 +122,38 @@ describe.runIf(dockerAvailable)(
           ('transactional', 'Transactional', 'system', 'receipt', 'transactional',
             NULL, true, 0, 'transactional', 100);
       `);
-      await client.query(
-        readFileSync(
-          'supabase/migrations/20260725000100_restore_email_queue_eligibility.sql',
-          'utf8'
-        )
-      );
-    }, 120_000);
+    await client.query(
+      readFileSync('supabase/migrations/20260725000100_restore_email_queue_eligibility.sql', 'utf8')
+    );
+  }, 120_000);
 
-    afterAll(async () => {
-      await client?.end();
-      spawnSync('docker', ['rm', '-f', containerName], { stdio: 'ignore' });
-    });
+  afterAll(async () => {
+    await client?.end();
+    spawnSync('docker', ['rm', '-f', containerName], { stdio: 'ignore' });
+  });
 
-    it('rejects an unclassified pending marketing row but allows transactional enqueue', async () => {
-      if (!client) throw new Error('PostgreSQL test client was not initialized');
-      await expect(
-        client.query(`
+  it('rejects an unclassified pending marketing row but allows transactional enqueue', async () => {
+    if (!client) throw new Error('PostgreSQL test client was not initialized');
+    await expect(
+      client.query(`
           INSERT INTO public.email_lifecycle_queue(
             campaign_key, recipient_email, scheduled_for
           ) VALUES ('marketing', 'redacted@example.com', pg_catalog.now())
         `)
-      ).rejects.toThrow('Unclassified pending marketing lifecycle row is forbidden');
+    ).rejects.toThrow('Unclassified pending marketing lifecycle row is forbidden');
 
-      await expect(
-        client.query(`
+    await expect(
+      client.query(`
           INSERT INTO public.email_lifecycle_queue(
             campaign_key, recipient_email, scheduled_for
           ) VALUES ('transactional', 'redacted@example.com', pg_catalog.now())
         `)
-      ).resolves.toBeDefined();
-    });
+    ).resolves.toBeDefined();
+  });
 
-    it('allows unrelated enqueue drift but rejects mutation of a persisted run item', async () => {
-      if (!client) throw new Error('PostgreSQL test client was not initialized');
-      const fixture = await client.query(`
+  it('allows unrelated enqueue drift but rejects mutation of a persisted run item', async () => {
+    if (!client) throw new Error('PostgreSQL test client was not initialized');
+    const fixture = await client.query(`
         INSERT INTO public.email_lifecycle_queue(
           campaign_key, recipient_email, scheduled_for,
           recipient_value_score, recipient_value_band, recipient_value_decision,
@@ -168,26 +163,26 @@ describe.runIf(dockerAvailable)(
           40, 'medium', 'keep_medium', '[]'::jsonb, 'v1', pg_catalog.now()
         ) RETURNING id, updated_at
       `);
-      const queueId = fixture.rows[0].id;
-      const runId = randomUUID();
-      await client.query(
-        `
+    const queueId = fixture.rows[0].id;
+    const runId = randomUUID();
+    await client.query(
+      `
           INSERT INTO public.email_queue_pruning_runs
             (id, policy_version, mode, candidate_count, candidate_checksum)
           VALUES ($1, 'v1', 'dry_run', 1, 'checksum')
         `,
-        [runId]
-      );
-      await client.query(
-        `
+      [runId]
+    );
+    await client.query(
+      `
           INSERT INTO public.email_queue_pruning_run_items
           SELECT $1, q.id, q.updated_at, 80, 'high', 'keep_high', '[]'::jsonb, 'v1'
           FROM public.email_lifecycle_queue AS q
           WHERE q.id = $2
         `,
-        [runId, queueId]
-      );
-      await client.query(`
+      [runId, queueId]
+    );
+    await client.query(`
         INSERT INTO public.email_lifecycle_queue(
           campaign_key, recipient_email, scheduled_for,
           recipient_value_score, recipient_value_band, recipient_value_decision,
@@ -198,13 +193,13 @@ describe.runIf(dockerAvailable)(
         )
       `);
 
-      const applied = await client.query(
-        `SELECT public.apply_email_recipient_value_run($1, 'v1', 1, 'checksum', 'apply') AS result`,
-        [runId]
-      );
-      expect(applied.rows[0].result).toMatchObject({ mode: 'applied', changed_count: 1 });
+    const applied = await client.query(
+      `SELECT public.apply_email_recipient_value_run($1, 'v1', 1, 'checksum', 'apply') AS result`,
+      [runId]
+    );
+    expect(applied.rows[0].result).toMatchObject({ mode: 'applied', changed_count: 1 });
 
-      const secondQueue = await client.query(`
+    const secondQueue = await client.query(`
         INSERT INTO public.email_lifecycle_queue(
           campaign_key, recipient_email, scheduled_for,
           recipient_value_score, recipient_value_band, recipient_value_decision,
@@ -214,43 +209,43 @@ describe.runIf(dockerAvailable)(
           40, 'medium', 'keep_medium', '[]'::jsonb, 'v1', pg_catalog.now()
         ) RETURNING id, updated_at
       `);
-      const secondRunId = randomUUID();
-      await client.query(
-        `
+    const secondRunId = randomUUID();
+    await client.query(
+      `
           INSERT INTO public.email_queue_pruning_runs
             (id, policy_version, mode, candidate_count, candidate_checksum)
           VALUES ($1, 'v1', 'dry_run', 1, 'checksum-2')
         `,
-        [secondRunId]
-      );
-      await client.query(
-        `
+      [secondRunId]
+    );
+    await client.query(
+      `
           INSERT INTO public.email_queue_pruning_run_items
           SELECT $1, q.id, q.updated_at, 80, 'high', 'keep_high', '[]'::jsonb, 'v1'
           FROM public.email_lifecycle_queue AS q
           WHERE q.id = $2
         `,
-        [secondRunId, secondQueue.rows[0].id]
-      );
-      await client.query(
-        `
+      [secondRunId, secondQueue.rows[0].id]
+    );
+    await client.query(
+      `
           UPDATE public.email_lifecycle_queue
           SET updated_at = updated_at + INTERVAL '1 second'
           WHERE id = $1
         `,
-        [secondQueue.rows[0].id]
-      );
-      await expect(
-        client.query(
-          `SELECT public.apply_email_recipient_value_run($1, 'v1', 1, 'checksum-2', 'apply')`,
-          [secondRunId]
-        )
-      ).rejects.toThrow('Recipient-value run item changed');
-    });
+      [secondQueue.rows[0].id]
+    );
+    await expect(
+      client.query(
+        `SELECT public.apply_email_recipient_value_run($1, 'v1', 1, 'checksum-2', 'apply')`,
+        [secondRunId]
+      )
+    ).rejects.toThrow('Recipient-value run item changed');
+  });
 
-    it('rejects incoherent decision and band pairs before applying a run', async () => {
-      if (!client) throw new Error('PostgreSQL test client was not initialized');
-      const fixture = await client.query(`
+  it('rejects incoherent decision and band pairs before applying a run', async () => {
+    if (!client) throw new Error('PostgreSQL test client was not initialized');
+    const fixture = await client.query(`
         INSERT INTO public.email_lifecycle_queue(
           campaign_key, recipient_email, scheduled_for,
           recipient_value_score, recipient_value_band, recipient_value_decision,
@@ -260,40 +255,40 @@ describe.runIf(dockerAvailable)(
           40, 'medium', 'keep_medium', '[]'::jsonb, 'v1', pg_catalog.now()
         ) RETURNING id, updated_at
       `);
-      const runId = randomUUID();
-      await client.query(
-        `
+    const runId = randomUUID();
+    await client.query(
+      `
           INSERT INTO public.email_queue_pruning_runs
             (id, policy_version, mode, candidate_count, candidate_checksum)
           VALUES ($1, 'v1', 'dry_run', 1, 'incoherent-checksum')
         `,
-        [runId]
-      );
-      await client.query(
-        `
+      [runId]
+    );
+    await client.query(
+      `
           INSERT INTO public.email_queue_pruning_run_items
           SELECT $1, q.id, q.updated_at, 80, 'cancel', 'keep_high', '[]'::jsonb, 'v1'
           FROM public.email_lifecycle_queue AS q
           WHERE q.id = $2
         `,
-        [runId, fixture.rows[0].id]
-      );
+      [runId, fixture.rows[0].id]
+    );
 
-      await expect(
-        client.query(
-          `SELECT public.apply_email_recipient_value_run(
+    await expect(
+      client.query(
+        `SELECT public.apply_email_recipient_value_run(
             $1, 'v1', 1, 'incoherent-checksum', 'apply'
           )`,
-          [runId]
-        )
-      ).rejects.toThrow('Recipient-value run contains an unsafe decision');
-    });
+        [runId]
+      )
+    ).rejects.toThrow('Recipient-value run contains an unsafe decision');
+  });
 
-    it('serializes apply against a concurrent run-item mutation', async () => {
-      if (!client || !connectionString) {
-        throw new Error('PostgreSQL test client was not initialized');
-      }
-      const fixture = await client.query(`
+  it('serializes apply against a concurrent run-item mutation', async () => {
+    if (!client || !connectionString) {
+      throw new Error('PostgreSQL test client was not initialized');
+    }
+    const fixture = await client.query(`
         INSERT INTO public.email_lifecycle_queue(
           campaign_key, recipient_email, scheduled_for,
           recipient_value_score, recipient_value_band, recipient_value_decision,
@@ -303,55 +298,55 @@ describe.runIf(dockerAvailable)(
           40, 'medium', 'keep_medium', '[]'::jsonb, 'v1', pg_catalog.now()
         ) RETURNING id
       `);
-      const runId = randomUUID();
-      await client.query(
-        `
+    const runId = randomUUID();
+    await client.query(
+      `
           INSERT INTO public.email_queue_pruning_runs
             (id, policy_version, mode, candidate_count, candidate_checksum)
           VALUES ($1, 'v1', 'dry_run', 1, 'concurrent-checksum')
         `,
-        [runId]
-      );
-      await client.query(
-        `
+      [runId]
+    );
+    await client.query(
+      `
           INSERT INTO public.email_queue_pruning_run_items
           SELECT $1, q.id, q.updated_at, 80, 'high', 'keep_high', '[]'::jsonb, 'v1'
           FROM public.email_lifecycle_queue AS q
           WHERE q.id = $2
         `,
-        [runId, fixture.rows[0].id]
-      );
+      [runId, fixture.rows[0].id]
+    );
 
-      const concurrent = new Client({ connectionString });
-      await concurrent.connect();
-      try {
-        await concurrent.query('BEGIN');
-        await concurrent.query(
-          `
+    const concurrent = new Client({ connectionString });
+    await concurrent.connect();
+    try {
+      await concurrent.query('BEGIN');
+      await concurrent.query(
+        `
             UPDATE public.email_lifecycle_queue
             SET updated_at = updated_at + INTERVAL '1 second'
             WHERE id = $1
           `,
-          [fixture.rows[0].id]
-        );
-        const apply = client.query(
-          `SELECT public.apply_email_recipient_value_run(
+        [fixture.rows[0].id]
+      );
+      const apply = client.query(
+        `SELECT public.apply_email_recipient_value_run(
             $1, 'v1', 1, 'concurrent-checksum', 'apply'
           )`,
-          [runId]
-        );
-        await new Promise(resolve => setTimeout(resolve, 100));
-        await concurrent.query('COMMIT');
-        await expect(apply).rejects.toThrow('Recipient-value run item changed');
-      } finally {
-        await concurrent.query('ROLLBACK').catch(() => undefined);
-        await concurrent.end();
-      }
-    });
+        [runId]
+      );
+      await new Promise(resolve => setTimeout(resolve, 100));
+      await concurrent.query('COMMIT');
+      await expect(apply).rejects.toThrow('Recipient-value run item changed');
+    } finally {
+      await concurrent.query('ROLLBACK').catch(() => undefined);
+      await concurrent.end();
+    }
+  });
 
-    it('releases a deterministic cohort with a hard one-hundred daily ceiling', async () => {
-      if (!client) throw new Error('PostgreSQL test client was not initialized');
-      await client.query(`
+  it('releases a deterministic cohort with a hard one-hundred daily ceiling', async () => {
+    if (!client) throw new Error('PostgreSQL test client was not initialized');
+    await client.query(`
         INSERT INTO public.profiles
         SELECT extensions.gen_random_uuid(), 'PH'
         FROM pg_catalog.generate_series(1, 1500);
@@ -368,62 +363,63 @@ describe.runIf(dockerAvailable)(
         WHERE p.signup_country = 'PH';
       `);
 
-      const first = await client.query(
-        `SELECT public.release_email_recipient_value_holdout(CURRENT_DATE, 100) AS released`
-      );
-      const releasedIds = await client.query(`
+    const first = await client.query(
+      `SELECT public.release_email_recipient_value_holdout(CURRENT_DATE, 100) AS released`
+    );
+    const releasedIds = await client.query(`
         SELECT id
         FROM public.email_lifecycle_queue
         WHERE recipient_value_holdout_released_at IS NOT NULL
         ORDER BY id
       `);
-      const second = await client.query(
-        `SELECT public.release_email_recipient_value_holdout(CURRENT_DATE, 100) AS released`
-      );
-      await client.query(`
+    const second = await client.query(
+      `SELECT public.release_email_recipient_value_holdout(CURRENT_DATE, 100) AS released`
+    );
+    await client.query(`
         UPDATE public.email_lifecycle_queue
         SET recipient_value_holdout_released_at = NULL
         WHERE recipient_value_decision = 'hold_experiment'
       `);
-      const replay = await client.query(
-        `SELECT public.release_email_recipient_value_holdout(CURRENT_DATE, 100) AS released`
-      );
-      const replayedIds = await client.query(`
+    const replay = await client.query(
+      `SELECT public.release_email_recipient_value_holdout(CURRENT_DATE, 100) AS released`
+    );
+    const replayedIds = await client.query(`
         SELECT id
         FROM public.email_lifecycle_queue
         WHERE recipient_value_holdout_released_at IS NOT NULL
         ORDER BY id
       `);
-      await client.query(`
+    await client.query(`
         UPDATE public.email_lifecycle_queue
         SET recipient_value_holdout_released_at =
           recipient_value_holdout_released_at - INTERVAL '1 day'
         WHERE recipient_value_holdout_released_at IS NOT NULL
       `);
-      const dueHoldout = await client.query(`
+    const dueHoldout = await client.query(`
         SELECT id
         FROM public.get_due_email_lifecycle_queue(250, pg_catalog.now())
         WHERE recipient_value_decision = 'hold_experiment'
       `);
-      const health = await client.query(`
+    const health = await client.query(`
         SELECT *
         FROM public.get_email_lifecycle_queue_health(pg_catalog.now())
       `);
 
-      expect(first.rows[0].released).toBe(100);
-      expect(releasedIds.rowCount).toBe(100);
-      expect(second.rows[0].released).toBe(0);
-      expect(replay.rows[0].released).toBe(100);
-      expect(replayedIds.rows).toEqual(releasedIds.rows);
-      expect(dueHoldout.rowCount).toBe(100);
-      expect(Number(health.rows[0].held_count)).toBe(1500);
-      expect(Number(health.rows[0].eligible_count)).toBeGreaterThanOrEqual(100);
-      expect(Number(health.rows[0].unclassified_count)).toBe(0);
-    });
+    expect(first.rows[0].released).toBe(100);
+    expect(releasedIds.rowCount).toBe(100);
+    expect(second.rows[0].released).toBe(0);
+    expect(replay.rows[0].released).toBe(100);
+    expect(replayedIds.rows).toEqual(releasedIds.rows);
+    expect(dueHoldout.rowCount).toBe(100);
+    expect(Number(health.rows[0].held_count)).toBe(1500);
+    expect(Number(health.rows[0].eligible_count)).toBeGreaterThanOrEqual(100);
+    expect(Number(health.rows[0].unclassified_count)).toBe(0);
+  });
 
-    it('halts health on unsubscribe threshold or any provider block event', async () => {
-      if (!client) throw new Error('PostgreSQL test client was not initialized');
-      await client.query(`
+  it('halts health on unsubscribe threshold or any provider block event', async () => {
+    if (!client) throw new Error('PostgreSQL test client was not initialized');
+    // Below the 500-send window the rate is reported but must not halt sending.
+    await client.query(`
         INSERT INTO public.email_lifecycle_events(event_type, campaign_key)
         SELECT 'sent', 'marketing'
         FROM pg_catalog.generate_series(1, 100);
@@ -431,29 +427,47 @@ describe.runIf(dockerAvailable)(
         SELECT 'unsubscribed'
         FROM pg_catalog.generate_series(1, 4);
       `);
-      const unsubscribeHealth = await client.query(`
+    const belowFloor = await client.query(`
         SELECT stop_recommended, unsubscribe_rate
         FROM public.get_email_lifecycle_health(pg_catalog.now() - INTERVAL '1 day')
         WHERE campaign_priority = 'lifecycle'
       `);
-      expect(unsubscribeHealth.rows[0].unsubscribe_rate).toBe('0.0400');
-      expect(unsubscribeHealth.rows[0].stop_recommended).toBe(true);
+    expect(belowFloor.rows[0].unsubscribe_rate).toBe('0.0400');
+    expect(belowFloor.rows[0].stop_recommended).toBe(false);
 
-      await client.query(`
+    // Same 4% rate over a 500-send window must halt.
+    await client.query(`
+        INSERT INTO public.email_lifecycle_events(event_type, campaign_key)
+        SELECT 'sent', 'marketing'
+        FROM pg_catalog.generate_series(1, 400);
+        INSERT INTO public.email_lifecycle_events(event_type)
+        SELECT 'unsubscribed'
+        FROM pg_catalog.generate_series(1, 16);
+      `);
+    const unsubscribeHealth = await client.query(`
+        SELECT stop_recommended, unsubscribe_rate
+        FROM public.get_email_lifecycle_health(pg_catalog.now() - INTERVAL '1 day')
+        WHERE campaign_priority = 'lifecycle'
+      `);
+    expect(unsubscribeHealth.rows[0].unsubscribe_rate).toBe('0.0400');
+    expect(unsubscribeHealth.rows[0].stop_recommended).toBe(true);
+
+    // An account block is categorical: it halts with no volume floor at all.
+    await client.query(`
         DELETE FROM public.email_lifecycle_events WHERE event_type = 'unsubscribed';
+        DELETE FROM public.email_lifecycle_events WHERE event_type = 'sent';
         INSERT INTO public.email_lifecycle_events(event_type, campaign_key, metadata)
         VALUES (
           'failed', 'marketing',
           '{"classification":"provider_blocked","error":"provider_blocked"}'::jsonb
         );
       `);
-      const blockHealth = await client.query(`
+    const blockHealth = await client.query(`
         SELECT stop_recommended, provider_block_count
         FROM public.get_email_lifecycle_health(pg_catalog.now() - INTERVAL '1 day')
         WHERE campaign_priority = 'lifecycle'
       `);
-      expect(Number(blockHealth.rows[0].provider_block_count)).toBe(1);
-      expect(blockHealth.rows[0].stop_recommended).toBe(true);
-    });
-  }
-);
+    expect(Number(blockHealth.rows[0].provider_block_count)).toBe(1);
+    expect(blockHealth.rows[0].stop_recommended).toBe(true);
+  });
+});

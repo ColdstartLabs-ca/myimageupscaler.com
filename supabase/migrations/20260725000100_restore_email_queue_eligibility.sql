@@ -702,13 +702,17 @@ AS $$
     pg_catalog.round(m.complaint_count::NUMERIC / NULLIF(m.sent_count, 0), 4),
     pg_catalog.round(g.unsubscribe_count::NUMERIC / NULLIF(g.sent_count, 0), 4),
     (
+      -- An account block is categorical, not statistical: stop on the first one.
       g.provider_block_count > 0
-      OR m.hard_bounce_count::NUMERIC / NULLIF(m.sent_count, 0) > 0.02
-      OR g.unsubscribe_count::NUMERIC / NULLIF(g.sent_count, 0) > 0.03
+      -- Every rate threshold stays behind the rolling 500-send window. The gate is
+      -- called with a 24h window at ~100-200 sends/day, so an unguarded rate would
+      -- let a handful of bounces or unsubscribes halt the whole queue.
       OR (
         m.sent_count + m.provider_failure_count >= 500
         AND (
-          m.complaint_count::NUMERIC / NULLIF(m.sent_count, 0) > 0.001
+          m.hard_bounce_count::NUMERIC / NULLIF(m.sent_count, 0) > 0.02
+          OR g.unsubscribe_count::NUMERIC / NULLIF(g.sent_count, 0) > 0.03
+          OR m.complaint_count::NUMERIC / NULLIF(m.sent_count, 0) > 0.001
           OR m.provider_failure_count::NUMERIC /
             NULLIF(m.sent_count + m.provider_failure_count, 0) > 0.05
         )
