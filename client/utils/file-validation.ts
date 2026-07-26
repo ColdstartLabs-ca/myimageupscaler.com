@@ -28,8 +28,17 @@ const MAGIC_BYTE_SIGNATURES: Record<string, number[]> = {
   'image/webp': [0x52, 0x49, 0x46, 0x46],
 };
 
+/** Brands that identify an ISO base-media file as HEIC/HEIF rather than video. */
+const HEIF_BRANDS = ['heic', 'heix', 'hevc', 'hevx', 'heim', 'heis', 'mif1', 'msf1'];
+
 function normalizeMimeType(mimeType: string): string {
   return mimeType.toLowerCase() === 'image/jpg' ? 'image/jpeg' : mimeType.toLowerCase();
+}
+
+function isAllowedType(mimeType: string): boolean {
+  return (IMAGE_VALIDATION.ALLOWED_TYPES as readonly string[]).includes(
+    normalizeMimeType(mimeType)
+  );
 }
 
 async function detectFileMimeType(file: File): Promise<string | null> {
@@ -57,13 +66,11 @@ async function detectFileMimeType(file: File): Promise<string | null> {
     }
   }
 
-  if (
-    header[4] === 0x66 &&
-    header[5] === 0x74 &&
-    header[6] === 0x79 &&
-    header[7] === 0x70
-  ) {
-    return 'image/heic';
+  // ISO base-media container ('ftyp'). Only report HEIC when the brand at bytes
+  // 8-11 is an actual HEIF brand — otherwise this matches MP4/MOV/M4A too.
+  if (header[4] === 0x66 && header[5] === 0x74 && header[6] === 0x79 && header[7] === 0x70) {
+    const brand = String.fromCharCode(header[8], header[9], header[10], header[11]).toLowerCase();
+    return HEIF_BRANDS.includes(brand) ? 'image/heic' : null;
   }
 
   return null;
@@ -113,12 +120,10 @@ export function exceedsMaxPixels(
  * Note: Dimension validation requires async loading, use validateImageFileWithDimensions for full validation
  */
 export function validateImageFile(file: File, isPaidUser: boolean): IFileValidationResult {
-  // Check file type
-  if (
-    !IMAGE_VALIDATION.ALLOWED_TYPES.includes(
-      file.type as 'image/jpeg' | 'image/png' | 'image/webp' | 'image/heic'
-    )
-  ) {
+  // Check file type. An absent `file.type` is missing information, not evidence of a
+  // bad file (common on mobile and some drag-and-drop paths), so it is allowed through
+  // here and resolved by magic-byte sniffing in validateImageFileWithDimensions.
+  if (file.type !== '' && !isAllowedType(file.type)) {
     return { valid: false, reason: 'type' };
   }
 
@@ -146,7 +151,12 @@ export async function validateImageFileWithDimensions(
     return basicResult;
   }
 
-  const claimedMimeType = normalizeMimeType(file.type);
+  // The detected content type is authoritative; `file.type` is only a hint. A file
+  // whose content is a supported image is accepted even when the browser labelled it
+  // as a different supported format (a real PNG named .jpg is a normal user file, not
+  // an attack). The security property is unchanged: content must still sniff to a
+  // supported image format, and an attacker controls the claimed label anyway — so
+  // requiring the two to agree only ever rejected honest uploads.
   const detectedMimeType = await detectFileMimeType(file);
   if (!detectedMimeType) {
     return {
@@ -156,12 +166,12 @@ export async function validateImageFileWithDimensions(
     };
   }
 
-  if (claimedMimeType !== detectedMimeType) {
+  if (!isAllowedType(detectedMimeType)) {
     return {
       valid: false,
       reason: 'type',
       detectedMimeType,
-      errorMessage: `MIME type mismatch: claimed ${claimedMimeType}, detected ${detectedMimeType}`,
+      errorMessage: `Unsupported image format: ${detectedMimeType}`,
     };
   }
 

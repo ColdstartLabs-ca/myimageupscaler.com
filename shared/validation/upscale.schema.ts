@@ -257,14 +257,25 @@ const MAGIC_BYTES = {
   'image/gif': [0x47, 0x49, 0x46], // GIF87a or GIF89a
 } as const;
 
+/** Brands that identify an ISO base-media file as HEIC/HEIF rather than video. */
+const HEIF_BRANDS = ['heic', 'heix', 'hevc', 'hevx', 'heim', 'heis', 'mif1', 'msf1'];
+
 /**
- * Validate image magic bytes against claimed MIME type
+ * Resolve the true image format from magic bytes.
+ *
+ * Returns `valid: true` with `detectedMimeType` whenever the content is a recognized
+ * image format. It does NOT check that format against any allowlist — callers must do
+ * that against `detectedMimeType`, never against the client-supplied value.
+ *
  * @param imageData - Base64 encoded image data
- * @param claimedMimeType - MIME type claimed by client
+ * @param _claimedMimeType - IGNORED. Retained so existing call sites keep compiling.
+ *   The client-supplied MIME type is a hint, not evidence: an attacker sets it freely,
+ *   so comparing it against the detected type rejected honest uploads without adding
+ *   any protection. See git history for 2026-07-25.
  */
 export function validateMagicBytes(
   imageData: string,
-  claimedMimeType: string
+  _claimedMimeType?: string
 ): IImageValidationResult & { detectedMimeType?: string } {
   try {
     // Extract base64 data
@@ -301,7 +312,9 @@ export function validateMagicBytes(
       }
     }
 
-    // HEIC detection (more complex, check for ftyp box)
+    // HEIC detection: an ISO base-media 'ftyp' box, but only when the brand at bytes
+    // 8-11 is an actual HEIF brand. Without the brand check this also matches MP4,
+    // MOV and M4A, letting video through as image/heic.
     if (
       !detectedMimeType &&
       bytes[4] === 0x66 &&
@@ -309,7 +322,10 @@ export function validateMagicBytes(
       bytes[6] === 0x79 &&
       bytes[7] === 0x70
     ) {
-      detectedMimeType = 'image/heic';
+      const brand = String.fromCharCode(bytes[8], bytes[9], bytes[10], bytes[11]).toLowerCase();
+      if (HEIF_BRANDS.includes(brand)) {
+        detectedMimeType = 'image/heic';
+      }
     }
 
     if (!detectedMimeType) {
@@ -319,18 +335,15 @@ export function validateMagicBytes(
       };
     }
 
-    // Normalize MIME types for comparison
-    const normalizedClaimed = claimedMimeType.toLowerCase();
-    const normalizedDetected = detectedMimeType.toLowerCase();
-
-    if (normalizedClaimed !== normalizedDetected) {
-      return {
-        valid: false,
-        error: `MIME type mismatch: claimed ${normalizedClaimed}, detected ${normalizedDetected}`,
-        detectedMimeType,
-      };
-    }
-
+    // The detected type is authoritative and the claimed type is only a hint, so a
+    // disagreement between two real image formats is not an error — a genuine PNG
+    // labelled image/png-vs-jpeg is an ordinary user file. Callers must enforce their
+    // allowlist against `detectedMimeType`, not against the client-supplied value.
+    //
+    // This does not weaken the guarantee that motivated magic-byte validation: content
+    // must still resolve to a recognized image format before it reaches any AI provider.
+    // Requiring claimed === detected never added protection, because an attacker sets
+    // the claimed label themselves; it only rejected honest uploads.
     return { valid: true, detectedMimeType };
   } catch {
     return {

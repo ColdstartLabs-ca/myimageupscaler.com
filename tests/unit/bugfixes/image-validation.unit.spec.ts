@@ -349,20 +349,47 @@ describe('Bug Fix: Magic Byte Validation', () => {
       expect(result.detectedMimeType).toBe('image/gif');
     });
 
-    test('should reject JPEG claimed as PNG (MIME mismatch)', () => {
+    /**
+     * Policy change (2026-07-25): content is authoritative, the claimed MIME is a hint.
+     * A real JPEG labelled image/png is a normal user file (renamed, re-saved, exported
+     * by a phone gallery) and is accepted; the caller enforces the allowlist against the
+     * *detected* type. Requiring claimed === detected protected nothing — an attacker
+     * sets the label to match — while rejecting ~438 valid PNG/JPEG uploads per 30 days.
+     */
+    test('should accept JPEG claimed as PNG and report the detected type', () => {
       const jpegBase64 = bytesToBase64(jpegMagicBytes);
       const result = validateMagicBytes(jpegBase64, 'image/png');
-      expect(result.valid).toBe(false);
-      expect(result.error).toContain('MIME type mismatch');
+      expect(result.valid).toBe(true);
       expect(result.detectedMimeType).toBe('image/jpeg');
     });
 
-    test('should reject PNG claimed as JPEG (MIME mismatch)', () => {
+    test('should accept PNG claimed as JPEG and report the detected type', () => {
       const pngBase64 = bytesToBase64(pngMagicBytes);
       const result = validateMagicBytes(pngBase64, 'image/jpeg');
-      expect(result.valid).toBe(false);
-      expect(result.error).toContain('MIME type mismatch');
+      expect(result.valid).toBe(true);
       expect(result.detectedMimeType).toBe('image/png');
+    });
+
+    /**
+     * Guards the false-accept direction of the 2026-07-25 policy change. GIF is a
+     * recognized format in MAGIC_BYTES but is NOT in ALLOWED_TYPES. Since the claimed
+     * type is no longer compared, the *only* thing keeping GIF out is the caller
+     * enforcing ALLOWED_TYPES against detectedMimeType. If that check is ever removed
+     * from the upscale route, this pairing is what makes the hole visible.
+     */
+    test('should detect GIF but leave it outside the allowlist for callers to reject', () => {
+      const result = validateMagicBytes(bytesToBase64(gifMagicBytes), 'image/png');
+      expect(result.valid).toBe(true);
+      expect(result.detectedMimeType).toBe('image/gif');
+      expect(IMAGE_VALIDATION.ALLOWED_TYPES).not.toContain('image/gif');
+    });
+
+    test('should reject an ISO base-media file without a HEIF brand (video, not image)', () => {
+      // 'ftyp' + 'mp42' — an MP4. Previously reported as image/heic.
+      const mp4Bytes = [0x00, 0x00, 0x00, 0x00, 0x66, 0x74, 0x79, 0x70, 0x6d, 0x70, 0x34, 0x32];
+      const result = validateMagicBytes(bytesToBase64(mp4Bytes), 'image/heic');
+      expect(result.valid).toBe(false);
+      expect(result.error).toContain('Unrecognized image format');
     });
 
     test('should reject unrecognized image format', () => {
@@ -386,9 +413,10 @@ describe('Bug Fix: Magic Byte Validation', () => {
       expect(result.valid).toBe(true);
     });
 
-    test('should detect HEIC format (ftyp box)', () => {
-      // HEIC detection looks for 'ftyp' at offset 4-7
-      const heicBytes = [0x00, 0x00, 0x00, 0x00, 0x66, 0x74, 0x79, 0x70];
+    test('should detect HEIC format (ftyp box with a HEIF brand)', () => {
+      // 'ftyp' at offset 4-7, then the brand at 8-11. A real HEIC always carries a
+      // brand; the previous fixture had none, which is why MP4s were passing as HEIC.
+      const heicBytes = [0x00, 0x00, 0x00, 0x00, 0x66, 0x74, 0x79, 0x70, 0x68, 0x65, 0x69, 0x63];
       const heicBase64 = bytesToBase64(heicBytes);
       const result = validateMagicBytes(heicBase64, 'image/heic');
       expect(result.valid).toBe(true);

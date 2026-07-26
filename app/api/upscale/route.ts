@@ -27,6 +27,7 @@ import { isAccountSetupPending, isFreeleaderBlocked } from '@/lib/anti-freeloade
 import { ErrorCodes, createErrorResponse, serializeError } from '@shared/utils/errors';
 import {
   decodeImageDimensions,
+  IMAGE_VALIDATION,
   upscaleSchema,
   validateImageDimensions,
   validateImageSizeForTier,
@@ -498,7 +499,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json(errorBody, { status });
     }
 
-    // 8a. Validate magic bytes match claimed MIME type
+    // 8a. Resolve the real image format from magic bytes. The client-supplied MIME is
+    // only a hint — the detected type is what we validate against and use downstream.
     const magicValidation = validateMagicBytes(validatedInput.imageData, validatedInput.mimeType);
     if (!magicValidation.valid) {
       logFailure('magic_bytes_validation_failed', {
@@ -512,6 +514,24 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
       return NextResponse.json(errorBody, { status });
     }
+
+    // 8a-ii. Enforce the allowlist against the detected format, not the claimed one.
+    const detectedMimeType = magicValidation.detectedMimeType ?? validatedInput.mimeType;
+    if (!(IMAGE_VALIDATION.ALLOWED_TYPES as readonly string[]).includes(detectedMimeType)) {
+      logFailure('unsupported_image_format', {
+        claimedMime: validatedInput.mimeType,
+        detectedMime: detectedMimeType,
+      });
+      const { body: errorBody, status } = createErrorResponse(
+        ErrorCodes.VALIDATION_ERROR,
+        `Unsupported image format: ${detectedMimeType}`,
+        400
+      );
+      return NextResponse.json(errorBody, { status });
+    }
+
+    // Downstream consumers must see the true format, not what the browser guessed.
+    const effectiveMimeType = detectedMimeType as typeof validatedInput.mimeType;
 
     // 8b. Decode and validate input dimensions
     inputDimensions = decodeImageDimensions(validatedInput.imageData);
@@ -582,7 +602,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       const analysis = await analyzeImageForProcessing(validatedInput.imageData, {
         suggestTier: true,
         userTier: userTier || 'free',
-        mimeType: validatedInput.mimeType,
+        mimeType: effectiveMimeType,
       });
       resolvedTier = analysis.recommendedTier || 'quick';
       resolvedModelId = (getModelForTier(resolvedTier) || 'real-esrgan') as ModelId;
@@ -616,7 +636,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       const analysis = await analyzeImageForProcessing(validatedInput.imageData, {
         suggestTier: false, // Important: Don't ask AI for model recommendation
         userTier: userTier || 'free',
-        mimeType: validatedInput.mimeType,
+        mimeType: effectiveMimeType,
       });
       resolvedTier = config.qualityTier;
       resolvedModelId = (getModelForTier(resolvedTier) || 'real-esrgan') as ModelId;
@@ -883,7 +903,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Map new quality tier system to legacy format that processors understand
     const legacyInputForProcessor = {
       imageData: validatedInput.imageData,
-      mimeType: validatedInput.mimeType,
+      mimeType: effectiveMimeType,
       enhancementPrompt: validatedInput.enhancementPrompt,
       config: {
         // New quality tier system - required by calculateCreditCost

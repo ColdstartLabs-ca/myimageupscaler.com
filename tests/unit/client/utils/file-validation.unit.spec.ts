@@ -316,13 +316,100 @@ describe('processFilesAsync', () => {
     expect(result.errorMessage).toBeNull();
   });
 
-  it('should reject MIME type mismatches before upload', async () => {
+  /**
+   * Policy change (2026-07-25): the detected content type is authoritative and the
+   * browser-supplied `file.type` is only a hint. A mismatch between two *supported*
+   * formats (e.g. a real PNG named .jpg) is a normal user file, not an attack, and
+   * is now accepted. Previously this rejected ~438 valid PNG/JPEG uploads per 30d.
+   *
+   * The security property is unchanged: content must still sniff to a recognized,
+   * supported image format. The old claimed-vs-detected equality check protected
+   * nothing, because an attacker controls the claimed label and would simply set it
+   * to match — it only ever blocked honest users.
+   */
+  it('should accept a real PNG that claims to be a JPEG (both supported)', async () => {
     const file = new File([imageBytes('image/png')], 'actually-png.jpg', { type: 'image/jpeg' });
+
+    const result = await processFilesAsync([file], false);
+
+    expect(result.validFiles).toEqual([file]);
+    expect(result.invalidTypeFiles).toHaveLength(0);
+    expect(result.errorMessage).toBeNull();
+  });
+
+  it('should accept the image/jpg alias for JPEG content', async () => {
+    const file = new File([imageBytes('image/jpeg')], 'photo.jpg', { type: 'image/jpg' });
+
+    const result = await processFilesAsync([file], false);
+
+    expect(result.validFiles).toEqual([file]);
+    expect(result.invalidTypeFiles).toHaveLength(0);
+  });
+
+  it('should accept a file with an empty MIME type when content sniffs as supported', async () => {
+    const file = new File([imageBytes('image/png')], 'no-type.png', { type: '' });
+
+    const result = await processFilesAsync([file], false);
+
+    expect(result.validFiles).toEqual([file]);
+    expect(result.invalidTypeFiles).toHaveLength(0);
+  });
+
+  it('should reject a video even when it claims to be an image', async () => {
+    // ISO base-media 'ftyp' at offset 4 with an mp42 brand — not a HEIC image
+    const mp4 = new Uint8Array(16);
+    mp4.set([0x66, 0x74, 0x79, 0x70], 4); // ftyp
+    mp4.set([0x6d, 0x70, 0x34, 0x32], 8); // mp42
+    const file = new File([mp4], 'clip.mp4', { type: 'image/png' });
 
     const result = await processFilesAsync([file], false);
 
     expect(result.validFiles).toHaveLength(0);
     expect(result.invalidTypeFiles).toEqual([file]);
-    expect(result.errorMessage).toContain('valid image formats');
+  });
+
+  it('should accept a genuine HEIC (ftyp with a heic brand)', async () => {
+    const heic = new Uint8Array(16);
+    heic.set([0x66, 0x74, 0x79, 0x70], 4); // ftyp
+    heic.set([0x68, 0x65, 0x69, 0x63], 8); // heic
+    const file = new File([heic], 'photo.heic', { type: 'image/heic' });
+
+    const result = await processFilesAsync([file], false);
+
+    expect(result.validFiles).toEqual([file]);
+    expect(result.invalidTypeFiles).toHaveLength(0);
+  });
+
+  it('should reject a GIF even though it is a real image format', async () => {
+    // GIF is a valid image but is not in ALLOWED_TYPES. Guards the false-accept
+    // direction: relaxing the claimed-vs-detected check must not widen the allowlist.
+    const gif = new Uint8Array(16);
+    gif.set([0x47, 0x49, 0x46], 0); // GIF
+    const file = new File([gif], 'anim.gif', { type: 'image/png' });
+
+    const result = await processFilesAsync([file], false);
+
+    expect(result.validFiles).toHaveLength(0);
+    expect(result.invalidTypeFiles).toEqual([file]);
+  });
+
+  it('should still reject unrecognized content claiming to be an image', async () => {
+    const garbage = new File([new Uint8Array(16)], 'payload.png', { type: 'image/png' });
+
+    const result = await processFilesAsync([garbage], false);
+
+    expect(result.validFiles).toHaveLength(0);
+    expect(result.invalidTypeFiles).toEqual([garbage]);
+  });
+
+  it('should still reject oversized files regardless of the relaxed type check', async () => {
+    const big = new File([imageBytes('image/png', 6 * 1024 * 1024)], 'big.jpg', {
+      type: 'image/jpeg',
+    });
+
+    const result = await processFilesAsync([big], false);
+
+    expect(result.validFiles).toHaveLength(0);
+    expect(result.oversizedFiles).toEqual([big]);
   });
 });
