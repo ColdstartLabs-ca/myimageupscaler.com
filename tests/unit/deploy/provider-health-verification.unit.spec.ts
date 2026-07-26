@@ -5,7 +5,37 @@ import { spawnSync } from 'node:child_process';
 import { describe, expect, test } from 'vitest';
 
 const verifyScriptPath = path.resolve(process.cwd(), 'scripts/deploy/steps/06-verify.sh');
+const preflightScriptPath = path.resolve(process.cwd(), 'scripts/deploy/steps/01-preflight.sh');
+const secretsScriptPath = path.resolve(process.cwd(), 'scripts/deploy/steps/05-secrets.sh');
 const verifyScript = readFileSync(verifyScriptPath, 'utf8');
+const preflightScript = readFileSync(preflightScriptPath, 'utf8');
+const secretsScript = readFileSync(secretsScriptPath, 'utf8');
+
+function runProviderObservabilityPreflight(overrides: Partial<Record<string, string>> = {}) {
+  return spawnSync(
+    'bash',
+    [
+      '-c',
+      `set -euo pipefail
+log_success() { :; }
+log_error() { printf '%s\\n' "$1" >&2; exit 1; }
+source "$PREFLIGHT_SCRIPT"
+_check_provider_observability`,
+    ],
+    {
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        BASELIME_API_KEY: 'baselime-key',
+        BREVO_API_KEY: '',
+        CLOUDFLARE_EMAIL_API_TOKEN: 'email-key',
+        PREFLIGHT_SCRIPT: preflightScriptPath,
+        PROVIDER_ALERT_EMAIL: 'alerts@example.com',
+        ...overrides,
+      },
+    }
+  );
+}
 
 function runProviderHealthVerification({
   responseBody = '{"success":true,"alerted":false}',
@@ -80,6 +110,39 @@ _verify_provider_health_cron "https://example.com"`,
 }
 
 describe('provider health deployment verification', () => {
+  test('blocks deployment without provider observability and alert delivery settings', () => {
+    expect(preflightScript).toContain('BASELIME_API_KEY');
+    expect(preflightScript).toContain('PROVIDER_ALERT_EMAIL');
+    expect(preflightScript).toContain('CLOUDFLARE_EMAIL_API_TOKEN');
+    expect(preflightScript).toContain('BREVO_API_KEY');
+  });
+
+  test('uploads provider observability and alert routing settings', () => {
+    expect(secretsScript).toContain('BASELIME_API_KEY');
+    expect(secretsScript).toContain('PROVIDER_ALERT_EMAIL');
+  });
+
+  test('accepts a configured logger, alert destination, and email provider', () => {
+    expect(runProviderObservabilityPreflight().status).toBe(0);
+    expect(
+      runProviderObservabilityPreflight({
+        BREVO_API_KEY: 'brevo-key',
+        CLOUDFLARE_EMAIL_API_TOKEN: '',
+      }).status
+    ).toBe(0);
+  });
+
+  test.each([
+    [{ BASELIME_API_KEY: '' }, 'Missing BASELIME_API_KEY'],
+    [{ PROVIDER_ALERT_EMAIL: '' }, 'Missing PROVIDER_ALERT_EMAIL'],
+    [{ BREVO_API_KEY: '', CLOUDFLARE_EMAIL_API_TOKEN: '' }, 'Missing alert delivery provider'],
+  ])('blocks deployment when provider paging is inert', (overrides, expectedError) => {
+    const result = runProviderObservabilityPreflight(overrides);
+
+    expect(result.status).not.toBe(0);
+    expect(result.stderr).toContain(expectedError);
+  });
+
   test('calls the authenticated provider-health cron route after deployment', () => {
     expect(verifyScript).toContain('_verify_provider_health_cron "$url"');
     expect(verifyScript).toContain('-X POST "$url/api/cron/provider-health"');

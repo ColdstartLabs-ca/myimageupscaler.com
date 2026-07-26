@@ -9,6 +9,10 @@ const healthMigration = readFileSync(
   'supabase/migrations/20260726132000_provider_health_circuit.sql',
   'utf8'
 );
+const billingAlertMigration = readFileSync(
+  'supabase/migrations/20260726133000_immediate_provider_billing_alert.sql',
+  'utf8'
+);
 
 describe('provider outage database contracts', () => {
   it('should release quota atomically without allowing a negative count', () => {
@@ -32,5 +36,15 @@ describe('provider outage database contracts', () => {
     expect(healthMigration).toContain('p_min_attempts INTEGER DEFAULT 5');
     expect(healthMigration).toContain('p_failure_ratio NUMERIC DEFAULT 0.5');
     expect(healthMigration).toMatch(/last_alerted_at\s*=\s*NOW\(\)/);
+  });
+
+  it('should alert on the first provider billing failure without weakening rate alerts', () => {
+    expect(billingAlertMigration).toContain('v_billing_failures > 0');
+    expect(billingAlertMigration).toContain('v_attempts >= p_min_attempts');
+    expect(billingAlertMigration).toContain('v_ratio >= p_failure_ratio');
+    expect(billingAlertMigration).toContain('p_alert_cooldown_minutes');
+    expect(billingAlertMigration).toContain(
+      'GRANT EXECUTE ON FUNCTION public.claim_provider_health_alert'
+    );
   });
 });

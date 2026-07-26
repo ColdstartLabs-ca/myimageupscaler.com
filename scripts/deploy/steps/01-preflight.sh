@@ -15,6 +15,8 @@ step_preflight() {
     done
     log_success "Stripe credentials"
 
+    _check_provider_observability
+
     # Wrangler auth
     if ! npx wrangler whoami &>/dev/null; then
         log_info "Running wrangler login..."
@@ -36,6 +38,17 @@ step_preflight() {
 
     # Stripe products check (informational only)
     check_stripe_products
+}
+
+_check_provider_observability() {
+    # Provider incidents must be observable and able to page an operator.
+    for var in BASELIME_API_KEY PROVIDER_ALERT_EMAIL; do
+        [[ -z "${!var:-}" ]] && log_error "Missing $var in .env.api"
+    done
+    if [[ -z "${CLOUDFLARE_EMAIL_API_TOKEN:-}" && -z "${BREVO_API_KEY:-}" ]]; then
+        log_error "Missing alert delivery provider: set CLOUDFLARE_EMAIL_API_TOKEN or BREVO_API_KEY"
+    fi
+    log_success "Provider observability and alert delivery"
 }
 
 # Block deployment if a test key is being used outside of test/dev environment
