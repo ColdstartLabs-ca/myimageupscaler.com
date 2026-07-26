@@ -11,6 +11,7 @@ export enum ReplicateErrorCode {
   SAFETY = 'SAFETY',
   TIMEOUT = 'TIMEOUT',
   IMAGE_TOO_LARGE = 'IMAGE_TOO_LARGE', // GPU OOM - image exceeds hardware limits
+  PROVIDER_UNAVAILABLE = 'PROVIDER_UNAVAILABLE',
   PROCESSING_FAILED = 'PROCESSING_FAILED',
   NO_OUTPUT = 'NO_OUTPUT',
   GENERIC = 'REPLICATE_ERROR',
@@ -21,11 +22,13 @@ export enum ReplicateErrorCode {
  */
 export class ReplicateError extends Error {
   public readonly code: string;
+  public readonly providerStatus?: number;
 
-  constructor(message: string, code: string = ReplicateErrorCode.GENERIC) {
+  constructor(message: string, code: string = ReplicateErrorCode.GENERIC, providerStatus?: number) {
     super(message);
     this.name = 'ReplicateError';
     this.code = code;
+    this.providerStatus = providerStatus;
   }
 }
 
@@ -70,6 +73,22 @@ export class ReplicateErrorMapper {
     const message = serializeError(error);
     const lowerMessage = message.toLowerCase();
     const statusCode = this.extractStatusCode(error);
+
+    // Provider-side billing failures are an infrastructure outage from the
+    // customer's perspective. Never preserve the provider's purchase prompt.
+    if (
+      statusCode === 402 ||
+      (lowerMessage.includes('402') &&
+        (lowerMessage.includes('payment required') ||
+          lowerMessage.includes('insufficient credit') ||
+          lowerMessage.includes('billing')))
+    ) {
+      return new ReplicateError(
+        'Image processing is temporarily unavailable due to a provider issue. Your credits have not been charged. Please try again shortly or contact our support team.',
+        ReplicateErrorCode.PROVIDER_UNAVAILABLE,
+        402
+      );
+    }
 
     // Check for rate limit errors
     if (isRateLimitError(message)) {

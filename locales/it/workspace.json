@@ -241,5 +241,12 @@
     "finish": "Fine",
     "stepOf": "Passo {current} di {total}",
     "showTour": "Mostrami come"
+  },
+  "providerUnavailable": {
+    "title": "L’elaborazione delle immagini è temporaneamente non disponibile",
+    "message": "Il nostro fornitore di elaborazione delle immagini sta riscontrando un problema. Riprova tra poco.",
+    "creditsSafe": "I tuoi crediti non sono stati addebitati.",
+    "contactSupport": "Se hai bisogno di aiuto, contatta il nostro team di assistenza:",
+    "close": "Chiudi"
   }
 }

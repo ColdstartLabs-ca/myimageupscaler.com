@@ -9,6 +9,8 @@ compatibility_flags = ["nodejs_compat"]
 # Cron Triggers
 [triggers]
 crons = [
+  # Provider failure-rate monitoring - every 5 minutes
+  "*/5 * * * *",
   # Webhook recovery - every 15 minutes
   "*/15 * * * *",
   # Expiration check - every hour at :05

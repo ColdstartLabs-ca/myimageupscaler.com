@@ -58,6 +58,7 @@ import { AfterUpscaleBanner } from './AfterUpscaleBanner';
 import { BatchLimitModal } from './BatchLimitModal';
 import { ModelGalleryModal } from './ModelGalleryModal';
 import { PostDownloadPrompt } from './PostDownloadPrompt';
+import { ProviderUnavailableModal } from './ProviderUnavailableModal';
 import { ProgressSteps, checkIsFirstTimeUser, markFirstUploadCompleted } from './ProgressSteps';
 import { SampleImageSelector } from './SampleImageSelector';
 import { ISampleImage } from '@shared/config/sample-images.config';
@@ -78,6 +79,7 @@ const Workspace: React.FC = () => {
     completedCount,
     batchLimit,
     batchLimitExceeded,
+    providerUnavailable,
     setActiveId,
     addFiles,
     addSampleItem,
@@ -86,6 +88,7 @@ const Workspace: React.FC = () => {
     processBatch,
     processSingleItem,
     clearBatchLimitError,
+    clearProviderUnavailable,
   } = useBatchQueue();
 
   const { isFreeUser, profile, isAuthenticated, totalCredits } = useUserData();
@@ -940,6 +943,8 @@ const Workspace: React.FC = () => {
         onQuickBuy={handleBatchLimitQuickBuy}
         serverEnforced={batchLimitExceeded?.serverEnforced}
       />
+
+      <ProviderUnavailableModal isOpen={!!providerUnavailable} onClose={clearProviderUnavailable} />
 
       {showCelebration && (
         <FirstDownloadCelebration

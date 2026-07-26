@@ -322,6 +322,7 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
       'checkout-recovery': 'CheckoutRecoveryEmail',
       'credit-wall-recovery': 'CreditWallRecoveryEmail',
       'auto-top-up-failure': 'AutoTopUpFailureEmail',
+      'provider-incident': 'ProviderIncidentEmail',
     };
 
     const exportName = templateExportNames[templateName];
@@ -347,6 +348,7 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
       'checkout-recovery': () => import('@/emails/templates/CheckoutRecoveryEmail'),
       'credit-wall-recovery': () => import('@/emails/templates/CreditWallRecoveryEmail'),
       'auto-top-up-failure': () => import('@/emails/templates/AutoTopUpFailureEmail'),
+      'provider-incident': () => import('@/emails/templates/ProviderIncidentEmail'),
     };
     /* eslint-enable no-restricted-syntax */
 
@@ -387,6 +389,7 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
           ? 'You are close to your free upscale limit'
           : 'Finish more images with more credits',
       'auto-top-up-failure': 'Your auto top-up needs attention',
+      'provider-incident': 'URGENT: image processing provider incident',
       'password-reset': 'Reset your password',
       'support-request': d =>
         `[Support] [${String(d.category || 'GENERAL').toUpperCase()}] ${d.subject || 'Support Request'}`,

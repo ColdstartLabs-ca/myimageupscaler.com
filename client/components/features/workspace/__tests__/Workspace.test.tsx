@@ -88,6 +88,9 @@ vi.mock('lucide-react', () => ({
 vi.mock('../BatchLimitModal', () => ({
   BatchLimitModal: () => null,
 }));
+vi.mock('../ProviderUnavailableModal', () => ({
+  ProviderUnavailableModal: () => null,
+}));
 
 // Mock UpgradeSuccessBanner
 vi.mock('../UpgradeSuccessBanner', () => ({

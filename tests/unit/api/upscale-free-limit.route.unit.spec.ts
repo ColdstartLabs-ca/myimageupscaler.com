@@ -3,6 +3,7 @@ import { NextRequest } from 'next/server';
 
 const mocks = vi.hoisted(() => ({
   batchCheck: vi.fn(),
+  batchRelease: vi.fn(),
   ensureProfile: vi.fn(),
   from: vi.fn(),
   InsufficientCreditsError: class InsufficientCreditsError extends Error {
@@ -13,7 +14,23 @@ const mocks = vi.hoisted(() => ({
       this.availableCredits = availableCredits;
     }
   },
+  ReplicateError: class ReplicateError extends Error {
+    code: string;
+    providerStatus?: number;
+
+    constructor(message: string, code: string, providerStatus?: number) {
+      super(message);
+      this.name = 'ReplicateError';
+      this.code = code;
+      this.providerStatus = providerStatus;
+    }
+  },
+  refundCredits: vi.fn(),
   processImage: vi.fn(),
+  providerAvailability: vi.fn(),
+  acquireProviderPermit: vi.fn(),
+  recordProviderFailure: vi.fn(),
+  recordProviderSuccess: vi.fn(),
   rateLimit: vi.fn(),
   setupPending: vi.fn(),
   track: vi.fn(),
@@ -25,7 +42,7 @@ vi.mock('@server/monitoring/logger', () => ({
 }));
 vi.mock('@server/rateLimit', () => ({ upscaleRateLimit: { limit: mocks.rateLimit } }));
 vi.mock('@server/services/batch-limit.service', () => ({
-  batchLimitCheck: { checkAndIncrement: mocks.batchCheck },
+  batchLimitCheck: { checkAndIncrement: mocks.batchCheck, release: mocks.batchRelease },
 }));
 vi.mock('@server/services/anti-freeloader.service', () => ({
   ensureAntiFreeloaderProfile: mocks.ensureProfile,
@@ -50,14 +67,22 @@ vi.mock('@server/services/model-registry', () => ({
     }),
   },
 }));
+vi.mock('@server/services/provider-health.service', () => ({
+  providerHealthService: {
+    getAvailability: mocks.providerAvailability,
+    acquireProcessingPermit: mocks.acquireProviderPermit,
+    recordFailure: mocks.recordProviderFailure,
+    recordSuccess: mocks.recordProviderSuccess,
+  },
+}));
 vi.mock('@server/services/replicate.service', () => ({
-  ReplicateError: class ReplicateError extends Error {},
+  ReplicateError: mocks.ReplicateError,
 }));
 vi.mock('@server/services/scale-preserving-model', () => ({
   resolveScalePreservingModel: () => ({ usedFallback: false, modelId: 'real-esrgan' }),
 }));
 vi.mock('@server/services/replicate/utils/credit-manager', () => ({
-  creditManager: { refundCredits: vi.fn() },
+  creditManager: { refundCredits: mocks.refundCredits },
 }));
 vi.mock('@server/supabase/supabaseAdmin', () => ({ supabaseAdmin: { from: mocks.from } }));
 vi.mock('@shared/config/env', () => ({
@@ -98,6 +123,7 @@ vi.mock('@shared/validation/upscale.schema', () => ({
 
 import { POST } from '@/app/api/upscale/route';
 import { InsufficientCreditsError } from '@server/services/image-generation.service';
+import { ReplicateError } from '@server/services/replicate.service';
 
 function request(): NextRequest {
   return new NextRequest('http://localhost/api/upscale', {
@@ -126,12 +152,22 @@ describe('POST /api/upscale free limit errors', () => {
     vi.clearAllMocks();
     mocks.rateLimit.mockResolvedValue({ success: true, remaining: 4, reset: Date.now() + 60_000 });
     mocks.setupPending.mockReturnValue(false);
+    mocks.refundCredits.mockResolvedValue(true);
+    mocks.providerAvailability.mockResolvedValue({
+      available: true,
+      status: 'closed',
+      retryAt: null,
+    });
+    mocks.acquireProviderPermit.mockResolvedValue(true);
+    mocks.recordProviderFailure.mockResolvedValue(true);
+    mocks.recordProviderSuccess.mockResolvedValue(true);
     mocks.batchCheck.mockResolvedValue({
       allowed: true,
       current: 0,
       limit: 5,
       resetAt: new Date(Date.now() + 60_000),
     });
+    mocks.batchRelease.mockResolvedValue(true);
     mocks.from.mockImplementation(() => ({
       select: () => ({
         eq: () => ({
@@ -271,5 +307,113 @@ describe('POST /api/upscale free limit errors', () => {
       },
       { apiKey: 'test-key', userId: 'user-1' }
     );
+  });
+
+  it('returns a vendor-neutral response for a provider 402', async () => {
+    const oneCreditProfile = profile({ subscription_credits_balance: 1 });
+    mocks.from.mockImplementation(() => ({
+      select: () => ({
+        eq: () => ({
+          single: async () => ({ data: oneCreditProfile, error: null }),
+          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
+        }),
+      }),
+    }));
+    mocks.processImage.mockImplementation(
+      async (
+        _userId: string,
+        _input: unknown,
+        options: { onCreditsDeducted?: (deduction: Record<string, unknown>) => void }
+      ) => {
+        options.onCreditsDeducted?.({
+          amount: 1,
+          subscriptionAmount: 1,
+          purchasedAmount: 0,
+          jobId: 'job-402',
+        });
+        throw new ReplicateError(
+          'Request to https://api.replicate.com failed with 402. Buy credits at https://replicate.com/account/billing.',
+          'PROVIDER_UNAVAILABLE',
+          402
+        );
+      }
+    );
+
+    const response = await POST(request());
+    const payload = await response.json();
+
+    expect(response.status).toBe(503);
+    expect(payload).toEqual({
+      success: false,
+      error: {
+        code: 'AI_UNAVAILABLE',
+        message:
+          'Image processing is temporarily unavailable due to a provider issue. Your credits have not been charged. Please try again shortly or contact our support team.',
+      },
+    });
+    expect(JSON.stringify(payload)).not.toMatch(/replicate|https?:\/\/|buy|purchase|billing/i);
+    expect(mocks.batchRelease).toHaveBeenCalledWith('user-1');
+    expect(mocks.recordProviderFailure).toHaveBeenCalledWith('billing');
+  });
+
+  it('keeps the hourly slot for a safety-filter rejection', async () => {
+    const oneCreditProfile = profile({ subscription_credits_balance: 1 });
+    mocks.from.mockImplementation(() => ({
+      select: () => ({
+        eq: () => ({
+          single: async () => ({ data: oneCreditProfile, error: null }),
+          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
+        }),
+      }),
+    }));
+    mocks.processImage.mockImplementation(
+      async (
+        _userId: string,
+        _input: unknown,
+        options: { onCreditsDeducted?: (deduction: Record<string, unknown>) => void }
+      ) => {
+        options.onCreditsDeducted?.({
+          amount: 1,
+          subscriptionAmount: 1,
+          purchasedAmount: 0,
+          jobId: 'job-safety',
+        });
+        throw new ReplicateError('raw provider safety detail', 'SAFETY');
+      }
+    );
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(422);
+    expect(mocks.refundCredits).toHaveBeenCalled();
+    expect(mocks.batchRelease).not.toHaveBeenCalled();
+    expect(mocks.recordProviderFailure).not.toHaveBeenCalled();
+  });
+
+  it('serves maintenance before consuming quota while the circuit is open', async () => {
+    mocks.providerAvailability.mockResolvedValue({
+      available: false,
+      status: 'open',
+      retryAt: new Date('2026-07-26T20:00:00Z'),
+    });
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toEqual({
+      success: false,
+      error: {
+        code: 'AI_UNAVAILABLE',
+        message:
+          'Image processing is temporarily unavailable due to a provider issue. Your credits have not been charged. Please try again shortly or contact our support team.',
+        details: {
+          providerUnavailable: true,
+          suppressPurchaseCtas: true,
+          retryAt: '2026-07-26T20:00:00.000Z',
+        },
+      },
+    });
+    expect(mocks.batchCheck).not.toHaveBeenCalled();
+    expect(mocks.processImage).not.toHaveBeenCalled();
   });
 });

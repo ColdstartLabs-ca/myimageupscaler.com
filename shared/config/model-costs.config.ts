@@ -33,7 +33,8 @@ export const MODEL_COSTS = {
   CLARITY_PRO_UPSCALER_COST: 0.03, // philz1337x/clarity-pro-upscaler - per output megapixel, $0.03 minimum
   RECRAFT_CRISP_UPSCALE_COST: 0.006, // recraft-ai/recraft-crisp-upscale - fixed per image
   FLUX_2_PRO_COST: 0.05, // black-forest-labs/flux-2-pro - premium face restoration
-  NANO_BANANA_PRO_COST: 0.13,
+  // Replicate google/nano-banana-pro pricing verified 2026-07-26: $0.15/output at 1K/2K.
+  NANO_BANANA_PRO_COST: 0.15,
   NANO_BANANA_2_COST: 0.08, // google/nano-banana-2 - fast image generation and editing
   QWEN_IMAGE_EDIT_COST: 0.03, // qwen/qwen-image-edit-2511 - budget image editing
   SEEDREAM_COST: 0.04, // bytedance/seedream-4.5 - image editing

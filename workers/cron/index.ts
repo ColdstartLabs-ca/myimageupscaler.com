@@ -123,7 +123,10 @@ export default {
     let jobName: string;
     let lifecycleIncludeEligibility: boolean | null = null;
 
-    if (cronPattern === '*/15 * * * *') {
+    if (cronPattern === '*/5 * * * *') {
+      endpoint = '/api/cron/provider-health';
+      jobName = 'Provider Health';
+    } else if (cronPattern === '*/15 * * * *') {
       endpoint = '/api/cron/recover-webhooks';
       jobName = 'Webhook Recovery';
     } else if (cronPattern === '5 * * * *') {

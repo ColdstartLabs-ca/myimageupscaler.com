@@ -13,6 +13,7 @@ import type { ICreditDeduction } from '@server/services/image-processor.interfac
 import { LLMImageAnalyzer } from '@server/services/llm-image-analyzer';
 import { ModelRegistry } from '@server/services/model-registry';
 import type { SubscriptionTier } from '@server/services/model-registry.types';
+import { providerHealthService } from '@server/services/provider-health.service';
 import { ReplicateError } from '@server/services/replicate.service';
 import { resolveScalePreservingModel } from '@server/services/scale-preserving-model';
 import { creditManager } from '@server/services/replicate/utils/credit-manager';
@@ -39,6 +40,21 @@ import { ZodError } from 'zod';
 // Delay between AI analysis and image processing to avoid Replicate rate limits
 // Replicate enforces 1 req/sec for low-credit accounts, with ~30s reset on 429
 const RATE_LIMIT_DELAY_MS = 5000;
+const TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE =
+  'Image processing is temporarily unavailable due to a provider issue. Your credits have not been charged. Please try again shortly or contact our support team.';
+
+function getSafeReplicateClientMessage(code: string): string {
+  switch (code) {
+    case 'SAFETY':
+      return 'Image was rejected by the safety filter. Please try a different image.';
+    case 'IMAGE_TOO_LARGE':
+      return 'Image is too large for processing. Please try a smaller image or lower resolution.';
+    case 'INVALID_INPUT':
+      return 'The image input is invalid. Please upload the image again.';
+    default:
+      return TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE;
+  }
+}
 
 /**
  * Delay helper to avoid Replicate rate limits when using smart analysis
@@ -196,6 +212,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   let inputDimensions: { width: number; height: number } | null = null;
   let creditDeduction: ICreditDeduction | undefined;
   let routeRefundAttempted = false;
+  let providerAttemptStarted = false;
 
   const logFailure = (
     failureReason: string,
@@ -225,7 +242,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   const refundAfterRouteFailure = async (
     failureReason: string,
-    errorDetails: Record<string, unknown> = {}
+    errorDetails: Record<string, unknown> = {},
+    releaseBatchSlot = true
   ): Promise<void> => {
     if (!userId || !creditDeduction || routeRefundAttempted) {
       return;
@@ -237,6 +255,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       creditDeduction,
       `Route-level refund after upscale failure: ${failureReason}`
     );
+    const batchSlotReleased =
+      refunded && releaseBatchSlot ? await batchLimitCheck.release(userId) : false;
 
     logFailure(
       refunded
@@ -248,9 +268,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         amount: creditDeduction.amount,
         subscriptionAmount: creditDeduction.subscriptionAmount,
         purchasedAmount: creditDeduction.purchasedAmount,
+        batchSlotReleaseRequired: releaseBatchSlot,
+        batchSlotReleased,
         ...errorDetails,
       },
-      refunded ? 'warn' : 'error'
+      refunded && (!releaseBatchSlot || batchSlotReleased) ? 'warn' : 'error'
     );
   };
 
@@ -425,6 +447,25 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       : hasPurchasedCredits
         ? 'hobby'
         : null;
+
+    const providerAvailability = await providerHealthService.getAvailability();
+    if (!providerAvailability.available) {
+      logFailure('provider_circuit_open', {
+        circuitStatus: providerAvailability.status,
+        retryAt: providerAvailability.retryAt?.toISOString(),
+      });
+      const { body, status } = createErrorResponse(
+        ErrorCodes.AI_UNAVAILABLE,
+        TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE,
+        503,
+        {
+          providerUnavailable: true,
+          suppressPurchaseCtas: true,
+          retryAt: providerAvailability.retryAt?.toISOString(),
+        }
+      );
+      return NextResponse.json(body, { status });
+    }
 
     // 4. Check batch limit (after rate limit, before processing)
     // HIGH-8/9 FIX: Use atomic checkAndIncrement to prevent race conditions
@@ -936,6 +977,23 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Add 2-minute timeout to prevent hung requests
     const PROCESSING_TIMEOUT_MS = 120000;
 
+    const providerPermitAcquired = await providerHealthService.acquireProcessingPermit();
+    if (!providerPermitAcquired) {
+      const batchSlotReleased = await batchLimitCheck.release(userId);
+      logFailure('provider_circuit_probe_in_progress', { batchSlotReleased });
+      const { body, status } = createErrorResponse(
+        ErrorCodes.AI_UNAVAILABLE,
+        TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE,
+        503,
+        {
+          providerUnavailable: true,
+          suppressPurchaseCtas: true,
+        }
+      );
+      return NextResponse.json(body, { status });
+    }
+
+    providerAttemptStarted = true;
     const result = await Promise.race([
       processor.processImage(userId, legacyInputForProcessor as never, {
         creditCost,
@@ -950,6 +1008,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         )
       ),
     ]);
+    await providerHealthService.recordSuccess();
+    providerAttemptStarted = false;
 
     const durationMs = Date.now() - startTime;
 
@@ -1084,6 +1144,22 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     // Handle Replicate errors
     if (error instanceof ReplicateError) {
+      if (
+        providerAttemptStarted &&
+        !['SAFETY', 'INVALID_INPUT', 'IMAGE_TOO_LARGE'].includes(error.code)
+      ) {
+        await providerHealthService.recordFailure(
+          error.providerStatus === 402
+            ? 'billing'
+            : error.code === 'RATE_LIMITED'
+              ? 'rate_limited'
+              : error.code === 'AUTHENTICATION_FAILED'
+                ? 'authentication'
+                : error.code === 'TIMEOUT'
+                  ? 'timeout'
+                  : 'provider_unavailable'
+        );
+      }
       const statusCode =
         error.code === 'RATE_LIMITED'
           ? 429
@@ -1118,10 +1194,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         },
         'error'
       );
-      await refundAfterRouteFailure(`replicate_${String(error.code).toLowerCase()}`, {
-        message: error.message,
-        replicateCode: error.code,
-      });
+      await refundAfterRouteFailure(
+        `replicate_${String(error.code).toLowerCase()}`,
+        {
+          message: error.message,
+          replicateCode: error.code,
+        },
+        !['SAFETY', 'INVALID_INPUT', 'IMAGE_TOO_LARGE'].includes(error.code)
+      );
 
       // Track processing failed event for Replicate errors
       if (userId) {
@@ -1146,17 +1226,24 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         );
       }
 
-      const { body, status } = createErrorResponse(errorCode, error.message, statusCode, {
-        replicateCode: error.code,
-      });
+      const { body, status } = createErrorResponse(
+        errorCode,
+        getSafeReplicateClientMessage(error.code),
+        statusCode
+      );
       return NextResponse.json(body, { status });
     }
 
     // Handle AI generation errors
     if (error instanceof AIGenerationError) {
-      const statusCode = error.finishReason === 'SAFETY' ? 422 : 500;
+      if (providerAttemptStarted && error.finishReason !== 'SAFETY') {
+        await providerHealthService.recordFailure(
+          error.message.toLowerCase().includes('timeout') ? 'timeout' : 'provider_unavailable'
+        );
+      }
+      const statusCode = error.finishReason === 'SAFETY' ? 422 : 503;
       const errorCode =
-        error.finishReason === 'SAFETY' ? ErrorCodes.INVALID_REQUEST : ErrorCodes.PROCESSING_FAILED;
+        error.finishReason === 'SAFETY' ? ErrorCodes.INVALID_REQUEST : ErrorCodes.AI_UNAVAILABLE;
       logFailure(
         `ai_generation_${String(error.finishReason).toLowerCase()}`,
         {
@@ -1165,10 +1252,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         },
         'error'
       );
-      await refundAfterRouteFailure(`ai_generation_${String(error.finishReason).toLowerCase()}`, {
-        message: error.message,
-        finishReason: error.finishReason,
-      });
+      await refundAfterRouteFailure(
+        `ai_generation_${String(error.finishReason).toLowerCase()}`,
+        {
+          message: error.message,
+          finishReason: error.finishReason,
+        },
+        error.finishReason !== 'SAFETY'
+      );
 
       // Track processing failed event for AI generation errors
       if (userId) {
@@ -1193,14 +1284,22 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         );
       }
 
-      const { body, status } = createErrorResponse(errorCode, error.message, statusCode, {
-        finishReason: error.finishReason,
-      });
+      const { body, status } = createErrorResponse(
+        errorCode,
+        error.finishReason === 'SAFETY'
+          ? 'Image was rejected by the safety filter. Please try a different image.'
+          : TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE,
+        statusCode,
+        { finishReason: error.finishReason }
+      );
       return NextResponse.json(body, { status });
     }
 
     // Handle unexpected errors
     const errorMessage = serializeError(error);
+    if (providerAttemptStarted) {
+      await providerHealthService.recordFailure('internal');
+    }
     logFailure(
       'unexpected_internal_error',
       {
@@ -1235,7 +1334,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const { body, status } = createErrorResponse(ErrorCodes.INTERNAL_ERROR, errorMessage, 500);
+    const { body, status } = createErrorResponse(
+      ErrorCodes.INTERNAL_ERROR,
+      TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE,
+      500
+    );
     return NextResponse.json(body, { status });
   } finally {
     await logger.flush();

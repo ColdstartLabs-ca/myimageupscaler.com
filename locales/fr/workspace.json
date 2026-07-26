@@ -259,5 +259,12 @@
     "finish": "Terminer",
     "stepOf": "Étape {current} sur {total}",
     "showTour": "Montrez-moi comment"
+  },
+  "providerUnavailable": {
+    "title": "Le traitement des images est temporairement indisponible",
+    "message": "Notre fournisseur de traitement d’images rencontre actuellement une panne. Veuillez réessayer dans quelques instants.",
+    "creditsSafe": "Vos crédits n’ont pas été débités.",
+    "contactSupport": "Si vous avez besoin d’aide, contactez notre équipe d’assistance :",
+    "close": "Fermer"
   }
 }

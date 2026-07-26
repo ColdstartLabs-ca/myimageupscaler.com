@@ -241,5 +241,12 @@
     "finish": "Concluir",
     "stepOf": "Passo {current} de {total}",
     "showTour": "Mostre-me como"
+  },
+  "providerUnavailable": {
+    "title": "O processamento de imagens está temporariamente indisponível",
+    "message": "O nosso fornecedor de processamento de imagens está com uma falha. Tente novamente em breve.",
+    "creditsSafe": "Os seus créditos não foram cobrados.",
+    "contactSupport": "Se precisar de ajuda, contacte a nossa equipa de suporte:",
+    "close": "Fechar"
   }
 }

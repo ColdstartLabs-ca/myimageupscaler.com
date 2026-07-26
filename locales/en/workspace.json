@@ -250,5 +250,12 @@
     "finish": "Finish",
     "stepOf": "Step {current} of {total}",
     "showTour": "Show me how"
+  },
+  "providerUnavailable": {
+    "title": "Image processing is temporarily unavailable",
+    "message": "Our image processing provider is currently experiencing a failure. Please try again shortly.",
+    "creditsSafe": "Your credits have not been charged.",
+    "contactSupport": "If you need help, contact our support team:",
+    "close": "Close"
   }
 }

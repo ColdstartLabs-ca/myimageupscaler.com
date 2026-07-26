@@ -236,5 +236,12 @@
     "finish": "完了",
     "stepOf": "{current}/{total}ステップ",
     "showTour": "使い方を見る"
+  },
+  "providerUnavailable": {
+    "title": "画像処理は一時的に利用できません",
+    "message": "現在、画像処理プロバイダーで障害が発生しています。しばらくしてからもう一度お試しください。",
+    "creditsSafe": "クレジットは消費されていません。",
+    "contactSupport": "サポートが必要な場合は、以下までお問い合わせください：",
+    "close": "閉じる"
   }
 }

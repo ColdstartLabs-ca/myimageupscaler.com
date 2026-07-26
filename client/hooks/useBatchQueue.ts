@@ -6,7 +6,12 @@ import {
 } from '@/shared/types/coreflow.types';
 import { useToastStore } from '@client/store/toastStore';
 import { useUserData, useUserStore } from '@client/store/userStore';
-import { BatchLimitError, FreeLimitExceededError, processImage } from '@client/utils/api-client';
+import {
+  BatchLimitError,
+  FreeLimitExceededError,
+  processImage,
+  ProviderUnavailableError,
+} from '@client/utils/api-client';
 import { prepareFileForProcessing } from '@client/utils/upscale-file-preprocessing';
 import {
   calculateBatchProviderAwareCreditCost,
@@ -33,6 +38,7 @@ interface IUseBatchQueueReturn {
   completedCount: number;
   batchLimit: number;
   batchLimitExceeded: { attempted: number; limit: number; serverEnforced?: boolean } | null;
+  providerUnavailable: { message: string; retryAt?: Date } | null;
   setActiveId: (id: string) => void;
   addFiles: (files: File[], source?: 'drag_drop' | 'file_picker' | 'paste' | 'url') => void;
   /** Inject a pre-processed sample — shows before/after without calling the API */
@@ -42,6 +48,7 @@ interface IUseBatchQueueReturn {
   processBatch: (config: IUpscaleConfig) => Promise<void>;
   processSingleItem: (item: IBatchItem, config: IUpscaleConfig) => Promise<void>;
   clearBatchLimitError: () => void;
+  clearProviderUnavailable: () => void;
 }
 
 export const useBatchQueue = (): IUseBatchQueueReturn => {
@@ -53,6 +60,10 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     attempted: number;
     limit: number;
     serverEnforced?: boolean;
+  } | null>(null);
+  const [providerUnavailable, setProviderUnavailable] = useState<{
+    message: string;
+    retryAt?: Date;
   } | null>(null);
   const showToast = useToastStore(state => state.showToast);
   const t = useTranslations('workspace');
@@ -209,6 +220,10 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     setBatchLimitExceeded(null);
   }, []);
 
+  const clearProviderUnavailable = useCallback(() => {
+    setProviderUnavailable(null);
+  }, []);
+
   const processSingleItem = async (item: IBatchItem, config: IUpscaleConfig) => {
     updateItemStatus(item.id, {
       status: ProcessingStatus.PROCESSING,
@@ -318,6 +333,12 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
       } else if (error instanceof BatchLimitError) {
         errorType = 'batch_limit_exceeded';
 
+        updateItemStatus(item.id, {
+          status: ProcessingStatus.ERROR,
+          error: 'Hourly limit reached',
+          stage: undefined,
+        });
+
         // Track error_occurred event for batch limit
         analytics.track('error_occurred', {
           errorType: 'rate_limited',
@@ -336,6 +357,30 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
           attempted: queue.filter(i => i.status === ProcessingStatus.IDLE).length,
           limit: error.limit,
           serverEnforced: true,
+        });
+        return;
+      } else if (error instanceof ProviderUnavailableError) {
+        errorType = 'provider_unavailable';
+        setIsProcessingBatch(false);
+        setProviderUnavailable({ message: error.message, retryAt: error.retryAt });
+        updateItemStatus(item.id, {
+          status: ProcessingStatus.ERROR,
+          error: error.message,
+          stage: undefined,
+        });
+        analytics.track('error_occurred', {
+          errorType,
+          errorMessage: error.message,
+          context: {
+            fileName: item.file.name,
+            fileSize: item.file.size,
+            retryAt: error.retryAt?.toISOString(),
+          },
+        });
+        showToast({
+          message: error.message,
+          type: 'error',
+          duration: TIMEOUTS.TOAST_LONG_AUTO_CLOSE_DELAY,
         });
         return;
       } else if (error instanceof Error && error.message.includes('insufficient credits')) {
@@ -454,6 +499,21 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         success,
         errorType: success ? undefined : errorType,
       });
+
+      // Last-resort state invariant: every settled request must leave the queue
+      // in a terminal state, even if a future catch branch returns early.
+      setQueue(prev =>
+        prev.map(queueItem =>
+          queueItem.id === item.id && queueItem.status === ProcessingStatus.PROCESSING
+            ? {
+                ...queueItem,
+                status: ProcessingStatus.ERROR,
+                error: queueItem.error || 'Image processing failed',
+                stage: undefined,
+              }
+            : queueItem
+        )
+      );
     }
   };
 
@@ -493,6 +553,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     completedCount,
     batchLimit,
     batchLimitExceeded,
+    providerUnavailable,
     setActiveId,
     addFiles,
     addSampleItem,
@@ -501,5 +562,6 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     processBatch,
     processSingleItem,
     clearBatchLimitError,
+    clearProviderUnavailable,
   };
 };

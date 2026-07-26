@@ -236,5 +236,12 @@
     "finish": "Finalizar",
     "stepOf": "Paso {current} de {total}",
     "showTour": "Muéstrame cómo"
+  },
+  "providerUnavailable": {
+    "title": "El procesamiento de imágenes no está disponible temporalmente",
+    "message": "Nuestro proveedor de procesamiento de imágenes está experimentando un fallo. Inténtalo de nuevo en unos minutos.",
+    "creditsSafe": "No se han descontado tus créditos.",
+    "contactSupport": "Si necesitas ayuda, contacta con nuestro equipo de soporte:",
+    "close": "Cerrar"
   }
 }

@@ -83,6 +83,22 @@ describe('ReplicateErrorMapper', () => {
   });
 
   describe('Existing Error Mappings', () => {
+    it('should map provider 402 errors to a vendor-neutral unavailable error', () => {
+      const error = Object.assign(
+        new Error(
+          'Request to https://api.replicate.com failed: buy credit at https://replicate.com/account/billing'
+        ),
+        { status: 402 }
+      );
+      const result = mapper.mapError(error);
+
+      expect(result.code).toBe(ReplicateErrorCode.PROVIDER_UNAVAILABLE);
+      expect(result.message).toBe(
+        'Image processing is temporarily unavailable due to a provider issue. Your credits have not been charged. Please try again shortly or contact our support team.'
+      );
+      expect(result.message).not.toMatch(/replicate|https?:\/\/|buy|purchase|billing/i);
+    });
+
     it('should map rate limit errors', () => {
       const error = new Error('Rate limit exceeded. Please try again later.');
       const result = mapper.mapError(error);

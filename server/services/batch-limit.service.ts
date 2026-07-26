@@ -138,6 +138,33 @@ export const batchLimitCheck = {
   },
 
   /**
+   * Atomically release one slot in the current hourly window.
+   * Used only after a non-user-attributable failure was successfully refunded.
+   */
+  async release(userId: string): Promise<boolean> {
+    if (isTestEnvironment()) {
+      return true;
+    }
+
+    try {
+      const { error } = await supabaseAdmin.rpc('release_batch_limit_slot', {
+        p_user_id: userId,
+        p_window_hours: 1,
+      });
+
+      if (error) {
+        console.error('[BATCH_LIMIT] Database error releasing slot:', error);
+        return false;
+      }
+
+      return true;
+    } catch (err) {
+      console.error('[BATCH_LIMIT] Unexpected error releasing slot:', err);
+      return false;
+    }
+  },
+
+  /**
    * Get current usage for a user (without incrementing)
    */
   async getUsage(

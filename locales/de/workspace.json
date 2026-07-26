@@ -239,5 +239,12 @@
     "finish": "Fertig",
     "stepOf": "Schritt {current} von {total}",
     "showTour": "Zeig mir wie"
+  },
+  "providerUnavailable": {
+    "title": "Die Bildverarbeitung ist vorübergehend nicht verfügbar",
+    "message": "Bei unserem Bildverarbeitungsanbieter liegt derzeit eine Störung vor. Bitte versuche es in Kürze erneut.",
+    "creditsSafe": "Deine Credits wurden nicht belastet.",
+    "contactSupport": "Wenn du Hilfe benötigst, kontaktiere unser Support-Team:",
+    "close": "Schließen"
   }
 }

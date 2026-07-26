@@ -283,6 +283,7 @@ const serverEnvSchema = z.object({
   // Common email settings
   EMAIL_FROM_ADDRESS: z.string().email().default('noreply@myimageupscaler.com'),
   SUPPORT_EMAIL: z.string().email().default('support@myimageupscaler.com'),
+  PROVIDER_ALERT_EMAIL: z.string().email().default('admin@myimageupscaler.com'),
   BASE_URL: z.string().url().default('http://localhost:3000'),
   // Allow sending transactional emails in development (for testing)
   ALLOW_TRANSACTIONAL_EMAILS_IN_DEV: z.coerce.boolean().default(false),
@@ -436,6 +437,7 @@ function loadServerEnv(): IServerEnv {
       process.env.SUPPORT_EMAIL ||
       process.env.NEXT_PUBLIC_SUPPORT_EMAIL ||
       'support@myimageupscaler.com',
+    PROVIDER_ALERT_EMAIL: process.env.PROVIDER_ALERT_EMAIL || 'admin@myimageupscaler.com',
     BASE_URL: process.env.BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
     ALLOW_TRANSACTIONAL_EMAILS_IN_DEV: process.env.ALLOW_TRANSACTIONAL_EMAILS_IN_DEV ?? 'false',
     RECOVERY_EMAILS_ENABLED: process.env.RECOVERY_EMAILS_ENABLED ?? 'true',

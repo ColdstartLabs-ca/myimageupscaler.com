@@ -16,6 +16,7 @@
  */
 
 const JOBS = {
+  'provider-health': '*/5 * * * *',
   'webhook-recovery': '*/15 * * * *',
   'expiration-check': '5 * * * *',
   reconciliation: '5 3 * * *',

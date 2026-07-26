@@ -45,6 +45,20 @@ export class FreeLimitExceededError extends Error {
   }
 }
 
+/** Server-confirmed provider outage. This state must never open a purchase flow. */
+export class ProviderUnavailableError extends Error {
+  public readonly retryAt?: Date;
+
+  constructor(options: { message?: string; retryAt?: Date }) {
+    super(
+      options.message ||
+        'Image processing is temporarily unavailable due to a provider issue. Your credits have not been charged. Please try again shortly or contact our support team.'
+    );
+    this.name = 'ProviderUnavailableError';
+    this.retryAt = options.retryAt;
+  }
+}
+
 // Extend Window interface for test environment markers
 declare global {
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -290,6 +304,15 @@ export const processImage = async (
           message: errorData.error.message,
           requiredCredits: errorData.error.details?.required,
           availableCredits: errorData.error.details?.available,
+        });
+      }
+
+      if (errorData.error?.code === 'AI_UNAVAILABLE') {
+        throw new ProviderUnavailableError({
+          message: errorData.error.message,
+          retryAt: errorData.error.details?.retryAt
+            ? new Date(errorData.error.details.retryAt)
+            : undefined,
         });
       }
 

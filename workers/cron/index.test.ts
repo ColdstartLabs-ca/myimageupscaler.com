@@ -32,6 +32,30 @@ describe('Cloudflare Cron Worker', () => {
   });
 
   describe('scheduled handler', () => {
+    it('should route provider health checks every five minutes', async () => {
+      const event = {
+        cron: '*/5 * * * *',
+        scheduledTime: Date.now(),
+      } as ScheduledEvent;
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({ success: true, alerted: false }),
+      });
+      global.fetch = fetchMock;
+
+      await worker.scheduled(event, mockEnv, mockCtx as unknown);
+      await mockCtx.waitUntil.mock.calls[0][0];
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        'https://api.example.com/api/cron/provider-health',
+        expect.objectContaining({
+          method: 'POST',
+          headers: expect.objectContaining({ 'x-cron-secret': 'test-secret-123' }),
+        })
+      );
+    });
+
     it('should route webhook recovery cron pattern correctly', async () => {
       const event = {
         cron: '*/15 * * * *',

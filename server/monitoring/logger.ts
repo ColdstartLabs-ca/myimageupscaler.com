@@ -1,10 +1,47 @@
-import { BaselimeLogger } from '@baselime/edge-logger';
+import { BaselimeLogger, type BaselimeLoggerArgs } from '@baselime/edge-logger';
+import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { isDevelopment, serverEnv } from '@shared/config/env';
 
 interface ILogContext {
   requestId?: string;
   userId?: string;
   [key: string]: unknown;
+}
+
+type TCloudflareExecutionContext = BaselimeLoggerArgs['ctx'];
+
+function createLocalExecutionContext(): TCloudflareExecutionContext {
+  return {
+    waitUntil(promise: Promise<unknown>): void {
+      void promise.catch(error => console.error('[LOGGER] Background flush failed', error));
+    },
+    passThroughOnException(): void {
+      // No-op outside the Cloudflare runtime.
+    },
+  } as TCloudflareExecutionContext;
+}
+
+function getLoggerExecutionContext(apiKey: string): TCloudflareExecutionContext {
+  let executionContext: TCloudflareExecutionContext;
+
+  try {
+    executionContext = getCloudflareContext().ctx;
+  } catch (error) {
+    if (apiKey && !isDevelopment()) {
+      throw new Error(
+        `[LOGGER] Cloudflare ExecutionContext is unavailable: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
+    }
+    executionContext = createLocalExecutionContext();
+  }
+
+  if (typeof executionContext?.waitUntil !== 'function') {
+    throw new Error('[LOGGER] Invalid Cloudflare ExecutionContext: waitUntil must be callable');
+  }
+
+  return executionContext;
 }
 
 /**
@@ -36,17 +73,20 @@ export function createLogger(
   context?: ILogContext
 ): BaselimeLogger {
   const apiKey = serverEnv.BASELIME_API_KEY;
+  const executionContext = getLoggerExecutionContext(apiKey);
 
   const logger = new BaselimeLogger({
     service: 'myimageupscaler-api',
     namespace,
     apiKey: apiKey || '',
-    ctx: {
-      url: request.url,
-      method: request.method,
-      ...context,
-    },
+    ctx: executionContext,
     isLocalDev: !apiKey || isDevelopment(),
+  });
+
+  logger.debug('Request context', {
+    url: request.url,
+    method: request.method,
+    ...context,
   });
 
   return logger;
