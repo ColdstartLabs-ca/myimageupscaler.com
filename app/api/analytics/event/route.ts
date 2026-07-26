@@ -32,6 +32,7 @@ const ALLOWED_EVENTS = [
   'credit_pack_purchased',
   'credits_deducted',
   'credits_refunded',
+  'credit_wall_shown',
 
   // Image processing events
   'image_uploaded',

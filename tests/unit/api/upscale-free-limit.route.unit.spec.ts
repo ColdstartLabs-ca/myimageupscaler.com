@@ -186,6 +186,16 @@ describe('POST /api/upscale free limit errors', () => {
     await expect(response.json()).resolves.toMatchObject({
       error: { code: 'INSUFFICIENT_CREDITS', details: { required: 1, available: 0 } },
     });
+    expect(mocks.track).toHaveBeenCalledWith(
+      'credit_wall_shown',
+      {
+        source: 'server_402',
+        requiredCredits: 1,
+        currentBalance: 0,
+        deficit: 1,
+      },
+      { apiKey: 'test-key', userId: 'user-1' }
+    );
   });
 
   it('keeps INSUFFICIENT_CREDITS for a paid user with zero current balance', async () => {
@@ -248,5 +258,15 @@ describe('POST /api/upscale free limit errors', () => {
     await expect(response.json()).resolves.toMatchObject({
       error: { code: 'INSUFFICIENT_CREDITS', details: { required: 1, available: 0 } },
     });
+    expect(mocks.track).toHaveBeenCalledWith(
+      'credit_wall_shown',
+      {
+        source: 'server_402',
+        requiredCredits: 1,
+        currentBalance: 0,
+        deficit: 1,
+      },
+      { apiKey: 'test-key', userId: 'user-1' }
+    );
   });
 });

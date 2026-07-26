@@ -537,6 +537,7 @@ describe('Workspace Quality Tier Logic', () => {
   });
 
   test('should open dismissible upgrade modal when credits are insufficient', async () => {
+    const analyticsTrack = await getAnalyticsMock();
     mockTotalCredits = 0;
     mockBatchQueueState.queue = [
       {
@@ -553,6 +554,12 @@ describe('Workspace Quality Tier Logic', () => {
     fireEvent.click(screen.getByTestId('batch-sidebar-process'));
 
     expect(mockProcessBatch).not.toHaveBeenCalled();
+    expect(analyticsTrack).toHaveBeenCalledWith('credit_wall_shown', {
+      source: 'preflight_batch',
+      requiredCredits: 1,
+      currentBalance: 0,
+      deficit: 1,
+    });
     expect(screen.getByTestId('purchase-modal')).toHaveAttribute(
       'data-trigger',
       'insufficient_credits'

@@ -24,6 +24,7 @@ const ALLOWED_EVENTS = [
   'credit_pack_purchased',
   'credits_deducted',
   'credits_refunded',
+  'credit_wall_shown',
 
   // Image processing events
   'image_uploaded',
@@ -160,11 +161,30 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
     });
 
     test('should include credit events', () => {
-      const creditEvents = ['credit_pack_purchased', 'credits_deducted', 'credits_refunded'];
+      const creditEvents = [
+        'credit_pack_purchased',
+        'credits_deducted',
+        'credits_refunded',
+        'credit_wall_shown',
+      ];
       for (const eventName of creditEvents) {
         const result = eventSchema.safeParse({ eventName });
         expect(result.success).toBe(true);
       }
+    });
+
+    test('should accept credit wall measurement properties', () => {
+      const result = eventSchema.safeParse({
+        eventName: 'credit_wall_shown',
+        properties: {
+          source: 'preflight_batch',
+          requiredCredits: 3,
+          currentBalance: 1,
+          deficit: 2,
+        },
+      });
+
+      expect(result.success).toBe(true);
     });
 
     test('should include error/limit events (server-side only)', () => {

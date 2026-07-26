@@ -1,4 +1,5 @@
 import { IBatchItem, ProcessingStatus } from '@/shared/types/coreflow.types';
+import { analytics } from '@client/analytics';
 import { InsufficientCreditsModal } from '@client/components/stripe/InsufficientCreditsModal';
 import { Button } from '@client/components/ui/Button';
 import { Download, Loader2, Trash2, Wand2 } from 'lucide-react';
@@ -43,6 +44,12 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
 
   const handleProcessClick = () => {
     if (!hasEnoughCredits && pendingQueue.length > 0) {
+      analytics.track('credit_wall_shown', {
+        source: 'preflight_action_panel',
+        requiredCredits: totalCost,
+        currentBalance,
+        deficit: totalCost - currentBalance,
+      });
       setShowInsufficientModal(true);
       return;
     }

@@ -8,7 +8,10 @@ import { useToastStore } from '@client/store/toastStore';
 import { useUserData, useUserStore } from '@client/store/userStore';
 import { BatchLimitError, FreeLimitExceededError, processImage } from '@client/utils/api-client';
 import { prepareFileForProcessing } from '@client/utils/upscale-file-preprocessing';
-import { getBatchLimit } from '@shared/config/subscription.utils';
+import {
+  calculateBatchProviderAwareCreditCost,
+  getBatchLimit,
+} from '@shared/config/subscription.utils';
 import { TIMEOUTS } from '@shared/config/timeouts.config';
 import { serializeError } from '@shared/utils/errors';
 import { useTranslations } from 'next-intl';
@@ -55,7 +58,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
   const t = useTranslations('workspace');
 
   // Get user subscription data
-  const { profile } = useUserData();
+  const { profile, totalCredits } = useUserData();
   const batchLimit = getBatchLimit(profile?.subscription_tier ?? null);
 
   // Cleanup object URLs on unmount
@@ -337,6 +340,10 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         return;
       } else if (error instanceof Error && error.message.includes('insufficient credits')) {
         errorType = 'insufficient_credits';
+        const requiredCredits = calculateBatchProviderAwareCreditCost({
+          config,
+          items: [item],
+        }).totalCredits;
 
         // Track error_occurred event for insufficient credits
         analytics.track('error_occurred', {
@@ -346,6 +353,12 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
             fileName: item.file.name,
             fileSize: item.file.size,
           },
+        });
+        analytics.track('credit_wall_shown', {
+          source: 'midbatch',
+          requiredCredits,
+          currentBalance: totalCredits,
+          deficit: Math.max(0, requiredCredits - totalCredits),
         });
 
         // Show a specific error message for insufficient credits

@@ -44,6 +44,13 @@ export interface ICreditPackProperties {
   currency?: string;
 }
 
+export interface ICreditWallShownProperties {
+  source: 'preflight_batch' | 'preflight_action_panel' | 'midbatch' | 'server_402';
+  requiredCredits: number;
+  currentBalance: number;
+  deficit: number;
+}
+
 export interface IImageUpscaledProperties {
   inputWidth: number;
   inputHeight: number;
@@ -667,6 +674,7 @@ export type IAnalyticsEventName =
   | 'revenue_support_contact'
   | 'credits_deducted'
   | 'credits_refunded'
+  | 'credit_wall_shown'
   // Image processing events
   | 'image_uploaded'
   | 'image_upscale_started'

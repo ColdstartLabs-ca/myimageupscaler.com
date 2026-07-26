@@ -58,6 +58,23 @@ function normalizePaidTier(tier: string | null | undefined): SubscriptionTier {
   return 'hobby';
 }
 
+async function trackCreditWallShown(
+  userId: string,
+  requiredCredits: number,
+  currentBalance: number
+): Promise<void> {
+  await trackServerEvent(
+    'credit_wall_shown',
+    {
+      source: 'server_402',
+      requiredCredits,
+      currentBalance,
+      deficit: Math.max(0, requiredCredits - currentBalance),
+    },
+    { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+  );
+}
+
 /**
  * Directly call LLM analyzer for image analysis
  * Returns AI analysis result with tier and enhancement suggestions
@@ -827,6 +844,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         requiredCredits: creditCost,
         effectiveTotalCredits,
       });
+      await trackCreditWallShown(userId, creditCost, effectiveTotalCredits);
       const { body, status } = createErrorResponse(
         ErrorCodes.INSUFFICIENT_CREDITS,
         `You have insufficient credits. This operation requires ${creditCost} credit${creditCost > 1 ? 's' : ''}.`,
@@ -1032,6 +1050,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     if (error instanceof InsufficientCreditsError) {
       logFailure('insufficient_credits', { requiredCredits: creditCost });
       const availableCredits = error.availableCredits ?? effectiveTotalCredits ?? 1;
+      if (userId) {
+        await trackCreditWallShown(userId, creditCost, availableCredits);
+      }
       const { body, status } = createErrorResponse(
         ErrorCodes.INSUFFICIENT_CREDITS,
         `You have insufficient credits. This operation requires ${creditCost} credit${creditCost > 1 ? 's' : ''}.`,
