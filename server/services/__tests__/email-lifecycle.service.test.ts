@@ -694,7 +694,7 @@ describe('EmailLifecycleService', () => {
         recipient_value_score: 20,
         recipient_value_band: 'experiment',
         recipient_value_decision: 'hold_experiment',
-      recipient_value_policy_version: 'v1',
+        recipient_value_policy_version: 'v1',
         recipient_value_classified_at: '2026-07-20T00:00:00.000Z',
         recipient_value_holdout_released_at: new Date().toISOString(),
       },

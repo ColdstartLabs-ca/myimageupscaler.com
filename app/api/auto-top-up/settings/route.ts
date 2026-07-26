@@ -81,9 +81,12 @@ export async function PUT(request: NextRequest) {
       }
     } catch (cancelError) {
       console.error('[AUTO_TOP_UP_DISABLE] PaymentIntent cancellation failed', cancelError);
-      return NextResponse.json({ error: 'Unable to safely cancel the active auto top-up charge' }, {
-        status: 503,
-      });
+      return NextResponse.json(
+        { error: 'Unable to safely cancel the active auto top-up charge' },
+        {
+          status: 503,
+        }
+      );
     }
   }
 
@@ -98,9 +101,9 @@ export async function PUT(request: NextRequest) {
       updated_at: new Date().toISOString(),
     })
     .eq('user_id', user.id);
-  const { data, error } = await (attempt?.id
-    ? updateQuery.eq('charge_claim_id', attempt.id)
-    : updateQuery)
+  const { data, error } = await (
+    attempt?.id ? updateQuery.eq('charge_claim_id', attempt.id) : updateQuery
+  )
     .select('enabled, pending_enabled')
     .maybeSingle();
   if (error) return NextResponse.json({ error: 'Unable to disable auto top-up' }, { status: 500 });

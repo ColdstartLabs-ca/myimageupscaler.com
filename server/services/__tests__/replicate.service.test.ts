@@ -1301,10 +1301,7 @@ describe('ReplicateService', () => {
       );
 
       // Verify refund was called
-      expect(mockSupabaseRpc).toHaveBeenCalledWith(
-        'refund_consumed_credits',
-        expect.any(Object)
-      );
+      expect(mockSupabaseRpc).toHaveBeenCalledWith('refund_consumed_credits', expect.any(Object));
     });
 
     test('should throw ReplicateError for NSFW/safety violations', async () => {

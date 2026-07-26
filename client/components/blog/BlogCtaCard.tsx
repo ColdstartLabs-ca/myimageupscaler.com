@@ -21,7 +21,9 @@ export async function BlogCtaCard({
   const t = await getTranslations('blog.cta');
 
   return (
-    <div className={`${blogCardClass} border-accent/20 p-8 text-center md:p-10 ${className}`.trim()}>
+    <div
+      className={`${blogCardClass} border-accent/20 p-8 text-center md:p-10 ${className}`.trim()}
+    >
       <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10">
         <Sparkles className="h-6 w-6 text-accent" />
       </div>

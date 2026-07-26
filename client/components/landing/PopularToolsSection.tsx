@@ -39,7 +39,9 @@ export function PopularToolsSection({
       innerClassName="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
     >
       <div className="mb-6 text-center sm:mb-12">
-        <p className="mb-2 text-sm font-bold uppercase tracking-widest text-secondary sm:mb-3">Tools</p>
+        <p className="mb-2 text-sm font-bold uppercase tracking-widest text-secondary sm:mb-3">
+          Tools
+        </p>
         <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
           Start enhancing — <span className="gradient-text-primary">pick a tool</span>
         </h2>
