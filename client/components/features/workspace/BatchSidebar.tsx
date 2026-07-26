@@ -38,6 +38,7 @@ interface IBatchSidebarProps {
   onClear: () => void;
   onUpgrade: () => void;
   onUpgradeDirect?: (params: IUpgradeDirectParams) => void;
+  suppressPurchaseCtas?: boolean;
 }
 
 export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
@@ -51,6 +52,7 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
   onClear,
   onUpgrade,
   onUpgradeDirect,
+  suppressPurchaseCtas = false,
 }) => {
   const { totalCredits, isFreeUser } = useUserData();
   const [showInsufficientModal, setShowInsufficientModal] = useState(false);
@@ -127,6 +129,7 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
           onUpgrade={onUpgrade}
           showInsufficientModal={showInsufficientModal}
           setShowInsufficientModal={setShowInsufficientModal}
+          suppressPurchaseCtas={suppressPurchaseCtas}
         />
       </div>
 
@@ -150,6 +153,7 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
           isFreeUser={isFreeUser}
           onUpgrade={onUpgrade}
           onUpgradeDirect={onUpgradeDirect}
+          suppressPurchaseCtas={suppressPurchaseCtas}
         />
 
         {/* 2. Upscale Factor Selector (dynamic options based on tier) */}
@@ -170,6 +174,7 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
           disabled={isProcessing}
           isFreeUser={isFreeUser}
           onUpgradeClick={onUpgrade}
+          suppressPurchaseCtas={suppressPurchaseCtas}
         />
 
         {/* 4. Ultra tier specific config (conditional) */}

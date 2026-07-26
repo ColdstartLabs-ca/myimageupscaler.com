@@ -59,4 +59,42 @@ describe('ActionPanel credit wall analytics', () => {
       deficit: 2,
     });
   });
+
+  it('hides the credit purchase prompt and reopens provider support during an outage', () => {
+    const onUpgrade = vi.fn();
+    const setShowInsufficientModal = vi.fn();
+
+    render(
+      <ActionPanel
+        queue={[
+          {
+            id: 'item-1',
+            file: new File(['image'], 'image.png', { type: 'image/png' }),
+            previewUrl: 'blob:test',
+            processedUrl: null,
+            status: ProcessingStatus.IDLE,
+            progress: 0,
+          },
+        ]}
+        isProcessing={false}
+        batchProgress={null}
+        completedCount={0}
+        totalCost={3}
+        currentBalance={1}
+        onProcess={vi.fn()}
+        onDownloadAll={vi.fn()}
+        onClear={vi.fn()}
+        onUpgrade={onUpgrade}
+        showInsufficientModal={true}
+        setShowInsufficientModal={setShowInsufficientModal}
+        suppressPurchaseCtas={true}
+      />
+    );
+
+    expect(screen.queryByText(/Get credits to upscale today/)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Process All/ }));
+    expect(onUpgrade).toHaveBeenCalledOnce();
+    expect(setShowInsufficientModal).not.toHaveBeenCalled();
+    expect(track).not.toHaveBeenCalled();
+  });
 });

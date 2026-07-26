@@ -21,6 +21,7 @@ export interface IQualityTierSelectorProps {
   isFreeUser?: boolean;
   onUpgrade: () => void;
   onUpgradeDirect?: (params: IUpgradeDirectParams) => void;
+  suppressPurchaseCtas?: boolean;
 }
 
 export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
@@ -32,6 +33,7 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
   isFreeUser = false,
   onUpgrade,
   onUpgradeDirect,
+  suppressPurchaseCtas = false,
 }) => {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
@@ -109,6 +111,7 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
         onSelect={onChange}
         onUpgrade={onUpgrade}
         onUpgradeDirect={onUpgradeDirect}
+        suppressPurchaseCtas={suppressPurchaseCtas}
       />
     </div>
   );

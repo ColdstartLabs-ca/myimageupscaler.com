@@ -356,6 +356,25 @@ describe('POST /api/upscale free limit errors', () => {
     expect(mocks.recordProviderFailure).toHaveBeenCalledWith('billing');
   });
 
+  it('releases the hourly slot when an internal failure happens before credit deduction', async () => {
+    const oneCreditProfile = profile({ subscription_credits_balance: 1 });
+    mocks.from.mockImplementation(() => ({
+      select: () => ({
+        eq: () => ({
+          single: async () => ({ data: oneCreditProfile, error: null }),
+          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
+        }),
+      }),
+    }));
+    mocks.processImage.mockRejectedValue(new Error('Internal processor setup failure'));
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(500);
+    expect(mocks.refundCredits).not.toHaveBeenCalled();
+    expect(mocks.batchRelease).toHaveBeenCalledWith('user-1');
+  });
+
   it('keeps the hourly slot for a safety-filter rejection', async () => {
     const oneCreditProfile = profile({ subscription_credits_balance: 1 });
     mocks.from.mockImplementation(() => ({

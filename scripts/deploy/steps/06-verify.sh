@@ -14,6 +14,7 @@ step_verify() {
         status=$(curl -s -o /dev/null -w "%{http_code}" "$url/api/health" 2>/dev/null || echo "000")
         if [[ "$status" == "200" ]]; then
             log_success "Health check passed"
+            _verify_provider_health_cron "$url"
             _verify_webhook_secret "$url"
             _verify_recovery_lifecycle_dry_run "$url"
             _verify_email_delivery_readiness
@@ -52,6 +53,38 @@ _verify_cron_schedules() {
     done
 
     log_error "Deployed cron schedules do not match workers/cron/wrangler.toml"
+}
+
+_verify_provider_health_cron() {
+    local url="$1"
+    local cron_secret="${CRON_SECRET:-}"
+
+    if [[ -z "$cron_secret" ]]; then
+        log_error "CRON_SECRET is required for provider health verification"
+    fi
+
+    log_info "Verifying provider health cron..."
+
+    local response_file
+    response_file=$(mktemp)
+    local response_code
+    response_code=$(curl -s -o "$response_file" -w "%{http_code}" \
+        -X POST "$url/api/cron/provider-health" \
+        -H "x-cron-secret: $cron_secret" \
+        2>/dev/null || echo "000")
+
+    if [[ "$response_code" != "200" ]]; then
+        rm -f "$response_file"
+        log_error "Provider health verification returned HTTP $response_code"
+    fi
+
+    if ! jq -e '.success == true' "$response_file" >/dev/null 2>&1; then
+        rm -f "$response_file"
+        log_error "Provider health cron verification failed"
+    fi
+
+    rm -f "$response_file"
+    log_success "Provider health cron verified"
 }
 
 _verify_recovery_lifecycle_dry_run() {

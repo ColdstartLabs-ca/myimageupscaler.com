@@ -213,6 +213,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   let creditDeduction: ICreditDeduction | undefined;
   let routeRefundAttempted = false;
   let providerAttemptStarted = false;
+  let batchSlotAcquired = false;
 
   const logFailure = (
     failureReason: string,
@@ -245,34 +246,49 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     errorDetails: Record<string, unknown> = {},
     releaseBatchSlot = true
   ): Promise<void> => {
-    if (!userId || !creditDeduction || routeRefundAttempted) {
+    if (!userId || routeRefundAttempted) {
       return;
     }
 
     routeRefundAttempted = true;
-    const refunded = await creditManager.refundCredits(
-      userId,
-      creditDeduction,
-      `Route-level refund after upscale failure: ${failureReason}`
-    );
+    const refunded = creditDeduction
+      ? await creditManager.refundCredits(
+          userId,
+          creditDeduction,
+          `Route-level refund after upscale failure: ${failureReason}`
+        )
+      : true;
     const batchSlotReleased =
-      refunded && releaseBatchSlot ? await batchLimitCheck.release(userId) : false;
+      refunded && releaseBatchSlot && batchSlotAcquired
+        ? await batchLimitCheck.release(userId)
+        : false;
+    if (batchSlotReleased) {
+      batchSlotAcquired = false;
+    }
 
     logFailure(
-      refunded
-        ? 'credits_refunded_after_route_failure'
-        : 'credit_refund_failed_after_route_failure',
+      creditDeduction
+        ? refunded
+          ? 'credits_refunded_after_route_failure'
+          : 'credit_refund_failed_after_route_failure'
+        : batchSlotReleased
+          ? 'batch_slot_released_before_credit_deduction'
+          : 'batch_slot_release_failed_before_credit_deduction',
       {
         originalFailureReason: failureReason,
-        jobId: creditDeduction.jobId,
-        amount: creditDeduction.amount,
-        subscriptionAmount: creditDeduction.subscriptionAmount,
-        purchasedAmount: creditDeduction.purchasedAmount,
+        ...(creditDeduction
+          ? {
+              jobId: creditDeduction.jobId,
+              amount: creditDeduction.amount,
+              subscriptionAmount: creditDeduction.subscriptionAmount,
+              purchasedAmount: creditDeduction.purchasedAmount,
+            }
+          : {}),
         batchSlotReleaseRequired: releaseBatchSlot,
         batchSlotReleased,
         ...errorDetails,
       },
-      refunded && (!releaseBatchSlot || batchSlotReleased) ? 'warn' : 'error'
+      refunded && (!releaseBatchSlot || !batchSlotAcquired || batchSlotReleased) ? 'warn' : 'error'
     );
   };
 
@@ -497,6 +513,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         },
       });
     }
+    batchSlotAcquired = true;
 
     // 5. Parse and validate request body
     const body = await req.json();
@@ -980,6 +997,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const providerPermitAcquired = await providerHealthService.acquireProcessingPermit();
     if (!providerPermitAcquired) {
       const batchSlotReleased = await batchLimitCheck.release(userId);
+      if (batchSlotReleased) {
+        batchSlotAcquired = false;
+      }
       logFailure('provider_circuit_probe_in_progress', { batchSlotReleased });
       const { body, status } = createErrorResponse(
         ErrorCodes.AI_UNAVAILABLE,

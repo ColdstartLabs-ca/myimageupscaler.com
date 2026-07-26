@@ -29,6 +29,7 @@ export interface IEnhancementOptionsProps {
   disabled?: boolean;
   isFreeUser?: boolean;
   onUpgradeClick?: () => void;
+  suppressPurchaseCtas?: boolean;
 }
 
 export const EnhancementOptions: React.FC<IEnhancementOptionsProps> = ({
@@ -39,6 +40,7 @@ export const EnhancementOptions: React.FC<IEnhancementOptionsProps> = ({
   disabled = false,
   isFreeUser = false,
   onUpgradeClick,
+  suppressPurchaseCtas = false,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [autoResize, setAutoResize] = useState(() => isAutoResizeEnabled());
@@ -93,7 +95,7 @@ export const EnhancementOptions: React.FC<IEnhancementOptionsProps> = ({
       {selectedTier !== 'bg-removal' && (
         <>
           {/* Smart AI Analysis - Prominent Card */}
-          {showSmartAnalysis && (
+          {showSmartAnalysis && (!isFreeUser || !suppressPurchaseCtas) && (
             <div
               className={`rounded-lg border overflow-hidden ${
                 isFreeUser

@@ -21,6 +21,11 @@ const mockBatchQueueState = {
   completedCount: 0,
   batchLimit: 1,
   batchLimitExceeded: null,
+  providerUnavailable: null as {
+    message: string;
+    isModalOpen: boolean;
+    suppressPurchaseCtas: boolean;
+  } | null,
   setActiveId: vi.fn(),
   addFiles: mockAddFiles,
   addSampleItem: mockAddSampleItem,
@@ -29,6 +34,8 @@ const mockBatchQueueState = {
   processBatch: mockProcessBatch,
   processSingleItem: vi.fn(),
   clearBatchLimitError: vi.fn(),
+  clearProviderUnavailable: vi.fn(),
+  showProviderUnavailable: vi.fn(),
 };
 vi.mock('@/client/hooks/useBatchQueue', () => ({
   useBatchQueue: () => mockBatchQueueState,
@@ -299,6 +306,7 @@ describe('Workspace Quality Tier Defaults', () => {
     mockBatchQueueState.completedCount = 0;
     mockBatchQueueState.batchLimit = 1;
     mockBatchQueueState.batchLimitExceeded = null;
+    mockBatchQueueState.providerUnavailable = null;
   });
 
   describe('Free User', () => {
@@ -348,6 +356,7 @@ describe('Workspace Quality Tier Logic', () => {
     mockBatchQueueState.completedCount = 0;
     mockBatchQueueState.batchLimit = 1;
     mockBatchQueueState.batchLimitExceeded = null;
+    mockBatchQueueState.providerUnavailable = null;
   });
 
   test('should initialize with quick tier for all users', () => {
@@ -396,6 +405,30 @@ describe('Workspace Quality Tier Logic', () => {
         container.querySelector('[data-modal="checkout"][data-price-id="price_test_small"]')
       ).toBeInTheDocument();
     });
+  });
+
+  test('suppresses workspace purchase entry points while a provider outage is active', () => {
+    mockBatchQueueState.providerUnavailable = {
+      message: 'Provider processing is temporarily unavailable',
+      isModalOpen: false,
+      suppressPurchaseCtas: true,
+    };
+    mockBatchQueueState.queue = [
+      {
+        id: 'item-1',
+        status: ProcessingStatus.COMPLETED,
+        file: new File(['test'], 'test.png', { type: 'image/png' }),
+      },
+    ];
+    mockBatchQueueState.activeId = 'item-1';
+    mockBatchQueueState.activeItem = mockBatchQueueState.queue[0];
+
+    const { container } = render(<Workspace />);
+
+    fireEvent.click(screen.getByTestId('batch-sidebar-direct-checkout'));
+
+    expect(container.querySelector('[data-modal="checkout"]')).not.toBeInTheDocument();
+    expect(screen.queryByText('More Credits')).not.toBeInTheDocument();
   });
 
   test('routes unauthenticated model-gate direct checkout through auth wall', async () => {

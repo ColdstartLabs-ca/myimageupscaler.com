@@ -89,7 +89,9 @@ const Workspace: React.FC = () => {
     processSingleItem,
     clearBatchLimitError,
     clearProviderUnavailable,
+    showProviderUnavailable,
   } = useBatchQueue();
+  const purchaseCtasSuppressed = providerUnavailable?.suppressPurchaseCtas === true;
 
   const { isFreeUser, profile, isAuthenticated, totalCredits } = useUserData();
   const { openAuthRequiredModal } = useModalStore();
@@ -115,6 +117,10 @@ const Workspace: React.FC = () => {
     trigger = 'workspace',
     creditContext?: { requiredCredits: number; currentBalance: number }
   ) => {
+    if (purchaseCtasSuppressed) {
+      showProviderUnavailable();
+      return;
+    }
     setUpgradeModalOutOfCredits(outOfCredits);
     setUpgradeModalTrigger(trigger);
     setUpgradeModalCreditContext(creditContext ?? null);
@@ -128,6 +134,13 @@ const Workspace: React.FC = () => {
   const [postAuthCheckoutPriceId, setPostAuthCheckoutPriceId] = useState<string | null>(null);
   const [directCheckoutPriceId, setDirectCheckoutPriceId] = useState<string | null>(null);
   const processedCheckoutParamRef = React.useRef(false);
+
+  useEffect(() => {
+    if (!purchaseCtasSuppressed) return;
+    setShowUpgradeModal(false);
+    setPostAuthCheckoutPriceId(null);
+    setDirectCheckoutPriceId(null);
+  }, [purchaseCtasSuppressed]);
 
   // Auto-open checkout after post-auth redirect: /?checkout=<priceId>
   useEffect(() => {
@@ -483,6 +496,10 @@ const Workspace: React.FC = () => {
     trigger: string,
     source: 'model_gate' | 'batch_limit' | 'engagement_discount_banner'
   ) => {
+    if (purchaseCtasSuppressed) {
+      showProviderUnavailable();
+      return;
+    }
     setCheckoutTrackingContext({ trigger });
     const ctx = getCheckoutTrackingContext();
     const attributionProps = {
@@ -633,14 +650,14 @@ const Workspace: React.FC = () => {
           </div>
         )}
         <PurchaseModal
-          isOpen={showUpgradeModal}
+          isOpen={!purchaseCtasSuppressed && showUpgradeModal}
           onClose={closeUpgradeModal}
           onPurchaseComplete={closeUpgradeModal}
           outOfCredits={upgradeModalOutOfCredits}
           trigger={upgradeModalTrigger}
         />
 
-        {postAuthCheckoutPriceId && (
+        {!purchaseCtasSuppressed && postAuthCheckoutPriceId && (
           <CheckoutModal
             priceId={postAuthCheckoutPriceId}
             onClose={() => setPostAuthCheckoutPriceId(null)}
@@ -649,7 +666,7 @@ const Workspace: React.FC = () => {
           />
         )}
 
-        {directCheckoutPriceId && (
+        {!purchaseCtasSuppressed && directCheckoutPriceId && (
           <CheckoutModal
             priceId={directCheckoutPriceId}
             onClose={() => setDirectCheckoutPriceId(null)}
@@ -658,7 +675,13 @@ const Workspace: React.FC = () => {
           />
         )}
 
-        <EngagementDiscountBanner onClaimDiscount={handleEngagementDiscountClaim} />
+        {!purchaseCtasSuppressed && (
+          <EngagementDiscountBanner onClaimDiscount={handleEngagementDiscountClaim} />
+        )}
+        <ProviderUnavailableModal
+          isOpen={providerUnavailable?.isModalOpen === true}
+          onClose={clearProviderUnavailable}
+        />
       </div>
     );
   }
@@ -687,6 +710,7 @@ const Workspace: React.FC = () => {
             onClear={clearQueue}
             onUpgrade={() => openUpgradeModal(true, 'workspace_batch_sidebar')}
             onUpgradeDirect={handleUpgradeDirect}
+            suppressPurchaseCtas={purchaseCtasSuppressed}
           />
         </div>
 
@@ -714,7 +738,7 @@ const Workspace: React.FC = () => {
           </div>
 
           {/* After 3rd upscale upgrade nudge (free users only, once per session) */}
-          {isFreeUser && (
+          {isFreeUser && !purchaseCtasSuppressed && (
             <div className="px-3 md:px-4 pb-0">
               <AfterUpscaleBanner
                 completedCount={completedCount}
@@ -901,6 +925,7 @@ const Workspace: React.FC = () => {
         onUpgrade={handleModelGalleryUpgrade}
         onUpgradeDirect={handleUpgradeDirect}
         selectedScale={config.scale}
+        suppressPurchaseCtas={purchaseCtasSuppressed}
       />
 
       {/* Mobile Tab Bar */}
@@ -922,18 +947,20 @@ const Workspace: React.FC = () => {
         <TabButton active={mobileTab === 'queue'} onClick={() => setMobileTab('queue')} icon={List}>
           Queue
         </TabButton>
-        <TabButton
-          active={false}
-          onClick={() => openUpgradeModal(false, 'mobile_tab_credits')}
-          icon={CreditCard}
-        >
-          More Credits
-        </TabButton>
+        {!purchaseCtasSuppressed && (
+          <TabButton
+            active={false}
+            onClick={() => openUpgradeModal(false, 'mobile_tab_credits')}
+            icon={CreditCard}
+          >
+            More Credits
+          </TabButton>
+        )}
       </nav>
 
       {/* Batch Limit Modal */}
       <BatchLimitModal
-        isOpen={!!batchLimitExceeded}
+        isOpen={!purchaseCtasSuppressed && !!batchLimitExceeded}
         onClose={clearBatchLimitError}
         limit={batchLimitExceeded?.limit ?? batchLimit}
         attempted={batchLimitExceeded?.attempted ?? 0}
@@ -944,7 +971,10 @@ const Workspace: React.FC = () => {
         serverEnforced={batchLimitExceeded?.serverEnforced}
       />
 
-      <ProviderUnavailableModal isOpen={!!providerUnavailable} onClose={clearProviderUnavailable} />
+      <ProviderUnavailableModal
+        isOpen={providerUnavailable?.isModalOpen === true}
+        onClose={clearProviderUnavailable}
+      />
 
       {showCelebration && (
         <FirstDownloadCelebration
@@ -960,7 +990,7 @@ const Workspace: React.FC = () => {
       )}
 
       <PurchaseModal
-        isOpen={showUpgradeModal}
+        isOpen={!purchaseCtasSuppressed && showUpgradeModal}
         onClose={closeUpgradeModal}
         onPurchaseComplete={closeUpgradeModal}
         outOfCredits={upgradeModalOutOfCredits}
@@ -969,7 +999,7 @@ const Workspace: React.FC = () => {
         currentBalance={upgradeModalCreditContext?.currentBalance}
       />
 
-      {postAuthCheckoutPriceId && (
+      {!purchaseCtasSuppressed && postAuthCheckoutPriceId && (
         <CheckoutModal
           priceId={postAuthCheckoutPriceId}
           onClose={() => setPostAuthCheckoutPriceId(null)}
@@ -978,7 +1008,7 @@ const Workspace: React.FC = () => {
         />
       )}
 
-      {directCheckoutPriceId && (
+      {!purchaseCtasSuppressed && directCheckoutPriceId && (
         <CheckoutModal
           priceId={directCheckoutPriceId}
           onClose={() => setDirectCheckoutPriceId(null)}
@@ -988,7 +1018,9 @@ const Workspace: React.FC = () => {
       )}
 
       {/* Engagement discount banner — shown to eligible free users */}
-      <EngagementDiscountBanner onClaimDiscount={handleEngagementDiscountClaim} />
+      {!purchaseCtasSuppressed && (
+        <EngagementDiscountBanner onClaimDiscount={handleEngagementDiscountClaim} />
+      )}
 
       {/* Samples modal — triggered by help button */}
       {showSamplesModal && (

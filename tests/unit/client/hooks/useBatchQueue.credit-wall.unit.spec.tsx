@@ -28,6 +28,7 @@ const mocks = vi.hoisted(() => ({
   },
   ProviderUnavailableError: class ProviderUnavailableError extends Error {
     public readonly retryAt?: Date;
+    public readonly suppressPurchaseCtas = true;
   },
 }));
 
@@ -200,5 +201,37 @@ describe('useBatchQueue credit wall analytics', () => {
       'mailto:support@myimageupscaler.com'
     );
     expect(screen.queryByText(/buy|purchase|get credits/i)).not.toBeInTheDocument();
+  });
+
+  it('should keep purchase CTAs suppressed after closing the outage modal until processing recovers', async () => {
+    const { result } = renderHook(() => useBatchQueue());
+
+    await addAndProcessOne(
+      result,
+      new mocks.ProviderUnavailableError('Provider processing is temporarily unavailable')
+    );
+
+    expect(result.current.providerUnavailable).toMatchObject({
+      isModalOpen: true,
+      suppressPurchaseCtas: true,
+    });
+
+    act(() => result.current.clearProviderUnavailable());
+
+    expect(result.current.providerUnavailable).toMatchObject({
+      isModalOpen: false,
+      suppressPurchaseCtas: true,
+    });
+
+    mocks.processImage.mockResolvedValueOnce({
+      imageData: 'data:image/png;base64,processed',
+      creditsRemaining: 4,
+      creditsUsed: 1,
+    });
+    await act(async () => {
+      await result.current.processSingleItem(result.current.queue[0], config);
+    });
+
+    expect(result.current.providerUnavailable).toBeNull();
   });
 });

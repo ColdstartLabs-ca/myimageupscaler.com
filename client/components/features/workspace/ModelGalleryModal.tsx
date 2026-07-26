@@ -43,6 +43,7 @@ export interface IModelGalleryModalProps {
   onUpgradeDirect?: (params: IUpgradeDirectParams) => void;
   /** Prevents auto-opened educational views from being counted as upgrade prompt impressions. */
   suppressUpgradeImpression?: boolean;
+  suppressPurchaseCtas?: boolean;
   source?: 'manual' | 'mobile' | 'post_download_explore' | 'first_time_auto';
   selectedScale?: 2 | 4 | 8;
 }
@@ -170,6 +171,7 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
   onUpgrade,
   onUpgradeDirect,
   suppressUpgradeImpression = false,
+  suppressPurchaseCtas = false,
   source = 'manual',
   selectedScale = 2,
 }) => {
@@ -208,7 +210,12 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
       originalTierRef.current = currentTier;
       setActiveTier(currentTier);
 
-      if (isFreeUser && !suppressUpgradeImpression && typeof window !== 'undefined') {
+      if (
+        isFreeUser &&
+        !suppressUpgradeImpression &&
+        !suppressPurchaseCtas &&
+        typeof window !== 'undefined'
+      ) {
         const alreadyShown = sessionStorage.getItem(MODEL_GATE_SESSION_KEY);
         if (!alreadyShown) {
           sessionStorage.setItem(MODEL_GATE_SESSION_KEY, 'true');
@@ -221,7 +228,15 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
         }
       }
     }
-  }, [copyVariant, currentTier, isFreeUser, isOpen, pricingRegion, suppressUpgradeImpression]);
+  }, [
+    copyVariant,
+    currentTier,
+    isFreeUser,
+    isOpen,
+    pricingRegion,
+    suppressPurchaseCtas,
+    suppressUpgradeImpression,
+  ]);
 
   useEffect(() => {
     if (!isFilterMenuOpen) return;
@@ -463,30 +478,31 @@ export const ModelGalleryModal: React.FC<IModelGalleryModalProps> = ({
   }, [onClose, currentTier, isFreeUser, freeTiers, premiumTiers, searchQuery, source]);
 
   const hasResults = freeTiers.length > 0 || premiumTiers.length > 0;
-  const upgradeCta = isFreeUser ? (
-    <button
-      type="button"
-      onClick={() => handleLockedClick('banner')}
-      className="group flex w-full items-center justify-between gap-3 rounded-xl border border-violet-200/70 bg-gradient-to-r from-violet-500/70 via-indigo-500/58 to-blue-500/62 p-3.5 text-left shadow-[0_20px_46px_rgba(79,70,229,0.46),inset_0_1px_0_rgba(255,255,255,0.18)] transition-all hover:border-white/80 hover:from-violet-500/82 hover:to-blue-500/74 focus:outline-none focus:ring-2 focus:ring-violet-200/80 md:p-4"
-    >
-      <div className="flex min-w-0 items-center gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-violet-700 shadow-[0_0_28px_rgba(255,255,255,0.28)] transition-transform group-hover:scale-105">
-          <Sparkles className="h-5 w-5" />
+  const upgradeCta =
+    isFreeUser && !suppressPurchaseCtas ? (
+      <button
+        type="button"
+        onClick={() => handleLockedClick('banner')}
+        className="group flex w-full items-center justify-between gap-3 rounded-xl border border-violet-200/70 bg-gradient-to-r from-violet-500/70 via-indigo-500/58 to-blue-500/62 p-3.5 text-left shadow-[0_20px_46px_rgba(79,70,229,0.46),inset_0_1px_0_rgba(255,255,255,0.18)] transition-all hover:border-white/80 hover:from-violet-500/82 hover:to-blue-500/74 focus:outline-none focus:ring-2 focus:ring-violet-200/80 md:p-4"
+      >
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-violet-700 shadow-[0_0_28px_rgba(255,255,255,0.28)] transition-transform group-hover:scale-105">
+            <Sparkles className="h-5 w-5" />
+          </div>
+          <div className="min-w-0">
+            <span className="block truncate text-base font-black text-white drop-shadow-sm">
+              Unlock all models
+            </span>
+            <span className="block truncate text-xs font-bold text-white/88">
+              From $4.99 - sharper premium results
+            </span>
+          </div>
         </div>
-        <div className="min-w-0">
-          <span className="block truncate text-base font-black text-white drop-shadow-sm">
-            Unlock all models
-          </span>
-          <span className="block truncate text-xs font-bold text-white/88">
-            From $4.99 - sharper premium results
-          </span>
-        </div>
-      </div>
-      <span className="shrink-0 rounded-lg bg-white px-4 py-2.5 text-[11px] font-black uppercase tracking-wide text-violet-700 shadow-lg shadow-violet-950/30 transition-transform group-hover:scale-105">
-        Upgrade
-      </span>
-    </button>
-  ) : null;
+        <span className="shrink-0 rounded-lg bg-white px-4 py-2.5 text-[11px] font-black uppercase tracking-wide text-violet-700 shadow-lg shadow-violet-950/30 transition-transform group-hover:scale-105">
+          Upgrade
+        </span>
+      </button>
+    ) : null;
 
   return (
     <BottomSheet

@@ -38,7 +38,12 @@ interface IUseBatchQueueReturn {
   completedCount: number;
   batchLimit: number;
   batchLimitExceeded: { attempted: number; limit: number; serverEnforced?: boolean } | null;
-  providerUnavailable: { message: string; retryAt?: Date } | null;
+  providerUnavailable: {
+    message: string;
+    retryAt?: Date;
+    suppressPurchaseCtas: boolean;
+    isModalOpen: boolean;
+  } | null;
   setActiveId: (id: string) => void;
   addFiles: (files: File[], source?: 'drag_drop' | 'file_picker' | 'paste' | 'url') => void;
   /** Inject a pre-processed sample — shows before/after without calling the API */
@@ -49,6 +54,7 @@ interface IUseBatchQueueReturn {
   processSingleItem: (item: IBatchItem, config: IUpscaleConfig) => Promise<void>;
   clearBatchLimitError: () => void;
   clearProviderUnavailable: () => void;
+  showProviderUnavailable: () => void;
 }
 
 export const useBatchQueue = (): IUseBatchQueueReturn => {
@@ -64,6 +70,8 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
   const [providerUnavailable, setProviderUnavailable] = useState<{
     message: string;
     retryAt?: Date;
+    suppressPurchaseCtas: boolean;
+    isModalOpen: boolean;
   } | null>(null);
   const showToast = useToastStore(state => state.showToast);
   const t = useTranslations('workspace');
@@ -221,7 +229,25 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
   }, []);
 
   const clearProviderUnavailable = useCallback(() => {
-    setProviderUnavailable(null);
+    setProviderUnavailable(current =>
+      current
+        ? {
+            ...current,
+            isModalOpen: false,
+          }
+        : null
+    );
+  }, []);
+
+  const showProviderUnavailable = useCallback(() => {
+    setProviderUnavailable(current =>
+      current
+        ? {
+            ...current,
+            isModalOpen: true,
+          }
+        : null
+    );
   }, []);
 
   const processSingleItem = async (item: IBatchItem, config: IUpscaleConfig) => {
@@ -287,6 +313,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
           stage: stage || ProcessingStage.ENHANCING,
         });
       });
+      setProviderUnavailable(null);
 
       // Prefer imageUrl (direct URL, edge-optimized) over imageData (base64)
       // Both work in <img> tags, but URL is faster and avoids CORS issues
@@ -362,7 +389,12 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
       } else if (error instanceof ProviderUnavailableError) {
         errorType = 'provider_unavailable';
         setIsProcessingBatch(false);
-        setProviderUnavailable({ message: error.message, retryAt: error.retryAt });
+        setProviderUnavailable({
+          message: error.message,
+          retryAt: error.retryAt,
+          suppressPurchaseCtas: error.suppressPurchaseCtas,
+          isModalOpen: true,
+        });
         updateItemStatus(item.id, {
           status: ProcessingStatus.ERROR,
           error: error.message,
@@ -563,5 +595,6 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     processSingleItem,
     clearBatchLimitError,
     clearProviderUnavailable,
+    showProviderUnavailable,
   };
 };

@@ -367,6 +367,13 @@ describe('Prompt 1: model_gate — ModelGalleryModal', () => {
     expect(screen.getByText(/From \$4.99/i)).toBeInTheDocument();
   });
 
+  it('hides and does not track the upgrade banner during a provider outage', () => {
+    render(<ModelGalleryModal {...defaultProps} isFreeUser={true} suppressPurchaseCtas={true} />);
+
+    expect(screen.queryByText('Unlock all models')).not.toBeInTheDocument();
+    expect(mockAnalyticsTrack).not.toHaveBeenCalledWith('upgrade_prompt_shown', expect.anything());
+  });
+
   it('calls onUpgrade when upgrade button is clicked', async () => {
     const onUpgrade = vi.fn();
     render(<ModelGalleryModal {...defaultProps} onUpgrade={onUpgrade} isFreeUser={true} />);

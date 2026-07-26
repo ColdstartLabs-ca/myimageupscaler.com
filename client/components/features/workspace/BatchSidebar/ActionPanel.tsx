@@ -23,6 +23,7 @@ export interface IActionPanelProps {
   onUpgrade: () => void;
   showInsufficientModal: boolean;
   setShowInsufficientModal: (show: boolean) => void;
+  suppressPurchaseCtas?: boolean;
 }
 
 export const ActionPanel: React.FC<IActionPanelProps> = ({
@@ -38,12 +39,17 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
   onUpgrade,
   showInsufficientModal,
   setShowInsufficientModal,
+  suppressPurchaseCtas = false,
 }) => {
   const pendingQueue = queue.filter(i => i.status !== ProcessingStatus.COMPLETED);
   const hasEnoughCredits = currentBalance >= totalCost;
 
   const handleProcessClick = () => {
     if (!hasEnoughCredits && pendingQueue.length > 0) {
+      if (suppressPurchaseCtas) {
+        onUpgrade();
+        return;
+      }
       analytics.track('credit_wall_shown', {
         source: 'preflight_action_panel',
         requiredCredits: totalCost,
@@ -121,7 +127,7 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
       </button>
 
       {/* Insufficient Credits Warning */}
-      {!hasEnoughCredits && pendingQueue.length > 0 && (
+      {!suppressPurchaseCtas && !hasEnoughCredits && pendingQueue.length > 0 && (
         <div className="px-3 py-2 bg-amber-500/20 border border-amber-500/20 rounded-lg text-center">
           <p className="text-xs font-medium text-amber-400">
             Need {totalCost - currentBalance} more{' '}
@@ -156,7 +162,7 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
 
       {/* Insufficient Credits Modal */}
       <InsufficientCreditsModal
-        isOpen={showInsufficientModal}
+        isOpen={!suppressPurchaseCtas && showInsufficientModal}
         onClose={() => setShowInsufficientModal(false)}
         requiredCredits={totalCost}
         currentBalance={currentBalance}

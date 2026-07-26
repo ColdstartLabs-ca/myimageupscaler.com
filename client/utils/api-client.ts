@@ -48,14 +48,16 @@ export class FreeLimitExceededError extends Error {
 /** Server-confirmed provider outage. This state must never open a purchase flow. */
 export class ProviderUnavailableError extends Error {
   public readonly retryAt?: Date;
+  public readonly suppressPurchaseCtas: boolean;
 
-  constructor(options: { message?: string; retryAt?: Date }) {
+  constructor(options: { message?: string; retryAt?: Date; suppressPurchaseCtas?: boolean }) {
     super(
       options.message ||
         'Image processing is temporarily unavailable due to a provider issue. Your credits have not been charged. Please try again shortly or contact our support team.'
     );
     this.name = 'ProviderUnavailableError';
     this.retryAt = options.retryAt;
+    this.suppressPurchaseCtas = options.suppressPurchaseCtas ?? true;
   }
 }
 
@@ -313,6 +315,7 @@ export const processImage = async (
           retryAt: errorData.error.details?.retryAt
             ? new Date(errorData.error.details.retryAt)
             : undefined,
+          suppressPurchaseCtas: errorData.error.details?.suppressPurchaseCtas ?? true,
         });
       }
 
