@@ -1199,26 +1199,24 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
                   : 'provider_unavailable'
         );
       }
-      const statusCode =
-        error.code === 'RATE_LIMITED'
-          ? 429
-          : error.code === 'SAFETY' ||
-              error.code === 'IMAGE_TOO_LARGE' ||
-              error.code === 'INVALID_INPUT'
-            ? error.code === 'INVALID_INPUT'
-              ? 400
-              : 422
-            : 503;
+      const isUserAttributableProviderError = [
+        'SAFETY',
+        'IMAGE_TOO_LARGE',
+        'INVALID_INPUT',
+      ].includes(error.code);
+      const statusCode = isUserAttributableProviderError
+        ? error.code === 'INVALID_INPUT'
+          ? 400
+          : 422
+        : 503;
       const errorCode =
-        error.code === 'RATE_LIMITED'
-          ? ErrorCodes.RATE_LIMITED
-          : error.code === 'IMAGE_TOO_LARGE'
-            ? ErrorCodes.IMAGE_TOO_LARGE
-            : error.code === 'SAFETY'
-              ? ErrorCodes.INVALID_REQUEST
-              : error.code === 'INVALID_INPUT'
-                ? ErrorCodes.VALIDATION_ERROR
-                : ErrorCodes.AI_UNAVAILABLE;
+        error.code === 'IMAGE_TOO_LARGE'
+          ? ErrorCodes.IMAGE_TOO_LARGE
+          : error.code === 'SAFETY'
+            ? ErrorCodes.INVALID_REQUEST
+            : error.code === 'INVALID_INPUT'
+              ? ErrorCodes.VALIDATION_ERROR
+              : ErrorCodes.AI_UNAVAILABLE;
       logFailure(
         `replicate_${String(error.code).toLowerCase()}`,
         {
@@ -1336,7 +1334,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     // Handle unexpected errors
     const errorMessage = serializeError(error);
-    if (providerAttemptStarted) {
+    const failedDuringProviderAttempt = providerAttemptStarted;
+    if (failedDuringProviderAttempt) {
       await providerHealthService.recordFailure('internal');
     }
     logFailure(
@@ -1374,9 +1373,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     const { body, status } = createErrorResponse(
-      ErrorCodes.INTERNAL_ERROR,
+      failedDuringProviderAttempt ? ErrorCodes.AI_UNAVAILABLE : ErrorCodes.INTERNAL_ERROR,
       TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE,
-      500
+      failedDuringProviderAttempt ? 503 : 500
     );
     return NextResponse.json(body, { status });
   } finally {

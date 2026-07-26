@@ -572,6 +572,47 @@ describe('POST /api/upscale free limit errors', () => {
     expect(mocks.recordProviderFailure).toHaveBeenCalledWith('billing');
   });
 
+  it.each([
+    ['authentication', 'AUTHENTICATION_FAILED', 403, 'authentication'],
+    ['rate limiting', 'RATE_LIMITED', 429, 'rate_limited'],
+  ])(
+    'returns the support-only outage state for provider %s failures',
+    async (_failureName, replicateCode, providerStatus, expectedFailureKind) => {
+      const oneCreditProfile = profile({ subscription_credits_balance: 1 });
+      mocks.from.mockImplementation(() => ({
+        select: () => ({
+          eq: () => ({
+            single: async () => ({ data: oneCreditProfile, error: null }),
+            maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
+          }),
+        }),
+      }));
+      mocks.processImage.mockRejectedValue(
+        new ReplicateError(
+          'Raw Replicate failure: buy credits at https://replicate.com/account/billing.',
+          replicateCode,
+          providerStatus
+        )
+      );
+
+      const response = await POST(request());
+      const payload = await response.json();
+
+      expect(response.status).toBe(503);
+      expect(payload).toEqual({
+        success: false,
+        error: {
+          code: 'AI_UNAVAILABLE',
+          message:
+            'Image processing is temporarily unavailable due to a provider issue. Your credits have not been charged. Please try again shortly or contact our support team.',
+        },
+      });
+      expect(JSON.stringify(payload)).not.toMatch(/replicate|https?:\/\/|buy|purchase|billing/i);
+      expect(mocks.batchRelease).toHaveBeenCalledWith('user-1');
+      expect(mocks.recordProviderFailure).toHaveBeenCalledWith(expectedFailureKind);
+    }
+  );
+
   it('releases the hourly slot when an internal failure happens before credit deduction', async () => {
     const oneCreditProfile = profile({ subscription_credits_balance: 1 });
     mocks.from.mockImplementation(() => ({
@@ -585,8 +626,18 @@ describe('POST /api/upscale free limit errors', () => {
     mocks.processImage.mockRejectedValue(new Error('Internal processor setup failure'));
 
     const response = await POST(request());
+    const payload = await response.json();
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(503);
+    expect(payload).toEqual({
+      success: false,
+      error: {
+        code: 'AI_UNAVAILABLE',
+        message:
+          'Image processing is temporarily unavailable due to a provider issue. Your credits have not been charged. Please try again shortly or contact our support team.',
+      },
+    });
+    expect(JSON.stringify(payload)).not.toMatch(/replicate|https?:\/\/|buy|purchase|billing/i);
     expect(mocks.refundCredits).not.toHaveBeenCalled();
     expect(mocks.batchRelease).toHaveBeenCalledWith('user-1');
   });

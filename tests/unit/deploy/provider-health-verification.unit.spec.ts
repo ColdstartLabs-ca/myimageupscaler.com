@@ -7,9 +7,11 @@ import { describe, expect, test } from 'vitest';
 const verifyScriptPath = path.resolve(process.cwd(), 'scripts/deploy/steps/06-verify.sh');
 const preflightScriptPath = path.resolve(process.cwd(), 'scripts/deploy/steps/01-preflight.sh');
 const secretsScriptPath = path.resolve(process.cwd(), 'scripts/deploy/steps/05-secrets.sh');
+const deployScriptPath = path.resolve(process.cwd(), 'scripts/deploy/deploy.sh');
 const verifyScript = readFileSync(verifyScriptPath, 'utf8');
 const preflightScript = readFileSync(preflightScriptPath, 'utf8');
 const secretsScript = readFileSync(secretsScriptPath, 'utf8');
+const deployScript = readFileSync(deployScriptPath, 'utf8');
 
 function runProviderObservabilityPreflight(overrides: Partial<Record<string, string>> = {}) {
   return spawnSync(
@@ -120,6 +122,15 @@ describe('provider health deployment verification', () => {
   test('uploads provider observability and alert routing settings', () => {
     expect(secretsScript).toContain('BASELIME_API_KEY');
     expect(secretsScript).toContain('PROVIDER_ALERT_EMAIL');
+  });
+
+  test('runs provider observability preflight before production migrations', () => {
+    const preflightIndex = deployScript.indexOf('step_preflight');
+    const migrationIndex = deployScript.indexOf('deploy_database_migrations');
+
+    expect(preflightIndex).toBeGreaterThan(-1);
+    expect(migrationIndex).toBeGreaterThan(-1);
+    expect(preflightIndex).toBeLessThan(migrationIndex);
   });
 
   test('accepts a configured logger, alert destination, and email provider', () => {

@@ -72,6 +72,10 @@ echo ""
 # Load production environment variables
 source "$PROJECT_ROOT/scripts/load-env.sh" --prod
 
+# Validate production credentials, observability, alert delivery, and cron
+# configuration before any database mutation.
+source "$SCRIPT_DIR/steps/01-preflight.sh" && step_preflight
+
 # Capture a verified schema + data backup before every production deployment.
 echo -e "${CYAN}▸ Backing up production database...${NC}"
 cd "$PROJECT_ROOT"
@@ -147,7 +151,6 @@ echo ""
 # required check) leaves behind after the initial clean-tree gate.
 assert_clean_worktree
 
-source "$SCRIPT_DIR/steps/01-preflight.sh" && step_preflight
 source "$SCRIPT_DIR/steps/02-build.sh" && step_build
 source "$SCRIPT_DIR/steps/03-deploy.sh" && step_deploy
 
