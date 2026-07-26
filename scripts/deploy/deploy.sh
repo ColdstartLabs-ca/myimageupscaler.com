@@ -82,6 +82,10 @@ fi
 echo -e "${GREEN}✓ Production database backup complete${NC}"
 echo ""
 
+# Supabase detects pending migrations, refuses incompatible history, applies valid
+# pending migrations, and verifies synchronization before application checks/builds.
+source "$SCRIPT_DIR/steps/00-database-migrations.sh" && deploy_database_migrations
+
 if [ "$SKIP_TESTS" = "false" ]; then
     echo -e "${CYAN}▸ Running tests...${NC}"
     cd "$PROJECT_ROOT"

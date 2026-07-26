@@ -42,4 +42,17 @@ describe('yarn deploy safety gates', () => {
       deployScript.indexOf('if [ "$SKIP_TESTS" = "false" ]; then')
     );
   });
+
+  test('applies and verifies production migrations only after the database backup', () => {
+    const backup = 'if ! yarn db:backup; then';
+    const migrationGate =
+      'source "$SCRIPT_DIR/steps/00-database-migrations.sh" && deploy_database_migrations';
+
+    expect(deployScript).toContain(migrationGate);
+    expect(deployScript.indexOf(backup)).toBeLessThan(deployScript.indexOf(migrationGate));
+    expect(deployScript.indexOf(migrationGate)).toBeLessThan(
+      deployScript.indexOf('if [ "$SKIP_TESTS" = "false" ]; then')
+    );
+    expect(deployScript).not.toContain('--skip-migrations');
+  });
 });

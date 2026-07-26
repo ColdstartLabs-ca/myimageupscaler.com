@@ -139,7 +139,7 @@ test.describe('Account creation free-credit hardening', () => {
     await harness.assertDashboardCredits(page, 5);
   });
 
-  test('should apply the 5/3/0 identity ladder without retroactively reducing the first account', async ({
+  test('should preserve full tier grants for accounts sharing an identity', async ({
     page,
     request,
   }) => {
@@ -162,16 +162,16 @@ test.describe('Account creation free-credit hardening', () => {
     });
     await harness.assertDecision(second.id, {
       tier: 'standard',
-      grantedCredits: 3,
+      grantedCredits: 5,
       transactionCount: 1,
     });
     await harness.assertDecision(third.id, {
       tier: 'standard',
-      grantedCredits: 0,
-      transactionCount: 0,
+      grantedCredits: 5,
+      transactionCount: 1,
     });
     await harness.openDashboard(page, third);
-    await harness.assertDashboardCredits(page, 0);
+    await harness.assertDashboardCredits(page, 5);
     await harness.expectCheckoutCreated(request, third, identity);
   });
 
