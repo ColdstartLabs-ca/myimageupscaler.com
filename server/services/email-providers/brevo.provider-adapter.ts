@@ -81,9 +81,7 @@ export function createBrevoSendError(
       false
     );
   }
-  if (
-    /account (?:is )?(?:blocked|disabled|suspended)/.test(providerDetail)
-  ) {
+  if (/account (?:is )?(?:blocked|disabled|suspended)/.test(providerDetail)) {
     return new EmailProviderSendError(
       'Brevo account is blocked',
       'provider_blocked',
