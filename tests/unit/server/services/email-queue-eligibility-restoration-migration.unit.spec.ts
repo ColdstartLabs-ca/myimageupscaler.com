@@ -64,6 +64,19 @@ describe('lifecycle queue eligibility restoration migration', () => {
     expect(migration).toContain('m.hard_bounce_count::NUMERIC / NULLIF(m.sent_count, 0) > 0.02');
   });
 
+  it('should scope the queue health scan to pending rows so it can use a partial index', () => {
+    // Every health metric concerns pending rows only. Filtering status inside each
+    // FILTER instead of WHERE seq-scans the whole queue (196k rows / ~1.8s in prod)
+    // on every drain, and the worker runs 10 drains per schedule.
+    const health = migration.slice(
+      migration.indexOf('CREATE OR REPLACE FUNCTION public.get_email_lifecycle_queue_health'),
+      migration.indexOf('get_email_lifecycle_health(')
+    );
+    expect(health).toContain("WHERE q.status = 'pending'");
+    expect(health).not.toContain("FILTER (WHERE q.status = 'pending')");
+    expect(health).not.toMatch(/FILTER \(\s*WHERE q\.status = 'pending'\s+AND/);
+  });
+
   it('should keep every stop_recommended rate threshold behind the 500-send window', () => {
     // PRD section 10 step 8: the 2% bounce / 0.1% complaint / 5% failure thresholds
     // are only meaningful over a rolling 500-send window. The gate runs on a 24h

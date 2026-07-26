@@ -552,14 +552,18 @@ STABLE
 SECURITY INVOKER
 SET search_path = ''
 AS $$
+-- Every metric here concerns pending rows only, so the status filter belongs in
+-- WHERE rather than in each FILTER. Without it this seq-scans the whole queue
+-- (196k rows / 177MB / ~1.8s in production) on every cron drain, and the worker
+-- runs 10 drains per schedule. In WHERE, the existing status='pending' partial
+-- indexes serve it instead, and cost tracks the pending backlog, not table size.
   SELECT
-    pg_catalog.count(*) FILTER (WHERE q.status = 'pending') AS pending_count,
+    pg_catalog.count(*) AS pending_count,
     pg_catalog.count(*) FILTER (
-      WHERE q.status = 'pending' AND q.scheduled_for <= p_due_before
+      WHERE q.scheduled_for <= p_due_before
     ) AS overdue_count,
     pg_catalog.count(*) FILTER (
-      WHERE q.status = 'pending'
-        AND q.scheduled_for <= p_due_before
+      WHERE q.scheduled_for <= p_due_before
         AND c.enabled IS TRUE
         AND (
           q.processing_claim_id IS NULL
@@ -582,20 +586,19 @@ AS $$
         )
     ) AS eligible_count,
     pg_catalog.count(*) FILTER (
-      WHERE q.status = 'pending' AND q.recipient_value_decision = 'hold_experiment'
+      WHERE q.recipient_value_decision = 'hold_experiment'
     ) AS held_count,
     pg_catalog.count(*) FILTER (
-      WHERE q.status = 'pending'
-        AND c.email_type = 'marketing'
+      WHERE c.email_type = 'marketing'
         AND (
           q.recipient_value_decision IS NULL
           OR q.recipient_value_policy_version IS NULL
         )
     ) AS unclassified_count,
-    pg_catalog.min(q.scheduled_for) FILTER (WHERE q.status = 'pending')
-      AS oldest_pending_scheduled_for
+    pg_catalog.min(q.scheduled_for) AS oldest_pending_scheduled_for
   FROM public.email_lifecycle_queue AS q
-  JOIN public.email_lifecycle_campaigns AS c ON c.key = q.campaign_key;
+  JOIN public.email_lifecycle_campaigns AS c ON c.key = q.campaign_key
+  WHERE q.status = 'pending';
 $$;
 
 REVOKE ALL ON FUNCTION public.get_email_lifecycle_queue_health(TIMESTAMPTZ)
