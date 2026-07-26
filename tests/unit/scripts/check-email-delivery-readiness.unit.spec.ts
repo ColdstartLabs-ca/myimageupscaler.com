@@ -14,6 +14,7 @@ vi.mock('@shared/config/env', () => ({
 vi.mock('@server/supabase/supabaseAdmin', () => ({ supabaseAdmin: {} }));
 
 import {
+  buildBackupVersionsArgs,
   assertBrevoAuthentication,
   assertBrevoSenderReadiness,
   assertQueueDistribution,
@@ -24,6 +25,11 @@ import {
 } from '@/scripts/check-email-delivery-readiness';
 
 describe('check-email-delivery-readiness helpers', () => {
+  it('should pin the gcloud account so an unrelated active account cannot fail the check', () => {
+    expect(buildBackupVersionsArgs()).toContain(
+      '--account=myimageupscaler@myimageupscaler-auth.iam.gserviceaccount.com'
+    );
+  });
   it('should fail when production Brevo authentication is not HTTP 200', () => {
     expect(() => assertBrevoAuthentication(401)).toThrow('HTTP 401');
     expect(() => assertBrevoAuthentication(200)).not.toThrow();

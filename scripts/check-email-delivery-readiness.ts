@@ -8,6 +8,7 @@ import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 const execFile = promisify(execFileCallback);
 const GCLOUD_PROJECT = 'myimageupscaler-auth';
 const GCLOUD_API_SECRET = 'myimageupscaler-api-prod';
+const GCLOUD_ACCOUNT = 'myimageupscaler@myimageupscaler-auth.iam.gserviceaccount.com';
 const RECIPIENT_VALUE_DECISIONS = [
   'protected',
   'keep_high',
@@ -310,16 +311,21 @@ async function checkCron(): Promise<IReadinessSummary['cron']> {
   return { authenticated: true, ...assertCronReadinessResponse(await response.json()) };
 }
 
-async function countEnabledBackupVersions(): Promise<number> {
-  const { stdout } = await execFile('gcloud', [
+export function buildBackupVersionsArgs(): string[] {
+  return [
     'secrets',
     'versions',
     'list',
     GCLOUD_API_SECRET,
     `--project=${GCLOUD_PROJECT}`,
+    `--account=${GCLOUD_ACCOUNT}`,
     '--filter=state=ENABLED',
     '--format=value(name)',
-  ]);
+  ];
+}
+
+async function countEnabledBackupVersions(): Promise<number> {
+  const { stdout } = await execFile('gcloud', buildBackupVersionsArgs());
   const count = stdout.split('\n').filter(Boolean).length;
   if (count < 2) throw new Error('Production API secret must retain at least two enabled versions');
   return count;

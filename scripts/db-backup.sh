@@ -24,6 +24,7 @@ RESTORE_FILEPATH=""
 # GCloud Secret Manager config (matches deploy/steps/00-fetch-secrets.sh)
 GCLOUD_PROJECT="myimageupscaler-auth"
 GCLOUD_SECRET_API="myimageupscaler-api-prod"
+GCLOUD_ACCOUNT="myimageupscaler@myimageupscaler-auth.iam.gserviceaccount.com"
 
 # Colors
 RED='\033[0;31m'
@@ -180,14 +181,15 @@ fetch_db_credentials() {
         log_error "gcloud CLI not installed. Install from: https://cloud.google.com/sdk/docs/install"
     fi
 
-    if ! gcloud auth print-identity-token &>/dev/null 2>&1; then
-        log_error "Not authenticated with gcloud. Run: gcloud auth login"
+    if ! gcloud auth print-identity-token --account="$GCLOUD_ACCOUNT" &>/dev/null 2>&1; then
+        log_error "Not authenticated with gcloud as $GCLOUD_ACCOUNT. Run: gcloud auth login"
     fi
 
     local secret_content
     secret_content=$(gcloud secrets versions access latest \
         --secret="$GCLOUD_SECRET_API" \
-        --project="$GCLOUD_PROJECT" 2>/dev/null) \
+        --project="$GCLOUD_PROJECT" \
+        --account="$GCLOUD_ACCOUNT" 2>/dev/null) \
         || log_error "Failed to fetch secret '$GCLOUD_SECRET_API'. Check gcloud access."
 
     # Extract specific vars from the secret (KEY=VALUE format)
