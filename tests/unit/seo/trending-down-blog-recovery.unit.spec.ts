@@ -23,6 +23,13 @@ const RECOVERY_METADATA = [
     description:
       'Find out why your YouTube thumbnail looks blurry or low quality, then fix resolution, compression, text, and export settings with this 2026 checklist.',
   },
+  {
+    slug: 'fixing-pixelated-photos',
+    targetTerms: ['how', 'to', 'fix', 'pixelated', 'photos', 'online'],
+    title: 'How to Fix Pixelated Photos Online: 3 Fast AI Fixes',
+    description:
+      'Learn how to fix pixelated photos online in 3 steps: upscale, sharpen, or rescan blocky images, then try the free AI upscaler.',
+  },
 ] as const;
 
 describe('Trending-down blog SERP recovery metadata', () => {

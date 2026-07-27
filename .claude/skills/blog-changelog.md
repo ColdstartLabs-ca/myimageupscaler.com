@@ -355,3 +355,13 @@ Intent mismatch fixes (seo_title only):
 - `text-image-enhancer` — aligned the H1 and SEO title to clarity/readability intent, added a direct-answer opening and five-problem table, separated human reading from OCR preparation, and linked the AI photo enhancer tool.
 - `poster-size-dimensions-pixels` — applied the approved 24×36/150–300 DPI snippet while preserving the existing first-screen table; corrected stale welcome-credit copy.
 - `photo-restoration-program` — added a four-option comparison by task, limits, pricing, privacy, and use case; removed an unsupported testing claim; aligned the visible year and welcome-credit copy.
+
+## 2026-07-27
+
+### Edit: Pixelated photos SERP CTR escalation
+
+**Affected:** fixing-pixelated-photos
+**Why:** Fresh 28-day GSC showed `/blog/fixing-pixelated-photos` at 56,994 impressions, 9 clicks, avg position 9.69, with `how to fix pixelated photos` at 55,669 impressions, 1 click, avg position 9.34 after the 2026-07-03 edit matured past the 2026-07-20 guardrail.
+**Changes:**
+
+- `fixing-pixelated-photos` — changed production `seo_title` to `How to Fix Pixelated Photos Online: 3 Fast AI Fixes` and `seo_description` to a 3-step online fix snippet; slug, H1/title, canonical, robots, and body content unchanged.

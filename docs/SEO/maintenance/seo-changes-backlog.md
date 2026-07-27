@@ -20,6 +20,38 @@ Maintenance rules:
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
 
+## 2026-07-27
+
+### Pixelated Photos SERP CTR Escalation
+
+Source: autonomous blog growth operator using fresh GSC 28-day data through 2026-07-24, GA4 organic data through 2026-07-26, prior 2026-07-06/2026-07-13 blog monitor and opportunities reports, current SEO/indexing backlogs, blog changelog, and recent git history.
+
+Changes:
+
+- Applied the matured 2026-07-03 follow-up on `/blog/fixing-pixelated-photos`: changed the production blog record `seo_title` from `How to Stop and Fix Pixelated Photos & Images` to `How to Fix Pixelated Photos Online: 3 Fast AI Fixes`.
+- Changed `seo_description` to `Learn how to fix pixelated photos online in 3 steps: upscale, sharpen, or rescan blocky images, then try the free AI upscaler.`
+- Kept slug, canonical, robots, H1/title, and body content unchanged to make this a narrow SERP CTR test.
+- Moved `https://myimageupscaler.com/blog/fixing-pixelated-photos` back to the pending GSC request-indexing backlog because the URL changed again after the older completed request.
+
+Why:
+
+- Fresh 28-day GSC shows the canonical page at 56,994 impressions, 9 clicks, avg position 9.69; the exact query `how to fix pixelated photos` accounts for 55,669 impressions, 1 click, avg position 9.34. The previous reports set 2026-07-20 as the edit-now date if the 2026-07-03 update matured with near-zero clicks, and that threshold is now met.
+- GA4 organic sessions are up sitewide, so the highest-value safe action was not new content; it was a narrow CTR escalation on an existing canonical URL already ranking on page one.
+
+Validation:
+
+- Created and verified fresh production DB backups before the production blog update: `backups/backup_2026-07-27_10-34-37.schema.sql.gz` and `backups/backup_2026-07-27_10-34-37.data.sql.gz`; `yarn db:backups` listed both and `gzip -t` passed.
+- Supabase update/readback confirmed the published record has the new `seo_title`, `seo_description`, and `updated_at`.
+- Production HTML returned `200`, self-canonical, and rendered `How to Fix Pixelated Photos Online: 3 Fast AI Fixes | MyImageUpscaler` with the new meta description.
+- Added SEO unit coverage in `tests/unit/seo/trending-down-blog-recovery.unit.spec.ts`; `yarn vitest run tests/unit/seo/trending-down-blog-recovery.unit.spec.ts` and `yarn verify` passed in this job.
+
+Follow-up:
+
+- Commit: COMMIT_PENDING.
+- Deploy state: production blog DB content is live immediately; repo backlog/test changes are local until the commit is pushed/deployed.
+- Manual action: request indexing for `https://myimageupscaler.com/blog/fixing-pixelated-photos` in GSC URL Inspection.
+- Next trigger: on or after 2026-08-10, compare the first complete 14-day GSC window after 2026-07-27 for `how to fix pixelated photos`; if avg position remains 3-10 and CTR stays below 0.2%, escalate to a proof-led snippet/body support pass rather than another title-only edit.
+
 ## 2026-07-26
 
 ### Credit Economy Copy and pSEO Parity

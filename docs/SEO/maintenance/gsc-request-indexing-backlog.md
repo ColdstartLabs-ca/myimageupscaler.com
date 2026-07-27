@@ -18,6 +18,7 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 - [ ] `https://myimageupscaler.com/blog/best-image-upscaler`
 - [ ] `https://myimageupscaler.com/blog/fix-blurry-photos-ai-methods-guide`
 - [ ] `https://myimageupscaler.com/blog/fix-pixelated-image`
+- [ ] `https://myimageupscaler.com/blog/fixing-pixelated-photos` — refreshed 2026-07-27 with a matured SERP title/meta CTR test for the pixelated-photos query cluster.
 - [ ] `https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark`
 - [ ] `https://myimageupscaler.com/blog/how-to-upscale-midjourney-images-for-print`
 - [ ] `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails`
@@ -44,7 +45,6 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 - [x] `https://myimageupscaler.com/blog/ai-upscaler-muryou-osusume`
 - [x] `https://myimageupscaler.com/blog/best-ai-image-enhancer`
 - [x] `https://myimageupscaler.com/blog/best-app-to-restore-old-photos`
-- [x] `https://myimageupscaler.com/blog/fixing-pixelated-photos`
 - [x] `https://myimageupscaler.com/blog/free-photo-restoration-app`
 - [x] `https://myimageupscaler.com/blog/how-ai-image-upscaling-works-guide`
 - [x] `https://myimageupscaler.com/blog/how-to-upscale-anime-images-with-ai`
