@@ -47,7 +47,7 @@ Validation:
 
 Follow-up:
 
-- Commit: COMMIT_PENDING.
+- Commit: `89c910b6` (`fix(seo): escalate pixelated photos SERP CTR`).
 - Deploy state: production blog DB content is live immediately; repo backlog/test changes are local until the commit is pushed/deployed.
 - Manual action: request indexing for `https://myimageupscaler.com/blog/fixing-pixelated-photos` in GSC URL Inspection.
 - Next trigger: on or after 2026-08-10, compare the first complete 14-day GSC window after 2026-07-27 for `how to fix pixelated photos`; if avg position remains 3-10 and CTR stays below 0.2%, escalate to a proof-led snippet/body support pass rather than another title-only edit.
