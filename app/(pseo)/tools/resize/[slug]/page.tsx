@@ -93,12 +93,13 @@ export default async function ResizeToolPage({ params }: IPageProps) {
     notFound();
   }
 
-  const schema = generateToolSchema(tool);
+  const canonicalPath = `/tools/resize/${slug}`;
+  const schema = generateToolSchema(tool, 'en', canonicalPath);
 
   return (
     <>
       <SchemaMarkup schema={schema} />
-      <InteractiveToolPageTemplate data={tool} />
+      <InteractiveToolPageTemplate data={tool} canonicalPath={canonicalPath} />
     </>
   );
 }

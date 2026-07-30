@@ -17,6 +17,8 @@ export const HeroBeforeAfter: React.FC = () => {
       labelPosition="top"
       className="h-full w-full rounded-xl"
       aspectRatio={null}
+      renderAfterImage={false}
+      imagePriority={false}
     />
   );
 };

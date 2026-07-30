@@ -2,7 +2,6 @@ import { DEFAULT_LOCALE } from '@/i18n/config';
 import { AuthProvider } from '@/shared/types/authProviders.types';
 import { LocaleSwitcher } from '@client/components/i18n/LocaleSwitcher';
 import { CreditsDisplay } from '@client/components/stripe/CreditsDisplay';
-import { PurchaseModal } from '@client/components/stripe/PurchaseModal';
 import { useClickOutside } from '@client/hooks/useClickOutside';
 import { useModalStore } from '@client/store/modalStore';
 import { useRegionTier } from '@client/hooks/useRegionTier';
@@ -12,8 +11,14 @@ import { getFreeCreditsForTier } from '@/lib/anti-freeloader/region-classifier';
 import { clientEnv } from '@shared/config/env';
 import { ChevronDown, Menu, X, Zap } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
+
+const PurchaseModal = dynamic(
+  () => import('@client/components/stripe/PurchaseModal').then(module => module.PurchaseModal),
+  { ssr: false }
+);
 
 export const NavBar = (): JSX.Element => {
   const t = useTranslations('nav');
@@ -578,12 +583,14 @@ export const NavBar = (): JSX.Element => {
         )}
       </header>
 
-      <PurchaseModal
-        isOpen={showUpgradeModal}
-        onClose={() => setShowUpgradeModal(false)}
-        onPurchaseComplete={() => setShowUpgradeModal(false)}
-        trigger="navbar"
-      />
+      {showUpgradeModal && (
+        <PurchaseModal
+          isOpen
+          onClose={() => setShowUpgradeModal(false)}
+          onPurchaseComplete={() => setShowUpgradeModal(false)}
+          trigger="navbar"
+        />
+      )}
     </>
   );
 };

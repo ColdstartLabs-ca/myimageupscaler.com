@@ -33,6 +33,7 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 - [ ] `https://myimageupscaler.com/blog/what-resolution-for-print`
 - [ ] `https://myimageupscaler.com/comparisons-expanded/ai-models-comparison`
 - [ ] `https://myimageupscaler.com/es`
+- [ ] `https://myimageupscaler.com/formats/upscale-gif-images` — refreshed 2026-07-30 as the sole truthful GIF-intent owner; four `/format-scale/gif-upscale-*` URLs now consolidate here.
 - [ ] `https://myimageupscaler.com/it`
 - [ ] `https://myimageupscaler.com/ja`
 - [ ] `https://myimageupscaler.com/pt`
@@ -56,6 +57,5 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 - [x] `https://myimageupscaler.com/blog/topaz-labs-free-trial`
 - [x] `https://myimageupscaler.com/blog/topaz-video-upscaler`
 - [x] `https://myimageupscaler.com/blog/video-upscaling-software`
-- [x] `https://myimageupscaler.com/formats/upscale-gif-images`
 - [x] `https://myimageupscaler.com/scale/upscale-16x`
 - [x] `https://myimageupscaler.com/tools/ai-image-upscaler`

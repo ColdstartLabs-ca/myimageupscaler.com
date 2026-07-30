@@ -31,7 +31,6 @@ const ENGLISH_ONLY_SITEMAP_CATEGORIES = [
   'comparisons-expanded',
   'personas-expanded',
   'technical-guides',
-  'use-cases-expanded',
 ];
 
 /**

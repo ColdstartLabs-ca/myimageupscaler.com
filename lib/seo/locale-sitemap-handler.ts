@@ -14,6 +14,7 @@ import type { PSEOCategory } from './url-utils';
 import { clientEnv } from '@shared/config/env';
 import { getLocalizedPath, generateSitemapHreflangLinks } from './hreflang-generator';
 import { getSitemapResponseHeaders } from './sitemap-generator';
+import { GIF_FORMAT_OWNER_SLUG } from './gif-intent';
 
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
 
@@ -54,8 +55,18 @@ export const TOOLS_INTERACTIVE_PATHS: Record<string, string> = {
  */
 export function buildToolsSitemapPages(
   staticTools: Array<{ slug: string; lastUpdated: string; title: string; ogImage?: string }>,
-  interactiveTools: Array<{ slug: string; lastUpdated: string; title: string; ogImage?: string }>
+  interactiveTools: Array<{ slug: string; lastUpdated: string; title: string; ogImage?: string }>,
+  additionalTools: Array<{ slug: string; lastUpdated: string; title: string; ogImage?: string }> = []
 ): ILocaleSitemapPage[] {
+  const existingInteractiveSlugs = new Set(interactiveTools.map(tool => tool.slug));
+  const routedAdditionalTools = additionalTools.filter(
+    (tool, index) =>
+      tool.slug in TOOLS_INTERACTIVE_PATHS &&
+      !existingInteractiveSlugs.has(tool.slug) &&
+      additionalTools.findIndex(candidate => candidate.slug === tool.slug) === index
+  );
+  const routedInteractiveTools = [...interactiveTools, ...routedAdditionalTools];
+
   return [
     ...staticTools.map(t => ({
       slug: t.slug,
@@ -63,7 +74,7 @@ export function buildToolsSitemapPages(
       title: t.title,
       ogImage: t.ogImage,
     })),
-    ...interactiveTools.map(t => ({
+    ...routedInteractiveTools.map(t => ({
       slug: t.slug,
       lastUpdated: t.lastUpdated,
       title: t.title,
@@ -91,6 +102,10 @@ export function generateLocaleCategorySitemapResponse(
   pages: ILocaleSitemapPage[],
   priority: number = 0.8
 ): NextResponse {
+  const routedPages =
+    category === 'formats'
+      ? pages.filter(page => page.slug !== GIF_FORMAT_OWNER_SLUG)
+      : pages;
   const localeCategoryPath = getLocalizedPath(`/${categoryPath}`, locale);
 
   const categoryEntry = buildUrlEntry(
@@ -101,7 +116,7 @@ export function generateLocaleCategorySitemapResponse(
     category
   );
 
-  const pageEntries = pages.map(page => {
+  const pageEntries = routedPages.map(page => {
     const englishPath = page.customPath || `/${categoryPath}/${page.slug}`;
     const localePath = getLocalizedPath(englishPath, locale);
     const imageXml = page.ogImage

@@ -20,6 +20,10 @@ import useCasesDataFile from '@/app/seo/data/use-cases.json';
 import alternativesDataFile from '@/app/seo/data/alternatives.json';
 import platformsDataFile from '@/app/seo/data/platforms.json';
 import formatScaleDataFile from '@/app/seo/data/format-scale.json';
+import {
+  GIF_FORMAT_OWNER_SLUG,
+  isGifFormatScaleSlug,
+} from '@/lib/seo/gif-intent';
 import platformFormatDataFile from '@/app/seo/data/platform-format.json';
 import deviceUseDataFile from '@/app/seo/data/device-use.json';
 import type {
@@ -374,19 +378,25 @@ export const getAllAIFeaturePages = cache(async (): Promise<IAIFeaturePage[]> =>
 
 // Format × Scale Multiplier Pages
 export const getAllFormatScaleSlugs = cache(async (): Promise<string[]> => {
-  return formatScaleData.pages.map(page => page.slug);
+  return formatScaleData.pages
+    .filter(page => !isGifFormatScaleSlug(page.slug))
+    .map(page => page.slug);
 });
 
 export const getFormatScaleData = cache(async (slug: string): Promise<IFormatScalePage | null> => {
+  if (isGifFormatScaleSlug(slug)) return null;
+
   const page = formatScaleData.pages.find(p => p.slug === slug);
   return page || null;
 });
 
 export const getAllFormatScale = cache(async (): Promise<IFormatScalePage[]> => {
-  return formatScaleData.pages.map(page => ({
-    ...page,
-    category: 'format-scale' as const,
-  }));
+  return formatScaleData.pages
+    .filter(page => !isGifFormatScaleSlug(page.slug))
+    .map(page => ({
+      ...page,
+      category: 'format-scale' as const,
+    }));
 });
 
 // Platform × Format Multiplier Pages
@@ -771,6 +781,14 @@ export const getFormatDataWithLocale = cache(
   async (slug: string, locale: Locale = 'en'): Promise<ILocalizedDataResult<IFormatPage>> => {
     const isLocalized = isCategoryLocalized('formats', locale);
 
+    if (slug === GIF_FORMAT_OWNER_SLUG && locale !== 'en') {
+      return {
+        data: null,
+        hasTranslation: false,
+        isLocalizedCategory: isLocalized,
+      };
+    }
+
     if (locale !== 'en' && !isLocalized) {
       return {
         data: null,
@@ -998,6 +1016,14 @@ export const getFreeDataWithLocale = cache(
 export const getFormatScaleDataWithLocale = cache(
   async (slug: string, locale: Locale = 'en'): Promise<ILocalizedDataResult<IFormatScalePage>> => {
     const isLocalized = isCategoryLocalized('format-scale', locale);
+
+    if (isGifFormatScaleSlug(slug)) {
+      return {
+        data: null,
+        hasTranslation: false,
+        isLocalizedCategory: isLocalized,
+      };
+    }
 
     if (locale !== 'en' && !isLocalized) {
       return {

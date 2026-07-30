@@ -305,5 +305,24 @@ describe('Speakable schema (AEO)', () => {
         'https://myimageupscaler.com/de/tools/ai-image-upscaler#webpage'
       );
     });
+
+    it('should use an explicit dedicated route throughout schema markup', () => {
+      const schema = generateToolSchema(
+        mockTool,
+        'ja',
+        '/tools/resize/ai-image-upscaler'
+      ) as { '@graph': Record<string, unknown>[] };
+      const software = schema['@graph'].find(n => n['@type'] === 'SoftwareApplication');
+      const breadcrumb = schema['@graph'].find(n => n['@type'] === 'BreadcrumbList') as {
+        itemListElement: Array<Record<string, unknown>>;
+      };
+      const webPage = schema['@graph'].find(n => n['@type'] === 'WebPage');
+
+      const canonicalUrl =
+        'https://myimageupscaler.com/ja/tools/resize/ai-image-upscaler';
+      expect(software!['url']).toBe(canonicalUrl);
+      expect(breadcrumb.itemListElement[2].item).toBe(canonicalUrl);
+      expect(webPage!['@id']).toBe(`${canonicalUrl}#webpage`);
+    });
   });
 });

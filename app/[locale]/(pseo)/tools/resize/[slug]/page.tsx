@@ -129,12 +129,13 @@ export default async function ResizeToolPage({ params }: IPageProps) {
     ctaUrl: toolData.ctaUrl as string,
   };
 
-  const schema = generateToolSchema(tool, locale);
+  const canonicalPath = `/tools/resize/${slug}`;
+  const schema = generateToolSchema(tool, locale, canonicalPath);
 
   return (
     <>
       <SchemaMarkup schema={schema} />
-      <InteractiveToolPageTemplate data={tool} />
+      <InteractiveToolPageTemplate data={tool} locale={locale} canonicalPath={canonicalPath} />
     </>
   );
 }

@@ -180,6 +180,44 @@ describe('buildToolsSitemapPages', () => {
     expect(pages[1].slug).toBe('image-resizer');
     expect(pages[1].customPath).toBe('/tools/resize/image-resizer');
   });
+
+  it('should include dedicated social resize tools at their canonical paths', () => {
+    const socialResizeTools = [
+      {
+        slug: 'resize-image-for-linkedin',
+        lastUpdated: '2026-01-20',
+        title: 'LinkedIn Image Resizer',
+      },
+    ];
+
+    const pages = buildToolsSitemapPages([], [], socialResizeTools);
+
+    expect(pages).toEqual([
+      expect.objectContaining({
+        slug: 'resize-image-for-linkedin',
+        customPath: '/tools/resize/resize-image-for-linkedin',
+      }),
+    ]);
+  });
+
+  it('should preserve generic interactive tools that use the default tools route', () => {
+    const genericInteractiveTools = [
+      {
+        slug: 'heic-to-jpg',
+        lastUpdated: '2026-01-20',
+        title: 'HEIC to JPG',
+      },
+    ];
+
+    const pages = buildToolsSitemapPages([], genericInteractiveTools);
+
+    expect(pages).toEqual([
+      expect.objectContaining({
+        slug: 'heic-to-jpg',
+        customPath: undefined,
+      }),
+    ]);
+  });
 });
 
 describe('TOOLS_INTERACTIVE_PATHS', () => {

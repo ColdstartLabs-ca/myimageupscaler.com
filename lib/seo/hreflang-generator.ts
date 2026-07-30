@@ -8,6 +8,7 @@ import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '../../i18n/config';
 import type { Locale } from '../../i18n/config';
 import { clientEnv } from '@shared/config/env';
 import type { PSEOCategory } from './url-utils';
+import { GIF_FORMAT_OWNER_PATH } from './gif-intent';
 import { isCategoryLocalized } from './localization-config';
 
 /**
@@ -61,6 +62,11 @@ export function generateHreflangAlternates(
 
   // Remove trailing slash for consistency (including root for homepage)
   const normalizedPath = path.replace(/\/$/, '');
+
+  if (normalizedPath === GIF_FORMAT_OWNER_PATH) {
+    const ownerUrl = `${clientEnv.BASE_URL}${GIF_FORMAT_OWNER_PATH}`;
+    return { en: ownerUrl, 'x-default': ownerUrl };
+  }
 
   // Get available locales for this category
   const availableLocales = getAvailableLocales(category);
@@ -352,6 +358,14 @@ export function getOpenGraphMetadata(
 export function generateSitemapHreflangLinks(path: string, category?: PSEOCategory): string[] {
   const links: string[] = [];
   const baseUrl = clientEnv.BASE_URL;
+
+  if (path.replace(/\/$/, '') === GIF_FORMAT_OWNER_PATH) {
+    const ownerUrl = `${baseUrl}${GIF_FORMAT_OWNER_PATH}`;
+    return [
+      `    <xhtml:link rel="alternate" hreflang="en" href="${ownerUrl}"/>`,
+      `    <xhtml:link rel="alternate" hreflang="x-default" href="${ownerUrl}"/>`,
+    ];
+  }
 
   // Determine which locales to include
   // If category is specified, only include locales where the page exists

@@ -10,11 +10,15 @@ import {
   buildToolsSitemapPages,
 } from '@/lib/seo/locale-sitemap-handler';
 import interactiveToolsData from '@/app/seo/data/interactive-tools.json';
+import socialMediaResizeData from '@/app/seo/data/social-media-resize.json';
 import type { IToolPage, IPSEODataFile } from '@/lib/seo/pseo-types';
 
 export async function GET() {
   const staticTools = await getAllTools();
   const interactiveTools = (interactiveToolsData as IPSEODataFile<IToolPage>).pages;
-  const pages = buildToolsSitemapPages(staticTools, interactiveTools);
+  const socialResizeTools = (
+    socialMediaResizeData as unknown as IPSEODataFile<IToolPage>
+  ).pages;
+  const pages = buildToolsSitemapPages(staticTools, interactiveTools, socialResizeTools);
   return generateLocaleCategorySitemapResponse('fr', 'tools', 'tools', pages, 0.9);
 }

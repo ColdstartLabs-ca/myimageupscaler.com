@@ -16,6 +16,10 @@ import { DEFAULT_LOCALE, isValidLocale, LOCALE_COOKIE, type Locale } from '@/i18
 import { getLocaleFromCountry } from '@lib/i18n/country-locale-map';
 import { ENGLISH_ONLY_CATEGORIES } from '@/lib/seo/localization-config';
 import type { IReferralSource } from '@server/analytics/types';
+import {
+  GIF_FORMAT_OWNER_PATH,
+  isGifFormatScaleSlug,
+} from '@/lib/seo/gif-intent';
 
 // Debug: log when middleware is loaded
 if (serverEnv.ENV === 'test') {
@@ -630,6 +634,19 @@ function handleLegacyRedirects(req: NextRequest): NextResponse | null {
     return NextResponse.redirect(url, 301);
   }
 
+  const formatScaleMatch = pathWithoutLocale.match(/^\/format-scale\/([^/]+)$/);
+  if (formatScaleMatch && isGifFormatScaleSlug(formatScaleMatch[1])) {
+    const url = req.nextUrl.clone();
+    url.pathname = GIF_FORMAT_OWNER_PATH;
+    return NextResponse.redirect(url, 301);
+  }
+
+  if (localePrefix && pathWithoutLocale === GIF_FORMAT_OWNER_PATH) {
+    const url = req.nextUrl.clone();
+    url.pathname = GIF_FORMAT_OWNER_PATH;
+    return NextResponse.redirect(url, 301);
+  }
+
   // Define redirects without locale prefix
   // Note: No trailing slashes to avoid redirect chains (/{locale}/path/ -> /{locale}/path)
   const redirectMap: Record<string, string> = {
@@ -646,6 +663,11 @@ function handleLegacyRedirects(req: NextRequest): NextResponse | null {
     '/tools/png-to-webp': '/tools/convert/png-to-webp',
     '/tools/image-compressor': '/tools/compress/image-compressor',
     '/tools/image-resizer': '/tools/resize/image-resizer',
+    '/tools/resize-image-for-instagram': '/tools/resize/resize-image-for-instagram',
+    '/tools/resize-image-for-youtube': '/tools/resize/resize-image-for-youtube',
+    '/tools/resize-image-for-facebook': '/tools/resize/resize-image-for-facebook',
+    '/tools/resize-image-for-twitter': '/tools/resize/resize-image-for-twitter',
+    '/tools/resize-image-for-linkedin': '/tools/resize/resize-image-for-linkedin',
 
     // NEW: Misrouted category URLs (from GSC 404 list)
     '/tools/free-ai-upscaler': '/free/free-ai-upscaler',

@@ -12,6 +12,9 @@ Maintenance rules:
 ## Open Follow-Ups
 
 - [ ] After next deploy, complete [GSC request indexing backlog](./gsc-request-indexing-backlog.md).
+- [ ] After the next deploy, run GSC **Validate fix** for the four supplied Japanese social-resize 5xx examples. Their missing `/resize/` path now has a direct locale-preserving `301`; the matching YouTube route was fixed preventively. Sampling the `Crawled - currently not indexed` (905) and `Google chose different canonical` (236) groups still requires URLs from the GSC UI because the aggregate export and API do not expose them.
+- [ ] Reduce Cloudflare Worker/cache CPU for localized pSEO pages, then recrawl all sitemap URLs. The 2026-07-30 crawl reproduced `error code: 1102` on 63 of 1,927 URLs after retry, concentrated in localized `platform-format`, `format-scale`, and `device-use` pages. A representative generated OpenNext cache record is about 1.1 MB; a tested client-boundary change did not reduce it.
+- [ ] After the next deploy, verify all four `/format-scale/gif-upscale-{2x,4x,8x,16x}` URLs return a direct `301` to `/formats/upscale-gif-images`, request indexing for the owner, rerun mobile PageSpeed, and start GSC LCP/INP validation only after field data reflects the deployment.
 - [ ] Measure the implemented [GSC SEO recovery PRD](../../PRDs/gsc-opportunity-recovery-2026-07-22.md): first complete 14-day comparison on or after 2026-08-05 and 28-day success-criteria evaluation on or after 2026-08-19. Keep the PRD outside `done/` until the 28-day evaluation is recorded.
 - [ ] On or after 2026-07-19, compare `/blog/best-free-ai-photo-enhancer-online` for 2026-06-22 through 2026-07-07 against the next complete 16-day GSC window; inspect query and competing-URL losses before any further edit. A 2026-07-20 fresh 28-day check found this URL at 2,985 impressions, 21 clicks, avg position 38.93; no edit was made because the stronger matured CTR action was on `/blog/best-free-ai-image-upscaler-2026-tested-compared`.
 - [ ] Around 2026-07-20, run the early GSC check for the 2026-07-03 edits to `/blog/fixing-pixelated-photos`, `/blog/topaz-video-upscaler`, and `/blog/best-ai-upscaler`; use early August for the stronger 28-day evaluation and do not rewrite during the window.
@@ -19,6 +22,54 @@ Maintenance rules:
 - [x] After next deploy, verify `https://myimageupscaler.com/sitemap-static.xml` includes `/de`, `/es`, `/fr`, `/it`, `/ja`, and `/pt`. Verified 2026-05-13.
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
+
+## 2026-07-30
+
+### GSC Diagnosis Execution: GIF Ownership and Mobile CWV
+
+Source: [GSC performance diagnosis](../reports/gsc-performance-diagnosis-2026-07-30.md)
+
+Changes:
+
+- Consolidated `/format-scale/gif-upscale-{2x,4x,8x,16x}` and localized variants with direct permanent redirects to the truthful `/formats/upscale-gif-images` owner.
+- Made the truthful GIF owner English-only; localized owner and scale URLs redirect to it, while runtime loaders, localized sitemaps, hreflang, and internal links exclude retired or contradictory variants.
+- Added direct locale-preserving redirects for all five legacy social-resize paths missing `/resize/`; corrected the canonical resize pages' schema and visible breadcrumbs, and included them in localized tool sitemaps.
+- Removed the unrouted `use-cases-expanded` child sitemap from the sitemap index after all 10 URLs in that sitemap returned 404.
+- Deferred the navbar purchase modal so Stripe loads only when needed across public templates; stopped the homepage comparison slider from downloading a duplicate LCP image or promoting overlay images to high priority.
+- Held homepage and active blog snippet metadata. Fresh 14-day GSC evidence shows `image upscaler` improved from position 11.42 to 10.33 (+74 clicks), while exact branded losses remained at position ~1 and occurred across desktop/mobile and countries.
+
+Validation:
+
+- Red/green coverage added in `tests/unit/seo/gif-intent-consolidation.unit.spec.ts` and `tests/unit/seo/homepage-performance.unit.spec.ts`.
+- Sitemap-index regression coverage verifies the unrouted `use-cases-expanded` category is excluded and the index contains 85 child sitemaps.
+- `yarn vitest run tests/unit/seo` passed: 69 files, 1,014 tests.
+- Production crawl: 86 child sitemaps and 1,927 unique URLs checked; status totals were 1,853×200, 1×308, 10×404, and 63×503. Sequential checks identified the 503 body as Cloudflare Worker CPU error 1102.
+- Production mobile PageSpeed baselines before deploy: homepage LCP 5.91s, INP 419ms, 380 KiB unused JavaScript; GIF format page LCP 3.50s and 366 KiB unused JavaScript. Lighthouse attributed 168 KiB of homepage waste to always-loaded Stripe.
+
+Follow-up:
+
+- Production verification, request indexing, PageSpeed rerun, and CWV validation are pending the next deploy.
+- The four supplied 5xx examples are addressed in code; after deploy, confirm each redirects to its Japanese canonical page and run GSC **Validate fix**. Sampling the 905/236 exclusion groups remains manual because the supplied export and Search Console API do not expose their example URLs.
+- Independent deploy review caught and corrected a localized-tools sitemap regression before deploy; coverage now proves existing generic tool URLs remain alongside the new nested social-resize URLs.
+
+### GSC Performance, Coverage, and CWV Diagnosis
+
+Source: [GSC performance diagnosis](../reports/gsc-performance-diagnosis-2026-07-30.md)
+
+Changes:
+
+- Pulled fresh 7-, 28-, and 90-day GSC datasets and ran the blog SEO audit; correlated the results with the supplied Coverage and mobile Core Web Vitals exports.
+- Documented that the recent movement is concentrated in the homepage and GIF landing-page losses, while the pixelated-photo query is inflating impressions and depressing CTR.
+- No production content, metadata, URL, canonical, sitemap, robots, redirect, database, or indexing state changed.
+
+Validation:
+
+- Fresh URL Inspection passed 10/10 priority URLs with matching canonicals; Coverage showed 1,045 indexed pages stable from July 10 through July 23.
+- Cross-checked conclusions against the SEO and request-indexing backlogs.
+
+Follow-up:
+
+- Executed in the preceding entry: GIF ownership was consolidated, the four supplied 5xx URLs were fixed, and the existing August measurement windows were preserved without further snippet edits.
 
 ## 2026-07-27
 

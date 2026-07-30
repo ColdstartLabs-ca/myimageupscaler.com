@@ -212,11 +212,16 @@ export function generateReviewSchemas(products: IProduct[]): object[] {
  *
  * @param tool - The tool page data
  * @param locale - The locale for this page instance (default: 'en')
+ * @param canonicalPath - The routed path when a tool uses a dedicated nested route
  */
-export function generateToolSchema(tool: IToolPage, locale: Locale = 'en'): object {
+export function generateToolSchema(
+  tool: IToolPage,
+  locale: Locale = 'en',
+  canonicalPath: string = `/tools/${tool.slug}`
+): object {
   // Build locale-aware canonical URL
-  const canonicalUrl =
-    locale === 'en' ? `${BASE_URL}/tools/${tool.slug}` : `${BASE_URL}/${locale}/tools/${tool.slug}`;
+  const localePrefix = locale === 'en' ? '' : `/${locale}`;
+  const canonicalUrl = `${BASE_URL}${localePrefix}${canonicalPath}`;
   const language = getLanguageCode(locale);
   const organizationRef = { '@id': `${BASE_URL}#organization` };
 

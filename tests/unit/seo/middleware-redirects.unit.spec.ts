@@ -236,6 +236,42 @@ describe('Middleware Legacy Redirects', () => {
       expect(response.status).toBe(301);
       expect(response.headers.get('location')).toBe('http://localhost/tools/resize/image-resizer');
     });
+
+    test.each(['instagram', 'youtube', 'facebook', 'twitter', 'linkedin'])(
+      'should redirect legacy Japanese %s resize URLs to the dedicated route',
+      async platform => {
+        const { middleware } = await import('../../../middleware');
+        const request = new NextRequest(
+          `http://localhost/ja/tools/resize-image-for-${platform}`,
+          { method: 'GET' }
+        );
+
+        const response = await middleware(request);
+
+        expect(response.status).toBe(301);
+        expect(response.headers.get('location')).toBe(
+          `http://localhost/ja/tools/resize/resize-image-for-${platform}`
+        );
+      }
+    );
+
+    test.each(['instagram', 'youtube', 'facebook', 'twitter', 'linkedin'])(
+      'should redirect legacy English %s resize URLs to the dedicated route',
+      async platform => {
+        const { middleware } = await import('../../../middleware');
+        const request = new NextRequest(
+          `http://localhost/tools/resize-image-for-${platform}`,
+          { method: 'GET' }
+        );
+
+        const response = await middleware(request);
+
+        expect(response.status).toBe(301);
+        expect(response.headers.get('location')).toBe(
+          `http://localhost/tools/resize/resize-image-for-${platform}`
+        );
+      }
+    );
   });
 
   describe('Misrouted category URLs', () => {

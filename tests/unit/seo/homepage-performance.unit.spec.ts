@@ -289,6 +289,33 @@ describe('Homepage Performance — Phase 5', () => {
   });
 });
 
+describe('Homepage Performance — CWV remediation', () => {
+  it('lazy-loads the Stripe purchase modal instead of shipping it on every public page', () => {
+    const navPath = join(ROOT, 'client/components/navigation/NavBar.tsx');
+    const source = readFileSync(navPath, 'utf-8');
+
+    expect(source).not.toContain(
+      "import { PurchaseModal } from '@client/components/stripe/PurchaseModal'"
+    );
+    expect(source).toContain("import dynamic from 'next/dynamic'");
+    expect(source).toMatch(/dynamic\([\s\S]*?PurchaseModal[\s\S]*?\{\s*ssr:\s*false\s*\}/);
+    expect(source).toMatch(/\{showUpgradeModal && \(\s*<PurchaseModal/);
+  });
+
+  it('uses the server-rendered after image as the slider underlay without loading a duplicate', () => {
+    const heroSliderPath = join(ROOT, 'client/components/landing/HeroBeforeAfter.tsx');
+    const sliderPath = join(ROOT, 'client/components/ui/BeforeAfterSlider.tsx');
+    const heroSliderSource = readFileSync(heroSliderPath, 'utf-8');
+    const sliderSource = readFileSync(sliderPath, 'utf-8');
+
+    expect(heroSliderSource).toContain('renderAfterImage={false}');
+    expect(heroSliderSource).toContain('imagePriority={false}');
+    expect(sliderSource).toContain('renderAfterImage?: boolean');
+    expect(sliderSource).toContain('imagePriority?: boolean');
+    expect(sliderSource).toMatch(/\{renderAfterImage && \(\s*<Image/);
+  });
+});
+
 describe('Homepage Performance — Phase 6 (Render-Blocking CSS)', () => {
   describe('pSEO layout — Google Fonts preconnects', () => {
     it('should not have preconnect to fonts.googleapis.com (fonts are self-hosted via next/font)', () => {

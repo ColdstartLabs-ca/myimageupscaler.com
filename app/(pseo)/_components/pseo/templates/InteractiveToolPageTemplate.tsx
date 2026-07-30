@@ -133,16 +133,19 @@ interface IInteractiveToolPageTemplateProps {
   data: IToolPage;
   locale?: string;
   relatedPages?: IRelatedPage[];
+  canonicalPath?: string;
 }
 
 export function InteractiveToolPageTemplate({
   data,
   locale = 'en',
   relatedPages = [],
+  canonicalPath = `/tools/${data.slug}`,
 }: IInteractiveToolPageTemplateProps): ReactElement {
   const pageMapping = getPageMappingByUrl(`/tools/${data.slug}`);
   const tier = pageMapping?.tier;
   const t = useTranslations('pseo');
+  const localePrefix = locale === 'en' ? '' : `/${locale}`;
 
   const ToolComponent = data.toolComponent ? TOOL_COMPONENTS[data.toolComponent] : null;
 
@@ -160,11 +163,11 @@ export function InteractiveToolPageTemplate({
       <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 pt-6">
         <BreadcrumbNav
           items={[
-            { label: 'AI Image Upscaler', href: locale ? `/${locale}` : '/' },
-            { label: 'Tools', href: locale ? `/${locale}/tools` : '/tools' },
+            { label: 'AI Image Upscaler', href: localePrefix || '/' },
+            { label: 'Tools', href: `${localePrefix}/tools` },
             {
               label: data.title,
-              href: locale ? `/${locale}/tools/${data.slug}` : `/tools/${data.slug}`,
+              href: `${localePrefix}${canonicalPath}`,
             },
           ]}
         />

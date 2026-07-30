@@ -16,6 +16,10 @@ export interface IBeforeAfterSliderProps {
   className?: string;
   /** Pass `null` when the slider fills a pre-sized parent (e.g. hero overlay). */
   aspectRatio?: string | null;
+  /** Omit the after image when a server-rendered copy already sits beneath the slider. */
+  renderAfterImage?: boolean;
+  /** Reserve high priority for the actual LCP image instead of slider overlays. */
+  imagePriority?: boolean;
 }
 
 export const BeforeAfterSlider: React.FC<IBeforeAfterSliderProps> = ({
@@ -29,6 +33,8 @@ export const BeforeAfterSlider: React.FC<IBeforeAfterSliderProps> = ({
   labelPosition = 'bottom',
   className = '',
   aspectRatio = '16/9',
+  renderAfterImage = true,
+  imagePriority = true,
 }) => {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
@@ -90,15 +96,17 @@ export const BeforeAfterSlider: React.FC<IBeforeAfterSliderProps> = ({
       onTouchStart={handleMouseDown}
     >
       {/* After Image (Background) */}
-      <Image
-        src={afterUrl}
-        alt={afterLabel}
-        fill
-        sizes="(max-width: 768px) 100vw, 50vw"
-        className="object-cover select-none"
-        draggable={false}
-        priority
-      />
+      {renderAfterImage && (
+        <Image
+          src={afterUrl}
+          alt={afterLabel}
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-cover select-none"
+          draggable={false}
+          priority={imagePriority}
+        />
+      )}
 
       {/* Before Image (Foreground - Clipped) */}
       <div
@@ -112,7 +120,7 @@ export const BeforeAfterSlider: React.FC<IBeforeAfterSliderProps> = ({
           sizes="(max-width: 768px) 100vw, 50vw"
           className="object-cover"
           draggable={false}
-          priority
+          priority={imagePriority}
         />
       </div>
 
