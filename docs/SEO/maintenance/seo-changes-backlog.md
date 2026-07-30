@@ -25,6 +25,20 @@ Maintenance rules:
 
 ## 2026-07-30
 
+### Deployment SEO Guard Sitemap Parity
+
+Changes:
+
+- Aligned the deploy-blocking sitemap-index E2E expectation with the routed 85-child index after `use-cases-expanded` was removed.
+
+Validation:
+
+- The guard now checks the same category set already covered by `tests/unit/seo/sitemap-index.unit.spec.ts`; focused SEO guard, SEO unit suite, and repository verification run before deployment.
+
+Follow-up:
+
+- No new indexing request; complete the existing post-deploy GSC and redirect checks below.
+
 ### GSC Diagnosis Execution: GIF Ownership and Mobile CWV
 
 Source: [GSC performance diagnosis](../reports/gsc-performance-diagnosis-2026-07-30.md)

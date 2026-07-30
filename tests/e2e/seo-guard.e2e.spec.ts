@@ -54,13 +54,12 @@ const ENGLISH_ONLY_CATEGORIES = [
   'comparisons-expanded',
   'personas-expanded',
   'technical-guides',
-  'use-cases-expanded',
   'ai-photo-editor',
 ] as const;
 
-// Total sitemaps: 16 English-only + (10 localized × 7 locales) = 16 + 70 = 86
-// English-only: static + blog + 14 ENGLISH_ONLY_CATEGORIES = 16
-const TOTAL_SITEMAP_COUNT = 86;
+// Total sitemaps: 15 English-only + (10 localized × 7 locales) = 15 + 70 = 85
+// English-only: static + blog + 13 ENGLISH_ONLY_CATEGORIES = 15
+const TOTAL_SITEMAP_COUNT = 85;
 
 // Base URL for production checks (canonical URLs should always use this)
 const PRODUCTION_BASE_URL = 'https://myimageupscaler.com';
@@ -149,7 +148,7 @@ test.describe('SEO Guard - Deploy Blocker', () => {
       );
       const sitemapUrls = Array.from(sitemapMatches).map(m => m[1]);
 
-      // Should have 82 total sitemaps
+      // Should contain every routed child sitemap.
       expect(sitemapUrls.length).toBe(TOTAL_SITEMAP_COUNT);
 
       // Should contain core English-only sitemaps
