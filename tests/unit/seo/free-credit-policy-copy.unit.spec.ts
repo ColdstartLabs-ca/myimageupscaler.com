@@ -76,7 +76,8 @@ describe('free-credit policy copy', () => {
     }
   });
 
-  test('owned English and SEO copy never promises ten or recurring welcome credits', () => {
+  test('owned English and SEO copy never promises obsolete or recurring welcome credits', () => {
+    expect(ownedPolicyCopy).not.toMatch(/\b3 free images per day\b/i);
     expect(ownedPolicyCopy).not.toMatch(/\b10 free credits\b/i);
     expect(ownedPolicyCopy).not.toMatch(/\b10 credits\/(?:month|mo)\b/i);
     expect(ownedPolicyCopy).not.toMatch(/MyImageUpscaler.{0,160}\b10 free images\b/i);

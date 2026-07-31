@@ -23,6 +23,22 @@ Maintenance rules:
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
 
+## 2026-07-31
+
+### Free-credit comparison copy correction
+
+Changes:
+
+- Replaced the obsolete "3 free images per day" comparison claim with the current one-time "5 free credits on signup" policy in both comparison data copies.
+
+Validation:
+
+- Extended `tests/unit/seo/free-credit-policy-copy.unit.spec.ts` to reject the obsolete recurring claim; the focused test failed before the copy change and passed afterward.
+
+Follow-up:
+
+- Deploy through the normal review flow; no separate indexing request is needed for this narrow copy correction.
+
 ## 2026-07-30
 
 ### Merchant Listing Product Images
