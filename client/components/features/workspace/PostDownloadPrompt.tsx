@@ -6,7 +6,8 @@ import { analytics } from '@client/analytics/analyticsClient';
 import { Modal } from '@client/components/ui/Modal';
 import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import { useRegionTier } from '@client/hooks/useRegionTier';
-import { getVariant } from '@client/utils/abTest';
+import { getUserId, getVariantForIdentity } from '@client/utils/abTest';
+import { useUserStore } from '@client/store/userStore';
 import { useTranslations } from 'next-intl';
 
 export interface IPostDownloadPromptProps {
@@ -18,6 +19,9 @@ export interface IPostDownloadPromptProps {
 
 const POST_DOWNLOAD_DISMISS_KEY = 'post_download_explore_dismiss_count';
 const POST_DOWNLOAD_MAX_DISMISSES = 2;
+const POST_DOWNLOAD_EXPERIMENT_KEY = 'post_download_surface';
+const POST_DOWNLOAD_VARIANTS = ['blocking_modal_control', 'inline_explore_treatment'] as const;
+type TPostDownloadVariant = (typeof POST_DOWNLOAD_VARIANTS)[number];
 
 function getDismissCount(): number {
   if (typeof window === 'undefined') return 0;
@@ -36,9 +40,8 @@ function incrementDismissCount(): number {
 }
 
 /**
- * A dismissible modal shown to free users after download clicks.
- * Shows after successful downloads for free users, capped after repeated dismissals.
- * Fires upgrade_prompt_shown/clicked/dismissed with trigger: 'post_download_explore'.
+ * Fixed post-download A/B surface for free users after successful downloads.
+ * Control shows the existing modal; treatment shows a non-blocking inline action.
  */
 export const PostDownloadPrompt = ({
   isFreeUser,
@@ -49,10 +52,15 @@ export const PostDownloadPrompt = ({
   const t = useTranslations('workspace.postDownloadPrompt');
   const [visible, setVisible] = useState(false);
   const previousDownloadCountRef = useRef(downloadCount);
+  const funnelContextRef = useRef<ReturnType<typeof setCheckoutTrackingContext> | null>(null);
   const { pricingRegion } = useRegionTier();
-
-  // Get copy variant for A/B testing
-  const copyVariant = getVariant('after_download_copy', ['value', 'outcome', 'urgency']);
+  const userId = useUserStore(state => state.user?.id);
+  const assignmentIdentity = userId ? `user:${userId}` : `device:${getUserId()}`;
+  const experimentVariant = getVariantForIdentity(
+    POST_DOWNLOAD_EXPERIMENT_KEY,
+    POST_DOWNLOAD_VARIANTS,
+    assignmentIdentity
+  ) as TPostDownloadVariant;
 
   useEffect(() => {
     const previousDownloadCount = previousDownloadCountRef.current;
@@ -63,15 +71,24 @@ export const PostDownloadPrompt = ({
     if (downloadCount <= previousDownloadCount) return;
     if (getDismissCount() >= POST_DOWNLOAD_MAX_DISMISSES) return;
 
+    const funnelContext = setCheckoutTrackingContext({
+      entrySurface: 'post_download_explore',
+      trigger: 'post_download_explore',
+    });
+    funnelContextRef.current = funnelContext;
     setVisible(true);
     analytics.track('upgrade_prompt_shown', {
       trigger: 'post_download_explore',
       imageVariant: currentModel,
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
-      copyVariant,
+      experimentKey: POST_DOWNLOAD_EXPERIMENT_KEY,
+      experimentVariant,
+      funnelAttemptId: funnelContext?.funnelAttemptId,
+      entrySurface: funnelContext?.entrySurface,
+      attributionChain: funnelContext?.attributionChain,
     });
-  }, [isFreeUser, downloadCount, pricingRegion, currentModel, copyVariant]);
+  }, [isFreeUser, downloadCount, pricingRegion, currentModel, experimentVariant]);
 
   if (!visible) return null;
 
@@ -82,25 +99,64 @@ export const PostDownloadPrompt = ({
       imageVariant: currentModel,
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
-      copyVariant,
+      experimentKey: POST_DOWNLOAD_EXPERIMENT_KEY,
+      experimentVariant,
+      funnelAttemptId: funnelContextRef.current?.funnelAttemptId,
+      entrySurface: funnelContextRef.current?.entrySurface,
+      attributionChain: funnelContextRef.current?.attributionChain,
       dismissCount,
     });
     setVisible(false);
   };
 
   const handleExploreModelsClick = () => {
+    const funnelContext = setCheckoutTrackingContext({
+      originatingTrigger: 'post_download_explore',
+    });
     analytics.track('upgrade_prompt_clicked', {
       trigger: 'post_download_explore',
       imageVariant: currentModel,
       destination: 'model_gallery',
       currentPlan: 'free',
       pricingRegion: pricingRegion || 'standard',
-      copyVariant,
+      experimentKey: POST_DOWNLOAD_EXPERIMENT_KEY,
+      experimentVariant,
+      funnelAttemptId: funnelContext?.funnelAttemptId,
+      entrySurface: funnelContext?.entrySurface,
+      attributionChain: funnelContext?.attributionChain,
     });
-    setCheckoutTrackingContext({ originatingTrigger: 'post_download_explore' });
     setVisible(false);
     onExploreModels();
   };
+
+  if (experimentVariant === 'inline_explore_treatment') {
+    return (
+      <div data-testid="post-download-inline-action" className="px-3 pt-3 md:px-4">
+        <div className="flex items-center gap-3 rounded-xl border border-border bg-surface-light p-3">
+          <Sparkles className="h-4 w-4 shrink-0 text-secondary" />
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold text-text-primary">{t('title')}</p>
+            <p className="truncate text-xs text-text-muted">{t('body')}</p>
+          </div>
+          <button
+            type="button"
+            onClick={handleExploreModelsClick}
+            className="shrink-0 rounded-lg bg-secondary px-3 py-2 text-sm font-bold text-text-primary transition-opacity hover:opacity-90"
+          >
+            {t('cta')}
+          </button>
+          <button
+            type="button"
+            onClick={handleDismiss}
+            className="shrink-0 rounded-full p-1 text-text-muted transition-colors hover:bg-surface hover:text-text-primary"
+            aria-label={t('dismiss')}
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Modal

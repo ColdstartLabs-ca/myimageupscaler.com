@@ -62,6 +62,7 @@ import { stripe } from '@server/stripe/config';
 import { assertKnownPriceId, getPlanForPriceId, resolvePlanOrPack } from '@shared/config/stripe';
 import { getBasePriceIdByPlanKey } from '@shared/config/pricing-regions';
 import { recordExperimentReward } from '@lib/experiments';
+import { trackServerEvent } from '@server/analytics';
 
 // Cast mocks
 const MockedSupabaseAdmin = supabaseAdmin as {
@@ -70,6 +71,7 @@ const MockedSupabaseAdmin = supabaseAdmin as {
 };
 const MockedResolvePlanOrPack = resolvePlanOrPack as ReturnType<typeof vi.fn>;
 const MockedRecordExperimentReward = recordExperimentReward as ReturnType<typeof vi.fn>;
+const MockedTrackServerEvent = trackServerEvent as ReturnType<typeof vi.fn>;
 
 describe('PaymentHandler - MEDIUM-14: Verify credits from price config', () => {
   let consoleSpy: {
@@ -101,6 +103,8 @@ describe('PaymentHandler - MEDIUM-14: Verify credits from price config', () => {
       data: null,
       error: null,
     } as never);
+    MockedRecordExperimentReward.mockResolvedValue('recorded');
+    MockedTrackServerEvent.mockResolvedValue(true);
   });
 
   afterEach(() => {
@@ -190,6 +194,11 @@ describe('PaymentHandler - MEDIUM-14: Verify credits from price config', () => {
           user_id: mockUserId,
           pack_key: 'standard_100',
           credits: '100',
+          funnel_attempt_id: 'fa_webhook_123',
+          entry_surface: 'insufficient_credits',
+          checkout_trigger: 'insufficient_credits',
+          checkout_originating_trigger: 'insufficient_credits',
+          checkout_attribution_chain: 'insufficient_credits,purchase_modal',
           exp_key: 'purchase_modal_default_selection',
           exp_ctx: 'global',
           exp_arm_id: '10',
@@ -238,6 +247,30 @@ describe('PaymentHandler - MEDIUM-14: Verify credits from price config', () => {
           stripeCheckoutSessionId: mockSessionId,
         })
       );
+      expect(MockedTrackServerEvent).toHaveBeenCalledWith(
+        'purchase_confirmed',
+        expect.objectContaining({
+          funnelAttemptId: 'fa_webhook_123',
+          entrySurface: 'insufficient_credits',
+          trigger: 'insufficient_credits',
+          attributionChain: ['insufficient_credits', 'purchase_modal'],
+          experimentKey: 'purchase_modal_default_selection',
+          experimentArmKey: 'compact_credit_picker',
+          experimentAssignmentKey: 'session:abc',
+        }),
+        expect.anything()
+      );
+      expect(MockedTrackServerEvent).toHaveBeenCalledWith(
+        'experiment_reward_recorded',
+        expect.objectContaining({
+          outcome: 'recorded',
+          experimentKey: 'purchase_modal_default_selection',
+          experimentArmId: 10,
+          revenueCents: 2000,
+          stripeCheckoutSessionId: mockSessionId,
+        }),
+        expect.anything()
+      );
     });
 
     test('ignores invalid experiment arm metadata', async () => {
@@ -283,6 +316,64 @@ describe('PaymentHandler - MEDIUM-14: Verify credits from price config', () => {
       await PaymentHandler.handleCheckoutSessionCompleted(session);
 
       expect(MockedRecordExperimentReward).not.toHaveBeenCalled();
+    });
+
+    test('emits countable health outcomes for every reward result', async () => {
+      const createSession = (metadata: Record<string, string>) =>
+        ({
+          id: mockSessionId,
+          mode: 'payment',
+          payment_status: 'paid',
+          customer: mockCustomerId,
+          payment_intent: 'pi_test_123',
+          amount_total: 2000,
+          currency: 'usd',
+          payment_method_types: ['card'],
+          metadata: {
+            user_id: mockUserId,
+            pack_key: 'standard_100',
+            credits: '100',
+            ...metadata,
+          },
+          line_items: { data: [{ price: { id: 'price_pack_100' } }] },
+        }) as Stripe.Checkout.Session;
+      const validMetadata = {
+        exp_key: 'purchase_modal_default_selection',
+        exp_ctx: 'global',
+        exp_arm_id: '10',
+        exp_arm_key: 'compact_credit_picker',
+        exp_assign_key: 'session:abc',
+      };
+
+      for (const outcome of ['duplicate', 'invalid_arm'] as const) {
+        MockedTrackServerEvent.mockClear();
+        MockedRecordExperimentReward.mockResolvedValueOnce(outcome);
+        await PaymentHandler.handleCheckoutSessionCompleted(createSession(validMetadata));
+        expect(MockedTrackServerEvent).toHaveBeenCalledWith(
+          'experiment_reward_recorded',
+          expect.objectContaining({ outcome }),
+          expect.anything()
+        );
+      }
+
+      MockedTrackServerEvent.mockClear();
+      MockedRecordExperimentReward.mockRejectedValueOnce(new Error('storage unavailable'));
+      await PaymentHandler.handleCheckoutSessionCompleted(createSession(validMetadata));
+      expect(MockedTrackServerEvent).toHaveBeenCalledWith(
+        'experiment_reward_recorded',
+        expect.objectContaining({ outcome: 'storage_error' }),
+        expect.anything()
+      );
+
+      MockedTrackServerEvent.mockClear();
+      await PaymentHandler.handleCheckoutSessionCompleted(
+        createSession({ exp_key: 'purchase_modal_default_selection' })
+      );
+      expect(MockedTrackServerEvent).toHaveBeenCalledWith(
+        'experiment_reward_recorded',
+        expect.objectContaining({ outcome: 'missing_assignment' }),
+        expect.anything()
+      );
     });
 
     test('should fall back to metadata when price ID not found in config', async () => {

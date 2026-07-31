@@ -8,6 +8,11 @@ describe('checkout funnel contract', () => {
     expect(
       parseFunnelCheckoutAttribution({
         funnel_schema_version: '1',
+        funnel_attempt_id: 'fa_checkout_123',
+        entry_surface: 'post_download_explore',
+        checkout_trigger: 'model_gate',
+        checkout_originating_trigger: 'post_download_explore',
+        checkout_attribution_chain: 'post_download_explore,model_gate',
         first_touch_source: 'google',
         first_touch_medium: 'cpc',
         first_touch_landing_page: '/tools/ai-image-upscaler',
@@ -17,6 +22,11 @@ describe('checkout funnel contract', () => {
       })
     ).toEqual({
       funnel_schema_version: '1',
+      funnel_attempt_id: 'fa_checkout_123',
+      entry_surface: 'post_download_explore',
+      checkout_trigger: 'model_gate',
+      checkout_originating_trigger: 'post_download_explore',
+      checkout_attribution_chain: 'post_download_explore,model_gate',
       first_touch_source: 'google',
       first_touch_medium: 'cpc',
       first_touch_landing_page: '/tools/ai-image-upscaler',
@@ -53,5 +63,22 @@ describe('checkout funnel contract', () => {
         first_touch_landing_page: 'x'.repeat(501),
       })
     ).toThrow('too long');
+  });
+
+  test('should reject invalid attempt IDs and attribution chains longer than five surfaces', () => {
+    expect(() =>
+      parseFunnelCheckoutAttribution({
+        funnel_schema_version: '1',
+        funnel_attempt_id: 'user@example.com',
+      })
+    ).toThrow('Invalid funnel attempt ID');
+
+    expect(() =>
+      parseFunnelCheckoutAttribution({
+        funnel_schema_version: '1',
+        funnel_attempt_id: 'fa_valid_123',
+        checkout_attribution_chain: 'one,two,three,four,five,six',
+      })
+    ).toThrow('Invalid funnel attribution chain');
   });
 });

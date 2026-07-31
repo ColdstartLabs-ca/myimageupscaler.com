@@ -21,22 +21,62 @@ interface IRedirectIntent {
 async function restoreCheckoutContext(context: Record<string, unknown> | undefined): Promise<void> {
   if (!context) return;
 
+  const funnelAttemptId =
+    typeof context.funnelAttemptId === 'string' ? context.funnelAttemptId : undefined;
+  const entrySurface = typeof context.entrySurface === 'string' ? context.entrySurface : undefined;
   const trigger = typeof context.trigger === 'string' ? context.trigger : undefined;
   const originatingModel =
     typeof context.originatingModel === 'string' ? context.originatingModel : undefined;
+  const originatingTrigger =
+    typeof context.originatingTrigger === 'string' ? context.originatingTrigger : undefined;
+  const attributionChain = Array.isArray(context.attributionChain)
+    ? context.attributionChain
+        .filter((value): value is string => typeof value === 'string')
+        .slice(-5)
+    : undefined;
   const pricingRegion =
     typeof context.pricingRegion === 'string' ? context.pricingRegion : undefined;
   const discountPercent =
     typeof context.discountPercent === 'number' ? context.discountPercent : undefined;
+  const experimentKey =
+    typeof context.experimentKey === 'string' ? context.experimentKey : undefined;
+  const experimentContextKey =
+    typeof context.experimentContextKey === 'string' ? context.experimentContextKey : undefined;
+  const experimentArmId =
+    typeof context.experimentArmId === 'number' ? context.experimentArmId : undefined;
+  const experimentArmKey =
+    typeof context.experimentArmKey === 'string' ? context.experimentArmKey : undefined;
+  const experimentAssignmentKey =
+    typeof context.experimentAssignmentKey === 'string'
+      ? context.experimentAssignmentKey
+      : undefined;
 
-  if (!trigger && !originatingModel && !pricingRegion && discountPercent === undefined) return;
+  if (
+    !funnelAttemptId &&
+    !entrySurface &&
+    !trigger &&
+    !originatingModel &&
+    !pricingRegion &&
+    discountPercent === undefined
+  ) {
+    return;
+  }
 
   const { setCheckoutTrackingContext } = await import('@client/utils/checkoutTrackingContext');
   setCheckoutTrackingContext({
+    funnelAttemptId,
+    entrySurface,
     trigger,
     originatingModel,
+    originatingTrigger,
+    attributionChain,
     pricingRegion,
     discountPercent,
+    experimentKey,
+    experimentContextKey,
+    experimentArmId,
+    experimentArmKey,
+    experimentAssignmentKey,
   });
 }
 

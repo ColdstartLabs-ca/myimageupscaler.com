@@ -19,6 +19,8 @@ const PSEO_FAMILIES = new Set([
 ]);
 
 interface IStoredCheckoutTrackingContext {
+  funnelAttemptId?: string;
+  entrySurface?: string;
   trigger?: string;
   originatingModel?: string;
   originatingTrigger?: string;
@@ -34,6 +36,8 @@ interface IStoredCheckoutTrackingContext {
 }
 
 export interface ICheckoutTrackingContext {
+  funnelAttemptId?: string;
+  entrySurface?: string;
   trigger?: string;
   originatingModel?: string;
   originatingTrigger?: string;
@@ -119,6 +123,8 @@ export function getCheckoutTrackingContext(): ICheckoutTrackingContext | null {
   const originatingModel = stored?.originatingModel || legacyOriginatingModel;
 
   if (
+    !stored?.funnelAttemptId &&
+    !stored?.entrySurface &&
     !stored?.trigger &&
     !originatingModel &&
     !stored?.originatingTrigger &&
@@ -130,6 +136,8 @@ export function getCheckoutTrackingContext(): ICheckoutTrackingContext | null {
   }
 
   return {
+    funnelAttemptId: stored?.funnelAttemptId,
+    entrySurface: stored?.entrySurface,
     trigger: stored?.trigger,
     originatingModel,
     originatingTrigger: stored?.originatingTrigger,
@@ -144,23 +152,51 @@ export function getCheckoutTrackingContext(): ICheckoutTrackingContext | null {
   };
 }
 
-export function setCheckoutTrackingContext(context: ICheckoutTrackingContext): void {
-  if (typeof window === 'undefined') return;
+function createFunnelAttemptId(): string {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+    return `fa_${crypto.randomUUID().replaceAll('-', '')}`;
+  }
+
+  return `fa_${Date.now().toString(36)}_${Math.random().toString(36).slice(2)}`;
+}
+
+export function setCheckoutTrackingContext(
+  context: ICheckoutTrackingContext
+): ICheckoutTrackingContext | null {
+  if (typeof window === 'undefined') return null;
 
   const existing = readStoredContext();
+  const funnelAttemptId =
+    existing?.funnelAttemptId || context.funnelAttemptId || createFunnelAttemptId();
+  const entrySurface =
+    existing?.entrySurface ||
+    context.entrySurface ||
+    context.originatingTrigger ||
+    context.trigger ||
+    'unknown';
   const trigger = context.trigger || existing?.trigger;
   const originatingModel = context.originatingModel || existing?.originatingModel;
   const originatingTrigger = context.originatingTrigger || existing?.originatingTrigger;
-  const experimentKey = context.experimentKey || existing?.experimentKey;
-  const experimentContextKey = context.experimentContextKey || existing?.experimentContextKey;
-  const experimentArmId = context.experimentArmId ?? existing?.experimentArmId;
-  const experimentArmKey = context.experimentArmKey || existing?.experimentArmKey;
-  const experimentAssignmentKey =
-    context.experimentAssignmentKey || existing?.experimentAssignmentKey;
+  const hasExistingExperiment = Boolean(existing?.experimentKey);
+  const experimentKey = hasExistingExperiment ? existing?.experimentKey : context.experimentKey;
+  const experimentContextKey = hasExistingExperiment
+    ? existing?.experimentContextKey
+    : context.experimentContextKey;
+  const experimentArmId = hasExistingExperiment
+    ? existing?.experimentArmId
+    : context.experimentArmId;
+  const experimentArmKey = hasExistingExperiment
+    ? existing?.experimentArmKey
+    : context.experimentArmKey;
+  const experimentAssignmentKey = hasExistingExperiment
+    ? existing?.experimentAssignmentKey
+    : context.experimentAssignmentKey;
   const pricingRegion = context.pricingRegion || existing?.pricingRegion;
   const discountPercent = context.discountPercent ?? existing?.discountPercent;
 
   if (
+    !funnelAttemptId &&
+    !entrySurface &&
     !trigger &&
     !originatingModel &&
     !originatingTrigger &&
@@ -169,7 +205,7 @@ export function setCheckoutTrackingContext(context: ICheckoutTrackingContext): v
     discountPercent === undefined
   ) {
     clearCheckoutTrackingContext();
-    return;
+    return null;
   }
 
   const existingChain = existing?.attributionChain ?? [];
@@ -180,6 +216,8 @@ export function setCheckoutTrackingContext(context: ICheckoutTrackingContext): v
       : existingChain);
 
   const next: IStoredCheckoutTrackingContext = {
+    funnelAttemptId,
+    entrySurface,
     timestamp: Date.now(),
   };
 
@@ -229,6 +267,7 @@ export function setCheckoutTrackingContext(context: ICheckoutTrackingContext): v
   }
 
   sessionStorage.setItem(CHECKOUT_TRACKING_CONTEXT_KEY, JSON.stringify(next));
+  return getCheckoutTrackingContext();
 }
 
 export function clearCheckoutTrackingContext(): void {

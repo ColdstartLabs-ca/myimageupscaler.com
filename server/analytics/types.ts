@@ -758,6 +758,7 @@ export type IAnalyticsEventName =
   | 'experiment_reward_recorded'
   // Checkout funnel events (Phase 1 - Checkout Friction Investigation)
   | 'purchase_modal_opened'
+  | 'purchase_cta_clicked'
   | 'checkout_direct_started'
   | 'checkout_direct_unavailable'
   | 'checkout_modal_mounted'

@@ -78,6 +78,26 @@ export class PaymentHandler {
     return this.buildAmplitudeOptsFromMetadata(session.metadata, userId);
   }
 
+  private static getCheckoutAttributionProperties(session: Stripe.Checkout.Session) {
+    return {
+      funnelAttemptId: session.metadata?.funnel_attempt_id,
+      entrySurface: session.metadata?.entry_surface,
+      trigger: session.metadata?.checkout_trigger || null,
+      originatingModel: session.metadata?.checkout_originating_model || null,
+      originatingTrigger: session.metadata?.checkout_originating_trigger || null,
+      attributionChain: session.metadata?.checkout_attribution_chain
+        ? session.metadata.checkout_attribution_chain.split(',').filter(Boolean)
+        : undefined,
+      experimentKey: session.metadata?.[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentKey],
+      experimentContextKey:
+        session.metadata?.[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentContextKey],
+      experimentArmId: session.metadata?.[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmId],
+      experimentArmKey: session.metadata?.[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmKey],
+      experimentAssignmentKey:
+        session.metadata?.[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentAssignmentKey],
+    };
+  }
+
   private static async resolveCheckoutSessionUserId(
     session: Stripe.Checkout.Session
   ): Promise<string> {
@@ -287,7 +307,8 @@ export class PaymentHandler {
 
   private static async recordCheckoutExperimentReward(
     session: Stripe.Checkout.Session,
-    amountCents: number
+    amountCents: number,
+    userId: string
   ): Promise<void> {
     const experiment = this.getExperimentRewardMetadata(session);
     const hasExperimentMetadata = Object.values(EXPERIMENT_CHECKOUT_METADATA_KEYS).some(
@@ -295,10 +316,16 @@ export class PaymentHandler {
     );
     if (!experiment) {
       if (hasExperimentMetadata) {
-        console.warn('[EXPERIMENT_REWARD_HEALTH]', {
+        const health = {
           outcome: 'missing_assignment',
           stripeCheckoutSessionId: session.id,
-        });
+        };
+        console.warn('[EXPERIMENT_REWARD_HEALTH]', health);
+        await trackServerEvent(
+          'experiment_reward_recorded',
+          health,
+          this.buildAmplitudeOpts(session, userId)
+        ).catch(() => undefined);
       }
       return;
     }
@@ -328,6 +355,18 @@ export class PaymentHandler {
         armId: experiment.armId,
         stripeCheckoutSessionId: session.id,
       });
+      await trackServerEvent(
+        'experiment_reward_recorded',
+        {
+          outcome,
+          experimentKey: experiment.experimentKey,
+          experimentArmId: experiment.armId,
+          experimentAssignmentKey: experiment.assignmentKey,
+          revenueCents: amountCents,
+          stripeCheckoutSessionId: session.id,
+        },
+        this.buildAmplitudeOpts(session, userId)
+      ).catch(() => undefined);
     } catch (error) {
       // Attribution health must never roll back confirmed payment fulfillment.
       console.error('[EXPERIMENT_REWARD_HEALTH]', {
@@ -337,6 +376,18 @@ export class PaymentHandler {
         stripeCheckoutSessionId: session.id,
         error: error instanceof Error ? error.message : String(error),
       });
+      await trackServerEvent(
+        'experiment_reward_recorded',
+        {
+          outcome: 'storage_error',
+          experimentKey: experiment.experimentKey,
+          experimentArmId: experiment.armId,
+          experimentAssignmentKey: experiment.assignmentKey,
+          revenueCents: amountCents,
+          stripeCheckoutSessionId: session.id,
+        },
+        this.buildAmplitudeOpts(session, userId)
+      ).catch(() => undefined);
     }
   }
 
@@ -604,6 +655,7 @@ export class PaymentHandler {
           currency: session.currency ?? 'usd',
           pricingRegion,
           discountPercent,
+          ...this.getCheckoutAttributionProperties(session),
         },
         amplitudeOpts
       );
@@ -632,23 +684,13 @@ export class PaymentHandler {
             typeof session.customer === 'string' ? session.customer : session.customer?.id || null,
           priceId: session.metadata?.price_id || null,
           uiMode: session.metadata?.checkout_ui_mode || null,
-          trigger: session.metadata?.checkout_trigger || null,
-          originatingModel: session.metadata?.checkout_originating_model || null,
-          originatingTrigger: session.metadata?.checkout_originating_trigger || null,
-          attributionChain: session.metadata?.checkout_attribution_chain
-            ? session.metadata.checkout_attribution_chain.split(',').filter(Boolean)
-            : undefined,
-          experimentKey: session.metadata?.[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentKey],
-          experimentContextKey:
-            session.metadata?.[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentContextKey],
-          experimentArmId: session.metadata?.[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmId],
-          experimentArmKey: session.metadata?.[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmKey],
+          ...this.getCheckoutAttributionProperties(session),
         },
         amplitudeOpts
       );
 
       if (session.payment_status === 'paid') {
-        await this.recordCheckoutExperimentReward(session, amountCents);
+        await this.recordCheckoutExperimentReward(session, amountCents, userId);
       }
 
       // Update user properties in Amplitude for subscription purchases
@@ -799,6 +841,7 @@ export class PaymentHandler {
         currency: session.currency ?? 'usd',
         pricingRegion,
         discountPercent,
+        ...this.getCheckoutAttributionProperties(session),
       },
       amplitudeOpts
     );
@@ -823,22 +866,12 @@ export class PaymentHandler {
           typeof session.customer === 'string' ? session.customer : session.customer?.id || null,
         priceId: session.metadata?.price_id || null,
         uiMode: session.metadata?.checkout_ui_mode || null,
-        trigger: session.metadata?.checkout_trigger || null,
-        originatingModel: session.metadata?.checkout_originating_model || null,
-        originatingTrigger: session.metadata?.checkout_originating_trigger || null,
-        attributionChain: session.metadata?.checkout_attribution_chain
-          ? session.metadata.checkout_attribution_chain.split(',').filter(Boolean)
-          : undefined,
-        experimentKey: session.metadata?.[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentKey],
-        experimentContextKey:
-          session.metadata?.[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentContextKey],
-        experimentArmId: session.metadata?.[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmId],
-        experimentArmKey: session.metadata?.[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmKey],
+        ...this.getCheckoutAttributionProperties(session),
       },
       amplitudeOpts
     );
 
-    await this.recordCheckoutExperimentReward(session, amountCents);
+    await this.recordCheckoutExperimentReward(session, amountCents, userId);
 
     await trackRevenue(
       {

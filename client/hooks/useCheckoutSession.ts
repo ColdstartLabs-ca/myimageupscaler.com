@@ -230,6 +230,12 @@ export function useCheckoutSession({
         const checkoutTrigger = checkoutContext?.trigger;
         const metadata: Record<string, string> = getCheckoutFunnelMetadata();
 
+        if (checkoutContext?.funnelAttemptId) {
+          metadata.funnel_attempt_id = checkoutContext.funnelAttemptId;
+        }
+        if (checkoutContext?.entrySurface) {
+          metadata.entry_surface = checkoutContext.entrySurface;
+        }
         if (checkoutTrigger) {
           metadata.checkout_trigger = checkoutTrigger;
         }
@@ -277,6 +283,8 @@ export function useCheckoutSession({
         metadata.checkout_authenticated = String(isAuthenticated);
 
         const attributionProps = {
+          funnelAttemptId: checkoutContext?.funnelAttemptId,
+          entrySurface: checkoutContext?.entrySurface,
           trigger: checkoutTrigger,
           ...(checkoutContext?.originatingModel
             ? { originatingModel: checkoutContext.originatingModel }

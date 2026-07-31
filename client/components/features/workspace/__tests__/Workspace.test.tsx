@@ -1,11 +1,18 @@
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import { ProcessingStatus } from '@/shared/types/coreflow.types';
+import { DEFAULT_ADDITIONAL_OPTIONS, ProcessingStatus } from '@/shared/types/coreflow.types';
 
-const { mockOpenAuthRequiredModal, mockPrepareAuthRedirect } = vi.hoisted(() => ({
+const {
+  mockFetchUserData,
+  mockOpenAuthRequiredModal,
+  mockPrepareAuthRedirect,
+  mockNavigationState,
+} = vi.hoisted(() => ({
+  mockFetchUserData: vi.fn(),
   mockOpenAuthRequiredModal: vi.fn(),
   mockPrepareAuthRedirect: vi.fn(),
+  mockNavigationState: { checkout: null as string | null },
 }));
 
 // Mock useBatchQueue hook
@@ -55,7 +62,23 @@ vi.mock('@client/store/userStore', () => ({
     isAuthenticated: mockIsAuthenticated,
     isFreeUser: mockIsFreeUser,
   }),
-  useUserStore: vi.fn(() => ({ user: mockProfile })),
+  useUserStore: Object.assign(
+    vi.fn(() => ({ user: mockProfile })),
+    {
+      getState: () => ({
+        user: mockProfile
+          ? {
+              ...mockProfile,
+              profile: {
+                subscription_credits_balance: 0,
+                purchased_credits_balance: mockTotalCredits,
+              },
+            }
+          : null,
+        fetchUserData: mockFetchUserData,
+      }),
+    }
+  ),
   useProfile: vi.fn(() => mockProfile),
   useSubscription: vi.fn(() => mockSubscription),
 }));
@@ -73,6 +96,12 @@ vi.mock('@client/utils/authRedirectManager', () => ({
 // Mock next-intl
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
+}));
+
+vi.mock('next/navigation', () => ({
+  useSearchParams: () => ({
+    get: (key: string) => (key === 'checkout' ? mockNavigationState.checkout : null),
+  }),
 }));
 
 vi.mock('lucide-react', () => ({
@@ -204,6 +233,7 @@ vi.mock('@client/components/stripe/PurchaseModal', () => ({
     requiredCredits,
     currentBalance,
     onClose,
+    onPurchaseComplete,
   }: {
     isOpen: boolean;
     trigger?: string;
@@ -211,6 +241,7 @@ vi.mock('@client/components/stripe/PurchaseModal', () => ({
     requiredCredits?: number;
     currentBalance?: number;
     onClose: () => void;
+    onPurchaseComplete: () => void;
   }) =>
     isOpen ? (
       <div
@@ -221,13 +252,16 @@ vi.mock('@client/components/stripe/PurchaseModal', () => ({
         data-current-balance={currentBalance}
       >
         <button onClick={onClose}>Dismiss purchase modal</button>
+        <button onClick={onPurchaseComplete}>Complete purchase</button>
       </div>
     ) : null,
 }));
 
 vi.mock('@client/components/stripe/CheckoutModal', () => ({
-  CheckoutModal: ({ priceId }: { priceId: string }) => (
-    <div data-modal="checkout" data-price-id={priceId} />
+  CheckoutModal: ({ priceId, onSuccess }: { priceId: string; onSuccess: () => void }) => (
+    <div data-modal="checkout" data-price-id={priceId}>
+      <button onClick={onSuccess}>Complete checkout</button>
+    </div>
   ),
 }));
 
@@ -247,7 +281,11 @@ vi.mock('@client/components/landing/AmbientBackground', () => ({
 
 // Mock ErrorAlert
 vi.mock('@client/components/stripe/ErrorAlert', () => ({
-  ErrorAlert: () => null,
+  ErrorAlert: ({ title, message }: { title?: string; message: string }) => (
+    <div role="alert">
+      {title}: {message}
+    </div>
+  ),
 }));
 
 // Mock TabButton
@@ -282,6 +320,11 @@ vi.mock('@/client/hooks/useRegionTier', () => ({
 
 // Import after mocks are set up
 import Workspace from '../Workspace';
+import {
+  claimInterruptedJob,
+  inspectInterruptedJob,
+  saveInterruptedJob,
+} from '@client/utils/interruptedJob';
 
 // Get analytics mock for assertions
 const getAnalyticsMock = async () => {
@@ -289,10 +332,15 @@ const getAnalyticsMock = async () => {
   return analytics.analytics.track;
 };
 
+beforeEach(() => {
+  mockNavigationState.checkout = null;
+});
+
 describe('Workspace Quality Tier Defaults', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    sessionStorage.clear();
     mockSubscription = null;
     mockIsFreeUser = true;
     mockProfile = { id: 'user-123' };
@@ -307,6 +355,7 @@ describe('Workspace Quality Tier Defaults', () => {
     mockBatchQueueState.batchLimit = 1;
     mockBatchQueueState.batchLimitExceeded = null;
     mockBatchQueueState.providerUnavailable = null;
+    mockFetchUserData.mockResolvedValue(undefined);
   });
 
   describe('Free User', () => {
@@ -343,6 +392,7 @@ describe('Workspace Quality Tier Logic', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    sessionStorage.clear();
     mockSubscription = null;
     mockIsFreeUser = true;
     mockProfile = { id: 'user-123' };
@@ -357,6 +407,7 @@ describe('Workspace Quality Tier Logic', () => {
     mockBatchQueueState.batchLimit = 1;
     mockBatchQueueState.batchLimitExceeded = null;
     mockBatchQueueState.providerUnavailable = null;
+    mockFetchUserData.mockResolvedValue(undefined);
   });
 
   test('should initialize with quick tier for all users', () => {
@@ -627,6 +678,143 @@ describe('Workspace Quality Tier Logic', () => {
       expect.objectContaining({ qualityTier: 'quick', scale: 2 })
     );
     expect(screen.queryByTestId('purchase-modal')).not.toBeInTheDocument();
+  });
+
+  test('should resume the interrupted job exactly once after confirmed credit fulfillment', async () => {
+    mockTotalCredits = 0;
+    mockBatchQueueState.queue = [
+      {
+        id: 'item-1',
+        status: ProcessingStatus.IDLE,
+        file: new File(['test'], 'test.png', { type: 'image/png' }),
+      },
+    ];
+    mockBatchQueueState.activeId = 'item-1';
+    mockBatchQueueState.activeItem = mockBatchQueueState.queue[0];
+    mockFetchUserData.mockImplementation(async () => {
+      mockTotalCredits = 50;
+    });
+
+    render(<Workspace />);
+    fireEvent.click(screen.getByTestId('batch-sidebar-process'));
+
+    const completePurchase = screen.getByRole('button', { name: 'Complete purchase' });
+    fireEvent.click(completePurchase);
+    fireEvent.click(completePurchase);
+
+    await waitFor(() => {
+      expect(mockProcessBatch).toHaveBeenCalledTimes(1);
+    });
+    expect(mockProcessBatch).toHaveBeenCalledWith(
+      expect.objectContaining({ qualityTier: 'quick', scale: 2 })
+    );
+    expect(inspectInterruptedJob()).toEqual({ status: 'missing' });
+  });
+
+  test('should resume the interrupted job from post-auth checkout success', async () => {
+    mockTotalCredits = 0;
+    mockBatchQueueState.queue = [
+      {
+        id: 'item-1',
+        status: ProcessingStatus.IDLE,
+        file: new File(['test'], 'test.png', { type: 'image/png' }),
+      },
+    ];
+    mockBatchQueueState.activeId = 'item-1';
+    mockBatchQueueState.activeItem = mockBatchQueueState.queue[0];
+    saveInterruptedJob({
+      config: {
+        qualityTier: 'quick',
+        scale: 2,
+        additionalOptions: {
+          ...DEFAULT_ADDITIONAL_OPTIONS,
+          enhanceFaces: true,
+        },
+      },
+      itemIds: ['item-1'],
+      requiredCredits: 1,
+    });
+    mockNavigationState.checkout = 'price_test_small';
+    mockFetchUserData.mockImplementation(async () => {
+      mockTotalCredits = 50;
+    });
+
+    render(<Workspace />);
+    fireEvent.click(await screen.findByRole('button', { name: 'Complete checkout' }));
+
+    await waitFor(() => {
+      expect(mockProcessBatch).toHaveBeenCalledTimes(1);
+    });
+    expect(inspectInterruptedJob()).toEqual({ status: 'missing' });
+  });
+
+  test('should not resume when the purchase modal is only dismissed repeatedly', () => {
+    mockTotalCredits = 0;
+    mockBatchQueueState.queue = [
+      {
+        id: 'item-1',
+        status: ProcessingStatus.IDLE,
+        file: new File(['test'], 'test.png', { type: 'image/png' }),
+      },
+    ];
+    mockBatchQueueState.activeId = 'item-1';
+    mockBatchQueueState.activeItem = mockBatchQueueState.queue[0];
+
+    render(<Workspace />);
+    fireEvent.click(screen.getByTestId('batch-sidebar-process'));
+    fireEvent.click(screen.getByRole('button', { name: 'Dismiss purchase modal' }));
+
+    expect(mockProcessBatch).not.toHaveBeenCalled();
+    expect(inspectInterruptedJob().status).toBe('ready');
+  });
+
+  test('should require user action after refresh loses the in-memory image inputs', async () => {
+    saveInterruptedJob({
+      config: {
+        qualityTier: 'quick',
+        scale: 2,
+        additionalOptions: DEFAULT_ADDITIONAL_OPTIONS,
+      },
+      itemIds: ['item-before-refresh'],
+      requiredCredits: 1,
+    });
+    mockBatchQueueState.queue = [];
+
+    render(<Workspace />);
+
+    await waitFor(() => {
+      expect(inspectInterruptedJob()).toMatchObject({
+        status: 'needs_action',
+        reason: 'missing_inputs',
+      });
+    });
+    expect(screen.getByRole('alert')).toHaveTextContent(/add the original images again/i);
+    expect(mockProcessBatch).not.toHaveBeenCalled();
+  });
+
+  test('should require user action after refresh interrupts a claimed resume', async () => {
+    const job = saveInterruptedJob({
+      config: {
+        qualityTier: 'quick',
+        scale: 2,
+        additionalOptions: DEFAULT_ADDITIONAL_OPTIONS,
+      },
+      itemIds: ['item-before-refresh'],
+      requiredCredits: 1,
+    });
+    claimInterruptedJob(job.jobId);
+    mockBatchQueueState.queue = [];
+
+    render(<Workspace />);
+
+    await waitFor(() => {
+      expect(inspectInterruptedJob()).toMatchObject({
+        status: 'needs_action',
+        reason: 'missing_inputs',
+      });
+    });
+    expect(screen.getByRole('alert')).toHaveTextContent(/add the original images again/i);
+    expect(mockProcessBatch).not.toHaveBeenCalled();
   });
 });
 

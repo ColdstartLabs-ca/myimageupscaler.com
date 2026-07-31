@@ -24,7 +24,7 @@ import { useOnboardingDriver } from '@client/hooks/useOnboardingDriver';
 import { FEATURE_FLAGS } from '@shared/config/feature-flags';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useUpgradeAbandonmentDetector } from '@client/hooks/useUpgradeAbandonmentDetector';
-import { useUserData } from '@client/store/userStore';
+import { useUserData, useUserStore } from '@client/store/userStore';
 import { useModalStore } from '@client/store/modalStore';
 import { cn } from '@client/utils/cn';
 import { EngagementDiscountBanner } from '@client/components/engagement-discount';
@@ -56,6 +56,13 @@ import {
   getCheckoutTrackingContext,
   setCheckoutTrackingContext,
 } from '@client/utils/checkoutTrackingContext';
+import {
+  claimInterruptedJob,
+  clearInterruptedJob,
+  inspectInterruptedJob,
+  markInterruptedJobNeedsAction,
+  saveInterruptedJob,
+} from '@client/utils/interruptedJob';
 import type { IUpgradeDirectParams } from './ModelGalleryModal';
 import { AfterUpscaleBanner } from './AfterUpscaleBanner';
 import { BatchLimitModal } from './BatchLimitModal';
@@ -256,6 +263,48 @@ const Workspace: React.FC = () => {
   const [globalErrors, setGlobalErrors] = useState<
     Array<{ id: string; message: string; title?: string }>
   >([]);
+  const addInterruptedJobError = React.useCallback((message: string) => {
+    setGlobalErrors(previous => {
+      if (previous.some(error => error.id === 'interrupted-job-resume')) return previous;
+      return [
+        ...previous,
+        {
+          id: 'interrupted-job-resume',
+          title: 'Resume needs your action',
+          message,
+        },
+      ];
+    });
+  }, []);
+
+  useEffect(() => {
+    const interruptedJob = inspectInterruptedJob();
+
+    if (interruptedJob.status === 'invalid') {
+      addInterruptedJobError('Your saved job is invalid. Please add the original images again.');
+      return;
+    }
+
+    if (interruptedJob.status === 'needs_action') {
+      addInterruptedJobError('Please add the original images again to continue your saved job.');
+      return;
+    }
+
+    if (interruptedJob.status === 'already_claimed' && queue.length === 0) {
+      markInterruptedJobNeedsAction(interruptedJob.job.jobId, 'missing_inputs');
+      addInterruptedJobError(
+        'The page refreshed while processing was starting. Add the original images again to continue.'
+      );
+      return;
+    }
+
+    if (interruptedJob.status === 'ready' && queue.length === 0) {
+      markInterruptedJobNeedsAction(interruptedJob.job.jobId, 'missing_inputs');
+      addInterruptedJobError(
+        'The page refreshed before processing resumed. Add the original images again to continue.'
+      );
+    }
+  }, [addInterruptedJobError, queue.length]);
 
   // Auto-start phase 1 tour (dropzone tip) on first visit
   useEffect(() => {
@@ -306,8 +355,25 @@ const Workspace: React.FC = () => {
           item.error?.toLowerCase().includes('insufficient credits')
         ) {
           errorTitle = t('workspace.errors.insufficientCredits');
+          const pendingItems = queue.filter(
+            queueItem => queueItem.status !== ProcessingStatus.COMPLETED
+          );
+          const requiredCredits = calculateBatchProviderAwareCreditCost({
+            config,
+            items: pendingItems,
+          }).totalCredits;
+          if (pendingItems.length > 0 && requiredCredits > 0) {
+            saveInterruptedJob({
+              config,
+              itemIds: pendingItems.map(queueItem => queueItem.id),
+              requiredCredits,
+            });
+          }
           // Auto-open upgrade modal with outOfCredits: true
-          openUpgradeModal(true, 'insufficient_credits');
+          openUpgradeModal(true, 'insufficient_credits', {
+            requiredCredits,
+            currentBalance: totalCredits,
+          });
         } else if (item.error?.toLowerCase().includes('timeout')) {
           errorTitle = t('workspace.errors.requestTimeout');
         } else if (
@@ -327,7 +393,7 @@ const Workspace: React.FC = () => {
         ]);
       }
     });
-  }, [queue, globalErrors]);
+  }, [config, globalErrors, queue, totalCredits]);
 
   // Track previous queue length to detect new uploads
   const prevQueueLengthRef = React.useRef(queue.length);
@@ -473,6 +539,11 @@ const Workspace: React.FC = () => {
 
     const requiredCredits = getRequiredCreditsForPendingQueue();
     if (requiredCredits > totalCredits) {
+      saveInterruptedJob({
+        config,
+        itemIds: pendingQueue.map(item => item.id),
+        requiredCredits,
+      });
       analytics.track('credit_wall_shown', {
         source: 'preflight_batch',
         requiredCredits,
@@ -487,6 +558,67 @@ const Workspace: React.FC = () => {
     }
 
     processBatch(config);
+  };
+
+  const handleUpgradePurchaseComplete = () => {
+    closeUpgradeModal();
+
+    void (async () => {
+      const inspection = inspectInterruptedJob();
+      if (inspection.status !== 'ready') return;
+
+      const pendingItemIds = getPendingQueue().map(item => item.id);
+      const hasMatchingInputs =
+        pendingItemIds.length === inspection.job.itemIds.length &&
+        inspection.job.itemIds.every((itemId, index) => itemId === pendingItemIds[index]);
+      if (!hasMatchingInputs) {
+        markInterruptedJobNeedsAction(inspection.job.jobId, 'missing_inputs');
+        addInterruptedJobError('Please add the original images again to continue your saved job.');
+        return;
+      }
+
+      let confirmedCredits = 0;
+      for (let attempt = 0; attempt < 8; attempt += 1) {
+        const userState = useUserStore.getState();
+        const userId = userState.user?.id;
+        if (!userId) break;
+
+        try {
+          await userState.fetchUserData(userId);
+        } catch {
+          // Webhook fulfillment can briefly lag Checkout completion.
+        }
+
+        const refreshedProfile = useUserStore.getState().user?.profile;
+        confirmedCredits =
+          (refreshedProfile?.subscription_credits_balance ?? 0) +
+          (refreshedProfile?.purchased_credits_balance ?? 0);
+        if (confirmedCredits >= inspection.job.requiredCredits) break;
+
+        if (attempt < 7) {
+          await new Promise(resolve => window.setTimeout(resolve, 1000));
+        }
+      }
+
+      if (confirmedCredits < inspection.job.requiredCredits) {
+        markInterruptedJobNeedsAction(inspection.job.jobId, 'credits_unconfirmed');
+        addInterruptedJobError(
+          'Payment completed, but credits are still updating. Start the saved job when your balance refreshes.'
+        );
+        return;
+      }
+
+      const claim = claimInterruptedJob(inspection.job.jobId);
+      if (claim.status !== 'claimed') return;
+
+      try {
+        await processBatch(claim.job.config);
+        clearInterruptedJob(claim.job.jobId);
+      } catch {
+        markInterruptedJobNeedsAction(claim.job.jobId, 'resume_failed');
+        addInterruptedJobError('Automatic resume failed. Start the saved job again.');
+      }
+    })();
   };
 
   const handleCloseModelGallery = () => {
@@ -612,6 +744,15 @@ const Workspace: React.FC = () => {
         <div className="p-8 sm:p-16 flex-grow flex flex-col justify-center relative">
           <AmbientBackground variant="section" />
           <div className="relative z-10">
+            {globalErrors.map(error => (
+              <div key={error.id} className="mb-4">
+                <ErrorAlert
+                  title={error.title}
+                  message={error.message}
+                  onClick={() => dismissError(error.id)}
+                />
+              </div>
+            ))}
             <Dropzone onFilesSelected={handleFilesSelected} maxPixels={uploadMaxPixels} />
             <div className="mt-4 md:mt-8 flex justify-center gap-4 md:gap-8 text-text-muted flex-wrap text-xs md:text-sm">
               <div className="flex items-center gap-1.5">
@@ -655,16 +796,21 @@ const Workspace: React.FC = () => {
         <PurchaseModal
           isOpen={!purchaseCtasSuppressed && showUpgradeModal}
           onClose={closeUpgradeModal}
-          onPurchaseComplete={closeUpgradeModal}
+          onPurchaseComplete={handleUpgradePurchaseComplete}
           outOfCredits={upgradeModalOutOfCredits}
           trigger={upgradeModalTrigger}
+          requiredCredits={upgradeModalCreditContext?.requiredCredits}
+          currentBalance={upgradeModalCreditContext?.currentBalance}
         />
 
         {!purchaseCtasSuppressed && postAuthCheckoutPriceId && (
           <CheckoutModal
             priceId={postAuthCheckoutPriceId}
             onClose={() => setPostAuthCheckoutPriceId(null)}
-            onSuccess={() => setPostAuthCheckoutPriceId(null)}
+            onSuccess={() => {
+              setPostAuthCheckoutPriceId(null);
+              handleUpgradePurchaseComplete();
+            }}
             prefillPlanId={postAuthCheckoutPriceId}
           />
         )}
@@ -991,7 +1137,7 @@ const Workspace: React.FC = () => {
       <PurchaseModal
         isOpen={!purchaseCtasSuppressed && showUpgradeModal}
         onClose={closeUpgradeModal}
-        onPurchaseComplete={closeUpgradeModal}
+        onPurchaseComplete={handleUpgradePurchaseComplete}
         outOfCredits={upgradeModalOutOfCredits}
         trigger={upgradeModalTrigger}
         requiredCredits={upgradeModalCreditContext?.requiredCredits}
@@ -1002,7 +1148,10 @@ const Workspace: React.FC = () => {
         <CheckoutModal
           priceId={postAuthCheckoutPriceId}
           onClose={() => setPostAuthCheckoutPriceId(null)}
-          onSuccess={() => setPostAuthCheckoutPriceId(null)}
+          onSuccess={() => {
+            setPostAuthCheckoutPriceId(null);
+            handleUpgradePurchaseComplete();
+          }}
           prefillPlanId={postAuthCheckoutPriceId}
         />
       )}

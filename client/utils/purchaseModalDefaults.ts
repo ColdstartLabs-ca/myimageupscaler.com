@@ -43,6 +43,20 @@ function getRecommendedPlan(subscriptionPlans: IPlanConfig[]): IPlanConfig | nul
   return subscriptionPlans.find(plan => plan.recommended) || subscriptionPlans[0] || null;
 }
 
+export function getSmallestSufficientCreditPack(
+  creditPacks: ICreditPack[],
+  deficit: number
+): ICreditPack | null {
+  const purchasablePacks = creditPacks
+    .filter(pack => pack.enabled && Boolean(pack.stripePriceId) && pack.credits > 0)
+    .sort((a, b) => a.credits - b.credits);
+
+  if (purchasablePacks.length === 0) return null;
+
+  const requiredCredits = Math.max(0, deficit);
+  return purchasablePacks.find(pack => pack.credits >= requiredCredits) || null;
+}
+
 function isBatchLimitTrigger(trigger: string): boolean {
   return trigger === 'batch_limit' || trigger.includes('batch_limit');
 }
@@ -54,6 +68,9 @@ export function getPurchaseModalInitialSelection({
   subscriptionPlans,
   banditConfig,
   repeatPackKey,
+  requiredCredits,
+  currentBalance,
+  experimentArmKey,
 }: {
   trigger: string;
   outOfCredits: boolean;
@@ -61,8 +78,32 @@ export function getPurchaseModalInitialSelection({
   subscriptionPlans: IPlanConfig[];
   banditConfig?: IPurchaseModalBanditConfig;
   repeatPackKey?: string | null;
+  requiredCredits?: number;
+  currentBalance?: number;
+  experimentArmKey?: string;
 }): IPurchaseModalInitialSelection {
   const starterPack = getStarterPack(creditPacks);
+  const isCreditWall =
+    outOfCredits || trigger === 'out_of_credits' || trigger === 'insufficient_credits';
+  const usesSufficientPackRecommendation =
+    experimentArmKey === 'sufficient_pack_focus' || experimentArmKey === 'direct_sufficient_pack';
+
+  if (
+    isCreditWall &&
+    usesSufficientPackRecommendation &&
+    typeof requiredCredits === 'number' &&
+    typeof currentBalance === 'number'
+  ) {
+    return {
+      purchaseMode: 'credits',
+      selectedPack: getSmallestSufficientCreditPack(
+        creditPacks,
+        Math.max(requiredCredits - currentBalance, 0)
+      ),
+      selectedPlan: null,
+      lockToCredits: false,
+    };
+  }
 
   const repeatPack = creditPacks.find(pack => pack.key === repeatPackKey);
   if (repeatPack) {
@@ -122,7 +163,7 @@ export function getPurchaseModalInitialSelection({
 
   // Pending job cost is not available at this modal boundary yet, so the out-of-credits
   // fallback is the smallest available pack.
-  if (outOfCredits || trigger === 'out_of_credits' || trigger === 'insufficient_credits') {
+  if (isCreditWall) {
     return {
       purchaseMode: 'credits',
       selectedPack: starterPack,

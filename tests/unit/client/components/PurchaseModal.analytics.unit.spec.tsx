@@ -11,6 +11,9 @@ const {
   mockUseExperimentArm,
   mockCheckoutModal,
   mockGetSession,
+  mockPrepareAuthRedirect,
+  mockRegionState,
+  mockUserState,
 } = vi.hoisted(() => ({
   mockTrack: vi.fn(),
   mockGetTrackingContext: vi.fn(),
@@ -18,6 +21,15 @@ const {
   mockUseExperimentArm: vi.fn(),
   mockCheckoutModal: vi.fn(() => null),
   mockGetSession: vi.fn(),
+  mockPrepareAuthRedirect: vi.fn(),
+  mockRegionState: {
+    pricingRegion: 'standard',
+    discountPercent: 0,
+  },
+  mockUserState: {
+    isAuthenticated: true,
+    user: { id: 'user-1' } as { id: string } | null,
+  },
 }));
 
 const creditPacks: ICreditPack[] = [
@@ -39,6 +51,16 @@ const creditPacks: ICreditPack[] = [
     currency: 'usd',
     stripePriceId: 'price_small',
     description: 'Starter pack',
+    enabled: true,
+  },
+  {
+    key: 'large',
+    name: 'Large',
+    credits: 600,
+    priceInCents: 3999,
+    currency: 'usd',
+    stripePriceId: 'price_large',
+    description: 'Large pack',
     enabled: true,
   },
 ];
@@ -97,10 +119,7 @@ vi.mock('@client/analytics', () => ({
 }));
 
 vi.mock('@client/hooks/useRegionTier', () => ({
-  useRegionTier: () => ({
-    pricingRegion: 'standard',
-    discountPercent: 0,
-  }),
+  useRegionTier: () => mockRegionState,
 }));
 
 vi.mock('@client/hooks/useExperimentArm', () => ({
@@ -116,10 +135,7 @@ vi.mock('@client/hooks/useCurrentPlan', () => ({
 }));
 
 vi.mock('@client/store/userStore', () => ({
-  useUserStore: () => ({
-    isAuthenticated: true,
-    user: { id: 'user-1' },
-  }),
+  useUserStore: () => mockUserState,
 }));
 
 vi.mock('@server/supabase/supabaseClient', () => ({
@@ -133,7 +149,7 @@ vi.mock('@client/store/modalStore', () => ({
 }));
 
 vi.mock('@client/utils/authRedirectManager', () => ({
-  prepareAuthRedirect: vi.fn(),
+  prepareAuthRedirect: mockPrepareAuthRedirect,
 }));
 
 vi.mock('@client/utils/checkoutTrackingContext', () => ({
@@ -188,20 +204,38 @@ describe('PurchaseModal analytics', () => {
       })
     );
     mockGetTrackingContext.mockReturnValue(null);
-    mockUseExperimentArm.mockReturnValue({
-      assignment: {
-        experimentKey: 'purchase_modal_default_selection',
-        contextKey: 'global',
-        armId: 10,
-        armKey: 'current_modal_control',
+    mockUserState.isAuthenticated = true;
+    mockUserState.user = { id: 'user-1' };
+    mockRegionState.pricingRegion = 'standard';
+    mockRegionState.discountPercent = 0;
+    mockSetTrackingContext.mockImplementation(context => ({
+      funnelAttemptId: 'attempt_test_123',
+      ...context,
+    }));
+    const experimentResults = new Map<string, Record<string, unknown>>();
+    mockUseExperimentArm.mockImplementation(({ experimentKey }: { experimentKey: string }) => {
+      const cached = experimentResults.get(experimentKey);
+      if (cached) return cached;
+
+      const isModelGate = experimentKey === 'model_gate_purchase_path';
+      const armKey = isModelGate ? 'direct_small_pack_control' : 'current_modal_control';
+      const result = {
+        assignment: {
+          experimentKey,
+          contextKey: 'global',
+          armId: 10,
+          armKey,
+          armConfig: {},
+          assignmentKey: 'session:test',
+          surface: 'purchase_modal',
+        },
+        armKey,
         armConfig: {},
-        assignmentKey: 'session:test',
-        surface: 'purchase_modal',
-      },
-      armKey: 'current_modal_control',
-      armConfig: {},
-      isLoading: false,
-      isFallback: false,
+        isLoading: false,
+        isFallback: false,
+      };
+      experimentResults.set(experimentKey, result);
+      return result;
     });
   });
 
@@ -246,11 +280,17 @@ describe('PurchaseModal analytics', () => {
           selectedKey: 'small',
           priceId: 'price_small',
           lockToCredits: true,
-          experimentKey: 'purchase_modal_default_selection',
-          experimentArmKey: 'current_modal_control',
+          experimentKey: 'model_gate_purchase_path',
+          experimentArmKey: 'direct_small_pack_control',
         })
       );
     });
+    expect(mockUseExperimentArm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        experimentKey: 'model_gate_purchase_path',
+        assignmentScope: 'session',
+      })
+    );
   });
 
   test('keeps auto top-up unchecked and forwards explicit threshold consent only after opt-in', async () => {
@@ -335,7 +375,7 @@ describe('PurchaseModal analytics', () => {
     });
   });
 
-  test('should include outOfCredits context when insufficient_credits prompt is shown', async () => {
+  test('should use purchase-stage semantics without duplicate promotional events', async () => {
     render(
       <PurchaseModal
         isOpen={true}
@@ -350,9 +390,11 @@ describe('PurchaseModal analytics', () => {
 
     await waitFor(() => {
       expect(mockTrack).toHaveBeenCalledWith(
-        'upgrade_prompt_shown',
+        'purchase_modal_opened',
         expect.objectContaining({
           trigger: 'insufficient_credits',
+          funnelAttemptId: 'attempt_test_123',
+          entrySurface: 'insufficient_credits',
           outOfCredits: true,
           requiredCredits: 4,
           currentBalance: 1,
@@ -361,6 +403,212 @@ describe('PurchaseModal analytics', () => {
         })
       );
     });
+    expect(mockTrack).not.toHaveBeenCalledWith('upgrade_prompt_shown', expect.anything());
+    expect(mockUseExperimentArm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        experimentKey: 'insufficient_credits_purchase_path',
+        assignmentScope: 'session',
+        surface: 'purchase_modal',
+      })
+    );
+  });
+
+  test('recommends the sufficient pack first and reveals larger options on request', async () => {
+    mockUseExperimentArm.mockReturnValue({
+      assignment: {
+        experimentKey: 'insufficient_credits_purchase_path',
+        contextKey: 'global',
+        armId: 21,
+        armKey: 'direct_sufficient_pack',
+        armConfig: {},
+        assignmentKey: 'session:test',
+        surface: 'purchase_modal',
+      },
+      armKey: 'direct_sufficient_pack',
+      armConfig: {},
+      isLoading: false,
+      isFallback: false,
+    });
+    render(
+      <PurchaseModal
+        isOpen={true}
+        onClose={vi.fn()}
+        onPurchaseComplete={vi.fn()}
+        trigger="insufficient_credits"
+        outOfCredits={true}
+        requiredCredits={30}
+        currentBalance={0}
+      />
+    );
+
+    expect(await screen.findByRole('button', { name: /continue this upscale/i })).toBeVisible();
+    expect(screen.queryByText('150')).not.toBeInTheDocument();
+    expect(screen.getByText(/after purchase: 50 credits/i)).toBeVisible();
+
+    fireEvent.click(screen.getByRole('button', { name: /see all options/i }));
+
+    expect(screen.getByText('150')).toBeVisible();
+  });
+
+  test('shows the exact discounted regional price for the recommended pack', async () => {
+    mockRegionState.pricingRegion = 'latam';
+    mockRegionState.discountPercent = 50;
+    mockUseExperimentArm.mockReturnValue({
+      assignment: {
+        experimentKey: 'insufficient_credits_purchase_path',
+        contextKey: 'global',
+        armId: 20,
+        armKey: 'sufficient_pack_focus',
+        armConfig: {},
+        assignmentKey: 'session:test',
+        surface: 'purchase_modal',
+      },
+      armKey: 'sufficient_pack_focus',
+      armConfig: {},
+      isLoading: false,
+      isFallback: false,
+    });
+
+    render(
+      <PurchaseModal
+        isOpen={true}
+        onClose={vi.fn()}
+        onPurchaseComplete={vi.fn()}
+        trigger="insufficient_credits"
+        outOfCredits={true}
+        requiredCredits={30}
+        currentBalance={0}
+      />
+    );
+
+    expect(await screen.findByText('$2.50')).toBeVisible();
+    expect(mockTrack).toHaveBeenCalledWith(
+      'purchase_modal_opened',
+      expect.objectContaining({
+        selectedKey: 'small',
+        priceId: 'price_small',
+        pricingRegion: 'latam',
+        recommendedPriceInCents: 250,
+      })
+    );
+  });
+
+  test('should track purchase CTA and abandonment with the complete ordered-attempt context', async () => {
+    const onClose = vi.fn();
+    const { unmount } = render(
+      <PurchaseModal
+        isOpen={true}
+        onClose={onClose}
+        onPurchaseComplete={vi.fn()}
+        trigger="insufficient_credits"
+        outOfCredits={true}
+        requiredCredits={4}
+        currentBalance={1}
+      />
+    );
+
+    fireEvent.click(await screen.findByRole('button', { name: /buy 50 credits/i }));
+    expect(mockTrack).toHaveBeenCalledWith(
+      'purchase_cta_clicked',
+      expect.objectContaining({
+        trigger: 'insufficient_credits',
+        funnelAttemptId: 'attempt_test_123',
+        entrySurface: 'insufficient_credits',
+        selectedType: 'credit_pack',
+        selectedKey: 'small',
+        priceId: 'price_small',
+      })
+    );
+    expect(mockTrack).not.toHaveBeenCalledWith('upgrade_prompt_clicked', expect.anything());
+
+    unmount();
+    render(
+      <PurchaseModal
+        isOpen={true}
+        onClose={onClose}
+        onPurchaseComplete={vi.fn()}
+        trigger="insufficient_credits"
+        outOfCredits={true}
+        requiredCredits={4}
+        currentBalance={1}
+      />
+    );
+    fireEvent.click(await screen.findByRole('button', { name: 'notNow' }));
+
+    expect(mockTrack).toHaveBeenCalledWith(
+      'purchase_modal_abandoned',
+      expect.objectContaining({
+        trigger: 'insufficient_credits',
+        funnelAttemptId: 'attempt_test_123',
+        entrySurface: 'insufficient_credits',
+        selectedType: 'credit_pack',
+        selectedKey: 'small',
+        priceId: 'price_small',
+        checkoutOpened: false,
+      })
+    );
+    expect(mockTrack).toHaveBeenCalledWith(
+      'upgrade_prompt_dismissed',
+      expect.objectContaining({
+        trigger: 'insufficient_credits',
+        method: 'close_button',
+        funnelAttemptId: 'attempt_test_123',
+        entrySurface: 'insufficient_credits',
+      })
+    );
+  });
+
+  test('should preserve the checkout-owning model-gate assignment through auth', async () => {
+    const modelGateContext = {
+      funnelAttemptId: 'attempt_model_gate_123',
+      entrySurface: 'post_download_explore',
+      trigger: 'model_gate',
+      originatingTrigger: 'post_download_explore',
+      attributionChain: ['post_download_explore', 'model_gate'],
+      pricingRegion: 'standard',
+      discountPercent: 0,
+      experimentKey: 'model_gate_purchase_path',
+      experimentContextKey: 'global',
+      experimentArmId: 20,
+      experimentArmKey: 'direct_small_pack_control',
+      experimentAssignmentKey: 'session:model-gate',
+    };
+    mockUserState.isAuthenticated = false;
+    mockUserState.user = null;
+    mockGetTrackingContext.mockReturnValue(modelGateContext);
+    mockSetTrackingContext.mockReturnValue(modelGateContext);
+
+    render(
+      <PurchaseModal
+        isOpen={true}
+        onClose={vi.fn()}
+        onPurchaseComplete={vi.fn()}
+        trigger="model_gate"
+      />
+    );
+
+    fireEvent.click(await screen.findByRole('button', { name: /buy 50 credits/i }));
+
+    expect(mockPrepareAuthRedirect).toHaveBeenCalledWith(
+      'checkout',
+      expect.objectContaining({
+        context: expect.objectContaining(modelGateContext),
+      })
+    );
+    expect(mockTrack).toHaveBeenCalledWith(
+      'checkout_auth_required',
+      expect.objectContaining({
+        funnelAttemptId: 'attempt_model_gate_123',
+        entrySurface: 'post_download_explore',
+        experimentKey: 'model_gate_purchase_path',
+        experimentArmKey: 'direct_small_pack_control',
+        experimentAssignmentKey: 'session:model-gate',
+      })
+    );
+    expect(mockTrack).not.toHaveBeenCalledWith(
+      'checkout_auth_required',
+      expect.objectContaining({ experimentKey: 'purchase_modal_default_selection' })
+    );
   });
 
   test('should always render a working close button for zero-credit users', async () => {
@@ -426,6 +674,22 @@ describe('PurchaseModal analytics', () => {
     }
   });
 
+  test('preserves all credit packs as the current-modal control baseline', async () => {
+    render(
+      <PurchaseModal
+        isOpen={true}
+        onClose={vi.fn()}
+        onPurchaseComplete={vi.fn()}
+        trigger="workspace"
+      />
+    );
+
+    expect(await screen.findByText('50')).toBeVisible();
+    expect(screen.getByText('150')).toBeVisible();
+    expect(screen.getByText('600')).toBeVisible();
+    expect(screen.queryByRole('button', { name: /see all options/i })).not.toBeInTheDocument();
+  });
+
   test('renders compact credit picker arm', async () => {
     mockUseExperimentArm.mockReturnValue({
       assignment: {
@@ -436,7 +700,7 @@ describe('PurchaseModal analytics', () => {
         armConfig: {
           defaultType: 'credit_pack',
           defaultKey: 'small',
-          visiblePacks: ['small'],
+          visiblePacks: ['small', 'medium'],
           hideSubscriptionsInitially: true,
         },
         assignmentKey: 'session:test',
@@ -446,14 +710,14 @@ describe('PurchaseModal analytics', () => {
       armConfig: {
         defaultType: 'credit_pack',
         defaultKey: 'small',
-        visiblePacks: ['small'],
+        visiblePacks: ['small', 'medium'],
         hideSubscriptionsInitially: true,
       },
       isLoading: false,
       isFallback: false,
     });
 
-    const { queryByText } = render(
+    render(
       <PurchaseModal
         isOpen={true}
         onClose={vi.fn()}
@@ -471,6 +735,11 @@ describe('PurchaseModal analytics', () => {
         })
       );
     });
-    expect(queryByText('150')).toBeNull();
+    expect(screen.getByText('150')).toBeVisible();
+    expect(screen.queryByText('600')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /see all options/i }));
+
+    expect(screen.getByText('600')).toBeVisible();
   });
 });

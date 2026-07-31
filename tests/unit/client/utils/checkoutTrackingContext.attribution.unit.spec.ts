@@ -115,6 +115,50 @@ describe('checkoutTrackingContext — attribution chain', () => {
     );
   });
 
+  test('should create one stable non-PII funnel attempt at the first monetization surface', () => {
+    const first = setCheckoutTrackingContext({
+      trigger: 'insufficient_credits',
+      entrySurface: 'insufficient_credits',
+    });
+    const second = setCheckoutTrackingContext({
+      trigger: 'purchase_modal',
+    });
+
+    expect(first?.funnelAttemptId).toMatch(/^[a-zA-Z0-9_-]+$/);
+    expect(first?.funnelAttemptId).not.toContain('user');
+    expect(second?.funnelAttemptId).toBe(first?.funnelAttemptId);
+    expect(second?.entrySurface).toBe('insufficient_credits');
+  });
+
+  test('should not silently replace an existing checkout-owning experiment assignment', () => {
+    setCheckoutTrackingContext({
+      trigger: 'model_gate',
+      experimentKey: 'model_gate_purchase_path',
+      experimentContextKey: 'global',
+      experimentArmId: 20,
+      experimentArmKey: 'direct_small_pack_control',
+      experimentAssignmentKey: 'session:model-gate',
+    });
+
+    const context = setCheckoutTrackingContext({
+      trigger: 'purchase_modal',
+      experimentKey: 'purchase_modal_default_selection',
+      experimentContextKey: 'global',
+      experimentArmId: 10,
+      experimentArmKey: 'current_modal_control',
+      experimentAssignmentKey: 'session:purchase-modal',
+    });
+
+    expect(context).toEqual(
+      expect.objectContaining({
+        experimentKey: 'model_gate_purchase_path',
+        experimentArmId: 20,
+        experimentArmKey: 'direct_small_pack_control',
+        experimentAssignmentKey: 'session:model-gate',
+      })
+    );
+  });
+
   test('should preserve acquisition and landing-page fields through checkout', () => {
     vi.mocked(window.localStorage.getItem).mockImplementation(key =>
       key === 'miu_first_touch_utm'

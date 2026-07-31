@@ -210,6 +210,38 @@ describe('abTest', () => {
     });
   });
 
+  describe('getVariantForIdentity', () => {
+    it('returns the same arm for the same authenticated user identity', async () => {
+      const { getVariantForIdentity } = await import('@/client/utils/abTest');
+      const variants = ['blocking_modal_control', 'inline_explore_treatment'];
+
+      const first = getVariantForIdentity('post_download_surface', variants, 'user:user-123');
+      const second = getVariantForIdentity('post_download_surface', variants, 'user:user-123');
+
+      expect(first).toBe(second);
+      expect(variants).toContain(first);
+    });
+
+    it('does not read or write anonymous storage when an identity is supplied', async () => {
+      const getItemSpy = vi.spyOn(localStorage, 'getItem');
+      const setItemSpy = vi.spyOn(localStorage, 'setItem');
+      const { getVariantForIdentity } = await import('@/client/utils/abTest');
+
+      getVariantForIdentity('post_download_surface', ['control', 'treatment'], 'user:user-456');
+
+      expect(getItemSpy).not.toHaveBeenCalled();
+      expect(setItemSpy).not.toHaveBeenCalled();
+    });
+
+    it('rejects an empty identity so assignment cannot silently become unstable', async () => {
+      const { getVariantForIdentity } = await import('@/client/utils/abTest');
+
+      expect(() =>
+        getVariantForIdentity('post_download_surface', ['control', 'treatment'], '')
+      ).toThrow('Identity must not be empty');
+    });
+  });
+
   describe('isVariant', () => {
     it.skip('should return true when variant matches (skipped: localStorage persistence broken in vitest/jsdom)', async () => {
       localStorage.setItem(STORAGE_KEY, 'test_user_check');

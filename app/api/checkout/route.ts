@@ -585,7 +585,7 @@ export async function POST(request: NextRequest) {
     // 6.7. Check for engagement discount eligibility (first-purchase discount for engaged free users)
     let engagementDiscountPercent = 0;
     let checkoutOfferDiscountPercent = 0;
-    const checkoutTrigger = customMetadata.checkout_trigger;
+    const checkoutTrigger = validatedFunnelMetadata.checkout_trigger;
 
     // Resolve metadata early for engagement discount check
     const unifiedMetadata = resolvePlanOrPack(validatedPriceId);
@@ -968,6 +968,26 @@ export async function POST(request: NextRequest) {
         pricingRegion: resolvedPricingRegion,
         discountPercent: regionalDiscountPercent,
         funnelSchemaVersion: validatedFunnelMetadata.funnel_schema_version,
+        funnelAttemptId: validatedFunnelMetadata.funnel_attempt_id,
+        entrySurface: validatedFunnelMetadata.entry_surface,
+        trigger: validatedFunnelMetadata.checkout_trigger,
+        originatingModel: validatedFunnelMetadata.checkout_originating_model,
+        originatingTrigger: validatedFunnelMetadata.checkout_originating_trigger,
+        attributionChain: validatedFunnelMetadata.checkout_attribution_chain
+          ?.split(',')
+          .filter(Boolean),
+        experimentKey: validatedExperimentMetadata[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentKey],
+        experimentContextKey:
+          validatedExperimentMetadata[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentContextKey],
+        experimentArmId: validatedExperimentMetadata[
+          EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmId
+        ]
+          ? Number(validatedExperimentMetadata[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmId])
+          : undefined,
+        experimentArmKey:
+          validatedExperimentMetadata[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentArmKey],
+        experimentAssignmentKey:
+          validatedExperimentMetadata[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentAssignmentKey],
         firstTouchSource: validatedFunnelMetadata.first_touch_source,
         firstTouchMedium: validatedFunnelMetadata.first_touch_medium,
         firstTouchLandingPage: validatedFunnelMetadata.first_touch_landing_page,

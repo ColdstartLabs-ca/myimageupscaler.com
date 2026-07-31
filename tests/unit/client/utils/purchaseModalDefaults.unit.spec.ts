@@ -23,6 +23,16 @@ const creditPacks: ICreditPack[] = [
     description: 'Starter pack',
     enabled: true,
   },
+  {
+    key: 'large',
+    name: 'Large',
+    credits: 300,
+    priceInCents: 2499,
+    currency: 'usd',
+    stripePriceId: 'price_large',
+    description: 'Large pack',
+    enabled: true,
+  },
 ];
 
 const basePlan = {
@@ -85,18 +95,82 @@ describe('getPurchaseModalInitialSelection', () => {
     expect(selection.lockToCredits).toBe(true);
   });
 
-  test('out_of_credits defaults to the small credit pack', () => {
+  test('out_of_credits selects the exact pack that covers the deficit', () => {
     const selection = getPurchaseModalInitialSelection({
       trigger: 'out_of_credits',
       outOfCredits: true,
       creditPacks,
       subscriptionPlans,
+      requiredCredits: 50,
+      currentBalance: 0,
+      experimentArmKey: 'sufficient_pack_focus',
     });
 
     expect(selection.purchaseMode).toBe('credits');
     expect(selection.selectedPack?.key).toBe('small');
     expect(selection.selectedPlan).toBeNull();
     expect(selection.lockToCredits).toBe(false);
+  });
+
+  test('insufficient_credits selects the smallest pack above a between-pack deficit', () => {
+    const selection = getPurchaseModalInitialSelection({
+      trigger: 'insufficient_credits',
+      outOfCredits: true,
+      creditPacks,
+      subscriptionPlans,
+      requiredCredits: 80,
+      currentBalance: 10,
+      experimentArmKey: 'sufficient_pack_focus',
+    });
+
+    expect(selection.selectedPack?.key).toBe('medium');
+  });
+
+  test('insufficient_credits leaves selection empty when no pack covers the deficit', () => {
+    const selection = getPurchaseModalInitialSelection({
+      trigger: 'insufficient_credits',
+      outOfCredits: true,
+      creditPacks,
+      subscriptionPlans,
+      requiredCredits: 500,
+      currentBalance: 0,
+      experimentArmKey: 'sufficient_pack_focus',
+    });
+
+    expect(selection.selectedPack).toBeNull();
+  });
+
+  test('skips a sufficient pack with missing Stripe price data', () => {
+    const packsWithMissingPrice = creditPacks.map(pack =>
+      pack.key === 'small' ? { ...pack, stripePriceId: null } : pack
+    );
+    const selection = getPurchaseModalInitialSelection({
+      trigger: 'insufficient_credits',
+      outOfCredits: true,
+      creditPacks: packsWithMissingPrice,
+      subscriptionPlans,
+      requiredCredits: 30,
+      currentBalance: 0,
+      experimentArmKey: 'direct_sufficient_pack',
+    });
+
+    expect(selection.selectedPack?.key).toBe('medium');
+    expect(selection.selectedPack?.stripePriceId).toBe('price_medium');
+  });
+
+  test('returns a safe null pack when the catalog is missing', () => {
+    const selection = getPurchaseModalInitialSelection({
+      trigger: 'insufficient_credits',
+      outOfCredits: true,
+      creditPacks: [],
+      subscriptionPlans,
+      requiredCredits: 30,
+      currentBalance: 0,
+      experimentArmKey: 'sufficient_pack_focus',
+    });
+
+    expect(selection.purchaseMode).toBe('credits');
+    expect(selection.selectedPack).toBeNull();
   });
 
   test('low-balance repeat purchase defaults to the buyer last pack while retaining all packs', () => {
@@ -108,7 +182,7 @@ describe('getPurchaseModalInitialSelection', () => {
       repeatPackKey: 'medium',
     });
     expect(selection.selectedPack?.key).toBe('medium');
-    expect(creditPacks.map(pack => pack.key)).toEqual(['medium', 'small']);
+    expect(creditPacks.map(pack => pack.key)).toEqual(['medium', 'small', 'large']);
   });
 
   test('repeat context overrides a pack-filtering bandit default', () => {
@@ -129,6 +203,8 @@ describe('getPurchaseModalInitialSelection', () => {
       outOfCredits: true,
       creditPacks,
       subscriptionPlans,
+      requiredCredits: 30,
+      currentBalance: 0,
     });
 
     expect(selection.purchaseMode).toBe('credits');

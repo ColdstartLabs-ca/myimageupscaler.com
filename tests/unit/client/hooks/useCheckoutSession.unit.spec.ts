@@ -164,9 +164,7 @@ describe('useCheckoutSession', () => {
       .mockResolvedValueOnce(SUCCESS_RESPONSE);
 
     const { result } = renderHook(() =>
-      useCheckoutSession(
-        buildParams({ autoTopUp: { enabled: true, thresholdCredits: 25 } })
-      )
+      useCheckoutSession(buildParams({ autoTopUp: { enabled: true, thresholdCredits: 25 } }))
     );
 
     await waitFor(() => expect(result.current.clientSecret).toBe('cs_test_secret'));
@@ -202,10 +200,19 @@ describe('useCheckoutSession', () => {
 
   it('passes model-gate attribution through checkout session metadata', async () => {
     mockGetTrackingContext.mockReturnValue({
+      funnelAttemptId: 'fa_checkout_123',
+      entrySurface: 'post_download_explore',
       trigger: 'model_gate',
       originatingModel: 'hd-upscale',
       originatingTrigger: 'post_download_explore',
       attributionChain: ['post_download_explore', 'model_gate'],
+      pricingRegion: 'standard',
+      discountPercent: 0,
+      experimentKey: 'model_gate_purchase_path',
+      experimentContextKey: 'global',
+      experimentArmId: 20,
+      experimentArmKey: 'direct_small_pack_control',
+      experimentAssignmentKey: 'session:model-gate',
     });
 
     renderHook(() => useCheckoutSession(buildParams({ banditArmId: 42 })));
@@ -219,14 +226,30 @@ describe('useCheckoutSession', () => {
       expect.objectContaining({
         uiMode: 'embedded',
         metadata: expect.objectContaining({
+          funnel_attempt_id: 'fa_checkout_123',
+          entry_surface: 'post_download_explore',
           checkout_trigger: 'model_gate',
           checkout_originating_model: 'hd-upscale',
           checkout_originating_trigger: 'post_download_explore',
           checkout_attribution_chain: 'post_download_explore,model_gate',
+          exp_key: 'model_gate_purchase_path',
+          exp_ctx: 'global',
+          exp_arm_id: '20',
+          exp_arm_key: 'direct_small_pack_control',
+          exp_assign_key: 'session:model-gate',
           checkout_ui_mode: 'embedded',
           checkout_authenticated: 'true',
           bandit_arm_id: '42',
         }),
+      })
+    );
+    expect(mockTrack).toHaveBeenCalledWith(
+      'checkout_session_requested',
+      expect.objectContaining({
+        funnelAttemptId: 'fa_checkout_123',
+        entrySurface: 'post_download_explore',
+        experimentKey: 'model_gate_purchase_path',
+        experimentArmKey: 'direct_small_pack_control',
       })
     );
   });

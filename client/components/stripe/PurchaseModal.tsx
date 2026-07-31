@@ -18,9 +18,11 @@ import {
   getCheckoutTrackingContext,
   setCheckoutTrackingContext,
 } from '@client/utils/checkoutTrackingContext';
+import type { ICheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
 import {
   getPurchaseModalInitialSelection,
   getRepeatPurchaseContext,
+  getSmallestSufficientCreditPack,
 } from '@client/utils/purchaseModalDefaults';
 import type { IPurchaseModalBanditConfig } from '@client/utils/purchaseModalDefaults';
 import {
@@ -78,7 +80,7 @@ function getSavingsPercent(pack: ICreditPack, basePack: ICreditPack | undefined)
 }
 
 function getExperimentAnalyticsProps(assignment: IExperimentAssignment | null) {
-  if (!assignment) return {};
+  if (!assignment || assignment.armId <= 0) return {};
 
   return {
     experimentKey: assignment.experimentKey,
@@ -86,6 +88,25 @@ function getExperimentAnalyticsProps(assignment: IExperimentAssignment | null) {
     experimentArmId: assignment.armId,
     experimentArmKey: assignment.armKey,
     experimentAssignmentKey: assignment.assignmentKey,
+  };
+}
+
+function getFunnelAnalyticsProps(context: ICheckoutTrackingContext | null) {
+  if (!context) return {};
+
+  return {
+    funnelAttemptId: context.funnelAttemptId,
+    entrySurface: context.entrySurface,
+    trigger: context.trigger,
+    originatingTrigger: context.originatingTrigger,
+    attributionChain: context.attributionChain,
+    pricingRegion: context.pricingRegion,
+    discountPercent: context.discountPercent,
+    experimentKey: context.experimentKey,
+    experimentContextKey: context.experimentContextKey,
+    experimentArmId: context.experimentArmId,
+    experimentArmKey: context.experimentArmKey,
+    experimentAssignmentKey: context.experimentAssignmentKey,
   };
 }
 
@@ -136,13 +157,25 @@ export function PurchaseModal({
 }: IPurchaseModalProps): JSX.Element | null {
   const t = useTranslations('stripe.outOfCredits');
   const { pricingRegion, discountPercent } = useRegionTier();
+  const isCreditWall =
+    outOfCredits || trigger === 'out_of_credits' || trigger === 'insufficient_credits';
+  const deficit =
+    typeof requiredCredits === 'number' && typeof currentBalance === 'number'
+      ? Math.max(requiredCredits - currentBalance, 0)
+      : null;
   const openTimeRef = useRef<number>(0);
+  const funnelContextRef = useRef<ICheckoutTrackingContext | null>(null);
   const { isAuthenticated, user } = useUserStore();
   const { openAuthRequiredModal } = useModalStore();
 
   const { planKey: currentPlan, priceId: currentPriceId, isPaidUser } = useCurrentPlan();
   const purchaseExperiment = useExperimentArm({
-    experimentKey: 'purchase_modal_default_selection',
+    experimentKey:
+      trigger === 'model_gate'
+        ? 'model_gate_purchase_path'
+        : isCreditWall
+          ? 'insufficient_credits_purchase_path'
+          : 'purchase_modal_default_selection',
     contextKey: 'global',
     assignmentScope: 'session',
     surface: 'purchase_modal',
@@ -155,8 +188,11 @@ export function PurchaseModal({
       currentBalance,
     },
     fallbackArm: {
-      armKey: 'current_modal_control',
-      armConfig: { description: 'Current purchase modal behavior' },
+      armKey: trigger === 'model_gate' ? 'direct_small_pack_control' : 'current_modal_control',
+      armConfig:
+        trigger === 'model_gate'
+          ? { path: 'direct_checkout', defaultKey: 'small' }
+          : { description: 'Current purchase modal behavior' },
     },
   });
   const purchaseBanditConfig = purchaseExperiment.armConfig as IPurchaseModalBanditConfig;
@@ -168,6 +204,7 @@ export function PurchaseModal({
   const [autoTopUpEligible, setAutoTopUpEligible] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<IPlanConfig | null>(null);
   const [purchaseMode, setPurchaseMode] = useState<'credits' | 'subscribe'>('credits');
+  const [showAllCreditPacks, setShowAllCreditPacks] = useState(false);
 
   // Checkout state
   const [checkoutPriceId, setCheckoutPriceId] = useState<string | null>(null);
@@ -252,21 +289,52 @@ export function PurchaseModal({
 
   const basePack = creditPacks[0];
   const starterPack = creditPacks.find(pack => pack.key === 'small') || basePack;
+  const usesSufficientPackRecommendation =
+    purchaseExperiment.armKey === 'sufficient_pack_focus' ||
+    purchaseExperiment.armKey === 'direct_sufficient_pack';
+  const usesDirectSufficientPack = purchaseExperiment.armKey === 'direct_sufficient_pack';
+  const recommendedCreditPack = useMemo(
+    () =>
+      isCreditWall && usesSufficientPackRecommendation && deficit !== null
+        ? getSmallestSufficientCreditPack(creditPacks, deficit)
+        : null,
+    [creditPacks, deficit, isCreditWall, usesSufficientPackRecommendation]
+  );
+  const displayedCreditPacks = useMemo(() => {
+    if (showAllCreditPacks) return creditPacks;
+    if (!isCreditWall || !usesDirectSufficientPack) return visibleCreditPacks;
+    if (!recommendedCreditPack) return creditPacks;
+    return [recommendedCreditPack];
+  }, [
+    creditPacks,
+    isCreditWall,
+    recommendedCreditPack,
+    showAllCreditPacks,
+    usesDirectSufficientPack,
+    visibleCreditPacks,
+  ]);
+  const canRevealAllCreditPacks = displayedCreditPacks.length < creditPacks.length;
 
   // Default selection on open
   useEffect(() => {
     if (isOpen && !purchaseExperiment.isLoading) {
       setAutoTopUpEnabled(false);
       setAutoTopUpThreshold(25);
+      setShowAllCreditPacks(false);
       openTimeRef.current = Date.now();
       const existingContext = getCheckoutTrackingContext();
       const experimentProps = getExperimentAnalyticsProps(purchaseExperiment.assignment);
-      if (!existingContext?.trigger || !existingContext.experimentKey) {
-        setCheckoutTrackingContext({
-          ...(existingContext?.trigger ? {} : { trigger }),
-          ...(!existingContext?.experimentKey ? experimentProps : {}),
-        });
-      }
+      funnelContextRef.current = setCheckoutTrackingContext({
+        entrySurface: existingContext?.entrySurface || trigger,
+        trigger,
+        ...(existingContext?.trigger && existingContext.trigger !== trigger
+          ? { originatingTrigger: existingContext.trigger }
+          : {}),
+        pricingRegion: pricingRegion || 'standard',
+        discountPercent,
+        ...(!existingContext?.experimentKey ? experimentProps : {}),
+      });
+      const funnelProps = getFunnelAnalyticsProps(funnelContextRef.current);
 
       const initialSelection = getPurchaseModalInitialSelection({
         trigger,
@@ -275,6 +343,9 @@ export function PurchaseModal({
         subscriptionPlans,
         banditConfig: purchaseBanditConfig,
         repeatPackKey,
+        requiredCredits,
+        currentBalance,
+        experimentArmKey: purchaseExperiment.armKey,
       });
       setSelectedPack(initialSelection.selectedPack);
       setSelectedPlan(initialSelection.selectedPlan);
@@ -294,19 +365,13 @@ export function PurchaseModal({
         selectedKey: initialItem?.key,
         priceId: initialItem?.stripePriceId,
         lockToCredits: initialSelection.lockToCredits,
-        ...experimentProps,
-      });
-
-      analytics.track('upgrade_prompt_shown', {
-        trigger,
-        outOfCredits,
-        requiredCredits,
-        currentBalance,
-        currentPlan,
-        pricingRegion: pricingRegion || 'standard',
-        initialTab: initialSelection.purchaseMode,
-        lockToCredits: initialSelection.lockToCredits,
-        ...experimentProps,
+        deficit,
+        recommendedPackKey: recommendedCreditPack?.key,
+        recommendedPackCredits: recommendedCreditPack?.credits,
+        recommendedPriceInCents: recommendedCreditPack
+          ? Math.round(recommendedCreditPack.priceInCents * (1 - discountPercent / 100))
+          : undefined,
+        ...funnelProps,
       });
     }
   }, [
@@ -316,13 +381,17 @@ export function PurchaseModal({
     requiredCredits,
     currentBalance,
     pricingRegion,
+    discountPercent,
     currentPlan,
     creditPacks,
     subscriptionPlans,
     purchaseBanditConfig,
     purchaseExperiment.assignment,
+    purchaseExperiment.armKey,
     purchaseExperiment.isLoading,
     repeatPackKey,
+    deficit,
+    recommendedCreditPack,
   ]);
 
   const lockToCredits = trigger === 'model_gate';
@@ -338,12 +407,13 @@ export function PurchaseModal({
         pricingRegion: pricingRegion || 'standard',
         timeOpenMs: Date.now() - openTimeRef.current,
         dismissalCount,
-        ...getExperimentAnalyticsProps(purchaseExperiment.assignment),
+        ...getFunnelAnalyticsProps(funnelContextRef.current),
       });
 
       const selectedItem = selectedPlan || selectedPack;
       if (!showCheckoutModal && selectedItem?.stripePriceId) {
         analytics.track('purchase_modal_abandoned', {
+          trigger,
           priceId: selectedItem.stripePriceId,
           step: 'plan_selection',
           timeSpentMs: Date.now() - openTimeRef.current,
@@ -356,7 +426,7 @@ export function PurchaseModal({
           selectedKey: selectedItem.key,
           checkoutOpened: false,
           outOfCredits,
-          ...getExperimentAnalyticsProps(purchaseExperiment.assignment),
+          ...getFunnelAnalyticsProps(funnelContextRef.current),
         });
       }
 
@@ -374,6 +444,7 @@ export function PurchaseModal({
       selectedPack,
       showCheckoutModal,
       currentPlan,
+      user?.id,
     ]
   );
 
@@ -474,14 +545,17 @@ export function PurchaseModal({
     const priceId = item.stripePriceId;
     const destination = selectedPlan ? 'subscribe' : 'credits';
 
-    analytics.track('upgrade_prompt_clicked', {
+    analytics.track('purchase_cta_clicked', {
       trigger,
       destination,
+      selectedType: selectedPlan ? 'subscription' : 'credit_pack',
+      selectedKey: item.key,
+      priceId,
       currentPlan,
       outOfCredits,
       pricingRegion: pricingRegion || 'standard',
       timeOpenMs: Date.now() - openTimeRef.current,
-      ...getExperimentAnalyticsProps(purchaseExperiment.assignment),
+      ...getFunnelAnalyticsProps(funnelContextRef.current),
     });
 
     // Existing subscriber changing plans
@@ -496,7 +570,7 @@ export function PurchaseModal({
       return;
     }
 
-    const checkoutContext = getCheckoutTrackingContext();
+    const checkoutContext = getCheckoutTrackingContext() || funnelContextRef.current;
     const effectiveOriginModel =
       checkoutContext?.originatingModel ||
       (typeof window !== 'undefined'
@@ -521,14 +595,18 @@ export function PurchaseModal({
       const returnTo = `${window.location.pathname}?${currentSearchParams.toString()}`;
       prepareAuthRedirect('checkout', {
         returnTo,
-        context: { priceId, trigger: effectiveTrigger, originatingModel: effectiveOriginModel },
+        context: {
+          priceId,
+          ...checkoutContext,
+          trigger: effectiveTrigger,
+          originatingModel: effectiveOriginModel,
+        },
       });
       analytics.track('checkout_auth_required', {
         priceId,
-        ...(effectiveTrigger ? { trigger: effectiveTrigger } : {}),
         pricingRegion: pricingRegion || 'standard',
         originatingModel: effectiveOriginModel,
-        ...getExperimentAnalyticsProps(purchaseExperiment.assignment),
+        ...getFunnelAnalyticsProps(checkoutContext),
       });
       openAuthRequiredModal();
       return;
@@ -545,7 +623,7 @@ export function PurchaseModal({
       ...(checkoutContext?.attributionChain?.length
         ? { attributionChain: checkoutContext.attributionChain }
         : {}),
-      ...getExperimentAnalyticsProps(purchaseExperiment.assignment),
+      ...getFunnelAnalyticsProps(funnelContextRef.current),
     });
 
     setCheckoutPriceId(priceId);
@@ -565,6 +643,9 @@ export function PurchaseModal({
   ]);
 
   const getCTALabel = useCallback(() => {
+    if (usesSufficientPackRecommendation && selectedPack) {
+      return 'Continue this upscale';
+    }
     if (selectedPlan) {
       return `Subscribe to ${selectedPlan.name}`;
     }
@@ -572,7 +653,7 @@ export function PurchaseModal({
       return `Buy ${selectedPack.credits} credits`;
     }
     return 'Select an option';
-  }, [selectedPlan, selectedPack]);
+  }, [selectedPlan, selectedPack, usesSufficientPackRecommendation]);
 
   const getCTAPrice = useCallback(() => {
     if (selectedPlan) {
@@ -587,11 +668,7 @@ export function PurchaseModal({
   if (!isOpen) return null;
 
   const title = outOfCredits ? 'Keep enhancing instantly' : 'Get credits for premium models';
-  const deficit =
-    typeof requiredCredits === 'number' && typeof currentBalance === 'number'
-      ? Math.max(requiredCredits - currentBalance, 0)
-      : null;
-  const starterCredits = starterPack?.credits;
+  const starterCredits = (recommendedCreditPack || starterPack)?.credits;
   const subtitle = outOfCredits
     ? starterCredits
       ? `You used your free credits. Get ${starterCredits} more now and continue this upscale.`
@@ -647,10 +724,18 @@ export function PurchaseModal({
                       {subtitle}
                     </p>
                     {outOfCredits && deficit !== null && (
-                      <p className="mt-2 text-xs font-semibold text-accent">
-                        Need {requiredCredits} {requiredCredits === 1 ? 'credit' : 'credits'}. Your
-                        balance: {currentBalance}. Deficit: {deficit}.
-                      </p>
+                      <>
+                        <p className="mt-2 text-xs font-semibold text-accent">
+                          Need {requiredCredits} {requiredCredits === 1 ? 'credit' : 'credits'}.
+                          Your balance: {currentBalance}. Deficit: {deficit}.
+                        </p>
+                        {recommendedCreditPack && currentBalance !== undefined && (
+                          <p className="mt-1 text-xs text-text-secondary">
+                            After purchase: {currentBalance + recommendedCreditPack.credits}{' '}
+                            credits.
+                          </p>
+                        )}
+                      </>
                     )}
                   </div>
                   <div className="flex-shrink-0 -mt-2 sm:-mt-3 -mr-1">
@@ -726,7 +811,7 @@ export function PurchaseModal({
                   </div>
 
                   <div className="space-y-1.5 px-3 py-2">
-                    {visibleCreditPacks.map(pack => {
+                    {displayedCreditPacks.map(pack => {
                       const isSelected = selectedPack?.key === pack.key;
                       const savings = getSavingsPercent(pack, basePack);
                       return (
@@ -752,6 +837,11 @@ export function PurchaseModal({
                                 {pack.key === 'small' && (
                                   <span className="rounded bg-accent/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-accent">
                                     Starter
+                                  </span>
+                                )}
+                                {isCreditWall && pack.key === recommendedCreditPack?.key && (
+                                  <span className="rounded bg-secondary/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-secondary">
+                                    Recommended for this job
                                   </span>
                                 )}
                                 {pack.badge && (
@@ -806,6 +896,15 @@ export function PurchaseModal({
                         </div>
                       );
                     })}
+                    {canRevealAllCreditPacks && (
+                      <button
+                        type="button"
+                        onClick={() => setShowAllCreditPacks(true)}
+                        className="w-full rounded-lg px-3 py-2 text-xs font-semibold text-text-secondary transition-colors hover:bg-surface hover:text-text-primary"
+                      >
+                        See all options
+                      </button>
+                    )}
                   </div>
                 </div>
               ) : (

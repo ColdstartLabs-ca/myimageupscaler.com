@@ -75,6 +75,14 @@ vi.mock('@client/utils/checkoutTrackingContext', () => ({
   getCheckoutTrackingContext: vi.fn(() => null),
 }));
 
+vi.mock('@client/utils/abTest', async importOriginal => {
+  const actual = await importOriginal<typeof import('@client/utils/abTest')>();
+  return {
+    ...actual,
+    getVariantForIdentity: () => 'blocking_modal_control',
+  };
+});
+
 vi.mock('next-intl', () => ({
   useTranslations: (ns: string) => {
     const translations: Record<string, string> = {
@@ -531,6 +539,12 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockSetCheckoutTrackingContext.mockReturnValue({
+      funnelAttemptId: 'fa_post_download_test',
+      entrySurface: 'post_download_explore',
+      trigger: 'post_download_explore',
+      attributionChain: ['post_download_explore'],
+    });
     // Set up a working localStorage for promptFrequency tests
     store = new Map();
     vi.stubGlobal('localStorage', {
@@ -596,12 +610,17 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
     );
 
     await waitFor(() => {
-      expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
-        trigger: 'post_download_explore',
-        currentPlan: 'free',
-        pricingRegion: 'standard',
-        copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
-      });
+      expect(mockAnalyticsTrack).toHaveBeenCalledWith(
+        'upgrade_prompt_shown',
+        expect.objectContaining({
+          trigger: 'post_download_explore',
+          currentPlan: 'free',
+          pricingRegion: 'standard',
+          experimentKey: 'post_download_surface',
+          experimentVariant: 'blocking_modal_control',
+          funnelAttemptId: 'fa_post_download_test',
+        })
+      );
     });
   });
 
@@ -626,13 +645,17 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
     );
 
     await waitFor(() => {
-      expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_shown', {
-        trigger: 'post_download_explore',
-        imageVariant: 'premium',
-        currentPlan: 'free',
-        pricingRegion: 'standard',
-        copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
-      });
+      expect(mockAnalyticsTrack).toHaveBeenCalledWith(
+        'upgrade_prompt_shown',
+        expect.objectContaining({
+          trigger: 'post_download_explore',
+          imageVariant: 'premium',
+          currentPlan: 'free',
+          pricingRegion: 'standard',
+          experimentKey: 'post_download_surface',
+          experimentVariant: 'blocking_modal_control',
+        })
+      );
     });
   });
 
@@ -652,13 +675,17 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
 
     fireEvent.click(screen.getByLabelText('Dismiss prompt'));
 
-    expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_dismissed', {
-      trigger: 'post_download_explore',
-      currentPlan: 'free',
-      pricingRegion: 'standard',
-      copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
-      dismissCount: 1,
-    });
+    expect(mockAnalyticsTrack).toHaveBeenCalledWith(
+      'upgrade_prompt_dismissed',
+      expect.objectContaining({
+        trigger: 'post_download_explore',
+        currentPlan: 'free',
+        pricingRegion: 'standard',
+        experimentKey: 'post_download_surface',
+        experimentVariant: 'blocking_modal_control',
+        dismissCount: 1,
+      })
+    );
 
     await waitFor(() => {
       expect(screen.queryByText(/See what other models can do/i)).not.toBeInTheDocument();
@@ -682,13 +709,17 @@ describe('Phase 1: after_download — PostDownloadPrompt', () => {
     const button = screen.getByRole('button', { name: /Explore Models/i });
     fireEvent.click(button);
 
-    expect(mockAnalyticsTrack).toHaveBeenCalledWith('upgrade_prompt_clicked', {
-      trigger: 'post_download_explore',
-      destination: 'model_gallery',
-      currentPlan: 'free',
-      pricingRegion: 'standard',
-      copyVariant: expect.stringMatching(/^(value|outcome|urgency)$/),
-    });
+    expect(mockAnalyticsTrack).toHaveBeenCalledWith(
+      'upgrade_prompt_clicked',
+      expect.objectContaining({
+        trigger: 'post_download_explore',
+        destination: 'model_gallery',
+        currentPlan: 'free',
+        pricingRegion: 'standard',
+        experimentKey: 'post_download_surface',
+        experimentVariant: 'blocking_modal_control',
+      })
+    );
     expect(onExploreModels).toHaveBeenCalled();
     expect(mockSetCheckoutTrackingContext).toHaveBeenCalledWith({
       originatingTrigger: 'post_download_explore',

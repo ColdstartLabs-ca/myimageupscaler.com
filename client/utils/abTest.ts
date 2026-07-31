@@ -75,16 +75,33 @@ export function getUserId(): string {
  * ```
  */
 export function getVariant(experimentName: string, variants: string[]): string {
+  return getVariantForIdentity(experimentName, variants, getUserId());
+}
+
+/**
+ * Get a deterministic variant for an explicit, non-PII identity key.
+ *
+ * Authenticated callers can use a user-scoped key while anonymous callers
+ * can use the stable device key returned by getUserId().
+ */
+export function getVariantForIdentity(
+  experimentName: string,
+  variants: readonly string[],
+  identity: string
+): string {
   if (!variants.length) {
     throw new Error('Variants array must not be empty');
+  }
+
+  if (!identity) {
+    throw new Error('Identity must not be empty');
   }
 
   if (variants.length === 1) {
     return variants[0];
   }
 
-  const userId = getUserId();
-  const hashInput = `${userId}:${experimentName}`;
+  const hashInput = `${identity}:${experimentName}`;
   const hash = djb2Hash(hashInput);
 
   // Use modulo to map hash to variant index

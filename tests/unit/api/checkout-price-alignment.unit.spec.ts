@@ -530,6 +530,11 @@ describe('POST /api/checkout price alignment', () => {
       createRequest({
         priceId: STRIPE_PRICES.MEDIUM_CREDITS,
         metadata: {
+          funnel_schema_version: '1',
+          funnel_attempt_id: 'fa_checkout_alignment_123',
+          entry_surface: 'insufficient_credits',
+          checkout_trigger: 'insufficient_credits',
+          checkout_attribution_chain: 'insufficient_credits,purchase_modal',
           exp_key: 'purchase_modal_default_selection',
           exp_ctx: 'global',
           exp_arm_id: '10',
@@ -557,6 +562,21 @@ describe('POST /api/checkout price alignment', () => {
         exp_arm_key: 'compact_credit_picker',
         exp_assign_key: 'session:abc',
       })
+    );
+    expect(trackServerEventMock).toHaveBeenCalledWith(
+      'checkout_started',
+      expect.objectContaining({
+        funnelAttemptId: 'fa_checkout_alignment_123',
+        entrySurface: 'insufficient_credits',
+        trigger: 'insufficient_credits',
+        attributionChain: ['insufficient_credits', 'purchase_modal'],
+        experimentKey: 'purchase_modal_default_selection',
+        experimentContextKey: 'global',
+        experimentArmId: 10,
+        experimentArmKey: 'compact_credit_picker',
+        experimentAssignmentKey: 'session:abc',
+      }),
+      expect.objectContaining({ userId: 'user_checkout_alignment' })
     );
   });
 

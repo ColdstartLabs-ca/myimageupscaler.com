@@ -79,6 +79,7 @@ const ALLOWED_EVENTS = [
   'pseo_internal_link_clicked',
   // Checkout funnel events (Phase 1 - Checkout Friction Investigation)
   'purchase_modal_opened',
+  'purchase_cta_clicked',
   'checkout_direct_started',
   'checkout_direct_unavailable',
   'checkout_modal_mounted',
@@ -129,6 +130,22 @@ describe('Bug Fix: Analytics Event Whitelist', () => {
           entryPage: '/dashboard',
         },
       });
+      expect(result.success).toBe(true);
+    });
+
+    test('should include the purchase CTA stage event', () => {
+      const result = eventSchema.safeParse({
+        eventName: 'purchase_cta_clicked',
+        properties: {
+          funnelAttemptId: 'fa_test_123',
+          entrySurface: 'insufficient_credits',
+          trigger: 'insufficient_credits',
+          selectedType: 'credit_pack',
+          selectedKey: 'small',
+          priceId: 'price_small',
+        },
+      });
+
       expect(result.success).toBe(true);
     });
 

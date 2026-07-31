@@ -99,6 +99,7 @@ const ALLOWED_EVENTS = [
   'hero_upload_cta_clicked',
   // Checkout funnel events (Phase 1 - Checkout Friction Investigation)
   'purchase_modal_opened',
+  'purchase_cta_clicked',
   'checkout_direct_started',
   'checkout_direct_unavailable',
   'checkout_modal_mounted',
@@ -299,6 +300,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       'upgrade_prompt_dismissed',
       'upgrade_prompt_tab_toggled',
       'purchase_modal_opened',
+      'purchase_cta_clicked',
       'checkout_direct_started',
       'checkout_auth_required',
       'checkout_started',

@@ -125,10 +125,19 @@ describe('authRedirectManager — handleAuthRedirect (post-auth checkout)', () =
       makeIntent({
         context: {
           priceId: 'price_small_pack_ca',
+          funnelAttemptId: 'fa_auth_handoff_123',
+          entrySurface: 'post_download_explore',
           trigger: 'model_gate',
           originatingModel: 'clarity-upscaler',
+          originatingTrigger: 'post_download_explore',
+          attributionChain: ['post_download_explore', 'model_gate'],
           pricingRegion: 'regional',
           discountPercent: 35,
+          experimentKey: 'model_gate_purchase_path',
+          experimentContextKey: 'global',
+          experimentArmId: 20,
+          experimentArmKey: 'direct_small_pack_control',
+          experimentAssignmentKey: 'session:model-gate',
         },
         returnTo: '/pricing?source=model-gate&checkout=price_small_pack_ca',
       })
@@ -141,10 +150,19 @@ describe('authRedirectManager — handleAuthRedirect (post-auth checkout)', () =
     expect(
       JSON.parse(sessionStorage.getItem('miu_checkout_tracking_context') ?? '{}')
     ).toMatchObject({
+      funnelAttemptId: 'fa_auth_handoff_123',
+      entrySurface: 'post_download_explore',
       trigger: 'model_gate',
       originatingModel: 'clarity-upscaler',
+      originatingTrigger: 'post_download_explore',
+      attributionChain: ['post_download_explore', 'model_gate'],
       pricingRegion: 'regional',
       discountPercent: 35,
+      experimentKey: 'model_gate_purchase_path',
+      experimentContextKey: 'global',
+      experimentArmId: 20,
+      experimentArmKey: 'direct_small_pack_control',
+      experimentAssignmentKey: 'session:model-gate',
     });
   });
 
