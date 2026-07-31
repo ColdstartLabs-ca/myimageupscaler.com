@@ -11,17 +11,17 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 
 ## Pending
 
-- [ ] `https://myimageupscaler.com/`
-- [ ] `https://myimageupscaler.com/blog/best-ai-upscaler` — daily request-indexing quota reached on 2026-07-10; retry later.
-- [ ] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared` — refreshed 2026-07-20; request indexing for the latest version.
-- [ ] `https://myimageupscaler.com/blog/best-free-ai-photo-enhancer-online`
-- [ ] `https://myimageupscaler.com/blog/best-image-upscaler`
-- [ ] `https://myimageupscaler.com/blog/fix-blurry-photos-ai-methods-guide`
-- [ ] `https://myimageupscaler.com/blog/fix-pixelated-image`
-- [ ] `https://myimageupscaler.com/blog/fixing-pixelated-photos` — refreshed 2026-07-27 with a matured SERP title/meta CTR test for the pixelated-photos query cluster.
-- [ ] `https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark`
-- [ ] `https://myimageupscaler.com/blog/how-to-upscale-midjourney-images-for-print`
-- [ ] `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails`
+- [x] `https://myimageupscaler.com/`
+- [x] `https://myimageupscaler.com/blog/best-ai-upscaler` — daily request-indexing quota reached on 2026-07-10; retry later.
+- [x] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared` — refreshed 2026-07-20; request indexing for the latest version.
+- [x] `https://myimageupscaler.com/blog/best-free-ai-photo-enhancer-online`
+- [x] `https://myimageupscaler.com/blog/best-image-upscaler`
+- [x] `https://myimageupscaler.com/blog/fix-blurry-photos-ai-methods-guide`
+- [x] `https://myimageupscaler.com/blog/fix-pixelated-image`
+- [x] `https://myimageupscaler.com/blog/fixing-pixelated-photos` — refreshed 2026-07-27 with a matured SERP title/meta CTR test for the pixelated-photos query cluster.
+- [x] `https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark`
+- [x] `https://myimageupscaler.com/blog/how-to-upscale-midjourney-images-for-print`
+- [x] `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails`
 - [ ] `https://myimageupscaler.com/blog/image-upscaler-8x`
 - [ ] `https://myimageupscaler.com/blog/photo-restoration-program` — refreshed 2026-07-22 with a current comparison table and policy-aligned credit copy.
 - [ ] `https://myimageupscaler.com/blog/photoshop-upscale-image`
