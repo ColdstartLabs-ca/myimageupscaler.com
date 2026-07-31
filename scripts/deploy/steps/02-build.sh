@@ -12,6 +12,13 @@ step_build() {
     log_info "Building blog data..."
     npx tsx scripts/build-blog.ts
 
+    # The SEO guard runs a Next.js dev server and leaves dev-only route types
+    # behind. Remove them so the production build generates a clean type graph.
+    if [[ -d ".next/dev" ]]; then
+        log_info "Clearing development route types before production build..."
+        rm -rf .next/dev
+    fi
+
     log_info "Next.js build (using webpack for smaller bundles)..."
     npx next build --webpack
 
