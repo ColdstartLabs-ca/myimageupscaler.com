@@ -12,6 +12,7 @@ For SEO-facing tasks, use `.claude/skills/seo-changes-backlog/` and skim `docs/S
 - **Colors**: Never hardcode - use Tailwind config tokens only.
 - **Docs**: No auto-generated .md files unless explicitly requested.
 - **Environment Variables**: NEVER use `process.env` directly. Use `clientEnv` or `serverEnv` from `@shared/config/env`.
+- **Production Data Gathering**: Use the `gcloud-secrets` skill read-only whenever production credentials are needed to gather data. Fetch only the credentials required for the query; never print secret values, create secret versions, or mutate production data unless the user explicitly requests it.
 - **Production Database Safety**: Before any potentially destructive production database action (including schema changes, migrations, data updates/deletes, restores, or bulk operations), create and verify a fresh backup. Run `yarn db:backup` yourself; it fetches credentials from GCloud Secret Manager, exports schema and data, and test-verifies the compressed archives. Confirm the new schema and data archives with `yarn db:backups` and `gzip -t`, then record their paths before proceeding. If the command fails, stop and ask the user before changing the database.
 
 ## Before Starting
