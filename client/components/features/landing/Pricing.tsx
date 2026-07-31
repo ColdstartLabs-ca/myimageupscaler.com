@@ -20,12 +20,18 @@ export function calculateDiscountedPrice(priceValue: number, discountPercent: nu
   return Math.round(priceValue * (1 - discountPercent / 100) * 100) / 100;
 }
 
-function generatePlanJsonLd(plan: ReturnType<typeof getEnabledPlans>[number], priceUsd: number) {
+export function generatePlanJsonLd(
+  plan: ReturnType<typeof getEnabledPlans>[number],
+  priceUsd: number
+): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
+    '@id': `${clientEnv.BASE_URL}/pricing#${plan.key}`,
     name: `${clientEnv.APP_NAME} ${plan.name}`,
     description: plan.description,
+    image: `${clientEnv.BASE_URL}/og-image.png`,
+    url: `${clientEnv.BASE_URL}/pricing`,
     brand: {
       '@type': 'Brand',
       name: clientEnv.APP_NAME,

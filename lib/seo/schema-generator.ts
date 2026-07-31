@@ -925,7 +925,7 @@ export function generatePricingSchema(): object {
         name: `${APP_NAME} Subscription Plans`,
         description:
           'Choose the subscription plan that fits your needs. Get monthly credits with automatic rollover for AI image upscaling and enhancement.',
-        image: `${BASE_URL}/og-image-pricing.png`,
+        image: `${BASE_URL}/og-image.png`,
         category: 'Software',
         applicationCategory: 'MultimediaApplication',
         operatingSystem: 'Web Browser',

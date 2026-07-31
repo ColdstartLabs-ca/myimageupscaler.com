@@ -25,6 +25,21 @@ Maintenance rules:
 
 ## 2026-07-30
 
+### Merchant Listing Product Images
+
+Changes:
+
+- Added a valid shared product image, stable product IDs, and canonical pricing URLs to the four subscription `Product` JSON-LD blocks emitted in the homepage pricing section.
+- Replaced the pricing-page schema's missing `/og-image-pricing.png` reference with the deployed `/og-image.png` asset.
+
+Validation:
+
+- Added `tests/unit/seo/homepage-plan-schema.unit.spec.ts` to verify every monthly plan emits a crawlable image, URL, ID, and offer price.
+
+Follow-up:
+
+- After deployment, re-run URL Inspection on the homepage and confirm the four Merchant listings no longer have the critical missing-image issue. Optional `validFrom`, `shippingDetails`, and `hasMerchantReturnPolicy` notices remain non-blocking because these are digital subscriptions.
+
 ### Deployment SEO Guard Sitemap Parity
 
 Changes:
