@@ -70,6 +70,10 @@ Closes the obvious next move: creating a new account to get 5 fresh credits.
 
 ### P2: Escalating friction for serial dismissers
 
+> **Reverted 2026-07-31.** The 5s free-plan confirmation gate was removed from `PurchaseModal`. It gated on a
+> localStorage counter, so the session-resetting abusers it targeted were unaffected while long-tenured free users
+> were permanently penalized. The `dismissCount` analytics prop is retained; only the UI friction is gone.
+
 - Use the already-tracked `dismissCount` on `upgrade_prompt_dismissed`.
 - After **3+ dismissals**: prompt requires an explicit "Continue with free plan" click after a short (~5s) delay instead of instant dismiss. No cooldowns, no blocking — just enough friction that the paywall registers.
 - No change for users with < 3 dismissals.

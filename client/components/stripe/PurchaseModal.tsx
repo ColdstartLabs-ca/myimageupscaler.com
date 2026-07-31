@@ -25,10 +25,7 @@ import {
   getSmallestSufficientCreditPack,
 } from '@client/utils/purchaseModalDefaults';
 import type { IPurchaseModalBanditConfig } from '@client/utils/purchaseModalDefaults';
-import {
-  recordUpgradePromptDismissal,
-  requiresFreePlanConfirmation,
-} from '@client/utils/upgrade-prompt-dismissals';
+import { recordUpgradePromptDismissal } from '@client/utils/upgrade-prompt-dismissals';
 import { getEnabledCreditPacks, getEnabledPlans } from '@shared/config/subscription.utils';
 import type { IExperimentAssignment } from '@shared/types/experiments.types';
 import type { ICreditPack, IPlanConfig } from '@shared/config/subscription.types';
@@ -211,28 +208,6 @@ export function PurchaseModal({
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [planChangePriceId, setPlanChangePriceId] = useState<string | null>(null);
   const [isPlanChangeModalOpen, setIsPlanChangeModalOpen] = useState(false);
-  const [requiresFreePlanConfirm, setRequiresFreePlanConfirm] = useState(false);
-  const [showFreePlanConfirmation, setShowFreePlanConfirmation] = useState(false);
-  const [isFreePlanConfirmationReady, setIsFreePlanConfirmationReady] = useState(false);
-
-  useEffect(() => {
-    if (!isOpen) {
-      setShowFreePlanConfirmation(false);
-      setIsFreePlanConfirmationReady(false);
-      return;
-    }
-
-    setRequiresFreePlanConfirm(requiresFreePlanConfirmation(user?.id));
-    setShowFreePlanConfirmation(false);
-    setIsFreePlanConfirmationReady(false);
-  }, [isOpen, user?.id]);
-
-  useEffect(() => {
-    if (!showFreePlanConfirmation) return;
-
-    const timer = window.setTimeout(() => setIsFreePlanConfirmationReady(true), 5000);
-    return () => window.clearTimeout(timer);
-  }, [showFreePlanConfirmation]);
 
   // Data (memoized to avoid re-renders)
   const creditPacks = useMemo(() => getEnabledCreditPacks(), []);
@@ -396,7 +371,7 @@ export function PurchaseModal({
 
   const lockToCredits = trigger === 'model_gate';
 
-  const completeDismiss = useCallback(
+  const handleDismiss = useCallback(
     (method: 'backdrop' | 'close_button' | 'not_now') => {
       const dismissalCount = recordUpgradePromptDismissal(user?.id);
       analytics.track('upgrade_prompt_dismissed', {
@@ -446,18 +421,6 @@ export function PurchaseModal({
       currentPlan,
       user?.id,
     ]
-  );
-
-  const handleDismiss = useCallback(
-    (method: 'backdrop' | 'close_button' | 'not_now') => {
-      if (requiresFreePlanConfirm && !showFreePlanConfirmation) {
-        setShowFreePlanConfirmation(true);
-        return;
-      }
-
-      completeDismiss(method);
-    },
-    [completeDismiss, requiresFreePlanConfirm, showFreePlanConfirmation]
   );
 
   const handleModeChange = useCallback(
@@ -1097,33 +1060,6 @@ export function PurchaseModal({
                 </div>
               </button>
             </div>
-
-            {showFreePlanConfirmation && (
-              <div
-                className="absolute inset-0 z-10 flex items-center justify-center bg-surface/95 p-6 text-center"
-                role="dialog"
-                aria-label="Continue with free plan"
-              >
-                <div className="max-w-sm space-y-4">
-                  <h3 className="text-lg font-bold text-text-primary">
-                    Continue with the free plan?
-                  </h3>
-                  <p className="text-sm text-text-secondary">
-                    You can keep the free plan. Please confirm after a short pause.
-                  </p>
-                  <button
-                    type="button"
-                    disabled={!isFreePlanConfirmationReady}
-                    onClick={() => completeDismiss('not_now')}
-                    className="w-full rounded-xl bg-accent px-4 py-3 font-bold text-text-primary transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {isFreePlanConfirmationReady
-                      ? 'Continue with free plan'
-                      : 'Continue with free plan (5 seconds)'}
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

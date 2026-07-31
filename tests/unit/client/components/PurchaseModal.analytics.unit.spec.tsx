@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { PurchaseModal } from '@client/components/stripe/PurchaseModal';
@@ -632,7 +632,7 @@ describe('PurchaseModal analytics', () => {
     );
   });
 
-  test('requires a five-second confirmation before a fourth upgrade-prompt dismissal', async () => {
+  test('dismisses immediately regardless of how many times the prompt was dismissed before', async () => {
     const store = new Map<string, string>([['miu_upgrade_prompt_dismiss_count:user-1', '3']]);
     vi.stubGlobal('localStorage', {
       getItem: (key: string) => store.get(key) ?? null,
@@ -657,19 +657,11 @@ describe('PurchaseModal analytics', () => {
       );
 
       await screen.findByRole('button', { name: 'notNow' });
-      vi.useFakeTimers();
       fireEvent.click(screen.getByRole('button', { name: 'notNow' }));
-      const continueButton = screen.getByRole('button', { name: /continue with free plan/i });
-      expect(continueButton).toBeDisabled();
-
-      await act(async () => {
-        vi.advanceTimersByTime(5000);
-      });
-      fireEvent.click(continueButton);
 
       expect(onClose).toHaveBeenCalledOnce();
+      expect(screen.queryByRole('dialog', { name: /free plan/i })).not.toBeInTheDocument();
     } finally {
-      vi.useRealTimers();
       vi.unstubAllGlobals();
     }
   });
