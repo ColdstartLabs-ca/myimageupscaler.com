@@ -5,7 +5,11 @@ import Image from 'next/image';
 import { AlertCircle, Sparkles, Zap, ArrowRight, Loader2 } from 'lucide-react';
 import { Modal } from '@client/components/ui/Modal';
 import { useTranslations } from 'next-intl';
-import { compressImage, formatBytes } from '@client/utils/image-compression';
+import { compressImageWithinByteLimit, formatBytes } from '@client/utils/image-compression';
+import {
+  getFileMetadataFromBlobType,
+  replaceFileExtension,
+} from '@client/utils/image-output-format';
 import {
   AUTO_RESIZE_STORAGE_KEY,
   isAutoResizeEnabled,
@@ -346,18 +350,27 @@ export const OversizedImageModal: React.FC<IOversizedImageModalProps> = ({
     try {
       // For dimension-oversized images, resize to fit within pixel limit
       // For byte-size oversized images, compress to fit within byte limit
-      const result = await compressImage(file, {
-        targetSizeBytes: dimensions ? undefined : Math.floor(currentLimit * 0.9),
-        maxPixels: dimensions ? maxPixels : undefined,
-        format: 'jpeg', // JPEG typically gives best compression for photos
-        maintainAspectRatio: true,
-      });
+      const result = await compressImageWithinByteLimit(
+        file,
+        {
+          targetSizeBytes: dimensions ? undefined : Math.floor(currentLimit * 0.9),
+          maxPixels: dimensions ? maxPixels : undefined,
+          quality: dimensions ? 95 : undefined,
+          format: dimensions ? undefined : 'jpeg',
+          maintainAspectRatio: true,
+        },
+        currentLimit
+      );
 
-      // Convert blob to File
-      const resizedFile = new File([result.blob], file.name.replace(/\.\w+$/, '.jpg'), {
-        type: 'image/jpeg',
-        lastModified: Date.now(),
-      });
+      const emitted = getFileMetadataFromBlobType(result.blob.type, file);
+      const resizedFile = new File(
+        [result.blob],
+        replaceFileExtension(file.name, emitted.extension),
+        {
+          type: emitted.mimeType,
+          lastModified: Date.now(),
+        }
+      );
 
       // onResizeAndContinue handles advancing to next file or closing modal
       onResizeAndContinue(resizedFile);

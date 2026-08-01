@@ -80,7 +80,7 @@ vi.mock('@client/components/ui/Modal', () => ({
 
 // Mock image-compression module
 vi.mock('@client/utils/image-compression', () => ({
-  compressImage: vi.fn().mockResolvedValue({
+  compressImageWithinByteLimit: vi.fn().mockResolvedValue({
     blob: new Blob(['compressed'], { type: 'image/jpeg' }),
     originalSize: 10000,
     compressedSize: 5000,
@@ -102,6 +102,7 @@ import {
 
 describe('OversizedImageModal', () => {
   const mockFile = new File(['test content'], 'test.jpg', { type: 'image/jpeg' });
+  const mockPngFile = new File(['png content'], 'test.png', { type: 'image/png' });
   const mockOnClose = vi.fn();
   const mockOnResizeAndContinue = vi.fn();
 
@@ -193,7 +194,7 @@ describe('OversizedImageModal', () => {
 
   describe('Resize Button Behavior', () => {
     it('should call onResizeAndContinue with resized file when clicking resize', async () => {
-      const { compressImage } = await import('@client/utils/image-compression');
+      const { compressImageWithinByteLimit } = await import('@client/utils/image-compression');
 
       render(
         <OversizedImageModal
@@ -211,14 +212,14 @@ describe('OversizedImageModal', () => {
       }
 
       await waitFor(() => {
-        expect(compressImage).toHaveBeenCalled();
+        expect(compressImageWithinByteLimit).toHaveBeenCalled();
         expect(mockOnResizeAndContinue).toHaveBeenCalled();
       });
     });
 
-    it('should call compressImage with maxPixels when resizing for dimensions', async () => {
-      const { compressImage } = await import('@client/utils/image-compression');
-      const mockCompress = compressImage as ReturnType<typeof vi.fn>;
+    it('should call the compressor with maxPixels when resizing for dimensions', async () => {
+      const { compressImageWithinByteLimit } = await import('@client/utils/image-compression');
+      const mockCompress = compressImageWithinByteLimit as ReturnType<typeof vi.fn>;
       mockCompress.mockClear();
 
       const dimensions = { width: 4000, height: 3000, pixels: 12000000 };
@@ -241,19 +242,19 @@ describe('OversizedImageModal', () => {
 
       await waitFor(() => {
         expect(mockCompress).toHaveBeenCalledWith(
-          expect.any(File),
+          mockFile,
           expect.objectContaining({
             maxPixels: expect.any(Number),
-            format: 'jpeg',
             maintainAspectRatio: true,
-          })
+          }),
+          5 * 1024 * 1024
         );
       });
     });
 
-    it('should call compressImage with targetSizeBytes when resizing for file size', async () => {
-      const { compressImage } = await import('@client/utils/image-compression');
-      const mockCompress = compressImage as ReturnType<typeof vi.fn>;
+    it('should call the compressor with targetSizeBytes when resizing for file size', async () => {
+      const { compressImageWithinByteLimit } = await import('@client/utils/image-compression');
+      const mockCompress = compressImageWithinByteLimit as ReturnType<typeof vi.fn>;
       mockCompress.mockClear();
 
       render(
@@ -273,11 +274,106 @@ describe('OversizedImageModal', () => {
 
       await waitFor(() => {
         expect(mockCompress).toHaveBeenCalledWith(
-          expect.any(File),
+          mockFile,
           expect.objectContaining({
             targetSizeBytes: expect.any(Number),
             format: 'jpeg',
             maintainAspectRatio: true,
+          }),
+          5 * 1024 * 1024
+        );
+      });
+    });
+
+    it('preserves PNG output metadata for dimension-limit resizing', async () => {
+      const { compressImageWithinByteLimit } = await import('@client/utils/image-compression');
+      const mockCompress = compressImageWithinByteLimit as ReturnType<typeof vi.fn>;
+      mockCompress.mockReset();
+      mockCompress.mockResolvedValue({
+        blob: new Blob(['compressed-png'], { type: 'image/png' }),
+        originalSize: 10000,
+        compressedSize: 5000,
+        reductionPercent: 50,
+        dimensions: { width: 1024, height: 768 },
+      });
+
+      const dimensions = { width: 4000, height: 3000, pixels: 12000000 };
+
+      render(
+        <OversizedImageModal
+          file={mockPngFile}
+          isOpen={true}
+          onClose={mockOnClose}
+          onResizeAndContinue={mockOnResizeAndContinue}
+          currentLimit={5 * 1024 * 1024}
+          dimensions={dimensions}
+        />
+      );
+
+      const resizeButton = screen.getByText('Resize & Continue').closest('button');
+      if (resizeButton) {
+        fireEvent.click(resizeButton);
+      }
+
+      await waitFor(() => {
+        expect(mockCompress).toHaveBeenCalledWith(
+          mockPngFile,
+          expect.objectContaining({
+            maxPixels: expect.any(Number),
+            maintainAspectRatio: true,
+          }),
+          5 * 1024 * 1024
+        );
+        expect(mockOnResizeAndContinue).toHaveBeenCalledWith(
+          expect.objectContaining({
+            name: 'test.png',
+            type: 'image/png',
+          })
+        );
+      });
+    });
+
+    it('keeps byte-limit PNG resizing on the JPEG output branch', async () => {
+      const { compressImageWithinByteLimit } = await import('@client/utils/image-compression');
+      const mockCompress = compressImageWithinByteLimit as ReturnType<typeof vi.fn>;
+      mockCompress.mockReset();
+      mockCompress.mockResolvedValue({
+        blob: new Blob(['compressed-jpg'], { type: 'image/jpeg' }),
+        originalSize: 10000,
+        compressedSize: 4000,
+        reductionPercent: 60,
+        dimensions: { width: 1200, height: 900 },
+      });
+
+      render(
+        <OversizedImageModal
+          file={mockPngFile}
+          isOpen={true}
+          onClose={mockOnClose}
+          onResizeAndContinue={mockOnResizeAndContinue}
+          currentLimit={5 * 1024 * 1024}
+        />
+      );
+
+      const resizeButton = screen.getByText('Resize & Continue').closest('button');
+      if (resizeButton) {
+        fireEvent.click(resizeButton);
+      }
+
+      await waitFor(() => {
+        expect(mockCompress).toHaveBeenCalledWith(
+          mockPngFile,
+          expect.objectContaining({
+            targetSizeBytes: expect.any(Number),
+            format: 'jpeg',
+            maintainAspectRatio: true,
+          }),
+          5 * 1024 * 1024
+        );
+        expect(mockOnResizeAndContinue).toHaveBeenCalledWith(
+          expect.objectContaining({
+            name: 'test.jpg',
+            type: 'image/jpeg',
           })
         );
       });

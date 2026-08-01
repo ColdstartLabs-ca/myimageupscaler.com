@@ -3,9 +3,14 @@ import {
   MODEL_MAX_INPUT_PIXELS,
   SCALE_PRESERVING_FALLBACK_MAX_SIDE,
 } from '@shared/config/model-costs.config';
-import { getMaxPixelsForQualityTier } from '@shared/validation/upscale.schema';
+import { IMAGE_VALIDATION, getMaxPixelsForQualityTier } from '@shared/validation/upscale.schema';
 import { loadImageDimensions } from './file-validation';
-import { compressImage } from './image-compression';
+import { compressImageWithinByteLimit } from './image-compression';
+import {
+  getFileMetadataFromBlobType,
+  getPreferredCanvasFormatForFile,
+  replaceFileExtension,
+} from './image-output-format';
 import { isAutoResizeEnabled } from './auto-resize-preference';
 
 export interface IPreparedFileForProcessing {
@@ -19,12 +24,6 @@ export interface IPreparedFileForProcessing {
   };
 }
 
-function replaceExtension(fileName: string, extension: string): string {
-  return /\.[^/.]+$/.test(fileName)
-    ? fileName.replace(/\.[^/.]+$/, `.${extension}`)
-    : `${fileName}.${extension}`;
-}
-
 /**
  * Ensure a queued file still fits the currently selected processing mode.
  * This closes the gap where a file was uploaded under one tier but processed under
@@ -33,7 +32,8 @@ function replaceExtension(fileName: string, extension: string): string {
 export async function prepareFileForProcessing(
   file: File,
   qualityTier: QualityTier,
-  scale = 2
+  scale = 2,
+  maxBytes: number = IMAGE_VALIDATION.MAX_SIZE_FREE
 ): Promise<IPreparedFileForProcessing> {
   const maxPixels = getMaxPixelsForQualityTier(qualityTier);
 
@@ -99,20 +99,28 @@ export async function prepareFileForProcessing(
     };
   }
 
-  const result = await compressImage(file, {
-    maxPixels: resizeMaxPixels,
-    ...(resizeMaxSide
-      ? {
-          maxWidth: resizeMaxSide,
-          maxHeight: resizeMaxSide,
-        }
-      : {}),
-    format: 'jpeg',
-    maintainAspectRatio: true,
-  });
+  const output = getPreferredCanvasFormatForFile(file);
+  const result = await compressImageWithinByteLimit(
+    file,
+    {
+      maxPixels: resizeMaxPixels,
+      ...(resizeMaxSide
+        ? {
+            maxWidth: resizeMaxSide,
+            maxHeight: resizeMaxSide,
+          }
+        : {}),
+      format: output.format,
+      quality: 95,
+      maintainAspectRatio: true,
+    },
+    maxBytes
+  );
 
-  const resizedFile = new File([result.blob], replaceExtension(file.name, 'jpg'), {
-    type: 'image/jpeg',
+  const emitted = getFileMetadataFromBlobType(result.blob.type, file);
+
+  const resizedFile = new File([result.blob], replaceFileExtension(file.name, emitted.extension), {
+    type: emitted.mimeType,
     lastModified: Date.now(),
   });
 

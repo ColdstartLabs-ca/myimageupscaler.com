@@ -1,15 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { prepareFileForProcessing } from '@client/utils/upscale-file-preprocessing';
-import { compressImage } from '@client/utils/image-compression';
+import { compressImageWithinByteLimit } from '@client/utils/image-compression';
 import { loadImageDimensions } from '@client/utils/file-validation';
 import { isAutoResizeEnabled } from '@client/utils/auto-resize-preference';
+import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
 
 vi.mock('@client/utils/file-validation', () => ({
   loadImageDimensions: vi.fn(),
 }));
 
 vi.mock('@client/utils/image-compression', () => ({
-  compressImage: vi.fn(),
+  compressImageWithinByteLimit: vi.fn(),
 }));
 
 vi.mock('@client/utils/auto-resize-preference', () => ({
@@ -36,7 +37,7 @@ describe('prepareFileForProcessing', () => {
       height: 1000,
       pixels: 1_000_000,
     });
-    expect(compressImage).not.toHaveBeenCalled();
+    expect(compressImageWithinByteLimit).not.toHaveBeenCalled();
   });
 
   it('keeps Quick 2x originals that fit the scale-preserving fallback', async () => {
@@ -53,14 +54,14 @@ describe('prepareFileForProcessing', () => {
       height: 2048,
       pixels: 4_194_304,
     });
-    expect(compressImage).not.toHaveBeenCalled();
+    expect(compressImageWithinByteLimit).not.toHaveBeenCalled();
   });
 
   it('auto-resizes Quick 2x images outside the scale-preserving fallback envelope', async () => {
     const file = new File(['image'], 'katie-photo.png', { type: 'image/png' });
     vi.mocked(loadImageDimensions).mockResolvedValue({ width: 1700, height: 2532 });
-    vi.mocked(compressImage).mockResolvedValue({
-      blob: new Blob(['resized'], { type: 'image/jpeg' }),
+    vi.mocked(compressImageWithinByteLimit).mockResolvedValue({
+      blob: new Blob(['resized'], { type: 'image/png' }),
       originalSize: 1000,
       compressedSize: 800,
       reductionPercent: 20,
@@ -69,14 +70,21 @@ describe('prepareFileForProcessing', () => {
 
     const result = await prepareFileForProcessing(file, 'quick', 2);
 
-    expect(compressImage).toHaveBeenCalledWith(file, {
-      maxPixels: 4_194_304,
-      maxWidth: 2048,
-      maxHeight: 2048,
-      format: 'jpeg',
-      maintainAspectRatio: true,
-    });
+    expect(compressImageWithinByteLimit).toHaveBeenCalledWith(
+      file,
+      {
+        maxPixels: 4_194_304,
+        maxWidth: 2048,
+        maxHeight: 2048,
+        format: 'png',
+        quality: 95,
+        maintainAspectRatio: true,
+      },
+      IMAGE_VALIDATION.MAX_SIZE_FREE
+    );
     expect(result.resized).toBe(true);
+    expect(result.file.type).toBe('image/png');
+    expect(result.file.name).toBe('katie-photo.png');
     expect(result.dimensions).toEqual({
       width: 1375,
       height: 2048,
@@ -87,8 +95,8 @@ describe('prepareFileForProcessing', () => {
   it('auto-resizes Quick 2x images that only exceed the verified fallback side', async () => {
     const file = new File(['image'], 'tall-photo.png', { type: 'image/png' });
     vi.mocked(loadImageDimensions).mockResolvedValue({ width: 1700, height: 2300 });
-    vi.mocked(compressImage).mockResolvedValue({
-      blob: new Blob(['resized'], { type: 'image/jpeg' }),
+    vi.mocked(compressImageWithinByteLimit).mockResolvedValue({
+      blob: new Blob(['resized'], { type: 'image/png' }),
       originalSize: 1000,
       compressedSize: 800,
       reductionPercent: 20,
@@ -97,15 +105,15 @@ describe('prepareFileForProcessing', () => {
 
     const result = await prepareFileForProcessing(file, 'quick', 2);
 
-    expect(compressImage).toHaveBeenCalled();
+    expect(compressImageWithinByteLimit).toHaveBeenCalled();
     expect(result.resized).toBe(true);
   });
 
   it('uses the Real-ESRGAN limit when auto-resizing oversized Quick 4x inputs', async () => {
     const file = new File(['image'], 'quick-4x.png', { type: 'image/png' });
     vi.mocked(loadImageDimensions).mockResolvedValue({ width: 1700, height: 2532 });
-    vi.mocked(compressImage).mockResolvedValue({
-      blob: new Blob(['resized'], { type: 'image/jpeg' }),
+    vi.mocked(compressImageWithinByteLimit).mockResolvedValue({
+      blob: new Blob(['resized'], { type: 'image/png' }),
       originalSize: 1000,
       compressedSize: 700,
       reductionPercent: 30,
@@ -114,12 +122,104 @@ describe('prepareFileForProcessing', () => {
 
     const result = await prepareFileForProcessing(file, 'quick', 4);
 
-    expect(compressImage).toHaveBeenCalledWith(file, {
-      maxPixels: 2_096_704,
-      format: 'jpeg',
-      maintainAspectRatio: true,
-    });
+    expect(compressImageWithinByteLimit).toHaveBeenCalledWith(
+      file,
+      {
+        maxPixels: 2_096_704,
+        format: 'png',
+        quality: 95,
+        maintainAspectRatio: true,
+      },
+      IMAGE_VALIDATION.MAX_SIZE_FREE
+    );
     expect(result.resized).toBe(true);
+  });
+
+  it('preserves JPEG output metadata while using near-lossless quality', async () => {
+    const file = new File(['image'], 'portrait.jpg', { type: 'image/jpeg' });
+    vi.mocked(loadImageDimensions).mockResolvedValue({ width: 1700, height: 2532 });
+    vi.mocked(compressImageWithinByteLimit).mockResolvedValue({
+      blob: new Blob(['resized'], { type: 'image/jpeg' }),
+      originalSize: 1000,
+      compressedSize: 750,
+      reductionPercent: 25,
+      dimensions: { width: 1375, height: 2048 },
+    });
+
+    const result = await prepareFileForProcessing(file, 'quick', 2);
+
+    expect(compressImageWithinByteLimit).toHaveBeenCalledWith(
+      file,
+      {
+        maxPixels: 4_194_304,
+        maxWidth: 2048,
+        maxHeight: 2048,
+        format: 'jpeg',
+        quality: 95,
+        maintainAspectRatio: true,
+      },
+      IMAGE_VALIDATION.MAX_SIZE_FREE
+    );
+    expect(result.file.type).toBe('image/jpeg');
+    expect(result.file.name).toBe('portrait.jpg');
+  });
+
+  it('preserves WebP output metadata while using near-lossless quality', async () => {
+    const file = new File(['image'], 'artwork.webp', { type: 'image/webp' });
+    vi.mocked(loadImageDimensions).mockResolvedValue({ width: 1700, height: 2532 });
+    vi.mocked(compressImageWithinByteLimit).mockResolvedValue({
+      blob: new Blob(['resized'], { type: 'image/webp' }),
+      originalSize: 1000,
+      compressedSize: 760,
+      reductionPercent: 24,
+      dimensions: { width: 1375, height: 2048 },
+    });
+
+    const result = await prepareFileForProcessing(file, 'quick', 2);
+
+    expect(compressImageWithinByteLimit).toHaveBeenCalledWith(
+      file,
+      {
+        maxPixels: 4_194_304,
+        maxWidth: 2048,
+        maxHeight: 2048,
+        format: 'webp',
+        quality: 95,
+        maintainAspectRatio: true,
+      },
+      IMAGE_VALIDATION.MAX_SIZE_FREE
+    );
+    expect(result.file.type).toBe('image/webp');
+    expect(result.file.name).toBe('artwork.webp');
+  });
+
+  it('falls back HEIC preprocessing to high-quality JPEG output', async () => {
+    const file = new File(['image'], 'camera.heic', { type: 'image/heic' });
+    vi.mocked(loadImageDimensions).mockResolvedValue({ width: 1700, height: 2532 });
+    vi.mocked(compressImageWithinByteLimit).mockResolvedValue({
+      blob: new Blob(['resized'], { type: 'image/jpeg' }),
+      originalSize: 1000,
+      compressedSize: 780,
+      reductionPercent: 22,
+      dimensions: { width: 1375, height: 2048 },
+    });
+
+    const result = await prepareFileForProcessing(file, 'quick', 2);
+
+    expect(compressImageWithinByteLimit).toHaveBeenCalledWith(
+      file,
+      {
+        maxPixels: 4_194_304,
+        maxWidth: 2048,
+        maxHeight: 2048,
+        format: 'jpeg',
+        quality: 95,
+        maintainAspectRatio: true,
+      },
+      IMAGE_VALIDATION.MAX_SIZE_FREE
+    );
+    expect(result.file.type).toBe('image/jpeg');
+    expect(result.file.name).toBe('camera.jpg');
   });
 
   it('keeps unsupported Quick originals when auto-resize is disabled', async () => {
@@ -131,7 +231,7 @@ describe('prepareFileForProcessing', () => {
 
     expect(result.file).toBe(file);
     expect(result.resized).toBe(false);
-    expect(compressImage).not.toHaveBeenCalled();
+    expect(compressImageWithinByteLimit).not.toHaveBeenCalled();
   });
 
   it('skips pixel resizing for tiers without a processing pixel cap', async () => {
@@ -143,7 +243,7 @@ describe('prepareFileForProcessing', () => {
     expect(result.file).toBe(file);
     expect(result.resized).toBe(false);
     expect(result.maxPixels).toBeNull();
-    expect(compressImage).not.toHaveBeenCalled();
+    expect(compressImageWithinByteLimit).not.toHaveBeenCalled();
   });
 
   it('respects the auto-resize preference when it is disabled', async () => {
@@ -156,6 +256,26 @@ describe('prepareFileForProcessing', () => {
     expect(result.file).toBe(file);
     expect(result.resized).toBe(false);
     expect(result.maxPixels).toBe(1_500_000);
-    expect(compressImage).not.toHaveBeenCalled();
+    expect(compressImageWithinByteLimit).not.toHaveBeenCalled();
+  });
+
+  it('caps the resized upload at the paid byte limit when the caller is a paid user', async () => {
+    const file = new File(['image'], 'photo.png', { type: 'image/png' });
+    vi.mocked(loadImageDimensions).mockResolvedValue({ width: 1700, height: 2532 });
+    vi.mocked(compressImageWithinByteLimit).mockResolvedValue({
+      blob: new Blob(['resized'], { type: 'image/png' }),
+      originalSize: 1000,
+      compressedSize: 800,
+      reductionPercent: 20,
+      dimensions: { width: 1375, height: 2048 },
+    });
+
+    await prepareFileForProcessing(file, 'quick', 2, IMAGE_VALIDATION.MAX_SIZE_PAID);
+
+    expect(compressImageWithinByteLimit).toHaveBeenCalledWith(
+      file,
+      expect.objectContaining({ format: 'png' }),
+      IMAGE_VALIDATION.MAX_SIZE_PAID
+    );
   });
 });

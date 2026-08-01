@@ -75,7 +75,10 @@
     "dimensionWarning": "Your image ({width}x{height} = {pixels}) exceeds the maximum ({maxPixels}). Resize to continue.",
     "autoResizeToggle": "Always auto-resize images for me",
     "autoResizeToast": "Image automatically resized to fit processing limits",
-    "autoResizeToPixelLimit": "Automatically resize to fit within {maxPixels}MP pixel limit."
+    "autoResizeToPixelLimit": "Automatically resize to fit within {maxPixels}MP pixel limit.",
+    "autoResizeToastUpload": "Image resized to {resizedWidth}×{resizedHeight} so it fits upload limits before processing.",
+    "autoResizeToastUploadBatch": "{count, plural, one {# image was resized to fit upload limits before processing.} other {# images were resized to fit upload limits before processing.}}",
+    "autoResizeToastProcessing": "Input resized to {resizedWidth}×{resizedHeight} to fit processing. Final result will be about {expectedWidth}×{expectedHeight} ({scale}x from the resized input)."
   },
   "previewArea": {
     "stages": {

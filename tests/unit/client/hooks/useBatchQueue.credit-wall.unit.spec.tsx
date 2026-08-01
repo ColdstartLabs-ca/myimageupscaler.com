@@ -9,6 +9,7 @@ import {
 
 const mocks = vi.hoisted(() => ({
   processImage: vi.fn(),
+  prepareFileForProcessing: vi.fn(),
   showToast: vi.fn(),
   track: vi.fn(),
   BatchLimitError: class BatchLimitError extends Error {
@@ -59,7 +60,7 @@ vi.mock('@client/utils/api-client', () => ({
 }));
 
 vi.mock('@client/utils/upscale-file-preprocessing', () => ({
-  prepareFileForProcessing: (file: File) => Promise.resolve({ file, resized: false }),
+  prepareFileForProcessing: mocks.prepareFileForProcessing,
 }));
 
 vi.mock('@client/utils/file-validation', () => ({
@@ -75,7 +76,13 @@ vi.mock('@shared/config/subscription.utils', async importOriginal => {
 });
 
 vi.mock('next-intl', () => ({
-  useTranslations: () => (key: string) => key,
+  useTranslations: () => (key: string, values?: Record<string, number>) => {
+    if (key === 'oversizedImage.autoResizeToastProcessing') {
+      return `Input resized to ${values?.resizedWidth}×${values?.resizedHeight} to fit processing. Final result will be about ${values?.expectedWidth}×${values?.expectedHeight} (${values?.scale}x from the resized input).`;
+    }
+
+    return key;
+  },
 }));
 
 import { useBatchQueue } from '@/client/hooks/useBatchQueue';
@@ -110,6 +117,46 @@ async function addAndProcessOne(
 describe('useBatchQueue credit wall analytics', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.prepareFileForProcessing.mockImplementation((file: File) =>
+      Promise.resolve({ file, resized: false })
+    );
+  });
+
+  it('shows a truthful processing auto-resize toast when preprocessing shrinks the queued input', async () => {
+    mocks.prepareFileForProcessing.mockResolvedValueOnce({
+      file: new File(['resized'], 'image.png', { type: 'image/png' }),
+      resized: true,
+      dimensions: { width: 1375, height: 2048, pixels: 2_816_000 },
+      maxPixels: null,
+    });
+    mocks.processImage.mockResolvedValueOnce({
+      imageData: 'data:image/png;base64,processed',
+      creditsRemaining: 4,
+      creditsUsed: 1,
+    });
+
+    const item: IBatchItem = {
+      id: 'item-1',
+      file: new File(['image'], 'image.png', { type: 'image/png' }),
+      previewUrl: 'blob:test',
+      processedUrl: null,
+      status: ProcessingStatus.IDLE,
+      progress: 0,
+      inputDimensions: { width: 1700, height: 2532 },
+    };
+    const { result } = renderHook(() => useBatchQueue());
+
+    await act(async () => {
+      await result.current.processSingleItem(item, config);
+    });
+
+    expect(mocks.showToast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message:
+          'Input resized to 1375×2048 to fit processing. Final result will be about 2750×4096 (2x from the resized input).',
+        type: 'info',
+      })
+    );
   });
 
   it('should track the midbatch wall with its credit deficit', async () => {

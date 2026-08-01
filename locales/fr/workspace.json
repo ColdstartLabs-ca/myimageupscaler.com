@@ -61,7 +61,10 @@
     "imageCompressed": "L'image est compressée pour s'adapter sous la limite de taille",
     "qualityOptimized": "La qualité est automatiquement optimisée pour les meilleurs résultats",
     "processingInstantly": "Le traitement se produit instantanément dans votre navigateur",
-    "aspectRatioMaintained": "Le ratio d'aspect original est maintenu"
+    "aspectRatioMaintained": "Le ratio d'aspect original est maintenu",
+    "autoResizeToastUpload": "L’image a été redimensionnée à {resizedWidth}×{resizedHeight} pour respecter les limites d’envoi avant le traitement.",
+    "autoResizeToastUploadBatch": "{count, plural, one {# image a été redimensionnée pour respecter les limites d’envoi avant le traitement.} other {# images ont été redimensionnées pour respecter les limites d’envoi avant le traitement.}}",
+    "autoResizeToastProcessing": "L’entrée a été redimensionnée à {resizedWidth}×{resizedHeight} pour respecter les limites de traitement. Le résultat final fera environ {expectedWidth}×{expectedHeight} ({scale}x par rapport à l’entrée redimensionnée)."
   },
   "previewArea": {
     "stages": {

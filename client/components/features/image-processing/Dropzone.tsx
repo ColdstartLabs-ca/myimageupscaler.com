@@ -7,8 +7,13 @@ import { useUserData } from '@client/store/userStore';
 import { useToastStore } from '@client/store/toastStore';
 import { analytics } from '@client/analytics';
 import { processFilesAsync, IDimensionInfo } from '@client/utils/file-validation';
-import { compressImage } from '@client/utils/image-compression';
+import { compressImage, compressImageWithinByteLimit } from '@client/utils/image-compression';
+import {
+  getFileMetadataFromBlobType,
+  replaceFileExtension,
+} from '@client/utils/image-output-format';
 import { isAutoResizeEnabled } from '@client/utils/auto-resize-preference';
+import { buildUploadAutoResizeToastValues } from '@client/utils/auto-resize-toast';
 import { OversizedImageModal } from './OversizedImageModal';
 import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
 
@@ -93,17 +98,24 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
         // Auto-resize dimension-oversized files
         let autoResizedFiles: File[] = [];
         let dimensionFilesNeedingModal = oversizedDimensionFiles;
+        let firstAutoResizeDimensions: { width: number; height: number } | null = null;
 
         if (autoResize && oversizedDimensionFiles.length > 0) {
           const resizePromises = oversizedDimensionFiles.map(async ({ file }) => {
             try {
-              const result = await compressImage(file, {
-                maxPixels,
-                format: 'jpeg',
-                maintainAspectRatio: true,
-              });
-              return new File([result.blob], file.name.replace(/\.\w+$/, '.jpg'), {
-                type: 'image/jpeg',
+              const result = await compressImageWithinByteLimit(
+                file,
+                {
+                  maxPixels,
+                  quality: 95,
+                  maintainAspectRatio: true,
+                },
+                currentLimit
+              );
+              firstAutoResizeDimensions ??= result.dimensions;
+              const emitted = getFileMetadataFromBlobType(result.blob.type, file);
+              return new File([result.blob], replaceFileExtension(file.name, emitted.extension), {
+                type: emitted.mimeType,
                 lastModified: Date.now(),
               });
             } catch {
@@ -130,8 +142,10 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
                 format: 'jpeg',
                 maintainAspectRatio: true,
               });
-              return new File([result.blob], file.name.replace(/\.\w+$/, '.jpg'), {
-                type: 'image/jpeg',
+              firstAutoResizeDimensions ??= result.dimensions;
+              const emitted = getFileMetadataFromBlobType(result.blob.type, file);
+              return new File([result.blob], replaceFileExtension(file.name, emitted.extension), {
+                type: emitted.mimeType,
                 lastModified: Date.now(),
               });
             } catch {
@@ -148,9 +162,20 @@ export const Dropzone: React.FC<IDropzoneProps> = ({
         }
 
         // Show toast if any files were auto-resized
-        if (autoResize && autoResizedFiles.length > 0) {
+        if (autoResize && autoResizedFiles.length === 1 && firstAutoResizeDimensions) {
           showToast({
-            message: t('oversizedImage.autoResizeToast'),
+            message: t(
+              'oversizedImage.autoResizeToastUpload',
+              buildUploadAutoResizeToastValues(firstAutoResizeDimensions)
+            ),
+            type: 'info',
+            duration: 3000,
+          });
+        } else if (autoResize && autoResizedFiles.length > 1) {
+          showToast({
+            message: t('oversizedImage.autoResizeToastUploadBatch', {
+              count: autoResizedFiles.length,
+            }),
             type: 'info',
             duration: 3000,
           });

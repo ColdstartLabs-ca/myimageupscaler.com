@@ -13,11 +13,13 @@ import {
   ProviderUnavailableError,
 } from '@client/utils/api-client';
 import { prepareFileForProcessing } from '@client/utils/upscale-file-preprocessing';
+import { buildProcessingAutoResizeToastValues } from '@client/utils/auto-resize-toast';
 import {
   calculateBatchProviderAwareCreditCost,
   getBatchLimit,
 } from '@shared/config/subscription.utils';
 import { TIMEOUTS } from '@shared/config/timeouts.config';
+import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
 import { serializeError } from '@shared/utils/errors';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
@@ -77,8 +79,11 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
   const t = useTranslations('workspace');
 
   // Get user subscription data
-  const { profile, totalCredits } = useUserData();
+  const { profile, subscription, totalCredits } = useUserData();
   const batchLimit = getBatchLimit(profile?.subscription_tier ?? null);
+  const uploadByteLimit = subscription?.price_id
+    ? IMAGE_VALIDATION.MAX_SIZE_PAID
+    : IMAGE_VALIDATION.MAX_SIZE_FREE;
 
   // Cleanup object URLs on unmount
   useEffect(() => {
@@ -261,7 +266,12 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     let fileToProcess = item.file;
 
     try {
-      const prepared = await prepareFileForProcessing(item.file, config.qualityTier, config.scale);
+      const prepared = await prepareFileForProcessing(
+        item.file,
+        config.qualityTier,
+        config.scale,
+        uploadByteLimit
+      );
       fileToProcess = prepared.file;
 
       if (prepared.resized) {
@@ -274,7 +284,14 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         });
 
         showToast({
-          message: t('oversizedImage.autoResizeToast'),
+          message: t(
+            'oversizedImage.autoResizeToastProcessing',
+            buildProcessingAutoResizeToastValues({
+              resizedWidth: prepared.dimensions?.width ?? 0,
+              resizedHeight: prepared.dimensions?.height ?? 0,
+              scale: config.scale,
+            })
+          ),
           type: 'info',
           duration: 3000,
         });

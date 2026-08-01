@@ -23,6 +23,86 @@ export interface ICompressionResult {
   dimensions: { width: number; height: number };
 }
 
+interface ICompressionPassResult {
+  blob: Blob;
+  dimensions: { width: number; height: number };
+}
+
+export interface IConstrainedDimensionsInput {
+  width: number;
+  height: number;
+  maxWidth?: number;
+  maxHeight?: number;
+  maxPixels?: number | null;
+  maintainAspectRatio?: boolean;
+}
+
+function violatesConstraints(
+  width: number,
+  height: number,
+  maxWidth?: number,
+  maxHeight?: number,
+  maxPixels?: number | null
+): boolean {
+  if (maxWidth && width > maxWidth) return true;
+  if (maxHeight && height > maxHeight) return true;
+  if (maxPixels != null && width * height > maxPixels) return true;
+  return false;
+}
+
+export function getConstrainedDimensions({
+  width,
+  height,
+  maxWidth,
+  maxHeight,
+  maxPixels,
+  maintainAspectRatio = true,
+}: IConstrainedDimensionsInput): { width: number; height: number } {
+  if (!maintainAspectRatio) {
+    let constrainedWidth = Math.min(width, maxWidth ?? width);
+    let constrainedHeight = Math.min(height, maxHeight ?? height);
+
+    if (maxPixels != null && constrainedWidth * constrainedHeight > maxPixels) {
+      const scaleFactor = Math.sqrt(maxPixels / (constrainedWidth * constrainedHeight));
+      constrainedWidth = Math.max(1, Math.floor(constrainedWidth * scaleFactor));
+      constrainedHeight = Math.max(1, Math.floor(constrainedHeight * scaleFactor));
+    }
+
+    return { width: constrainedWidth, height: constrainedHeight };
+  }
+
+  let scale = 1;
+
+  if (maxWidth || maxHeight) {
+    const widthScale = maxWidth ? maxWidth / width : 1;
+    const heightScale = maxHeight ? maxHeight / height : 1;
+    scale = Math.min(scale, widthScale, heightScale, 1);
+  }
+
+  if (maxPixels != null && width * height > maxPixels) {
+    scale = Math.min(scale, Math.sqrt(maxPixels / (width * height)));
+  }
+
+  let constrainedWidth = Math.max(1, Math.round(width * scale));
+  let constrainedHeight = Math.max(1, Math.round(height * scale));
+
+  if (
+    scale < 1 &&
+    violatesConstraints(constrainedWidth, constrainedHeight, maxWidth, maxHeight, maxPixels)
+  ) {
+    constrainedWidth = Math.max(1, Math.floor(width * scale));
+    constrainedHeight = Math.max(1, Math.floor(height * scale));
+  }
+
+  return { width: constrainedWidth, height: constrainedHeight };
+}
+
+function getOutputFormatFromMimeType(type: string): 'jpeg' | 'png' | 'webp' {
+  if (type.includes('png')) return 'png';
+  if (type.includes('webp')) return 'webp';
+  return 'jpeg';
+}
+
 /**
  * Compress an image file to meet size/quality requirements
  * Uses iterative quality adjustment if targetSizeBytes is specified
@@ -43,14 +123,16 @@ export async function compressImage(
   const originalSize = file.size;
 
   // Determine output format
-  const outputFormat =
-    format || (file.type.includes('png') ? 'png' : file.type.includes('webp') ? 'webp' : 'jpeg');
+  const outputFormat = targetSizeBytes
+    ? format || 'jpeg'
+    : format || getOutputFormatFromMimeType(file.type);
 
   // If target size is specified, use iterative compression
   if (targetSizeBytes) {
     return await compressToTargetSize(file, targetSizeBytes, {
       maxWidth,
       maxHeight,
+      maxPixels: options.maxPixels,
       format: outputFormat,
       maintainAspectRatio,
     });
@@ -59,42 +141,59 @@ export async function compressImage(
   // Otherwise, compress once with the specified quality
   const img = await loadImage(file);
 
-  // Calculate pixel-constrained dimensions if maxPixels is set
-  let constrainedMaxWidth = maxWidth;
-  let constrainedMaxHeight = maxHeight;
   const maxPixels = options.maxPixels ?? IMAGE_VALIDATION.MAX_PIXELS;
-  const originalPixels = img.width * img.height;
+  const constrainedDimensions = getConstrainedDimensions({
+    width: img.width,
+    height: img.height,
+    maxWidth,
+    maxHeight,
+    maxPixels: options.maxPixels != null ? maxPixels : null,
+    maintainAspectRatio,
+  });
 
-  if (options.maxPixels != null && originalPixels > maxPixels) {
-    const scaleFactor = Math.sqrt(maxPixels / originalPixels);
-    const pixelWidth = Math.floor(img.width * scaleFactor);
-    const pixelHeight = Math.floor(img.height * scaleFactor);
-    constrainedMaxWidth = Math.min(pixelWidth, constrainedMaxWidth ?? pixelWidth);
-    constrainedMaxHeight = Math.min(pixelHeight, constrainedMaxHeight ?? pixelHeight);
-  }
-
-  const blob = await compressOnce(file, {
+  const compressed = await compressOnce(file, {
     quality,
-    maxWidth: constrainedMaxWidth,
-    maxHeight: constrainedMaxHeight,
+    maxWidth: constrainedDimensions.width,
+    maxHeight: constrainedDimensions.height,
     format: outputFormat,
     maintainAspectRatio,
   });
 
-  // Get actual output dimensions from canvas (may differ from input if resized)
-  const outWidth =
-    constrainedMaxWidth && constrainedMaxWidth < img.width ? constrainedMaxWidth : img.width;
-  const outHeight =
-    constrainedMaxHeight && constrainedMaxHeight < img.height ? constrainedMaxHeight : img.height;
-  const reductionPercent = Math.round(((originalSize - blob.size) / originalSize) * 100);
+  const reductionPercent = Math.round(((originalSize - compressed.blob.size) / originalSize) * 100);
 
   return {
-    blob,
+    blob: compressed.blob,
     originalSize,
-    compressedSize: blob.size,
+    compressedSize: compressed.blob.size,
     reductionPercent,
-    dimensions: { width: outWidth, height: outHeight },
+    dimensions: compressed.dimensions,
   };
+}
+
+/**
+ * Compress an image, then guarantee the result fits a byte ceiling.
+ *
+ * Lossless formats (and any format the browser silently substituted for an
+ * unsupported one) can grow well past the tier upload limit even while the
+ * image shrinks in pixels. When that happens, fall back to a JPEG encode
+ * targeted at the ceiling so the upload is never rejected downstream.
+ */
+export async function compressImageWithinByteLimit(
+  file: File,
+  options: ICompressionOptions,
+  maxBytes: number
+): Promise<ICompressionResult> {
+  const result = await compressImage(file, options);
+
+  if (result.blob.size <= maxBytes) {
+    return result;
+  }
+
+  return await compressImage(file, {
+    ...options,
+    format: 'jpeg',
+    targetSizeBytes: maxBytes,
+  });
 }
 
 /**
@@ -107,41 +206,39 @@ async function compressToTargetSize(
   options: Omit<ICompressionOptions, 'quality' | 'targetSizeBytes'>
 ): Promise<ICompressionResult> {
   const originalSize = file.size;
-  const maxPixels = options.maxPixels ?? IMAGE_VALIDATION.MAX_PIXELS;
-
   const img = await loadImage(file);
-  const originalPixels = img.width * img.height;
-
-  // Calculate dimensions that fit within max pixels while maintaining aspect ratio
-  let targetWidth = img.width;
-  let targetHeight = img.height;
-
-  if (options.maxPixels != null && originalPixels > maxPixels) {
-    const scaleFactor = Math.sqrt(maxPixels / originalPixels);
-    targetWidth = Math.floor(img.width * scaleFactor);
-    targetHeight = Math.floor(img.height * scaleFactor);
-  }
+  let targetDimensions = getConstrainedDimensions({
+    width: img.width,
+    height: img.height,
+    maxWidth: options.maxWidth,
+    maxHeight: options.maxHeight,
+    maxPixels: options.maxPixels ?? null,
+    maintainAspectRatio: options.maintainAspectRatio,
+  });
 
   // Apply the pixel-constrained dimensions
   const constrainedOptions = {
     ...options,
-    maxWidth: Math.min(targetWidth, options.maxWidth ?? targetWidth),
-    maxHeight: Math.min(targetHeight, options.maxHeight ?? targetHeight),
+    maxWidth: targetDimensions.width,
+    maxHeight: targetDimensions.height,
   };
 
   let minQuality = 1;
   let maxQuality = 95;
   let bestBlob: Blob | null = null;
+  let bestDimensions = targetDimensions;
   let iterations = 0;
   const maxIterations = 8; // Limit iterations to avoid infinite loops
 
   while (iterations < maxIterations && maxQuality - minQuality > 5) {
     const quality = Math.floor((minQuality + maxQuality) / 2);
-    const blob = await compressOnce(file, { ...constrainedOptions, quality });
+    const compressed = await compressOnce(file, { ...constrainedOptions, quality });
+    const blob = compressed.blob;
 
     if (blob.size <= targetBytes) {
       // Success! But try to get higher quality if possible
       bestBlob = blob;
+      bestDimensions = compressed.dimensions;
       minQuality = quality;
     } else {
       // Too large, reduce quality
@@ -153,24 +250,28 @@ async function compressToTargetSize(
 
   // If we still don't have a result, try minimum quality
   if (!bestBlob) {
-    bestBlob = await compressOnce(file, { ...constrainedOptions, quality: minQuality });
+    const compressed = await compressOnce(file, { ...constrainedOptions, quality: minQuality });
+    bestBlob = compressed.blob;
+    bestDimensions = compressed.dimensions;
   }
 
   // If still too large after quality reduction, reduce dimensions further
   if (bestBlob.size > targetBytes) {
     const scaleFactor = Math.sqrt(targetBytes / bestBlob.size);
-    const newMaxWidth = Math.floor(targetWidth * scaleFactor);
-    const newMaxHeight = Math.floor(targetHeight * scaleFactor);
+    const newMaxWidth = Math.floor(targetDimensions.width * scaleFactor);
+    const newMaxHeight = Math.floor(targetDimensions.height * scaleFactor);
 
-    bestBlob = await compressOnce(file, {
+    const compressed = await compressOnce(file, {
       ...constrainedOptions,
       quality: 75,
       maxWidth: newMaxWidth,
       maxHeight: newMaxHeight,
     });
+    bestBlob = compressed.blob;
 
-    targetWidth = newMaxWidth;
-    targetHeight = newMaxHeight;
+    targetDimensions = compressed.dimensions;
+  } else {
+    targetDimensions = bestDimensions;
   }
 
   const reductionPercent = Math.round(((originalSize - bestBlob.size) / originalSize) * 100);
@@ -180,7 +281,7 @@ async function compressToTargetSize(
     originalSize,
     compressedSize: bestBlob.size,
     reductionPercent,
-    dimensions: { width: targetWidth, height: targetHeight },
+    dimensions: targetDimensions,
   };
 }
 
@@ -196,7 +297,7 @@ async function compressOnce(
     format?: 'jpeg' | 'png' | 'webp';
     maintainAspectRatio?: boolean;
   }
-): Promise<Blob> {
+): Promise<ICompressionPassResult> {
   const {
     quality = 80,
     maxWidth,
@@ -253,16 +354,25 @@ async function compressOnce(
 
       URL.revokeObjectURL(objectUrl);
 
+      const outputType = `image/${format}`;
+      const outputQuality = format === 'png' ? undefined : quality / 100;
+
       canvas.toBlob(
         blob => {
           if (blob) {
-            resolve(blob);
+            resolve({
+              blob,
+              dimensions: {
+                width: targetWidth,
+                height: targetHeight,
+              },
+            });
           } else {
             reject(new Error('Failed to compress image'));
           }
         },
-        `image/${format}`,
-        quality / 100
+        outputType,
+        outputQuality
       );
     };
 
