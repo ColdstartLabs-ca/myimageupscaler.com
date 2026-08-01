@@ -24,6 +24,9 @@ export const MODEL_MAX_INPUT_PIXELS: Record<string, number> = {
   'nano-banana-2': 4_000_000, // 4M pixels - capable model
 } as const;
 
+/** Largest input side verified for the tiled Quick 2x fallback. */
+export const SCALE_PRESERVING_FALLBACK_MAX_SIDE = 2048;
+
 /**
  * Replicate per-output-image pricing verified against June/July 2026 invoices.
  * Resolution keys intentionally mirror the provider API values.

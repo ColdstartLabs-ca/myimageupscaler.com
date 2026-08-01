@@ -1,7 +1,8 @@
-import { MODEL_MAX_INPUT_PIXELS } from '@shared/config/model-costs.config';
+import {
+  MODEL_MAX_INPUT_PIXELS,
+  SCALE_PRESERVING_FALLBACK_MAX_SIDE,
+} from '@shared/config/model-costs.config';
 import type { ModelId } from '@shared/types/coreflow.types';
-
-const MAX_VERIFIED_FALLBACK_SIDE = 2048;
 
 interface IScalePreservingModelInput {
   modelId: ModelId;
@@ -32,8 +33,8 @@ export function resolveScalePreservingModel({
   if (
     modelId === 'real-esrgan' &&
     scale === 2 &&
-    width <= MAX_VERIFIED_FALLBACK_SIDE &&
-    height <= MAX_VERIFIED_FALLBACK_SIDE &&
+    width <= SCALE_PRESERVING_FALLBACK_MAX_SIDE &&
+    height <= SCALE_PRESERVING_FALLBACK_MAX_SIDE &&
     pixels > MODEL_MAX_INPUT_PIXELS['real-esrgan'] &&
     pixels <= MODEL_MAX_INPUT_PIXELS['clarity-upscaler']
   ) {

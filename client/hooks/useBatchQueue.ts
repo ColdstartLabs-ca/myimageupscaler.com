@@ -261,7 +261,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     let fileToProcess = item.file;
 
     try {
-      const prepared = await prepareFileForProcessing(item.file, config.qualityTier);
+      const prepared = await prepareFileForProcessing(item.file, config.qualityTier, config.scale);
       fileToProcess = prepared.file;
 
       if (prepared.resized) {

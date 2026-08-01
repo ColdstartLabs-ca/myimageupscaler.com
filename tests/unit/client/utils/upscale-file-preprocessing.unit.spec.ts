@@ -39,20 +39,98 @@ describe('prepareFileForProcessing', () => {
     expect(compressImage).not.toHaveBeenCalled();
   });
 
-  it('never downsizes Quick inputs because scale is relative to the original', async () => {
+  it('keeps Quick 2x originals that fit the scale-preserving fallback', async () => {
     const file = new File(['image'], 'photo.png', { type: 'image/png' });
-    vi.mocked(loadImageDimensions).mockResolvedValue({ width: 3006, height: 1994 });
+    vi.mocked(loadImageDimensions).mockResolvedValue({ width: 2048, height: 2048 });
 
-    const result = await prepareFileForProcessing(file, 'quick');
+    const result = await prepareFileForProcessing(file, 'quick', 2);
 
     expect(result.resized).toBe(false);
     expect(result.file).toBe(file);
     expect(result.maxPixels).toBeNull();
     expect(result.dimensions).toEqual({
-      width: 3006,
-      height: 1994,
-      pixels: 5_993_964,
+      width: 2048,
+      height: 2048,
+      pixels: 4_194_304,
     });
+    expect(compressImage).not.toHaveBeenCalled();
+  });
+
+  it('auto-resizes Quick 2x images outside the scale-preserving fallback envelope', async () => {
+    const file = new File(['image'], 'katie-photo.png', { type: 'image/png' });
+    vi.mocked(loadImageDimensions).mockResolvedValue({ width: 1700, height: 2532 });
+    vi.mocked(compressImage).mockResolvedValue({
+      blob: new Blob(['resized'], { type: 'image/jpeg' }),
+      originalSize: 1000,
+      compressedSize: 800,
+      reductionPercent: 20,
+      dimensions: { width: 1375, height: 2048 },
+    });
+
+    const result = await prepareFileForProcessing(file, 'quick', 2);
+
+    expect(compressImage).toHaveBeenCalledWith(file, {
+      maxPixels: 4_194_304,
+      maxWidth: 2048,
+      maxHeight: 2048,
+      format: 'jpeg',
+      maintainAspectRatio: true,
+    });
+    expect(result.resized).toBe(true);
+    expect(result.dimensions).toEqual({
+      width: 1375,
+      height: 2048,
+      pixels: 2_816_000,
+    });
+  });
+
+  it('auto-resizes Quick 2x images that only exceed the verified fallback side', async () => {
+    const file = new File(['image'], 'tall-photo.png', { type: 'image/png' });
+    vi.mocked(loadImageDimensions).mockResolvedValue({ width: 1700, height: 2300 });
+    vi.mocked(compressImage).mockResolvedValue({
+      blob: new Blob(['resized'], { type: 'image/jpeg' }),
+      originalSize: 1000,
+      compressedSize: 800,
+      reductionPercent: 20,
+      dimensions: { width: 1514, height: 2048 },
+    });
+
+    const result = await prepareFileForProcessing(file, 'quick', 2);
+
+    expect(compressImage).toHaveBeenCalled();
+    expect(result.resized).toBe(true);
+  });
+
+  it('uses the Real-ESRGAN limit when auto-resizing oversized Quick 4x inputs', async () => {
+    const file = new File(['image'], 'quick-4x.png', { type: 'image/png' });
+    vi.mocked(loadImageDimensions).mockResolvedValue({ width: 1700, height: 2532 });
+    vi.mocked(compressImage).mockResolvedValue({
+      blob: new Blob(['resized'], { type: 'image/jpeg' }),
+      originalSize: 1000,
+      compressedSize: 700,
+      reductionPercent: 30,
+      dimensions: { width: 1186, height: 1767 },
+    });
+
+    const result = await prepareFileForProcessing(file, 'quick', 4);
+
+    expect(compressImage).toHaveBeenCalledWith(file, {
+      maxPixels: 2_096_704,
+      format: 'jpeg',
+      maintainAspectRatio: true,
+    });
+    expect(result.resized).toBe(true);
+  });
+
+  it('keeps unsupported Quick originals when auto-resize is disabled', async () => {
+    const file = new File(['image'], 'quick-original.png', { type: 'image/png' });
+    vi.mocked(isAutoResizeEnabled).mockReturnValue(false);
+    vi.mocked(loadImageDimensions).mockResolvedValue({ width: 1700, height: 2532 });
+
+    const result = await prepareFileForProcessing(file, 'quick', 2);
+
+    expect(result.file).toBe(file);
+    expect(result.resized).toBe(false);
     expect(compressImage).not.toHaveBeenCalled();
   });
 

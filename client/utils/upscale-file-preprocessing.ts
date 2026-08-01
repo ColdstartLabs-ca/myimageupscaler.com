@@ -1,4 +1,8 @@
 import { QualityTier } from '@/shared/types/coreflow.types';
+import {
+  MODEL_MAX_INPUT_PIXELS,
+  SCALE_PRESERVING_FALLBACK_MAX_SIDE,
+} from '@shared/config/model-costs.config';
 import { getMaxPixelsForQualityTier } from '@shared/validation/upscale.schema';
 import { loadImageDimensions } from './file-validation';
 import { compressImage } from './image-compression';
@@ -28,7 +32,8 @@ function replaceExtension(fileName: string, extension: string): string {
  */
 export async function prepareFileForProcessing(
   file: File,
-  qualityTier: QualityTier
+  qualityTier: QualityTier,
+  scale = 2
 ): Promise<IPreparedFileForProcessing> {
   const maxPixels = getMaxPixelsForQualityTier(qualityTier);
 
@@ -50,7 +55,42 @@ export async function prepareFileForProcessing(
   const pixels = width * height;
   const dimensions = { width, height, pixels };
 
-  if (maxPixels === null || pixels <= maxPixels || !isAutoResizeEnabled()) {
+  let resizeMaxPixels = maxPixels;
+  let resizeMaxSide: number | undefined;
+  let requiresResize = false;
+
+  if (qualityTier === 'quick') {
+    const realEsrganMaxPixels = MODEL_MAX_INPUT_PIXELS['real-esrgan'];
+    const fitsRealEsrgan = pixels <= realEsrganMaxPixels;
+    const fitsScalePreservingFallback =
+      scale === 2 &&
+      width <= SCALE_PRESERVING_FALLBACK_MAX_SIDE &&
+      height <= SCALE_PRESERVING_FALLBACK_MAX_SIDE &&
+      pixels <= MODEL_MAX_INPUT_PIXELS['clarity-upscaler'];
+
+    if (fitsRealEsrgan || fitsScalePreservingFallback) {
+      return {
+        file,
+        resized: false,
+        maxPixels,
+        dimensions,
+      };
+    }
+
+    requiresResize = true;
+    if (scale === 2) {
+      resizeMaxPixels = MODEL_MAX_INPUT_PIXELS['clarity-upscaler'];
+      resizeMaxSide = SCALE_PRESERVING_FALLBACK_MAX_SIDE;
+    } else {
+      resizeMaxPixels = realEsrganMaxPixels;
+    }
+  }
+
+  if (
+    resizeMaxPixels === null ||
+    (!requiresResize && pixels <= resizeMaxPixels) ||
+    !isAutoResizeEnabled()
+  ) {
     return {
       file,
       resized: false,
@@ -60,7 +100,13 @@ export async function prepareFileForProcessing(
   }
 
   const result = await compressImage(file, {
-    maxPixels,
+    maxPixels: resizeMaxPixels,
+    ...(resizeMaxSide
+      ? {
+          maxWidth: resizeMaxSide,
+          maxHeight: resizeMaxSide,
+        }
+      : {}),
     format: 'jpeg',
     maintainAspectRatio: true,
   });
