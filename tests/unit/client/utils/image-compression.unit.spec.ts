@@ -193,6 +193,47 @@ describe('image-compression', () => {
     expect(result.dimensions).toEqual({ width: 687, height: 1023 });
   });
 
+  // The dimension-reduction scale factor is derived from a blob encoded at the
+  // binary search's (low) quality, but the reduction pass re-encodes at quality
+  // 75. A single pass can therefore still exceed the ceiling, which used to be
+  // returned as-is and rejected server-side by the tier upload limit.
+  it('keeps reducing dimensions when one reduction pass still exceeds the byte ceiling', async () => {
+    const targetBytes = 1000;
+    const { toBlob } = mockCanvasEnvironment(
+      2000,
+      2000,
+      ({ canvasWidth, canvasHeight, quality }) => {
+        const area = canvasWidth * canvasHeight;
+        // Quality 75 encodes twice as large as the low-quality search passes.
+        const size = Math.round(area / (Number(quality) >= 0.75 ? 500 : 1000));
+        return new Blob(['x'.repeat(size)], { type: 'image/jpeg' });
+      }
+    );
+    const file = new File(['jpg'], 'dense.jpg', { type: 'image/jpeg' });
+
+    const result = await compressImage(file, { targetSizeBytes: targetBytes });
+
+    expect(result.blob.size).toBeLessThanOrEqual(targetBytes);
+    expect(result.dimensions).toEqual({ width: 707, height: 707 });
+    expect(toBlob).toHaveBeenLastCalledWith(expect.any(Function), 'image/jpeg', 0.75);
+  });
+
+  it('guarantees the byte ceiling for oversized lossless input', async () => {
+    const maxBytes = 1000;
+    mockCanvasEnvironment(2000, 2000, ({ canvasWidth, canvasHeight, type, quality }) => {
+      // PNG stays huge regardless of dimensions; JPEG scales with area.
+      if (type === 'image/png') return new Blob(['x'.repeat(50_000)], { type });
+      const area = canvasWidth * canvasHeight;
+      const size = Math.round(area / (Number(quality) >= 0.75 ? 500 : 1000));
+      return new Blob(['x'.repeat(size)], { type: type ?? 'image/jpeg' });
+    });
+    const file = new File(['png'], 'lossless.png', { type: 'image/png' });
+
+    const result = await compressImageWithinByteLimit(file, {}, maxBytes);
+
+    expect(result.blob.size).toBeLessThanOrEqual(maxBytes);
+  });
+
   it('applies the pixel cap on the byte-target path', async () => {
     const { canvas } = mockCanvasEnvironment(3000, 3000);
     const file = new File(['jpg'], 'huge.jpg', { type: 'image/jpeg' });

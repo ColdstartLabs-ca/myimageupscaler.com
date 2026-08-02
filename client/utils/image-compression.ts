@@ -255,11 +255,19 @@ async function compressToTargetSize(
     bestDimensions = compressed.dimensions;
   }
 
-  // If still too large after quality reduction, reduce dimensions further
-  if (bestBlob.size > targetBytes) {
+  // If still too large after quality reduction, reduce dimensions further.
+  // The scale factor is derived from a blob encoded at the binary search's
+  // quality, while this pass re-encodes at quality 75, so a single pass can
+  // still land over the ceiling. Callers treat the ceiling as a guarantee
+  // (tier upload limits), so keep shrinking instead of returning oversized.
+  const maxReductionPasses = 3;
+  let reductionPasses = 0;
+  let reducedDimensions = targetDimensions;
+
+  while (bestBlob.size > targetBytes && reductionPasses < maxReductionPasses) {
     const scaleFactor = Math.sqrt(targetBytes / bestBlob.size);
-    const newMaxWidth = Math.floor(targetDimensions.width * scaleFactor);
-    const newMaxHeight = Math.floor(targetDimensions.height * scaleFactor);
+    const newMaxWidth = Math.max(1, Math.floor(reducedDimensions.width * scaleFactor));
+    const newMaxHeight = Math.max(1, Math.floor(reducedDimensions.height * scaleFactor));
 
     const compressed = await compressOnce(file, {
       ...constrainedOptions,
@@ -268,11 +276,11 @@ async function compressToTargetSize(
       maxHeight: newMaxHeight,
     });
     bestBlob = compressed.blob;
-
-    targetDimensions = compressed.dimensions;
-  } else {
-    targetDimensions = bestDimensions;
+    reducedDimensions = compressed.dimensions;
+    reductionPasses++;
   }
+
+  targetDimensions = reductionPasses > 0 ? reducedDimensions : bestDimensions;
 
   const reductionPercent = Math.round(((originalSize - bestBlob.size) / originalSize) * 100);
 
