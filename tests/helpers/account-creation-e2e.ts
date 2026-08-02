@@ -483,12 +483,12 @@ export class AccountCreationHarness {
   private async stopDashboardHydration(): Promise<void> {
     const pages = [...this.dashboardRoutePages];
     this.dashboardRoutePages.clear();
+    await Promise.all([...this.activeDashboardReads]);
     await Promise.all(
       pages.map(page =>
         page.isClosed() ? Promise.resolve() : page.unroute('**/rest/v1/rpc/get_user_data')
       )
     );
-    await Promise.all([...this.activeDashboardReads]);
   }
 
   private async signIn(user: IAccountCreationUser): Promise<Session> {
