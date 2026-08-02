@@ -12,6 +12,11 @@ import {
   replaceFileExtension,
 } from './image-output-format';
 import { isAutoResizeEnabled } from './auto-resize-preference';
+import {
+  normalizeImageUpscaledProperties,
+  type TFileSizeBucket,
+  type TImageMimeFamily,
+} from '@server/analytics/core-event-contract';
 
 export interface IPreparedFileForProcessing {
   file: File;
@@ -21,6 +26,26 @@ export interface IPreparedFileForProcessing {
     width: number;
     height: number;
     pixels: number;
+  };
+}
+
+export interface IPrivacySafeFileTelemetry {
+  fileType: TImageMimeFamily;
+  fileSizeBucket: TFileSizeBucket;
+}
+
+/** Return only the bounded file dimensions used by product telemetry. */
+export function getPrivacySafeFileTelemetry(
+  file: Pick<File, 'type' | 'size'>
+): IPrivacySafeFileTelemetry {
+  const normalized = normalizeImageUpscaledProperties({
+    fileType: file.type,
+    fileSizeBytes: file.size,
+  });
+
+  return {
+    fileType: normalized.fileType,
+    fileSizeBucket: normalized.fileSizeBucket,
   };
 }
 

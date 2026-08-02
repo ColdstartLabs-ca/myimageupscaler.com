@@ -116,6 +116,41 @@ describe('subscription retention offer route', () => {
     );
   });
 
+  test('suppresses a second retention alternative after a downgrade is already scheduled', async () => {
+    single.mockResolvedValue({
+      data: {
+        id: 'sub-1',
+        price_id: getPlanByKey('pro')?.stripePriceId,
+        scheduled_price_id: getPlanByKey('hobby')?.stripePriceId,
+      },
+    });
+
+    const response = await POST(
+      new NextRequest('http://localhost/api/subscriptions/retention-offer', {
+        method: 'POST',
+        headers: { authorization: 'Bearer token', 'content-type': 'application/json' },
+        body: JSON.stringify({ reason: 'too_expensive' }),
+      })
+    );
+
+    expect(response.status).toBe(200);
+    expect((await response.json()).data.offer).toBeNull();
+    expect(eventUpsert).not.toHaveBeenCalled();
+  });
+
+  test('rejects client-supplied retention offer fields during eligibility', async () => {
+    const response = await POST(
+      new NextRequest('http://localhost/api/subscriptions/retention-offer', {
+        method: 'POST',
+        headers: { authorization: 'Bearer token', 'content-type': 'application/json' },
+        body: JSON.stringify({ reason: 'too_expensive', targetPlanKey: 'hobby' }),
+      })
+    );
+
+    expect(response.status).toBe(400);
+    expect(eventUpsert).not.toHaveBeenCalled();
+  });
+
   test('keeps the deterministic holdout from seeing or accepting an offer', async () => {
     getUser.mockResolvedValue({ data: { user: { id: 'user-2' } }, error: null });
     const shown = await POST(

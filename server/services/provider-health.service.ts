@@ -4,6 +4,15 @@ const PROCESSING_PROVIDER_KEY = 'image-processing';
 const FAILURE_THRESHOLD = 5;
 const CIRCUIT_COOLDOWN_SECONDS = 300;
 
+export const PROCESSING_FAILURE_ALERT_POLICY = {
+  windowMinutes: 15,
+  minimumAttempts: 20,
+  warningRatio: 0.05,
+  criticalRatio: 0.1,
+  criticalBaselineMultiplier: 3,
+  alertCooldownMinutes: 30,
+} as const;
+
 export type ProviderFailureKind =
   | 'authentication'
   | 'billing'
@@ -26,9 +35,11 @@ export interface IProviderCircuitAvailability {
 
 export interface IProviderHealthAlertSnapshot {
   shouldAlert: boolean;
+  severity: 'warning' | 'critical' | null;
   attempts: number;
   failures: number;
   failureRatio: number;
+  baselineRatio: number | null;
   billingFailures: number;
   circuitStatus: 'closed' | 'open' | 'half_open';
   retryAt: Date | null;
@@ -36,9 +47,11 @@ export interface IProviderHealthAlertSnapshot {
 
 interface IDbProviderHealthAlert {
   should_alert: boolean;
+  severity?: 'warning' | 'critical' | null;
   attempts: number;
   failures: number;
   failure_ratio: number | string;
+  baseline_ratio?: number | string | null;
   billing_failures: number;
   circuit_status: 'closed' | 'open' | 'half_open';
   retry_at: string | null;
@@ -110,12 +123,14 @@ export const providerHealthService = {
   },
 
   async claimAlert(): Promise<IProviderHealthAlertSnapshot | null> {
-    const { data, error } = await supabaseAdmin.rpc('claim_provider_health_alert', {
+    const { data, error } = await supabaseAdmin.rpc('claim_provider_health_alert_v2', {
       p_provider: PROCESSING_PROVIDER_KEY,
-      p_window_minutes: 10,
-      p_min_attempts: 5,
-      p_failure_ratio: 0.5,
-      p_alert_cooldown_minutes: 30,
+      p_window_minutes: PROCESSING_FAILURE_ALERT_POLICY.windowMinutes,
+      p_min_attempts: PROCESSING_FAILURE_ALERT_POLICY.minimumAttempts,
+      p_warning_ratio: PROCESSING_FAILURE_ALERT_POLICY.warningRatio,
+      p_critical_ratio: PROCESSING_FAILURE_ALERT_POLICY.criticalRatio,
+      p_baseline_multiplier: PROCESSING_FAILURE_ALERT_POLICY.criticalBaselineMultiplier,
+      p_alert_cooldown_minutes: PROCESSING_FAILURE_ALERT_POLICY.alertCooldownMinutes,
     });
 
     if (error) {
@@ -130,9 +145,14 @@ export const providerHealthService = {
 
     return {
       shouldAlert: result.should_alert,
+      severity: result.severity ?? null,
       attempts: Number(result.attempts),
       failures: Number(result.failures),
       failureRatio: Number(result.failure_ratio),
+      baselineRatio:
+        result.baseline_ratio === null || result.baseline_ratio === undefined
+          ? null
+          : Number(result.baseline_ratio),
       billingFailures: Number(result.billing_failures),
       circuitStatus: result.circuit_status,
       retryAt: result.retry_at ? new Date(result.retry_at) : null,

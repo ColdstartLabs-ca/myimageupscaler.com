@@ -12,7 +12,10 @@ import {
   processImage,
   ProviderUnavailableError,
 } from '@client/utils/api-client';
-import { prepareFileForProcessing } from '@client/utils/upscale-file-preprocessing';
+import {
+  getPrivacySafeFileTelemetry,
+  prepareFileForProcessing,
+} from '@client/utils/upscale-file-preprocessing';
 import { buildProcessingAutoResizeToastValues } from '@client/utils/auto-resize-toast';
 import {
   calculateBatchProviderAwareCreditCost,
@@ -25,6 +28,7 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 import { analytics } from '@client/analytics';
 import { loadImageDimensions } from '@client/utils/file-validation';
+import { normalizeCoreEventProperties } from '@server/analytics/core-event-contract';
 
 interface IBatchProgress {
   current: number;
@@ -135,9 +139,10 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
       filesToAdd.forEach((file, index) => {
         // Funnel telemetry must not depend on asynchronous image decoding. A user can
         // navigate away before dimensions load, especially during the guest signup flow.
+        const fileTelemetry = getPrivacySafeFileTelemetry(file);
         analytics.track('image_uploaded', {
-          fileSize: file.size,
-          fileType: file.type,
+          fileSizeBucket: fileTelemetry.fileSizeBucket,
+          fileType: fileTelemetry.fileType,
           source,
           isGuest,
           batchPosition: currentCount + index,
@@ -355,10 +360,8 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         errorType = 'free_limit_exceeded';
         analytics.track('error_occurred', {
           errorType,
-          errorMessage: error.message,
+          errorMessage: 'Free processing limit reached',
           context: {
-            fileName: item.file.name,
-            fileSize: item.file.size,
             requiredCredits: error.requiredCredits,
             availableCredits: error.availableCredits,
           },
@@ -390,8 +393,6 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
           context: {
             limit: error.limit,
             attempted: queue.filter(i => i.status === ProcessingStatus.IDLE).length,
-            fileName: item.file.name,
-            fileSize: item.file.size,
           },
         });
 
@@ -419,10 +420,8 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         });
         analytics.track('error_occurred', {
           errorType,
-          errorMessage: error.message,
+          errorMessage: 'Image provider unavailable',
           context: {
-            fileName: item.file.name,
-            fileSize: item.file.size,
             retryAt: error.retryAt?.toISOString(),
           },
         });
@@ -443,10 +442,6 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         analytics.track('error_occurred', {
           errorType: 'insufficient_credits',
           errorMessage: 'Insufficient credits for operation',
-          context: {
-            fileName: item.file.name,
-            fileSize: item.file.size,
-          },
         });
         analytics.track('credit_wall_shown', {
           source: 'midbatch',
@@ -479,10 +474,6 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         analytics.track('error_occurred', {
           errorType: 'timeout',
           errorMessage: 'Request timeout during processing',
-          context: {
-            fileName: item.file.name,
-            fileSize: item.file.size,
-          },
         });
 
         // Show a specific error message for timeout
@@ -507,12 +498,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         // Track error_occurred event for unknown errors
         analytics.track('error_occurred', {
           errorType: 'upscale_failed',
-          errorMessage: errorMessage.substring(0, 500), // Limit error message length
-          context: {
-            fileName: item.file.name,
-            fileSize: item.file.size,
-            fileType: item.file.type,
-          },
+          errorMessage: 'Image processing failed',
         });
       }
 
@@ -539,15 +525,32 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
           ? `${inputWidth * config.scale}x${inputHeight * config.scale}`
           : undefined;
 
-      // Track upscale completed event
-      analytics.track('upscale_completed', {
-        durationMs,
-        modelUsed: config.qualityTier,
-        inputResolution,
-        outputResolution,
-        success,
-        errorType: success ? undefined : errorType,
-      });
+      // The server owns terminal telemetry for API-backed processing. Browser
+      // background removal is the only client-owned terminal path.
+      if (config.qualityTier === 'bg-removal') {
+        if (success) {
+          analytics.track('upscale_completed', {
+            durationMs,
+            modelUsed: config.qualityTier,
+            inputResolution,
+            outputResolution,
+            success: true,
+          });
+        } else {
+          analytics.track('processing_failed', {
+            ...normalizeCoreEventProperties('processing_failed', {
+              errorType,
+              reason: errorType,
+              provider: 'unknown',
+              model: 'unknown',
+              qualityTier: config.qualityTier,
+              retryable: errorType === 'timeout' || errorType === 'provider_unavailable',
+              durationMs,
+              requestId: 'unknown',
+            }),
+          });
+        }
+      }
 
       // Last-resort state invariant: every settled request must leave the queue
       // in a terminal state, even if a future catch branch returns early.

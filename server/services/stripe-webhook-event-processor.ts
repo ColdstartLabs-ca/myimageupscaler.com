@@ -91,6 +91,28 @@ export function extractPreviousPriceId(
   return typeof directPrice === 'string' ? directPrice : null;
 }
 
+export function extractPreviousCancelAtPeriodEnd(
+  previousAttributes: Record<string, unknown> | null | undefined
+): boolean | null {
+  if (!previousAttributes || typeof previousAttributes !== 'object') {
+    return null;
+  }
+
+  const previousValue = previousAttributes.cancel_at_period_end;
+  return typeof previousValue === 'boolean' ? previousValue : null;
+}
+
+export function extractPreviousSubscriptionStatus(
+  previousAttributes: Record<string, unknown> | null | undefined
+): string | null {
+  if (!previousAttributes || typeof previousAttributes !== 'object') {
+    return null;
+  }
+
+  const previousValue = previousAttributes.status;
+  return typeof previousValue === 'string' ? previousValue : null;
+}
+
 export async function processStripeWebhookEvent(
   event: Stripe.Event
 ): Promise<IWebhookProcessResult> {
@@ -132,12 +154,25 @@ export async function processStripeWebhookEvent(
     case 'customer.subscription.created':
     case 'customer.subscription.updated':
       await SubscriptionHandler.handleSubscriptionUpdate(event.data.object as Stripe.Subscription, {
+        eventType:
+          event.type === 'customer.subscription.created'
+            ? 'customer.subscription.created'
+            : 'customer.subscription.updated',
+        lifecycleAction: event.type === 'customer.subscription.created' ? 'created' : 'updated',
         previousPriceId: extractPreviousPriceId(event.data.previous_attributes),
+        previousCancelAtPeriodEnd: extractPreviousCancelAtPeriodEnd(event.data.previous_attributes),
+        previousStatus: extractPreviousSubscriptionStatus(event.data.previous_attributes),
       });
       return { handled: true };
 
     case 'customer.subscription.deleted':
-      await SubscriptionHandler.handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
+      await SubscriptionHandler.handleSubscriptionDeleted(
+        event.data.object as Stripe.Subscription,
+        {
+          eventType: 'customer.subscription.deleted',
+          lifecycleAction: 'deleted',
+        }
+      );
       return { handled: true };
 
     case 'customer.subscription.trial_will_end':

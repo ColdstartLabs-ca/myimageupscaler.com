@@ -209,4 +209,29 @@ describe('Analytics Fixes - Structural Checks', () => {
       expect(upscaleRouteSource).toContain("errorType: 'unexpected_internal_error'");
     });
   });
+
+  describe('TASK-7 through TASK-9: core telemetry contract', () => {
+    test('server producers use the shared core event normalizer', async () => {
+      const fs = await import('fs');
+      const setupSource = fs.readFileSync('app/api/users/setup/route.ts', 'utf-8');
+      const upscaleSource = fs.readFileSync('app/api/upscale/route.ts', 'utf-8');
+
+      expect(setupSource).toContain("normalizeCoreEventProperties('account_created'");
+      expect(upscaleSource).toContain("normalizeCoreEventProperties('image_upscaled'");
+      expect(upscaleSource).toContain("normalizeCoreEventProperties('processing_failed'");
+    });
+
+    test('processing failure telemetry does not send raw messages or stacks', async () => {
+      const fs = await import('fs');
+      const upscaleSource = fs.readFileSync('app/api/upscale/route.ts', 'utf-8');
+      const helperStart = upscaleSource.indexOf('const trackProcessingFailure');
+      const helperEnd = upscaleSource.indexOf('const trackImageUpscaled');
+      const helperSource = upscaleSource.slice(helperStart, helperEnd);
+
+      expect(helperSource).not.toContain('message: error.message');
+      expect(helperSource).not.toContain('message: errorMessage');
+      expect(upscaleSource).not.toContain('stack: error.stack');
+      expect(upscaleSource).not.toContain('message: error.message');
+    });
+  });
 });

@@ -9,6 +9,8 @@ import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import Stripe from 'stripe';
 import {
   extractPreviousPriceId,
+  extractPreviousCancelAtPeriodEnd,
+  extractPreviousSubscriptionStatus,
   processStripeWebhookEvent,
   type IWebhookProcessResult,
 } from '../../../server/services/stripe-webhook-event-processor';
@@ -295,6 +297,21 @@ describe('Stripe Webhook Event Processor', () => {
         const result = extractPreviousPriceId(previousAttributes);
         expect(result).toBeNull();
       });
+
+      test('should extract previous cancel_at_period_end when Stripe includes the changed field', () => {
+        expect(extractPreviousCancelAtPeriodEnd({ cancel_at_period_end: true })).toBe(true);
+        expect(extractPreviousCancelAtPeriodEnd({ cancel_at_period_end: false })).toBe(false);
+      });
+
+      test('should return null when cancel_at_period_end was not part of the update', () => {
+        expect(extractPreviousCancelAtPeriodEnd({ status: 'active' })).toBeNull();
+        expect(extractPreviousCancelAtPeriodEnd(null)).toBeNull();
+      });
+
+      test('should extract previous subscription status for incomplete activation', () => {
+        expect(extractPreviousSubscriptionStatus({ status: 'incomplete' })).toBe('incomplete');
+        expect(extractPreviousSubscriptionStatus({ status: 42 })).toBeNull();
+      });
     });
 
     describe('priority order', () => {
@@ -480,7 +497,7 @@ describe('Stripe Webhook Event Processor', () => {
     });
 
     describe('customer.subscription.created', () => {
-      test('should route to SubscriptionHandler.handleSubscriptionUpdate with previousPriceId', async () => {
+      test('should route to SubscriptionHandler.handleSubscriptionUpdate with explicit create lifecycle context', async () => {
         const event = {
           id: 'evt_test',
           type: 'customer.subscription.created',
@@ -501,7 +518,13 @@ describe('Stripe Webhook Event Processor', () => {
         expect(result.handled).toBe(true);
         expect(MockedSubscriptionHandler.handleSubscriptionUpdate).toHaveBeenCalledWith(
           event.data.object,
-          { previousPriceId: 'price_old' }
+          {
+            eventType: 'customer.subscription.created',
+            lifecycleAction: 'created',
+            previousPriceId: 'price_old',
+            previousCancelAtPeriodEnd: null,
+            previousStatus: null,
+          }
         );
       });
 
@@ -521,13 +544,19 @@ describe('Stripe Webhook Event Processor', () => {
         expect(result.handled).toBe(true);
         expect(MockedSubscriptionHandler.handleSubscriptionUpdate).toHaveBeenCalledWith(
           event.data.object,
-          { previousPriceId: null }
+          {
+            eventType: 'customer.subscription.created',
+            lifecycleAction: 'created',
+            previousPriceId: null,
+            previousCancelAtPeriodEnd: null,
+            previousStatus: null,
+          }
         );
       });
     });
 
     describe('customer.subscription.updated', () => {
-      test('should route to SubscriptionHandler.handleSubscriptionUpdate with previousPriceId', async () => {
+      test('should route to SubscriptionHandler.handleSubscriptionUpdate with explicit update lifecycle context', async () => {
         const event = {
           id: 'evt_test',
           type: 'customer.subscription.updated',
@@ -537,6 +566,8 @@ describe('Stripe Webhook Event Processor', () => {
               items: {
                 data: [{ price: 'price_old' }],
               },
+              cancel_at_period_end: false,
+              status: 'incomplete',
             },
           },
         } as Stripe.Event;
@@ -548,13 +579,19 @@ describe('Stripe Webhook Event Processor', () => {
         expect(result.handled).toBe(true);
         expect(MockedSubscriptionHandler.handleSubscriptionUpdate).toHaveBeenCalledWith(
           event.data.object,
-          { previousPriceId: 'price_old' }
+          {
+            eventType: 'customer.subscription.updated',
+            lifecycleAction: 'updated',
+            previousPriceId: 'price_old',
+            previousCancelAtPeriodEnd: false,
+            previousStatus: 'incomplete',
+          }
         );
       });
     });
 
     describe('customer.subscription.deleted', () => {
-      test('should route to SubscriptionHandler.handleSubscriptionDeleted', async () => {
+      test('should route to SubscriptionHandler.handleSubscriptionDeleted with explicit delete lifecycle context', async () => {
         const event = {
           id: 'evt_test',
           type: 'customer.subscription.deleted',
@@ -569,7 +606,11 @@ describe('Stripe Webhook Event Processor', () => {
 
         expect(result.handled).toBe(true);
         expect(MockedSubscriptionHandler.handleSubscriptionDeleted).toHaveBeenCalledWith(
-          event.data.object
+          event.data.object,
+          {
+            eventType: 'customer.subscription.deleted',
+            lifecycleAction: 'deleted',
+          }
         );
       });
     });

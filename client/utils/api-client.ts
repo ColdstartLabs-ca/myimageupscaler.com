@@ -2,6 +2,7 @@ import { IUpscaleConfig, ProcessingStage } from '@/shared/types/coreflow.types';
 import { TIMEOUTS } from '@shared/config/timeouts.config';
 import { createClient } from '@shared/utils/supabase/client';
 import { analytics } from '@client/analytics';
+import { normalizeCoreEventProperties } from '@server/analytics/core-event-contract';
 
 /**
  * Error class for batch limit violations
@@ -220,15 +221,18 @@ export const processImage = async (
       }
 
       const deductData = await deductRes.json();
+      const processingStartedAt = Date.now();
 
       const { processBackgroundRemoval } = await import('@/client/utils/bg-removal');
       const result = await processBackgroundRemoval(file, onProgress);
       analytics.track('image_upscaled', {
-        qualityTier: 'bg-removal',
-        mode: 'bg-removal',
-        creditsUsed: deductData.creditsUsed,
-        creditsRemaining: deductData.creditsRemaining,
-        source: 'completed_processing',
+        ...normalizeCoreEventProperties('image_upscaled', {
+          qualityTier: 'bg-removal',
+          scaleFactor: 1,
+          fileType: file.type,
+          fileSizeBytes: file.size,
+          durationMs: Date.now() - processingStartedAt,
+        }),
       });
       return {
         imageUrl: result.imageUrl,

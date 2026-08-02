@@ -27,6 +27,7 @@
  */
 
 import type { IAnalyticsEvent } from '@server/analytics/types';
+import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
 import { TIMEOUTS } from '@shared/config/timeouts.config';
 import { GA4_EVENT_MAP, GA4_CONVERSION_EVENTS } from '@shared/analytics/types';
@@ -41,6 +42,109 @@ export interface IServerTrackOptions {
   deviceId?: string;
   /** Amplitude session_id (Unix ms) — stitches server events to the browser session that triggered them */
   sessionId?: number;
+  /** Stable provider object used to deduplicate billing telemetry. */
+  sourceObjectId?: string;
+  /** Stable lifecycle action paired with sourceObjectId. */
+  lifecycleAction?: string;
+  /** Claim the billing analytics deduplication record before sending. */
+  deduplicate?: boolean;
+  /** Explicit Amplitude insert_id override. */
+  insertId?: string;
+}
+
+export function buildAnalyticsInsertId(
+  eventName: IAnalyticsEvent['name'],
+  options: Pick<IServerTrackOptions, 'sourceObjectId' | 'lifecycleAction' | 'insertId'>
+): string | undefined {
+  if (options.insertId) return options.insertId;
+  if (!options.sourceObjectId) return undefined;
+
+  return `${eventName}:${options.sourceObjectId}:${options.lifecycleAction || 'event'}`;
+}
+
+interface IBillingAnalyticsClaimError {
+  code?: string;
+  message?: string;
+}
+
+interface IBillingAnalyticsClaimResult {
+  shouldSend: boolean;
+  claimed: boolean;
+}
+
+async function claimBillingAnalyticsEvent(
+  eventName: IAnalyticsEvent['name'],
+  options: IServerTrackOptions,
+  insertId: string | undefined
+): Promise<IBillingAnalyticsClaimResult> {
+  if (!options.deduplicate || !options.sourceObjectId || !options.lifecycleAction || !insertId) {
+    return { shouldSend: true, claimed: false };
+  }
+
+  try {
+    const { error } = await supabaseAdmin.from('billing_analytics_events').insert({
+      event_key: insertId,
+      event_name: eventName,
+      source_object_id: options.sourceObjectId,
+      lifecycle_action: options.lifecycleAction,
+      user_id: options.userId ?? null,
+    });
+
+    if (error?.code === '23505') {
+      return { shouldSend: false, claimed: false };
+    }
+
+    if (!error) return { shouldSend: true, claimed: true };
+
+    console.error('[Analytics] Billing event deduplication claim failed', {
+      event: eventName,
+      sourceObjectId: options.sourceObjectId,
+      lifecycleAction: options.lifecycleAction,
+      error: error.message,
+    });
+  } catch (error) {
+    // A telemetry claim must never prevent a successful Stripe operation.
+    const claimError = error as IBillingAnalyticsClaimError;
+    console.error('[Analytics] Billing event deduplication claim unavailable', {
+      event: eventName,
+      sourceObjectId: options.sourceObjectId,
+      lifecycleAction: options.lifecycleAction,
+      error: claimError.message || String(error),
+    });
+  }
+
+  return { shouldSend: true, claimed: false };
+}
+
+async function releaseBillingAnalyticsClaim(
+  eventName: IAnalyticsEvent['name'],
+  options: IServerTrackOptions,
+  insertId: string | undefined
+): Promise<void> {
+  if (!insertId || !options.sourceObjectId || !options.lifecycleAction) return;
+
+  try {
+    const { error } = await supabaseAdmin
+      .from('billing_analytics_events')
+      .delete()
+      .eq('event_key', insertId);
+    if (error) {
+      console.error('[Analytics] Billing event deduplication claim release failed', {
+        event: eventName,
+        sourceObjectId: options.sourceObjectId,
+        lifecycleAction: options.lifecycleAction,
+        error: error.message,
+      });
+    }
+  } catch (error) {
+    const releaseError = error as IBillingAnalyticsClaimError;
+    console.error('[Analytics] Billing event deduplication claim release unavailable', {
+      event: eventName,
+      sourceObjectId: options.sourceObjectId,
+      lifecycleAction: options.lifecycleAction,
+      error: releaseError.message || String(error),
+    });
+  }
 }
 
 export async function fetchAnalyticsWithTimeout(
@@ -120,10 +224,10 @@ export interface IIdentifyEventProperties {
  */
 export async function trackServerEvent(
   name: IAnalyticsEvent['name'],
-  properties: Record<string, unknown>,
+  properties: object,
   options: IServerTrackOptions
 ): Promise<boolean> {
-  const { apiKey, userId, deviceId, sessionId } = options;
+  const { apiKey, userId, deviceId, sessionId, sourceObjectId, lifecycleAction } = options;
 
   if (!apiKey) {
     console.error('[Analytics] Missing Amplitude API key for server event', {
@@ -146,6 +250,20 @@ export async function trackServerEvent(
     return true;
   }
 
+  const insertId = buildAnalyticsInsertId(name, options);
+  const claim = await claimBillingAnalyticsEvent(name, options, insertId);
+  if (!claim.shouldSend) return true;
+
+  const eventProperties: Record<string, unknown> = {
+    ...(properties as Record<string, unknown>),
+    ...(name !== '$identify' && sourceObjectId && !('sourceObjectId' in properties)
+      ? { sourceObjectId }
+      : {}),
+    ...(name !== '$identify' && lifecycleAction && !('lifecycleAction' in properties)
+      ? { lifecycleAction }
+      : {}),
+  };
+
   // Build the event payload
   // For $identify events, use user_properties instead of event_properties
   const isIdentifyEvent = name === '$identify';
@@ -156,15 +274,16 @@ export async function trackServerEvent(
     device_id: deviceId || `server-${Date.now()}`,
     time: Date.now(),
     ...(sessionId !== undefined ? { session_id: sessionId } : {}),
+    ...(insertId ? { insert_id: insertId } : {}),
   };
 
   if (isIdentifyEvent) {
     // For $identify, the properties contain user property operations
     // These go in user_properties, not event_properties
-    event.user_properties = properties;
+    event.user_properties = eventProperties;
   } else {
     // For regular events, properties are event_properties
-    event.event_properties = properties;
+    event.event_properties = eventProperties;
   }
 
   try {
@@ -188,13 +307,19 @@ export async function trackServerEvent(
         event: name,
         userId,
       });
+      if (claim.claimed) {
+        await releaseBillingAnalyticsClaim(name, options, insertId);
+      }
     }
 
     // Also send to GA4 Measurement Protocol (fire-and-forget, non-blocking)
-    trackGA4ServerEvent(name, properties, { userId, deviceId }).catch(() => {});
+    trackGA4ServerEvent(name, eventProperties, { userId, deviceId }).catch(() => {});
 
     return response.ok;
   } catch (err) {
+    if (claim.claimed) {
+      await releaseBillingAnalyticsClaim(name, options, insertId);
+    }
     console.error('[Analytics] Failed to send server event:', name, err);
     return false;
   }
@@ -271,9 +396,25 @@ export async function trackRevenue(
     purchaseType: 'subscription' | 'credit_pack';
     quantity?: number;
     currency?: string;
+    invoiceId?: string;
+    subscriptionId?: string;
+    sourceObjectId?: string;
+    lifecycleAction?: string;
   },
   options: IServerTrackOptions
 ): Promise<boolean> {
+  if (!Number.isFinite(params.amountCents) || params.amountCents <= 0) {
+    console.warn('[Analytics] Skipping non-positive revenue event', {
+      userId: params.userId,
+      amountCents: params.amountCents,
+      sourceObjectId: params.sourceObjectId || options.sourceObjectId,
+    });
+    return false;
+  }
+
+  const sourceObjectId = params.sourceObjectId || options.sourceObjectId;
+  const lifecycleAction = params.lifecycleAction || options.lifecycleAction;
+
   return trackServerEvent(
     'revenue_received',
     {
@@ -282,9 +423,18 @@ export async function trackRevenue(
       $quantity: params.quantity ?? 1,
       $revenueType: params.purchaseType,
       amountCents: params.amountCents,
-      currency: params.currency ?? 'usd',
+      currency: (params.currency ?? 'usd').toLowerCase(),
+      ...(params.invoiceId ? { invoiceId: params.invoiceId } : {}),
+      ...(params.subscriptionId ? { subscriptionId: params.subscriptionId } : {}),
+      ...(sourceObjectId ? { sourceObjectId } : {}),
+      ...(lifecycleAction ? { lifecycleAction } : {}),
     },
-    { ...options, userId: params.userId }
+    {
+      ...options,
+      userId: params.userId,
+      ...(sourceObjectId ? { sourceObjectId } : {}),
+      ...(lifecycleAction ? { lifecycleAction } : {}),
+    }
   );
 }
 

@@ -31,9 +31,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         type: 'transactional',
         template: 'provider-incident',
         data: {
+          severity: snapshot.severity || 'warning',
           attempts: snapshot.attempts,
           failures: snapshot.failures,
           failureRatioPercent: Math.round(snapshot.failureRatio * 100),
+          baselineRatioPercent:
+            snapshot.baselineRatio === null ? null : Math.round(snapshot.baselineRatio * 100),
           billingFailures: snapshot.billingFailures,
           circuitStatus: snapshot.circuitStatus,
         },

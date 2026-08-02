@@ -281,6 +281,65 @@ function buildTrackedEventProperties(
   };
 }
 
+function normalizeCanonicalToken(value: unknown, fallback = 'unknown'): string {
+  if (typeof value !== 'string') return fallback;
+  const normalized = value.trim().toLowerCase().replace(/\s+/g, '_');
+  return /^[a-z0-9][a-z0-9._:/-]{0,63}$/.test(normalized) ? normalized : fallback;
+}
+
+export function buildMonetizationSurfaceEvent(
+  eventName: 'upgrade_prompt_shown' | 'upgrade_prompt_clicked',
+  properties: Record<string, unknown> = {}
+): {
+  eventName: 'monetization_surface_shown' | 'monetization_surface_clicked';
+  properties: Record<string, unknown>;
+} {
+  const surface = normalizeCanonicalToken(
+    properties.surface ?? properties.trigger,
+    'upgrade_prompt'
+  );
+  const trigger = normalizeCanonicalToken(properties.trigger);
+  const offerType = normalizeCanonicalToken(
+    properties.offerType ?? properties.selectedType,
+    'subscription'
+  );
+  const priceId = normalizeCanonicalToken(properties.priceId);
+  const rawPriceCents = properties.priceCents ?? properties.recommendedPriceInCents;
+  const priceCents =
+    typeof rawPriceCents === 'number' && Number.isSafeInteger(rawPriceCents) && rawPriceCents >= 0
+      ? rawPriceCents
+      : 0;
+  const pricingRegion = normalizeCanonicalToken(properties.pricingRegion, 'standard');
+  const funnelAttemptId = normalizeCanonicalToken(
+    properties.funnelAttemptId,
+    `session_${normalizeCanonicalToken(getSessionId(), 'unknown')}_${surface}`
+  );
+  const canonicalProperties: Record<string, unknown> = {
+    surface,
+    trigger,
+    ...(eventName === 'upgrade_prompt_shown'
+      ? { offerType, priceId, priceCents, pricingRegion, funnelAttemptId }
+      : {
+          cta: normalizeCanonicalToken(properties.cta ?? properties.selectedKey, 'primary'),
+          destination: normalizeCanonicalToken(properties.destination),
+          funnelAttemptId,
+        }),
+  };
+
+  const experimentAssignmentKey = normalizeCanonicalToken(properties.experimentAssignmentKey);
+  if (experimentAssignmentKey !== 'unknown') {
+    canonicalProperties.experimentAssignmentKey = experimentAssignmentKey;
+  }
+
+  return {
+    eventName:
+      eventName === 'upgrade_prompt_shown'
+        ? 'monetization_surface_shown'
+        : 'monetization_surface_clicked',
+    properties: canonicalProperties,
+  };
+}
+
 function getEventAttributionProperties(): Record<string, unknown> {
   if (typeof window === 'undefined') return {};
 
@@ -537,6 +596,15 @@ export const analytics = {
     if (!this.isEnabled()) return;
 
     multiplexer.track(name, eventProperties);
+
+    if (name === 'upgrade_prompt_shown' || name === 'upgrade_prompt_clicked') {
+      const canonical = buildMonetizationSurfaceEvent(name, properties);
+      multiplexer.track(canonical.eventName, {
+        ...canonical.properties,
+        session_id: getSessionId(),
+        timestamp: Date.now(),
+      });
+    }
   },
 
   /**

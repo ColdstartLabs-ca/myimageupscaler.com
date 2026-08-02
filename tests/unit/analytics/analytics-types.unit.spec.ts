@@ -354,3 +354,49 @@ describe('Analytics Types - Paywall Event Tracking', () => {
     expect(checkoutProps.priceId).toBe('price_test');
   });
 });
+
+describe('Core product telemetry contract', () => {
+  test('exposes the three existing core event names', async () => {
+    const contract = await import('@server/analytics/core-event-contract');
+
+    expect(contract.CORE_EVENT_NAMES).toEqual([
+      'account_created',
+      'image_upscaled',
+      'processing_failed',
+    ]);
+  });
+
+  test('keeps core event output fields typed and privacy-safe', async () => {
+    const { normalizeCoreEventProperties } = await import('@server/analytics/core-event-contract');
+
+    const properties = normalizeCoreEventProperties('image_upscaled', {
+      qualityTier: 'quick',
+      scaleFactor: 2,
+      inputWidth: 100,
+      inputHeight: 80,
+      outputWidth: 200,
+      outputHeight: 160,
+      fileType: 'image/jpeg',
+      fileSizeBytes: 2 * 1024 * 1024,
+      durationMs: 500,
+      fileName: 'private-name.jpg',
+      imageUrl: 'https://example.com/private.jpg',
+      imageData: 'data:image/jpeg;base64,secret',
+    });
+
+    expect(properties).toEqual({
+      qualityTier: 'quick',
+      scaleFactor: 2,
+      inputWidth: 100,
+      inputHeight: 80,
+      outputWidth: 200,
+      outputHeight: 160,
+      fileType: 'jpeg',
+      fileSizeBucket: '1-5MB',
+      durationMs: 500,
+    });
+    expect(properties).not.toHaveProperty('fileName');
+    expect(properties).not.toHaveProperty('imageUrl');
+    expect(properties).not.toHaveProperty('imageData');
+  });
+});

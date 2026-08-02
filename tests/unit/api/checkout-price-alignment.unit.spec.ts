@@ -7,7 +7,7 @@ import Stripe from 'stripe';
 const persistCheckoutIntentContextMock = vi.hoisted(() => vi.fn());
 const validateExperimentCheckoutAttributionMock = vi.hoisted(() => vi.fn());
 const autoTopUpUpsertMock = vi.hoisted(() => vi.fn());
-const autoTopUpConsentInsertMock = vi.hoisted(() => vi.fn());
+const autoTopUpConsentUpsertMock = vi.hoisted(() => vi.fn());
 const autoTopUpConsentUpdateMock = vi.hoisted(() => vi.fn());
 const autoTopUpConsentDeleteMock = vi.hoisted(() => vi.fn());
 const autoTopUpUpdateMaybeSingleMock = vi.hoisted(() => vi.fn());
@@ -194,7 +194,7 @@ describe('POST /api/checkout price alignment', () => {
         query.then = (resolve: (value: unknown) => unknown) =>
           Promise.resolve({ error: null }).then(resolve);
         return {
-          insert: autoTopUpConsentInsertMock,
+          upsert: autoTopUpConsentUpsertMock,
           update: autoTopUpConsentUpdateMock.mockImplementation(() => query),
           delete: autoTopUpConsentDeleteMock.mockImplementation(() => query),
         } as never;
@@ -239,7 +239,7 @@ describe('POST /api/checkout price alignment', () => {
     });
     persistCheckoutIntentContextMock.mockResolvedValue(true);
     autoTopUpUpsertMock.mockResolvedValue({ error: null });
-    autoTopUpConsentInsertMock.mockResolvedValue({ error: null });
+    autoTopUpConsentUpsertMock.mockResolvedValue({ error: null });
     autoTopUpConsentUpdateMock.mockImplementation(() => {
       const query: Record<string, ReturnType<typeof vi.fn>> = {};
       query.eq = vi.fn(() => query);
@@ -294,14 +294,15 @@ describe('POST /api/checkout price alignment', () => {
     );
     expect(response.status).toBe(200);
     expect(getCreatedSessionParams().payment_intent_data?.setup_future_usage).toBe('off_session');
-    expect(autoTopUpConsentInsertMock).toHaveBeenCalledWith(
+    expect(autoTopUpConsentUpsertMock).toHaveBeenCalledWith(
       expect.objectContaining({
         user_id: 'user_checkout_alignment',
         threshold_credits: 25,
         pack_key: 'medium',
         consent_version: expect.any(String),
         checkout_session_id: null,
-      })
+      }),
+      { onConflict: 'consent_version', ignoreDuplicates: true }
     );
     expect(autoTopUpConsentUpdateMock).toHaveBeenCalledWith({
       checkout_session_id: 'cs_test_alignment',
@@ -578,6 +579,33 @@ describe('POST /api/checkout price alignment', () => {
       }),
       expect.objectContaining({ userId: 'user_checkout_alignment' })
     );
+  });
+
+  test('reuses one Stripe idempotency key for the same funnel attempt', async () => {
+    const body = {
+      priceId: STRIPE_PRICES.MEDIUM_CREDITS,
+      offerToken: 'offer_stable',
+      metadata: {
+        funnel_schema_version: '1',
+        funnel_attempt_id: 'fa_idempotent_checkout_123',
+        entry_surface: 'purchase_modal',
+        checkout_trigger: 'purchase_modal',
+        exp_key: 'purchase_modal_default_selection',
+        exp_ctx: 'global',
+        exp_arm_id: '10',
+        exp_arm_key: 'compact_credit_picker',
+        exp_assign_key: 'session:stable',
+      },
+    };
+
+    expect((await POST(createRequest(body))).status).toBe(200);
+    expect((await POST(createRequest(body))).status).toBe(200);
+
+    expect(sessionCreateMock).toHaveBeenCalledTimes(2);
+    const firstOptions = sessionCreateMock.mock.calls[0][1] as { idempotencyKey: string };
+    const secondOptions = sessionCreateMock.mock.calls[1][1] as { idempotencyKey: string };
+    expect(firstOptions.idempotencyKey).toBe(secondOptions.idempotencyKey);
+    expect(firstOptions.idempotencyKey).toMatch(/^miu_checkout_[a-f0-9]{64}$/);
   });
 
   test('fails open when experiment attribution is incomplete', async () => {

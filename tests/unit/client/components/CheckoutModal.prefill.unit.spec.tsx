@@ -104,6 +104,7 @@ vi.mock('@client/utils/checkoutRescueOfferVisibility', () => ({
 vi.mock('@client/utils/checkoutTrackingContext', () => ({
   getCheckoutTrackingContext: mockGetTrackingContext,
   getCheckoutFunnelMetadata: vi.fn(() => ({})),
+  setCheckoutTrackingContext: vi.fn(() => undefined),
 }));
 
 vi.mock('@client/components/stripe/CheckoutExitSurvey', () => ({

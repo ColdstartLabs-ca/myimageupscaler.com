@@ -5,16 +5,18 @@ import { getPlanByKey, resolvePriceId } from '@shared/config/subscription.utils'
 import { resolveCancellationRetentionOffer } from '@shared/config/cancellation-retention';
 import { postRetentionSubscriptionChange } from '@/app/api/subscription/change/route';
 
-const schema = z.object({
-  reason: z.enum([
-    'too_expensive',
-    'not_using_enough',
-    'missing_features',
-    'switching_competitor',
-    'technical_issues',
-    'other',
-  ]),
-});
+const schema = z
+  .object({
+    reason: z.enum([
+      'too_expensive',
+      'not_using_enough',
+      'missing_features',
+      'switching_competitor',
+      'technical_issues',
+      'other',
+    ]),
+  })
+  .strict();
 
 const RETENTION_CLAIM_LEASE_MS = 5 * 60 * 1000;
 
@@ -57,13 +59,16 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) return NextResponse.json({ error: 'Invalid reason' }, { status: 400 });
   const { data: subscription } = await supabaseAdmin
     .from('subscriptions')
-    .select('id, price_id')
+    .select('id, price_id, scheduled_price_id')
     .eq('user_id', user.id)
     .in('status', ['active', 'trialing'])
     .order('created_at', { ascending: false })
     .limit(1)
     .single();
   if (!subscription?.price_id) return NextResponse.json({ data: { offer: null } });
+  if (subscription.scheduled_price_id) {
+    return NextResponse.json({ data: { offer: null } });
+  }
   const current = resolvePriceId(subscription.price_id);
   if (!current) return NextResponse.json({ data: { offer: null } });
   const offer =

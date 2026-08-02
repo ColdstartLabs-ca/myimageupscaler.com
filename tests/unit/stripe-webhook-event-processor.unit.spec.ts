@@ -97,7 +97,11 @@ describe('stripe-webhook-event-processor', () => {
 
       expect(result).toEqual({ handled: true });
       expect(SubscriptionHandler.handleSubscriptionUpdate).toHaveBeenCalledWith(subscription, {
+        eventType: 'customer.subscription.updated',
+        lifecycleAction: 'updated',
         previousPriceId: 'price_previous_hobby',
+        previousCancelAtPeriodEnd: null,
+        previousStatus: null,
       });
     });
 

@@ -2,6 +2,7 @@ import { stripe, STRIPE_WEBHOOK_SECRET } from '@server/stripe';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv, isTest } from '@shared/config/env';
 import { trackServerEvent, trackRevenue } from '@server/analytics';
+import { recordPaymentFailure, trackPaymentRecovered } from '@server/analytics/paymentRecovery';
 import type { IPaymentFailedProperties } from '@server/analytics/types';
 import {
   assertKnownPriceId,
@@ -27,23 +28,36 @@ function trackPurchaseConfirmed(params: {
   invoiceId: string;
   subscriptionId: string;
   priceId?: string;
+  sourceObjectId?: string;
+  lifecycleAction?: string;
 }): void {
   const { userId, planKey, amountCents, purchaseType, currency } = params;
+  const sourceObjectId = params.sourceObjectId || params.invoiceId;
+  const lifecycleAction = params.lifecycleAction || purchaseType;
   trackServerEvent(
     'purchase_confirmed',
     {
       purchaseType: 'subscription',
       sessionId: params.invoiceId,
+      invoiceId: params.invoiceId,
       pricingRegion: 'standard',
       planTier: planKey,
       amount: amountCents,
+      amountCents,
       currency,
       source: purchaseType,
       stripeInvoiceId: params.invoiceId,
       stripeSubscriptionId: params.subscriptionId,
+      sourceObjectId,
       ...(params.priceId ? { priceId: params.priceId } : {}),
     },
-    { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+    {
+      apiKey: serverEnv.AMPLITUDE_API_KEY,
+      userId,
+      sourceObjectId,
+      lifecycleAction,
+      deduplicate: true,
+    }
   )
     .then(success => {
       if (!success) {
@@ -63,6 +77,73 @@ function trackPurchaseConfirmed(params: {
         subscriptionId: params.subscriptionId,
       })
     );
+}
+
+async function trackRevenueSafely(
+  params: Parameters<typeof trackRevenue>[0],
+  options: Parameters<typeof trackRevenue>[1]
+): Promise<void> {
+  try {
+    const accepted = await trackRevenue(params, options);
+    if (!accepted) {
+      console.error('[ANALYTICS] Revenue event was not accepted', {
+        sourceObjectId: params.sourceObjectId,
+        amountCents: params.amountCents,
+      });
+    }
+  } catch (error) {
+    console.error('[ANALYTICS] Revenue event failed', {
+      sourceObjectId: params.sourceObjectId,
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
+async function trackAnalyticsSafely(
+  eventName: Parameters<typeof trackServerEvent>[0],
+  properties: Record<string, unknown>,
+  options: Parameters<typeof trackServerEvent>[2]
+): Promise<void> {
+  try {
+    const accepted = await trackServerEvent(eventName, properties, options);
+    if (!accepted) {
+      console.error('[ANALYTICS] Invoice event was not accepted', { eventName });
+    }
+  } catch (error) {
+    console.error('[ANALYTICS] Invoice event failed', {
+      eventName,
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
+function hasPositivePaidCharge(invoice: Stripe.Invoice): boolean {
+  const invoiceState = invoice as Stripe.Invoice & {
+    paid?: boolean | null;
+    status?: string | null;
+  };
+  const amountCents = invoice.amount_paid ?? 0;
+  if (!Number.isFinite(amountCents) || amountCents <= 0 || invoiceState.paid === false) {
+    return false;
+  }
+
+  return !['draft', 'open', 'uncollectible', 'unpaid', 'void'].includes(invoiceState.status || '');
+}
+
+function getInvoiceCurrency(invoice: Stripe.Invoice): string | null {
+  return typeof invoice.currency === 'string' && invoice.currency.trim()
+    ? invoice.currency.toLowerCase()
+    : null;
+}
+
+function getInvoicePaymentIntentId(invoice: Stripe.Invoice): string | null {
+  const paymentIntent = (
+    invoice as Stripe.Invoice & {
+      payment_intent?: string | { id?: string } | null;
+    }
+  ).payment_intent;
+  if (typeof paymentIntent === 'string') return paymentIntent;
+  return paymentIntent && typeof paymentIntent.id === 'string' ? paymentIntent.id : null;
 }
 
 async function recordRetentionBillingEvent(params: {
@@ -145,6 +226,10 @@ export class InvoiceHandler {
     // But if checkout was rate-limited (429) or failed, credits were never allocated.
     // Now we check credit_transactions to decide: skip if credits exist, fallback-add if not.
     const billingReason = invoiceWithSub.billing_reason;
+    const amountCents = invoice.amount_paid || 0;
+    const currency = getInvoiceCurrency(invoice);
+    const hasRecognizedCharge = hasPositivePaidCharge(invoice) && !!invoice.id && !!currency;
+    const initialSourceObjectId = getInvoicePaymentIntentId(invoice) || invoice.id;
     if (billingReason === 'subscription_create') {
       const refId = `invoice_${invoice.id}`;
       const { data: existingCredit } = await supabaseAdmin
@@ -166,16 +251,49 @@ export class InvoiceHandler {
           .select('id, subscription_tier')
           .eq('stripe_customer_id', invoice.customer as string)
           .maybeSingle();
-        if (skipProfile?.id) {
+        if (skipProfile?.id && hasRecognizedCharge) {
+          await trackPaymentRecovered({
+            userId: skipProfile.id,
+            candidateFailureObjectIds: [invoice.id, getInvoicePaymentIntentId(invoice)].filter(
+              (value): value is string => Boolean(value)
+            ),
+            sourceObjectId: invoice.id,
+            purchaseType: 'subscription',
+            amountCents,
+            currency: currency!,
+            recoveryChannel: 'invoice_retry',
+          });
           trackPurchaseConfirmed({
             userId: skipProfile.id,
             planKey: skipProfile.subscription_tier || '',
-            amountCents: invoice.amount_paid || 0,
+            amountCents,
             purchaseType: 'subscription_new',
-            currency: invoice.currency ?? 'usd',
+            currency: currency!,
             invoiceId: invoice.id,
             subscriptionId,
+            sourceObjectId: initialSourceObjectId,
+            lifecycleAction: 'purchase_initial',
           });
+          await trackRevenueSafely(
+            {
+              userId: skipProfile.id,
+              amountCents,
+              productId: `subscription_${skipProfile.subscription_tier || 'unknown'}_monthly`,
+              purchaseType: 'subscription',
+              currency: currency!,
+              invoiceId: invoice.id,
+              subscriptionId,
+              sourceObjectId: initialSourceObjectId,
+              lifecycleAction: 'purchase_initial',
+            },
+            {
+              apiKey: serverEnv.AMPLITUDE_API_KEY,
+              userId: skipProfile.id,
+              sourceObjectId: initialSourceObjectId,
+              lifecycleAction: 'purchase_initial',
+              deduplicate: true,
+            }
+          );
         }
         return;
       }
@@ -221,6 +339,20 @@ export class InvoiceHandler {
     }
 
     const userId = profile.id;
+
+    if (hasRecognizedCharge) {
+      await trackPaymentRecovered({
+        userId,
+        candidateFailureObjectIds: [invoice.id, getInvoicePaymentIntentId(invoice)].filter(
+          (value): value is string => Boolean(value)
+        ),
+        sourceObjectId: invoice.id,
+        purchaseType: 'subscription',
+        amountCents,
+        currency: currency!,
+        recoveryChannel: 'invoice_retry',
+      });
+    }
 
     // Get the price ID from invoice lines to determine credit amount.
     // Prefer the subscription line item; if missing (proration invoice), choose the positive proration line
@@ -425,54 +557,97 @@ export class InvoiceHandler {
       );
     }
 
-    // Track subscription renewal analytics (only for recurring billing cycles, not first invoice)
-    if (billingReason === 'subscription_cycle') {
-      await trackServerEvent(
+    // Track recurring analytics only for a paid, positive recurring charge. The first invoice
+    // gets initial-charge fallback telemetry below, but is never classified as a renewal.
+    if (billingReason === 'subscription_cycle' && hasRecognizedCharge) {
+      await trackAnalyticsSafely(
         'subscription_renewed',
         {
           plan: planDetails.key,
-          amountCents: invoice.amount_paid || 0,
+          amountCents,
+          currency: currency!,
           subscriptionId,
+          invoiceId: invoice.id,
           creditsAdded: actualCreditsToAdd,
         },
-        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+        {
+          apiKey: serverEnv.AMPLITUDE_API_KEY,
+          userId,
+          sourceObjectId: invoice.id,
+          lifecycleAction: 'subscription_renewal',
+          deduplicate: true,
+        }
       );
 
       // purchase_confirmed for renewals — ensures every successful payment is captured
       trackPurchaseConfirmed({
         userId,
         planKey: planDetails.key,
-        amountCents: invoice.amount_paid || 0,
+        amountCents,
         purchaseType: 'subscription_renewal',
-        currency: invoice.currency ?? 'usd',
+        currency: currency!,
         invoiceId: invoice.id,
         subscriptionId,
         priceId: basePriceId,
+        sourceObjectId: invoice.id,
+        lifecycleAction: 'subscription_renewal',
       });
 
-      await trackRevenue(
+      await trackRevenueSafely(
         {
           userId,
-          amountCents: invoice.amount_paid || 0,
+          amountCents,
           productId: `subscription_${planDetails.key}_monthly`,
           purchaseType: 'subscription',
-          currency: invoice.currency ?? 'usd',
+          currency: currency!,
+          invoiceId: invoice.id,
+          subscriptionId,
+          sourceObjectId: invoice.id,
+          lifecycleAction: 'subscription_renewal',
         },
-        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+        {
+          apiKey: serverEnv.AMPLITUDE_API_KEY,
+          userId,
+          sourceObjectId: invoice.id,
+          lifecycleAction: 'subscription_renewal',
+          deduplicate: true,
+        }
       );
-    } else if (billingReason === 'subscription_create') {
+    } else if (billingReason === 'subscription_create' && hasRecognizedCharge) {
       // First invoice — fire purchase_confirmed as a fallback in case checkout handler
       // skipped analytics (e.g. price resolution failure).
       trackPurchaseConfirmed({
         userId,
         planKey: planDetails.key,
-        amountCents: invoice.amount_paid || 0,
+        amountCents,
         purchaseType: 'subscription_new',
-        currency: invoice.currency ?? 'usd',
+        currency: currency!,
         invoiceId: invoice.id,
         subscriptionId,
         priceId: basePriceId,
+        sourceObjectId: initialSourceObjectId,
+        lifecycleAction: 'purchase_initial',
       });
+      await trackRevenueSafely(
+        {
+          userId,
+          amountCents,
+          productId: `subscription_${planDetails.key}_monthly`,
+          purchaseType: 'subscription',
+          currency: currency!,
+          invoiceId: invoice.id,
+          subscriptionId,
+          sourceObjectId: initialSourceObjectId,
+          lifecycleAction: 'purchase_initial',
+        },
+        {
+          apiKey: serverEnv.AMPLITUDE_API_KEY,
+          userId,
+          sourceObjectId: initialSourceObjectId,
+          lifecycleAction: 'purchase_initial',
+          deduplicate: true,
+        }
+      );
     }
   }
 
@@ -525,6 +700,16 @@ export class InvoiceHandler {
 
     const userId = profile.id;
 
+    await recordPaymentFailure({
+      failureObjectId: invoice.id,
+      userId,
+      purchaseType: 'subscription',
+      amountCents: invoice.amount_due || invoice.amount_remaining || 0,
+      currency: (invoice.currency ?? 'usd').toLowerCase(),
+      failureType: this.mapStripeErrorType(invoice.last_finalization_error?.code),
+      recoveryChannel: 'invoice_retry',
+    });
+
     // Update profile to indicate payment issue
     const { error } = await supabaseAdmin
       .from('profiles')
@@ -557,8 +742,17 @@ export class InvoiceHandler {
         errorMessage: this.sanitizeErrorMessage(invoice.last_finalization_error?.message),
         attemptCount: invoice.attempt_count || 1,
         customerId,
+        sourceObjectId: invoice.id,
+        amountCents: invoice.amount_due || invoice.amount_remaining || 0,
+        currency: (invoice.currency ?? 'usd').toLowerCase(),
       },
-      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+      {
+        apiKey: serverEnv.AMPLITUDE_API_KEY,
+        userId,
+        sourceObjectId: invoice.id,
+        lifecycleAction: 'payment_failed',
+        deduplicate: true,
+      }
     ).catch(err => console.error('Failed to track payment_failed event', err));
   }
 

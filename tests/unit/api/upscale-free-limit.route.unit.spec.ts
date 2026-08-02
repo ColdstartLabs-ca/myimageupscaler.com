@@ -570,6 +570,23 @@ describe('POST /api/upscale free limit errors', () => {
     expect(JSON.stringify(payload)).not.toMatch(/replicate|https?:\/\/|buy|purchase|billing/i);
     expect(mocks.batchRelease).toHaveBeenCalledWith('user-1');
     expect(mocks.recordProviderFailure).toHaveBeenCalledWith('billing');
+
+    const processingFailures = mocks.track.mock.calls.filter(
+      ([eventName]) => eventName === 'processing_failed'
+    );
+    expect(processingFailures).toHaveLength(1);
+    expect(processingFailures[0][1]).toEqual(
+      expect.objectContaining({
+        errorType: 'provider_unavailable',
+        reason: 'provider_unavailable',
+        provider: 'unknown',
+        model: 'real-esrgan',
+        qualityTier: 'quick',
+        retryable: true,
+        requestId: 'unknown',
+      })
+    );
+    expect(JSON.stringify(processingFailures)).not.toContain('api.replicate.com');
   });
 
   it.each([

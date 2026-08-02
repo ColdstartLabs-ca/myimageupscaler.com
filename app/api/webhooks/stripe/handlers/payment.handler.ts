@@ -12,6 +12,7 @@ import { redeemDiscount } from '@server/services/engagement-discount.service';
 import { recordBanditConversion } from '@/lib/pricing-bandit';
 import { recordExperimentReward } from '@lib/experiments';
 import { EXPERIMENT_CHECKOUT_METADATA_KEYS } from '@shared/types/experiments.types';
+import { recordPaymentFailure, trackPaymentRecovered } from '@server/analytics/paymentRecovery';
 import Stripe from 'stripe';
 
 // Charge interface for accessing invoice property
@@ -405,6 +406,23 @@ export class PaymentHandler {
     let planKey: string | undefined;
     let packKey: string | undefined;
     let amountCents = session.amount_total || 0;
+    const paymentStatus = session.payment_status ?? 'unknown';
+    // Stripe always supplies payment_status. Treat an omitted value as paid only for
+    // legacy unit fixtures; explicit unpaid/no-payment-required sessions never count as revenue.
+    const paymentConfirmed =
+      (session.payment_status === 'paid' || session.payment_status == null) && amountCents > 0;
+    const paymentIntentId =
+      typeof session.payment_intent === 'string'
+        ? session.payment_intent
+        : session.payment_intent?.id || null;
+    const invoiceId = typeof session.invoice === 'string' ? session.invoice : null;
+    const sourceObjectId = paymentIntentId || invoiceId || session.id;
+    const billingAnalyticsOpts: IServerTrackOptions = {
+      ...amplitudeOpts,
+      sourceObjectId,
+      lifecycleAction: 'purchase_initial',
+      deduplicate: true,
+    };
 
     if (session.mode === 'subscription') {
       purchaseType = 'subscription';
@@ -584,6 +602,23 @@ export class PaymentHandler {
       // PIX and other async payment methods: checkout.session.completed fires with
       // payment_status='unpaid'. Defer credit allocation to async_payment_succeeded.
       if (session.payment_status !== 'paid') {
+        const paymentMethodType = session.payment_method_types?.[0] || 'card';
+        await trackServerEvent(
+          'checkout_completed',
+          {
+            purchaseType: 'credit_pack',
+            pack: session.metadata?.pack_key,
+            amountCents,
+            amount: amountCents,
+            paymentMethod: paymentMethodType === 'card' ? 'stripe_card' : paymentMethodType,
+            sessionId: session.id,
+            currency: (session.currency ?? 'usd').toLowerCase(),
+            paymentStatus,
+            pricingRegion: session.metadata?.pricing_region || 'standard',
+            ...this.getCheckoutAttributionProperties(session),
+          },
+          amplitudeOpts
+        );
         console.log(
           `[CHECKOUT_ASYNC_PAYMENT] Session ${session.id} payment_status='${session.payment_status}' — deferring to checkout.session.async_payment_succeeded`
         );
@@ -649,10 +684,12 @@ export class PaymentHandler {
           purchaseType,
           planTier: planKey,
           pack: packKey,
+          amountCents,
           amount: amountCents,
           paymentMethod,
           sessionId: session.id,
-          currency: session.currency ?? 'usd',
+          currency: (session.currency ?? 'usd').toLowerCase(),
+          paymentStatus,
           pricingRegion,
           discountPercent,
           ...this.getCheckoutAttributionProperties(session),
@@ -660,114 +697,126 @@ export class PaymentHandler {
         amplitudeOpts
       );
 
-      // purchase_confirmed is the canonical "purchase happened" event for funnel analysis.
-      // Fired server-side so it captures 100% of payments regardless of whether the user
-      // reaches the success page (tab close, redirect race, etc.).
-      await trackServerEvent(
-        'purchase_confirmed',
-        {
+      if (paymentConfirmed) {
+        await trackPaymentRecovered({
+          userId,
+          candidateFailureObjectIds: [paymentIntentId, invoiceId, session.id].filter(
+            (value): value is string => Boolean(value)
+          ),
+          sourceObjectId,
+          purchaseType,
+          amountCents,
+          currency: (session.currency ?? 'usd').toLowerCase(),
+          recoveryChannel: 'checkout_retry',
+        });
+
+        // purchase_confirmed is the canonical "purchase happened" event for funnel analysis.
+        // Fired server-side so it captures confirmed payments independent of browser redirects.
+        await trackServerEvent(
+          'purchase_confirmed',
+          {
+            purchaseType,
+            sessionId: session.id,
+            pricingRegion,
+            discountPercent,
+            planTier: planKey,
+            pack: packKey,
+            amountCents,
+            amount: amountCents,
+            revenue: amountCents / 100,
+            currency: (session.currency ?? 'usd').toLowerCase(),
+            stripePaymentIntentId: paymentIntentId,
+            stripeCheckoutSessionId: session.id,
+            invoiceId,
+            sourceObjectId,
+            stripeCustomerId:
+              typeof session.customer === 'string'
+                ? session.customer
+                : session.customer?.id || null,
+            priceId: session.metadata?.price_id || null,
+            uiMode: session.metadata?.checkout_ui_mode || null,
+            ...this.getCheckoutAttributionProperties(session),
+          },
+          billingAnalyticsOpts
+        );
+
+        await this.recordCheckoutExperimentReward(session, amountCents, userId);
+
+        // Update user properties in Amplitude for subscription purchases.
+        if (purchaseType === 'subscription' && planKey) {
+          const billingInterval =
+            session.mode === 'subscription'
+              ? (
+                  session as {
+                    subscription?: {
+                      items?: { data?: { price?: { recurring?: { interval?: string } } }[] };
+                    };
+                  }
+                ).subscription?.items?.data?.[0]?.price?.recurring?.interval || 'month'
+              : 'month';
+
+          await trackServerEvent(
+            '$identify',
+            {
+              $set: {
+                plan: planKey,
+                subscription_status: 'active',
+                subscription_started_at: new Date().toISOString(),
+                billing_interval: billingInterval === 'month' ? 'monthly' : billingInterval,
+              },
+            },
+            { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+          );
+        }
+
+        await trackRevenue(
+          {
+            userId,
+            amountCents,
+            productId:
+              purchaseType === 'subscription'
+                ? `subscription_${planKey ?? 'unknown'}_monthly`
+                : `credit_pack_${packKey ?? 'unknown'}`,
+            purchaseType,
+            currency: (session.currency ?? 'usd').toLowerCase(),
+            sourceObjectId,
+            lifecycleAction: 'purchase_initial',
+          },
+          billingAnalyticsOpts
+        );
+
+        await getEmailLifecycleService().recordPurchaseAttribution(userId, {
           purchaseType,
           sessionId: session.id,
-          pricingRegion,
-          discountPercent,
-          planTier: planKey,
-          pack: packKey,
-          amount: amountCents,
-          revenue: amountCents / 100,
-          currency: session.currency ?? 'usd',
-          stripePaymentIntentId:
-            typeof session.payment_intent === 'string'
-              ? session.payment_intent
-              : session.payment_intent?.id || null,
-          stripeCheckoutSessionId: session.id,
-          stripeCustomerId:
-            typeof session.customer === 'string' ? session.customer : session.customer?.id || null,
-          priceId: session.metadata?.price_id || null,
-          uiMode: session.metadata?.checkout_ui_mode || null,
-          ...this.getCheckoutAttributionProperties(session),
-        },
-        amplitudeOpts
-      );
-
-      if (session.payment_status === 'paid') {
-        await this.recordCheckoutExperimentReward(session, amountCents, userId);
-      }
-
-      // Update user properties in Amplitude for subscription purchases
-      // Note: subscription.handler.ts handles the primary $identify for subscriptions,
-      // but we also add one here to capture the checkout completion moment
-      if (purchaseType === 'subscription' && planKey) {
-        const billingInterval =
-          session.mode === 'subscription'
-            ? (
-                session as {
-                  subscription?: {
-                    items?: { data?: { price?: { recurring?: { interval?: string } } }[] };
-                  };
-                }
-              ).subscription?.items?.data?.[0]?.price?.recurring?.interval || 'month'
-            : 'month';
-
-        await trackServerEvent(
-          '$identify',
-          {
-            $set: {
-              plan: planKey,
-              subscription_status: 'active',
-              subscription_started_at: new Date().toISOString(),
-              billing_interval: billingInterval === 'month' ? 'monthly' : billingInterval,
-            },
-          },
-          { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-        );
-      }
-
-      // Track revenue in Amplitude for LTV/ARPU dashboards
-      await trackRevenue(
-        {
-          userId,
-          amountCents,
-          productId:
-            purchaseType === 'subscription'
-              ? `subscription_${planKey ?? 'unknown'}_monthly`
-              : `credit_pack_${packKey ?? 'unknown'}`,
-          purchaseType,
-          currency: session.currency ?? 'usd',
-        },
-        amplitudeOpts
-      );
-
-      await getEmailLifecycleService().recordPurchaseAttribution(userId, {
-        purchaseType,
-        sessionId: session.id,
-        amountCents,
-        planKey,
-        packKey,
-      });
-
-      await getRevenueRecoveryService()
-        .markUserConverted({
-          userId,
-          purchaseType,
-          stripeCheckoutSessionId: session.id,
           amountCents,
           planKey,
           packKey,
-        })
-        .catch(error => {
-          console.error('[RECOVERY_INTENT] Failed to mark user converted', {
-            userId,
-            sessionId: session.id,
-            error: error instanceof Error ? error.message : String(error),
-          });
         });
 
-      // Record bandit conversion so Thompson Sampling can update arm stats
-      const banditArmIdRaw = session.metadata?.bandit_arm_id;
-      if (banditArmIdRaw) {
-        const banditArmId = parseInt(banditArmIdRaw, 10);
-        if (!isNaN(banditArmId) && banditArmId > 0) {
-          await recordBanditConversion(banditArmId, amountCents);
+        await getRevenueRecoveryService()
+          .markUserConverted({
+            userId,
+            purchaseType,
+            stripeCheckoutSessionId: session.id,
+            amountCents,
+            planKey,
+            packKey,
+          })
+          .catch(error => {
+            console.error('[RECOVERY_INTENT] Failed to mark user converted', {
+              userId,
+              sessionId: session.id,
+              error: error instanceof Error ? error.message : String(error),
+            });
+          });
+
+        // Record bandit conversion so Thompson Sampling can update arm stats.
+        const banditArmIdRaw = session.metadata?.bandit_arm_id;
+        if (banditArmIdRaw) {
+          const banditArmId = parseInt(banditArmIdRaw, 10);
+          if (!isNaN(banditArmId) && banditArmId > 0) {
+            await recordBanditConversion(banditArmId, amountCents);
+          }
         }
       }
     }
@@ -792,6 +841,31 @@ export class PaymentHandler {
 
     const packKey = session.metadata?.pack_key;
     const amountCents = session.amount_total || 0;
+    const paymentIntentId =
+      typeof session.payment_intent === 'string'
+        ? session.payment_intent
+        : session.payment_intent?.id || null;
+    const sourceObjectId = paymentIntentId || session.id;
+    const billingAnalyticsOpts: IServerTrackOptions = {
+      ...amplitudeOpts,
+      sourceObjectId,
+      lifecycleAction: 'purchase_initial',
+      deduplicate: true,
+    };
+
+    if (amountCents > 0) {
+      await trackPaymentRecovered({
+        userId,
+        candidateFailureObjectIds: [paymentIntentId, session.id].filter((value): value is string =>
+          Boolean(value)
+        ),
+        sourceObjectId,
+        purchaseType: 'credit_pack',
+        amountCents,
+        currency: (session.currency ?? 'usd').toLowerCase(),
+        recoveryChannel: 'async_checkout_retry',
+      });
+    }
 
     await this.handleCreditPackPurchase(session, userId);
     await this.activateAutoTopUpConsent(session, userId);
@@ -835,16 +909,20 @@ export class PaymentHandler {
       {
         purchaseType: 'credit_pack',
         pack: packKey,
+        amountCents,
         amount: amountCents,
         paymentMethod,
         sessionId: session.id,
-        currency: session.currency ?? 'usd',
+        currency: (session.currency ?? 'usd').toLowerCase(),
+        paymentStatus: 'paid',
         pricingRegion,
         discountPercent,
         ...this.getCheckoutAttributionProperties(session),
       },
       amplitudeOpts
     );
+
+    if (amountCents <= 0) return;
 
     await trackServerEvent(
       'purchase_confirmed',
@@ -854,21 +932,20 @@ export class PaymentHandler {
         pricingRegion,
         discountPercent,
         pack: packKey,
+        amountCents,
         amount: amountCents,
         revenue: amountCents / 100,
-        currency: session.currency ?? 'usd',
-        stripePaymentIntentId:
-          typeof session.payment_intent === 'string'
-            ? session.payment_intent
-            : session.payment_intent?.id || null,
+        currency: (session.currency ?? 'usd').toLowerCase(),
+        stripePaymentIntentId: paymentIntentId,
         stripeCheckoutSessionId: session.id,
+        sourceObjectId,
         stripeCustomerId:
           typeof session.customer === 'string' ? session.customer : session.customer?.id || null,
         priceId: session.metadata?.price_id || null,
         uiMode: session.metadata?.checkout_ui_mode || null,
         ...this.getCheckoutAttributionProperties(session),
       },
-      amplitudeOpts
+      billingAnalyticsOpts
     );
 
     await this.recordCheckoutExperimentReward(session, amountCents, userId);
@@ -879,9 +956,11 @@ export class PaymentHandler {
         amountCents,
         productId: `credit_pack_${packKey ?? 'unknown'}`,
         purchaseType: 'credit_pack',
-        currency: session.currency ?? 'usd',
+        currency: (session.currency ?? 'usd').toLowerCase(),
+        sourceObjectId,
+        lifecycleAction: 'purchase_initial',
       },
-      amplitudeOpts
+      billingAnalyticsOpts
     );
 
     await getRevenueRecoveryService()
@@ -922,15 +1001,46 @@ export class PaymentHandler {
       return;
     }
     console.warn(`[ASYNC_PAYMENT_FAILED] Session ${session.id} for user ${userId}`);
+    const paymentIntentId =
+      typeof session.payment_intent === 'string'
+        ? session.payment_intent
+        : session.payment_intent?.id || null;
+    await recordPaymentFailure({
+      failureObjectId: paymentIntentId || session.id,
+      userId,
+      purchaseType: 'credit_pack',
+      amountCents: session.amount_total || 0,
+      currency: (session.currency ?? 'usd').toLowerCase(),
+      failureType: 'async_payment_failed',
+      recoveryChannel: 'async_checkout_retry',
+    });
     await trackServerEvent(
       'checkout_async_payment_failed',
       {
         sessionId: session.id,
         packKey: session.metadata?.pack_key,
         amountCents: session.amount_total || 0,
-        currency: session.currency ?? 'usd',
+        currency: (session.currency ?? 'usd').toLowerCase(),
       },
       this.buildAmplitudeOpts(session, userId)
+    );
+    await trackServerEvent(
+      'payment_failed',
+      {
+        errorType: 'async_payment_failed',
+        attemptCount: 1,
+        customerId: this.getStripeCustomerId(session.customer),
+        sourceObjectId: session.id,
+        amountCents: session.amount_total || 0,
+        currency: (session.currency ?? 'usd').toLowerCase(),
+        purchaseType: 'credit_pack',
+      },
+      {
+        ...this.buildAmplitudeOpts(session, userId),
+        sourceObjectId: session.id,
+        lifecycleAction: 'payment_failed',
+        deduplicate: true,
+      }
     );
   }
 
@@ -1012,6 +1122,22 @@ export class PaymentHandler {
     const lastPaymentError = paymentIntent.last_payment_error;
     const declineReason = lastPaymentError?.decline_code || lastPaymentError?.code || 'generic';
     const metadataType = paymentIntent.metadata?.type;
+    const purchaseType =
+      metadataType === 'plan'
+        ? 'subscription'
+        : metadataType === 'pack'
+          ? 'credit_pack'
+          : 'unknown';
+
+    await recordPaymentFailure({
+      failureObjectId: paymentIntent.id,
+      userId,
+      purchaseType,
+      amountCents: paymentIntent.amount,
+      currency: (paymentIntent.currency ?? 'usd').toLowerCase(),
+      failureType: this.normalizePaymentErrorType(declineReason),
+      recoveryChannel: 'payment_intent_retry',
+    });
 
     trackServerEvent(
       'payment_failed',
@@ -1022,19 +1148,21 @@ export class PaymentHandler {
         attemptCount: 1,
         stripePaymentIntentId: paymentIntent.id,
         stripeCustomerId: customerId,
+        amountCents: paymentIntent.amount,
         amount: paymentIntent.amount,
-        currency: paymentIntent.currency ?? 'usd',
-        purchaseType:
-          metadataType === 'plan'
-            ? 'subscription'
-            : metadataType === 'pack'
-              ? 'credit_pack'
-              : 'unknown',
+        currency: (paymentIntent.currency ?? 'usd').toLowerCase(),
+        sourceObjectId: paymentIntent.id,
+        purchaseType: purchaseType,
         decline_reason: declineReason,
         errorType: this.normalizePaymentErrorType(declineReason),
         errorMessage: this.sanitizeStripeErrorMessage(lastPaymentError?.message),
       },
-      this.buildAmplitudeOptsFromMetadata(paymentIntent.metadata, userId)
+      {
+        ...this.buildAmplitudeOptsFromMetadata(paymentIntent.metadata, userId),
+        sourceObjectId: paymentIntent.id,
+        lifecycleAction: 'payment_failed',
+        deduplicate: true,
+      }
     ).catch(err =>
       console.error('[ANALYTICS] Failed to track payment_intent.payment_failed event', err)
     );
@@ -1139,16 +1267,62 @@ export class PaymentHandler {
       { p_attempt_id: attemptId, p_payment_intent_id: paymentIntent.id, p_credits: attempt.credits }
     );
     if (finalizeError || !finalized) throw new Error('Unable to finalize auto top-up attempt');
+    if (paymentIntent.amount_received > 0) {
+      await trackPaymentRecovered({
+        userId,
+        candidateFailureObjectIds: [paymentIntent.id],
+        sourceObjectId: paymentIntent.id,
+        purchaseType: 'credit_pack',
+        amountCents: paymentIntent.amount_received,
+        currency: paymentIntent.currency,
+        recoveryChannel: 'auto_top_up_retry',
+      });
+    }
     if (attempt.status === 'succeeded') return;
+    const billingAnalyticsOpts: IServerTrackOptions = {
+      ...this.buildAmplitudeOptsFromMetadata(paymentIntent.metadata, userId),
+      sourceObjectId: paymentIntent.id,
+      lifecycleAction: 'auto_top_up',
+      deduplicate: true,
+    };
     await trackServerEvent(
       'auto_top_up_succeeded',
       {
         attemptId,
         packKey: attempt.pack_key,
+        amountCents: paymentIntent.amount_received,
         amount: paymentIntent.amount_received,
-        currency: paymentIntent.currency,
+        currency: paymentIntent.currency.toLowerCase(),
+        sourceObjectId: paymentIntent.id,
       },
-      this.buildAmplitudeOptsFromMetadata(paymentIntent.metadata, userId)
+      billingAnalyticsOpts
+    );
+    await trackServerEvent(
+      'purchase_confirmed',
+      {
+        purchaseType: 'credit_pack',
+        amountCents: paymentIntent.amount_received,
+        amount: paymentIntent.amount_received,
+        revenue: paymentIntent.amount_received / 100,
+        currency: paymentIntent.currency.toLowerCase(),
+        pack: attempt.pack_key,
+        priceId: paymentIntent.metadata.auto_top_up_price_id || null,
+        sourceObjectId: paymentIntent.id,
+        stripePaymentIntentId: paymentIntent.id,
+      },
+      billingAnalyticsOpts
+    );
+    await trackRevenue(
+      {
+        userId,
+        amountCents: paymentIntent.amount_received,
+        productId: `credit_pack_${attempt.pack_key}`,
+        purchaseType: 'credit_pack',
+        currency: paymentIntent.currency.toLowerCase(),
+        sourceObjectId: paymentIntent.id,
+        lifecycleAction: 'auto_top_up',
+      },
+      billingAnalyticsOpts
     );
 
     const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(userId);
@@ -1184,6 +1358,15 @@ export class PaymentHandler {
     );
     if (failureError)
       throw new Error(`Unable to finalize auto top-up failure: ${failureError.message}`);
+    await recordPaymentFailure({
+      failureObjectId: paymentIntent.id,
+      userId,
+      purchaseType: 'credit_pack',
+      amountCents: paymentIntent.amount,
+      currency: paymentIntent.currency,
+      failureType: reason,
+      recoveryChannel: 'auto_top_up_retry',
+    });
     if (typeof failures !== 'number') return true;
     await trackServerEvent(
       'auto_top_up_declined',
@@ -1220,13 +1403,26 @@ export class PaymentHandler {
     if (!userId) return;
 
     const declineCode = charge.failure_code || charge.outcome?.reason || 'generic';
+    const sourceObjectId =
+      typeof charge.payment_intent === 'string' ? charge.payment_intent : charge.id;
+    await recordPaymentFailure({
+      failureObjectId: sourceObjectId,
+      userId,
+      purchaseType: 'credit_pack',
+      amountCents: charge.amount,
+      currency: charge.currency,
+      failureType: declineCode,
+      recoveryChannel: 'charge_retry',
+    });
     trackServerEvent(
       'payment_failed',
       {
         stripePaymentIntentId:
           typeof charge.payment_intent === 'string' ? charge.payment_intent : null,
+        sourceObjectId,
+        amountCents: charge.amount,
         amount: charge.amount,
-        currency: charge.currency ?? 'usd',
+        currency: (charge.currency ?? 'usd').toLowerCase(),
         decline_reason: declineCode,
         errorType: declineCode.includes('insufficient_funds')
           ? 'insufficient_funds'
@@ -1237,7 +1433,13 @@ export class PaymentHandler {
         customerId,
         purchaseType: 'credit_pack',
       },
-      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+      {
+        apiKey: serverEnv.AMPLITUDE_API_KEY,
+        userId,
+        sourceObjectId,
+        lifecycleAction: 'payment_failed',
+        deduplicate: true,
+      }
     ).catch(err => console.error('[ANALYTICS] Failed to track charge.failed event', err));
   }
 

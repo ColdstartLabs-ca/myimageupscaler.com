@@ -45,14 +45,16 @@ describe('providerHealthService', () => {
     await expect(providerHealthService.recordFailure('provider_unavailable')).resolves.toBe(false);
   });
 
-  it('should atomically claim a rolling-window alert', async () => {
+  it('should atomically claim a PRD rolling-window alert', async () => {
     mocks.rpc.mockResolvedValue({
       data: [
         {
           should_alert: true,
+          severity: 'critical',
           attempts: 10,
           failures: 6,
           failure_ratio: '0.6',
+          baseline_ratio: '0.02',
           billing_failures: 2,
           circuit_status: 'open',
           retry_at: '2026-07-26T20:00:00Z',
@@ -63,18 +65,22 @@ describe('providerHealthService', () => {
 
     await expect(providerHealthService.claimAlert()).resolves.toEqual({
       shouldAlert: true,
+      severity: 'critical',
       attempts: 10,
       failures: 6,
       failureRatio: 0.6,
+      baselineRatio: 0.02,
       billingFailures: 2,
       circuitStatus: 'open',
       retryAt: new Date('2026-07-26T20:00:00Z'),
     });
-    expect(mocks.rpc).toHaveBeenCalledWith('claim_provider_health_alert', {
+    expect(mocks.rpc).toHaveBeenCalledWith('claim_provider_health_alert_v2', {
       p_provider: 'image-processing',
-      p_window_minutes: 10,
-      p_min_attempts: 5,
-      p_failure_ratio: 0.5,
+      p_window_minutes: 15,
+      p_min_attempts: 20,
+      p_warning_ratio: 0.05,
+      p_critical_ratio: 0.1,
+      p_baseline_multiplier: 3,
       p_alert_cooldown_minutes: 30,
     });
   });

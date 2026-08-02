@@ -234,6 +234,9 @@ export async function recordExperimentReward(
   const rewardValue = params.rewardValue ?? 1;
   const revenueCents = params.revenueCents ?? 0;
 
+  if (params.rewardType !== 'purchase_confirmed') {
+    throw new Error('Experiment rewards must be confirmed by a paid purchase webhook');
+  }
   if (!params.assignmentKey) return 'missing_assignment';
   if (!params.purchaseId) throw new Error('Experiment purchase reward requires purchaseId');
 

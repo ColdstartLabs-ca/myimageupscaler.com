@@ -11,14 +11,153 @@ import { getEmailService } from '@server/services/email.service';
 import { isTest } from '@shared/config/env';
 import Stripe from 'stripe';
 import dayjs from 'dayjs';
+import type { IAnalyticsEventName } from '@server/analytics/types';
 
 // Stripe subscription interface for accessing fields not in the SDK types
 type IStripeSubscriptionExtended = Stripe.Subscription & {
   current_period_start?: number;
   current_period_end?: number;
   canceled_at?: number | null | undefined;
+  cancel_at?: number | null | undefined;
+  cancellation_details?: {
+    reason?: string | null;
+    feedback?: string | null;
+  } | null;
   latest_invoice?: string | Stripe.Invoice | null | undefined;
 };
+
+export type TSubscriptionWebhookLifecycleAction = 'created' | 'updated' | 'deleted';
+
+export interface ISubscriptionWebhookOptions {
+  eventType?:
+    | 'customer.subscription.created'
+    | 'customer.subscription.updated'
+    | 'customer.subscription.deleted';
+  lifecycleAction?: TSubscriptionWebhookLifecycleAction;
+  previousPriceId?: string | null;
+  previousCancelAtPeriodEnd?: boolean | null;
+  previousStatus?: string | null;
+}
+
+interface IStoredSubscriptionLifecycleState {
+  price_id?: string | null;
+  status?: string | null;
+  cancel_at_period_end?: boolean | null;
+  cancellation_reason?: string | null;
+  current_period_end?: string | null;
+  updated_at?: string | null;
+}
+
+type TCancellationReasonCategory =
+  | 'too_expensive'
+  | 'not_using'
+  | 'quality'
+  | 'technical_issue'
+  | 'temporary_need'
+  | 'payment_failure'
+  | 'other'
+  | 'unknown';
+
+type TCancellationReasonSource = 'in_app' | 'stripe' | 'support' | 'unknown';
+
+const ACCEPTED_SUBSCRIPTION_STATUSES = new Set(['active', 'trialing']);
+
+function isAcceptedSubscriptionStatus(status: string): status is 'active' | 'trialing' {
+  return ACCEPTED_SUBSCRIPTION_STATUSES.has(status);
+}
+
+function normalizeCancellationReason(reason: unknown): TCancellationReasonCategory {
+  if (typeof reason !== 'string' || !reason.trim()) return 'unknown';
+
+  const normalized = reason
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, '_');
+  if (['too_expensive', 'price_too_high', 'cost'].includes(normalized)) {
+    return 'too_expensive';
+  }
+  if (
+    ['not_using', 'not_using_enough', 'not_using_it', 'unused', 'not_needed'].includes(normalized)
+  ) {
+    return 'not_using';
+  }
+  if (
+    ['quality', 'poor_quality', 'missing_features', 'switching_competitor'].includes(normalized)
+  ) {
+    return 'quality';
+  }
+  if (['technical_issue', 'technical_issues', 'technical_problem'].includes(normalized)) {
+    return 'technical_issue';
+  }
+  if (['temporary_need', 'temporary', 'only_needed_temporarily'].includes(normalized)) {
+    return 'temporary_need';
+  }
+  if (
+    ['payment_failure', 'payment_failed', 'billing_issue', 'payment_method'].includes(normalized)
+  ) {
+    return 'payment_failure';
+  }
+  if (normalized === 'other') return 'other';
+  return 'unknown';
+}
+
+function getCancellationReason(
+  subscription: Stripe.Subscription,
+  storedSubscription: IStoredSubscriptionLifecycleState | null | undefined
+): { category: TCancellationReasonCategory; source: TCancellationReasonSource } {
+  const appReason = storedSubscription?.cancellation_reason;
+  if (typeof appReason === 'string' && appReason.trim()) {
+    return { category: normalizeCancellationReason(appReason), source: 'in_app' };
+  }
+
+  const cancellationDetails = (subscription as IStripeSubscriptionExtended).cancellation_details;
+  const stripeReason = cancellationDetails?.reason || cancellationDetails?.feedback;
+  if (stripeReason) {
+    return { category: normalizeCancellationReason(stripeReason), source: 'stripe' };
+  }
+
+  return { category: 'unknown', source: 'unknown' };
+}
+
+function isoFromUnixTimestamp(timestamp: unknown): string | null {
+  return typeof timestamp === 'number' && Number.isFinite(timestamp)
+    ? dayjs.unix(timestamp).toISOString()
+    : null;
+}
+
+function resolveCancellationEffectiveAt(
+  subscription: Stripe.Subscription,
+  storedSubscription: IStoredSubscriptionLifecycleState | null | undefined
+): string {
+  const extended = subscription as IStripeSubscriptionExtended;
+  return (
+    isoFromUnixTimestamp(extended.cancel_at) ||
+    isoFromUnixTimestamp(extended.canceled_at) ||
+    isoFromUnixTimestamp(extended.current_period_end) ||
+    (typeof storedSubscription?.current_period_end === 'string'
+      ? storedSubscription.current_period_end
+      : null) ||
+    dayjs().toISOString()
+  );
+}
+
+async function trackAnalyticsSafely(
+  eventName: IAnalyticsEventName,
+  properties: Record<string, unknown>,
+  options: Parameters<typeof trackServerEvent>[2]
+): Promise<void> {
+  try {
+    const accepted = await trackServerEvent(eventName, properties, options);
+    if (!accepted) {
+      console.error('[ANALYTICS] Billing event was not accepted', { eventName, properties });
+    }
+  } catch (error) {
+    console.error('[ANALYTICS] Billing event failed', {
+      eventName,
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
 
 function isSchemaMissingError(
   error: { code?: string; message?: string } | null | undefined
@@ -86,17 +225,19 @@ export class SubscriptionHandler {
    */
   static async handleSubscriptionUpdate(
     subscription: Stripe.Subscription,
-    options?: {
-      previousPriceId?: string | null;
-    }
+    options: ISubscriptionWebhookOptions = {}
   ): Promise<void> {
     const customerId = subscription.customer as string;
+    const lifecycleAction =
+      options.lifecycleAction ||
+      (options.eventType === 'customer.subscription.created' ? 'created' : 'updated');
 
     console.log('[WEBHOOK_SUBSCRIPTION_UPDATE_START]', {
       subscriptionId: subscription.id,
       customerId,
       status: subscription.status,
       optionsPreviousPriceId: options?.previousPriceId,
+      lifecycleAction,
       timestamp: new Date().toISOString(),
     });
 
@@ -142,12 +283,16 @@ export class SubscriptionHandler {
     // making the DB value stale (it already has the NEW price_id)
     const { data: existingSubscription } = await supabaseAdmin
       .from('subscriptions')
-      .select('price_id, updated_at')
+      .select(
+        'price_id, status, cancel_at_period_end, cancellation_reason, current_period_end, updated_at'
+      )
       .eq('id', subscription.id)
       .maybeSingle();
 
     // Prefer Stripe's previous_attributes (accurate) over DB (may be stale after plan change)
-    const previousPriceId = options?.previousPriceId || existingSubscription?.price_id || null;
+    const previousPriceId = options.previousPriceId || existingSubscription?.price_id || null;
+    const previousCancelAtPeriodEnd =
+      options.previousCancelAtPeriodEnd ?? existingSubscription?.cancel_at_period_end ?? null;
 
     // RACE CONDITION LOGGING: Detect when DB price_id differs from Stripe's previous_attributes
     // This indicates the /api/subscription/change route updated the DB before the webhook fired
@@ -368,9 +513,7 @@ export class SubscriptionHandler {
     }
 
     const isNewActiveSubscription =
-      existingSubscription === null &&
-      subscription.status === 'active' &&
-      previousStatus !== 'trialing';
+      !existingSubscription && subscription.status === 'active' && previousStatus !== 'trialing';
 
     if (isNewActiveSubscription && latestInvoiceId) {
       const initialCreditRefId = `invoice_${latestInvoiceId}`;
@@ -495,7 +638,8 @@ export class SubscriptionHandler {
     if (
       effectivePreviousPriceId &&
       effectivePreviousPriceId !== basePriceId &&
-      subscription.status === 'active'
+      subscription.status === 'active' &&
+      lifecycleAction === 'updated'
     ) {
       // Resolve previous plan using unified resolver
       let previousPlanMetadata = null;
@@ -701,20 +845,44 @@ export class SubscriptionHandler {
         timestamp: new Date().toISOString(),
       });
 
-      // Track subscription created/updated event for active/trialing subscriptions
-      // existingSubscription === null means this is a brand-new subscription (INSERT), not an UPDATE
-      if (subscription.status === 'active' || subscription.status === 'trialing') {
-        const isNewSubscription = existingSubscription === null;
-        const isPlanChange =
-          !isNewSubscription &&
-          effectivePreviousPriceId &&
-          effectivePreviousPriceId !== basePriceId;
+      const isAcceptedStatus = isAcceptedSubscriptionStatus(subscription.status);
+      const becameActiveFromIncomplete =
+        lifecycleAction === 'updated' &&
+        isAcceptedStatus &&
+        (existingSubscription?.status === 'incomplete' ||
+          previousStatus === 'incomplete' ||
+          options.previousStatus === 'incomplete');
+      const shouldEmitCreated =
+        isAcceptedStatus && (lifecycleAction === 'created' || becameActiveFromIncomplete);
 
-        await trackServerEvent(
-          isNewSubscription ? 'subscription_created' : 'subscription_updated',
+      // Creation semantics come from Stripe's lifecycle action, not from whether another
+      // webhook (usually checkout.session.completed) inserted the database row first.
+      if (shouldEmitCreated) {
+        await trackAnalyticsSafely(
+          'subscription_created',
           {
             plan: planMetadata.key,
             amountCents: subscription.items.data[0]?.price.unit_amount || 0,
+            currency: (subscription.currency ?? 'usd').toLowerCase(),
+            billingInterval: subscription.items.data[0]?.price.recurring?.interval || 'month',
+            status: subscription.status,
+            subscriptionId: subscription.id,
+          },
+          {
+            apiKey: serverEnv.AMPLITUDE_API_KEY,
+            userId,
+            sourceObjectId: subscription.id,
+            lifecycleAction: 'subscription_created',
+            deduplicate: true,
+          }
+        );
+      } else if (isAcceptedStatus && lifecycleAction === 'updated') {
+        await trackAnalyticsSafely(
+          'subscription_updated',
+          {
+            plan: planMetadata.key,
+            amountCents: subscription.items.data[0]?.price.unit_amount || 0,
+            currency: (subscription.currency ?? 'usd').toLowerCase(),
             billingInterval: subscription.items.data[0]?.price.recurring?.interval || 'month',
             status: subscription.status,
             subscriptionId: subscription.id,
@@ -722,46 +890,91 @@ export class SubscriptionHandler {
           { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
         );
 
-        // Fire purchase_confirmed for plan changes (upgrades/downgrades that result in payment)
-        // The actual charge comes via invoice.payment_succeeded, but this ensures we capture
-        // the event tied to the subscription change itself.
-        if (isPlanChange) {
-          trackServerEvent(
+        const isPlanChange = Boolean(
+          effectivePreviousPriceId && effectivePreviousPriceId !== basePriceId
+        );
+        const planChangeAmountCents = subscription.items.data[0]?.price.unit_amount || 0;
+
+        // Keep the subscription-change purchase signal for the legacy plan-change funnel. The
+        // invoice webhook remains the authoritative paid-revenue source and deduplication keeps
+        // retries from producing a second event for the same subscription transition.
+        if (isPlanChange && planChangeAmountCents > 0) {
+          void trackAnalyticsSafely(
             'purchase_confirmed',
             {
               purchaseType: 'subscription',
               sessionId: subscription.id,
               pricingRegion: 'standard',
               planTier: planMetadata.key,
-              amount: subscription.items.data[0]?.price.unit_amount || 0,
-              currency: subscription.currency ?? 'usd',
+              amount: planChangeAmountCents,
+              amountCents: planChangeAmountCents,
+              currency: (subscription.currency ?? 'usd').toLowerCase(),
               source: 'subscription_plan_change',
               stripeSubscriptionId: subscription.id,
+              ...(latestInvoiceId ? { stripeInvoiceId: latestInvoiceId } : {}),
               priceId: basePriceId,
             },
-            { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-          )
-            .then(success => {
-              if (!success) {
-                console.error('[ANALYTICS] purchase_confirmed for plan change was not accepted:', {
-                  userId,
-                  subscriptionId: subscription.id,
-                  priceId: basePriceId,
-                });
-              }
-            })
-            .catch(err =>
-              console.error('[ANALYTICS] Failed to track purchase_confirmed for plan change:', {
-                error: err,
-                userId,
-                subscriptionId: subscription.id,
-              })
-            );
+            {
+              apiKey: serverEnv.AMPLITUDE_API_KEY,
+              userId,
+              sourceObjectId: subscription.id,
+              lifecycleAction: 'subscription_plan_change',
+              deduplicate: true,
+            }
+          ).catch(error => {
+            console.error('[ANALYTICS] Plan-change purchase tracking failed', {
+              userId,
+              subscriptionId: subscription.id,
+              error: error instanceof Error ? error.message : String(error),
+            });
+          });
         }
+      }
 
-        // Update user properties in Amplitude via $identify
+      if (
+        lifecycleAction === 'updated' &&
+        isAcceptedStatus &&
+        previousCancelAtPeriodEnd !== null &&
+        previousCancelAtPeriodEnd !== subscription.cancel_at_period_end
+      ) {
+        const reason = getCancellationReason(subscription, existingSubscription);
+        const cancellationOptions = {
+          apiKey: serverEnv.AMPLITUDE_API_KEY,
+          userId,
+          sourceObjectId: subscription.id,
+          deduplicate: true,
+        };
+
+        if (subscription.cancel_at_period_end) {
+          await trackAnalyticsSafely(
+            'subscription_cancel_scheduled',
+            {
+              plan: planMetadata.key,
+              subscriptionId: subscription.id,
+              effectiveAt: resolveCancellationEffectiveAt(subscription, existingSubscription),
+              reasonCategory: reason.category,
+              reasonSource: reason.source,
+            },
+            { ...cancellationOptions, lifecycleAction: 'subscription_cancel_scheduled' }
+          );
+        } else {
+          await trackAnalyticsSafely(
+            'subscription_cancel_reversed',
+            {
+              plan: planMetadata.key,
+              subscriptionId: subscription.id,
+              reversedAt: dayjs().toISOString(),
+            },
+            { ...cancellationOptions, lifecycleAction: 'subscription_cancel_reversed' }
+          );
+        }
+      }
+
+      if (shouldEmitCreated || isAcceptedStatus) {
+        // Update user properties in Amplitude via $identify. This is observability only and
+        // must never turn a successful billing state update into a failed webhook.
         const billingInterval = subscription.items.data[0]?.price.recurring?.interval || 'month';
-        await trackServerEvent(
+        await trackAnalyticsSafely(
           '$identify',
           {
             $set: {
@@ -780,7 +993,10 @@ export class SubscriptionHandler {
   /**
    * Handle subscription deletion
    */
-  static async handleSubscriptionDeleted(subscription: Stripe.Subscription): Promise<void> {
+  static async handleSubscriptionDeleted(
+    subscription: Stripe.Subscription,
+    _options: ISubscriptionWebhookOptions = {}
+  ): Promise<void> {
     const customerId = subscription.customer as string;
 
     // Get the user ID from the customer
@@ -814,7 +1030,29 @@ export class SubscriptionHandler {
 
     const userId = profile.id;
 
-    const planKey = subscription.metadata?.plan_key || undefined;
+    let storedSubscription: IStoredSubscriptionLifecycleState | null = null;
+    try {
+      const { data } = await supabaseAdmin
+        .from('subscriptions')
+        .select('price_id, cancellation_reason, current_period_end')
+        .eq('id', subscription.id)
+        .maybeSingle();
+      storedSubscription = data as IStoredSubscriptionLifecycleState | null;
+    } catch (error) {
+      // Deletion must still converge billing state if the optional reason lookup is unavailable.
+      console.error('[WEBHOOK_CANCELLATION_CONTEXT_UNAVAILABLE]', {
+        subscriptionId: subscription.id,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+
+    let planKey = subscription.metadata?.plan_key || undefined;
+    if (!planKey && storedSubscription?.price_id) {
+      const resolvedPlan = resolvePlanOrPack(storedSubscription.price_id);
+      if (resolvedPlan?.type === 'plan') planKey = resolvedPlan.key;
+    }
+    const cancellationReason = getCancellationReason(subscription, storedSubscription);
+    const effectiveAt = resolveCancellationEffectiveAt(subscription, storedSubscription);
 
     // Update subscription status
     const { error: subError } = await supabaseAdmin
@@ -843,24 +1081,32 @@ export class SubscriptionHandler {
     } else {
       console.log(`Canceled subscription for user ${userId}`);
 
-      // Track subscription canceled event
-      await trackServerEvent(
+      await trackAnalyticsSafely(
         'subscription_canceled',
         {
-          plan: planKey,
+          plan: planKey || 'unknown',
           subscriptionId: subscription.id,
+          effectiveAt,
+          reasonCategory: cancellationReason.category,
+          reasonSource: cancellationReason.source,
         },
-        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+        {
+          apiKey: serverEnv.AMPLITUDE_API_KEY,
+          userId,
+          sourceObjectId: subscription.id,
+          lifecycleAction: 'subscription_canceled',
+          deduplicate: true,
+        }
       );
 
       // Update user properties in Amplitude - set plan to 'free'
-      await trackServerEvent(
+      await trackAnalyticsSafely(
         '$identify',
         {
           $set: {
             plan: 'free',
             subscription_status: 'canceled',
-            subscription_canceled_at: new Date().toISOString(),
+            subscription_canceled_at: effectiveAt,
           },
         },
         { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }

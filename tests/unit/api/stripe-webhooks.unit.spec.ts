@@ -12,6 +12,7 @@ import {
   getPlanByPriceId,
   calculateBalanceWithExpiration,
 } from '@shared/config/subscription.utils';
+import { trackServerEvent } from '@server/analytics';
 
 // Mock webhook secret that can be changed per test
 let mockWebhookSecret = 'whsec_test_secret';
@@ -799,6 +800,421 @@ describe('Stripe Webhook Handler', () => {
           canceled_at: null,
         })
       );
+      expect(
+        trackServerEvent.mock.calls.filter(call => call[0] === 'subscription_created')
+      ).toHaveLength(1);
+    });
+
+    test('should emit subscription_created when checkout inserted the row first', async () => {
+      vi.mocked(getTrialConfig).mockReturnValue({ enabled: false, trialCredits: null });
+
+      const event = {
+        id: 'evt_subscription_created_after_checkout',
+        type: 'customer.subscription.created',
+        data: { object: { ...subscriptionData, id: 'sub_checkout_first' } },
+      };
+      const request = new NextRequest('http://localhost/api/webhooks/stripe', {
+        method: 'POST',
+        body: JSON.stringify(event),
+        headers: { 'stripe-signature': 'test_signature', 'content-type': 'application/json' },
+      });
+
+      const profile = {
+        id: 'user_checkout_first',
+        subscription_status: 'active',
+        subscription_tier: 'hobby',
+        subscription_credits_balance: 100,
+        purchased_credits_balance: 0,
+      };
+      const mockProfileSelect = vi.fn(() => ({
+        eq: vi.fn(() => ({ maybeSingle: vi.fn(() => ({ data: profile })) })),
+      }));
+      const mockSubscriptionSelect = vi.fn(() => ({
+        eq: vi.fn(() => ({
+          maybeSingle: vi.fn(() => ({
+            data: {
+              price_id: 'price_pro_monthly',
+              status: 'active',
+              cancel_at_period_end: false,
+              updated_at: '2026-08-01T00:00:00.000Z',
+            },
+          })),
+        })),
+      }));
+      const mockProfileUpdate = vi.fn(() => ({ eq: vi.fn(() => ({ error: null })) }));
+      const mockSubscriptionUpsert = vi.fn(() => ({ error: null }));
+
+      vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
+        if (table === 'webhook_events') return getWebhookEventsMock();
+        if (table === 'profiles') return { select: mockProfileSelect, update: mockProfileUpdate };
+        if (table === 'subscriptions') {
+          return { select: mockSubscriptionSelect, upsert: mockSubscriptionUpsert };
+        }
+        return {};
+      });
+
+      const response = await POST(request);
+
+      expect(response.status).toBe(200);
+      expect(trackServerEvent).toHaveBeenCalledWith(
+        'subscription_created',
+        expect.objectContaining({ subscriptionId: 'sub_checkout_first', status: 'active' }),
+        expect.objectContaining({
+          userId: 'user_checkout_first',
+          sourceObjectId: 'sub_checkout_first',
+          lifecycleAction: 'subscription_created',
+        })
+      );
+      expect(trackServerEvent).not.toHaveBeenCalledWith(
+        'subscription_updated',
+        expect.anything(),
+        expect.anything()
+      );
+      expect(trackServerEvent).not.toHaveBeenCalledWith(
+        'purchase_confirmed',
+        expect.anything(),
+        expect.anything()
+      );
+    });
+
+    test('should emit subscription_created once when incomplete becomes active', async () => {
+      vi.mocked(getTrialConfig).mockReturnValue({ enabled: false, trialCredits: null });
+
+      let storedStatus: 'none' | 'incomplete' | 'active' = 'none';
+      const mockProfileSelect = vi.fn(() => ({
+        eq: vi.fn(() => ({
+          maybeSingle: vi.fn(() => ({
+            data: {
+              id: 'user_incomplete_activation',
+              subscription_status:
+                storedStatus === 'incomplete' || storedStatus === 'none' ? 'incomplete' : 'active',
+              subscription_tier: 'hobby',
+              subscription_credits_balance: 100,
+              purchased_credits_balance: 0,
+            },
+          })),
+        })),
+      }));
+      const mockSubscriptionSelect = vi.fn(() => ({
+        eq: vi.fn(() => ({
+          maybeSingle: vi.fn(() => ({
+            data:
+              storedStatus === 'none'
+                ? null
+                : {
+                    price_id: 'price_pro_monthly',
+                    status: storedStatus,
+                    cancel_at_period_end: false,
+                    updated_at: '2026-08-01T00:00:00.000Z',
+                  },
+          })),
+        })),
+      }));
+      const mockProfileUpdate = vi.fn(() => ({ eq: vi.fn(() => ({ error: null })) }));
+      const mockSubscriptionUpsert = vi.fn((payload: { status: 'incomplete' | 'active' }) => {
+        storedStatus = payload.status;
+        return { error: null };
+      });
+
+      vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
+        if (table === 'webhook_events') return getWebhookEventsMock();
+        if (table === 'profiles') return { select: mockProfileSelect, update: mockProfileUpdate };
+        if (table === 'subscriptions') {
+          return { select: mockSubscriptionSelect, upsert: mockSubscriptionUpsert };
+        }
+        return {};
+      });
+
+      const sendSubscriptionEvent = async (event: Record<string, unknown>) => {
+        const request = new NextRequest('http://localhost/api/webhooks/stripe', {
+          method: 'POST',
+          body: JSON.stringify(event),
+          headers: { 'stripe-signature': 'test_signature', 'content-type': 'application/json' },
+        });
+        return POST(request);
+      };
+
+      const incompleteEvent = {
+        id: 'evt_subscription_incomplete',
+        type: 'customer.subscription.created',
+        data: {
+          object: { ...subscriptionData, id: 'sub_incomplete_activation', status: 'incomplete' },
+        },
+      };
+      const activeEvent = {
+        id: 'evt_subscription_activated',
+        type: 'customer.subscription.updated',
+        data: {
+          object: { ...subscriptionData, id: 'sub_incomplete_activation', status: 'active' },
+          previous_attributes: { status: 'incomplete' },
+        },
+      };
+      const normalUpdateEvent = {
+        id: 'evt_subscription_active_replay',
+        type: 'customer.subscription.updated',
+        data: {
+          object: { ...subscriptionData, id: 'sub_incomplete_activation', status: 'active' },
+          previous_attributes: { status: 'active' },
+        },
+      };
+
+      expect((await sendSubscriptionEvent(incompleteEvent)).status).toBe(200);
+      expect((await sendSubscriptionEvent(activeEvent)).status).toBe(200);
+      expect((await sendSubscriptionEvent(normalUpdateEvent)).status).toBe(200);
+
+      expect(
+        trackServerEvent.mock.calls.filter(call => call[0] === 'subscription_created')
+      ).toHaveLength(1);
+      expect(
+        trackServerEvent.mock.calls.filter(call => call[0] === 'subscription_updated')
+      ).toHaveLength(1);
+      expect(trackServerEvent).toHaveBeenCalledWith(
+        'subscription_created',
+        expect.objectContaining({
+          subscriptionId: 'sub_incomplete_activation',
+          status: 'active',
+        }),
+        expect.objectContaining({
+          sourceObjectId: 'sub_incomplete_activation',
+          lifecycleAction: 'subscription_created',
+        })
+      );
+    });
+
+    test('should emit scheduled cancellation without changing active access', async () => {
+      vi.mocked(getTrialConfig).mockReturnValue({ enabled: false, trialCredits: null });
+
+      const event = {
+        id: 'evt_subscription_cancel_scheduled',
+        type: 'customer.subscription.updated',
+        data: {
+          object: {
+            ...subscriptionData,
+            id: 'sub_cancel_schedule',
+            cancel_at_period_end: true,
+            metadata: { plan_key: 'hobby' },
+          },
+          previous_attributes: { cancel_at_period_end: false },
+        },
+      };
+      const request = new NextRequest('http://localhost/api/webhooks/stripe', {
+        method: 'POST',
+        body: JSON.stringify(event),
+        headers: { 'stripe-signature': 'test_signature', 'content-type': 'application/json' },
+      });
+
+      const mockProfileSelect = vi.fn(() => ({
+        eq: vi.fn(() => ({
+          maybeSingle: vi.fn(() => ({
+            data: {
+              id: 'user_cancel_schedule',
+              subscription_status: 'active',
+              subscription_tier: 'hobby',
+              subscription_credits_balance: 200,
+              purchased_credits_balance: 0,
+            },
+          })),
+        })),
+      }));
+      const mockSubscriptionSelect = vi.fn(() => ({
+        eq: vi.fn(() => ({
+          maybeSingle: vi.fn(() => ({
+            data: {
+              price_id: 'price_pro_monthly',
+              status: 'active',
+              cancel_at_period_end: false,
+              cancellation_reason: 'too_expensive',
+              updated_at: '2026-08-01T00:00:00.000Z',
+            },
+          })),
+        })),
+      }));
+      const mockProfileUpdate = vi.fn(() => ({ eq: vi.fn(() => ({ error: null })) }));
+      const mockSubscriptionUpsert = vi.fn(() => ({ error: null }));
+
+      vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
+        if (table === 'webhook_events') return getWebhookEventsMock();
+        if (table === 'profiles') return { select: mockProfileSelect, update: mockProfileUpdate };
+        if (table === 'subscriptions') {
+          return { select: mockSubscriptionSelect, upsert: mockSubscriptionUpsert };
+        }
+        return {};
+      });
+
+      const response = await POST(request);
+
+      expect(response.status).toBe(200);
+      expect(mockProfileUpdate).toHaveBeenCalledWith({
+        subscription_status: 'active',
+        subscription_tier: 'hobby',
+      });
+      expect(supabaseAdmin.rpc).not.toHaveBeenCalled();
+      expect(trackServerEvent).toHaveBeenCalledWith(
+        'subscription_cancel_scheduled',
+        expect.objectContaining({
+          subscriptionId: 'sub_cancel_schedule',
+          effectiveAt: '2024-01-15T00:00:00.000Z',
+          reasonCategory: 'too_expensive',
+          reasonSource: 'in_app',
+        }),
+        expect.objectContaining({
+          sourceObjectId: 'sub_cancel_schedule',
+          lifecycleAction: 'subscription_cancel_scheduled',
+        })
+      );
+    });
+
+    test('should emit cancellation reversal without emitting cancellation intent', async () => {
+      vi.mocked(getTrialConfig).mockReturnValue({ enabled: false, trialCredits: null });
+
+      const event = {
+        id: 'evt_subscription_cancel_reversed',
+        type: 'customer.subscription.updated',
+        data: {
+          object: { ...subscriptionData, id: 'sub_cancel_reversal', cancel_at_period_end: false },
+          previous_attributes: { cancel_at_period_end: true },
+        },
+      };
+      const request = new NextRequest('http://localhost/api/webhooks/stripe', {
+        method: 'POST',
+        body: JSON.stringify(event),
+        headers: { 'stripe-signature': 'test_signature', 'content-type': 'application/json' },
+      });
+
+      const mockProfileSelect = vi.fn(() => ({
+        eq: vi.fn(() => ({
+          maybeSingle: vi.fn(() => ({
+            data: {
+              id: 'user_cancel_reversal',
+              subscription_status: 'active',
+              subscription_tier: 'hobby',
+              subscription_credits_balance: 200,
+              purchased_credits_balance: 0,
+            },
+          })),
+        })),
+      }));
+      const mockSubscriptionSelect = vi.fn(() => ({
+        eq: vi.fn(() => ({
+          maybeSingle: vi.fn(() => ({
+            data: {
+              price_id: 'price_pro_monthly',
+              status: 'active',
+              cancel_at_period_end: true,
+              cancellation_reason: 'not_using_enough',
+              updated_at: '2026-08-01T00:00:00.000Z',
+            },
+          })),
+        })),
+      }));
+      const mockProfileUpdate = vi.fn(() => ({ eq: vi.fn(() => ({ error: null })) }));
+      const mockSubscriptionUpsert = vi.fn(() => ({ error: null }));
+
+      vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
+        if (table === 'webhook_events') return getWebhookEventsMock();
+        if (table === 'profiles') return { select: mockProfileSelect, update: mockProfileUpdate };
+        if (table === 'subscriptions') {
+          return { select: mockSubscriptionSelect, upsert: mockSubscriptionUpsert };
+        }
+        return {};
+      });
+
+      const response = await POST(request);
+
+      expect(response.status).toBe(200);
+      expect(trackServerEvent).toHaveBeenCalledWith(
+        'subscription_cancel_reversed',
+        expect.objectContaining({ subscriptionId: 'sub_cancel_reversal' }),
+        expect.objectContaining({
+          sourceObjectId: 'sub_cancel_reversal',
+          lifecycleAction: 'subscription_cancel_reversed',
+        })
+      );
+      expect(trackServerEvent).not.toHaveBeenCalledWith(
+        'subscription_cancel_scheduled',
+        expect.anything(),
+        expect.anything()
+      );
+      expect(trackServerEvent).not.toHaveBeenCalledWith(
+        'subscription_canceled',
+        expect.anything(),
+        expect.anything()
+      );
+    });
+
+    test('should not emit cancellation events for an unrelated subscription update', async () => {
+      vi.mocked(getTrialConfig).mockReturnValue({ enabled: false, trialCredits: null });
+
+      const event = {
+        id: 'evt_subscription_unrelated_update',
+        type: 'customer.subscription.updated',
+        data: {
+          object: { ...subscriptionData, id: 'sub_unrelated_update' },
+          previous_attributes: { status: 'active' },
+        },
+      };
+      const request = new NextRequest('http://localhost/api/webhooks/stripe', {
+        method: 'POST',
+        body: JSON.stringify(event),
+        headers: { 'stripe-signature': 'test_signature', 'content-type': 'application/json' },
+      });
+
+      const mockProfileSelect = vi.fn(() => ({
+        eq: vi.fn(() => ({
+          maybeSingle: vi.fn(() => ({
+            data: {
+              id: 'user_unrelated_update',
+              subscription_status: 'active',
+              subscription_tier: 'hobby',
+              subscription_credits_balance: 200,
+              purchased_credits_balance: 0,
+            },
+          })),
+        })),
+      }));
+      const mockSubscriptionSelect = vi.fn(() => ({
+        eq: vi.fn(() => ({
+          maybeSingle: vi.fn(() => ({
+            data: {
+              price_id: 'price_pro_monthly',
+              status: 'active',
+              cancel_at_period_end: false,
+              updated_at: '2026-08-01T00:00:00.000Z',
+            },
+          })),
+        })),
+      }));
+      const mockProfileUpdate = vi.fn(() => ({ eq: vi.fn(() => ({ error: null })) }));
+      const mockSubscriptionUpsert = vi.fn(() => ({ error: null }));
+
+      vi.mocked(supabaseAdmin.from).mockImplementation((table: string) => {
+        if (table === 'webhook_events') return getWebhookEventsMock();
+        if (table === 'profiles') return { select: mockProfileSelect, update: mockProfileUpdate };
+        if (table === 'subscriptions') {
+          return { select: mockSubscriptionSelect, upsert: mockSubscriptionUpsert };
+        }
+        return {};
+      });
+
+      const response = await POST(request);
+
+      expect(response.status).toBe(200);
+      expect(trackServerEvent).toHaveBeenCalledWith(
+        'subscription_updated',
+        expect.anything(),
+        expect.anything()
+      );
+      for (const eventName of [
+        'subscription_cancel_scheduled',
+        'subscription_cancel_reversed',
+        'subscription_canceled',
+      ]) {
+        expect(trackServerEvent).not.toHaveBeenCalledWith(
+          eventName,
+          expect.anything(),
+          expect.anything()
+        );
+      }
     });
 
     test('should allocate initial credits on customer.subscription.created when checkout missed them', async () => {
@@ -1074,13 +1490,25 @@ describe('Stripe Webhook Handler', () => {
           metadataPlanKey: 'hobby',
         })
       );
+      expect(trackServerEvent).not.toHaveBeenCalledWith(
+        'purchase_confirmed',
+        expect.anything(),
+        expect.anything()
+      );
     });
 
     test('should handle customer.subscription.deleted', async () => {
       // Arrange
       const event = {
         type: 'customer.subscription.deleted',
-        data: { object: subscriptionData },
+        data: {
+          object: {
+            ...subscriptionData,
+            metadata: { plan_key: 'hobby' },
+            canceled_at: 1700000000,
+            cancellation_details: { reason: 'payment_failed' },
+          },
+        },
       };
 
       const request = new NextRequest('http://localhost/api/webhooks/stripe', {
@@ -1108,6 +1536,18 @@ describe('Stripe Webhook Handler', () => {
         eq: vi.fn(() => ({ error: null })),
       }));
 
+      const mockSubSelect = vi.fn(() => ({
+        eq: vi.fn(() => ({
+          maybeSingle: vi.fn(() => ({
+            data: {
+              price_id: 'price_pro_monthly',
+              cancellation_reason: null,
+              current_period_end: '2026-08-31T00:00:00.000Z',
+            },
+          })),
+        })),
+      }));
+
       const mockProfileUpdate = vi.fn(() => ({
         eq: vi.fn(() => ({ error: null })),
       }));
@@ -1118,7 +1558,7 @@ describe('Stripe Webhook Handler', () => {
         } else if (table === 'profiles') {
           return { select: mockSelect, update: mockProfileUpdate };
         } else if (table === 'subscriptions') {
-          return { update: mockSubUpdate };
+          return { select: mockSubSelect, update: mockSubUpdate };
         }
         return {};
       });
@@ -1136,6 +1576,20 @@ describe('Stripe Webhook Handler', () => {
         subscription_status: 'canceled',
         subscription_tier: null,
       });
+      expect(trackServerEvent).toHaveBeenCalledWith(
+        'subscription_canceled',
+        expect.objectContaining({
+          plan: 'hobby',
+          subscriptionId: 'sub_test_123',
+          effectiveAt: '2024-01-15T00:00:00.000Z',
+          reasonCategory: 'payment_failure',
+          reasonSource: 'stripe',
+        }),
+        expect.objectContaining({
+          sourceObjectId: 'sub_test_123',
+          lifecycleAction: 'subscription_canceled',
+        })
+      );
     });
 
     test('should handle missing profile for subscription events', async () => {

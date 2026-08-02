@@ -32,6 +32,10 @@ export function parseFunnelCheckoutAttribution(metadata: Record<string, string>)
     throw new Error('Invalid funnel schema version');
   }
 
+  if (hasVersionedAttemptMetadata && !metadata[keys.funnelAttemptId]) {
+    throw new Error('Missing funnel attempt ID');
+  }
+
   for (const key of Object.values(keys)) {
     const value = metadata[key];
     if (value !== undefined && value.length > 500) {

@@ -11,6 +11,7 @@ const {
   mockShowToast,
   mockGetStoredOffer,
   mockGetTrackingContext,
+  mockSetTrackingContext,
   mockTrack,
   mockTrackStepViewed,
   mockTrackError,
@@ -21,6 +22,7 @@ const {
   mockShowToast: vi.fn(),
   mockGetStoredOffer: vi.fn().mockReturnValue(null),
   mockGetTrackingContext: vi.fn().mockReturnValue(null),
+  mockSetTrackingContext: vi.fn(),
   mockTrack: vi.fn(),
   mockTrackStepViewed: vi.fn(),
   mockTrackError: vi.fn(),
@@ -59,6 +61,7 @@ vi.mock('@client/utils/checkoutRescueOfferStorage', () => ({
 
 vi.mock('@client/utils/checkoutTrackingContext', () => ({
   getCheckoutTrackingContext: mockGetTrackingContext,
+  setCheckoutTrackingContext: mockSetTrackingContext,
   getCheckoutFunnelMetadata: vi.fn(() => ({})),
 }));
 
@@ -127,6 +130,7 @@ describe('useCheckoutSession', () => {
     mockCreateCheckoutSession.mockResolvedValue(SUCCESS_RESPONSE);
     mockGetStoredOffer.mockReturnValue(null);
     mockGetTrackingContext.mockReturnValue(null);
+    mockSetTrackingContext.mockReturnValue(null);
   });
 
   afterEach(() => {
@@ -254,29 +258,26 @@ describe('useCheckoutSession', () => {
     );
   });
 
-  it('tracks hosted checkout session creation on mobile viewports', async () => {
+  it('does not create a second session when hosted checkout has no URL', async () => {
     Object.defineProperty(window, 'innerWidth', { value: 390, configurable: true });
-    mockCreateCheckoutSession
-      .mockResolvedValueOnce({ url: '' })
-      .mockResolvedValueOnce(SUCCESS_RESPONSE);
+    mockCreateCheckoutSession.mockResolvedValueOnce({ url: '' });
 
     const { result } = renderHook(() => useCheckoutSession(buildParams()));
 
-    await waitFor(() => {
-      expect(result.current.clientSecret).toBe('cs_test_secret');
-    });
+    await waitFor(() =>
+      expect(result.current.error).toBe('No hosted checkout URL returned from checkout session')
+    );
 
     expect(mockCreateCheckoutSession).toHaveBeenNthCalledWith(
       1,
       PRICE_ID,
       expect.objectContaining({ uiMode: 'hosted' })
     );
+    expect(mockCreateCheckoutSession).toHaveBeenCalledTimes(1);
     expect(mockTrack).toHaveBeenCalledWith(
-      'checkout_session_created',
+      'checkout_error',
       expect.objectContaining({
-        priceId: PRICE_ID,
-        uiMode: 'hosted',
-        isAuthenticated: true,
+        failurePoint: 'hosted_checkout_url_missing',
       })
     );
   });
@@ -395,5 +396,48 @@ describe('useCheckoutSession', () => {
     await waitFor(() => {
       expect(mockCreateCheckoutSession).toHaveBeenCalledTimes(2);
     });
+  });
+
+  it('preserves the first checkout context and offer across a prop-change retry', async () => {
+    const firstContext = {
+      funnelAttemptId: 'fa_retry_stable_123',
+      entrySurface: 'purchase_modal',
+      trigger: 'purchase_modal',
+      experimentKey: 'purchase_modal_default_selection',
+      experimentContextKey: 'global',
+      experimentArmId: 10,
+      experimentArmKey: 'control',
+      experimentAssignmentKey: 'session:stable',
+    };
+    mockGetTrackingContext.mockReturnValue(firstContext);
+    mockCreateCheckoutSession
+      .mockRejectedValueOnce(new Error('transient failure'))
+      .mockResolvedValueOnce(SUCCESS_RESPONSE);
+
+    const { result, rerender } = renderHook(
+      ({ offerToken }: { offerToken: string }) =>
+        useCheckoutSession(buildParams({ appliedOfferToken: offerToken })),
+      { initialProps: { offerToken: 'offer_initial' } }
+    );
+
+    await waitFor(() => expect(result.current.error).toBeTruthy());
+    mockGetTrackingContext.mockReturnValue({
+      ...firstContext,
+      funnelAttemptId: 'fa_changed_456',
+      experimentAssignmentKey: 'session:changed',
+    });
+
+    rerender({ offerToken: 'offer_changed' });
+    await waitFor(() => expect(mockCreateCheckoutSession).toHaveBeenCalledTimes(2));
+
+    expect(mockCreateCheckoutSession.mock.calls[1][1]).toEqual(
+      expect.objectContaining({
+        offerToken: 'offer_initial',
+        metadata: expect.objectContaining({
+          funnel_attempt_id: 'fa_retry_stable_123',
+          exp_assign_key: 'session:stable',
+        }),
+      })
+    );
   });
 });

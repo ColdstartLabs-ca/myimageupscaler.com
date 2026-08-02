@@ -49,12 +49,14 @@ describe('POST /api/cron/provider-health', () => {
     mocks.send.mockResolvedValue({ success: true });
   });
 
-  it('should page the admin when the 10-minute threshold is claimed', async () => {
+  it('should page the admin when the PRD threshold is claimed', async () => {
     mocks.claimAlert.mockResolvedValue({
       shouldAlert: true,
+      severity: 'critical',
       attempts: 10,
       failures: 6,
       failureRatio: 0.6,
+      baselineRatio: 0.02,
       billingFailures: 2,
       circuitStatus: 'open',
       retryAt: new Date('2026-07-26T20:00:00Z'),
@@ -68,9 +70,11 @@ describe('POST /api/cron/provider-health', () => {
       type: 'transactional',
       template: 'provider-incident',
       data: {
+        severity: 'critical',
         attempts: 10,
         failures: 6,
         failureRatioPercent: 60,
+        baselineRatioPercent: 2,
         billingFailures: 2,
         circuitStatus: 'open',
       },
@@ -85,9 +89,11 @@ describe('POST /api/cron/provider-health', () => {
   it('should not send when volume or failure ratio is below threshold', async () => {
     mocks.claimAlert.mockResolvedValue({
       shouldAlert: false,
+      severity: null,
       attempts: 4,
       failures: 3,
       failureRatio: 0.75,
+      baselineRatio: null,
       billingFailures: 0,
       circuitStatus: 'closed',
       retryAt: null,
@@ -109,9 +115,11 @@ describe('POST /api/cron/provider-health', () => {
   it('should release the alert claim when email delivery fails', async () => {
     mocks.claimAlert.mockResolvedValue({
       shouldAlert: true,
+      severity: 'critical',
       attempts: 5,
       failures: 5,
       failureRatio: 1,
+      baselineRatio: 0.02,
       billingFailures: 5,
       circuitStatus: 'open',
       retryAt: null,

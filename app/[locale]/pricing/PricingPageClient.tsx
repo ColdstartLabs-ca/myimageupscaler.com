@@ -22,7 +22,10 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState, useRef } from 'react';
 import { analytics } from '@client/analytics';
 import { useRegionTier } from '@client/hooks/useRegionTier';
-import { getCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
+import {
+  getCheckoutTrackingContext,
+  setCheckoutTrackingContext,
+} from '@client/utils/checkoutTrackingContext';
 import { useSearchParams } from 'next/navigation';
 
 interface IPricingPageClientProps {
@@ -54,6 +57,7 @@ export default function PricingPageClient({ initialGeo }: IPricingPageClientProp
 
   // Track pricing_page_viewed event once on mount
   const hasTrackedPageView = useRef(false);
+  const hasTrackedRecoveryStart = useRef(false);
   const hasTrackedPaywallHitRef = useRef(false);
   const hasCheckoutStartedRef = useRef(false);
   const pricingPageOpenedAtRef = useRef(Date.now());
@@ -148,6 +152,36 @@ export default function PricingPageClient({ initialGeo }: IPricingPageClientProp
     pricingRegion,
     discountPercent,
   ]);
+
+  useEffect(() => {
+    if (hasTrackedRecoveryStart.current) return;
+
+    const recovery = searchParams.get('recovery');
+    const recoveryConfig =
+      recovery === 'checkout-abandoned'
+        ? { failureType: 'checkout_abandoned', purchaseType: 'unknown' as const }
+        : recovery === 'credit-wall'
+          ? { failureType: 'insufficient_credits', purchaseType: 'credit_pack' as const }
+          : null;
+    if (!recoveryConfig) return;
+
+    const checkoutContext = setCheckoutTrackingContext({
+      entrySurface: 'recovery_email',
+      trigger: 'payment_recovery',
+      originatingTrigger: recoveryConfig.failureType,
+    });
+    const funnelAttemptId =
+      checkoutContext?.funnelAttemptId || getCheckoutTrackingContext()?.funnelAttemptId;
+    if (!funnelAttemptId) return;
+
+    analytics.track('payment_recovery_started', {
+      purchaseType: recoveryConfig.purchaseType,
+      failureType: recoveryConfig.failureType,
+      recoveryChannel: 'email',
+      funnelAttemptId,
+    });
+    hasTrackedRecoveryStart.current = true;
+  }, [searchParams]);
 
   useEffect(() => {
     const pricingPageOpenedAt = pricingPageOpenedAtRef.current;

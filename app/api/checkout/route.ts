@@ -122,6 +122,56 @@ function sanitizeCustomCheckoutMetadata(metadata: Record<string, string>): Recor
   );
 }
 
+async function buildCheckoutIdempotencyKey(input: {
+  userId: string;
+  priceId: string;
+  uiMode: 'hosted' | 'embedded';
+  offerToken?: string;
+  funnelAttemptId?: string;
+  assignmentKey?: string;
+  autoTopUp?: { enabled: true; thresholdCredits: number };
+  successUrl?: string;
+  cancelUrl?: string;
+}): Promise<{ key: string; hash: string } | null> {
+  if (!input.funnelAttemptId) return null;
+
+  const identity = JSON.stringify([
+    input.userId,
+    input.priceId,
+    input.uiMode,
+    input.offerToken ?? null,
+    input.funnelAttemptId,
+    input.assignmentKey ?? null,
+    input.autoTopUp ?? null,
+    input.successUrl ?? null,
+    input.cancelUrl ?? null,
+  ]);
+
+  try {
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(identity));
+    const hash = Array.from(new Uint8Array(digest))
+      .map(byte => byte.toString(16).padStart(2, '0'))
+      .join('');
+    return { key: `miu_checkout_${hash}`, hash };
+  } catch {
+    // Checkout must remain available if a runtime lacks Web Crypto.
+    return null;
+  }
+}
+
+function consentVersionFromHash(hash: string): string {
+  const bytes = hash.slice(0, 32).padEnd(32, '0').split('');
+  bytes[12] = '4';
+  bytes[16] = ['8', '9', 'a', 'b'][parseInt(bytes[16], 16) % 4];
+  return [
+    bytes.slice(0, 8).join(''),
+    bytes.slice(8, 12).join(''),
+    bytes.slice(12, 16).join(''),
+    bytes.slice(16, 20).join(''),
+    bytes.slice(20).join(''),
+  ].join('-');
+}
+
 function createTestResolvedPrice(priceId: string): ReturnType<typeof assertKnownPriceId> {
   const creditPackPriceIds = new Set([
     STRIPE_PRICES.SMALL_CREDITS,
@@ -463,7 +513,23 @@ export async function POST(request: NextRequest) {
         { status: 403 }
       );
     }
-    const autoTopUpConsentVersion = autoTopUp ? crypto.randomUUID() : null;
+    const checkoutIdempotency = await buildCheckoutIdempotencyKey({
+      userId: user.id,
+      priceId: validatedPriceId,
+      uiMode,
+      offerToken,
+      funnelAttemptId: validatedFunnelMetadata.funnel_attempt_id,
+      assignmentKey:
+        validatedExperimentMetadata[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentAssignmentKey],
+      autoTopUp,
+      successUrl,
+      cancelUrl,
+    });
+    const autoTopUpConsentVersion = autoTopUp
+      ? checkoutIdempotency
+        ? consentVersionFromHash(checkoutIdempotency.hash)
+        : crypto.randomUUID()
+      : null;
 
     // 4. Check if user already has an active subscription (only for subscription purchases)
     const existingSubscription = await checkExistingSubscription(user, resolvedPrice, token);
@@ -798,6 +864,8 @@ export async function POST(request: NextRequest) {
         metadata: {
           user_id: user.id,
           plan_key: unifiedMetadata?.key || '',
+          ...validatedFunnelMetadata,
+          ...validatedExperimentMetadata,
         },
       };
 
@@ -835,16 +903,19 @@ export async function POST(request: NextRequest) {
     if (autoTopUp && autoTopUpConsentVersion && resolvedPrice?.type === 'pack') {
       const { error: pendingError } = await supabaseAdmin
         .from('auto_top_up_checkout_consents')
-        .insert({
-          consent_version: autoTopUpConsentVersion,
-          user_id: user.id,
-          checkout_session_id: null,
-          threshold_credits: autoTopUp.thresholdCredits,
-          pack_key: resolvedPrice.key,
-          stripe_price_id: validatedPriceId,
-          stripe_customer_id: customerId,
-          consented_at: new Date().toISOString(),
-        });
+        .upsert(
+          {
+            consent_version: autoTopUpConsentVersion,
+            user_id: user.id,
+            checkout_session_id: null,
+            threshold_credits: autoTopUp.thresholdCredits,
+            pack_key: resolvedPrice.key,
+            stripe_price_id: validatedPriceId,
+            stripe_customer_id: customerId,
+            consented_at: new Date().toISOString(),
+          },
+          { onConflict: 'consent_version', ignoreDuplicates: true }
+        );
       if (pendingError) {
         return NextResponse.json(
           {
@@ -885,8 +956,15 @@ export async function POST(request: NextRequest) {
     };
 
     let session: Stripe.Checkout.Session;
+    const createStripeCheckoutSession = (idempotencySuffix = '') => {
+      if (!checkoutIdempotency) return stripe.checkout.sessions.create(sessionParams);
+      return stripe.checkout.sessions.create(sessionParams, {
+        idempotencyKey: `${checkoutIdempotency.key}${idempotencySuffix}`,
+      });
+    };
+
     try {
-      session = await stripe.checkout.sessions.create(sessionParams);
+      session = await createStripeCheckoutSession();
     } catch (sessionError) {
       // If the stored customer ID is stale (deleted in Stripe), create a fresh one and retry once
       if (
@@ -905,7 +983,7 @@ export async function POST(request: NextRequest) {
         customerId = freshCustomer.id;
         sessionParams.customer = freshCustomer.id;
         try {
-          session = await stripe.checkout.sessions.create(sessionParams);
+          session = await createStripeCheckoutSession(':customer-retry');
         } catch (retryError) {
           await clearPendingConsent('checkout_session_retry_failed');
           throw retryError;

@@ -37,7 +37,13 @@ import { POST } from '../../../app/api/users/setup/route';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 
 function makeRequest(
-  options: { userId?: string | null; country?: string; ip?: string; userAgent?: string } = {}
+  options: {
+    userId?: string | null;
+    country?: string;
+    ip?: string;
+    userAgent?: string;
+    attribution?: Record<string, unknown>;
+  } = {}
 ): NextRequest {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   if (options.userId !== undefined && options.userId !== null)
@@ -49,7 +55,7 @@ function makeRequest(
   return new NextRequest('http://localhost/api/users/setup', {
     method: 'POST',
     headers,
-    body: JSON.stringify({}),
+    body: JSON.stringify(options.attribution ? { attribution: options.attribution } : {}),
   });
 }
 
@@ -185,7 +191,14 @@ describe('POST /api/users/setup', () => {
     expect(accountCreatedEvents).toEqual([
       [
         'account_created',
-        { method: 'email', hasEmail: true, pricingRegion: 'standard' },
+        {
+          method: 'email',
+          pricingRegion: 'standard',
+          utmSource: null,
+          utmMedium: null,
+          utmCampaign: null,
+          attributionAvailable: false,
+        },
         expect.objectContaining({ userId }),
       ],
     ]);
@@ -197,5 +210,57 @@ describe('POST /api/users/setup', () => {
     expect(serialized).not.toContain(identity.ip);
     expect(serialized).not.toContain(identity.userAgent);
     expect(serialized).not.toContain('identity_hash');
+  });
+
+  it('normalizes first-touch attribution and drops landing URLs from account_created', async () => {
+    await POST(
+      makeRequest({
+        userId: 'user-attributed',
+        country: 'US',
+        attribution: {
+          utmSource: 'Google Ads',
+          utmMedium: 'CPC',
+          utmCampaign: 'Spring 2026',
+          attributionAvailable: true,
+          landingPage: 'https://example.com/private?email=user@example.com',
+        },
+      })
+    );
+
+    expect(mockTrackServerEvent).toHaveBeenCalledWith(
+      'account_created',
+      {
+        method: 'email',
+        pricingRegion: 'standard',
+        utmSource: 'google_ads',
+        utmMedium: 'cpc',
+        utmCampaign: 'spring_2026',
+        attributionAvailable: true,
+      },
+      expect.objectContaining({ userId: 'user-attributed' })
+    );
+    expect(JSON.stringify(mockTrackServerEvent.mock.calls)).not.toContain('example.com');
+    expect(JSON.stringify(mockTrackServerEvent.mock.calls)).not.toContain('user@example.com');
+  });
+
+  it('records direct traffic as available attribution with null UTM values', async () => {
+    await POST(
+      makeRequest({
+        userId: 'user-direct',
+        country: 'US',
+        attribution: { attributionAvailable: true },
+      })
+    );
+
+    expect(mockTrackServerEvent).toHaveBeenCalledWith(
+      'account_created',
+      expect.objectContaining({
+        utmSource: null,
+        utmMedium: null,
+        utmCampaign: null,
+        attributionAvailable: true,
+      }),
+      expect.objectContaining({ userId: 'user-direct' })
+    );
   });
 });

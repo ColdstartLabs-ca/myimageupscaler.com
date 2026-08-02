@@ -1,5 +1,9 @@
 import type { IUpscaleResponse, ModelId, QualityTier } from '@/shared/types/coreflow.types';
 import { trackServerEvent } from '@server/analytics';
+import {
+  estimateBase64ByteLength,
+  normalizeCoreEventProperties,
+} from '@server/analytics/core-event-contract';
 import { createLogger } from '@server/monitoring/logger';
 import { upscaleRateLimit } from '@server/rateLimit';
 import { batchLimitCheck } from '@server/services/batch-limit.service';
@@ -28,7 +32,7 @@ import {
   resolveEffectiveResolution,
 } from '@shared/config/subscription.utils';
 import { isAccountSetupPending, isFreeleaderBlocked } from '@/lib/anti-freeloader/check-freeloader';
-import { ErrorCodes, createErrorResponse, serializeError } from '@shared/utils/errors';
+import { ErrorCodes, createErrorResponse } from '@shared/utils/errors';
 import {
   decodeImageDimensions,
   IMAGE_VALIDATION,
@@ -195,6 +199,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   let routeRefundAttempted = false;
   let providerAttemptStarted = false;
   let batchSlotAcquired = false;
+  let processingProvider: string | undefined;
+  let coreTerminalEventEmitted = false;
+  const requestId = req.headers.get('x-request-id') || req.headers.get('cf-ray') || undefined;
 
   const logFailure = (
     failureReason: string,
@@ -220,6 +227,49 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     logger.warn('Upscale rejected', payload);
+  };
+
+  const trackProcessingFailure = async (properties: Record<string, unknown>): Promise<void> => {
+    if (!userId || coreTerminalEventEmitted) return;
+
+    coreTerminalEventEmitted = true;
+    try {
+      await trackServerEvent(
+        'processing_failed',
+        {
+          ...normalizeCoreEventProperties('processing_failed', {
+            provider: processingProvider,
+            model: resolvedModelId,
+            qualityTier: resolvedTier ?? requestedQualityTier,
+            durationMs: Date.now() - startTime,
+            requestId,
+            ...properties,
+          }),
+        },
+        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+      );
+    } catch {
+      logger.warn('Failed to track processing_failed event', {
+        failureReason: 'analytics_delivery_failed',
+      });
+    }
+  };
+
+  const trackImageUpscaled = async (properties: Record<string, unknown>): Promise<void> => {
+    if (!userId || coreTerminalEventEmitted) return;
+
+    coreTerminalEventEmitted = true;
+    try {
+      await trackServerEvent(
+        'image_upscaled',
+        { ...normalizeCoreEventProperties('image_upscaled', properties) },
+        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+      );
+    } catch {
+      logger.warn('Failed to track image_upscaled event', {
+        failureReason: 'analytics_delivery_failed',
+      });
+    }
   };
 
   const refundAfterRouteFailure = async (
@@ -964,6 +1014,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       resolvedEnhancements,
       creditCost,
     });
+    processingProvider = processor.providerName;
 
     // Track upscale started event (before processing begins)
     await trackServerEvent(
@@ -1069,33 +1120,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
     );
 
-    // Track successful upscale event (legacy event with credit info)
-    await trackServerEvent(
-      'image_upscaled',
-      {
-        scaleFactor: config.scale,
-        qualityTier: resolvedTier,
-        mode: 'both', // Always upscale + enhance in new system
-        durationMs,
-        creditsUsed: creditCost,
-        creditsRemaining: result.creditsRemaining,
-        smartAnalysis: config.additionalOptions.smartAnalysis,
-        autoTier: config.qualityTier === 'auto',
-      },
-      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-    );
-
-    logger.info('Upscale completed', {
-      userId,
-      durationMs,
-      creditsUsed: creditCost,
-      originalTier: config.qualityTier,
-      usedTier: resolvedTier,
-      modelUsed: resolvedModelId,
-      smartAnalysis: config.additionalOptions.smartAnalysis,
-    });
-
-    // Return successful response with enhanced information
     // Get the actual model config for display name
     const modelConfig = modelRegistry.getModel(resolvedModelId);
     const modelDisplayName = modelConfig?.displayName || resolvedModelId;
@@ -1103,7 +1127,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Calculate output dimensions for dimension reporting
     // For enhancement-only models (flux-2-pro, qwen-image-edit), dimensions don't change
     // For true upscaling models, output = input * requested scale
-    const supportsUpscale = modelConfig?.capabilities.includes('upscale') ?? false;
+    const supportsUpscale = modelConfig?.capabilities?.includes('upscale') ?? false;
     const actualScale = supportsUpscale ? config.scale : 1;
 
     const dimensions = inputDimensions
@@ -1116,6 +1140,31 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           actualScale,
         }
       : undefined;
+
+    // The canonical success event contains only bounded processing context.
+    await trackImageUpscaled({
+      qualityTier: resolvedTier,
+      scaleFactor: config.scale,
+      inputWidth: dimensions?.input.width,
+      inputHeight: dimensions?.input.height,
+      outputWidth: dimensions?.output.width,
+      outputHeight: dimensions?.output.height,
+      fileType: effectiveMimeType,
+      fileSizeBytes: estimateBase64ByteLength(validatedInput.imageData),
+      durationMs,
+    });
+
+    logger.info('Upscale completed', {
+      userId,
+      durationMs,
+      creditsUsed: creditCost,
+      originalTier: config.qualityTier,
+      usedTier: resolvedTier,
+      modelUsed: resolvedModelId,
+      smartAnalysis: config.additionalOptions.smartAnalysis,
+    });
+
+    // Return successful response with enhanced information
 
     const response: IUpscaleResponse = {
       success: true,
@@ -1172,6 +1221,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       if (userId) {
         await trackCreditWallShown(userId, creditCost, availableCredits);
       }
+      if (providerAttemptStarted) {
+        await trackProcessingFailure({
+          errorType: 'insufficient_credits',
+          reason: 'insufficient_credits',
+          retryable: false,
+        });
+      }
       const { body, status } = createErrorResponse(
         ErrorCodes.INSUFFICIENT_CREDITS,
         `You have insufficient credits. This operation requires ${creditCost} credit${creditCost > 1 ? 's' : ''}.`,
@@ -1220,7 +1276,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       logFailure(
         `replicate_${String(error.code).toLowerCase()}`,
         {
-          message: error.message,
+          errorType: `replicate_${error.code}`,
           replicateCode: error.code,
           ...(error.code === 'AUTHENTICATION_FAILED'
             ? {
@@ -1234,7 +1290,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       await refundAfterRouteFailure(
         `replicate_${String(error.code).toLowerCase()}`,
         {
-          message: error.message,
+          errorType: `replicate_${error.code}`,
           replicateCode: error.code,
         },
         !['SAFETY', 'INVALID_INPUT', 'IMAGE_TOO_LARGE'].includes(error.code)
@@ -1252,15 +1308,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           },
           { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
         );
-        await trackServerEvent(
-          'processing_failed',
-          {
-            errorType: `replicate_${error.code}`,
-            reason: `replicate_${error.code}`,
-            message: error.message,
-          },
-          { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-        );
+        await trackProcessingFailure({
+          errorType: `replicate_${error.code}`,
+          reason: `replicate_${error.code}`,
+          retryable: !['SAFETY', 'INVALID_INPUT', 'IMAGE_TOO_LARGE'].includes(error.code),
+        });
       }
 
       const { body, status } = createErrorResponse(
@@ -1284,7 +1336,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       logFailure(
         `ai_generation_${String(error.finishReason).toLowerCase()}`,
         {
-          message: error.message,
+          errorType: `ai_generation_${error.finishReason}`,
           finishReason: error.finishReason,
         },
         'error'
@@ -1292,7 +1344,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       await refundAfterRouteFailure(
         `ai_generation_${String(error.finishReason).toLowerCase()}`,
         {
-          message: error.message,
+          errorType: `ai_generation_${error.finishReason}`,
           finishReason: error.finishReason,
         },
         error.finishReason !== 'SAFETY'
@@ -1310,15 +1362,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           },
           { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
         );
-        await trackServerEvent(
-          'processing_failed',
-          {
-            errorType: `ai_generation_${error.finishReason}`,
-            reason: `ai_generation_${error.finishReason}`,
-            message: error.message,
-          },
-          { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-        );
+        await trackProcessingFailure({
+          errorType: `ai_generation_${error.finishReason}`,
+          reason: `ai_generation_${error.finishReason}`,
+          retryable: error.finishReason !== 'SAFETY',
+        });
       }
 
       const { body, status } = createErrorResponse(
@@ -1333,7 +1381,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     // Handle unexpected errors
-    const errorMessage = serializeError(error);
     const failedDuringProviderAttempt = providerAttemptStarted;
     if (failedDuringProviderAttempt) {
       await providerHealthService.recordFailure('internal');
@@ -1341,13 +1388,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     logFailure(
       'unexpected_internal_error',
       {
-        error: errorMessage,
-        stack: error instanceof Error ? error.stack : undefined,
+        errorType: 'unexpected_internal_error',
       },
       'error'
     );
     await refundAfterRouteFailure('unexpected_internal_error', {
-      error: errorMessage,
+      errorType: 'unexpected_internal_error',
     });
 
     if (userId) {
@@ -1361,15 +1407,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         },
         { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
       );
-      await trackServerEvent(
-        'processing_failed',
-        {
-          errorType: 'unexpected_internal_error',
-          reason: 'unexpected_internal_error',
-          message: errorMessage,
-        },
-        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-      );
+      await trackProcessingFailure({
+        errorType: 'unexpected_internal_error',
+        reason: 'unexpected_internal_error',
+        retryable: true,
+      });
     }
 
     const { body, status } = createErrorResponse(

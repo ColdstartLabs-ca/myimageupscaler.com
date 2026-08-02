@@ -10,6 +10,8 @@ import { useToastStore } from '@client/store/toastStore';
 import {
   getCheckoutFunnelMetadata,
   getCheckoutTrackingContext,
+  setCheckoutTrackingContext,
+  type ICheckoutTrackingContext,
 } from '@client/utils/checkoutTrackingContext';
 import { getCheckoutUiMode } from '@client/utils/checkoutUiMode';
 import { getStoredCheckoutRescueOffer } from '@client/utils/checkoutRescueOfferStorage';
@@ -108,6 +110,12 @@ export function useCheckoutSession({
 
   const rescueOfferAppliedRef = useRef(false);
   const engagementDiscountAppliedRef = useRef(false);
+  const checkoutAttemptRef = useRef<{
+    priceId: string;
+    context: ICheckoutTrackingContext | null;
+    offerToken: string | null;
+    uiMode: 'hosted' | 'embedded';
+  } | null>(null);
 
   const trackCheckoutFailure = useCallback(
     (failurePoint: string, errorType: TCheckoutErrorType, errorMessage: string) => {
@@ -226,7 +234,35 @@ export function useCheckoutSession({
         rescueOfferAppliedRef.current = false;
         engagementDiscountAppliedRef.current = false;
         getStoredCheckoutRescueOffer(priceId); // side-effect: hydrate storage check
-        const checkoutContext = getCheckoutTrackingContext();
+        let checkoutAttempt = checkoutAttemptRef.current;
+        if (!checkoutAttempt || checkoutAttempt.priceId !== priceId) {
+          const existingContext = getCheckoutTrackingContext();
+          const stableContext = existingContext?.funnelAttemptId
+            ? existingContext
+            : (setCheckoutTrackingContext({
+                ...(existingContext ?? {}),
+                entrySurface: existingContext?.entrySurface ?? 'checkout',
+                trigger: existingContext?.trigger ?? 'checkout',
+              }) ?? existingContext);
+          checkoutAttempt = {
+            priceId,
+            context: stableContext,
+            offerToken: appliedOfferToken,
+            uiMode: getCheckoutUiMode(),
+          };
+          checkoutAttemptRef.current = checkoutAttempt;
+        } else if (appliedOfferToken && !checkoutAttempt.offerToken) {
+          // A rescue offer may be applied after an initial attempt with no offer. Once an offer
+          // is part of the attempt, preserve it across prop changes and retries.
+          checkoutAttempt = {
+            ...checkoutAttempt,
+            offerToken: appliedOfferToken,
+          };
+          checkoutAttemptRef.current = checkoutAttempt;
+        }
+
+        const checkoutContext = checkoutAttempt.context;
+        const checkoutOfferToken = checkoutAttempt.offerToken;
         const checkoutTrigger = checkoutContext?.trigger;
         const metadata: Record<string, string> = getCheckoutFunnelMetadata();
 
@@ -278,7 +314,7 @@ export function useCheckoutSession({
         if (amplitudeDeviceId) metadata.amplitude_device_id = amplitudeDeviceId;
         if (amplitudeSessionId !== null) metadata.amplitude_session_id = String(amplitudeSessionId);
 
-        const checkoutUiMode = getCheckoutUiMode();
+        const checkoutUiMode = checkoutAttempt.uiMode;
         metadata.checkout_ui_mode = checkoutUiMode;
         metadata.checkout_authenticated = String(isAuthenticated);
 
@@ -309,7 +345,7 @@ export function useCheckoutSession({
           priceId,
           uiMode: checkoutUiMode,
           hasBanditArm: Boolean(banditArmId),
-          hasOfferToken: Boolean(appliedOfferToken),
+          hasOfferToken: Boolean(checkoutOfferToken),
           isAuthenticated,
           ...attributionProps,
         });
@@ -320,6 +356,7 @@ export function useCheckoutSession({
         if (checkoutUiMode === 'hosted') {
           const hostedResponse = await createSession({
             uiMode: 'hosted',
+            offerToken: checkoutOfferToken ?? undefined,
             ...(Object.keys(metadata).length > 0 ? { metadata } : {}),
           });
 
@@ -339,19 +376,21 @@ export function useCheckoutSession({
             // Keep loading state until navigation completes
             return;
           }
+          const missingHostedUrlMessage = 'No hosted checkout URL returned from checkout session';
+          setError(missingHostedUrlMessage);
           trackCheckoutFailure(
             'hosted_checkout_url_missing',
             'network_error',
-            'No hosted checkout URL returned from checkout session'
+            missingHostedUrlMessage
           );
-          // Fall through to embedded if hosted URL is not returned
-          metadata.checkout_ui_mode = 'embedded';
+          showToast({ message: missingHostedUrlMessage, type: 'error' });
+          return;
         }
 
         // Don't pass successUrl - let the server construct it with proper type & credits params
         const response = await createSession({
           uiMode: 'embedded',
-          offerToken: appliedOfferToken ?? undefined,
+          offerToken: checkoutOfferToken ?? undefined,
           ...(Object.keys(metadata).length > 0 ? { metadata } : {}),
         });
 

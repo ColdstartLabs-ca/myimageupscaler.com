@@ -55,6 +55,8 @@ const ALLOWED_EVENTS = [
   'free_credits_reduced',
   'free_limit_gate_shown',
   'free_limit_gate_upgrade_clicked',
+  'monetization_surface_shown',
+  'monetization_surface_clicked',
 
   // Checkout events
   'checkout_started',
@@ -114,6 +116,7 @@ const ALLOWED_EVENTS = [
   'checkout_exit_survey_response',
   // Revenue leak detection events (PRD: analytics-tracking-enhancement - Phase 1)
   'plan_selected',
+  'payment_recovery_started',
   // User lifecycle events (PRD: analytics-tracking-enhancement - Phase 2)
   'account_created',
   'email_captured',

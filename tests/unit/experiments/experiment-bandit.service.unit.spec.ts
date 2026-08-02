@@ -236,6 +236,31 @@ describe('experiment bandit service', () => {
     expect(arms[0].revenue_cents).toBe(1499);
   });
 
+  it('rejects client-side or non-purchase reward events', async () => {
+    assignments.push({
+      experiment_key: 'purchase_modal_default_selection',
+      context_key: 'global',
+      arm_id: 10,
+      assignment_key: 'session:abc',
+      surface: 'purchase_modal',
+    });
+
+    await expect(
+      recordExperimentReward({
+        experimentKey: 'purchase_modal_default_selection',
+        contextKey: 'global',
+        armId: 10,
+        assignmentKey: 'session:abc',
+        purchaseId: 'cs_test_client_event',
+        rewardType: 'checkout_completed',
+        revenueCents: 1499,
+      })
+    ).rejects.toThrow('paid purchase webhook');
+
+    expect(rewards).toHaveLength(0);
+    expect(arms[0].rewards).toBe(0);
+  });
+
   it('should ignore duplicate Stripe purchase reward', async () => {
     assignments.push({
       experiment_key: 'purchase_modal_default_selection',

@@ -7,12 +7,30 @@ import {
 import { claimFreeCreditGrant } from '@server/services/free-credit-grant.service';
 import { serverEnv } from '@shared/config/env';
 import { trackServerEvent } from '@server/analytics';
+import { normalizeCoreEventProperties } from '@server/analytics/core-event-contract';
 import { isFreeTierProfile } from '@/lib/anti-freeloader/check-freeloader';
 import { getFreeCreditsForTier, type RegionTier } from '@/lib/anti-freeloader/region-classifier';
 import { NextRequest, NextResponse } from 'next/server';
 
 function isRegionTier(value: string | null | undefined): value is RegionTier {
   return value === 'standard' || value === 'restricted' || value === 'paywalled';
+}
+
+async function readAccountSetupAttribution(req: NextRequest): Promise<Record<string, unknown>> {
+  try {
+    const body: unknown = await req.json();
+    if (typeof body !== 'object' || body === null) return {};
+
+    const bodyRecord = body as Record<string, unknown>;
+    const attribution = bodyRecord.attribution;
+    return typeof attribution === 'object' && attribution !== null
+      ? (attribution as Record<string, unknown>)
+      : bodyRecord;
+  } catch {
+    // Older clients send an empty body. Setup must remain idempotent even when
+    // attribution capture is unavailable or the body cannot be parsed.
+    return {};
+  }
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
@@ -23,6 +41,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+
+  const attribution = await readAccountSetupAttribution(req);
 
   // Load current regional classification and credit state before granting.
   const { data: profile } = await supabaseAdmin
@@ -92,9 +112,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     trackServerEvent(
       'account_created',
       {
-        method: 'email',
-        hasEmail: true,
-        pricingRegion: resolvedProfile?.region_tier || undefined,
+        ...normalizeCoreEventProperties('account_created', {
+          method: 'email',
+          pricingRegion: resolvedProfile?.region_tier,
+          utmSource: attribution.utmSource,
+          utmMedium: attribution.utmMedium,
+          utmCampaign: attribution.utmCampaign,
+          attributionAvailable: attribution.attributionAvailable,
+        }),
       },
       { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
     ).catch(err =>

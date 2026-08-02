@@ -60,6 +60,10 @@ vi.mock('@client/utils/api-client', () => ({
 }));
 
 vi.mock('@client/utils/upscale-file-preprocessing', () => ({
+  getPrivacySafeFileTelemetry: vi.fn(() => ({
+    fileType: 'png',
+    fileSizeBucket: '<1MB',
+  })),
   prepareFileForProcessing: mocks.prepareFileForProcessing,
 }));
 

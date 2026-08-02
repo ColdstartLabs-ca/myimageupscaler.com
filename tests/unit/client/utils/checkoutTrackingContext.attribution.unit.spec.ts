@@ -159,6 +159,31 @@ describe('checkoutTrackingContext — attribution chain', () => {
     );
   });
 
+  test('should keep one attempt and assignment when the same visible surface rerenders', () => {
+    const first = setCheckoutTrackingContext({
+      entrySurface: 'purchase_modal',
+      trigger: 'purchase_modal',
+      experimentKey: 'purchase_modal_default_selection',
+      experimentContextKey: 'global',
+      experimentArmId: 10,
+      experimentArmKey: 'compact_credit_picker',
+      experimentAssignmentKey: 'session:visible',
+    });
+    const rerender = setCheckoutTrackingContext({
+      entrySurface: 'purchase_modal',
+      trigger: 'purchase_modal',
+      experimentKey: 'purchase_modal_default_selection',
+      experimentContextKey: 'global',
+      experimentArmId: 11,
+      experimentArmKey: 'different_arm',
+      experimentAssignmentKey: 'session:changed',
+    });
+
+    expect(rerender?.funnelAttemptId).toBe(first?.funnelAttemptId);
+    expect(rerender?.experimentAssignmentKey).toBe('session:visible');
+    expect(rerender?.experimentArmId).toBe(10);
+  });
+
   test('should preserve acquisition and landing-page fields through checkout', () => {
     vi.mocked(window.localStorage.getItem).mockImplementation(key =>
       key === 'miu_first_touch_utm'

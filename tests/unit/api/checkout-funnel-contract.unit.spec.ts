@@ -56,10 +56,21 @@ describe('checkout funnel contract', () => {
     });
   });
 
+  test('should reject versioned funnel metadata without a stable attempt ID', () => {
+    expect(() =>
+      parseFunnelCheckoutAttribution({
+        funnel_schema_version: '1',
+        entry_surface: 'purchase_modal',
+        checkout_trigger: 'purchase_modal',
+      })
+    ).toThrow('Missing funnel attempt ID');
+  });
+
   test('should reject funnel metadata that exceeds Stripe metadata limits', () => {
     expect(() =>
       parseFunnelCheckoutAttribution({
         funnel_schema_version: '1',
+        funnel_attempt_id: 'fa_length_check_123',
         first_touch_landing_page: 'x'.repeat(501),
       })
     ).toThrow('too long');

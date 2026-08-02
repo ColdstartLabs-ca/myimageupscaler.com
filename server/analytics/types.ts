@@ -37,6 +37,60 @@ export interface ISubscriptionProperties {
   currency?: string;
 }
 
+export type TSubscriptionLifecycleAction = 'created' | 'updated' | 'deleted';
+
+export type TSubscriptionCancellationReason =
+  | 'too_expensive'
+  | 'not_using'
+  | 'quality'
+  | 'technical_issue'
+  | 'temporary_need'
+  | 'payment_failure'
+  | 'other'
+  | 'unknown';
+
+export type TSubscriptionCancellationReasonSource = 'in_app' | 'stripe' | 'support' | 'unknown';
+
+export interface ISubscriptionCreatedProperties {
+  plan: string;
+  amountCents: number;
+  currency: string;
+  billingInterval: string;
+  status: 'active' | 'trialing';
+  subscriptionId: string;
+}
+
+export interface ISubscriptionRenewedProperties {
+  plan: string;
+  amountCents: number;
+  currency: string;
+  subscriptionId: string;
+  invoiceId: string;
+  creditsAdded: number;
+}
+
+export interface ISubscriptionCancelScheduledProperties {
+  plan: string;
+  subscriptionId: string;
+  effectiveAt: string;
+  reasonCategory: TSubscriptionCancellationReason;
+  reasonSource: TSubscriptionCancellationReasonSource;
+}
+
+export interface ISubscriptionCancelReversedProperties {
+  plan: string;
+  subscriptionId: string;
+  reversedAt: string;
+}
+
+export interface ISubscriptionCanceledProperties {
+  plan: string;
+  subscriptionId: string;
+  effectiveAt: string;
+  reasonCategory: TSubscriptionCancellationReason;
+  reasonSource: TSubscriptionCancellationReasonSource;
+}
+
 export interface ICreditPackProperties {
   pack: 'starter' | 'pro' | 'enterprise';
   amountCents: number;
@@ -649,6 +703,8 @@ export type IAnalyticsEventName =
   // Subscription events
   | 'subscription_created'
   | 'subscription_updated'
+  | 'subscription_cancel_scheduled'
+  | 'subscription_cancel_reversed'
   | 'subscription_canceled'
   | 'subscription_renewed'
   | 'subscription_retention_holdout_assigned'
@@ -659,6 +715,11 @@ export type IAnalyticsEventName =
   | 'subscription_retention_refund'
   | 'subscription_retention_chargeback'
   | 'upgrade_started'
+  // Canonical monetization and payment-recovery events
+  | 'monetization_surface_shown'
+  | 'monetization_surface_clicked'
+  | 'payment_recovery_started'
+  | 'payment_recovered'
   // Revenue events (server-side only)
   | 'revenue_received'
   // Credit events
@@ -826,6 +887,7 @@ export interface IAnalyticsEvent {
   properties?: Record<string, unknown>;
   userId?: string;
   sessionId?: string;
+  insertId?: string;
   timestamp?: number;
 }
 
