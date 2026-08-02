@@ -62,7 +62,7 @@ import { stripe } from '@server/stripe/config';
 import { assertKnownPriceId, getPlanForPriceId, resolvePlanOrPack } from '@shared/config/stripe';
 import { getBasePriceIdByPlanKey } from '@shared/config/pricing-regions';
 import { recordExperimentReward } from '@lib/experiments';
-import { trackServerEvent } from '@server/analytics';
+import { trackServerEvent, trackRevenue } from '@server/analytics';
 
 // Cast mocks
 const MockedSupabaseAdmin = supabaseAdmin as {
@@ -72,6 +72,7 @@ const MockedSupabaseAdmin = supabaseAdmin as {
 const MockedResolvePlanOrPack = resolvePlanOrPack as ReturnType<typeof vi.fn>;
 const MockedRecordExperimentReward = recordExperimentReward as ReturnType<typeof vi.fn>;
 const MockedTrackServerEvent = trackServerEvent as ReturnType<typeof vi.fn>;
+const MockedTrackRevenue = trackRevenue as ReturnType<typeof vi.fn>;
 
 describe('PaymentHandler - MEDIUM-14: Verify credits from price config', () => {
   let consoleSpy: {
@@ -676,6 +677,23 @@ describe('PaymentHandler — Issue 1: session.invoice null defers credit allocat
     await PaymentHandler.handleCheckoutSessionCompleted(session);
 
     expect(capturedRefId).toBe('invoice_in_test_invoice_123');
+    expect(MockedTrackServerEvent).toHaveBeenCalledWith(
+      'purchase_confirmed',
+      expect.objectContaining({ sourceObjectId: 'in_test_invoice_123' }),
+      expect.objectContaining({
+        sourceObjectId: 'in_test_invoice_123',
+        lifecycleAction: 'purchase_initial',
+        deduplicate: true,
+      })
+    );
+    expect(MockedTrackRevenue).toHaveBeenCalledWith(
+      expect.objectContaining({ sourceObjectId: 'in_test_invoice_123' }),
+      expect.objectContaining({
+        sourceObjectId: 'in_test_invoice_123',
+        lifecycleAction: 'purchase_initial',
+        deduplicate: true,
+      })
+    );
   });
 });
 

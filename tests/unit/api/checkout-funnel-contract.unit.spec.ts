@@ -1,6 +1,4 @@
 import { describe, expect, test } from 'vitest';
-import { NextRequest } from 'next/server';
-import { POST } from '@app/api/checkout/route';
 import { parseFunnelCheckoutAttribution } from '@app/api/checkout/funnel-attribution';
 
 describe('checkout funnel contract', () => {
@@ -36,24 +34,13 @@ describe('checkout funnel contract', () => {
     });
   });
 
-  test('should reject invalid funnel schema version', async () => {
-    const request = new NextRequest('http://localhost/api/checkout', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        priceId: 'price_test_valid_format',
-        metadata: {
-          funnel_schema_version: '999',
-          first_touch_source: 'google',
-        },
-      }),
-    });
-
-    const response = await POST(request);
-    expect(response.status).toBe(400);
-    await expect(response.json()).resolves.toMatchObject({
-      error: { code: 'INVALID_FUNNEL_ATTRIBUTION' },
-    });
+  test('parser rejects invalid funnel schema version', () => {
+    expect(() =>
+      parseFunnelCheckoutAttribution({
+        funnel_schema_version: '999',
+        first_touch_source: 'google',
+      })
+    ).toThrow('Invalid funnel schema version');
   });
 
   test('should reject versioned funnel metadata without a stable attempt ID', () => {

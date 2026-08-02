@@ -229,7 +229,10 @@ export class InvoiceHandler {
     const amountCents = invoice.amount_paid || 0;
     const currency = getInvoiceCurrency(invoice);
     const hasRecognizedCharge = hasPositivePaidCharge(invoice) && !!invoice.id && !!currency;
-    const initialSourceObjectId = getInvoicePaymentIntentId(invoice) || invoice.id;
+    // The invoice is the shared provider object for checkout.session.completed
+    // and invoice.payment_succeeded. Keep it as the initial-charge identity so
+    // both handlers converge on one dedupe key.
+    const initialSourceObjectId = invoice.id;
     if (billingReason === 'subscription_create') {
       const refId = `invoice_${invoice.id}`;
       const { data: existingCredit } = await supabaseAdmin

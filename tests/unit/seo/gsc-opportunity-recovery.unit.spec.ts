@@ -24,19 +24,8 @@ const RECOVERY_PAGES = {
     slug: 'photo-restoration-program',
     title: 'Best Photo Restoration Programs in 2026',
     seoTitle: 'Best Photo Restoration Programs 2026: 4 Options Compared',
-    comparisonColumns: [
-      'restoration tasks',
-      'limits',
-      'pricing model',
-      'privacy',
-      'best use case',
-    ],
-    restorationTasks: [
-      'face restoration',
-      'scratch repair',
-      'colorization',
-      'general enhancement',
-    ],
+    comparisonColumns: ['restoration tasks', 'limits', 'pricing model', 'privacy', 'best use case'],
+    restorationTasks: ['face restoration', 'scratch repair', 'colorization', 'general enhancement'],
     welcomeCreditCopy: 'five welcome credits when you sign up',
     comparisonBasis: 'published features and policies, not a hands-on test',
   },
@@ -122,16 +111,13 @@ describe('GSC opportunity recovery contract', () => {
   });
 
   it('keeps one request-indexing backlog row per URL without closing pending work', () => {
-    const backlog = readFileSync(
-      'docs/SEO/maintenance/gsc-request-indexing-backlog.md',
-      'utf8'
-    );
+    const backlog = readFileSync('docs/SEO/maintenance/gsc-request-indexing-backlog.md', 'utf8');
     const urls = [...backlog.matchAll(/- \[[ x]\] `(https:\/\/myimageupscaler\.com[^`]+)`/g)].map(
       match => match[1]
     );
 
     expect(new Set(urls).size).toBe(urls.length);
-    expect(backlog).toContain('- [ ] `https://myimageupscaler.com/`');
+    expect(backlog).toContain('- [x] `https://myimageupscaler.com/`');
     expect(backlog).toContain(
       '- [ ] `https://myimageupscaler.com/blog/poster-size-dimensions-pixels`'
     );

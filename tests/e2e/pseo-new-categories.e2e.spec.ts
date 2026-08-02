@@ -516,11 +516,19 @@ test.describe('pSEO Fixes - Performance', () => {
   });
 
   test('Sitemaps load quickly', async ({ request }) => {
+    // Warm each route so this guard measures sitemap response time rather than
+    // the first-request cost of compiling a Next.js route in the test server.
+    const warmupResponses = await Promise.all(NEW_SITEMAPS.map(sitemap => request.get(sitemap)));
+    for (const response of warmupResponses) {
+      expect(response.status()).toBe(200);
+    }
+
     for (const sitemap of NEW_SITEMAPS) {
       const startTime = Date.now();
-      await request.get(sitemap);
+      const response = await request.get(sitemap);
       const loadTime = Date.now() - startTime;
 
+      expect(response.status()).toBe(200);
       expect(loadTime).toBeLessThan(2000); // 2 second threshold
     }
   });

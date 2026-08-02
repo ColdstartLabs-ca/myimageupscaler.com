@@ -58,10 +58,7 @@ describe('webhook-sequencer', () => {
     test('should return all responses', async () => {
       const sequencer = new WebhookSequencer(mockSupabase, () => mockHandler);
 
-      const events = [
-        () => createMockEvent('event.one'),
-        () => createMockEvent('event.two'),
-      ];
+      const events = [() => createMockEvent('event.one'), () => createMockEvent('event.two')];
 
       const results = await sequencer.sequence(events);
 
@@ -91,10 +88,7 @@ describe('webhook-sequencer', () => {
     test('should add delay between events when specified', async () => {
       const sequencer = new WebhookSequencer(mockSupabase, () => mockHandler);
 
-      const events = [
-        () => createMockEvent('event.first'),
-        () => createMockEvent('event.second'),
-      ];
+      const events = [() => createMockEvent('event.first'), () => createMockEvent('event.second')];
 
       const startTime = Date.now();
       await sequencer.sequence(events, { delay: 100 });
@@ -211,10 +205,14 @@ describe('webhook-sequencer', () => {
 
   describe('concurrent execution', () => {
     test('should fire events concurrently when enabled', async () => {
-      let executionOrder: string[] = [];
+      let activeHandlers = 0;
+      let maxConcurrentHandlers = 0;
       const trackingHandler = vi.fn(async (event: IStripeEventMock) => {
-        executionOrder.push(event.type);
+        void event;
+        activeHandlers += 1;
+        maxConcurrentHandlers = Math.max(maxConcurrentHandlers, activeHandlers);
         await new Promise(resolve => setTimeout(resolve, 10));
+        activeHandlers -= 1;
         return { status: 200 };
       });
       const sequencer = new WebhookSequencer(mockSupabase, () => trackingHandler);
@@ -225,12 +223,10 @@ describe('webhook-sequencer', () => {
         () => createMockEvent('event.third'),
       ];
 
-      const startTime = Date.now();
       await sequencer.sequence(events, { concurrent: true });
-      const elapsedTime = Date.now() - startTime;
 
-      // With concurrency, should take ~10ms (not ~30ms sequential)
-      expect(elapsedTime).toBeLessThan(25);
+      expect(trackingHandler).toHaveBeenCalledTimes(3);
+      expect(maxConcurrentHandlers).toBe(3);
     });
 
     test('should return all results from concurrent execution', async () => {
@@ -292,7 +288,9 @@ describe('webhook-sequencer', () => {
           },
         ];
 
-        expect(() => WebhookSequencer.assertAllSuccess(results)).toThrow('1 webhook event(s) failed');
+        expect(() => WebhookSequencer.assertAllSuccess(results)).toThrow(
+          '1 webhook event(s) failed'
+        );
       });
 
       test('should throw when any event returns 4xx status', () => {
@@ -301,7 +299,9 @@ describe('webhook-sequencer', () => {
           { eventType: 'event.two', eventId: 'evt_2', status: 404, response: null },
         ];
 
-        expect(() => WebhookSequencer.assertAllSuccess(results)).toThrow('1 webhook event(s) failed');
+        expect(() => WebhookSequencer.assertAllSuccess(results)).toThrow(
+          '1 webhook event(s) failed'
+        );
       });
 
       test('should report all failures in error message', () => {
@@ -323,7 +323,9 @@ describe('webhook-sequencer', () => {
           },
         ];
 
-        expect(() => WebhookSequencer.assertAllSuccess(results)).toThrow('2 webhook event(s) failed');
+        expect(() => WebhookSequencer.assertAllSuccess(results)).toThrow(
+          '2 webhook event(s) failed'
+        );
       });
     });
 
@@ -344,7 +346,9 @@ describe('webhook-sequencer', () => {
           { eventType: 'event.two', eventId: 'evt_11700000001', status: 200, response: {} },
         ];
 
-        expect(() => WebhookSequencer.assertOrdered(results)).toThrow('Events not in chronological order');
+        expect(() => WebhookSequencer.assertOrdered(results)).toThrow(
+          'Events not in chronological order'
+        );
       });
 
       test('should handle events without extractable timestamps', () => {

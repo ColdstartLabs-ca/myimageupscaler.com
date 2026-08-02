@@ -608,6 +608,78 @@ describe('POST /api/checkout price alignment', () => {
     expect(firstOptions.idempotencyKey).toMatch(/^miu_checkout_[a-f0-9]{64}$/);
   });
 
+  test('uses a new Stripe idempotency key when checkout metadata changes', async () => {
+    const baseBody = {
+      priceId: STRIPE_PRICES.MEDIUM_CREDITS,
+      metadata: {
+        funnel_schema_version: '1',
+        funnel_attempt_id: 'fa_idempotent_checkout_456',
+        entry_surface: 'purchase_modal',
+        checkout_trigger: 'purchase_modal',
+      },
+    };
+
+    expect(
+      (
+        await POST(
+          createRequest({
+            ...baseBody,
+            metadata: { ...baseBody.metadata, checkout_authenticated: 'false' },
+          })
+        )
+      ).status
+    ).toBe(200);
+    expect(
+      (
+        await POST(
+          createRequest({
+            ...baseBody,
+            metadata: { ...baseBody.metadata, checkout_authenticated: 'true' },
+          })
+        )
+      ).status
+    ).toBe(200);
+
+    const idempotencyKeys = sessionCreateMock.mock.calls.map(
+      call => (call[1] as { idempotencyKey: string }).idempotencyKey
+    );
+    expect(idempotencyKeys).toHaveLength(2);
+    expect(new Set(idempotencyKeys).size).toBe(2);
+  });
+
+  test('uses a new Stripe idempotency key when auto-top-up changes', async () => {
+    const baseBody = {
+      priceId: STRIPE_PRICES.MEDIUM_CREDITS,
+      metadata: {
+        funnel_schema_version: '1',
+        funnel_attempt_id: 'fa_idempotent_checkout_auto_top_up',
+        entry_surface: 'purchase_modal',
+        checkout_trigger: 'purchase_modal',
+      },
+    };
+
+    expect(
+      (
+        await POST(
+          createRequest({ ...baseBody, autoTopUp: { enabled: true, thresholdCredits: 25 } })
+        )
+      ).status
+    ).toBe(200);
+    expect(
+      (
+        await POST(
+          createRequest({ ...baseBody, autoTopUp: { enabled: true, thresholdCredits: 30 } })
+        )
+      ).status
+    ).toBe(200);
+
+    const idempotencyKeys = sessionCreateMock.mock.calls.map(
+      call => (call[1] as { idempotencyKey: string }).idempotencyKey
+    );
+    expect(idempotencyKeys).toHaveLength(2);
+    expect(new Set(idempotencyKeys).size).toBe(2);
+  });
+
   test('fails open when experiment attribution is incomplete', async () => {
     const response = await POST(
       createRequest({
@@ -621,6 +693,22 @@ describe('POST /api/checkout price alignment', () => {
 
     expect(response.status).toBe(200);
     expect(getCreatedSessionParams().metadata).not.toHaveProperty('exp_key');
+  });
+
+  test('fails open when funnel attribution is incomplete', async () => {
+    const response = await POST(
+      createRequest({
+        priceId: STRIPE_PRICES.MEDIUM_CREDITS,
+        metadata: {
+          funnel_schema_version: '1',
+          checkout_trigger: 'purchase_modal',
+        },
+      })
+    );
+
+    expect(response.status).toBe(200);
+    expect(getCreatedSessionParams().metadata).not.toHaveProperty('funnel_schema_version');
+    expect(getCreatedSessionParams().metadata).not.toHaveProperty('checkout_trigger');
   });
 
   test('fails open when experiment validation storage is unavailable', async () => {

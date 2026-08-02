@@ -416,7 +416,13 @@ export class PaymentHandler {
         ? session.payment_intent
         : session.payment_intent?.id || null;
     const invoiceId = typeof session.invoice === 'string' ? session.invoice : null;
-    const sourceObjectId = paymentIntentId || invoiceId || session.id;
+    // Subscription-mode Checkout Sessions normally have no payment intent. The
+    // invoice is the stable provider object also seen by invoice.payment_succeeded,
+    // so use it first to make the initial charge dedupe across both handlers.
+    const sourceObjectId =
+      session.mode === 'subscription'
+        ? invoiceId || paymentIntentId || session.id
+        : paymentIntentId || invoiceId || session.id;
     const billingAnalyticsOpts: IServerTrackOptions = {
       ...amplitudeOpts,
       sourceObjectId,

@@ -139,6 +139,7 @@ describe('CancelSubscriptionModal', () => {
     fireEvent.click(continueButton);
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
     resolveRequest({ ok: true, json: async () => ({ data: { offer: null } }) });
+    await waitFor(() => expect(screen.getByText('Are you sure?')).toBeInTheDocument());
   });
 
   test('should accept downgrade offer without canceling', async () => {
@@ -388,6 +389,8 @@ describe('CancelSubscriptionModal', () => {
     // Should show loading state
     expect(screen.getByText('Canceling...')).toBeInTheDocument();
     expect(confirmButton).toBeDisabled();
+
+    await waitFor(() => expect(mockOnClose).toHaveBeenCalled());
   });
 
   test('should handle cancellation error gracefully', async () => {
@@ -407,6 +410,7 @@ describe('CancelSubscriptionModal', () => {
     await waitFor(() => {
       expect(consoleSpy).toHaveBeenCalledWith('Error canceling subscription:', expect.any(Error));
     });
+    await waitFor(() => expect(screen.getByText('Yes, Cancel Subscription')).toBeEnabled());
 
     consoleSpy.mockRestore();
   });

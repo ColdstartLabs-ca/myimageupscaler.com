@@ -337,11 +337,11 @@ describe('InvoiceHandler - Test Mode Graceful Handling', () => {
     );
     expect(MockedTrackRevenue).toHaveBeenCalledWith(
       expect.objectContaining({
-        sourceObjectId: 'pi_initial_123',
+        sourceObjectId: mockInvoiceId,
         lifecycleAction: 'purchase_initial',
       }),
       expect.objectContaining({
-        sourceObjectId: 'pi_initial_123',
+        sourceObjectId: mockInvoiceId,
         lifecycleAction: 'purchase_initial',
         deduplicate: true,
       })

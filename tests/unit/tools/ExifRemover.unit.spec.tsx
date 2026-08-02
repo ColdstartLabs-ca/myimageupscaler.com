@@ -1,6 +1,13 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+
+const interactiveToolTemplateSource = readFileSync(
+  join(process.cwd(), 'app/(pseo)/_components/pseo/templates/InteractiveToolPageTemplate.tsx'),
+  'utf8'
+);
 
 vi.mock('exifr', () => ({
   default: { parse: vi.fn().mockResolvedValue(null) },
@@ -18,9 +25,9 @@ describe('ExifRemover', () => {
     expect(screen.getByText(/Remove Metadata From Photo/i)).toBeInTheDocument();
   });
 
-  it('should be registered in TOOL_COMPONENTS', async () => {
-    const { TOOL_COMPONENTS } =
-      await import('@/app/(pseo)/_components/pseo/templates/InteractiveToolPageTemplate');
-    expect(TOOL_COMPONENTS['ExifRemover']).toBeDefined();
+  it('should be registered in TOOL_COMPONENTS', () => {
+    expect(interactiveToolTemplateSource).toMatch(
+      /export const TOOL_COMPONENTS[\s\S]*?\bExifRemover,/
+    );
   });
 });

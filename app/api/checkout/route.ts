@@ -122,30 +122,31 @@ function sanitizeCustomCheckoutMetadata(metadata: Record<string, string>): Recor
   );
 }
 
+function stableSerialize(value: unknown): string {
+  if (value === null) return 'null';
+  if (value === undefined) return 'undefined';
+  if (Array.isArray(value)) return `[${value.map(stableSerialize).join(',')}]`;
+  if (typeof value === 'object') {
+    const record = value as Record<string, unknown>;
+    return `{${Object.keys(record)
+      .filter(key => record[key] !== undefined)
+      .sort()
+      .map(key => `${JSON.stringify(key)}:${stableSerialize(record[key])}`)
+      .join(',')}}`;
+  }
+  return JSON.stringify(value);
+}
+
 async function buildCheckoutIdempotencyKey(input: {
-  userId: string;
-  priceId: string;
-  uiMode: 'hosted' | 'embedded';
-  offerToken?: string;
   funnelAttemptId?: string;
-  assignmentKey?: string;
-  autoTopUp?: { enabled: true; thresholdCredits: number };
-  successUrl?: string;
-  cancelUrl?: string;
+  sessionParams: Stripe.Checkout.SessionCreateParams;
 }): Promise<{ key: string; hash: string } | null> {
   if (!input.funnelAttemptId) return null;
 
-  const identity = JSON.stringify([
-    input.userId,
-    input.priceId,
-    input.uiMode,
-    input.offerToken ?? null,
-    input.funnelAttemptId,
-    input.assignmentKey ?? null,
-    input.autoTopUp ?? null,
-    input.successUrl ?? null,
-    input.cancelUrl ?? null,
-  ]);
+  // Stripe rejects reusing an idempotency key with a different request body.
+  // Hash every session parameter, including validated metadata, customer,
+  // line items, discounts, and return URLs, rather than only funnel identity.
+  const identity = stableSerialize(input.sessionParams);
 
   try {
     const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(identity));
@@ -350,16 +351,13 @@ export async function POST(request: NextRequest) {
     try {
       validatedFunnelMetadata = parseFunnelCheckoutAttribution(metadata) || {};
     } catch (error) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'INVALID_FUNNEL_ATTRIBUTION',
-            message: error instanceof Error ? error.message : 'Invalid funnel attribution',
-          },
-        },
-        { status: 400 }
-      );
+      // Funnel data is observability metadata, not a payment prerequisite.
+      // Ignore invalid or stale client attribution so cached bundles cannot
+      // turn a valid checkout into a hard 400.
+      console.warn('[CHECKOUT_FUNNEL_ATTRIBUTION_IGNORED]', {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      validatedFunnelMetadata = {};
     }
 
     if (Object.keys(customMetadata).length !== Object.keys(metadata).length) {
@@ -513,24 +511,6 @@ export async function POST(request: NextRequest) {
         { status: 403 }
       );
     }
-    const checkoutIdempotency = await buildCheckoutIdempotencyKey({
-      userId: user.id,
-      priceId: validatedPriceId,
-      uiMode,
-      offerToken,
-      funnelAttemptId: validatedFunnelMetadata.funnel_attempt_id,
-      assignmentKey:
-        validatedExperimentMetadata[EXPERIMENT_CHECKOUT_METADATA_KEYS.experimentAssignmentKey],
-      autoTopUp,
-      successUrl,
-      cancelUrl,
-    });
-    const autoTopUpConsentVersion = autoTopUp
-      ? checkoutIdempotency
-        ? consentVersionFromHash(checkoutIdempotency.hash)
-        : crypto.randomUUID()
-      : null;
-
     // 4. Check if user already has an active subscription (only for subscription purchases)
     const existingSubscription = await checkExistingSubscription(user, resolvedPrice, token);
 
@@ -833,13 +813,6 @@ export async function POST(request: NextRequest) {
                 }),
           }
         : {}),
-      ...(autoTopUp && autoTopUpConsentVersion && resolvedPrice?.type === 'pack'
-        ? {
-            auto_top_up_consent_version: autoTopUpConsentVersion,
-            auto_top_up_threshold: autoTopUp.thresholdCredits.toString(),
-            auto_top_up_pack_key: resolvedPrice.key,
-          }
-        : {}),
     };
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
@@ -898,6 +871,33 @@ export async function POST(request: NextRequest) {
       sessionParams.return_url =
         successUrl ||
         `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}&type=${purchaseType}${creditsParam}`;
+    }
+
+    // Include the auto-top-up rule in the request fingerprint. The consent
+    // version itself is derived from that fingerprint and is added afterward.
+    if (autoTopUp && resolvedPrice?.type === 'pack') {
+      Object.assign(checkoutMetadata, {
+        auto_top_up_threshold: autoTopUp.thresholdCredits.toString(),
+        auto_top_up_pack_key: resolvedPrice.key,
+      });
+    }
+
+    const checkoutIdempotency = await buildCheckoutIdempotencyKey({
+      funnelAttemptId: validatedFunnelMetadata.funnel_attempt_id,
+      sessionParams,
+    });
+    const autoTopUpConsentVersion = autoTopUp
+      ? checkoutIdempotency
+        ? consentVersionFromHash(checkoutIdempotency.hash)
+        : crypto.randomUUID()
+      : null;
+
+    // Add the derived consent version after hashing to avoid a circular identity
+    // dependency. The object is shared by session metadata and payment_intent_data metadata.
+    if (autoTopUp && autoTopUpConsentVersion && resolvedPrice?.type === 'pack') {
+      Object.assign(checkoutMetadata, {
+        auto_top_up_consent_version: autoTopUpConsentVersion,
+      });
     }
 
     if (autoTopUp && autoTopUpConsentVersion && resolvedPrice?.type === 'pack') {

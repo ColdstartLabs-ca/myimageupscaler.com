@@ -335,9 +335,10 @@ describe.runIf(dockerAvailable)('lifecycle queue eligibility restoration on Post
           )`,
         [runId]
       );
+      const applyFailure = expect(apply).rejects.toThrow('Recipient-value run item changed');
       await new Promise(resolve => setTimeout(resolve, 100));
       await concurrent.query('COMMIT');
-      await expect(apply).rejects.toThrow('Recipient-value run item changed');
+      await applyFailure;
     } finally {
       await concurrent.query('ROLLBACK').catch(() => undefined);
       await concurrent.end();
