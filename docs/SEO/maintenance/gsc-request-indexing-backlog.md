@@ -2,10 +2,11 @@
 
 Created: 2026-05-06
 Deduplicated: 2026-07-22
+API-inspected: 2026-08-03
 
 ## When To Use
 
-After a production SEO change, open Google Search Console URL Inspection for each pending URL below and click **Request indexing**. Keep one row per URL. Do not mark a row complete until someone confirms the request was accepted in the GSC UI.
+After a production SEO change, open Google Search Console URL Inspection for each pending URL below and click **Request indexing**. Keep one row per URL. Resolve a pending row only when either (a) the request is visibly accepted in the GSC UI, or (b) the URL Inspection API proves Google successfully crawled the URL after the recorded production change and currently reports `Submitted and indexed`; annotate API-resolved rows explicitly so they are not misreported as manual requests.
 
 Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myimageupscaler.com/sitemap-static.xml` were resubmitted through the Search Console Sitemaps API and both returned `204 No Content`. This does not replace manual URL Inspection request indexing.
 
@@ -24,21 +25,22 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 - [x] `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails`
 - [ ] `https://myimageupscaler.com/blog/image-upscaler-8x`
 - [ ] `https://myimageupscaler.com/blog/photo-restoration-program` — refreshed 2026-07-22 with a current comparison table and policy-aligned credit copy.
-- [ ] `https://myimageupscaler.com/blog/photoshop-upscale-image`
-- [ ] `https://myimageupscaler.com/blog/photoshop-upscaler-vs-ai-tools`
-- [ ] `https://myimageupscaler.com/blog/poster-size-dimensions-pixels` — refreshed 2026-07-22 with a new SERP snippet.
-- [ ] `https://myimageupscaler.com/blog/sharpen-a-video`
-- [ ] `https://myimageupscaler.com/blog/text-image-enhancer` — refreshed 2026-07-22 around clarity and text-readability intent.
-- [ ] `https://myimageupscaler.com/blog/upscale-image-for-print-300-dpi-guide`
-- [ ] `https://myimageupscaler.com/blog/what-resolution-for-print`
-- [ ] `https://myimageupscaler.com/comparisons-expanded/ai-models-comparison`
-- [ ] `https://myimageupscaler.com/es`
 - [ ] `https://myimageupscaler.com/formats/upscale-gif-images` — refreshed 2026-07-30 as the sole truthful GIF-intent owner; four `/format-scale/gif-upscale-*` URLs now consolidate here. Sitemap `lastmod` bumped 2026-08-03; request indexing after deploy.
-- [ ] `https://myimageupscaler.com/it`
-- [ ] `https://myimageupscaler.com/ja`
-- [ ] `https://myimageupscaler.com/pt`
 
 ## Completed
+
+- [x] `https://myimageupscaler.com/blog/photoshop-upscale-image` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-08-01 after the 2026-05-26 change.
+- [x] `https://myimageupscaler.com/blog/photoshop-upscaler-vs-ai-tools` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-07-15 after the 2026-06-05 change.
+- [x] `https://myimageupscaler.com/blog/poster-size-dimensions-pixels` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-08-01 after the 2026-07-22 refresh.
+- [x] `https://myimageupscaler.com/blog/sharpen-a-video` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-07-23 after the 2026-06-21 change.
+- [x] `https://myimageupscaler.com/blog/text-image-enhancer` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-07-26 after the 2026-07-22 refresh.
+- [x] `https://myimageupscaler.com/blog/upscale-image-for-print-300-dpi-guide` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-08-02 after the 2026-05-26 change.
+- [x] `https://myimageupscaler.com/blog/what-resolution-for-print` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-08-01 after the 2026-06-05 change.
+- [x] `https://myimageupscaler.com/comparisons-expanded/ai-models-comparison` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-07-21 after the 2026-05-26 change.
+- [x] `https://myimageupscaler.com/es` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-08-01 after the 2026-06-29 change.
+- [x] `https://myimageupscaler.com/it` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-07-27 after the 2026-06-29 change.
+- [x] `https://myimageupscaler.com/ja` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-07-31 after the 2026-06-29 change.
+- [x] `https://myimageupscaler.com/pt` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-08-01 after the 2026-06-29 change.
 
 - [x] `https://myimageupscaler.com/alternatives/vs-adobe-express`
 - [x] `https://myimageupscaler.com/blog`
