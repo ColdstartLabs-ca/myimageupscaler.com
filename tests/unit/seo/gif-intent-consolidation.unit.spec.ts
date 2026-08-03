@@ -51,9 +51,7 @@ describe('GIF search-intent consolidation', () => {
     const response = await middleware(request);
 
     expect(response.status).toBe(301);
-    expect(response.headers.get('location')).toBe(
-      'http://localhost/formats/upscale-gif-images'
-    );
+    expect(response.headers.get('location')).toBe('http://localhost/formats/upscale-gif-images');
   });
 
   test('collapses localized GIF scale variants to the truthful English owner', async () => {
@@ -63,9 +61,7 @@ describe('GIF search-intent consolidation', () => {
     const response = await middleware(request);
 
     expect(response.status).toBe(301);
-    expect(response.headers.get('location')).toBe(
-      'http://localhost/formats/upscale-gif-images'
-    );
+    expect(response.headers.get('location')).toBe('http://localhost/formats/upscale-gif-images');
   });
 
   test('removes GIF scale URLs from static generation, loaders, and the sitemap', async () => {
@@ -99,6 +95,7 @@ describe('GIF search-intent consolidation', () => {
     expect(copy).toContain('animated gif processing is not currently supported');
     expect(copy).toContain('export');
     expect(copy).toContain('png');
+    expect(page?.lastUpdated).toBe('2026-08-03T00:00:00Z');
     expect(copy).not.toContain('no registration');
   });
 
@@ -112,19 +109,16 @@ describe('GIF search-intent consolidation', () => {
       new NextRequest('http://localhost/ja/formats/upscale-gif-images')
     );
     expect(response.status).toBe(301);
-    expect(response.headers.get('location')).toBe(
-      'http://localhost/formats/upscale-gif-images'
-    );
+    expect(response.headers.get('location')).toBe('http://localhost/formats/upscale-gif-images');
 
     expect((await getFormatDataWithLocale('upscale-gif-images', 'ja')).data).toBeNull();
 
     const sitemap = await (await GET()).text();
     expect(sitemap).not.toContain('/ja/formats/upscale-gif-images');
 
-    const hreflang = generateSitemapHreflangLinks(
-      '/formats/upscale-gif-images',
-      'formats'
-    ).join('\n');
+    const hreflang = generateSitemapHreflangLinks('/formats/upscale-gif-images', 'formats').join(
+      '\n'
+    );
     expect(hreflang).toContain('hreflang="en"');
     expect(hreflang).toContain('hreflang="x-default"');
     expect(hreflang).not.toContain('hreflang="ja"');

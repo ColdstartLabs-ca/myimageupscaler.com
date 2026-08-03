@@ -167,6 +167,15 @@ describe('Sitemap Index Route', () => {
     expect(xml).not.toContain('sitemap-use-cases-expanded.xml');
   });
 
+  it('should return gone for the retired use-cases-expanded child sitemap', async () => {
+    const { GET } = await import('@/app/sitemap-use-cases-expanded.xml/route');
+
+    const response = await GET();
+
+    expect(response.status).toBe(410);
+    expect(await response.text()).toContain('retired');
+  });
+
   it('should include 85 total sitemaps (15 routed English-only + 10×7 localized)', async () => {
     const { GET } = await import('@/app/sitemap.xml/route');
     const response = await GET();

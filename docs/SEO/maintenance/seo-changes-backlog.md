@@ -23,6 +23,42 @@ Maintenance rules:
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
 
+## 2026-08-03
+
+### Orphan Sitemap Retirement + GIF Lastmod Signal
+
+Source: autonomous blog growth operator using fresh GSC 28-day data through 2026-07-31 (`/tmp/gsc-miu-28-2026-08-03.json`), GA4 organic data through 2026-08-02 (`/tmp/ga-miu-28-2026-08-03.json`), current SEO/indexing backlogs, blog changelog, the 2026-07-30 GSC diagnosis, the 2026-07-31 CTR batch review, and recent git history.
+
+Evidence:
+
+- Fresh GSC confirms active snippet tests should not be stacked yet: `/blog/fixing-pixelated-photos` still has only 1 click / 83,326 impressions for `how to fix pixelated photos` in the latest 28 days and its 2026-07-27 title test has a 2026-08-10 trigger; `/blog/poster-size-dimensions-pixels` is under the 2026-07-22 recovery window with 49 clicks / 19,073 impressions / avg position 6.73; `/blog/best-free-ai-image-upscaler-2026-tested-compared` has a broad 8.41% page CTR but zero-click exact 2026 variants, so it remains a measurement candidate rather than a same-run rewrite.
+- Fresh GA4 shows organic search is up 27.21% sessions and 32.87% conversions versus the prior 28 days, so the safest growth move was technical indexability cleanup rather than adding overlapping blog content.
+- The 2026-07-31 CTR batch review found the retired `use-cases-expanded` child sitemap still live even though its URLs have no route, and found the truthful GIF owner still carried stale `lastUpdated` despite the 2026-07-30 GIF consolidation.
+
+Changes:
+
+- Changed `app/sitemap-use-cases-expanded.xml/route.ts` from a child sitemap listing unrouted 404 URLs to a cacheable `410 Gone` retirement response.
+- Updated `app/seo/data/formats.json` so `/formats/upscale-gif-images` has `lastUpdated: 2026-08-03T00:00:00Z`, matching the GIF ownership/correctness change that should be recrawled.
+- Extended `tests/unit/seo/sitemap-index.unit.spec.ts` and `tests/unit/seo/gif-intent-consolidation.unit.spec.ts` to lock both behaviors.
+- Updated the existing GIF owner row in `docs/SEO/maintenance/gsc-request-indexing-backlog.md`; no duplicate indexing row was added.
+
+Why:
+
+- This fixes a concrete indexability/sitemap defect without touching active blog snippet experiments that are still inside stated GSC lag windows.
+- The GIF change is recorded as a correctness/indexing-signal improvement, not a CTR-recovery claim; current GSC still shows `gif upscaler` and `upscale gif` splitting across retired `/format-scale/gif-upscale-16x` URLs until the redirect/lastmod change is deployed and recrawled.
+
+Validation:
+
+- `yarn vitest run tests/unit/seo/gif-intent-consolidation.unit.spec.ts tests/unit/seo/sitemap-index.unit.spec.ts` passed: 2 files, 25 tests.
+- `yarn verify` passed (`tsc`, `eslint --fix`, ICU translation check, and schema validation); eslint emitted pre-existing warnings only.
+
+Follow-up:
+
+- Commit: this commit (`fix(seo): retire orphan sitemap and refresh gif lastmod`); final hash is recorded in the operator delivery.
+- Deploy state: not deployed; code/backlog changes are local until this commit is pushed and deployed.
+- After deploy, verify `https://myimageupscaler.com/sitemap-use-cases-expanded.xml` returns `410`, verify `/formats/upscale-gif-images` appears in the formats sitemap with `2026-08-03T00:00:00Z`, then request indexing for the existing pending GIF owner row in GSC URL Inspection.
+- Next trigger: preserve the existing blog measurement windows — best-free comparison on/after 2026-08-04, July 22 recovery pages on/after 2026-08-05, and pixelated-photo snippet on/after 2026-08-10. Do not rewrite those pages before their trigger unless production health/indexability breaks.
+
 ## 2026-07-31
 
 ### Free-credit comparison copy correction
