@@ -17,6 +17,10 @@ const halfOpenRecoveryMigration = readFileSync(
   'supabase/migrations/20260805182000_provider_circuit_half_open_recovery.sql',
   'utf8'
 );
+const circuitGrantsMigration = readFileSync(
+  'supabase/migrations/20260805210000_harden_provider_circuit_grants.sql',
+  'utf8'
+);
 const upscaleRoute = readFileSync('app/api/upscale/route.ts', 'utf8');
 
 function functionBody(migration: string, declaration: string): string {
@@ -192,6 +196,49 @@ describe('half-open circuit probe recovery', () => {
 
     // The alert-claim hardening migration owns those grants; this one must not touch them.
     expect(halfOpenRecoveryMigration).not.toMatch(
+      /(REVOKE|GRANT)[^;]*(claim_provider_health_alert|release_provider_health_alert_claim)/
+    );
+  });
+});
+
+describe('provider circuit function grants', () => {
+  const SERVER_ONLY_SIGNATURES = [
+    'public.acquire_provider_circuit_permit(TEXT)',
+    'public.get_provider_circuit_availability(TEXT)',
+  ];
+
+  it('should strip the inherited anon and authenticated execute grants', () => {
+    // REVOKE ... FROM PUBLIC does not remove Supabase's bootstrap role grants, so each role
+    // must be revoked explicitly. Verified in production: all three had anon=X/authenticated=X.
+    for (const signature of SERVER_ONLY_SIGNATURES) {
+      expect(circuitGrantsMigration).toContain(`REVOKE ALL ON FUNCTION ${signature} FROM PUBLIC`);
+      expect(circuitGrantsMigration).toContain(`REVOKE ALL ON FUNCTION ${signature} FROM anon`);
+      expect(circuitGrantsMigration).toContain(
+        `REVOKE ALL ON FUNCTION ${signature} FROM authenticated`
+      );
+      expect(circuitGrantsMigration).toContain(
+        `GRANT EXECUTE ON FUNCTION ${signature} TO service_role`
+      );
+    }
+  });
+
+  it('should revoke the outcome recorder that could otherwise be used to trip the circuit', () => {
+    const recorder =
+      /record_provider_health_outcome\(\s*TEXT, BOOLEAN, TEXT, INTEGER, INTEGER\s*\)/;
+
+    for (const role of ['PUBLIC', 'anon', 'authenticated']) {
+      expect(circuitGrantsMigration).toMatch(
+        new RegExp(`REVOKE ALL ON FUNCTION public\\.${recorder.source}\\s*FROM ${role};`)
+      );
+    }
+
+    expect(circuitGrantsMigration).toMatch(
+      new RegExp(`GRANT EXECUTE ON FUNCTION public\\.${recorder.source}\\s*TO service_role;`)
+    );
+  });
+
+  it('should leave the alert-claim grants to their own migration', () => {
+    expect(circuitGrantsMigration).not.toMatch(
       /(REVOKE|GRANT)[^;]*(claim_provider_health_alert|release_provider_health_alert_claim)/
     );
   });
