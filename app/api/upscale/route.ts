@@ -1178,6 +1178,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         processingTimeMs: durationMs,
         creditsUsed: creditCost,
         creditsRemaining: result.creditsRemaining,
+        ...(isInternalScaleFallback ? { dimensionPreservingFallback: true } : {}),
       },
       // Include usedTier for Auto tier responses so UI can show what was actually used
       usedTier: config.qualityTier === 'auto' ? resolvedTier : undefined,

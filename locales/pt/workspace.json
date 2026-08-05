@@ -64,7 +64,8 @@
     "aspectRatioMaintained": "A proporção original é mantida",
     "autoResizeToastUpload": "A imagem foi redimensionada para {resizedWidth}×{resizedHeight} para caber nos limites de upload antes do processamento.",
     "autoResizeToastUploadBatch": "{count, plural, one {# imagem foi redimensionada para caber nos limites de upload antes do processamento.} other {# imagens foram redimensionadas para caber nos limites de upload antes do processamento.}}",
-    "autoResizeToastProcessing": "A entrada foi redimensionada para {resizedWidth}×{resizedHeight} para caber no processamento. O resultado final será de aproximadamente {expectedWidth}×{expectedHeight} ({scale}x em relação à entrada redimensionada)."
+    "autoResizeToastProcessing": "A entrada foi redimensionada para {resizedWidth}×{resizedHeight} para caber no processamento. O resultado final será de aproximadamente {expectedWidth}×{expectedHeight} ({scale}x em relação à entrada redimensionada).",
+    "dimensionPreservingModelToast": "Sua imagem era grande demais para o modelo selecionado, então {model} a processou para manter as dimensões originais. Foi cobrado o preço habitual."
   },
   "previewArea": {
     "stages": {

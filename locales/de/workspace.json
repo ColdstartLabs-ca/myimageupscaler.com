@@ -64,7 +64,8 @@
     "aspectRatioMaintained": "Das ursprüngliche Seitenverhältnis wird beibehalten",
     "autoResizeToastUpload": "Das Bild wurde vor der Verarbeitung auf {resizedWidth}×{resizedHeight} verkleinert, damit es die Upload-Grenzen einhält.",
     "autoResizeToastUploadBatch": "{count, plural, one {# Bild wurde vor der Verarbeitung verkleinert, damit es die Upload-Grenzen einhält.} other {# Bilder wurden vor der Verarbeitung verkleinert, damit sie die Upload-Grenzen einhalten.}}",
-    "autoResizeToastProcessing": "Die Eingabe wurde auf {resizedWidth}×{resizedHeight} verkleinert, damit sie verarbeitet werden kann. Das Endergebnis wird ungefähr {expectedWidth}×{expectedHeight} groß sein ({scale}x bezogen auf die verkleinerte Eingabe)."
+    "autoResizeToastProcessing": "Die Eingabe wurde auf {resizedWidth}×{resizedHeight} verkleinert, damit sie verarbeitet werden kann. Das Endergebnis wird ungefähr {expectedWidth}×{expectedHeight} groß sein ({scale}x bezogen auf die verkleinerte Eingabe).",
+    "dimensionPreservingModelToast": "Ihr Bild war zu groß für das ausgewählte Modell. Stattdessen hat {model} es verarbeitet, um die ursprünglichen Abmessungen zu erhalten. Berechnet wurde der übliche Preis."
   },
   "previewArea": {
     "stages": {

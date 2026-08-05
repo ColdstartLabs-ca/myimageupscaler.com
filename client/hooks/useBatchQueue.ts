@@ -351,6 +351,18 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         useUserStore.getState().updateCreditsFromProcessing(result.creditsRemaining);
       }
 
+      // The source exceeded the selected model's size limit, so a tiled model ran
+      // instead. Disclose it rather than swapping models silently.
+      if (result.dimensionPreservingFallback) {
+        showToast({
+          message: t('oversizedImage.dimensionPreservingModelToast', {
+            model: result.modelDisplayName ?? '',
+          }),
+          type: 'info',
+          duration: 5000,
+        });
+      }
+
       success = true;
     } catch (error: unknown) {
       const errorMessage = serializeError(error);

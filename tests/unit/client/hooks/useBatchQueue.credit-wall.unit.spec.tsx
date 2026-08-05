@@ -80,9 +80,13 @@ vi.mock('@shared/config/subscription.utils', async importOriginal => {
 });
 
 vi.mock('next-intl', () => ({
-  useTranslations: () => (key: string, values?: Record<string, number>) => {
+  useTranslations: () => (key: string, values?: Record<string, string | number>) => {
     if (key === 'oversizedImage.autoResizeToastProcessing') {
       return `Input resized to ${values?.resizedWidth}×${values?.resizedHeight} to fit processing. Final result will be about ${values?.expectedWidth}×${values?.expectedHeight} (${values?.scale}x from the resized input).`;
+    }
+
+    if (key === 'oversizedImage.dimensionPreservingModelToast') {
+      return `Your image was too large for the selected model, so ${values?.model} processed it instead to keep the original dimensions. You were charged the usual price.`;
     }
 
     return key;
@@ -159,6 +163,69 @@ describe('useBatchQueue credit wall analytics', () => {
         message:
           'Input resized to 1375×2048 to fit processing. Final result will be about 2750×4096 (2x from the resized input).',
         type: 'info',
+      })
+    );
+  });
+
+  it('discloses the size-driven model swap instead of switching models silently', async () => {
+    mocks.processImage.mockResolvedValueOnce({
+      imageData: 'data:image/png;base64,processed',
+      creditsRemaining: 4,
+      creditsUsed: 1,
+      modelDisplayName: 'Clarity Upscaler',
+      dimensionPreservingFallback: true,
+    });
+
+    const item: IBatchItem = {
+      id: 'item-1',
+      file: new File(['image'], 'image.png', { type: 'image/png' }),
+      previewUrl: 'blob:test',
+      processedUrl: null,
+      status: ProcessingStatus.IDLE,
+      progress: 0,
+      inputDimensions: { width: 2000, height: 1500 },
+    };
+    const { result } = renderHook(() => useBatchQueue());
+
+    await act(async () => {
+      await result.current.processSingleItem(item, config);
+    });
+
+    expect(mocks.showToast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message:
+          'Your image was too large for the selected model, so Clarity Upscaler processed it instead to keep the original dimensions. You were charged the usual price.',
+        type: 'info',
+      })
+    );
+  });
+
+  it('stays silent when the selected model processed the image', async () => {
+    mocks.processImage.mockResolvedValueOnce({
+      imageData: 'data:image/png;base64,processed',
+      creditsRemaining: 4,
+      creditsUsed: 1,
+      modelDisplayName: 'Real-ESRGAN',
+    });
+
+    const item: IBatchItem = {
+      id: 'item-1',
+      file: new File(['image'], 'image.png', { type: 'image/png' }),
+      previewUrl: 'blob:test',
+      processedUrl: null,
+      status: ProcessingStatus.IDLE,
+      progress: 0,
+      inputDimensions: { width: 1000, height: 1000 },
+    };
+    const { result } = renderHook(() => useBatchQueue());
+
+    await act(async () => {
+      await result.current.processSingleItem(item, config);
+    });
+
+    expect(mocks.showToast).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: expect.stringContaining('processed it instead'),
       })
     );
   });

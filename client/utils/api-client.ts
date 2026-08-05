@@ -123,6 +123,10 @@ export interface IProcessImageResult {
   imageUrl?: string; // Direct URL to image (from Replicate - use in <img> tag)
   creditsRemaining: number;
   creditsUsed: number;
+  /** Display name of the model that actually ran, for disclosing a size-driven model swap */
+  modelDisplayName?: string;
+  /** The source exceeded the selected model's size limit, so a tiled model ran instead */
+  dimensionPreservingFallback?: boolean;
 }
 
 /**
@@ -362,6 +366,8 @@ export const processImage = async (
       imageData: data.imageData,
       creditsRemaining: data.processing?.creditsRemaining ?? 0,
       creditsUsed: data.processing?.creditsUsed ?? 0,
+      modelDisplayName: data.processing?.modelDisplayName,
+      dimensionPreservingFallback: data.processing?.dimensionPreservingFallback,
     };
   } catch (error) {
     console.error('AI Processing Error:', error);

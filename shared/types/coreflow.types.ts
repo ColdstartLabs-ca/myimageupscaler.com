@@ -636,6 +636,8 @@ export interface IUpscaleResponse {
     processingTimeMs: number;
     creditsUsed: number;
     creditsRemaining: number;
+    /** Set when the source was too large for the tier's model, so a tiled model ran instead to keep the original dimensions. Billing still follows the selected tier. */
+    dimensionPreservingFallback?: boolean;
   };
   // New field for Auto tier to show what was actually used
   usedTier?: QualityTier;
