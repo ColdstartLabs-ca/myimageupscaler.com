@@ -2,10 +2,19 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
   rpc: vi.fn(),
+  env: { ENV: 'production', NODE_ENV: 'production', PLAYWRIGHT_TEST: undefined } as {
+    ENV: string;
+    NODE_ENV: string;
+    PLAYWRIGHT_TEST: string | undefined;
+  },
 }));
 
 vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: { rpc: mocks.rpc },
+}));
+
+vi.mock('@shared/config/env', () => ({
+  serverEnv: mocks.env,
 }));
 
 import { providerHealthService } from '@server/services/provider-health.service';
@@ -13,6 +22,9 @@ import { providerHealthService } from '@server/services/provider-health.service'
 describe('providerHealthService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.env.ENV = 'production';
+    mocks.env.NODE_ENV = 'production';
+    mocks.env.PLAYWRIGHT_TEST = undefined;
   });
 
   it('should expose shared circuit availability', async () => {
@@ -83,5 +95,33 @@ describe('providerHealthService', () => {
       p_baseline_multiplier: 3,
       p_alert_cooldown_minutes: 30,
     });
+  });
+
+  // The test server shares the production database, and test traffic intentionally
+  // drives the provider to failure. Recording those outcomes tripped the live circuit
+  // and turned every later request in the run into a 503.
+  describe('test-environment isolation', () => {
+    const testEnvCases = [
+      { label: 'ENV=test', apply: () => (mocks.env.ENV = 'test') },
+      { label: 'NODE_ENV=test', apply: () => (mocks.env.NODE_ENV = 'test') },
+      { label: 'PLAYWRIGHT_TEST=true', apply: () => (mocks.env.PLAYWRIGHT_TEST = 'true') },
+    ];
+
+    for (const { label, apply } of testEnvCases) {
+      it(`should never touch the shared circuit when ${label}`, async () => {
+        apply();
+
+        await expect(providerHealthService.getAvailability()).resolves.toEqual({
+          available: true,
+          status: 'closed',
+          retryAt: null,
+        });
+        await expect(providerHealthService.acquireProcessingPermit()).resolves.toBe(true);
+        await expect(providerHealthService.recordFailure('internal')).resolves.toBe(true);
+        await expect(providerHealthService.recordSuccess()).resolves.toBe(true);
+
+        expect(mocks.rpc).not.toHaveBeenCalled();
+      });
+    }
   });
 });

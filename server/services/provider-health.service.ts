@@ -1,3 +1,4 @@
+import { serverEnv } from '@shared/config/env';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 
 const PROCESSING_PROVIDER_KEY = 'image-processing';
@@ -61,8 +62,24 @@ function firstRow<T>(data: T | T[] | null): T | null {
   return Array.isArray(data) ? (data[0] ?? null) : data;
 }
 
+/**
+ * The circuit lives in the shared database, which the test server also talks to.
+ * Test traffic deliberately drives the provider to failure, so recording those
+ * outcomes would trip the circuit for real users and make every later test in the
+ * run fail with 503. Mirrors the batch-limit service's test-environment bypass.
+ */
+function isTestEnvironment(): boolean {
+  return (
+    serverEnv.ENV === 'test' || serverEnv.NODE_ENV === 'test' || serverEnv.PLAYWRIGHT_TEST === 'true'
+  );
+}
+
 export const providerHealthService = {
   async getAvailability(): Promise<IProviderCircuitAvailability> {
+    if (isTestEnvironment()) {
+      return { available: true, status: 'closed', retryAt: null };
+    }
+
     const { data, error } = await supabaseAdmin.rpc('get_provider_circuit_availability', {
       p_provider: PROCESSING_PROVIDER_KEY,
     });
@@ -85,6 +102,10 @@ export const providerHealthService = {
   },
 
   async acquireProcessingPermit(): Promise<boolean> {
+    if (isTestEnvironment()) {
+      return true;
+    }
+
     const { data, error } = await supabaseAdmin.rpc('acquire_provider_circuit_permit', {
       p_provider: PROCESSING_PROVIDER_KEY,
     });
@@ -106,6 +127,10 @@ export const providerHealthService = {
   },
 
   async recordOutcome(success: boolean, failureKind?: ProviderFailureKind): Promise<boolean> {
+    if (isTestEnvironment()) {
+      return true;
+    }
+
     const { error } = await supabaseAdmin.rpc('record_provider_health_outcome', {
       p_provider: PROCESSING_PROVIDER_KEY,
       p_success: success,

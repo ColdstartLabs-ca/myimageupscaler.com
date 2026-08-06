@@ -51,8 +51,9 @@ test.describe('PRD: True Image Upscaling - Phase 2: Dimension Reporting', () => 
       // Note: May fail with AI service errors in test environment, but dimensions should be present
       const response = await api.post('/api/upscale', baseConfig);
 
-      // Accept both success and AI service errors - we're validating structure
-      expect([200, 422, 500]).toContain(response.status);
+      // Accept both success and AI service errors - we're validating structure.
+      // A failed provider attempt surfaces as 503 (AI_UNAVAILABLE), not 500.
+      expect([200, 422, 500, 503]).toContain(response.status);
 
       if (response.status === 200) {
         const data = await response.json();
@@ -249,8 +250,8 @@ test.describe('PRD: True Image Upscaling - Phase 4: Scale Validation', () => {
         },
       });
 
-      // Scale validation (400), tier restriction (403), or AI service errors (422, 500)
-      expect([400, 403, 422, 500]).toContain(response.status);
+      // Scale validation (400), tier restriction (403), or AI service errors (422, 500, 503)
+      expect([400, 403, 422, 500, 503]).toContain(response.status);
 
       if (response.status === 400) {
         const data = await response.json();
@@ -280,8 +281,8 @@ test.describe('PRD: True Image Upscaling - Phase 4: Scale Validation', () => {
         },
       });
 
-      // Scale validation (400), tier restriction (403), or AI service errors (422, 500)
-      expect([400, 403, 422, 500]).toContain(response.status);
+      // Scale validation (400), tier restriction (403), or AI service errors (422, 500, 503)
+      expect([400, 403, 422, 500, 503]).toContain(response.status);
 
       if (response.status === 400) {
         const data = await response.json();
@@ -312,8 +313,8 @@ test.describe('PRD: True Image Upscaling - Phase 4: Scale Validation', () => {
         },
       });
 
-      // Scale validation (400), tier restriction (403), or AI service errors (422, 500)
-      expect([400, 403, 422, 500]).toContain(response.status);
+      // Scale validation (400), tier restriction (403), or AI service errors (422, 500, 503)
+      expect([400, 403, 422, 500, 503]).toContain(response.status);
     });
   });
 
@@ -337,8 +338,8 @@ test.describe('PRD: True Image Upscaling - Phase 4: Scale Validation', () => {
         },
       });
 
-      // Scale validation (400), tier restriction (403), or AI service errors (422, 500)
-      expect([400, 403, 422, 500]).toContain(response.status);
+      // Scale validation (400), tier restriction (403), or AI service errors (422, 500, 503)
+      expect([400, 403, 422, 500, 503]).toContain(response.status);
 
       if (response.status === 400) {
         const data = await response.json();
