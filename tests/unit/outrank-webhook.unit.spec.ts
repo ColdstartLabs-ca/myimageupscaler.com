@@ -77,6 +77,25 @@ describe('outrankWebhookPayloadSchema', () => {
     const result = outrankWebhookPayloadSchema.safeParse(payloadWithoutTimestamp);
     expect(result.success).toBe(true);
   });
+
+  it('should validate an update_article payload with a single article', () => {
+    const result = outrankWebhookPayloadSchema.safeParse({
+      event_type: 'update_article',
+      timestamp: '2026-02-24T12:00:00Z',
+      data: { article: makeArticle() },
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('should reject an update_article payload with an articles array', () => {
+    const result = outrankWebhookPayloadSchema.safeParse({
+      event_type: 'update_article',
+      data: { articles: [makeArticle()] },
+    });
+
+    expect(result.success).toBe(false);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -302,6 +321,7 @@ describe('mapOutrankArticleToBlogInput — static field mapping', () => {
 // can change the secret without resetting modules (same pattern as Stripe tests).
 
 import { NextRequest } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { POST as outrankPOST } from '@/app/api/webhooks/outrank/route';
 import * as blogService from '@server/services/blog.service';
 
@@ -322,6 +342,7 @@ vi.mock('@server/services/blog.service', () => ({
   createBlogPost: vi.fn(),
   publishBlogPost: vi.fn(),
   slugExists: vi.fn(),
+  updateBlogPost: vi.fn(),
 }));
 
 vi.mock('next/cache', () => ({
@@ -375,12 +396,15 @@ describe('POST /api/webhooks/outrank route handler', () => {
 
     // Default behaviour: slug does not exist, create/publish succeed
     vi.mocked(blogService.slugExists).mockResolvedValue(false);
-     
+
     vi.mocked(blogService.createBlogPost).mockResolvedValue({
       slug: 'test-article-from-outrank',
     } as any);
-     
+
     vi.mocked(blogService.publishBlogPost).mockResolvedValue({
+      slug: 'test-article-from-outrank',
+    } as any);
+    vi.mocked(blogService.updateBlogPost).mockResolvedValue({
       slug: 'test-article-from-outrank',
     } as any);
   });
@@ -442,6 +466,62 @@ describe('POST /api/webhooks/outrank route handler', () => {
 
     expect(blogService.createBlogPost).toHaveBeenCalledOnce();
     expect(blogService.publishBlogPost).toHaveBeenCalledWith('test-article-from-outrank');
+  });
+
+  it('should update an existing article for an update_article event', async () => {
+    const updatePayload = {
+      event_type: 'update_article',
+      timestamp: '2026-02-24T12:00:00Z',
+      data: {
+        article: {
+          ...validOutrankPayload.data.articles[0],
+          title: 'Updated Article from Outrank With A Long Enough Title',
+        },
+      },
+    };
+
+    const request = makeOutrankRequest(updatePayload);
+    const response = await outrankPOST(request);
+
+    expect(response.status).toBe(200);
+    const json = await response.json();
+    expect(json.success).toBe(true);
+    expect(json.processed).toEqual(['test-article-from-outrank']);
+    expect(json.skipped).toHaveLength(0);
+    expect(json.errors).toHaveLength(0);
+    expect(blogService.updateBlogPost).toHaveBeenCalledWith(
+      'test-article-from-outrank',
+      expect.objectContaining({
+        title: 'Updated Article from Outrank With A Long Enough Title',
+      })
+    );
+    expect(blogService.slugExists).not.toHaveBeenCalled();
+    expect(revalidatePath).toHaveBeenCalledWith('/blog');
+    expect(revalidatePath).toHaveBeenCalledWith('/blog/test-article-from-outrank');
+    expect(blogService.createBlogPost).not.toHaveBeenCalled();
+    expect(blogService.publishBlogPost).not.toHaveBeenCalled();
+  });
+
+  it('should report an update failure without creating or publishing a post', async () => {
+    vi.mocked(blogService.updateBlogPost).mockRejectedValueOnce(
+      new Error('NOT_FOUND: Post not found')
+    );
+
+    const updatePayload = {
+      event_type: 'update_article',
+      data: { article: validOutrankPayload.data.articles[0] },
+    };
+
+    const request = makeOutrankRequest(updatePayload);
+    const response = await outrankPOST(request);
+
+    expect(response.status).toBe(200);
+    const json = await response.json();
+    expect(json.success).toBe(true);
+    expect(json.processed).toHaveLength(0);
+    expect(json.errors).toEqual(['test-article-from-outrank']);
+    expect(blogService.createBlogPost).not.toHaveBeenCalled();
+    expect(blogService.publishBlogPost).not.toHaveBeenCalled();
   });
 
   it('should skip article when slug already exists', async () => {

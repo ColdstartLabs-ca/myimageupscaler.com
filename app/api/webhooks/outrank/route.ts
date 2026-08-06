@@ -5,13 +5,18 @@ import {
   outrankWebhookPayloadSchema,
   mapOutrankArticleToBlogInput,
 } from '@shared/validation/outrank-webhook.schema';
-import { createBlogPost, publishBlogPost, slugExists } from '@server/services/blog.service';
+import {
+  createBlogPost,
+  publishBlogPost,
+  slugExists,
+  updateBlogPost,
+} from '@server/services/blog.service';
 import { createLogger } from '@server/monitoring/logger';
 
 /**
  * POST /api/webhooks/outrank
  *
- * Receives article publish events from Outrank.so.
+ * Receives article publish and update events from Outrank.so.
  * Authentication: Authorization: Bearer <OUTRANK_WEBHOOK_SECRET>
  *
  * This route is public (no JWT auth) — it uses its own Bearer token auth.
@@ -58,19 +63,43 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     const payload = parseResult.data;
-    const { articles } = payload.data;
+    const articleCount =
+      payload.event_type === 'publish_articles' ? payload.data.articles.length : 1;
 
     logger.info('Outrank webhook received', {
       eventType: payload.event_type,
-      articleCount: articles.length,
+      articleCount,
     });
 
     const processed: string[] = [];
     const skipped: string[] = [];
     const errors: string[] = [];
 
-    // 4. Process each article
-    for (const article of articles) {
+    if (payload.event_type === 'update_article') {
+      const mappedInput = mapOutrankArticleToBlogInput(payload.data.article);
+      const { slug } = mappedInput;
+
+      try {
+        await updateBlogPost(slug, mappedInput);
+        processed.push(slug);
+        logger.info('Blog post updated', { slug });
+
+        try {
+          revalidatePath('/blog');
+          revalidatePath(`/blog/${slug}`);
+          logger.info('Revalidated blog paths', { slug });
+        } catch (revalidateError) {
+          logger.warn('Failed to revalidate blog paths', { slug, error: revalidateError });
+        }
+      } catch (updateError) {
+        const message = updateError instanceof Error ? updateError.message : String(updateError);
+        logger.error('Failed to update blog post', { slug, error: message });
+        errors.push(slug);
+      }
+    }
+
+    // 4. Process each new article
+    for (const article of payload.event_type === 'publish_articles' ? payload.data.articles : []) {
       const mappedInput = mapOutrankArticleToBlogInput(article);
       const { slug } = mappedInput;
 

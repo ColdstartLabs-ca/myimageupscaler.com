@@ -17,13 +17,22 @@ export const outrankArticleSchema = z.object({
 export type IOutrankArticle = z.infer<typeof outrankArticleSchema>;
 
 // Full webhook payload
-export const outrankWebhookPayloadSchema = z.object({
-  event_type: z.literal('publish_articles'),
-  timestamp: z.string().optional(),
-  data: z.object({
-    articles: z.array(outrankArticleSchema).min(1),
+export const outrankWebhookPayloadSchema = z.discriminatedUnion('event_type', [
+  z.object({
+    event_type: z.literal('publish_articles'),
+    timestamp: z.string().optional(),
+    data: z.object({
+      articles: z.array(outrankArticleSchema).min(1),
+    }),
   }),
-});
+  z.object({
+    event_type: z.literal('update_article'),
+    timestamp: z.string().optional(),
+    data: z.object({
+      article: outrankArticleSchema,
+    }),
+  }),
+]);
 
 export type IOutrankWebhookPayload = z.infer<typeof outrankWebhookPayloadSchema>;
 
