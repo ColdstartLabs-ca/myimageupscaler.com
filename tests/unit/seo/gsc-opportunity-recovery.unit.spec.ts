@@ -110,7 +110,7 @@ describe('GSC opportunity recovery contract', () => {
     expect(INTENT_OWNERS.every(([, path]) => path.startsWith('/'))).toBe(true);
   });
 
-  it('keeps one request-indexing backlog row per URL without closing pending work', () => {
+  it('keeps one request-indexing backlog row per URL and records resolved work', () => {
     const backlog = readFileSync('docs/SEO/maintenance/gsc-request-indexing-backlog.md', 'utf8');
     const urls = [...backlog.matchAll(/- \[[ x]\] `(https:\/\/myimageupscaler\.com[^`]+)`/g)].map(
       match => match[1]
@@ -121,6 +121,6 @@ describe('GSC opportunity recovery contract', () => {
     expect(backlog).toMatch(
       /- \[x\] `https:\/\/myimageupscaler\.com\/blog\/poster-size-dimensions-pixels` — API-resolved \d{4}-\d{2}-\d{2}: `Submitted and indexed`/
     );
-    expect(backlog).toContain('- [ ] `https://myimageupscaler.com/blog/photo-restoration-program`');
+    expect(backlog).toContain('- [x] `https://myimageupscaler.com/blog/photo-restoration-program`');
   });
 });
