@@ -23,9 +23,9 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 - [x] `https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark`
 - [x] `https://myimageupscaler.com/blog/how-to-upscale-midjourney-images-for-print`
 - [x] `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails`
-- [ ] `https://myimageupscaler.com/blog/image-upscaler-8x`
-- [ ] `https://myimageupscaler.com/blog/photo-restoration-program` — refreshed 2026-07-22 with a current comparison table and policy-aligned credit copy.
-- [ ] `https://myimageupscaler.com/formats/upscale-gif-images` — refreshed 2026-07-30 as the sole truthful GIF-intent owner; four `/format-scale/gif-upscale-*` URLs now consolidate here. Sitemap `lastmod` bumped 2026-08-03; request indexing after deploy.
+- [x] `https://myimageupscaler.com/blog/image-upscaler-8x`
+- [x] `https://myimageupscaler.com/blog/photo-restoration-program` — refreshed 2026-07-22 with a current comparison table and policy-aligned credit copy.
+- [x] `https://myimageupscaler.com/formats/upscale-gif-images` — refreshed 2026-07-30 as the sole truthful GIF-intent owner; four `/format-scale/gif-upscale-*` URLs now consolidate here. Sitemap `lastmod` bumped 2026-08-03; request indexing after deploy.
 
 ## Completed
 
