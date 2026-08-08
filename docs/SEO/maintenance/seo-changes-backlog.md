@@ -23,6 +23,24 @@ Maintenance rules:
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
 
+## 2026-08-08
+
+### Enhancer Cluster Internal-Link Verification
+
+Source: [GSC drop diagnosis](../reports/gsc-drop-diagnosis-2026-08-08.md)
+
+Changes:
+
+- No production content edit was needed for the P3 recommendation: `/blog/best-ai-photo-enhancer-reddit` and `/blog/best-free-ai-photo-enhancer-online` already link to `/tools/ai-photo-enhancer`.
+
+Validation:
+
+- Public HTML inspection confirmed the target link on both live blog pages; no database write was performed.
+
+Follow-up:
+
+- Treat the P3 internal-link option as satisfied. Preserve the scheduled 2026-08-10 proof-led follow-up for `/blog/fixing-pixelated-photos`.
+
 ## 2026-08-03
 
 ### Orphan Sitemap Retirement + GIF Lastmod Signal
