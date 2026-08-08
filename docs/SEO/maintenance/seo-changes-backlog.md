@@ -35,7 +35,9 @@ Changes:
 
 Validation:
 
-- Public HTML inspection confirmed the target link on both live blog pages; no database write was performed.
+- Public HTML inspection confirmed the target link on both live blog pages; no database write was performed:
+  - `/blog/best-ai-photo-enhancer-reddit` → `https://myimageupscaler.com/tools/ai-photo-enhancer`
+  - `/blog/best-free-ai-photo-enhancer-online` → `/tools/ai-photo-enhancer`
 
 Follow-up:
 
