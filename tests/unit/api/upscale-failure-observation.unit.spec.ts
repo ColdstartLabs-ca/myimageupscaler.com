@@ -33,7 +33,7 @@ describe('POST /api/upscale/failure-observation', () => {
     vi.clearAllMocks();
     mocks.from.mockReturnValue({ insert: mocks.insert });
     mocks.insert.mockResolvedValue({ error: null });
-    mocks.trackServerEvent.mockResolvedValue(undefined);
+    mocks.trackServerEvent.mockResolvedValue(true);
   });
 
   it('should write a redacted failed row and server telemetry without browser analytics consent', async () => {
@@ -74,7 +74,7 @@ describe('POST /api/upscale/failure-observation', () => {
 
     const response = await POST(request({ status: 502, rayId: 'ray-502' }));
 
-    expect(response.status).toBe(202);
+    expect(response.status).toBe(503);
     expect(mocks.insert).toHaveBeenCalledOnce();
   });
 
@@ -83,12 +83,25 @@ describe('POST /api/upscale/failure-observation', () => {
 
     const response = await POST(request({ status: 502, rayId: 'ray-502' }));
 
-    expect(response.status).toBe(202);
+    expect(response.status).toBe(503);
     expect(mocks.trackServerEvent).toHaveBeenCalledWith(
       'processing_failed',
       expect.any(Object),
       expect.objectContaining({ userId: 'user-1' })
     );
+  });
+
+  it('should report telemetry rejection instead of acknowledging the observation', async () => {
+    mocks.trackServerEvent.mockResolvedValue(false);
+
+    const response = await POST(request({ status: 502, rayId: 'ray-502' }));
+
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toEqual({
+      success: false,
+      rowPersisted: true,
+      telemetryAccepted: false,
+    });
   });
 
   it('should reject unauthenticated and unbounded observation payloads', async () => {

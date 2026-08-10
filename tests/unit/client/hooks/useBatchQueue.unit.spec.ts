@@ -123,7 +123,7 @@ describe('useBatchQueue edge failures', () => {
     );
   });
 
-  it('should emit processing_failed when UpscaleEdgeError is thrown', async () => {
+  it('should rely on authenticated server observation for edge processing failures', async () => {
     mocks.processImage.mockRejectedValueOnce(
       new mocks.UpscaleEdgeError({ status: 503, rayId: 'abc-123', bodyPreview: '<html>' })
     );
@@ -136,13 +136,7 @@ describe('useBatchQueue edge failures', () => {
       await result.current.processSingleItem(result.current.queue[0], config);
     });
 
-    expect(mocks.track).toHaveBeenCalledWith(
-      'processing_failed',
-      expect.objectContaining({
-        errorType: 'edge_error',
-        reason: 'edge_error',
-        retryable: true,
-      })
-    );
+    expect(mocks.reportUpscaleEdgeFailure).toHaveBeenCalledOnce();
+    expect(mocks.track).not.toHaveBeenCalledWith('processing_failed', expect.anything());
   });
 });

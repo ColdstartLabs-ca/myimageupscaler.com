@@ -110,14 +110,14 @@ bottleneck — see the diagnostic report.
 Fill every placeholder with a real, non-test `file:line` during implementation. Any placeholder at phase end
 means the phase is **not** done.
 
-| #   | New thing                                             | Live caller (`file:line`, non-test)                                                                        | Replaces                                                                  | Old path removed?                                | Negative control                                                     |
-| --- | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------ | -------------------------------------------------------------------- |
-| 1   | `parseJsonResponse()` in `client/utils/api-client.ts` | `client/utils/api-client.ts:290,296,325,343,428,471`                                                       | bare `response.json()` at `api-client.ts:305-306,348`                     | yes — all response parses delegate to the helper | feed an HTML body → returns a typed edge error, never a parse crash  |
-| 2   | `UpscaleEdgeError` (typed, carries status + Ray ID)   | `client/hooks/useBatchQueue.ts:454`                                                                        | generic `'Image processing failed'` at `useBatchQueue.ts:513`             | yes — string replaced                            | delete the class → `useBatchQueue` classifier test fails             |
-| 3   | `processing_jobs` failed-row write                    | `app/api/upscale/route.ts:237` (inside `logFailure`)                                                       | nothing writes failures today                                             | n/a — new coverage                               | force a provider error → a `status='failed'` row appears             |
-| 4   | `yarn diag:upscale-health` script                     | `package.json:61`; CLI entry `scripts/diagnostics/upscale-completion-rate.ts:122`                          | manual Amplitude curl                                                     | n/a                                              | point it at a healthy window → prints ≥0.95; at Aug 03 → prints 0.49 |
-| 5   | Completion-rate alert                                 | `app/api/cron/upscale-completion-health/route.ts:14`; CLI `scripts/monitor-processing-failure-rate.ts:445` | no alert exists for this metric                                           | n/a                                              | set threshold to 0.99 → alert fires on current prod data             |
-| 6   | Authenticated edge-failure observation                | `client/hooks/useBatchQueue.ts:457` → `app/api/upscale/failure-observation/route.ts:80`                    | consent-gated browser `processing_failed` was the only edge terminal path | browser event retained; server row/event added   | remove the observer call → client observation test fails             |
+| #   | New thing                                             | Live caller (`file:line`, non-test)                                                                        | Replaces                                                                  | Old path removed?                                                        | Negative control                                                     |
+| --- | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| 1   | `parseJsonResponse()` in `client/utils/api-client.ts` | `client/utils/api-client.ts:290,296,325,343,428,471`                                                       | bare `response.json()` at `api-client.ts:305-306,348`                     | yes — all response parses delegate to the helper                         | feed an HTML body → returns a typed edge error, never a parse crash  |
+| 2   | `UpscaleEdgeError` (typed, carries status + Ray ID)   | `client/hooks/useBatchQueue.ts:454`                                                                        | generic `'Image processing failed'` at `useBatchQueue.ts:513`             | yes — string replaced                                                    | delete the class → `useBatchQueue` classifier test fails             |
+| 3   | `processing_jobs` failed-row write                    | `app/api/upscale/route.ts:237` (inside `logFailure`)                                                       | nothing writes failures today                                             | n/a — new coverage                                                       | force a provider error → a `status='failed'` row appears             |
+| 4   | `yarn diag:upscale-health` script                     | `package.json:61`; CLI entry `scripts/diagnostics/upscale-completion-rate.ts:122`                          | manual Amplitude curl                                                     | n/a                                                                      | point it at a healthy window → prints ≥0.95; at Aug 03 → prints 0.49 |
+| 5   | Completion-rate alert                                 | `app/api/cron/upscale-completion-health/route.ts:14`; CLI `scripts/monitor-processing-failure-rate.ts:445` | no alert exists for this metric                                           | n/a                                                                      | set threshold to 0.99 → alert fires on current prod data             |
+| 6   | Authenticated edge-failure observation                | `client/hooks/useBatchQueue.ts:457` → `app/api/upscale/failure-observation/route.ts:80`                    | consent-gated browser `processing_failed` was the only edge terminal path | browser edge `processing_failed` removed; server row/event authoritative | remove the observer call → client observation test fails             |
 
 ---
 
@@ -143,8 +143,9 @@ means the phase is **not** done.
   monitor at `scripts/monitor-processing-failure-rate.ts:445`.
 - `reportUpscaleEdgeFailure` is called by `client/hooks/useBatchQueue.ts:457`; it POSTs only bounded
   status, Ray ID, quality tier, and scale metadata to the protected observer route at
-  `app/api/upscale/failure-observation/route.ts:80`. That route writes the failed row at `:36` and
-  sends server-side `processing_failed` at `:64`, independently via `Promise.allSettled`.
+  `app/api/upscale/failure-observation/route.ts:80`. The browser keeps `error_occurred` for UI/error
+  analytics, while that route writes the failed row at `:36` and sends canonical server-side
+  `processing_failed` at `:64`, independently via `Promise.allSettled`.
 - `ProviderIncidentEmail` is loaded by the live email adapter at
   `server/services/email-providers/base-email-provider-adapter.ts:351`; daily alerts pass the date
   and completion rate from `server/services/upscale-completion-health.service.ts:185-186`.
@@ -155,7 +156,7 @@ compression for an oversized quick-path input; and inverting the alert compariso
 alert tests fail. The alert suite also proves the negative 0.98 case does not send. The repair
 tests additionally fail when the daily cron mapping, daily email branch, or client observer call
 is removed; the observer route test fails if server telemetry or the redacted failed-row write is
-removed.
+removed, if a `false` telemetry result is acknowledged, or if a row/telemetry failure returns `202`.
 
 Observed red evidence before implementation: the new API-client tests failed with a `SyntaxError`
 from the HTML body, and the queue classifier tests failed to mark the item retryable or emit
@@ -261,7 +262,9 @@ ref: <CF-Ray>). Please retry." instead of `Unexpected token '<'`.
 - [x] Replace **both** `response.json()` call sites with `parseJsonResponse`. Leave none behind.
 - [x] In `useBatchQueue`, map `UpscaleEdgeError` → `errorType: 'edge_error'`, mark it
       `retryable: true`, and surface `Upscale failed (HTTP {status}, ref: {rayId}). Please retry.`
-- [x] Emit `processing_failed` for this path so the attempt stops being unaccounted.
+- [x] Send bounded edge-failure metadata to the authenticated server observer so the server owns
+      the terminal `processing_failed` event and failed-row write; retain client `error_occurred`
+      UI/error analytics without duplicating the terminal event.
 
 **Wiring:**
 
@@ -273,12 +276,12 @@ ref: <CF-Ray>). Please retry." instead of `Unexpected token '<'`.
 
 **Tests Required:**
 
-| Test File                    | Test Name                                                       | Assertion                                                              | Negative control (must be observed red)                     |
-| ---------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `api-client.unit.spec.ts`    | `should throw UpscaleEdgeError when response is HTML`           | `expect(fn).rejects.toBeInstanceOf(UpscaleEdgeError)`                  | revert to `response.json()` → test fails with a SyntaxError |
-| `api-client.unit.spec.ts`    | `should include cf-ray and status when edge returns HTML`       | `expect(err.rayId).toBe('abc-123'); expect(err.status).toBe(503)`      | drop the header read → assertion fails                      |
-| `useBatchQueue.unit.spec.ts` | `should mark item retryable when UpscaleEdgeError is thrown`    | `expect(item.retryable).toBe(true)`                                    | remove the classifier branch → falls back to non-retryable  |
-| `useBatchQueue.unit.spec.ts` | `should emit processing_failed when UpscaleEdgeError is thrown` | `expect(analytics.track).toHaveBeenCalledWith('processing_failed', …)` | remove the emit → assertion fails                           |
+| Test File                    | Test Name                                                                      | Assertion                                                                    | Negative control (must be observed red)                                  |
+| ---------------------------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `api-client.unit.spec.ts`    | `should throw UpscaleEdgeError when response is HTML`                          | `expect(fn).rejects.toBeInstanceOf(UpscaleEdgeError)`                        | revert to `response.json()` → test fails with a SyntaxError              |
+| `api-client.unit.spec.ts`    | `should include cf-ray and status when edge returns HTML`                      | `expect(err.rayId).toBe('abc-123'); expect(err.status).toBe(503)`            | drop the header read → assertion fails                                   |
+| `useBatchQueue.unit.spec.ts` | `should mark item retryable when UpscaleEdgeError is thrown`                   | `expect(item.retryable).toBe(true)`                                          | remove the classifier branch → falls back to non-retryable               |
+| `useBatchQueue.unit.spec.ts` | `should rely on authenticated server observation for edge processing failures` | observer call occurs and browser does not emit duplicate `processing_failed` | remove the observer call or restore the duplicate emit → assertion fails |
 
 **Revert check:** rename `parseJsonResponse` → the four tests above fail.
 
@@ -559,19 +562,22 @@ closes them in the live paths rather than leaving them as documentation-only gap
 
 **Repair tests:**
 
-| Test File                                                                        | Test Name                                                              | Assertion                                                                           |
-| -------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `tests/unit/api/upscale-completion-health-cron.unit.spec.ts`                     | daily route calls the monitor and rejects an invalid secret            | `200` + monitor call; `401` without the cron secret                                 |
-| `tests/unit/workers/cron-router.unit.spec.ts` and `workers/cron/index.test.ts`   | `15 1 * * *` maps to the completion-health endpoint                    | authenticated fetch targets `/api/cron/upscale-completion-health`                   |
-| `tests/unit/emails/provider-incident-email.unit.spec.tsx`                        | daily context is accurate and rolling wording is preserved             | date/rate appears; “last 10 minutes” appears only without daily fields              |
-| `tests/unit/api/upscale-failure-observation.unit.spec.ts` and client/queue specs | edge observation is redacted, durable, server-tracked, and best-effort | no HTML/body preview is accepted or stored; original queue error remains actionable |
+| Test File                                                                        | Test Name                                                              | Assertion                                                                                                                |
+| -------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `tests/unit/api/upscale-completion-health-cron.unit.spec.ts`                     | daily route calls the monitor and rejects an invalid secret            | `200` + monitor call; `401` without the cron secret                                                                      |
+| `tests/unit/workers/cron-router.unit.spec.ts` and `workers/cron/index.test.ts`   | `15 1 * * *` maps to the completion-health endpoint                    | authenticated fetch targets `/api/cron/upscale-completion-health`                                                        |
+| `tests/unit/emails/provider-incident-email.unit.spec.tsx`                        | daily context is accurate and rolling wording is preserved             | date/rate appears; “last 10 minutes” appears only without daily fields                                                   |
+| `tests/unit/api/upscale-failure-observation.unit.spec.ts` and client/queue specs | edge observation is redacted, durable, server-tracked, and best-effort | no HTML/body preview is accepted or stored; original queue error remains actionable; no duplicate browser terminal event |
+| `tests/unit/server/services/upscale-completion-health.service.unit.spec.ts`      | health queries use canonical server telemetry                          | started/failed totals require `telemetrySource=server`; completions also require `success=true`                          |
 
-**Repair evidence:** the application repair suite passed 32 tests, the cron-worker suite passed 23
-tests, and `yarn tsc` passed. The required red controls were observed locally: removing the daily
-cron branch produced one failed mapping test; disabling the daily email branch produced one failed
-template test; removing the client observer call produced one failed observer-call assertion; and
-removing either `processing_jobs` or server-telemetry operation produced the corresponding failed
-route assertion. Those controls are recorded in the integration ledger above. The direct CLI entry remains at
+**Repair evidence:** the application repair suite passed 32 tests, the focused follow-up suite
+passed 11 tests, the cron-worker suite passed 23 tests, and `yarn tsc` passed. The required red
+controls were observed locally: removing the daily cron branch produced one failed mapping test;
+disabling the daily email branch produced one failed template test; removing the client observer
+call or restoring its duplicate browser terminal event produced a failed queue assertion; removing
+either `processing_jobs` or server-telemetry operation produced the corresponding failed route
+assertion; and removing the canonical Amplitude filters produced a failed health-query assertion.
+Those controls are recorded in the integration ledger above. The direct CLI entry remains at
 `scripts/diagnostics/upscale-completion-rate.ts:122`, while production scheduling now reaches the
 same monitor at `app/api/cron/upscale-completion-health/route.ts:14`.
 

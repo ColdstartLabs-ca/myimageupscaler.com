@@ -334,7 +334,6 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     const startTime = Date.now();
     let success = false;
     let errorType: string | undefined;
-    let requestId = 'unknown';
 
     try {
       const result = await processImage(fileToProcess, config, (p, stage) => {
@@ -453,7 +452,6 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         return;
       } else if (isUpscaleEdgeError(error)) {
         errorType = 'edge_error';
-        requestId = error.rayId ?? 'unknown';
         void reportUpscaleEdgeFailure(error, {
           qualityTier: config.qualityTier,
           scale: config.scale,
@@ -597,21 +595,6 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
             }),
           });
         }
-      }
-
-      if (errorType === 'edge_error') {
-        analytics.track('processing_failed', {
-          ...normalizeCoreEventProperties('processing_failed', {
-            errorType,
-            reason: errorType,
-            provider: 'unknown',
-            model: 'unknown',
-            qualityTier: config.qualityTier,
-            retryable: true,
-            durationMs,
-            requestId,
-          }),
-        });
       }
 
       // Last-resort state invariant: every settled request must leave the queue

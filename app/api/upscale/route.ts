@@ -286,6 +286,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       await trackServerEvent(
         'processing_failed',
         {
+          telemetrySource: 'server',
           ...normalizeCoreEventProperties('processing_failed', {
             provider: processingProvider,
             model: resolvedModelId,
@@ -1070,6 +1071,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     await trackServerEvent(
       'image_upscale_started',
       {
+        telemetrySource: 'server',
         inputWidth: inputDimensions?.width,
         inputHeight: inputDimensions?.height,
         scaleFactor: config.scale,
@@ -1157,6 +1159,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     await trackServerEvent(
       'upscale_completed',
       {
+        telemetrySource: 'server',
         durationMs,
         modelUsed: resolvedModelId,
         inputResolution: inputDimensions
@@ -1353,6 +1356,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         await trackServerEvent(
           'upscale_completed',
           {
+            telemetrySource: 'server',
             durationMs,
             success: false,
             errorType: `replicate_${error.code}`,
@@ -1407,6 +1411,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         await trackServerEvent(
           'upscale_completed',
           {
+            telemetrySource: 'server',
             durationMs,
             success: false,
             errorType: `ai_generation_${error.finishReason}`,
@@ -1452,6 +1457,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       await trackServerEvent(
         'upscale_completed',
         {
+          telemetrySource: 'server',
           durationMs,
           success: false,
           errorType: 'unexpected_internal_error',

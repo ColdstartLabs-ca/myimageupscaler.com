@@ -61,20 +61,27 @@ async function trackFailureEvent(
   userId: string,
   observation: z.infer<typeof edgeFailureObservationSchema>
 ): Promise<void> {
-  await trackServerEvent(
+  const accepted = await trackServerEvent(
     'processing_failed',
-    normalizeCoreEventProperties('processing_failed', {
-      errorType: 'edge_error',
-      reason: 'edge_error',
-      provider: 'unknown',
-      model: 'unknown',
-      qualityTier: observation.qualityTier ?? 'unknown',
-      retryable: true,
-      durationMs: null,
-      requestId: observation.rayId ?? 'unknown',
-    }),
+    {
+      telemetrySource: 'server',
+      ...normalizeCoreEventProperties('processing_failed', {
+        errorType: 'edge_error',
+        reason: 'edge_error',
+        provider: 'unknown',
+        model: 'unknown',
+        qualityTier: observation.qualityTier ?? 'unknown',
+        retryable: true,
+        durationMs: null,
+        requestId: observation.rayId ?? 'unknown',
+      }),
+    },
     { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
   );
+
+  if (!accepted) {
+    throw new Error('Upscale edge-failure telemetry was not accepted');
+  }
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -120,6 +127,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           ? eventResult.reason.message
           : String(eventResult.reason),
     });
+  }
+
+  if (rowResult.status === 'rejected' || eventResult.status === 'rejected') {
+    return NextResponse.json(
+      {
+        success: false,
+        rowPersisted: rowResult.status === 'fulfilled',
+        telemetryAccepted: eventResult.status === 'fulfilled',
+      },
+      { status: 503 }
+    );
   }
 
   return NextResponse.json({ success: true }, { status: 202 });

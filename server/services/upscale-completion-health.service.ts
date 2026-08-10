@@ -1,6 +1,7 @@
 import { getEmailService } from '@server/services/email.service';
 import {
   getAmplitudeEventTotals,
+  type IAmplitudeEventFilter,
   type IAmplitudeEventTotalsResult,
 } from '@server/analytics/dashboardApi';
 import { serverEnv } from '@shared/config/env';
@@ -12,6 +13,20 @@ const UPSCALE_EVENTS = {
   completed: 'upscale_completed',
   failed: 'processing_failed',
 } as const;
+
+const SERVER_TELEMETRY_SOURCE_FILTER: IAmplitudeEventFilter = {
+  subprop_type: 'event',
+  subprop_key: 'telemetrySource',
+  subprop_op: 'is',
+  subprop_value: ['server'],
+};
+
+const SUCCESS_FILTER: IAmplitudeEventFilter = {
+  subprop_type: 'event',
+  subprop_key: 'success',
+  subprop_op: 'is',
+  subprop_value: ['true'],
+};
 
 export interface IUpscaleHealthDay {
   date: string;
@@ -142,15 +157,30 @@ export async function getUpscaleHealthReport(
   };
   const [started, completed, failed] = await Promise.all([
     getAmplitudeEventTotals(
-      { eventType: UPSCALE_EVENTS.started, startDate: range.startDate, endDate: range.endDate },
+      {
+        eventType: UPSCALE_EVENTS.started,
+        startDate: range.startDate,
+        endDate: range.endDate,
+        filters: [SERVER_TELEMETRY_SOURCE_FILTER],
+      },
       authOptions
     ),
     getAmplitudeEventTotals(
-      { eventType: UPSCALE_EVENTS.completed, startDate: range.startDate, endDate: range.endDate },
+      {
+        eventType: UPSCALE_EVENTS.completed,
+        startDate: range.startDate,
+        endDate: range.endDate,
+        filters: [SERVER_TELEMETRY_SOURCE_FILTER, SUCCESS_FILTER],
+      },
       authOptions
     ),
     getAmplitudeEventTotals(
-      { eventType: UPSCALE_EVENTS.failed, startDate: range.startDate, endDate: range.endDate },
+      {
+        eventType: UPSCALE_EVENTS.failed,
+        startDate: range.startDate,
+        endDate: range.endDate,
+        filters: [SERVER_TELEMETRY_SOURCE_FILTER],
+      },
       authOptions
     ),
   ]);
