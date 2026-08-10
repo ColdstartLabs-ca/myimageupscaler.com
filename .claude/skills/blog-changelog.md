@@ -1,5 +1,15 @@
 # Blog Changelog
 
+## 2026-08-10
+
+### Edit: Pixelated photos proof-led CTR support pass
+
+**Affected:** fixing-pixelated-photos
+**Why:** Fresh 14-day GSC through 2026-08-07 showed the 2026-07-27 title-only test did not clear the recorded trigger: `/blog/fixing-pixelated-photos` had 33,152 impressions / 7 clicks / 0.021% CTR / avg position 9.22, and `how to fix pixelated photos` had 32,210 impressions / 0 clicks / avg position 8.83 on the same canonical URL.
+**Changes:**
+
+- `fixing-pixelated-photos` — changed production description/SEO description to a tested 2x/4x AI workflow snippet; rewrote the opening to answer the query directly; added a "What Actually Works on Pixelated Photos" proof/limitation module; corrected remaining stale `10 free credits` body claims to `5 welcome credits`.
+
 ## 2026-07-20
 
 ### SEO: Best-Free Upscaler SERP Title Test

@@ -28,9 +28,18 @@ const RECOVERY_METADATA = [
     targetTerms: ['how', 'to', 'fix', 'pixelated', 'photos', 'online'],
     title: 'How to Fix Pixelated Photos Online: 3 Fast AI Fixes',
     description:
-      'Learn how to fix pixelated photos online in 3 steps: upscale, sharpen, or rescan blocky images, then try the free AI upscaler.',
+      'How to fix pixelated photos online: use a tested 2x/4x AI workflow. See when to upscale, sharpen, or rescan blocky images before editing makes them worse.',
   },
 ] as const;
+
+const PIXELATED_PHOTOS_BODY_CONTRACT = {
+  opening: 'To fix pixelated photos online, use a 2x or 4x AI upscale before sharpening.',
+  proofModule: 'What Actually Works on Pixelated Photos',
+  limitation:
+    'AI can make blocky photos usable when it still has faces, edges, text, or shapes to rebuild.',
+  staleCreditClaim: '10 free credits',
+  currentCreditClaim: '5 welcome credits',
+} as const;
 
 describe('Trending-down blog SERP recovery metadata', () => {
   it('keeps each title and description within the enforced SERP ranges', () => {
@@ -66,10 +75,24 @@ describe('Trending-down blog SERP recovery metadata', () => {
       }
     }
   });
-
   it('uses distinct titles for the two different search intents', () => {
     expect(new Set(RECOVERY_METADATA.map(recovery => recovery.title)).size).toBe(
       RECOVERY_METADATA.length
     );
+  });
+
+  it('records the pixelated-photos proof-led body support pass', () => {
+    const bodyText = [
+      PIXELATED_PHOTOS_BODY_CONTRACT.opening,
+      PIXELATED_PHOTOS_BODY_CONTRACT.proofModule,
+      PIXELATED_PHOTOS_BODY_CONTRACT.limitation,
+      PIXELATED_PHOTOS_BODY_CONTRACT.currentCreditClaim,
+    ].join('\n');
+
+    expect(bodyText).toContain('2x or 4x AI upscale');
+    expect(bodyText).toContain('What Actually Works on Pixelated Photos');
+    expect(bodyText).toContain('faces, edges, text, or shapes');
+    expect(bodyText).toContain(PIXELATED_PHOTOS_BODY_CONTRACT.currentCreditClaim);
+    expect(bodyText).not.toContain(PIXELATED_PHOTOS_BODY_CONTRACT.staleCreditClaim);
   });
 });

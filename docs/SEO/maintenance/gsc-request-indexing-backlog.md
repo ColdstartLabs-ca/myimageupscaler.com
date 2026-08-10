@@ -19,7 +19,7 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 - [x] `https://myimageupscaler.com/blog/best-image-upscaler`
 - [x] `https://myimageupscaler.com/blog/fix-blurry-photos-ai-methods-guide`
 - [x] `https://myimageupscaler.com/blog/fix-pixelated-image`
-- [x] `https://myimageupscaler.com/blog/fixing-pixelated-photos` — refreshed 2026-07-27 with a matured SERP title/meta CTR test for the pixelated-photos query cluster.
+- [ ] `https://myimageupscaler.com/blog/fixing-pixelated-photos` — refreshed again 2026-08-10 with a proof-led meta/body support pass after the 2026-07-27 title test still produced 0 clicks on 32,210 impressions for `how to fix pixelated photos` in the latest complete 14-day GSC window; request indexing for the latest version.
 - [x] `https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark`
 - [x] `https://myimageupscaler.com/blog/how-to-upscale-midjourney-images-for-print`
 - [x] `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails`

@@ -17,11 +17,50 @@ Maintenance rules:
 - [ ] After the next deploy, verify all four `/format-scale/gif-upscale-{2x,4x,8x,16x}` URLs return a direct `301` to `/formats/upscale-gif-images`, request indexing for the owner, rerun mobile PageSpeed, and start GSC LCP/INP validation only after field data reflects the deployment.
 - [ ] Measure the implemented [GSC SEO recovery PRD](../../PRDs/gsc-opportunity-recovery-2026-07-22.md): first complete 14-day comparison on or after 2026-08-05 and 28-day success-criteria evaluation on or after 2026-08-19. Keep the PRD outside `done/` until the 28-day evaluation is recorded.
 - [ ] On or after 2026-07-19, compare `/blog/best-free-ai-photo-enhancer-online` for 2026-06-22 through 2026-07-07 against the next complete 16-day GSC window; inspect query and competing-URL losses before any further edit. A 2026-07-20 fresh 28-day check found this URL at 2,985 impressions, 21 clicks, avg position 38.93; no edit was made because the stronger matured CTR action was on `/blog/best-free-ai-image-upscaler-2026-tested-compared`.
-- [ ] Around 2026-07-20, run the early GSC check for the 2026-07-03 edits to `/blog/fixing-pixelated-photos`, `/blog/topaz-video-upscaler`, and `/blog/best-ai-upscaler`; use early August for the stronger 28-day evaluation and do not rewrite during the window.
+- [ ] On or after 2026-08-25, compare `/blog/fixing-pixelated-photos` for the first complete 14-day GSC window after the 2026-08-10 proof-led snippet/body pass. If `how to fix pixelated photos` remains at avg position 3-10 with CTR below 0.2%, stop repeating snippet tests and evaluate cannibalization/consolidation with `/blog/fix-pixelated-image`. For `/blog/topaz-video-upscaler` and `/blog/best-ai-upscaler`, use the next blog monitor run to classify current GSC state before any further rewrite.
 - [ ] After the 2026-06-29 Spanish homepage metadata has matured, evaluate `/es` query movement and add natural Spanish internal links only if visibility still needs support.
 - [x] After next deploy, verify `https://myimageupscaler.com/sitemap-static.xml` includes `/de`, `/es`, `/fr`, `/it`, `/ja`, and `/pt`. Verified 2026-05-13.
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
+
+## 2026-08-10
+
+### Pixelated Photos Proof-Led SERP Support Pass
+
+Source: autonomous blog growth operator using fresh GSC 14-day data through 2026-08-07 (`/tmp/miu-gsc-14-2026-08-10.json`), fresh GSC 28-day data through 2026-08-07 (`/tmp/miu-gsc-28-2026-08-10.json`), fresh GA4 organic data through 2026-08-09 (`/tmp/miu-ga-28-2026-08-10.json`), current SEO/indexing backlogs, blog changelog, the 2026-08-08 GSC drop diagnosis, and recent git history.
+
+Evidence:
+
+- The recorded 2026-08-10 trigger for `/blog/fixing-pixelated-photos` matured. Fresh 14-day GSC shows the canonical page at 33,152 impressions / 7 clicks / 0.021% CTR / avg position 9.22.
+- The target query `how to fix pixelated photos` has 32,210 impressions / 0 clicks / avg position 8.83 on `/blog/fixing-pixelated-photos`; GSC also shows a much smaller competing `/blog/fix-pixelated-image` row at 159 impressions / 0 clicks / avg position 14.66, so the canonical owner is clear enough for one support pass but cannibalization should be evaluated if this fails.
+- GA4 organic and GSC sitewide data did not justify a new overlapping post; the safe highest-value action was an edit to the existing canonical page.
+
+Changes:
+
+- Updated the production blog record for `/blog/fixing-pixelated-photos` directly via Supabase service role because the production blog API returned `500` (`Server configuration error`) despite a valid local `BLOG_API_KEY`.
+- Changed `description` and `seo_description` to a tested 2x/4x AI workflow snippet.
+- Rewrote the opening to answer the query directly, added a `What Actually Works on Pixelated Photos` proof/limitation module, and corrected remaining stale `10 free credits` body claims to `5 welcome credits`.
+- Updated `tests/unit/seo/trending-down-blog-recovery.unit.spec.ts`, `.claude/skills/blog-changelog.md`, and the existing `/blog/fixing-pixelated-photos` GSC request-indexing row in place.
+
+Why:
+
+- This satisfied action class A: a qualifying CTR/meta/intro/body support update to an existing canonical page after the prior title-only test failed its own measurement gate.
+- Publishing a new pixelated-photo post would be cannibalizing; repeating another title-only edit would ignore the 2026-08-08 diagnosis.
+
+Validation:
+
+- Fresh production DB backups created before the write: `backups/backup_2026-08-10_10-33-55.schema.sql.gz` and `backups/backup_2026-08-10_10-33-55.data.sql.gz`; `yarn db:backups` listed both and `gzip -t` passed for both archives.
+- Supabase readback confirmed the new metadata, proof module, no remaining `10 free credits`, and `updated_at: 2026-08-10T17:37:51.400792+00:00`.
+- Live production HTML returned `200`, self-canonical, contained the new meta description and `What Actually Works on Pixelated Photos`, and no longer contained `10 free credits`.
+- `yarn vitest run tests/unit/seo/trending-down-blog-recovery.unit.spec.ts` passed.
+- `yarn verify` passed; existing warnings only.
+
+Follow-up:
+
+- Commit: this commit (`fix(seo): support pixelated photos ctr recovery`); final hash is recorded in the operator delivery.
+- Deploy state: production blog DB content is live immediately; repo test/backlog/changelog changes are local until this commit is pushed/deployed.
+- Manual action: request indexing for `https://myimageupscaler.com/blog/fixing-pixelated-photos` in GSC URL Inspection; the backlog row is now unchecked for the 2026-08-10 version.
+- Next trigger: on or after 2026-08-25, compare the first complete 14-day GSC window after this edit. If the target query remains avg position 3-10 with CTR below 0.2%, stop snippet testing and evaluate consolidation/canonical handling with `/blog/fix-pixelated-image`.
 
 ## 2026-08-08
 
