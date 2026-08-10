@@ -1,7 +1,7 @@
 # Bug Report — Upscale Client Crashes on Non-JSON Cloudflare Response
 
 - **Date observed:** 2026-08-03
-- **Status:** Open
+- **Status:** Resolved
 - **Severity:** Medium
 - **Area:** Image processing / client API error handling
 - **Primary location:** `client/utils/api-client.ts:305-306,348`
@@ -105,5 +105,14 @@ Image processing returned an unexpected server response. Please try again. If it
 - The fix is verified locally and on a deployed production request before this report is closed.
 
 ## Operational follow-up
+
+The client-side masking defect is resolved by `parseJsonResponse()` in
+`client/utils/api-client.ts`. HTML and other non-JSON responses now become a typed
+`UpscaleEdgeError` carrying the HTTP status and `cf-ray` value; the queue marks the
+item retryable and emits `processing_failed`. The behavior is covered by unit tests,
+including an observed red control with the old direct JSON parsing path.
+
+The production deployment and 24-hour post-deploy observation remain an operator
+follow-up; this lane did not have a Cloudflare API token for live tailing.
 
 Consider granting the existing diagnostic token the minimum Cloudflare permission required to query historical Workers Observability telemetry. Do not broaden unrelated account permissions. This is optional for the client fix but would shorten future incident diagnosis.

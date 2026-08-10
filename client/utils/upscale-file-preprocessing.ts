@@ -93,7 +93,7 @@ export async function prepareFileForProcessing(
       height <= SCALE_PRESERVING_FALLBACK_MAX_SIDE &&
       pixels <= MODEL_MAX_INPUT_PIXELS['clarity-upscaler'];
 
-    if (fitsRealEsrgan || fitsScalePreservingFallback) {
+    if ((fitsRealEsrgan || fitsScalePreservingFallback) && file.size <= maxBytes) {
       return {
         file,
         resized: false,

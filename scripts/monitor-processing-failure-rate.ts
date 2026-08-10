@@ -2,11 +2,19 @@
  * Offline processing-health monitor.
  *
  * The monitor consumes terminal-attempt exports only. It calculates the PRD's
- * 15-minute policy and builds a bounded alert payload; it does not send alerts
- * or query production systems.
+ * 15-minute policy and builds a bounded alert payload. In explicit live mode it
+ * also checks the Amplitude completion funnel and uses the existing email service
+ * when the completion ratio falls below the product threshold.
  */
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
+import { getEmailService } from '@server/services/email.service';
+import { serverEnv } from '@shared/config/env';
+import {
+  calculateUpscaleCompletionRate,
+  getUpscaleHealthReport,
+  type IUpscaleHealthReport,
+} from './diagnostics/upscale-completion-rate';
 import { assertReadOnlyMode, type TEnvironmentMode } from './reconcile-revenue-telemetry';
 
 export const PROCESSING_FAILURE_MONITOR_POLICY = {
@@ -363,10 +371,46 @@ export function monitorProcessingFailureRate(input: IFailureMonitorInput): IFail
   return evaluateProcessingFailureRate(windows);
 }
 
+export async function monitorUpscaleCompletionRate(
+  reportLoader: () => Promise<IUpscaleHealthReport> = getUpscaleHealthReport
+): Promise<boolean> {
+  const report = await reportLoader();
+  const latest = report.lastCompleteDay;
+  const completionRate = latest
+    ? calculateUpscaleCompletionRate(latest.started, latest.completed)
+    : null;
+
+  if (completionRate === null || completionRate >= report.threshold) return false;
+
+  const failedAttempts = Math.max(0, latest!.started - latest!.completed);
+  const delivery = await getEmailService().send({
+    to: serverEnv.PROVIDER_ALERT_EMAIL,
+    type: 'transactional',
+    template: 'provider-incident',
+    data: {
+      severity: 'critical',
+      attempts: latest!.started,
+      failures: failedAttempts,
+      failureRatioPercent: Math.round((1 - completionRate) * 100),
+      baselineRatioPercent: Math.round(completionRate * 100),
+      billingFailures: latest!.processingFailed,
+      circuitStatus: `upscale_completion_rate_below_${report.threshold.toFixed(2)}`,
+      completionRatePercent: Math.round(completionRate * 100),
+      completionRateDate: latest!.date,
+    },
+  });
+  if (!delivery.success) {
+    throw new Error(delivery.error || 'Upscale completion-rate alert email was not accepted');
+  }
+  return true;
+}
+
 function printHelp(): void {
   console.log(`Usage: npx tsx scripts/monitor-processing-failure-rate.ts --mode test|live --input <attempts.json> [options]
 
-Reads local terminal-attempt data and prints a bounded alert evaluation. It never sends an alert or calls an API.
+Reads local terminal-attempt data and prints a bounded alert evaluation. With
+--mode live, it also checks the Amplitude upscale funnel and sends the existing
+provider-incident email when completion is below the diagnostic threshold.
 Options:
   --allow-live-read  Required acknowledgment for an input explicitly labeled live
   --test-alert       Print the same bounded payload used for an alert destination
@@ -435,6 +479,10 @@ async function main(): Promise<void> {
   const evaluation = monitorProcessingFailureRate(raw);
   const output = options.testAlert ? (evaluation.alertPayload ?? evaluation) : evaluation;
   console.log(JSON.stringify(output, null, 2));
+  if (options.mode === 'live') {
+    const alerted = await monitorUpscaleCompletionRate();
+    console.log(`Upscale completion-rate alert: ${alerted ? 'sent' : 'not sent'}.`);
+  }
   if (options.strict && evaluation.status === 'critical') process.exitCode = 2;
   if (options.strict && evaluation.status === 'warning') process.exitCode = 1;
 }

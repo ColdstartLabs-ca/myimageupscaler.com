@@ -58,6 +58,7 @@
     "amplitude:check:prod": "bash -c 'source ./scripts/load-env.sh --prod && npx tsx scripts/check-amplitude-events.ts \"$@\"' --",
     "analytics:reconcile": "tsx scripts/reconcile-revenue-telemetry.ts",
     "analytics:processing:monitor": "tsx scripts/monitor-processing-failure-rate.ts",
+    "diag:upscale-health": "tsx scripts/diagnostics/upscale-completion-rate.ts",
     "analytics:processing:incident": "tsx scripts/incident-processing-2026-07-26.ts",
     "analytics:schema:validate": "tsx scripts/validate-core-amplitude-schema.ts --mode test --json",
     "analytics:schema:template": "tsx scripts/validate-core-amplitude-schema.ts --mode test --template",

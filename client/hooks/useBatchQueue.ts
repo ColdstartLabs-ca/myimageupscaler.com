@@ -11,6 +11,7 @@ import {
   FreeLimitExceededError,
   processImage,
   ProviderUnavailableError,
+  UpscaleEdgeError,
 } from '@client/utils/api-client';
 import {
   getPrivacySafeFileTelemetry,
@@ -35,10 +36,14 @@ interface IBatchProgress {
   total: number;
 }
 
+type IRetryableBatchItem = IBatchItem & {
+  retryable?: boolean;
+};
+
 interface IUseBatchQueueReturn {
-  queue: IBatchItem[];
+  queue: IRetryableBatchItem[];
   activeId: string | null;
-  activeItem: IBatchItem | null;
+  activeItem: IRetryableBatchItem | null;
   isProcessingBatch: boolean;
   batchProgress: IBatchProgress | null;
   completedCount: number;
@@ -57,14 +62,14 @@ interface IUseBatchQueueReturn {
   removeItem: (id: string) => void;
   clearQueue: () => void;
   processBatch: (config: IUpscaleConfig) => Promise<void>;
-  processSingleItem: (item: IBatchItem, config: IUpscaleConfig) => Promise<void>;
+  processSingleItem: (item: IRetryableBatchItem, config: IUpscaleConfig) => Promise<void>;
   clearBatchLimitError: () => void;
   clearProviderUnavailable: () => void;
   showProviderUnavailable: () => void;
 }
 
 export const useBatchQueue = (): IUseBatchQueueReturn => {
-  const [queue, setQueue] = useState<IBatchItem[]>([]);
+  const [queue, setQueue] = useState<IRetryableBatchItem[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isProcessingBatch, setIsProcessingBatch] = useState(false);
   const [batchProgress, setBatchProgress] = useState<IBatchProgress | null>(null);
@@ -118,7 +123,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
       const filesToAdd = files.slice(0, availableSlots);
       const rejectedCount = files.length - filesToAdd.length;
 
-      const newItems: IBatchItem[] = filesToAdd.map(file => ({
+      const newItems: IRetryableBatchItem[] = filesToAdd.map(file => ({
         id: Math.random().toString(36).substring(2, 15),
         file,
         previewUrl: URL.createObjectURL(file),
@@ -223,7 +228,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     [queue, activeId]
   );
 
-  const updateItemStatus = useCallback((id: string, updates: Partial<IBatchItem>) => {
+  const updateItemStatus = useCallback((id: string, updates: Partial<IRetryableBatchItem>) => {
     setQueue(prev => prev.map(item => (item.id === id ? { ...item, ...updates } : item)));
   }, []);
 
@@ -260,12 +265,13 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     );
   }, []);
 
-  const processSingleItem = async (item: IBatchItem, config: IUpscaleConfig) => {
+  const processSingleItem = async (item: IRetryableBatchItem, config: IUpscaleConfig) => {
     updateItemStatus(item.id, {
       status: ProcessingStatus.PROCESSING,
       progress: 0,
       stage: ProcessingStage.PREPARING,
       error: undefined,
+      retryable: undefined,
     });
 
     let fileToProcess = item.file;
@@ -327,6 +333,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     const startTime = Date.now();
     let success = false;
     let errorType: string | undefined;
+    let requestId = 'unknown';
 
     try {
       const result = await processImage(fileToProcess, config, (p, stage) => {
@@ -443,6 +450,29 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
           duration: TIMEOUTS.TOAST_LONG_AUTO_CLOSE_DELAY,
         });
         return;
+      } else if (isUpscaleEdgeError(error)) {
+        errorType = 'edge_error';
+        requestId = error.rayId ?? 'unknown';
+        updateItemStatus(item.id, {
+          status: ProcessingStatus.ERROR,
+          error: error.message,
+          retryable: true,
+          stage: undefined,
+        });
+        analytics.track('error_occurred', {
+          errorType,
+          errorMessage: error.message,
+          context: {
+            status: error.status,
+            rayId: error.rayId,
+          },
+        });
+        showToast({
+          message: error.message,
+          type: 'error',
+          duration: TIMEOUTS.TOAST_LONG_AUTO_CLOSE_DELAY,
+        });
+        return;
       } else if (error instanceof Error && error.message.includes('insufficient credits')) {
         errorType = 'insufficient_credits';
         const requiredCredits = calculateBatchProviderAwareCreditCost({
@@ -510,7 +540,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         // Track error_occurred event for unknown errors
         analytics.track('error_occurred', {
           errorType: 'upscale_failed',
-          errorMessage: 'Image processing failed',
+          errorMessage: 'Failed to process image. Please try again.',
         });
       }
 
@@ -564,6 +594,21 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         }
       }
 
+      if (errorType === 'edge_error') {
+        analytics.track('processing_failed', {
+          ...normalizeCoreEventProperties('processing_failed', {
+            errorType,
+            reason: errorType,
+            provider: 'unknown',
+            model: 'unknown',
+            qualityTier: config.qualityTier,
+            retryable: true,
+            durationMs,
+            requestId,
+          }),
+        });
+      }
+
       // Last-resort state invariant: every settled request must leave the queue
       // in a terminal state, even if a future catch branch returns early.
       setQueue(prev =>
@@ -572,7 +617,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
             ? {
                 ...queueItem,
                 status: ProcessingStatus.ERROR,
-                error: queueItem.error || 'Image processing failed',
+                error: queueItem.error || 'Failed to process image. Please try again.',
                 stage: undefined,
               }
             : queueItem
@@ -629,4 +674,13 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     clearProviderUnavailable,
     showProviderUnavailable,
   };
+};
+
+const isUpscaleEdgeError = (error: unknown): error is UpscaleEdgeError => {
+  try {
+    return typeof UpscaleEdgeError === 'function' && error instanceof UpscaleEdgeError;
+  } catch {
+    // A partial module mock may not provide optional error exports.
+    return false;
+  }
 };

@@ -40,6 +40,7 @@ export type TProcessingErrorType =
   | 'provider_billing'
   | 'insufficient_credits'
   | 'batch_limit'
+  | 'edge_error'
   | 'account_setup'
   | 'no_output'
   | 'processing_failed'
@@ -57,6 +58,7 @@ export type TProcessingReason =
   | 'provider_billing'
   | 'insufficient_credits'
   | 'batch_limit'
+  | 'edge_error'
   | 'account_setup'
   | 'no_output'
   | 'processing_failed'
@@ -258,6 +260,7 @@ export function normalizeErrorType(value: unknown): TProcessingErrorType {
     return 'insufficient_credits';
   }
   if (normalized.includes('batch_limit')) return 'batch_limit';
+  if (normalized.includes('edge_error')) return 'edge_error';
   if (normalized.includes('account_setup')) return 'account_setup';
   if (normalized.includes('no_output')) return 'no_output';
   if (normalized.includes('processing_failed') || normalized.includes('ai_generation')) {
@@ -294,6 +297,7 @@ export function normalizeReason(value: unknown, errorType?: unknown): TProcessin
     return 'insufficient_credits';
   }
   if (source.includes('batch_limit')) return 'batch_limit';
+  if (source.includes('edge_error')) return 'edge_error';
   if (source.includes('account_setup')) return 'account_setup';
   if (source.includes('no_output')) return 'no_output';
   if (source.includes('processing_failed') || source.includes('ai_generation')) {

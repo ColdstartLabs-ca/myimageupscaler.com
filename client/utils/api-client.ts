@@ -62,6 +62,76 @@ export class ProviderUnavailableError extends Error {
   }
 }
 
+/** A non-JSON response from the edge, with enough metadata to support a retry. */
+export class UpscaleEdgeError extends Error {
+  public readonly status: number;
+  public readonly rayId: string | null;
+  public readonly bodyPreview: string;
+
+  constructor(options: { status: number; rayId?: string | null; bodyPreview?: string }) {
+    const rayId = options.rayId || null;
+    super(`Upscale failed (HTTP ${options.status}, ref: ${rayId ?? 'unknown'}). Please retry.`);
+    this.name = 'UpscaleEdgeError';
+    this.status = options.status;
+    this.rayId = rayId;
+    this.bodyPreview = options.bodyPreview ?? '';
+  }
+}
+
+interface IApiErrorDetails {
+  code?: string;
+  message?: string;
+  details?: Record<string, unknown>;
+}
+
+interface IApiErrorResponse {
+  error?: IApiErrorDetails | string;
+}
+
+interface IProcessImageApiResponse {
+  imageData?: string;
+  imageUrl?: string;
+  processing?: {
+    creditsRemaining?: number;
+    creditsUsed?: number;
+    modelDisplayName?: string;
+    dimensionPreservingFallback?: boolean;
+  };
+}
+
+function getApiErrorDetails(error: IApiErrorResponse['error']): IApiErrorDetails | undefined {
+  return typeof error === 'object' && error !== null ? error : undefined;
+}
+
+function getApiErrorMessage(error: IApiErrorResponse['error']): string | undefined {
+  return typeof error === 'string' ? error : getApiErrorDetails(error)?.message;
+}
+
+/** Parse a JSON API response without letting an edge-generated HTML page leak a SyntaxError. */
+export async function parseJsonResponse<T>(response: Response): Promise<T> {
+  const contentType = response.headers.get('content-type');
+  const body = await response.text().catch(() => '');
+  const bodyPreview = body.slice(0, 200);
+
+  if (!contentType?.includes('application/json')) {
+    throw new UpscaleEdgeError({
+      status: response.status,
+      rayId: response.headers.get('cf-ray'),
+      bodyPreview,
+    });
+  }
+
+  try {
+    return JSON.parse(body) as T;
+  } catch {
+    throw new UpscaleEdgeError({
+      status: response.status,
+      rayId: response.headers.get('cf-ray'),
+      bodyPreview,
+    });
+  }
+}
+
 // Extend Window interface for test environment markers
 declare global {
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -177,14 +247,13 @@ export const analyzeImage = async (
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
+    const errorData = await parseJsonResponse<IApiErrorResponse>(response);
     // Handle error object or string
-    const errorMessage =
-      typeof errorData.error === 'object' ? errorData.error.message : errorData.error;
+    const errorMessage = getApiErrorMessage(errorData.error);
     throw new Error(errorMessage || 'Failed to analyze image');
   }
 
-  return await response.json();
+  return await parseJsonResponse<IAnalyzeImageResult>(response);
 };
 
 // Update callback type
@@ -211,20 +280,29 @@ export const processImage = async (
       });
 
       if (!deductRes.ok) {
-        const errorData = await deductRes.json().catch(() => null);
-        if (errorData?.error?.code === 'FREE_LIMIT_EXCEEDED') {
+        let errorData: IApiErrorResponse | undefined;
+        try {
+          errorData = await parseJsonResponse<IApiErrorResponse>(deductRes);
+        } catch (error) {
+          if (error instanceof UpscaleEdgeError) throw error;
+        }
+
+        const errorDetails = getApiErrorDetails(errorData?.error);
+        if (errorDetails?.code === 'FREE_LIMIT_EXCEEDED') {
           throw new FreeLimitExceededError({
-            message: errorData.error.message,
-            requiredCredits: errorData.error.details?.required,
-            availableCredits: errorData.error.details?.available,
+            message: errorDetails.message,
+            requiredCredits: errorDetails.details?.required as number | undefined,
+            availableCredits: errorDetails.details?.available as number | undefined,
           });
         }
         const message =
-          errorData?.error?.message || 'Failed to deduct credits for background removal';
+          getApiErrorMessage(errorData?.error) || 'Failed to deduct credits for background removal';
         throw new Error(message);
       }
 
-      const deductData = await deductRes.json();
+      const deductData = await parseJsonResponse<{ creditsRemaining: number; creditsUsed: number }>(
+        deductRes
+      );
       const processingStartedAt = Date.now();
 
       const { processBackgroundRemoval } = await import('@/client/utils/bg-removal');
@@ -307,49 +385,50 @@ export const processImage = async (
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await parseJsonResponse<IApiErrorResponse>(response);
+      const errorDetails = getApiErrorDetails(errorData.error);
 
-      if (errorData.error?.code === 'FREE_LIMIT_EXCEEDED') {
+      if (errorDetails?.code === 'FREE_LIMIT_EXCEEDED') {
         throw new FreeLimitExceededError({
-          message: errorData.error.message,
-          requiredCredits: errorData.error.details?.required,
-          availableCredits: errorData.error.details?.available,
+          message: errorDetails.message,
+          requiredCredits: errorDetails.details?.required as number | undefined,
+          availableCredits: errorDetails.details?.available as number | undefined,
         });
       }
 
-      if (errorData.error?.code === 'AI_UNAVAILABLE') {
+      if (errorDetails?.code === 'AI_UNAVAILABLE') {
         throw new ProviderUnavailableError({
-          message: errorData.error.message,
-          retryAt: errorData.error.details?.retryAt
-            ? new Date(errorData.error.details.retryAt)
+          message: errorDetails.message,
+          retryAt: errorDetails.details?.retryAt
+            ? new Date(errorDetails.details.retryAt as string)
             : undefined,
-          suppressPurchaseCtas: errorData.error.details?.suppressPurchaseCtas ?? true,
+          suppressPurchaseCtas:
+            (errorDetails.details?.suppressPurchaseCtas as boolean | undefined) ?? true,
         });
       }
 
       // Handle batch limit exceeded errors specifically
-      if (errorData.error?.code === 'BATCH_LIMIT_EXCEEDED') {
+      if (errorDetails?.code === 'BATCH_LIMIT_EXCEEDED') {
         throw new BatchLimitError({
-          current: errorData.error.details?.current ?? 0,
-          limit: errorData.error.details?.limit ?? 0,
-          resetAt: errorData.error.details?.resetAt
-            ? new Date(errorData.error.details.resetAt)
+          current: (errorDetails.details?.current as number | undefined) ?? 0,
+          limit: (errorDetails.details?.limit as number | undefined) ?? 0,
+          resetAt: errorDetails.details?.resetAt
+            ? new Date(errorDetails.details.resetAt as string)
             : undefined,
-          upgradeUrl: errorData.error.details?.upgradeUrl,
-          message: errorData.error.message,
+          upgradeUrl: errorDetails.details?.upgradeUrl as string | undefined,
+          message: errorDetails.message,
         });
       }
 
       // Handle error object or string
-      const errorMessage =
-        typeof errorData.error === 'object' ? errorData.error.message : errorData.error;
+      const errorMessage = getApiErrorMessage(errorData.error);
       throw new Error(errorMessage || 'Failed to process image');
     }
 
     // Stage 4: Finalizing
     onProgress(95, ProcessingStage.FINALIZING);
 
-    const data = await response.json();
+    const data = await parseJsonResponse<IProcessImageApiResponse>(response);
 
     // Validate we got image data in some form
     if (!data.imageUrl && !data.imageData) {

@@ -202,6 +202,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   let processingProvider: string | undefined;
   let coreTerminalEventEmitted = false;
   const requestId = req.headers.get('x-request-id') || req.headers.get('cf-ray') || undefined;
+  let creditsRefunded = false;
+  let latestFailure: { failureReason: string } | null = null;
+  let failureRowWriteScheduled = false;
+  const pendingFailureRowWrites: Array<() => Promise<void>> = [];
 
   const logFailure = (
     failureReason: string,
@@ -220,6 +224,51 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       creditCost,
       ...details,
     };
+
+    latestFailure ??= { failureReason };
+    if (userId && !failureRowWriteScheduled) {
+      failureRowWriteScheduled = true;
+      pendingFailureRowWrites.push(async () => {
+        const failureUserId = userId;
+        const failure = latestFailure;
+        if (!failureUserId || !failure) return;
+
+        try {
+          const { error } = await supabaseAdmin.from('processing_jobs').insert({
+            user_id: failureUserId,
+            status: 'failed',
+            input_image_path: 'inline://redacted',
+            output_image_path: null,
+            credits_used: creditDeduction?.amount ?? 0,
+            processing_mode: 'standard',
+            error_message: failure.failureReason,
+            settings: {
+              request_id: requestId ?? null,
+              requested_quality_tier: requestedQualityTier ?? null,
+              requested_scale: requestedScale ?? null,
+              resolved_tier: resolvedTier ?? null,
+              resolved_model_id: resolvedModelId ?? null,
+            },
+            model_id: resolvedModelId ?? null,
+            quality_tier: resolvedTier ?? requestedQualityTier ?? null,
+            scale: requestedScale ?? null,
+            credits_charged: creditsRefunded ? 0 : (creditDeduction?.amount ?? 0),
+          });
+
+          if (error) {
+            logger.warn('Failed to record upscale failure row', {
+              failureReason: failure.failureReason,
+              error: error.message,
+            });
+          }
+        } catch (error) {
+          logger.warn('Failed to record upscale failure row', {
+            failureReason: failure.failureReason,
+            error: error instanceof Error ? error.message : String(error),
+          });
+        }
+      });
+    }
 
     if (level === 'error') {
       logger.error('Upscale failed', payload);
@@ -289,6 +338,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           `Route-level refund after upscale failure: ${failureReason}`
         )
       : true;
+    creditsRefunded = refunded;
     const batchSlotReleased =
       refunded && releaseBatchSlot && batchSlotAcquired
         ? await batchLimitCheck.release(userId)
@@ -1422,6 +1472,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     );
     return NextResponse.json(body, { status });
   } finally {
+    try {
+      await Promise.all(pendingFailureRowWrites.map(write => write()));
+    } catch {
+      // Failure telemetry must never mask the original route response.
+    }
     await logger.flush();
   }
 }

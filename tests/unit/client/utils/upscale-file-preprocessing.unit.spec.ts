@@ -278,4 +278,51 @@ describe('prepareFileForProcessing', () => {
       IMAGE_VALIDATION.MAX_SIZE_PAID
     );
   });
+
+  it('re-encodes an oversized Quick 2x fallback PNG before upload', async () => {
+    const file = new File(
+      [new Uint8Array(IMAGE_VALIDATION.MAX_SIZE_FREE + 1)],
+      'fallback-sized.png',
+      { type: 'image/png' }
+    );
+    vi.mocked(loadImageDimensions).mockResolvedValue({ width: 2048, height: 2048 });
+    vi.mocked(compressImageWithinByteLimit).mockResolvedValue({
+      blob: new Blob(['under-limit'], { type: 'image/jpeg' }),
+      originalSize: file.size,
+      compressedSize: 11,
+      reductionPercent: 99,
+      dimensions: { width: 2048, height: 2048 },
+    });
+
+    const result = await prepareFileForProcessing(file, 'quick', 2);
+
+    expect(compressImageWithinByteLimit).toHaveBeenCalledWith(
+      file,
+      expect.objectContaining({ format: 'png' }),
+      IMAGE_VALIDATION.MAX_SIZE_FREE
+    );
+    expect(result.file.size).toBeLessThanOrEqual(IMAGE_VALIDATION.MAX_SIZE_FREE);
+  });
+
+  it('keeps a 12MP PNG under the free-tier byte ceiling for Quick 4x', async () => {
+    const file = new File(
+      [new Uint8Array(IMAGE_VALIDATION.MAX_SIZE_FREE + 1)],
+      'twelve-megapixel.png',
+      { type: 'image/png' }
+    );
+    vi.mocked(loadImageDimensions).mockResolvedValue({ width: 4000, height: 3000 });
+    vi.mocked(compressImageWithinByteLimit).mockResolvedValue({
+      blob: new Blob([new Uint8Array(1024)], { type: 'image/jpeg' }),
+      originalSize: file.size,
+      compressedSize: 1024,
+      reductionPercent: 99,
+      dimensions: { width: 1448, height: 1086 },
+    });
+
+    const result = await prepareFileForProcessing(file, 'quick', 4);
+
+    expect(result.file.size).toBeLessThanOrEqual(IMAGE_VALIDATION.MAX_SIZE_FREE);
+    expect(result.dimensions?.width).toBe(1448);
+    expect(result.dimensions?.height).toBe(1086);
+  });
 });
