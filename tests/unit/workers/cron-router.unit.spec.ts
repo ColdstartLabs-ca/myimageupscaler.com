@@ -67,6 +67,26 @@ describe('Cron Worker Router', () => {
     );
   });
 
+  it('maps 15 1 * * * to the daily upscale completion health endpoint', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ success: true, alerted: false }),
+    });
+    global.fetch = fetchMock;
+
+    const ctx = makeCtx();
+    await worker.scheduled({ cron: '15 1 * * *', scheduledTime: Date.now() }, mockEnv, ctx);
+    await ctx.flush();
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://myimageupscaler.com/api/cron/upscale-completion-health',
+      expect.objectContaining({
+        method: 'POST',
+        headers: expect.objectContaining({ 'x-cron-secret': 'test-secret' }),
+      })
+    );
+  });
+
   it('maps 10 * * * * to the bounded email lifecycle endpoint', async () => {
     const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve({}) });
     global.fetch = fetchMock;

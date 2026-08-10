@@ -8,14 +8,10 @@
  */
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
-import { getEmailService } from '@server/services/email.service';
-import { serverEnv } from '@shared/config/env';
-import {
-  calculateUpscaleCompletionRate,
-  getUpscaleHealthReport,
-  type IUpscaleHealthReport,
-} from './diagnostics/upscale-completion-rate';
+import { monitorUpscaleCompletionRate } from '@server/services/upscale-completion-health.service';
 import { assertReadOnlyMode, type TEnvironmentMode } from './reconcile-revenue-telemetry';
+
+export { monitorUpscaleCompletionRate };
 
 export const PROCESSING_FAILURE_MONITOR_POLICY = {
   windowMinutes: 15,
@@ -369,40 +365,6 @@ export function monitorProcessingFailureRate(input: IFailureMonitorInput): IFail
     sevenDayBaselineRate: baseline,
   });
   return evaluateProcessingFailureRate(windows);
-}
-
-export async function monitorUpscaleCompletionRate(
-  reportLoader: () => Promise<IUpscaleHealthReport> = getUpscaleHealthReport
-): Promise<boolean> {
-  const report = await reportLoader();
-  const latest = report.lastCompleteDay;
-  const completionRate = latest
-    ? calculateUpscaleCompletionRate(latest.started, latest.completed)
-    : null;
-
-  if (completionRate === null || completionRate >= report.threshold) return false;
-
-  const failedAttempts = Math.max(0, latest!.started - latest!.completed);
-  const delivery = await getEmailService().send({
-    to: serverEnv.PROVIDER_ALERT_EMAIL,
-    type: 'transactional',
-    template: 'provider-incident',
-    data: {
-      severity: 'critical',
-      attempts: latest!.started,
-      failures: failedAttempts,
-      failureRatioPercent: Math.round((1 - completionRate) * 100),
-      baselineRatioPercent: Math.round(completionRate * 100),
-      billingFailures: latest!.processingFailed,
-      circuitStatus: `upscale_completion_rate_below_${report.threshold.toFixed(2)}`,
-      completionRatePercent: Math.round(completionRate * 100),
-      completionRateDate: latest!.date,
-    },
-  });
-  if (!delivery.success) {
-    throw new Error(delivery.error || 'Upscale completion-rate alert email was not accepted');
-  }
-  return true;
 }
 
 function printHelp(): void {

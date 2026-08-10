@@ -5,11 +5,6 @@ const mocks = vi.hoisted(() => ({
   sendEmail: vi.fn(),
 }));
 
-vi.mock('../../../scripts/diagnostics/upscale-completion-rate', () => ({
-  calculateUpscaleCompletionRate: (started: number, completed: number) =>
-    started > 0 ? completed / started : null,
-  getUpscaleHealthReport: mocks.getReport,
-}));
 vi.mock('@server/services/email.service', () => ({
   getEmailService: () => ({ send: mocks.sendEmail }),
 }));
@@ -17,7 +12,7 @@ vi.mock('@shared/config/env', () => ({
   serverEnv: { PROVIDER_ALERT_EMAIL: 'ops@example.com' },
 }));
 
-import { monitorUpscaleCompletionRate } from '../../../scripts/monitor-processing-failure-rate';
+import { monitorUpscaleCompletionRate } from '@server/services/upscale-completion-health.service';
 
 function report(started: number, completed: number, threshold = 0.95) {
   return {
@@ -45,7 +40,7 @@ describe('upscale completion-rate alert', () => {
   it('should alert when completion ratio is below 0.95', async () => {
     mocks.getReport.mockResolvedValue(report(508, 247));
 
-    await expect(monitorUpscaleCompletionRate()).resolves.toBe(true);
+    await expect(monitorUpscaleCompletionRate(mocks.getReport)).resolves.toBe(true);
 
     expect(mocks.sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -62,7 +57,7 @@ describe('upscale completion-rate alert', () => {
   it('should not alert when completion ratio is 0.98', async () => {
     mocks.getReport.mockResolvedValue(report(100, 98));
 
-    await expect(monitorUpscaleCompletionRate()).resolves.toBe(false);
+    await expect(monitorUpscaleCompletionRate(mocks.getReport)).resolves.toBe(false);
 
     expect(mocks.sendEmail).not.toHaveBeenCalled();
   });

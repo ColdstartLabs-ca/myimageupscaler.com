@@ -132,6 +132,46 @@ export async function parseJsonResponse<T>(response: Response): Promise<T> {
   }
 }
 
+/**
+ * Best-effort server observation for edge failures that may terminate the
+ * upscale Worker before its in-process failure telemetry can run.
+ */
+export async function reportUpscaleEdgeFailure(
+  error: Pick<UpscaleEdgeError, 'status' | 'rayId'>,
+  metadata: Pick<IUpscaleConfig, 'qualityTier' | 'scale'>
+): Promise<void> {
+  try {
+    const accessToken = await getAccessToken();
+    if (!accessToken) return;
+
+    const response = await fetch('/api/upscale/failure-observation', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        status: error.status,
+        rayId: error.rayId,
+        qualityTier: metadata.qualityTier,
+        scale: metadata.scale,
+      }),
+      signal: AbortSignal.timeout(2000),
+    });
+
+    if (!response.ok) {
+      console.warn('Upscale edge-failure observation was not accepted', {
+        status: response.status,
+      });
+    }
+  } catch (observationError) {
+    console.warn('Upscale edge-failure observation failed', {
+      error:
+        observationError instanceof Error ? observationError.message : String(observationError),
+    });
+  }
+}
+
 // Extend Window interface for test environment markers
 declare global {
   // eslint-disable-next-line @typescript-eslint/naming-convention

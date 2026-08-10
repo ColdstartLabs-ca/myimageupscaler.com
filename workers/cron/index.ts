@@ -141,6 +141,9 @@ export default {
     } else if (cronPattern === '0 0 * * *') {
       endpoint = '/api/cron/gallery-cleanup';
       jobName = 'Gallery Cleanup';
+    } else if (cronPattern === '15 1 * * *') {
+      endpoint = '/api/cron/upscale-completion-health';
+      jobName = 'Upscale Completion Health';
     } else if (cronPattern === '10 * * * *') {
       endpoint = '/api/cron/email-lifecycle?drainOnly=false&scanLimit=25&sendLimit=1';
       jobName = 'Email Lifecycle';

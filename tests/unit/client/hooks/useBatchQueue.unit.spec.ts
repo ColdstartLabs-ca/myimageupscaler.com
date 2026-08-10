@@ -9,6 +9,7 @@ import {
 const mocks = vi.hoisted(() => ({
   processImage: vi.fn(),
   prepareFileForProcessing: vi.fn(),
+  reportUpscaleEdgeFailure: vi.fn(),
   showToast: vi.fn(),
   track: vi.fn(),
   UpscaleEdgeError: class UpscaleEdgeError extends Error {
@@ -50,6 +51,7 @@ vi.mock('@client/store/userStore', () => ({
 
 vi.mock('@client/utils/api-client', () => ({
   processImage: mocks.processImage,
+  reportUpscaleEdgeFailure: mocks.reportUpscaleEdgeFailure,
   UpscaleEdgeError: mocks.UpscaleEdgeError,
   BatchLimitError: class BatchLimitError extends Error {},
   FreeLimitExceededError: class FreeLimitExceededError extends Error {},
@@ -91,6 +93,7 @@ const config: IUpscaleConfig = {
 describe('useBatchQueue edge failures', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.reportUpscaleEdgeFailure.mockResolvedValue(undefined);
     mocks.prepareFileForProcessing.mockImplementation((file: File) =>
       Promise.resolve({ file, resized: false })
     );
@@ -114,6 +117,10 @@ describe('useBatchQueue edge failures', () => {
       retryable: true,
       error: 'Upscale failed (HTTP 503, ref: abc-123). Please retry.',
     });
+    expect(mocks.reportUpscaleEdgeFailure).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 503, rayId: 'abc-123' }),
+      expect.objectContaining({ qualityTier: 'quick', scale: 4 })
+    );
   });
 
   it('should emit processing_failed when UpscaleEdgeError is thrown', async () => {

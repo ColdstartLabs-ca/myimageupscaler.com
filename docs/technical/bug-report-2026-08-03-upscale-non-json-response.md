@@ -112,6 +112,13 @@ The client-side masking defect is resolved by `parseJsonResponse()` in
 item retryable and emits `processing_failed`. The behavior is covered by unit tests,
 including an observed red control with the old direct JSON parsing path.
 
+If an edge crash terminates `/api/upscale` before its `finally` block, the queue now
+best-effort POSTs bounded status, Ray ID, quality tier, and scale metadata to the
+authenticated `/api/upscale/failure-observation` route. That route writes a redacted
+`status='failed'` `processing_jobs` row and sends server-side `processing_failed`
+telemetry independently of browser analytics consent; it never accepts or stores the
+HTML body.
+
 The production deployment and 24-hour post-deploy observation remain an operator
 follow-up; this lane did not have a Cloudflare API token for live tailing.
 

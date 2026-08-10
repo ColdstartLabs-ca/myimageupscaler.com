@@ -11,6 +11,7 @@ import {
   FreeLimitExceededError,
   processImage,
   ProviderUnavailableError,
+  reportUpscaleEdgeFailure,
   UpscaleEdgeError,
 } from '@client/utils/api-client';
 import {
@@ -453,6 +454,10 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
       } else if (isUpscaleEdgeError(error)) {
         errorType = 'edge_error';
         requestId = error.rayId ?? 'unknown';
+        void reportUpscaleEdgeFailure(error, {
+          qualityTier: config.qualityTier,
+          scale: config.scale,
+        });
         updateItemStatus(item.id, {
           status: ProcessingStatus.ERROR,
           error: error.message,

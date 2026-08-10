@@ -110,43 +110,57 @@ bottleneck — see the diagnostic report.
 Fill every placeholder with a real, non-test `file:line` during implementation. Any placeholder at phase end
 means the phase is **not** done.
 
-| #   | New thing                                             | Live caller (`file:line`, non-test)                                               | Replaces                                                      | Old path removed?                                | Negative control                                                     |
-| --- | ----------------------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------ | -------------------------------------------------------------------- |
-| 1   | `parseJsonResponse()` in `client/utils/api-client.ts` | `client/utils/api-client.ts:388` (error) and `:431` (success)                     | bare `response.json()` at `api-client.ts:305-306,348`         | yes — all response parses delegate to the helper | feed an HTML body → returns a typed edge error, never a parse crash  |
-| 2   | `UpscaleEdgeError` (typed, carries status + Ray ID)   | `client/hooks/useBatchQueue.ts:453`                                               | generic `'Image processing failed'` at `useBatchQueue.ts:513` | yes — string replaced                            | delete the class → `useBatchQueue` classifier test fails             |
-| 3   | `processing_jobs` failed-row write                    | `app/api/upscale/route.ts:237` (inside `logFailure`)                              | nothing writes failures today                                 | n/a — new coverage                               | force a provider error → a `status='failed'` row appears             |
-| 4   | `yarn diag:upscale-health` script                     | `package.json:61`; CLI entry `scripts/diagnostics/upscale-completion-rate.ts:262` | manual Amplitude curl                                         | n/a                                              | point it at a healthy window → prints ≥0.95; at Aug 03 → prints 0.49 |
-| 5   | Completion-rate alert                                 | `scripts/monitor-processing-failure-rate.ts:483` (live-mode caller)               | no alert exists for this metric                               | n/a                                              | set threshold to 0.99 → alert fires on current prod data             |
+| #   | New thing                                             | Live caller (`file:line`, non-test)                                                                        | Replaces                                                                  | Old path removed?                                | Negative control                                                     |
+| --- | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------ | -------------------------------------------------------------------- |
+| 1   | `parseJsonResponse()` in `client/utils/api-client.ts` | `client/utils/api-client.ts:290,296,325,343,428,471`                                                       | bare `response.json()` at `api-client.ts:305-306,348`                     | yes — all response parses delegate to the helper | feed an HTML body → returns a typed edge error, never a parse crash  |
+| 2   | `UpscaleEdgeError` (typed, carries status + Ray ID)   | `client/hooks/useBatchQueue.ts:454`                                                                        | generic `'Image processing failed'` at `useBatchQueue.ts:513`             | yes — string replaced                            | delete the class → `useBatchQueue` classifier test fails             |
+| 3   | `processing_jobs` failed-row write                    | `app/api/upscale/route.ts:237` (inside `logFailure`)                                                       | nothing writes failures today                                             | n/a — new coverage                               | force a provider error → a `status='failed'` row appears             |
+| 4   | `yarn diag:upscale-health` script                     | `package.json:61`; CLI entry `scripts/diagnostics/upscale-completion-rate.ts:122`                          | manual Amplitude curl                                                     | n/a                                              | point it at a healthy window → prints ≥0.95; at Aug 03 → prints 0.49 |
+| 5   | Completion-rate alert                                 | `app/api/cron/upscale-completion-health/route.ts:14`; CLI `scripts/monitor-processing-failure-rate.ts:445` | no alert exists for this metric                                           | n/a                                              | set threshold to 0.99 → alert fires on current prod data             |
+| 6   | Authenticated edge-failure observation                | `client/hooks/useBatchQueue.ts:457` → `app/api/upscale/failure-observation/route.ts:80`                    | consent-gated browser `processing_failed` was the only edge terminal path | browser event retained; server row/event added   | remove the observer call → client observation test fails             |
 
 ---
 
 ## Caller census — Phase 1
 
-- `parseJsonResponse`: non-test callers are `client/utils/api-client.ts:250`, `:256`, `:285`,
-  `:303`, `:388`, and `:431`.
-- `UpscaleEdgeError`: non-test caller is `client/hooks/useBatchQueue.ts:453`; the class is created by
+- `parseJsonResponse`: non-test callers are `client/utils/api-client.ts:290`, `:296`, `:325`,
+  `:343`, `:428`, and `:471`.
+- `UpscaleEdgeError`: non-test caller is `client/hooks/useBatchQueue.ts:454`; the class is created by
   `client/utils/api-client.ts:117` when an edge response is not JSON.
 
 ## Caller census — Phases 2–4
 
 - The failed-row writer is reached from the live `logFailure` closure at
   `app/api/upscale/route.ts:237`; `POST` invokes that closure on provider and route failures.
-- `getUpscaleHealthReport` is called by the live-mode alert at
-  `scripts/monitor-processing-failure-rate.ts:375`, and the diagnostic CLI reaches it at
-  `scripts/diagnostics/upscale-completion-rate.ts:262`.
-- `calculateUpscaleCompletionRate` is consumed by the live alert at
-  `scripts/monitor-processing-failure-rate.ts:380`.
-- `monitorUpscaleCompletionRate` is called by the live-mode monitor entry point at
-  `scripts/monitor-processing-failure-rate.ts:483`.
+- `getUpscaleHealthReport` is consumed by the shared monitor default at
+  `server/services/upscale-completion-health.service.ts:162` and the diagnostic CLI at
+  `scripts/diagnostics/upscale-completion-rate.ts:122`.
+- `calculateUpscaleCompletionRate` is consumed by the shared monitor at
+  `server/services/upscale-completion-health.service.ts:167`; `buildUpscaleHealthReport` is
+  consumed at `server/services/upscale-completion-health.service.ts:158`.
+- `monitorUpscaleCompletionRate` is called automatically by
+  `app/api/cron/upscale-completion-health/route.ts:14` and remains reachable from the manual live
+  monitor at `scripts/monitor-processing-failure-rate.ts:445`.
+- `reportUpscaleEdgeFailure` is called by `client/hooks/useBatchQueue.ts:457`; it POSTs only bounded
+  status, Ray ID, quality tier, and scale metadata to the protected observer route at
+  `app/api/upscale/failure-observation/route.ts:80`. That route writes the failed row at `:36` and
+  sends server-side `processing_failed` at `:64`, independently via `Promise.allSettled`.
+- `ProviderIncidentEmail` is loaded by the live email adapter at
+  `server/services/email-providers/base-email-provider-adapter.ts:351`; daily alerts pass the date
+  and completion rate from `server/services/upscale-completion-health.service.ts:185-186`.
 
 Observed red evidence: direct JSON parsing produced `SyntaxError` for HTML; removing the
 failed-row insert produced zero insert calls; removing the pre-upload byte guard skipped
 compression for an oversized quick-path input; and inverting the alert comparison made both
-alert tests fail. The alert suite also proves the negative 0.98 case does not send.
+alert tests fail. The alert suite also proves the negative 0.98 case does not send. The repair
+tests additionally fail when the daily cron mapping, daily email branch, or client observer call
+is removed; the observer route test fails if server telemetry or the redacted failed-row write is
+removed.
 
 Observed red evidence before implementation: the new API-client tests failed with a `SyntaxError`
 from the HTML body, and the queue classifier tests failed to mark the item retryable or emit
-`processing_failed`. After implementation, the affected 65-test run passed.
+`processing_failed`. After implementation, the affected 32-test application run and 23-test
+cron-worker run passed.
 
 ---
 
@@ -251,9 +265,9 @@ ref: <CF-Ray>). Please retry." instead of `Unexpected token '<'`.
 
 **Wiring:**
 
-- [x] Caller edited: `client/utils/api-client.ts:388` and `:431` — both parse sites now call
+- [x] Caller edited: `client/utils/api-client.ts:290` and `:296` — both parse sites now call
       `parseJsonResponse`
-- [x] Caller edited: `client/hooks/useBatchQueue.ts:453` — classifier handles `UpscaleEdgeError`
+- [x] Caller edited: `client/hooks/useBatchQueue.ts:454` — classifier handles `UpscaleEdgeError`
 - [x] Old path: bare `response.json()` **deleted** (verify with the grep below)
 - [x] Ledger rows filled: #1, #2
 
@@ -321,7 +335,7 @@ Today it returns `fail_pct = 0.0` on days when half of all attempts failed.
 
 - [x] Caller edited: `app/api/upscale/route.ts:237` — `logFailure` now records the row
 - [x] Registration: `package.json:61` script entry; CLI entry is
-      `scripts/diagnostics/upscale-completion-rate.ts:262`
+      `scripts/diagnostics/upscale-completion-rate.ts:122`
 - [x] Old path: n/a — new coverage, nothing recorded failures before
 - [x] Ledger rows filled: #3, #4
 
@@ -495,10 +509,11 @@ check remain pending because the worker was not deployed from this lane.
 
 **Wiring:**
 
-- [x] Caller edited: `scripts/monitor-processing-failure-rate.ts:483`
-- [x] Registration: the existing `package.json:60` `analytics:processing:monitor` entry reaches
-      the monitor; `--mode live` invokes the completion-rate check and sends the existing
-      `provider-incident` email.
+- [x] Caller edited: `app/api/cron/upscale-completion-health/route.ts:14`; the manual
+      `scripts/monitor-processing-failure-rate.ts:445` entry remains available.
+- [x] Registration: `workers/cron/wrangler.toml:25` schedules the authenticated route daily at
+      `15 1 * * *`, and `workers/cron/index.ts:145` maps that pattern. The existing CLI behavior
+      still invokes the same shared monitor in `--mode live`.
 - [x] Ledger row filled: #5
 
 **Tests Required:**
@@ -522,6 +537,43 @@ yarn verify
 **Local evidence:** the alert tests passed for a 0.49 report (email sent) and a 0.98 report (no
 email). Inverting the comparison made both tests fail red. The live production threshold override
 was not run because Amplitude credentials were unavailable in this lane.
+
+### Continuation repair — deployed scheduling, accurate context, and durable edge observation
+
+The manager review identified four integration defects in the first implementation. This repair
+closes them in the live paths rather than leaving them as documentation-only gaps.
+
+**Files added or edited:**
+
+- `server/services/upscale-completion-health.service.ts` — **NEW**: shared Amplitude report and
+  alert logic used by both the CLI and the application route.
+- `app/api/cron/upscale-completion-health/route.ts` — **NEW**: authenticated daily alert endpoint.
+- `workers/cron/index.ts` and `workers/cron/wrangler.toml` — **EDIT**: map and schedule the endpoint
+  at `15 1 * * *`, after the UTC complete-day boundary.
+- `emails/templates/ProviderIncidentEmail.tsx` — **EDIT**: render daily date/rate wording only
+  when completion fields are present; preserve rolling provider-health wording otherwise.
+- `client/utils/api-client.ts`, `client/hooks/useBatchQueue.ts`, and
+  `app/api/upscale/failure-observation/route.ts` — **EDIT/NEW**: best-effort authenticated client
+  observation with bounded metadata, a failed `processing_jobs` row, and server-side
+  `processing_failed` telemetry independent of browser consent.
+
+**Repair tests:**
+
+| Test File                                                                        | Test Name                                                              | Assertion                                                                           |
+| -------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `tests/unit/api/upscale-completion-health-cron.unit.spec.ts`                     | daily route calls the monitor and rejects an invalid secret            | `200` + monitor call; `401` without the cron secret                                 |
+| `tests/unit/workers/cron-router.unit.spec.ts` and `workers/cron/index.test.ts`   | `15 1 * * *` maps to the completion-health endpoint                    | authenticated fetch targets `/api/cron/upscale-completion-health`                   |
+| `tests/unit/emails/provider-incident-email.unit.spec.tsx`                        | daily context is accurate and rolling wording is preserved             | date/rate appears; “last 10 minutes” appears only without daily fields              |
+| `tests/unit/api/upscale-failure-observation.unit.spec.ts` and client/queue specs | edge observation is redacted, durable, server-tracked, and best-effort | no HTML/body preview is accepted or stored; original queue error remains actionable |
+
+**Repair evidence:** the application repair suite passed 32 tests, the cron-worker suite passed 23
+tests, and `yarn tsc` passed. The required red controls were observed locally: removing the daily
+cron branch produced one failed mapping test; disabling the daily email branch produced one failed
+template test; removing the client observer call produced one failed observer-call assertion; and
+removing either `processing_jobs` or server-telemetry operation produced the corresponding failed
+route assertion. Those controls are recorded in the integration ledger above. The direct CLI entry remains at
+`scripts/diagnostics/upscale-completion-rate.ts:122`, while production scheduling now reaches the
+same monitor at `app/api/cron/upscale-completion-health/route.ts:14`.
 
 ---
 
@@ -579,10 +631,13 @@ Consumer-scoped. Every one is about what a user or operator observes, not about 
       `Open` to `Resolved`, and the `exceededMemory` entries in
       `docs/operations/production-error-backlog.md` are closed
 
-The remaining unchecked acceptance items are deployment-dependent: this lane cannot establish
-Amplitude ratios, production `processing_jobs` rows, post-deploy error rates, or a live email
-delivery without credentials/deployment. The implementation, local negative controls, 12MP browser
-proof, and `yarn verify` are complete; deployment observation is the remaining gate.
+The four manager-review findings are resolved: the alert has an authenticated daily production
+caller, daily email context is date/rate-aware, edge crashes have a durable authenticated observer,
+and server telemetry no longer depends on browser consent. The remaining unchecked acceptance items
+are deployment-dependent: this lane cannot establish Amplitude ratios, production
+`processing_jobs` rows, post-deploy error rates, or a live email delivery without credentials and a
+deployment. The implementation, local negative controls, 12MP browser proof, and `yarn verify`
+are complete; deployment observation is the remaining gate.
 
 ---
 

@@ -189,6 +189,32 @@ describe('Cloudflare Cron Worker', () => {
       );
     });
 
+    it('should route daily upscale completion health correctly', async () => {
+      const event = {
+        cron: '15 1 * * *',
+        scheduledTime: Date.now(),
+      } as ScheduledEvent;
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({ success: true, alerted: false }),
+      });
+      global.fetch = fetchMock;
+
+      await worker.scheduled(event, mockEnv, mockCtx as unknown);
+
+      expect(mockCtx.waitUntil).toHaveBeenCalled();
+      await mockCtx.waitUntil.mock.calls[0][0];
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        'https://api.example.com/api/cron/upscale-completion-health',
+        expect.objectContaining({
+          method: 'POST',
+          headers: expect.objectContaining({ 'x-cron-secret': 'test-secret-123' }),
+        })
+      );
+    });
+
     it('should route email lifecycle catch-up schedule with single-send params', async () => {
       const event = {
         cron: '40 * * * *',

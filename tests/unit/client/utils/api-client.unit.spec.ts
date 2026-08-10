@@ -20,7 +20,12 @@ vi.mock('@client/analytics', () => ({
   },
 }));
 
-import { parseJsonResponse, processImage, UpscaleEdgeError } from '@client/utils/api-client';
+import {
+  parseJsonResponse,
+  processImage,
+  reportUpscaleEdgeFailure,
+  UpscaleEdgeError,
+} from '@client/utils/api-client';
 
 const config: IUpscaleConfig = {
   qualityTier: 'quick',
@@ -93,5 +98,42 @@ describe('upscale API response handling', () => {
       rayId: 'abc-123',
       message: 'Upscale failed (HTTP 503, ref: abc-123). Please retry.',
     });
+  });
+
+  it('should report only bounded edge metadata to the authenticated observer', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 202 }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await reportUpscaleEdgeFailure(
+      { status: 503, rayId: 'abc-123' },
+      { qualityTier: config.qualityTier, scale: config.scale }
+    );
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/upscale/failure-observation',
+      expect.objectContaining({
+        method: 'POST',
+        headers: expect.objectContaining({ Authorization: 'Bearer token-123' }),
+        body: JSON.stringify({
+          status: 503,
+          rayId: 'abc-123',
+          qualityTier: 'quick',
+          scale: 4,
+        }),
+      })
+    );
+    expect(JSON.stringify(fetchMock.mock.calls[0][1])).not.toContain('html');
+  });
+
+  it('should keep observer delivery best-effort when the observer request fails', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('observer unavailable')));
+
+    await expect(
+      reportUpscaleEdgeFailure(
+        { status: 503, rayId: 'abc-123' },
+        { qualityTier: config.qualityTier, scale: config.scale }
+      )
+    ).resolves.toBeUndefined();
   });
 });
