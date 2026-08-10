@@ -62,6 +62,27 @@ Follow-up:
 - Manual action: request indexing for `https://myimageupscaler.com/blog/fixing-pixelated-photos` in GSC URL Inspection; the backlog row is now unchecked for the 2026-08-10 version.
 - Next trigger: on or after 2026-08-25, compare the first complete 14-day GSC window after this edit. If the target query remains avg position 3-10 with CTR below 0.2%, stop snippet testing and evaluate consolidation/canonical handling with `/blog/fix-pixelated-image`.
 
+### Blog Core Web Vitals: static/ISR route and lazy embeds
+
+Source: `/home/joao/Downloads/myimageupscaler.com-core-web-vitals-Issue-2026-08-10.zip` (mobile LCP issue; target row reports 5.2s for `/blog/fixing-pixelated-photos`). Local Lighthouse reproduced 9.1s mobile LCP, with the hero image as LCP, 2.35s server response, and an eager embedded iframe competing during load.
+
+Changes:
+
+- Added `force-static` with 24-hour ISR to the database-backed blog post route so public blog HTML is generated/cacheable instead of assembled on each request.
+- Added `loading="lazy"` to article iframes, after spread props, so embedded media cannot override the deferral or compete with the hero.
+- Added `tests/unit/seo/blog-core-web-vitals.unit.spec.ts`; no URL, metadata, canonical, schema, or hero-image behavior changed.
+
+Validation:
+
+- Focused blog/SEO unit suite: 12 files, 102 tests passed.
+- Blog Chromium E2E: 7 tests passed.
+- `yarn build` passed; prerender manifest contains 126 static blog routes plus the dynamic route definition.
+- `yarn verify` passed: TypeScript, lint (existing warnings only), ICU, and Schema.org validation.
+
+Follow-up:
+
+- Deploy through the normal review path, then rerun mobile PageSpeed and GSC Core Web Vitals after field data reflects the deployment. No indexing request is needed because URLs and SEO signals were unchanged.
+
 ## 2026-08-08
 
 ### Enhancer Cluster Internal-Link Verification

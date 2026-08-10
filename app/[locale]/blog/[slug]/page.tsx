@@ -27,6 +27,10 @@ import { getRelatedPostsForSlug } from '@lib/seo/seo-equity';
 import { BlogFaqSection } from '@client/components/blog/BlogFaqSection';
 import { buildFallbackBlogFaq, buildFaqJsonLd } from '@lib/blog/blog-faq';
 
+// Blog content is public and cacheable; keep database-backed pages off the request path.
+export const dynamic = 'force-static';
+export const revalidate = 86400;
+
 // Convert MDX Callout components to blockquotes with type markers
 function preprocessContent(content: string): string {
   return (
@@ -503,6 +507,7 @@ export default async function BlogPostPage({ params }: IPageProps) {
                           <iframe
                             src={src}
                             {...props}
+                            loading="lazy"
                             className="w-full"
                             style={{ aspectRatio: '16 / 9' }}
                           />
