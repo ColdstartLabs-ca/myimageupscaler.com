@@ -25,9 +25,10 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 - [x] `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails`
 - [x] `https://myimageupscaler.com/blog/image-upscaler-8x`
 - [x] `https://myimageupscaler.com/blog/photo-restoration-program` — refreshed 2026-07-22 with a current comparison table and policy-aligned credit copy.
-- [x] `https://myimageupscaler.com/formats/upscale-gif-images` — refreshed 2026-07-30 as the sole truthful GIF-intent owner; four `/format-scale/gif-upscale-*` URLs now consolidate here. Sitemap `lastmod` bumped 2026-08-03; request indexing after deploy.
 
 ## Completed
+
+- [x] `https://myimageupscaler.com/formats/upscale-gif-images` — manually requested in GSC URL Inspection on 2026-08-08 after the GIF consolidation deploy was verified live (`/format-scale/gif-upscale-16x` → `301` to this owner, owner `200` + self-canonical, sitemap `lastmod` `2026-08-03`). Recovery checkpoint: 2026-08-22, see [SEO changes backlog](./seo-changes-backlog.md) open follow-ups.
 
 - [x] `https://myimageupscaler.com/blog/photoshop-upscale-image` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-08-01 after the 2026-05-26 change.
 - [x] `https://myimageupscaler.com/blog/photoshop-upscaler-vs-ai-tools` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-07-15 after the 2026-06-05 change.

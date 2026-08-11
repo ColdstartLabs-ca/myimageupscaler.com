@@ -11,6 +11,7 @@
  *   node scripts/test-trigger.js reconciliation
  *   node scripts/test-trigger.js refresh-3kings-sitemap
  *   node scripts/test-trigger.js gallery-cleanup
+ *   node scripts/test-trigger.js upscale-completion-health
  *   node scripts/test-trigger.js email-lifecycle
  *   node scripts/test-trigger.js email-lifecycle-catch-up
  */
@@ -22,6 +23,7 @@ const JOBS = {
   reconciliation: '5 3 * * *',
   'refresh-3kings-sitemap': '30 4 * * *',
   'gallery-cleanup': '0 0 * * *',
+  'upscale-completion-health': '15 1 * * *',
   'email-lifecycle': '10 * * * *',
   'email-lifecycle-catch-up': '40 * * * *',
 };
