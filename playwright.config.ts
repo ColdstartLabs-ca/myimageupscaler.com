@@ -52,6 +52,10 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
+        // Avoid intermittent Chromium headless-shell SIGSEGVs on GPU-backed hosts.
+        launchOptions: {
+          args: ['--disable-gpu'],
+        },
       },
       testMatch: /.*\.e2e\.spec\.ts/,
       timeout: 60000, // Dev server compiles on demand; locale pages can be slow under load
