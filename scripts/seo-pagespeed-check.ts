@@ -1,21 +1,35 @@
 #!/usr/bin/env tsx
 /**
- * PageSpeed Insights Check for MyImageUpscaler
- * Fetches Core Web Vitals and performance data from Google PageSpeed API
+ * PageSpeed Insights check for MyImageUpscaler.
  *
  * Usage:
- *   yarn tsx scripts/seo-pagespeed-check.ts --base-url=https://myimageupscaler.com
- *   yarn tsx scripts/seo-pagespeed-check.ts --base-url=https://myimageupscaler.com --url=/pricing
- *   yarn tsx scripts/seo-pagespeed-check.ts --base-url=https://myimageupscaler.com --strategy=desktop
+ *   yarn tsx scripts/seo-pagespeed-check.ts
+ *   yarn tsx scripts/seo-pagespeed-check.ts --urls=seo-reports/cwv-urls.txt
+ *   yarn tsx scripts/seo-pagespeed-check.ts --url=/pricing --strategy=desktop
+ *   yarn tsx scripts/seo-pagespeed-check.ts --budget-lcp=2.5
  *
- * Note: Set PAGESPEED_API_KEY in .env.api for higher quotas
+ * Set PAGESPEED_API_KEY in .env.api for higher API quotas.
  */
 
-import * as fs from 'fs';
+import * as fs from 'node:fs';
+import * as os from 'node:os';
+import * as path from 'node:path';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import { fileURLToPath } from 'node:url';
 import { config } from 'dotenv';
+import { serverEnv } from '../shared/config/env';
 
-// Load .env.api for API keys
-config({ path: '.env.api' });
+const loadedEnv = config({ path: '.env.api' }).parsed || {};
+
+const DEFAULT_BASE_URL = 'https://myimageupscaler.com';
+const DEFAULT_URLS_FILE = 'seo-reports/cwv-urls.txt';
+const execFileAsync = promisify(execFile);
+let useLocalLighthouse = false;
+const runtimeConfig = {
+  baseUrl: loadedEnv.SITE_URL || serverEnv.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL,
+  pageSpeedApiKey: loadedEnv.PAGESPEED_API_KEY || serverEnv.PAGESPEED_API_KEY,
+};
 
 interface IPageSpeedResult {
   url: string;
@@ -28,13 +42,14 @@ interface IPageSpeedResult {
     seo: number;
   };
   coreWebVitals: {
-    lcp: { value: number; rating: string };
+    lcp: { value: number | null; rating: string };
     fid: { value: number; rating: string };
     cls: { value: number; rating: string };
     inp: { value: number; rating: string } | null;
     fcp: { value: number; rating: string };
     ttfb: { value: number; rating: string };
   };
+  lcpElement: string;
   opportunities: Array<{
     id: string;
     title: string;
@@ -47,7 +62,6 @@ interface IPageSpeedResult {
   }>;
 }
 
-// Types for PageSpeed API response
 interface ILighthouseAudit {
   id: string;
   title: string;
@@ -55,53 +69,106 @@ interface ILighthouseAudit {
   details?: {
     type?: string;
     overallSavingsMs?: number;
+    items?: Array<Record<string, unknown>>;
   };
   numericValue?: number;
   displayValue?: string;
 }
 
-interface ILighthouseResult {
-  categories: {
-    performance?: { score: number };
-    accessibility?: { score: number };
-    'best-practices'?: { score: number };
-    seo?: { score: number };
-  };
+interface ILighthousePayload {
+  categories: Record<string, { score?: number }>;
   audits: Record<string, ILighthouseAudit>;
 }
 
+interface IPageSpeedPayload {
+  lighthouseResult: ILighthousePayload;
+  loadingExperience?: {
+    metrics?: Record<string, { percentile?: number }>;
+  };
+}
+
 interface IArgs {
-  url: string;
+  urls: string[];
+  urlsFile?: string;
   strategy: 'mobile' | 'desktop' | 'both';
   baseUrl: string;
+  budgetLcpSeconds?: number;
+  outputMarkdown: string;
+  outputJson: string;
+}
+
+function readUrlList(filePath: string): string[] {
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`URL list not found: ${filePath}`);
+  }
+
+  const urls = fs
+    .readFileSync(filePath, 'utf8')
+    .split(/\r?\n/)
+    .map(line => line.replace(/#.*/, '').trim())
+    .filter(Boolean);
+
+  if (urls.length === 0) {
+    throw new Error(`URL list is empty: ${filePath}`);
+  }
+
+  return urls;
 }
 
 function parseArgs(): IArgs {
   const args = process.argv.slice(2);
-  const result: IArgs = {
-    url: '/',
-    strategy: 'mobile',
-    baseUrl: process.env.SITE_URL || '',
-  };
+  const dateStr = new Date().toISOString().split('T')[0];
+  let explicitUrl: string | undefined;
+  let urlsFile: string | undefined;
+  let strategy: IArgs['strategy'] = 'both';
+  let baseUrl = runtimeConfig.baseUrl;
+  let budgetLcpSeconds: number | undefined;
+  let outputMarkdown = `seo-reports/cwv-${dateStr}.md`;
+  let outputJson = `seo-reports/cwv-${dateStr}.json`;
 
   for (const arg of args) {
     if (arg.startsWith('--url=')) {
-      result.url = arg.split('=')[1];
+      explicitUrl = arg.slice('--url='.length);
+    } else if (arg.startsWith('--urls=')) {
+      urlsFile = arg.slice('--urls='.length);
     } else if (arg.startsWith('--strategy=')) {
-      result.strategy = arg.split('=')[1] as IArgs['strategy'];
+      const value = arg.slice('--strategy='.length);
+      if (value !== 'mobile' && value !== 'desktop' && value !== 'both') {
+        throw new Error(`Invalid strategy: ${value}`);
+      }
+      strategy = value;
     } else if (arg.startsWith('--base-url=')) {
-      result.baseUrl = arg.split('=')[1];
+      baseUrl = arg.slice('--base-url='.length);
+    } else if (arg.startsWith('--budget-lcp=')) {
+      const value = Number(arg.slice('--budget-lcp='.length));
+      if (!Number.isFinite(value) || value < 0) {
+        throw new Error(`Invalid LCP budget: ${arg}`);
+      }
+      budgetLcpSeconds = value;
+    } else if (arg.startsWith('--output=')) {
+      outputMarkdown = arg.slice('--output='.length);
+      outputJson = outputMarkdown.replace(/\.md$/, '.json');
+    } else if (arg.startsWith('--output-markdown=')) {
+      outputMarkdown = arg.slice('--output-markdown='.length);
+    } else if (arg.startsWith('--output-json=')) {
+      outputJson = arg.slice('--output-json='.length);
     }
   }
 
-  if (!result.baseUrl) {
-    console.error('Error: --base-url is required (or set SITE_URL env var)');
-    console.log('\nUsage:');
-    console.log('  yarn tsx scripts/seo-pagespeed-check.ts --base-url=https://myimageupscaler.com');
-    process.exit(1);
+  if (!baseUrl) {
+    throw new Error('Base URL is required through --base-url or SITE_URL');
   }
 
-  return result;
+  const urls = explicitUrl ? [explicitUrl] : readUrlList(urlsFile || DEFAULT_URLS_FILE);
+  return {
+    urls,
+    urlsFile: explicitUrl ? undefined : urlsFile || DEFAULT_URLS_FILE,
+    strategy,
+    baseUrl: baseUrl.replace(/\/$/, ''),
+    budgetLcpSeconds,
+    outputMarkdown,
+    outputJson,
+  };
 }
 
 function getRating(value: number, metric: string): string {
@@ -114,289 +181,478 @@ function getRating(value: number, metric: string): string {
     ttfb: { good: 800, poor: 1800 },
   };
 
-  const t = thresholds[metric];
-  if (!t) return 'unknown';
-
-  if (value <= t.good) return 'good';
-  if (value <= t.poor) return 'needs-improvement';
+  const threshold = thresholds[metric];
+  if (!threshold) return 'unknown';
+  if (value <= threshold.good) return 'good';
+  if (value <= threshold.poor) return 'needs-improvement';
   return 'poor';
 }
 
 function getRatingEmoji(rating: string): string {
-  switch (rating) {
-    case 'good':
-      return '🟢';
-    case 'needs-improvement':
-      return '🟡';
-    case 'poor':
-      return '🔴';
-    default:
-      return '⚪';
-  }
+  return rating === 'good'
+    ? '🟢'
+    : rating === 'needs-improvement'
+      ? '🟡'
+      : rating === 'unknown'
+        ? '⚪'
+        : '🔴';
 }
 
 function getScoreEmoji(score: number): string {
-  if (score >= 90) return '🟢';
-  if (score >= 50) return '🟡';
-  return '🔴';
+  return score >= 90 ? '🟢' : score >= 50 ? '🟡' : '🔴';
+}
+
+function getLcpElement(audit?: ILighthouseAudit): string {
+  const findNode = (item: Record<string, unknown>): string | null => {
+    const node = item.element ?? item.node;
+    if (typeof node === 'string') return node;
+    if (node && typeof node === 'object') {
+      const nodeRecord = node as Record<string, unknown>;
+      for (const key of ['snippet', 'selector', 'nodeLabel', 'path']) {
+        if (typeof nodeRecord[key] === 'string' && nodeRecord[key]) {
+          return nodeRecord[key] as string;
+        }
+      }
+    }
+
+    const nestedItems = item.items;
+    if (Array.isArray(nestedItems)) {
+      for (const nestedItem of nestedItems) {
+        if (nestedItem && typeof nestedItem === 'object') {
+          const result = findNode(nestedItem as Record<string, unknown>);
+          if (result) return result;
+        }
+      }
+    }
+
+    return null;
+  };
+
+  for (const item of audit?.details?.items || []) {
+    const result = findNode(item);
+    if (result) return result;
+  }
+
+  return 'Unavailable';
+}
+
+function getFullUrl(baseUrl: string, url: string): string {
+  if (/^https?:\/\//i.test(url)) return url;
+  return `${baseUrl}/${url.replace(/^\//, '')}`;
+}
+
+function resolveChromePath(): string | undefined {
+  const candidates = [
+    '/usr/bin/google-chrome-stable',
+    '/usr/bin/google-chrome',
+    '/usr/bin/chromium',
+    '/usr/bin/chromium-browser',
+  ];
+
+  if (os.platform() === 'darwin') {
+    candidates.push('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome');
+  }
+
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) return candidate;
+  }
+
+  const playwrightCache = path.join(os.homedir(), '.cache', 'ms-playwright');
+  if (!fs.existsSync(playwrightCache)) return undefined;
+
+  const browserDirectories = fs
+    .readdirSync(playwrightCache, { withFileTypes: true })
+    .filter(entry => entry.isDirectory() && entry.name.startsWith('chromium-'))
+    .map(entry => entry.name)
+    .sort()
+    .reverse();
+
+  for (const browserDirectory of browserDirectories) {
+    const browserRoot = path.join(playwrightCache, browserDirectory);
+    const browserCandidates =
+      os.platform() === 'darwin'
+        ? [path.join(browserRoot, 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium')]
+        : [
+            path.join(browserRoot, 'chrome-linux64', 'chrome'),
+            path.join(browserRoot, 'chrome-linux', 'chrome'),
+          ];
+
+    for (const candidate of browserCandidates) {
+      if (fs.existsSync(candidate)) return candidate;
+    }
+  }
+
+  return undefined;
+}
+
+export function createPageSpeedResult(
+  url: string,
+  strategy: 'mobile' | 'desktop',
+  data: IPageSpeedPayload
+): IPageSpeedResult {
+  const lighthouse = data.lighthouseResult;
+  const audits = lighthouse.audits || {};
+  const metrics = data.loadingExperience?.metrics || {};
+
+  const rawLcpValue = audits['largest-contentful-paint']?.numericValue;
+  const lcpValue =
+    typeof rawLcpValue === 'number' && Number.isFinite(rawLcpValue) ? rawLcpValue : null;
+  const clsValue =
+    (metrics.CUMULATIVE_LAYOUT_SHIFT_SCORE?.percentile ?? 0) / 100 ||
+    audits['cumulative-layout-shift']?.numericValue ||
+    0;
+  const fidValue = metrics.FIRST_INPUT_DELAY_MS?.percentile || 0;
+  const inpValue =
+    metrics.INTERACTION_TO_NEXT_PAINT?.percentile ??
+    audits['interaction-to-next-paint']?.numericValue ??
+    null;
+  const fcpValue = audits['first-contentful-paint']?.numericValue || 0;
+  const ttfbValue = audits['server-response-time']?.numericValue || 0;
+
+  const opportunities = Object.values(audits)
+    .filter(
+      audit =>
+        audit.details?.type === 'opportunity' &&
+        audit.details.overallSavingsMs !== undefined &&
+        audit.details.overallSavingsMs > 0
+    )
+    .map(audit => ({
+      id: audit.id,
+      title: audit.title,
+      savings: `${((audit.details?.overallSavingsMs ?? 0) / 1000).toFixed(1)}s`,
+    }))
+    .sort((a, b) => parseFloat(b.savings) - parseFloat(a.savings))
+    .slice(0, 5);
+
+  const diagnosticIds = [
+    'dom-size',
+    'render-blocking-resources',
+    'unused-javascript',
+    'unused-css-rules',
+    'modern-image-formats',
+    'uses-responsive-images',
+  ];
+  const diagnostics = diagnosticIds
+    .map(id => audits[id])
+    .filter((audit): audit is ILighthouseAudit =>
+      Boolean(audit && audit.score !== null && audit.score < 1)
+    )
+    .map(audit => ({
+      id: audit.id,
+      title: audit.title,
+      description: audit.displayValue || '',
+    }));
+
+  return {
+    url,
+    strategy,
+    fetchedAt: new Date().toISOString(),
+    scores: {
+      performance: Math.round((lighthouse.categories.performance?.score || 0) * 100),
+      accessibility: Math.round((lighthouse.categories.accessibility?.score || 0) * 100),
+      bestPractices: Math.round((lighthouse.categories['best-practices']?.score || 0) * 100),
+      seo: Math.round((lighthouse.categories.seo?.score || 0) * 100),
+    },
+    coreWebVitals: {
+      lcp: {
+        value: lcpValue,
+        rating: lcpValue === null ? 'unknown' : getRating(lcpValue, 'lcp'),
+      },
+      fid: { value: fidValue, rating: getRating(fidValue, 'fid') },
+      cls: { value: clsValue, rating: getRating(clsValue, 'cls') },
+      inp: inpValue ? { value: inpValue, rating: getRating(inpValue, 'inp') } : null,
+      fcp: { value: fcpValue, rating: getRating(fcpValue, 'fcp') },
+      ttfb: { value: ttfbValue, rating: getRating(ttfbValue, 'ttfb') },
+    },
+    lcpElement: getLcpElement(audits['largest-contentful-paint-element']),
+    opportunities,
+    diagnostics,
+  };
+}
+
+export interface IPageSpeedGateResult {
+  unknownLcpResults: IPageSpeedResult[];
+  budgetFailures: IPageSpeedResult[];
+  exitCode: 0 | 1;
+}
+
+export function evaluatePageSpeedGate(
+  results: IPageSpeedResult[],
+  failedRequests: string[],
+  expectedResults: number,
+  budgetLcpSeconds?: number
+): IPageSpeedGateResult {
+  const unknownLcpResults = results.filter(result => result.coreWebVitals.lcp.value === null);
+  const budgetFailures =
+    budgetLcpSeconds === undefined
+      ? []
+      : results.filter(
+          result =>
+            result.strategy === 'mobile' &&
+            (result.coreWebVitals.lcp.value === null ||
+              result.coreWebVitals.lcp.value > budgetLcpSeconds * 1000)
+        );
+  const exitCode: 0 | 1 =
+    failedRequests.length > 0 ||
+    results.length !== expectedResults ||
+    unknownLcpResults.length > 0 ||
+    budgetFailures.length > 0
+      ? 1
+      : 0;
+
+  return { unknownLcpResults, budgetFailures, exitCode };
+}
+
+async function fetchLocalLighthouse(
+  url: string,
+  strategy: 'mobile' | 'desktop'
+): Promise<IPageSpeedResult | null> {
+  const outputDir = fs.mkdtempSync(path.join('/tmp', 'miu-lighthouse-'));
+  const outputPath = path.join(outputDir, 'report.json');
+  const chromePath = resolveChromePath();
+  const chromeFlags = '--headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage';
+  const lighthouseArgs = [
+    'lighthouse',
+    url,
+    '--output=json',
+    `--output-path=${outputPath}`,
+    `--chrome-flags=${chromeFlags}`,
+    '--only-categories=performance,seo,accessibility,best-practices',
+    '--quiet',
+  ];
+
+  if (strategy === 'desktop') {
+    lighthouseArgs.push(
+      '--form-factor=desktop',
+      '--screenEmulation.disabled',
+      '--throttling.cpuSlowdownMultiplier=1'
+    );
+  } else {
+    lighthouseArgs.push('--form-factor=mobile');
+  }
+
+  try {
+    const command = chromePath ? 'env' : 'npx';
+    const commandArgs = chromePath
+      ? [`CHROME_PATH=${chromePath}`, 'npx', ...lighthouseArgs]
+      : lighthouseArgs;
+    const { stdout, stderr } = await execFileAsync(command, commandArgs, {
+      maxBuffer: 50 * 1024 * 1024,
+    });
+    if (stderr.trim()) console.error(stderr.trim());
+    const report = JSON.parse(fs.readFileSync(outputPath, 'utf8')) as
+      | IPageSpeedPayload
+      | (ILighthousePayload & { loadingExperience?: IPageSpeedPayload['loadingExperience'] });
+    const data: IPageSpeedPayload =
+      'lighthouseResult' in report
+        ? report
+        : { lighthouseResult: report, loadingExperience: report.loadingExperience };
+    return createPageSpeedResult(url, strategy, data);
+  } catch (error) {
+    console.error(
+      `Local Lighthouse failed for ${url} (${strategy}): ${
+        error instanceof Error ? error.message : 'Unknown error'
+      }`
+    );
+    return null;
+  } finally {
+    fs.rmSync(outputDir, { recursive: true, force: true });
+  }
 }
 
 async function fetchPageSpeed(
   url: string,
   strategy: 'mobile' | 'desktop'
 ): Promise<IPageSpeedResult | null> {
-  const apiKey = process.env.PAGESPEED_API_KEY || '';
+  if (useLocalLighthouse) return fetchLocalLighthouse(url, strategy);
+
+  const apiKey = runtimeConfig.pageSpeedApiKey;
   const encodedUrl = encodeURIComponent(url);
+  let apiUrl =
+    `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodedUrl}` +
+    `&strategy=${strategy}&category=performance&category=accessibility` +
+    '&category=best-practices&category=seo';
 
-  let apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodedUrl}&strategy=${strategy}&category=performance&category=accessibility&category=best-practices&category=seo`;
-
-  if (apiKey) {
-    apiUrl += `&key=${apiKey}`;
-  }
+  if (apiKey) apiUrl += `&key=${apiKey}`;
 
   try {
     const response = await fetch(apiUrl);
-
     if (!response.ok) {
-      const error = await response.json();
-      console.error(`API Error: ${error.error?.message || response.statusText}`);
+      const body = await response.text();
+      let message = response.statusText;
+      try {
+        message = (JSON.parse(body) as { error?: { message?: string } }).error?.message || message;
+      } catch {
+        // Keep the HTTP status text when the API does not return JSON.
+      }
+      console.error(`API Error for ${url} (${strategy}): ${message}`);
+      if (/quota exceeded/i.test(message)) {
+        useLocalLighthouse = true;
+        console.log('PageSpeed API quota is unavailable; falling back to local Lighthouse.');
+        return fetchLocalLighthouse(url, strategy);
+      }
       return null;
     }
 
-    const data = await response.json();
-    const lighthouse = data.lighthouseResult;
-    const loadingExperience = data.loadingExperience;
-
-    const scores = {
-      performance: Math.round((lighthouse.categories.performance?.score || 0) * 100),
-      accessibility: Math.round((lighthouse.categories.accessibility?.score || 0) * 100),
-      bestPractices: Math.round((lighthouse.categories['best-practices']?.score || 0) * 100),
-      seo: Math.round((lighthouse.categories.seo?.score || 0) * 100),
-    };
-
-    const metrics = loadingExperience?.metrics || {};
-    const audits = lighthouse.audits || {};
-
-    const getLcpValue = () => {
-      if (metrics.LARGEST_CONTENTFUL_PAINT_MS?.percentile) {
-        return metrics.LARGEST_CONTENTFUL_PAINT_MS.percentile;
-      }
-      return audits['largest-contentful-paint']?.numericValue || 0;
-    };
-
-    const getClsValue = () => {
-      if (metrics.CUMULATIVE_LAYOUT_SHIFT_SCORE?.percentile) {
-        return metrics.CUMULATIVE_LAYOUT_SHIFT_SCORE.percentile / 100;
-      }
-      return audits['cumulative-layout-shift']?.numericValue || 0;
-    };
-
-    const lcpValue = getLcpValue();
-    const clsValue = getClsValue();
-    const fidValue = metrics.FIRST_INPUT_DELAY_MS?.percentile || 0;
-    const inpValue = metrics.INTERACTION_TO_NEXT_PAINT?.percentile || null;
-    const fcpValue = audits['first-contentful-paint']?.numericValue || 0;
-    const ttfbValue = audits['server-response-time']?.numericValue || 0;
-
-    const coreWebVitals = {
-      lcp: { value: lcpValue, rating: getRating(lcpValue, 'lcp') },
-      fid: { value: fidValue, rating: getRating(fidValue, 'fid') },
-      cls: { value: clsValue, rating: getRating(clsValue, 'cls') },
-      inp: inpValue ? { value: inpValue, rating: getRating(inpValue, 'inp') } : null,
-      fcp: { value: fcpValue, rating: getRating(fcpValue, 'fcp') },
-      ttfb: { value: ttfbValue, rating: getRating(ttfbValue, 'ttfb') },
-    };
-
-    const opportunities = Object.values(lighthouse.audits || {})
-      .filter(
-        (audit: ILighthouseAudit) =>
-          audit.details?.type === 'opportunity' &&
-          audit.details?.overallSavingsMs !== undefined &&
-          audit.details.overallSavingsMs > 0
-      )
-      .map((audit: ILighthouseAudit) => ({
-        id: audit.id,
-        title: audit.title,
-        savings: `${((audit.details.overallSavingsMs ?? 0) / 1000).toFixed(1)}s`,
-      }))
-      .sort((a, b) => parseFloat(b.savings) - parseFloat(a.savings))
-      .slice(0, 5);
-
-    const diagnosticIds = [
-      'dom-size',
-      'render-blocking-resources',
-      'unused-javascript',
-      'unused-css-rules',
-      'modern-image-formats',
-      'uses-responsive-images',
-    ];
-
-    const diagnostics = diagnosticIds
-      .map(id => lighthouse.audits[id])
-      .filter((audit?: ILighthouseAudit) => audit && audit.score !== null && audit.score < 1)
-      .map((audit: ILighthouseAudit) => ({
-        id: audit.id,
-        title: audit.title,
-        description: audit.displayValue || '',
-      }));
-
-    return {
-      url,
-      strategy,
-      fetchedAt: new Date().toISOString(),
-      scores,
-      coreWebVitals,
-      opportunities,
-      diagnostics,
-    };
+    const data = (await response.json()) as IPageSpeedPayload;
+    return createPageSpeedResult(url, strategy, data);
   } catch (error) {
     console.error(
-      `Failed to fetch PageSpeed data: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `Failed to fetch PageSpeed data for ${url} (${strategy}): ${
+        error instanceof Error ? error.message : 'Unknown error'
+      }`
     );
     return null;
   }
 }
 
-function printResult(result: IPageSpeedResult) {
-  console.log('\n' + '═'.repeat(60));
-  console.log(`  ${result.strategy.toUpperCase()} RESULTS`);
-  console.log('═'.repeat(60) + '\n');
-
-  console.log('📊 LIGHTHOUSE SCORES');
-  console.log('-'.repeat(40));
-  console.log(
-    `  ${getScoreEmoji(result.scores.performance)} Performance:     ${result.scores.performance}`
-  );
-  console.log(
-    `  ${getScoreEmoji(result.scores.accessibility)} Accessibility:   ${result.scores.accessibility}`
-  );
-  console.log(
-    `  ${getScoreEmoji(result.scores.bestPractices)} Best Practices:  ${result.scores.bestPractices}`
-  );
-  console.log(`  ${getScoreEmoji(result.scores.seo)} SEO:             ${result.scores.seo}`);
-
-  console.log('\n⚡ CORE WEB VITALS');
-  console.log('-'.repeat(40));
-
+function printResult(result: IPageSpeedResult): void {
   const cwv = result.coreWebVitals;
+  console.log(`\n${'═'.repeat(60)}`);
+  console.log(`  ${result.strategy.toUpperCase()} — ${result.url}`);
+  console.log(`${'═'.repeat(60)}\n`);
+  const lcpDisplay =
+    cwv.lcp.value === null
+      ? 'unknown (measurement unavailable)'
+      : `${(cwv.lcp.value / 1000).toFixed(2)}s`;
   console.log(
-    `  ${getRatingEmoji(cwv.lcp.rating)} LCP:  ${(cwv.lcp.value / 1000).toFixed(2)}s (${cwv.lcp.rating})`
+    `${getScoreEmoji(result.scores.performance)} Performance ${result.scores.performance} | ` +
+      `${getRatingEmoji(cwv.lcp.rating)} LCP ${lcpDisplay} | ` +
+      `${getRatingEmoji(cwv.cls.rating)} CLS ${cwv.cls.value.toFixed(3)}`
   );
-  console.log(`  ${getRatingEmoji(cwv.fid.rating)} FID:  ${cwv.fid.value}ms (${cwv.fid.rating})`);
-  console.log(
-    `  ${getRatingEmoji(cwv.cls.rating)} CLS:  ${cwv.cls.value.toFixed(3)} (${cwv.cls.rating})`
-  );
-  if (cwv.inp) {
-    console.log(`  ${getRatingEmoji(cwv.inp.rating)} INP:  ${cwv.inp.value}ms (${cwv.inp.rating})`);
-  }
-  console.log(
-    `  ${getRatingEmoji(cwv.fcp.rating)} FCP:  ${(cwv.fcp.value / 1000).toFixed(2)}s (${cwv.fcp.rating})`
-  );
-  console.log(
-    `  ${getRatingEmoji(cwv.ttfb.rating)} TTFB: ${cwv.ttfb.value}ms (${cwv.ttfb.rating})`
-  );
-
-  if (result.opportunities.length > 0) {
-    console.log('\n💡 TOP OPPORTUNITIES');
-    console.log('-'.repeat(40));
-    result.opportunities.forEach((opp, idx) => {
-      console.log(`  ${idx + 1}. ${opp.title}`);
-      console.log(`     Potential savings: ${opp.savings}`);
-    });
-  }
-
-  if (result.diagnostics.length > 0) {
-    console.log('\n🔍 DIAGNOSTICS');
-    console.log('-'.repeat(40));
-    result.diagnostics.forEach(diag => {
-      console.log(`  - ${diag.title}`);
-      if (diag.description) {
-        console.log(`    ${diag.description}`);
-      }
-    });
-  }
+  console.log(`LCP element: ${result.lcpElement}`);
+  console.log(`INP: ${cwv.inp ? `${cwv.inp.value}ms (${cwv.inp.rating})` : 'unavailable'}`);
 }
 
-async function main() {
-  const { url, strategy, baseUrl } = parseArgs();
-  const fullUrl = `${baseUrl}${url.startsWith('/') ? url : `/${url}`}`;
+function escapeMarkdown(value: string): string {
+  return value.replace(/\|/g, '\\|').replace(/\r?\n/g, ' ');
+}
+
+function createMarkdownReport(
+  args: IArgs,
+  results: IPageSpeedResult[],
+  failedRequests: string[]
+): string {
+  const budgetLine =
+    args.budgetLcpSeconds === undefined
+      ? 'No LCP budget configured.'
+      : `Mobile LCP budget: ${args.budgetLcpSeconds.toFixed(1)}s.`;
+  const rows = results
+    .map(result => {
+      const cwv = result.coreWebVitals;
+      const lcpDisplay =
+        cwv.lcp.value === null
+          ? 'unknown (measurement unavailable)'
+          : `${(cwv.lcp.value / 1000).toFixed(2)}s (${cwv.lcp.rating})`;
+      return `| ${escapeMarkdown(result.url)} | ${result.strategy} | ${lcpDisplay} | ${cwv.inp ? `${cwv.inp.value}ms` : 'n/a'} | ${cwv.cls.value.toFixed(3)} | ${escapeMarkdown(result.lcpElement)} |`;
+    })
+    .join('\n');
+
+  return `# PageSpeed Core Web Vitals Report
+
+Generated: ${new Date().toISOString()}
+
+${budgetLine}
+
+| URL | Strategy | LCP | INP | CLS | LCP element |
+| --- | --- | --- | --- | --- | --- |
+${rows || '| No measurements | — | — | — | — | — |'}
+
+${failedRequests.length > 0 ? `Failed requests:\n\n${failedRequests.map(item => `- ${item}`).join('\n')}` : 'All requested measurements returned successfully.'}
+`;
+}
+
+function writeReports(args: IArgs, results: IPageSpeedResult[], failedRequests: string[]): void {
+  const report = {
+    generatedAt: new Date().toISOString(),
+    baseUrl: args.baseUrl,
+    urls: args.urls,
+    urlsFile: args.urlsFile,
+    strategy: args.strategy,
+    budgetLcpSeconds: args.budgetLcpSeconds,
+    failedRequests,
+    results,
+  };
+
+  fs.mkdirSync(path.dirname(args.outputJson), { recursive: true });
+  fs.mkdirSync(path.dirname(args.outputMarkdown), { recursive: true });
+  fs.writeFileSync(args.outputJson, JSON.stringify(report, null, 2));
+  fs.writeFileSync(args.outputMarkdown, createMarkdownReport(args, results, failedRequests));
+  console.log(`\nJSON report: ${args.outputJson}`);
+  console.log(`Markdown report: ${args.outputMarkdown}`);
+}
+
+async function main(): Promise<void> {
+  const args = parseArgs();
+  const strategies: Array<'mobile' | 'desktop'> =
+    args.strategy === 'both' ? ['mobile', 'desktop'] : [args.strategy];
 
   console.log('\n🚀 PAGESPEED INSIGHTS CHECK');
-  console.log('═'.repeat(60));
-  console.log(`URL: ${fullUrl}`);
-  console.log(`Strategy: ${strategy}`);
+  console.log(`URLs: ${args.urls.length} from ${args.urlsFile || 'command line'}`);
+  console.log(`Strategies: ${strategies.join(', ')}`);
+  console.log(`Base URL: ${args.baseUrl}`);
 
-  if (!process.env.PAGESPEED_API_KEY) {
-    console.log('\n⚠️  No PAGESPEED_API_KEY set - using public API (lower quota)');
-    console.log(
-      '   Get a free key at: https://developers.google.com/speed/docs/insights/v5/get-started\n'
-    );
+  if (!runtimeConfig.pageSpeedApiKey) {
+    console.log('⚠️  No PAGESPEED_API_KEY set; using the public API quota.');
   }
 
   const results: IPageSpeedResult[] = [];
-  const strategies: Array<'mobile' | 'desktop'> =
-    strategy === 'both' ? ['mobile', 'desktop'] : [strategy as 'mobile' | 'desktop'];
+  const failedRequests: string[] = [];
 
-  for (const strat of strategies) {
-    console.log(`\nFetching ${strat} data...`);
-    const result = await fetchPageSpeed(fullUrl, strat);
-
-    if (result) {
-      results.push(result);
-      printResult(result);
-    } else {
-      console.log(`❌ Failed to fetch ${strat} data`);
+  for (const url of args.urls) {
+    for (const strategy of strategies) {
+      const fullUrl = getFullUrl(args.baseUrl, url);
+      console.log(`\nFetching ${strategy}: ${fullUrl}`);
+      const result = await fetchPageSpeed(fullUrl, strategy);
+      if (result) {
+        results.push(result);
+        printResult(result);
+      } else {
+        failedRequests.push(`${strategy} ${fullUrl}`);
+      }
     }
   }
 
-  if (results.length > 0) {
-    const dateStr = new Date().toISOString().split('T')[0];
-    const reportDir = `/home/joao/projects/pixelperfect/seo-reports/${dateStr}`;
-    fs.mkdirSync(reportDir, { recursive: true });
-    const pageName = url.replace(/\//g, '-').replace(/^-/, '') || 'home';
-    const exportPath = `${reportDir}/pagespeed-${pageName}.json`;
-    fs.writeFileSync(exportPath, JSON.stringify({ url: fullUrl, results }, null, 2));
-    console.log(`\n📁 Full report: ${exportPath}`);
-  }
+  writeReports(args, results, failedRequests);
 
-  console.log('\n' + '═'.repeat(60));
-  console.log('                  RECOMMENDATIONS');
-  console.log('═'.repeat(60) + '\n');
+  const expectedResults = args.urls.length * strategies.length;
+  const { unknownLcpResults, budgetFailures, exitCode } = evaluatePageSpeedGate(
+    results,
+    failedRequests,
+    expectedResults,
+    args.budgetLcpSeconds
+  );
 
-  const mobileResult = results.find(r => r.strategy === 'mobile');
-  if (mobileResult) {
-    const perf = mobileResult.scores.performance;
-
-    if (perf < 50) {
-      console.log('🔴 CRITICAL: Performance score is very low');
-      console.log('   Priority actions:');
-      console.log('   1. Reduce JavaScript bundle size');
-      console.log('   2. Optimize images (WebP, lazy loading)');
-      console.log('   3. Enable text compression');
-      console.log('   4. Reduce server response time');
-    } else if (perf < 90) {
-      console.log('🟡 Performance could be improved');
-      console.log('   Review the opportunities above for quick wins');
-    } else {
-      console.log('🟢 Performance is good! Focus on maintaining it.');
-    }
-
-    if (mobileResult.coreWebVitals.lcp.rating === 'poor') {
-      console.log('\n⚠️  LCP needs attention:');
-      console.log('   - Preload hero images');
-      console.log('   - Optimize server response time');
-      console.log('   - Remove render-blocking resources');
-    }
-
-    if (mobileResult.coreWebVitals.cls.rating === 'poor') {
-      console.log('\n⚠️  CLS needs attention:');
-      console.log('   - Add width/height to images');
-      console.log('   - Reserve space for dynamic content');
-      console.log('   - Avoid inserting content above existing content');
+  if (unknownLcpResults.length > 0) {
+    console.error('\n❌ LCP measurement unavailable or non-finite:');
+    for (const result of unknownLcpResults) {
+      console.error(`- ${result.strategy} ${result.url}`);
     }
   }
 
-  console.log('\n✅ PageSpeed check complete!\n');
+  if (budgetFailures.length > 0) {
+    console.error(`\n❌ Mobile LCP budget check failed (${args.budgetLcpSeconds}s):`);
+    for (const result of budgetFailures) {
+      const lcpValue = result.coreWebVitals.lcp.value;
+      const lcpDisplay =
+        lcpValue === null
+          ? 'unknown (measurement unavailable)'
+          : `${(lcpValue / 1000).toFixed(2)}s`;
+      console.error(`- ${result.url}: ${lcpDisplay}`);
+    }
+  }
+
+  if (exitCode !== 0) {
+    process.exitCode = exitCode;
+    return;
+  }
+
+  console.log('\n✅ PageSpeed check complete; all measurements are within the configured gate.');
 }
 
-main().catch(console.error);
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch(error => {
+    console.error(`❌ ${error instanceof Error ? error.message : 'PageSpeed check failed'}`);
+    process.exitCode = 1;
+  });
+}

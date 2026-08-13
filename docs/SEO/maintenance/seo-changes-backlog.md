@@ -68,6 +68,26 @@ Follow-up:
 
 - Production deployment and post-deploy GSC validation remain pending. The local production build reaches static-page generation but is still blocked by the pre-existing `use-cases-expanded/web-design-development` data/template mismatch and placeholder Supabase environment.
 - The source PRD still contains TBD caller cells.
+### LCP image delivery and budget gate
+
+Source: [GSC recovery LCP page-experience PRD](../../PRDs/gsc-recovery-2026-08/05-lcp-page-experience.md)
+
+Changes:
+
+- Replaced the global `next/image` `unoptimized` setting with the custom image loader, using Cloudflare Image Resizing for same-origin assets, Supabase render transforms for public blog objects, and width-matched AVIF URLs for Unsplash assets.
+- Added the Unsplash and production Supabase image-host preconnects, a fixed six-URL Core Web Vitals input set, the `seo:pagespeed` budget command, and a public-asset size guard.
+- Removed four unused original before/after PNGs from `public/before-after/originals/`; `girl-before.png` measured 565,843 bytes (552.6 KiB), while the other three exceeded the 1 MB public-asset limit.
+
+Validation:
+
+- Unit and browser checks covered rendered `srcset`, the exact Supabase acceptance hero transform, loader wiring, both image-host preconnects, asset weight, and the `unoptimized` regression control; the e2e file now matches the configured Playwright project.
+- The LCP budget unit control confirms the gate uses current Lighthouse LCP rather than rolling field data.
+- [Baseline report](../../../seo-reports/cwv-baseline-2026-08-13.md) captured all 12 real mobile and desktop Lighthouse measurements after PSI API quota fallback to local Lighthouse; one transient desktop 503 was rerun successfully.
+- A live Cloudflare Image Resizing probe returned `200` with `image/avif`.
+
+Follow-up:
+
+- After deployment, rerun the six-URL gate on the production host, complete the Slow 4G/LCP manual checkpoint, and monitor the GSC mobile CWV checkpoints in the PRD through 2026-10-08.
 
 ## 2026-08-10
 

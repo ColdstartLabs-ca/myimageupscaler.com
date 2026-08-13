@@ -1,0 +1,7 @@
+# Fixed URL set for the LCP/Page Experience recovery check.
+/
+/blog/fixing-pixelated-photos
+/blog/best-free-ai-image-upscaler-2026-tested-compared
+/tools/ai-image-upscaler
+/tools/photo-quality-enhancer
+/formats/upscale-gif-images

@@ -141,6 +141,8 @@ export default async function LocaleLayout({ children, params }: ILocaleLayoutPr
           media="(min-width: 475px)"
           fetchPriority="high"
         />
+        <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="" />
+        <link rel="preconnect" href="https://xqysaylskffsfwunczbd.supabase.co" crossOrigin="" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://analytics.ahrefs.com" />
         <link rel="dns-prefetch" href="https://js.stripe.com" />

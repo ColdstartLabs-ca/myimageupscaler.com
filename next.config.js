@@ -35,7 +35,8 @@ const nextConfig = {
   transpilePackages: ['react-markdown', 'remark-gfm', 'unified', 'bail'],
   // Performance optimizations
   images: {
-    unoptimized: true,
+    loader: 'custom',
+    loaderFile: './client/utils/image-loader.ts',
     // Allow external images from dicebear for avatars
     remotePatterns: [
       {
