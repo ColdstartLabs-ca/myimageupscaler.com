@@ -11,6 +11,42 @@ Maintenance rules:
 
 ## 2026-08-13
 
+### GSC recovery 2026-08 — squash status
+
+Five of the six PRD lanes are squashed onto `master`, one commit each: PRD 01
+(`63bb04f9`), PRD 05 (`52619af4`), PRD 06 (`c1c24ba5`), PRD 04 (`e95af3c0`), PRD 03
+(`a8c0514d`). `yarn verify` passes and the full unit suite is green (378 files).
+Nothing is deployed yet.
+
+**PRD 02 (locale indexation integrity) is NOT merged.** It stays on
+`linchpin/gsc-02-locale-indexation-integrity` (`78cfa256`). Two reasons:
+
+1. Its own gate is red. The lane added `scripts/seo/check-cache-record-size.ts`
+   with a 512 KiB aggregate OpenNext/R2 cache-record budget; localized pSEO
+   records measure 678–739 KB and unrelated blog records up to 1.27 MB. The lane
+   also wired `yarn opennextjs-cloudflare build && check-cache-record-size` into
+   `yarn verify`, which would make the default verify chain run a full Cloudflare
+   build and fail. This is the same open Worker CPU/1102 problem already tracked
+   in Open Follow-Ups.
+2. It conflicts semantically with two lanes that did land. `generateHreflangAlternates`
+   has two competing designs: PRD 01's `availableLocales` (intersect category policy
+   with locales where the page exists) versus PRD 02's `translatedLocales` (page-level
+   list is authoritative, category policy is only a hub fallback). PRD 02 also drops
+   the `shouldSubmit()` eligibility term that PRD 03 added to the metadata noindex
+   decision. Resolving these by hand, with no reviewer and a red gate, is how hreflang
+   and canonical regressions ship silently.
+
+Resume plan for PRD 02:
+
+- [ ] Decide the hreflang contract first: does a page-level translated-locale list
+      override category localization policy? That single answer resolves
+      `lib/seo/hreflang-generator.ts`, `lib/seo/data-loader.ts`, and
+      `lib/seo/metadata-factory.ts`.
+- [ ] Keep `check-cache-record-size.ts` as a standalone command, not in `yarn verify`,
+      until the cache-serialization architecture decision is made.
+- [ ] Re-run the lane against current `master` (it is based on `67196c03`, now 5
+      commits behind) rather than merging the existing branch as-is.
+
 ### PRD 06: Blog indexation, intent reporting, and citation CTAs
 
 Changes:
