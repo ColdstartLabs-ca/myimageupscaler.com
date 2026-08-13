@@ -56,3 +56,12 @@ The implementation and 12MP client proof are complete locally. A post-deploy thr
 Cloudflare observation confirming `exceededMemory <= 0.1%` is still required; live
 `wrangler tail` was blocked in this lane because `CLOUDFLARE_API_TOKEN` was not
 available. Do not treat the pre-fix rates above as a post-deploy measurement.
+### 2026-08-11T10:09:12+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 35 in the sampled window
+- **Evidence:** `{"count_15m": 3, "count_3h": 35, "live_health": {"api_health": {"latency_ms": 1013, "status": 200}, "homepage": {"latency_ms": 1276, "status": 200}}, "rate_15m": 0.03797, "rate_3h": 0.01502, "requests_15m": 79, "requests_3h": 2330}`
+- **Assessment:** 35 memory failures in 2,330 requests over 3 hours, rising to 3 in 79 recently, while homepage and API health remain 200.
+- **Next action:** Inspect high-memory inputs and worker limits, add safeguards, and monitor the failure rate.
+- **Status:** Open
+

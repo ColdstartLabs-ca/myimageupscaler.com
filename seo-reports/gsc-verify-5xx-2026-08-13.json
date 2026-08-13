@@ -1,0 +1,85 @@
+{
+  "set": "5xx",
+  "baseUrl": "https://myimageupscaler.com",
+  "expectStatus": null,
+  "generatedAt": "2026-08-13T07:10:15.119Z",
+  "totals": {
+    "checked": 5,
+    "violations": 0
+  },
+  "summaries": [
+    {
+      "family": "/tools/[slug]",
+      "total": 4,
+      "violations": 0,
+      "examples": []
+    },
+    {
+      "family": "/platform-format",
+      "total": 1,
+      "violations": 0,
+      "examples": []
+    }
+  ],
+  "results": [
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/platform-format/lightroom-upscaler-avif",
+        "status": 200,
+        "responseTimeMs": 423
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/resize-image-for-facebook",
+        "status": 301,
+        "responseTimeMs": 750,
+        "location": "/ja/tools/resize/resize-image-for-facebook"
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "301"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/resize-image-for-linkedin",
+        "status": 301,
+        "responseTimeMs": 771,
+        "location": "/ja/tools/resize/resize-image-for-linkedin"
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "301"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/resize-image-for-instagram",
+        "status": 301,
+        "responseTimeMs": 965,
+        "location": "/ja/tools/resize/resize-image-for-instagram"
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "301"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/resize-image-for-twitter",
+        "status": 301,
+        "responseTimeMs": 784,
+        "location": "/ja/tools/resize/resize-image-for-twitter"
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "301"
+      }
+    }
+  ]
+}

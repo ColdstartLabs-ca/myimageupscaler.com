@@ -87,6 +87,7 @@
     "i18n:stats": "tsx scripts/translation-helper.ts stats",
     "i18n:diff": "tsx scripts/translation-helper.ts diff",
     "i18n:batch": "tsx scripts/translation-helper.ts get-batch",
+    "seo:verify:gsc": "tsx scripts/seo/verify-gsc-fixes.ts",
     "validate:seo:sitemap": "tsx scripts/validate-sitemap-urls.ts",
     "validate:seo:sitemap:full": "tsx scripts/validate-sitemap-urls.ts --full",
     "validate:seo:sitemap:patterns": "tsx scripts/validate-sitemap-urls.ts --patterns-only",

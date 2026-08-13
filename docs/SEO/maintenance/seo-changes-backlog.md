@@ -23,6 +23,27 @@ Maintenance rules:
 - [x] After next deploy, re-inspect `https://myimageupscaler.com/it` in GSC and confirm it now has a referring sitemap. Verified 2026-05-13: URL Inspection reports `Submitted and indexed` with sitemap `https://myimageupscaler.com/sitemap.xml`.
 - [x] In GA4 Admin, grant Editor access on property `519826120` to `cloudstartlabs-service-acc@coldstartlabs-auth.iam.gserviceaccount.com`, then run `node ./.claude/skills/ga-analysis/scripts/ga4-key-events.cjs --create` to mark the SEO funnel events and emitted GA4 event names as key events. Completed 2026-05-13.
 
+## 2026-08-13
+
+### GSC Recovery PRD Set (planning only — no site changes yet)
+
+Source: GSC coverage + Core Web Vitals exports of 2026-08-12/08-10 and the 2026-08-13 audit report. Raw exports committed to `docs/PRDs/gsc-recovery-2026-08/data/`.
+
+Created [docs/PRDs/gsc-recovery-2026-08/](../../PRDs/gsc-recovery-2026-08/README.md) — six sliced PRDs, each with a live-URL verification gate rather than unit tests alone:
+
+- 01 404 elimination (303): locale interactive-tool slug lists drifted from the English routes and the sitemaps (11 slugs × 6 locales); `middleware.ts` `redirectMap` covers only 12 of 194 distinct 404 paths; `/use-cases-expanded/*` has data and a sitemap route but no page route.
+- 02 Locale indexation integrity (239 duplicate-canonical, 107 noindex, 5 5xx): hreflang/canonical decided per category instead of per page; stub `locales/ja/interactive-tools.json` entries; plus the still-open Worker 1102 503s.
+- 03 Index bloat pruning (790 crawled-not-indexed): sitemap eligibility earned from a committed 90-day GSC snapshot; publish freeze below 85% indexation.
+- 04 Taxonomy cannibalization: generalize the shipped GIF-intent consolidation into a cluster table — gated on a clean post-2026-08-04 measurement first.
+- 05 LCP (95 poor / 0 good): `images.unoptimized: true` makes `sizes` inert; Cloudflare/Unsplash image loader + preconnect.
+- 06 Blog indexation (33 posts) and the seven zero-click URLs (156K impressions → 389 clicks).
+
+Shipped with the PRDs (PRD 01 Phase 0): `lib/seo/gsc-verification.ts` + `scripts/seo/verify-gsc-fixes.ts`, exposed as `yarn seo:verify:gsc --set=404|noindex|5xx|dup|cni`. Re-fetches the exported URL lists against a live origin, resolves redirect destinations (a `301` to a `404` is not a fix), walks `/sitemap.xml` for the noindex/cni rule, writes `seo-reports/gsc-verify-<set>-<date>.json`, exits 1 on any violation. 31 unit tests in `tests/unit/seo/gsc-verification.unit.spec.ts`.
+
+Validation: `yarn verify` passed; 1,050 SEO unit tests green. Live baselines 2026-08-13 — `--set=404`: **212 of 303 still violating** (206 still 404, 6 redirect into a 404, 91 already fixed by earlier work); `--set=5xx`: 0 of 5 violating, because the four Japanese social-resize URLs now `301` into `/ja/tools/resize/*` (GSC **Validate fix** can be run for them) and the 1102 URL answered 200 on that request — intermittent, so not resolved. Negative controls observed: `--expect=404` flips the verdict on live data, and mutating the 404 expectation to always-pass turns 6 unit tests red.
+
+Follow-up: implement in order 01 → 02/05 → 03 → 04/06; each PRD's post-deploy GSC checkpoints are dated inside it.
+
 ## 2026-08-10
 
 ### Pixelated Photos Proof-Led SERP Support Pass

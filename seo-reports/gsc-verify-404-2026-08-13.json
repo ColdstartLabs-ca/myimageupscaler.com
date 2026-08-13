@@ -1,0 +1,3795 @@
+{
+  "set": "404",
+  "baseUrl": "https://myimageupscaler.com",
+  "expectStatus": null,
+  "generatedAt": "2026-08-13T07:13:13.701Z",
+  "totals": {
+    "checked": 303,
+    "violations": 212
+  },
+  "summaries": [
+    {
+      "family": "/article",
+      "total": 61,
+      "violations": 58,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/article/image-formats-comparison",
+          "reason": "still 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/article/damaged-photo-repair",
+          "reason": "still 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/article/bulk-image-resizer",
+          "reason": "still 404"
+        }
+      ]
+    },
+    {
+      "family": "/tools/resize",
+      "total": 48,
+      "violations": 47,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/de/tools/resize/resize-image-for-telegram",
+          "reason": "still 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-telegram",
+          "reason": "still 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/tools/resize/redimensionneur-image",
+          "reason": "still 404"
+        }
+      ]
+    },
+    {
+      "family": "/tools/convert",
+      "total": 33,
+      "violations": 33,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/tools/convert/webp-in-png",
+          "reason": "still 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/tools/convert/png-in-webp",
+          "reason": "still 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/tools/convert/png-en-jpg",
+          "reason": "still 404"
+        }
+      ]
+    },
+    {
+      "family": "/personas",
+      "total": 11,
+      "violations": 11,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/personas",
+          "reason": "still 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/personas/web-developers",
+          "reason": "still 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/personas/graphic-designers",
+          "reason": "still 404"
+        }
+      ]
+    },
+    {
+      "family": "/use-cases-expanded",
+      "total": 10,
+      "violations": 10,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/use-cases-expanded/social-media-content-creation?ref=narrareach-blog.ghost.io",
+          "reason": "301 → https://myimageupscaler.com/use-cases-expanded/social-media-content-creation which returns 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/use-cases-expanded/medical-scientific-imaging",
+          "reason": "still 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/use-cases-expanded/real-estate-photography",
+          "reason": "still 404"
+        }
+      ]
+    },
+    {
+      "family": "/tools/[slug]",
+      "total": 92,
+      "violations": 9,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/tools/Converter/jpg-to-webp",
+          "reason": "still 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/tools/resize-image-for-tiktok",
+          "reason": "still 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/tools/colorize-photo",
+          "reason": "still 404"
+        }
+      ]
+    },
+    {
+      "family": "/comparisons",
+      "total": 8,
+      "violations": 7,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/comparisons/online-vs-desktop-upscalers",
+          "reason": "still 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/comparisons/privacy-security-upscaling",
+          "reason": "still 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/comparisons/ai-models-comparison",
+          "reason": "still 404"
+        }
+      ]
+    },
+    {
+      "family": "/blog",
+      "total": 7,
+      "violations": 7,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/blog/how-to-batch-edit-photos",
+          "reason": "still 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/blog/how-to-change-frame-rate-video",
+          "reason": "still 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/blog/10-best-ai-tools-for-photo-editing",
+          "reason": "still 404"
+        }
+      ]
+    },
+    {
+      "family": "/tools/compress",
+      "total": 6,
+      "violations": 6,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/tools/compress/compresseur-image",
+          "reason": "still 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/tools/compress/compressore-immagini-in-blocco",
+          "reason": "still 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/pt/tools/compress/compressor-de-imagem",
+          "reason": "still 404"
+        }
+      ]
+    },
+    {
+      "family": "/guides",
+      "total": 6,
+      "violations": 6,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/de/guides/how-to-upsize-images",
+          "reason": "still 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/es/guides/how-to-upsize-images",
+          "reason": "still 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/pt/guides/how-to-upsize-images",
+          "reason": "still 404"
+        }
+      ]
+    },
+    {
+      "family": "/undefined",
+      "total": 5,
+      "violations": 5,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/undefined/midjourney-upscaler",
+          "reason": "301 → https://myimageupscaler.com/midjourney-upscaler which returns 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/undefined/canva-upscaler",
+          "reason": "301 → https://myimageupscaler.com/canva-upscaler which returns 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/undefined/stable-diffusion-upscaler",
+          "reason": "301 → https://myimageupscaler.com/stable-diffusion-upscaler which returns 404"
+        }
+      ]
+    },
+    {
+      "family": "/auth",
+      "total": 2,
+      "violations": 2,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/auth/signup",
+          "reason": "still 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/auth/register",
+          "reason": "still 404"
+        }
+      ]
+    },
+    {
+      "family": "/compare",
+      "total": 2,
+      "violations": 2,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-clipdrop",
+          "reason": "still 404"
+        },
+        {
+          "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-imgupscaler",
+          "reason": "still 404"
+        }
+      ]
+    },
+    {
+      "family": "/&",
+      "total": 1,
+      "violations": 1,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/&",
+          "reason": "still 404"
+        }
+      ]
+    },
+    {
+      "family": "/search",
+      "total": 1,
+      "violations": 1,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/search?q=%7Bsearch_term_string%7D",
+          "reason": "still 404"
+        }
+      ]
+    },
+    {
+      "family": "/comparison",
+      "total": 1,
+      "violations": 1,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/comparison/midjourney-vs-stable-diffusion-upscaler",
+          "reason": "still 404"
+        }
+      ]
+    },
+    {
+      "family": "/$",
+      "total": 1,
+      "violations": 1,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/$",
+          "reason": "still 404"
+        }
+      ]
+    },
+    {
+      "family": "/5",
+      "total": 1,
+      "violations": 1,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/5",
+          "reason": "still 404"
+        }
+      ]
+    },
+    {
+      "family": "/technical-guides",
+      "total": 1,
+      "violations": 1,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/technical-guides",
+          "reason": "still 404"
+        }
+      ]
+    },
+    {
+      "family": "/signup",
+      "total": 1,
+      "violations": 1,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/signup",
+          "reason": "still 404"
+        }
+      ]
+    },
+    {
+      "family": "/use-cases",
+      "total": 1,
+      "violations": 1,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/use-cases/anime-illustration-upscaling",
+          "reason": "still 404"
+        }
+      ]
+    },
+    {
+      "family": "/upscaler",
+      "total": 1,
+      "violations": 1,
+      "examples": [
+        {
+          "url": "https://myimageupscaler.com/upscaler",
+          "reason": "still 404"
+        }
+      ]
+    },
+    {
+      "family": "/industry-insights",
+      "total": 1,
+      "violations": 0,
+      "examples": []
+    },
+    {
+      "family": "/content",
+      "total": 1,
+      "violations": 0,
+      "examples": []
+    },
+    {
+      "family": "/photo-restoration",
+      "total": 1,
+      "violations": 0,
+      "examples": []
+    }
+  ],
+  "results": [
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/image-formats-comparison",
+        "status": 404,
+        "responseTimeMs": 102
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/Converter/jpg-to-webp",
+        "status": 404,
+        "responseTimeMs": 1188
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/damaged-photo-repair",
+        "status": 404,
+        "responseTimeMs": 63
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/bulk-image-resizer",
+        "status": 404,
+        "responseTimeMs": 1673
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/convert/webp-in-png",
+        "status": 404,
+        "responseTimeMs": 1781
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/blog/how-to-batch-edit-photos",
+        "status": 404,
+        "responseTimeMs": 1451
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/blog/how-to-change-frame-rate-video",
+        "status": 404,
+        "responseTimeMs": 561
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/&",
+        "status": 404,
+        "responseTimeMs": 1588
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/blog/10-best-ai-tools-for-photo-editing",
+        "status": 404,
+        "responseTimeMs": 1589
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/de/tools/resize/resize-image-for-telegram",
+        "status": 404,
+        "responseTimeMs": 1002
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/use-cases-expanded/social-media-content-creation?ref=narrareach-blog.ghost.io",
+        "status": 301,
+        "responseTimeMs": 1054,
+        "location": "/use-cases-expanded/social-media-content-creation",
+        "finalStatus": 404,
+        "finalUrl": "https://myimageupscaler.com/use-cases-expanded/social-media-content-creation",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "301 → https://myimageupscaler.com/use-cases-expanded/social-media-content-creation which returns 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/upscale-olympus-orf-images",
+        "status": 404,
+        "responseTimeMs": 884
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/photographers",
+        "status": 404,
+        "responseTimeMs": 49
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/ecommerce-product-photo-enhancement",
+        "status": 404,
+        "responseTimeMs": 1079
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-telegram",
+        "status": 404,
+        "responseTimeMs": 276
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize-image-for-linkedin",
+        "status": 301,
+        "responseTimeMs": 684,
+        "location": "/tools/resize/resize-image-for-linkedin",
+        "finalStatus": 200,
+        "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-linkedin",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "301 → https://myimageupscaler.com/tools/resize/resize-image-for-linkedin"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/compress/compresseur-image",
+        "status": 404,
+        "responseTimeMs": 2057
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/old-photo-restoration-guide",
+        "status": 404,
+        "responseTimeMs": 52
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/travel-tourism-enhancement",
+        "status": 404,
+        "responseTimeMs": 54
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize/redimensionneur-image",
+        "status": 404,
+        "responseTimeMs": 1184
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-telegram",
+        "status": 404,
+        "responseTimeMs": 1202
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize/Imagem-resizer",
+        "status": 404,
+        "responseTimeMs": 395
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/upscale-panasonic-rw2-images",
+        "status": 404,
+        "responseTimeMs": 1292
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/blog/how-to-remove-background-from-logo",
+        "status": 404,
+        "responseTimeMs": 554
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/search?q=%7Bsearch_term_string%7D",
+        "status": 404,
+        "responseTimeMs": 1010
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/convert/png-in-webp",
+        "status": 404,
+        "responseTimeMs": 383
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/comparison/midjourney-vs-stable-diffusion-upscaler",
+        "status": 404,
+        "responseTimeMs": 1294
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize-image-for-instagram",
+        "status": 301,
+        "responseTimeMs": 728,
+        "location": "/tools/resize/resize-image-for-instagram",
+        "finalStatus": 200,
+        "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-instagram",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "301 → https://myimageupscaler.com/tools/resize/resize-image-for-instagram"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/ai-upscaling-technical-guide",
+        "status": 404,
+        "responseTimeMs": 519
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize-image-for-facebook",
+        "status": 301,
+        "responseTimeMs": 30,
+        "location": "/tools/resize/resize-image-for-facebook",
+        "finalStatus": 200,
+        "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-facebook",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "301 → https://myimageupscaler.com/tools/resize/resize-image-for-facebook"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/comparisons/online-vs-desktop-upscalers",
+        "status": 404,
+        "responseTimeMs": 44
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/upscale-fuji-raf-images",
+        "status": 404,
+        "responseTimeMs": 42
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/convert/png-en-jpg",
+        "status": 404,
+        "responseTimeMs": 361
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/blog/sample-article-title-for-testing",
+        "status": 404,
+        "responseTimeMs": 429
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/personas",
+        "status": 404,
+        "responseTimeMs": 1086
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/comparisons/privacy-security-upscaling",
+        "status": 404,
+        "responseTimeMs": 1056
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/upscale-old-family-photos",
+        "status": 404,
+        "responseTimeMs": 1113
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/convert/gif-to-webp",
+        "status": 404,
+        "responseTimeMs": 328
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/wearable-device-image-optimization",
+        "status": 404,
+        "responseTimeMs": 851
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize/redimensionner-image-pour-youtube",
+        "status": 404,
+        "responseTimeMs": 897
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/convert/jpg-en-webp",
+        "status": 404,
+        "responseTimeMs": 1639
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/tools/convert/gif-to-webp",
+        "status": 404,
+        "responseTimeMs": 1179
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/tools/convert/bmp-to-webp",
+        "status": 404,
+        "responseTimeMs": 1700
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/de/tools/convert/gif-to-webp",
+        "status": 404,
+        "responseTimeMs": 1691
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-reddit",
+        "status": 404,
+        "responseTimeMs": 1685
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/de/tools/resize/resize-image-for-discord",
+        "status": 404,
+        "responseTimeMs": 1222
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-pinterest",
+        "status": 404,
+        "responseTimeMs": 400
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/tools/convert/gif-to-webp",
+        "status": 404,
+        "responseTimeMs": 388
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/tools/convert/bmp-to-png",
+        "status": 404,
+        "responseTimeMs": 1341
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-reddit",
+        "status": 404,
+        "responseTimeMs": 1500
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/use-cases-expanded/medical-scientific-imaging",
+        "status": 404,
+        "responseTimeMs": 1041
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/convert/bmp-to-png",
+        "status": 404,
+        "responseTimeMs": 352
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/convert/gif-to-png",
+        "status": 404,
+        "responseTimeMs": 1255
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/tools/convert/gif-to-png",
+        "status": 404,
+        "responseTimeMs": 1138
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/tools/resize/resize-image-for-reddit",
+        "status": 404,
+        "responseTimeMs": 1619
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-telegram",
+        "status": 404,
+        "responseTimeMs": 1650
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-tiktok",
+        "status": 404,
+        "responseTimeMs": 1903
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/use-cases-expanded/real-estate-photography",
+        "status": 404,
+        "responseTimeMs": 71
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/de/tools/resize/resize-image-for-reddit",
+        "status": 404,
+        "responseTimeMs": 1250
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/convert/gif-to-webp",
+        "status": 404,
+        "responseTimeMs": 305
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/de/tools/convert/gif-to-png",
+        "status": 404,
+        "responseTimeMs": 1424
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-discord",
+        "status": 404,
+        "responseTimeMs": 1232
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/use-cases-expanded/ai-generated-optimization",
+        "status": 404,
+        "responseTimeMs": 47
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/tools/convert/gif-to-webp",
+        "status": 404,
+        "responseTimeMs": 276
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/de/tools/convert/bmp-to-webp",
+        "status": 404,
+        "responseTimeMs": 1791
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/tools/resize/resize-image-for-pinterest",
+        "status": 404,
+        "responseTimeMs": 324
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-pinterest",
+        "status": 404,
+        "responseTimeMs": 2087
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/tools/convert/bmp-to-png",
+        "status": 404,
+        "responseTimeMs": 1732
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-pinterest",
+        "status": 404,
+        "responseTimeMs": 1181
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-pinterest",
+        "status": 404,
+        "responseTimeMs": 1499
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/convert/gif-to-png",
+        "status": 404,
+        "responseTimeMs": 1491
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/personas/web-developers",
+        "status": 404,
+        "responseTimeMs": 54
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/graphic-design-workflow-enhancement",
+        "status": 404,
+        "responseTimeMs": 45
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/color-theory-for-image-enhancement",
+        "status": 404,
+        "responseTimeMs": 56
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/upscale-leica-dng-images",
+        "status": 404,
+        "responseTimeMs": 243
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/batch-image-processing-guide",
+        "status": 404,
+        "responseTimeMs": 1102
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-tiktok",
+        "status": 404,
+        "responseTimeMs": 1198
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/speed-vs-quality-tradeoffs",
+        "status": 404,
+        "responseTimeMs": 1188
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/bulk-image-compressor",
+        "status": 404,
+        "responseTimeMs": 39
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/convert/jpg-in-png",
+        "status": 404,
+        "responseTimeMs": 1115
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/personas/graphic-designers",
+        "status": 404,
+        "responseTimeMs": 50
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/convert/webp-in-jpg",
+        "status": 404,
+        "responseTimeMs": 333
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize-image-for-tiktok",
+        "status": 404,
+        "responseTimeMs": 335
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize/redimensionner-image-pour-instagram",
+        "status": 404,
+        "responseTimeMs": 1269
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/comparisons/ai-models-comparison",
+        "status": 404,
+        "responseTimeMs": 1053
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/marketing-teams",
+        "status": 404,
+        "responseTimeMs": 46
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/neural-networks-image-processing",
+        "status": 404,
+        "responseTimeMs": 1090
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/comparisons/free-vs-paid-upscaling-solutions",
+        "status": 404,
+        "responseTimeMs": 178
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/colorize-photo",
+        "status": 404,
+        "responseTimeMs": 550
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/free-vs-paid-upscaling-solutions",
+        "status": 404,
+        "responseTimeMs": 1392
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/upscale-logos",
+        "status": 404,
+        "responseTimeMs": 1256
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/background-remover",
+        "status": 404,
+        "responseTimeMs": 1096
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/use-cases-expanded/social-media-content-creation",
+        "status": 404,
+        "responseTimeMs": 40
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/print-shops",
+        "status": 404,
+        "responseTimeMs": 968
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/compress/compressore-immagini-in-blocco",
+        "status": 404,
+        "responseTimeMs": 399
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/$",
+        "status": 404,
+        "responseTimeMs": 1454
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize/ridimensionare-immagine-per-instagram",
+        "status": 404,
+        "responseTimeMs": 1163
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/tools/convert/bmp-to-webp",
+        "status": 404,
+        "responseTimeMs": 1514
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/personas/content-creators",
+        "status": 404,
+        "responseTimeMs": 34
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/personas/small-business",
+        "status": 404,
+        "responseTimeMs": 906
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/5",
+        "status": 404,
+        "responseTimeMs": 1394
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/upscale-digital-art",
+        "status": 404,
+        "responseTimeMs": 1022
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/personas/marketing-teams",
+        "status": 404,
+        "responseTimeMs": 800
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/technical-guides",
+        "status": 404,
+        "responseTimeMs": 45
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/ai-models-comparison",
+        "status": 404,
+        "responseTimeMs": 43
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/blog/10-best-ai-tools-for-photo-editing-in-2026",
+        "status": 404,
+        "responseTimeMs": 542
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize-image-for-youtube",
+        "status": 301,
+        "responseTimeMs": 21,
+        "location": "/tools/resize/resize-image-for-youtube",
+        "finalStatus": 200,
+        "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-youtube",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "301 → https://myimageupscaler.com/tools/resize/resize-image-for-youtube"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/image-scaling-algorithms",
+        "status": 404,
+        "responseTimeMs": 53
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/use-cases-expanded/digital-marketing-materials",
+        "status": 404,
+        "responseTimeMs": 1052
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/web-developers",
+        "status": 404,
+        "responseTimeMs": 1554
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/personas/print-shops",
+        "status": 404,
+        "responseTimeMs": 1143
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/comparisons",
+        "status": 308,
+        "responseTimeMs": 1088,
+        "location": "/compare",
+        "finalStatus": 200,
+        "finalUrl": "https://myimageupscaler.com/compare",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "308 → https://myimageupscaler.com/compare"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/convert/webp-en-jpg",
+        "status": 404,
+        "responseTimeMs": 958
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/comparisons/batch-processing-workflows",
+        "status": 404,
+        "responseTimeMs": 46
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/small-business",
+        "status": 404,
+        "responseTimeMs": 47
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/content-creators",
+        "status": 404,
+        "responseTimeMs": 1030
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/game-developers",
+        "status": 404,
+        "responseTimeMs": 733
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/legal-documentation-enhancement",
+        "status": 404,
+        "responseTimeMs": 673
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/ai-vs-traditional-upscaling",
+        "status": 404,
+        "responseTimeMs": 995
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/convert/bmp-to-webp",
+        "status": 404,
+        "responseTimeMs": 337
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/de/tools/resize/resize-image-for-pinterest",
+        "status": 404,
+        "responseTimeMs": 377
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/manufacturing-industrial-enhancement",
+        "status": 404,
+        "responseTimeMs": 48
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/comparisons/ai-vs-traditional-upscaling",
+        "status": 404,
+        "responseTimeMs": 37
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/graphic-designers",
+        "status": 404,
+        "responseTimeMs": 47
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/image-compression-techniques",
+        "status": 404,
+        "responseTimeMs": 1024
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/use-cases-expanded/print-publishing-workflows",
+        "status": 404,
+        "responseTimeMs": 1031
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/ecommerce-sellers",
+        "status": 404,
+        "responseTimeMs": 42
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/comparisons/speed-vs-quality-tradeoffs",
+        "status": 404,
+        "responseTimeMs": 77
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/online-vs-desktop-upscalers",
+        "status": 404,
+        "responseTimeMs": 260
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/personas/real-estate-agents",
+        "status": 404,
+        "responseTimeMs": 1117
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/image-resolution-explained",
+        "status": 404,
+        "responseTimeMs": 100
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/auth/signup",
+        "status": 404,
+        "responseTimeMs": 1025
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/Converter/png-to-webp",
+        "status": 404,
+        "responseTimeMs": 29
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/personas/photographers",
+        "status": 404,
+        "responseTimeMs": 1074
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/personas/game-developers",
+        "status": 404,
+        "responseTimeMs": 45
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/resize/redimensionar-imagem-para-instagram",
+        "status": 404,
+        "responseTimeMs": 785
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/print-media-enhancement",
+        "status": 404,
+        "responseTimeMs": 523
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/upscale-hasselblad-3fr-images",
+        "status": 404,
+        "responseTimeMs": 1039
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/compress/compressor-de-imagem",
+        "status": 404,
+        "responseTimeMs": 257
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize-image-for-reddit",
+        "status": 404,
+        "responseTimeMs": 678
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/real-estate-agents",
+        "status": 404,
+        "responseTimeMs": 49
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/signup",
+        "status": 404,
+        "responseTimeMs": 40
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/tools/convert/gif-to-png",
+        "status": 404,
+        "responseTimeMs": 414
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/use-cases/anime-illustration-upscaling",
+        "status": 404,
+        "responseTimeMs": 381
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/personas/ecommerce-sellers",
+        "status": 404,
+        "responseTimeMs": 972
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/web-optimization-images",
+        "status": 404,
+        "responseTimeMs": 1694
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize-image-for-twitter",
+        "status": 301,
+        "responseTimeMs": 20,
+        "location": "/tools/resize/resize-image-for-twitter",
+        "finalStatus": 200,
+        "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-twitter",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "301 → https://myimageupscaler.com/tools/resize/resize-image-for-twitter"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-discord",
+        "status": 404,
+        "responseTimeMs": 235
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/batch-processing-workflows",
+        "status": 404,
+        "responseTimeMs": 1181
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/Converter/webp-to-jpg",
+        "status": 404,
+        "responseTimeMs": 1165
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/tools/convert/bmp-to-webp",
+        "status": 404,
+        "responseTimeMs": 328
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-reddit",
+        "status": 404,
+        "responseTimeMs": 287
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/convert/bmp-to-webp",
+        "status": 404,
+        "responseTimeMs": 383
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/sports-fitness-enhancement",
+        "status": 404,
+        "responseTimeMs": 977
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/tools/resize/resize-image-for-tiktok",
+        "status": 404,
+        "responseTimeMs": 398
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-tiktok",
+        "status": 404,
+        "responseTimeMs": 480
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-tiktok",
+        "status": 404,
+        "responseTimeMs": 1194
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/de/tools/resize/resize-image-for-tiktok",
+        "status": 404,
+        "responseTimeMs": 1218
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-reddit",
+        "status": 404,
+        "responseTimeMs": 1541
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/tools/resize/resize-image-for-discord",
+        "status": 404,
+        "responseTimeMs": 399
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/use-cases-expanded/restoration-preservation",
+        "status": 404,
+        "responseTimeMs": 52
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/tools/resize/resize-image-for-telegram",
+        "status": 404,
+        "responseTimeMs": 1890
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-discord",
+        "status": 404,
+        "responseTimeMs": 1301
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-telegram",
+        "status": 404,
+        "responseTimeMs": 515
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/use-cases-expanded/product-photography-enhancement",
+        "status": 404,
+        "responseTimeMs": 38
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/use-cases-expanded/architecture-construction",
+        "status": 404,
+        "responseTimeMs": 32
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/convert/bmp-to-png",
+        "status": 404,
+        "responseTimeMs": 250
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/upscale-nef-images",
+        "status": 404,
+        "responseTimeMs": 60
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/tools/convert/gif-to-png",
+        "status": 404,
+        "responseTimeMs": 1203
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize/resize-image-for-pinterest",
+        "status": 200,
+        "responseTimeMs": 605
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/convert/convert-to-webp",
+        "status": 404,
+        "responseTimeMs": 1492
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/resize/redimensionar-imagem-para-facebook",
+        "status": 404,
+        "responseTimeMs": 1316
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/social-media-marketing-enhancement",
+        "status": 404,
+        "responseTimeMs": 87
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/upscale-vintage-photos",
+        "status": 404,
+        "responseTimeMs": 41
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize/redimensionner-image-pour-facebook",
+        "status": 404,
+        "responseTimeMs": 1168
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/smart-tv-image-optimization",
+        "status": 404,
+        "responseTimeMs": 1120
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize/resize-image-for-YouTube",
+        "status": 404,
+        "responseTimeMs": 331
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/convert/png-para-jpg",
+        "status": 404,
+        "responseTimeMs": 267
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/upscale-cr2-images",
+        "status": 404,
+        "responseTimeMs": 984
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize/redimensionner-image-pour-twitter",
+        "status": 404,
+        "responseTimeMs": 433
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/Converter/jpg-to-png",
+        "status": 404,
+        "responseTimeMs": 46
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/education-content-enhancement",
+        "status": 404,
+        "responseTimeMs": 1324
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/upscale-portraits",
+        "status": 404,
+        "responseTimeMs": 1000
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/upscale-screenshots",
+        "status": 404,
+        "responseTimeMs": 495
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/compress/compressore-immagini",
+        "status": 404,
+        "responseTimeMs": 424
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/photo-conservation-methods",
+        "status": 404,
+        "responseTimeMs": 56
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/convert/png-en-webp",
+        "status": 404,
+        "responseTimeMs": 388
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/upscale-anime",
+        "status": 404,
+        "responseTimeMs": 1047
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize/redimensionneur-image-lot",
+        "status": 404,
+        "responseTimeMs": 327
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/compress/compresseur-image-lot",
+        "status": 404,
+        "responseTimeMs": 258
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/upscaler",
+        "status": 404,
+        "responseTimeMs": 37
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize/bulk-Imagem-resizer",
+        "status": 404,
+        "responseTimeMs": 1248
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/IA-background-remover",
+        "status": 404,
+        "responseTimeMs": 1449
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize/ridimensiona-immagine-in-blocco",
+        "status": 404,
+        "responseTimeMs": 461
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/auth/register",
+        "status": 404,
+        "responseTimeMs": 1087
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/convert/webp-en-png",
+        "status": 404,
+        "responseTimeMs": 1216
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize/redimensionner-image-pour-linkedin",
+        "status": 404,
+        "responseTimeMs": 312
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize/ridimensionare-immagine-per-youtube",
+        "status": 404,
+        "responseTimeMs": 267
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article",
+        "status": 404,
+        "responseTimeMs": 1053
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize/resize-image-for-Twitter",
+        "status": 404,
+        "responseTimeMs": 1170
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/compress/bulk-Imagem-compressor",
+        "status": 404,
+        "responseTimeMs": 1203
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize/ridimensiona-immagine-per-linkedin",
+        "status": 404,
+        "responseTimeMs": 393
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/tools/background-changer",
+        "status": 200,
+        "responseTimeMs": 316
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/photo-quality-enhancer",
+        "status": 200,
+        "responseTimeMs": 554
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/background-changer",
+        "status": 200,
+        "responseTimeMs": 514
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/tools/ocr-online",
+        "status": 200,
+        "responseTimeMs": 439
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/undefined/midjourney-upscaler",
+        "status": 301,
+        "responseTimeMs": 20,
+        "location": "/midjourney-upscaler",
+        "finalStatus": 404,
+        "finalUrl": "https://myimageupscaler.com/midjourney-upscaler",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "301 → https://myimageupscaler.com/midjourney-upscaler which returns 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/jpg-to-pdf",
+        "status": 200,
+        "responseTimeMs": 1416
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/tools/pdf-to-png",
+        "status": 200,
+        "responseTimeMs": 1361
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/bmp-to-jpg",
+        "status": 200,
+        "responseTimeMs": 746
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/undefined/canva-upscaler",
+        "status": 301,
+        "responseTimeMs": 1193,
+        "location": "/canva-upscaler",
+        "finalStatus": 404,
+        "finalUrl": "https://myimageupscaler.com/canva-upscaler",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "301 → https://myimageupscaler.com/canva-upscaler which returns 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/tools/ocr-online",
+        "status": 200,
+        "responseTimeMs": 1357
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/tools/png-to-jpg",
+        "status": 301,
+        "responseTimeMs": 904,
+        "location": "/es/tools/convert/png-to-jpg",
+        "finalStatus": 200,
+        "finalUrl": "https://myimageupscaler.com/es/tools/convert/png-to-jpg",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "301 → https://myimageupscaler.com/es/tools/convert/png-to-jpg"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/tools/heic-to-jpg",
+        "status": 200,
+        "responseTimeMs": 1396
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-clipdrop",
+        "status": 404,
+        "responseTimeMs": 1046
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/bmp-to-jpg",
+        "status": 200,
+        "responseTimeMs": 1580
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/de/tools/image-to-text",
+        "status": 200,
+        "responseTimeMs": 1637
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/undefined/stable-diffusion-upscaler",
+        "status": 301,
+        "responseTimeMs": 21,
+        "location": "/stable-diffusion-upscaler",
+        "finalStatus": 404,
+        "finalUrl": "https://myimageupscaler.com/stable-diffusion-upscaler",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "301 → https://myimageupscaler.com/stable-diffusion-upscaler which returns 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/tablet-image-optimization",
+        "status": 404,
+        "responseTimeMs": 923
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/undefined/dalle-upscaler",
+        "status": 301,
+        "responseTimeMs": 755,
+        "location": "/dalle-upscaler",
+        "finalStatus": 404,
+        "finalUrl": "https://myimageupscaler.com/dalle-upscaler",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "301 → https://myimageupscaler.com/dalle-upscaler which returns 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/nonprofit-visual-enhancement",
+        "status": 404,
+        "responseTimeMs": 998
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/tools/image-to-text",
+        "status": 200,
+        "responseTimeMs": 547
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/undefined/photoshop-upscaler",
+        "status": 301,
+        "responseTimeMs": 30,
+        "location": "/photoshop-upscaler",
+        "finalStatus": 404,
+        "finalUrl": "https://myimageupscaler.com/photoshop-upscaler",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "301 → https://myimageupscaler.com/photoshop-upscaler which returns 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/tools/heic-to-png",
+        "status": 200,
+        "responseTimeMs": 478
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/tools/image-to-text",
+        "status": 200,
+        "responseTimeMs": 1391
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/heic-to-jpg",
+        "status": 200,
+        "responseTimeMs": 1510
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/de/tools/pdf-to-png",
+        "status": 200,
+        "responseTimeMs": 565
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/de/tools/heic-to-jpg",
+        "status": 200,
+        "responseTimeMs": 413
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/image-to-pdf",
+        "status": 200,
+        "responseTimeMs": 1278
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/gif-to-jpg",
+        "status": 200,
+        "responseTimeMs": 1176
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/jpg-to-pdf",
+        "status": 200,
+        "responseTimeMs": 1746
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/tools/gif-to-jpg",
+        "status": 200,
+        "responseTimeMs": 408
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/de/tools/jpg-to-pdf",
+        "status": 200,
+        "responseTimeMs": 473
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/image-to-pdf",
+        "status": 200,
+        "responseTimeMs": 1011
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/de/tools/pdf-to-jpg",
+        "status": 200,
+        "responseTimeMs": 1530
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/background-changer",
+        "status": 200,
+        "responseTimeMs": 1866
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/tools/heic-to-jpg",
+        "status": 200,
+        "responseTimeMs": 1360
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/de/tools/gif-to-jpg",
+        "status": 200,
+        "responseTimeMs": 415
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/tools/gif-to-jpg",
+        "status": 200,
+        "responseTimeMs": 1568
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/image-to-text",
+        "status": 200,
+        "responseTimeMs": 1571
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/de/tools/ocr-online",
+        "status": 200,
+        "responseTimeMs": 832
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/de/tools/background-changer",
+        "status": 200,
+        "responseTimeMs": 467
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/tools/ocr-online",
+        "status": 200,
+        "responseTimeMs": 1959
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/tools/gif-to-jpg",
+        "status": 200,
+        "responseTimeMs": 498
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/de/tools/image-to-pdf",
+        "status": 200,
+        "responseTimeMs": 1265
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/de/tools/heic-to-png",
+        "status": 200,
+        "responseTimeMs": 1865
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/de/tools/bmp-to-jpg",
+        "status": 200,
+        "responseTimeMs": 1205
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/tools/jpg-to-pdf",
+        "status": 200,
+        "responseTimeMs": 1417
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/tools/pdf-to-jpg",
+        "status": 200,
+        "responseTimeMs": 1408
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/ocr-online",
+        "status": 200,
+        "responseTimeMs": 1460
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/tools/image-to-pdf",
+        "status": 200,
+        "responseTimeMs": 1517
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/tools/image-to-pdf",
+        "status": 200,
+        "responseTimeMs": 688
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/ocr-online",
+        "status": 200,
+        "responseTimeMs": 530
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/svg-to-jpg",
+        "status": 200,
+        "responseTimeMs": 1596
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/pdf-to-png",
+        "status": 200,
+        "responseTimeMs": 1567
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/gif-to-jpg",
+        "status": 200,
+        "responseTimeMs": 1358
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/heic-to-jpg",
+        "status": 200,
+        "responseTimeMs": 1416
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/pdf-to-jpg",
+        "status": 200,
+        "responseTimeMs": 466
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/make-image-transparent",
+        "status": 200,
+        "responseTimeMs": 338
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/tools/make-image-transparent",
+        "status": 200,
+        "responseTimeMs": 1965
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/tools/svg-to-jpg",
+        "status": 200,
+        "responseTimeMs": 2026
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/tools/heic-to-png",
+        "status": 200,
+        "responseTimeMs": 1461
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/tools/photo-quality-enhancer",
+        "status": 200,
+        "responseTimeMs": 1391
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/heic-to-png",
+        "status": 200,
+        "responseTimeMs": 533
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/pdf-to-jpg",
+        "status": 200,
+        "responseTimeMs": 525
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/tools/image-to-pdf",
+        "status": 200,
+        "responseTimeMs": 1536
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/tools/jpg-to-pdf",
+        "status": 200,
+        "responseTimeMs": 1504
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/tools/heic-to-png",
+        "status": 200,
+        "responseTimeMs": 1295
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/make-image-transparent",
+        "status": 200,
+        "responseTimeMs": 1417
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/tools/bmp-to-jpg",
+        "status": 200,
+        "responseTimeMs": 1640
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/tools/pdf-to-png",
+        "status": 200,
+        "responseTimeMs": 1262
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/photo-quality-enhancer",
+        "status": 200,
+        "responseTimeMs": 1781
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/tools/pdf-to-png",
+        "status": 200,
+        "responseTimeMs": 457
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/de/tools/make-image-transparent",
+        "status": 200,
+        "responseTimeMs": 502
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/tools/pdf-to-jpg",
+        "status": 200,
+        "responseTimeMs": 694
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/tools/image-to-text",
+        "status": 200,
+        "responseTimeMs": 1400
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/tools/make-image-transparent",
+        "status": 200,
+        "responseTimeMs": 1620
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/tools/heic-to-jpg",
+        "status": 200,
+        "responseTimeMs": 1382
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/tools/bmp-to-jpg",
+        "status": 200,
+        "responseTimeMs": 1395
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/tools/jpg-to-pdf",
+        "status": 200,
+        "responseTimeMs": 1562
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/tools/background-changer",
+        "status": 200,
+        "responseTimeMs": 1565
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/tools/bmp-to-jpg",
+        "status": 200,
+        "responseTimeMs": 1455
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/tools/pdf-to-jpg",
+        "status": 200,
+        "responseTimeMs": 1437
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/de/guides/how-to-upsize-images",
+        "status": 404,
+        "responseTimeMs": 530
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/es/guides/how-to-upsize-images",
+        "status": 404,
+        "responseTimeMs": 494
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/heic-to-png",
+        "status": 200,
+        "responseTimeMs": 1356
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "200"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-imgupscaler",
+        "status": 404,
+        "responseTimeMs": 1290
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/guides/how-to-upsize-images",
+        "status": 404,
+        "responseTimeMs": 1545
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/it/guides/how-to-upsize-images",
+        "status": 404,
+        "responseTimeMs": 1872
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/industry-insights/real-estate-photo-enhancement",
+        "status": 301,
+        "responseTimeMs": 722,
+        "location": "/use-cases/real-estate-photo-enhancement",
+        "finalStatus": 200,
+        "finalUrl": "https://myimageupscaler.com/use-cases/real-estate-photo-enhancement",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "301 → https://myimageupscaler.com/use-cases/real-estate-photo-enhancement"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/guides/how-to-upsize-images",
+        "status": 404,
+        "responseTimeMs": 1551
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/tools/free-ai-upscaler",
+        "status": 301,
+        "responseTimeMs": 755,
+        "location": "/fr/free/free-ai-upscaler",
+        "finalStatus": 200,
+        "finalUrl": "https://myimageupscaler.com/fr/free/free-ai-upscaler",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "301 → https://myimageupscaler.com/fr/free/free-ai-upscaler"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/blog/best-free-image-upscalers-comparison",
+        "status": 404,
+        "responseTimeMs": 612
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/webp-to-png",
+        "status": 301,
+        "responseTimeMs": 17,
+        "location": "/tools/convert/webp-to-png",
+        "finalStatus": 200,
+        "finalUrl": "https://myimageupscaler.com/tools/convert/webp-to-png",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "301 → https://myimageupscaler.com/tools/convert/webp-to-png"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/resize/ridimensionare-immagine-per-facebook",
+        "status": 404,
+        "responseTimeMs": 1199
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/photography-business-enhancement",
+        "status": 301,
+        "responseTimeMs": 750,
+        "location": "/industry-insights/photography-business-enhancement",
+        "finalStatus": 200,
+        "finalUrl": "https://myimageupscaler.com/industry-insights/photography-business-enhancement",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "301 → https://myimageupscaler.com/industry-insights/photography-business-enhancement"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/pt/tools/free-ai-upscaler",
+        "status": 301,
+        "responseTimeMs": 775,
+        "location": "/pt/free/free-ai-upscaler",
+        "finalStatus": 200,
+        "finalUrl": "https://myimageupscaler.com/pt/free/free-ai-upscaler",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "301 → https://myimageupscaler.com/pt/free/free-ai-upscaler"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/upscale-arw-images",
+        "status": 301,
+        "responseTimeMs": 761,
+        "location": "/camera-raw/upscale-arw-images",
+        "finalStatus": 200,
+        "finalUrl": "https://myimageupscaler.com/camera-raw/upscale-arw-images",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "301 → https://myimageupscaler.com/camera-raw/upscale-arw-images"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/tools/free-ai-upscaler",
+        "status": 301,
+        "responseTimeMs": 744,
+        "location": "/free/free-ai-upscaler",
+        "finalStatus": 200,
+        "finalUrl": "https://myimageupscaler.com/free/free-ai-upscaler",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "301 → https://myimageupscaler.com/free/free-ai-upscaler"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/guides/how-to-upsize-images",
+        "status": 404,
+        "responseTimeMs": 1706
+      },
+      "expectation": {
+        "ok": false,
+        "reason": "still 404"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/article/family-photo-preservation",
+        "status": 301,
+        "responseTimeMs": 723,
+        "location": "/photo-restoration/family-photo-preservation",
+        "finalStatus": 200,
+        "finalUrl": "https://myimageupscaler.com/photo-restoration/family-photo-preservation",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "301 → https://myimageupscaler.com/photo-restoration/family-photo-preservation"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/content/upscale-digital-art",
+        "status": 301,
+        "responseTimeMs": 722,
+        "location": "/content/upscale-digital-art",
+        "finalStatus": 200,
+        "finalUrl": "https://myimageupscaler.com/content/upscale-digital-art",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "301 → https://myimageupscaler.com/content/upscale-digital-art"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/fr/photo-restoration",
+        "status": 301,
+        "responseTimeMs": 1210,
+        "location": "/photo-restoration",
+        "finalStatus": 200,
+        "finalUrl": "https://myimageupscaler.com/photo-restoration",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "301 → https://myimageupscaler.com/photo-restoration"
+      }
+    }
+  ]
+}
