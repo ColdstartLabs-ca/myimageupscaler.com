@@ -14,6 +14,7 @@ import {
   getSitemapResponseHeaders,
   getMostRecentLastUpdated,
 } from '@/lib/seo/sitemap-generator';
+import { filterEligibleSitemapEntries } from '@/lib/seo/page-eligibility';
 import interactiveToolsData from '@/app/seo/data/interactive-tools.json';
 import socialMediaResizeData from '@/app/seo/data/social-media-resize.json';
 import type { IToolPage, IPSEODataFile } from '@/lib/seo/pseo-types';
@@ -39,6 +40,31 @@ export async function GET() {
   const socialMediaResizeTools = (
     socialMediaResizeData as unknown as IPSEODataFile<IToolPage>
   ).pages.filter(tool => tool.slug in INTERACTIVE_TOOL_PATHS);
+  const eligibleStaticTools = filterEligibleSitemapEntries(
+    staticTools,
+    CATEGORY,
+    'en',
+    tool => `/tools/${tool.slug}`,
+    tool => tool.lastUpdated
+  );
+  const eligibleInteractiveTools = filterEligibleSitemapEntries(
+    interactiveTools,
+    CATEGORY,
+    'en',
+    tool =>
+      INTERACTIVE_TOOL_PATHS[tool.slug as keyof typeof INTERACTIVE_TOOL_PATHS] ||
+      `/tools/${tool.slug}`,
+    tool => tool.lastUpdated
+  );
+  const eligibleSocialMediaResizeTools = filterEligibleSitemapEntries(
+    socialMediaResizeTools,
+    CATEGORY,
+    'en',
+    tool =>
+      INTERACTIVE_TOOL_PATHS[tool.slug as keyof typeof INTERACTIVE_TOOL_PATHS] ||
+      `/tools/resize/${tool.slug}`,
+    tool => tool.lastUpdated
+  );
 
   // Get the most recent lastUpdated date from all tools for the category page
   const allTools = [...staticTools, ...interactiveTools, ...socialMediaResizeTools];
@@ -55,7 +81,7 @@ export async function GET() {
     <priority>0.8</priority>
 ${generateSitemapHreflangLinks('/tools', CATEGORY).join('\n')}
   </url>
-${staticTools
+${eligibleStaticTools
   .map(tool => {
     const hreflangLinks = generateSitemapHreflangLinks(`/tools/${tool.slug}`, CATEGORY).join('\n');
     return `  <url>
@@ -75,7 +101,7 @@ ${hreflangLinks}${
   </url>`;
   })
   .join('\n')}
-${interactiveTools
+${eligibleInteractiveTools
   .map(tool => {
     const path = getInteractiveToolPath(tool.slug, `/tools/${tool.slug}`);
     const hreflangLinks = generateSitemapHreflangLinks(
@@ -100,7 +126,7 @@ ${hreflangLinks}${
   </url>`;
   })
   .join('\n')}
-${socialMediaResizeTools
+${eligibleSocialMediaResizeTools
   .map(tool => {
     const path = getInteractiveToolPath(tool.slug, `/tools/resize/${tool.slug}`);
     const hreflangLinks = generateSitemapHreflangLinks(

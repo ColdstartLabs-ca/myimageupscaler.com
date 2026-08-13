@@ -11,12 +11,20 @@ import {
   generateSitemapHreflangLinks,
   getSitemapResponseHeaders,
 } from '@/lib/seo/sitemap-generator';
+import { filterEligibleSitemapEntries } from '@/lib/seo/page-eligibility';
 
 const CATEGORY = 'platforms' as const;
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
 
 export async function GET() {
   const platforms = await getAllPlatforms();
+  const eligiblePlatforms = filterEligibleSitemapEntries(
+    platforms,
+    CATEGORY,
+    'en',
+    platform => `/platforms/${platform.slug}`,
+    platform => platform.lastUpdated
+  );
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -29,7 +37,7 @@ export async function GET() {
     <priority>0.8</priority>
 ${generateSitemapHreflangLinks('/platforms', CATEGORY).join('\n')}
   </url>
-${platforms
+${eligiblePlatforms
   .map(
     platform => `  <url>
     <loc>${BASE_URL}/platforms/${platform.slug}</loc>

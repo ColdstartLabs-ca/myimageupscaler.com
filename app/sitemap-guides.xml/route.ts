@@ -13,12 +13,20 @@ import {
   getSitemapResponseHeaders,
   getMostRecentLastUpdated,
 } from '@/lib/seo/sitemap-generator';
+import { filterEligibleSitemapEntries } from '@/lib/seo/page-eligibility';
 
 const CATEGORY = 'guides' as const;
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
 
 export async function GET() {
   const guides = await getAllGuides();
+  const eligibleGuides = filterEligibleSitemapEntries(
+    guides,
+    CATEGORY,
+    'en',
+    guide => `/guides/${guide.slug}`,
+    guide => guide.lastUpdated
+  );
 
   // Get the most recent lastUpdated date from all guides for the category page
   const categoryLastmod = getMostRecentLastUpdated(guides);
@@ -34,7 +42,7 @@ export async function GET() {
     <priority>0.7</priority>
 ${generateSitemapHreflangLinks('/guides', CATEGORY).join('\n')}
   </url>
-${guides
+${eligibleGuides
   .map(guide => {
     const hreflangLinks = generateSitemapHreflangLinks(`/guides/${guide.slug}`, CATEGORY).join(
       '\n'

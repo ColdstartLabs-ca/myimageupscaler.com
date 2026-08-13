@@ -11,12 +11,20 @@ import {
   generateSitemapHreflangLinks,
   getSitemapResponseHeaders,
 } from '@/lib/seo/sitemap-generator';
+import { filterEligibleSitemapEntries } from '@/lib/seo/page-eligibility';
 
 const CATEGORY = 'compare' as const;
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
 
 export async function GET() {
   const comparisons = await getAllComparisons();
+  const eligibleComparisons = filterEligibleSitemapEntries(
+    comparisons,
+    CATEGORY,
+    'en',
+    comparison => `/compare/${comparison.slug}`,
+    comparison => comparison.lastUpdated
+  );
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -29,7 +37,7 @@ export async function GET() {
     <priority>0.85</priority>
 ${generateSitemapHreflangLinks('/compare', CATEGORY).join('\n')}
   </url>
-${comparisons
+${eligibleComparisons
   .map(
     comparison => `  <url>
     <loc>${BASE_URL}/compare/${comparison.slug}</loc>

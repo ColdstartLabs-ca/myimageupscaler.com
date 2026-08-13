@@ -10,12 +10,20 @@ import {
   generateSitemapHreflangLinks,
   getSitemapResponseHeaders,
 } from '@/lib/seo/sitemap-generator';
+import { filterEligibleSitemapEntries } from '@/lib/seo/page-eligibility';
 
 const CATEGORY = 'photo-restoration' as const;
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
 
 export async function GET() {
   const pages = await getAllPhotoRestorationPages();
+  const eligiblePages = filterEligibleSitemapEntries(
+    pages,
+    CATEGORY,
+    'en',
+    page => `/photo-restoration/${page.slug}`,
+    page => page.lastUpdated
+  );
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -28,7 +36,7 @@ export async function GET() {
     <priority>0.8</priority>
 ${generateSitemapHreflangLinks('/photo-restoration', CATEGORY).join('\n')}
   </url>
-${pages
+${eligiblePages
   .map(
     page => `  <url>
     <loc>${BASE_URL}/photo-restoration/${page.slug}</loc>

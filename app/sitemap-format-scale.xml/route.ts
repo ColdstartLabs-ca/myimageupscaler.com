@@ -7,6 +7,7 @@
 import { NextResponse } from 'next/server';
 import { getAllFormatScale } from '@/lib/seo/data-loader';
 import { generateSitemapUrlEntry, getSitemapResponseHeaders } from '@/lib/seo/sitemap-generator';
+import { filterEligibleSitemapEntries } from '@/lib/seo/page-eligibility';
 import type { Locale } from '@/i18n/config';
 const CATEGORY = 'format-scale' as const;
 
@@ -14,6 +15,13 @@ const LOCALE: Locale = 'en';
 
 export async function GET() {
   const formatScalePages = await getAllFormatScale();
+  const eligibleFormatScalePages = filterEligibleSitemapEntries(
+    formatScalePages,
+    CATEGORY,
+    LOCALE,
+    page => `/format-scale/${page.slug}`,
+    page => page.lastUpdated
+  );
 
   // Generate category index entry
   const categoryEntry = generateSitemapUrlEntry({
@@ -26,7 +34,7 @@ export async function GET() {
   });
 
   // Generate format-scale page entries with hreflang
-  const pageEntries = formatScalePages.map(page =>
+  const pageEntries = eligibleFormatScalePages.map(page =>
     generateSitemapUrlEntry({
       path: `/format-scale/${page.slug}`,
       locale: LOCALE,

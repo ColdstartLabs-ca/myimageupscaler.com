@@ -13,12 +13,20 @@ import {
   getSitemapResponseHeaders,
   getMostRecentLastUpdated,
 } from '@/lib/seo/sitemap-generator';
+import { filterEligibleSitemapEntries } from '@/lib/seo/page-eligibility';
 
 const CATEGORY = 'free' as const;
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
 
 export async function GET() {
   const freeTools = await getAllFreeTools();
+  const eligibleFreeTools = filterEligibleSitemapEntries(
+    freeTools,
+    CATEGORY,
+    'en',
+    freeTool => `/free/${freeTool.slug}`,
+    freeTool => freeTool.lastUpdated
+  );
 
   // Get the most recent lastUpdated date from all free tools for the category page
   const categoryLastmod = getMostRecentLastUpdated(freeTools);
@@ -34,7 +42,7 @@ export async function GET() {
     <priority>0.85</priority>
 ${generateSitemapHreflangLinks('/free', CATEGORY).join('\n')}
   </url>
-${freeTools
+${eligibleFreeTools
   .map(freeTool => {
     const hreflangLinks = generateSitemapHreflangLinks(`/free/${freeTool.slug}`, CATEGORY).join(
       '\n'

@@ -13,12 +13,20 @@ import {
   getSitemapResponseHeaders,
   getMostRecentLastUpdated,
 } from '@/lib/seo/sitemap-generator';
+import { filterEligibleSitemapEntries } from '@/lib/seo/page-eligibility';
 
 const CATEGORY = 'formats' as const;
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
 
 export async function GET() {
   const formats = await getAllFormats();
+  const eligibleFormats = filterEligibleSitemapEntries(
+    formats,
+    CATEGORY,
+    'en',
+    format => `/formats/${format.slug}`,
+    format => format.lastUpdated
+  );
 
   // Get the most recent lastUpdated date from all formats for the category page
   const categoryLastmod = getMostRecentLastUpdated(formats);
@@ -34,7 +42,7 @@ export async function GET() {
     <priority>0.8</priority>
 ${generateSitemapHreflangLinks('/formats', CATEGORY).join('\n')}
   </url>
-${formats
+${eligibleFormats
   .map(format => {
     const hreflangLinks = generateSitemapHreflangLinks(`/formats/${format.slug}`, CATEGORY).join(
       '\n'

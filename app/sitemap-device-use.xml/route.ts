@@ -7,6 +7,7 @@
 import { NextResponse } from 'next/server';
 import { getAllDeviceUse } from '@/lib/seo/data-loader';
 import { generateSitemapUrlEntry, getSitemapResponseHeaders } from '@/lib/seo/sitemap-generator';
+import { filterEligibleSitemapEntries } from '@/lib/seo/page-eligibility';
 import type { Locale } from '@/i18n/config';
 const CATEGORY = 'device-use' as const;
 
@@ -14,6 +15,13 @@ const LOCALE: Locale = 'en';
 
 export async function GET() {
   const deviceUsePages = await getAllDeviceUse();
+  const eligibleDeviceUsePages = filterEligibleSitemapEntries(
+    deviceUsePages,
+    CATEGORY,
+    LOCALE,
+    page => `/device-use/${page.slug}`,
+    page => page.lastUpdated
+  );
 
   // Generate category index entry
   const categoryEntry = generateSitemapUrlEntry({
@@ -26,7 +34,7 @@ export async function GET() {
   });
 
   // Generate device-use page entries with hreflang
-  const pageEntries = deviceUsePages.map(page =>
+  const pageEntries = eligibleDeviceUsePages.map(page =>
     generateSitemapUrlEntry({
       path: `/device-use/${page.slug}`,
       locale: LOCALE,

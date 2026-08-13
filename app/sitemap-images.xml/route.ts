@@ -7,6 +7,7 @@ import { NextResponse } from 'next/server';
 import { getAllPSEOPages } from '@/lib/seo/data-loader';
 import type { PSEOPage } from '@/lib/seo/pseo-types';
 import { clientEnv } from '@shared/config/env';
+import { filterEligibleSitemapEntries } from '@/lib/seo/page-eligibility';
 
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
 
@@ -22,20 +23,29 @@ interface IImageEntry {
 export async function GET() {
   const pages = await getAllPSEOPages();
 
-  const imageEntries: IImageEntry[] = pages
-    .filter(
-      (page): page is PSEOPage =>
-        'category' in page && !!page.ogImage && (page as PSEOPage).category !== 'platforms'
-    )
-    .map(page => ({
-      pageUrl: `${BASE_URL}/${page.category}/${page.slug}`,
-      images: [
-        {
-          loc: page.ogImage!.startsWith('http') ? page.ogImage! : `${BASE_URL}${page.ogImage!}`,
-          title: page.title,
-        },
-      ],
-    }));
+  const imagePages = pages.filter(
+    (page): page is PSEOPage =>
+      'category' in page &&
+      typeof page.category === 'string' &&
+      !!page.ogImage &&
+      (page as PSEOPage).category !== 'platforms'
+  );
+  const eligibleImagePages = filterEligibleSitemapEntries(
+    imagePages,
+    'images',
+    'en',
+    page => `/${page.category}/${page.slug}`,
+    page => page.lastUpdated
+  );
+  const imageEntries: IImageEntry[] = eligibleImagePages.map(page => ({
+    pageUrl: `${BASE_URL}/${page.category}/${page.slug}`,
+    images: [
+      {
+        loc: page.ogImage!.startsWith('http') ? page.ogImage! : `${BASE_URL}${page.ogImage!}`,
+        title: page.title,
+      },
+    ],
+  }));
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"

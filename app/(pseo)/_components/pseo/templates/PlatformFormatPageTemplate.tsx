@@ -9,6 +9,7 @@ import { FadeIn } from '@/app/(pseo)/_components/ui/MotionWrappers';
 import { getPageMappingByUrl } from '@/lib/seo/keyword-mappings';
 import type { IPlatformFormatPage } from '@/lib/seo/pseo-types';
 import type { IRelatedPage } from '@/lib/seo/related-pages';
+import Link from 'next/link';
 import { ReactElement } from 'react';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
@@ -204,6 +205,23 @@ export function PlatformFormatPageTemplate({
               <FAQSection faqs={data.faq} pageType="platform-format" slug={data.slug} />
             </div>
           )}
+
+          <section
+            aria-label="Parent category navigation"
+            data-testid="pseo-parent-hub-link"
+            className="my-8 rounded-lg border border-accent/20 bg-accent/5 p-6"
+          >
+            <h2 className="text-xl font-semibold text-white">Explore more platform formats</h2>
+            <p className="mt-2 text-text-secondary">
+              Browse the platform format hub for more format-specific image enhancement workflows.
+            </p>
+            <Link
+              href={locale && locale !== 'en' ? `/${locale}/platform-format` : '/platform-format'}
+              className="mt-4 inline-flex font-semibold text-accent hover:text-accent/80"
+            >
+              View all platform format pages
+            </Link>
+          </section>
         </article>
       </div>
 

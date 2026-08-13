@@ -7,6 +7,7 @@
 import { NextResponse } from 'next/server';
 import { getAllUseCases } from '@/lib/seo/data-loader';
 import { generateSitemapUrlEntry, getSitemapResponseHeaders } from '@/lib/seo/sitemap-generator';
+import { filterEligibleSitemapEntries } from '@/lib/seo/page-eligibility';
 import type { Locale } from '@/i18n/config';
 const CATEGORY = 'use-cases' as const;
 
@@ -14,6 +15,13 @@ const LOCALE: Locale = 'en';
 
 export async function GET() {
   const useCases = await getAllUseCases();
+  const eligibleUseCases = filterEligibleSitemapEntries(
+    useCases,
+    CATEGORY,
+    LOCALE,
+    useCase => `/use-cases/${useCase.slug}`,
+    useCase => useCase.lastUpdated
+  );
 
   // Generate category index entry
   const categoryEntry = generateSitemapUrlEntry({
@@ -26,7 +34,7 @@ export async function GET() {
   });
 
   // Generate use case page entries with hreflang
-  const useCaseEntries = useCases.map(useCase =>
+  const useCaseEntries = eligibleUseCases.map(useCase =>
     generateSitemapUrlEntry({
       path: `/use-cases/${useCase.slug}`,
       locale: LOCALE,

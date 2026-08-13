@@ -10,17 +10,25 @@ import {
   generateSitemapHreflangLinks,
   getSitemapResponseHeaders,
 } from '@/lib/seo/sitemap-generator';
+import { filterEligibleSitemapEntries } from '@/lib/seo/page-eligibility';
 
 const CATEGORY = 'technical-guides' as const;
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
 
 export async function GET() {
   const pages = await getAllTechnicalGuidesPages();
+  const eligiblePages = filterEligibleSitemapEntries(
+    pages,
+    CATEGORY,
+    'en',
+    page => `/technical-guides/${page.slug}`,
+    page => page.lastUpdated
+  );
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
-${pages
+${eligiblePages
   .map(
     page => `  <url>
     <loc>${BASE_URL}/technical-guides/${page.slug}</loc>

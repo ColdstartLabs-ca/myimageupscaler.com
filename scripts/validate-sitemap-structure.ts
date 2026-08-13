@@ -20,6 +20,7 @@ import { parseStringPromise } from 'xml2js';
 import https from 'node:https';
 import http from 'node:http';
 import { isCategoryEnglishOnly } from '@/lib/seo/localization-config';
+import { isPSEOCategory, shouldSubmit } from '@/lib/seo/page-eligibility';
 import type { PSEOCategory } from '@/lib/seo/url-utils';
 
 // Types for xml2js parsed results
@@ -84,7 +85,7 @@ function getRequiredHreflangLocales(sitemapName: string): string[] {
 interface IValidationIssue {
   sitemap: string;
   type: 'error' | 'warning';
-  category: 'canonical' | 'hreflang' | 'namespace' | 'structure' | 'format';
+  category: 'canonical' | 'hreflang' | 'namespace' | 'structure' | 'format' | 'eligibility';
   message: string;
   url?: string;
   expected?: string;
@@ -339,6 +340,41 @@ class SitemapStructureValidator {
   }
 
   /**
+   * Ensure every pSEO URL emitted by a route agrees with the committed
+   * performance verdict. Category hubs and non-pSEO sitemaps are excluded.
+   */
+  private validateEligibility(entry: IXml2JsUrlEntry, sitemapName: string): void {
+    const url = entry.loc[0];
+    let pathname: string;
+    try {
+      pathname = new URL(url).pathname;
+    } catch {
+      return;
+    }
+
+    const segments = pathname.split('/').filter(Boolean);
+    let locale: Locale = DEFAULT_LOCALE;
+    if (SUPPORTED_LOCALES.includes(segments[0] as Locale)) {
+      locale = segments.shift() as Locale;
+    }
+    const category = segments[0];
+    const slug = segments[segments.length - 1];
+
+    if (!category || !slug || segments.length < 2 || !isPSEOCategory(category)) return;
+    if (shouldSubmit(category, slug, locale)) return;
+
+    this.issues.push({
+      sitemap: sitemapName,
+      type: 'error',
+      category: 'eligibility',
+      message: 'Sitemap contains a pruned pSEO URL',
+      url,
+      expected: 'URL must be excluded when shouldSubmit(...) is false',
+      actual: `shouldSubmit(${category}, ${slug}, ${locale}) === false`,
+    });
+  }
+
+  /**
    * Validate URL entry structure
    */
   private validateUrlEntry(entry: IXml2JsUrlEntry, sitemapName: string): void {
@@ -358,6 +394,9 @@ class SitemapStructureValidator {
 
     // Validate hreflang links
     this.validateHreflangLinks(entry, sitemapName);
+
+    // Validate committed page eligibility
+    this.validateEligibility(entry, sitemapName);
   }
 
   /**

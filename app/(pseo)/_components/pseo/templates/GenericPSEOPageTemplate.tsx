@@ -15,6 +15,7 @@ import type {
 import type { IRelatedPage } from '@/lib/seo/related-pages';
 import type { PSEOCategory } from '@/lib/seo/url-utils';
 import { clientEnv } from '@shared/config/env';
+import Link from 'next/link';
 import React from 'react';
 import { PSEOPageTracker } from '../analytics/PSEOPageTracker';
 import { ScrollTracker } from '../analytics/ScrollTracker';
@@ -218,6 +219,7 @@ export function GenericPSEOPageTemplate({
 
   // Build breadcrumb items
   const category = data.category as PSEOCategory;
+  const categoryHubHref = _locale === 'en' ? `/${category}` : `/${_locale}/${category}`;
   const breadcrumbItems: IBreadcrumbItem[] = [
     { label: 'Home', href: BASE_URL },
     {
@@ -302,8 +304,46 @@ export function GenericPSEOPageTemplate({
               <RelatedPagesSection relatedPages={relatedPages} />
             </div>
           )}
+
+          <section
+            aria-label="Parent category navigation"
+            data-testid="pseo-parent-hub-link"
+            className="my-8 rounded-lg border border-accent/20 bg-accent/5 p-6"
+          >
+            <h2 className="text-xl font-semibold text-white">Explore more in this category</h2>
+            <p className="mt-2 text-text-secondary">
+              Browse the complete {category.replace(/-/g, ' ')} collection for more ways to improve
+              your images.
+            </p>
+            <Link
+              href={categoryHubHref}
+              className="mt-4 inline-flex font-semibold text-accent hover:text-accent/80"
+            >
+              View all {category.replace(/-/g, ' ')} pages
+            </Link>
+          </section>
         </article>
       </div>
+
+      <section
+        aria-label="Recommended SEO resources"
+        className="relative mx-auto max-w-5xl px-6 py-8 sm:px-8 lg:px-12"
+      >
+        <div className="grid gap-4 md:grid-cols-2">
+          <Link
+            href="/tools/ai-image-upscaler"
+            className="rounded-lg border border-border p-5 text-text-primary transition-colors hover:border-accent"
+          >
+            Try the AI image upscaler
+          </Link>
+          <Link
+            href="/blog/best-free-ai-image-upscaler-2026-tested-compared"
+            className="rounded-lg border border-border p-5 text-text-primary transition-colors hover:border-accent"
+          >
+            Read the best free upscalers comparison
+          </Link>
+        </div>
+      </section>
 
       {hasCTA && (
         <CTASection

@@ -16,6 +16,7 @@ import {
   generateHreflangAlternates,
 } from './hreflang-generator';
 import { enforceMetaLengths } from './meta-generator';
+import { shouldSubmit } from './page-eligibility';
 import type { Locale } from '../../i18n/config';
 
 const BASE_URL = clientEnv.BASE_URL;
@@ -65,7 +66,10 @@ export function generateMetadata(
   const defaultOgImage = '/og-image.png';
   const ogImageUrl = page.ogImage || defaultOgImage;
 
-  const shouldNoindex = page.noindex === true || NOINDEX_CATEGORIES.includes(category);
+  const shouldNoindex =
+    page.noindex === true ||
+    NOINDEX_CATEGORIES.includes(category) ||
+    !shouldSubmit(category, page.slug, locale, page.lastUpdated);
 
   return {
     title: truncatedTitle,

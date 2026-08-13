@@ -13,6 +13,7 @@ import type { Locale } from '@/i18n/config';
 import type { PSEOCategory } from './url-utils';
 import { clientEnv } from '@shared/config/env';
 import { getLocalizedPath, generateSitemapHreflangLinks } from './hreflang-generator';
+import { filterEligiblePages, logSitemapEligibility } from './page-eligibility';
 import { getSitemapResponseHeaders } from './sitemap-generator';
 import { isClusterMember, isClusterOwner } from './intent-ownership';
 import { INTERACTIVE_TOOL_PATHS, isLocalizedInteractiveSlug } from './interactive-tool-routes';
@@ -94,6 +95,8 @@ export function generateLocaleCategorySitemapResponse(
     const pagePath = `/${categoryPath}/${page.slug}`;
     return !isClusterOwner(pagePath) && !isClusterMember(pagePath);
   });
+  const { pages: eligiblePages, skipped } = filterEligiblePages(routedPages, category, locale);
+  logSitemapEligibility(category, locale, routedPages.length, skipped);
   const localeCategoryPath = getLocalizedPath(`/${categoryPath}`, locale);
 
   const categoryEntry = buildUrlEntry(
@@ -104,7 +107,7 @@ export function generateLocaleCategorySitemapResponse(
     category
   );
 
-  const pageEntries = routedPages.map(page => {
+  const pageEntries = eligiblePages.map(page => {
     const englishPath = page.customPath || `/${categoryPath}/${page.slug}`;
     const localePath = getLocalizedPath(englishPath, locale);
     const imageXml = page.ogImage

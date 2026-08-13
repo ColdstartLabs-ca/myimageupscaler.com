@@ -10,6 +10,7 @@ import { clientEnv } from '@shared/config/env';
 import { SUPPORTED_LOCALES, DEFAULT_LOCALE, type Locale } from '@/i18n/config';
 import { generateSitemapHreflangLinks } from './hreflang-generator';
 import { isCategoryLocalized as checkCategoryLocalized } from './localization-config';
+import { logSitemapEligibility, shouldSubmitPath } from './page-eligibility';
 import type { PSEOCategory } from './url-utils';
 
 // Re-export for convenience
@@ -121,6 +122,11 @@ export function generateSitemapUrlEntry(entry: ISitemapUrlEntry): string {
     includeHreflang = false,
   } = entry;
 
+  // Shared entry point for English and custom-path sitemap routes. Returning an
+  // empty fragment keeps the caller's existing XML assembly intact while
+  // preventing a pruned pSEO URL from becoming a submitted <loc>.
+  if (!shouldSubmitPath(path, entry.lastModified)) return '';
+
   // IMPORTANT: Always use the canonical (English) URL in sitemaps
   // The locale parameter is now ignored for URL generation
   const fullUrl = `${BASE_URL}${path}`;
@@ -172,8 +178,11 @@ export function generateLocalizedSitemap(
     includeHreflang: false, // No hreflang for category index
   });
 
-  // Generate all page entries
-  const pageEntries = entries.map(entry =>
+  const eligibleEntries = entries.filter(entry => shouldSubmitPath(entry.path, entry.lastModified));
+  logSitemapEligibility(category, locale, entries.length, entries.length - eligibleEntries.length);
+
+  // Generate eligible page entries
+  const pageEntries = eligibleEntries.map(entry =>
     generateSitemapUrlEntry({
       ...entry,
       locale,

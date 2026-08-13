@@ -7,6 +7,7 @@
 import { NextResponse } from 'next/server';
 import { getAllPlatformFormat } from '@/lib/seo/data-loader';
 import { generateSitemapUrlEntry, getSitemapResponseHeaders } from '@/lib/seo/sitemap-generator';
+import { filterEligibleSitemapEntries } from '@/lib/seo/page-eligibility';
 import type { Locale } from '@/i18n/config';
 const CATEGORY = 'platform-format' as const;
 
@@ -14,6 +15,13 @@ const LOCALE: Locale = 'en';
 
 export async function GET() {
   const platformFormatPages = await getAllPlatformFormat();
+  const eligiblePlatformFormatPages = filterEligibleSitemapEntries(
+    platformFormatPages,
+    CATEGORY,
+    LOCALE,
+    page => `/platform-format/${page.slug}`,
+    page => page.lastUpdated
+  );
 
   // Generate category index entry
   const categoryEntry = generateSitemapUrlEntry({
@@ -26,7 +34,7 @@ export async function GET() {
   });
 
   // Generate platform-format page entries with hreflang
-  const pageEntries = platformFormatPages.map(page =>
+  const pageEntries = eligiblePlatformFormatPages.map(page =>
     generateSitemapUrlEntry({
       path: `/platform-format/${page.slug}`,
       locale: LOCALE,

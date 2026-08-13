@@ -51,14 +51,6 @@ export const Footer = (): JSX.Element => {
             <ul className="space-y-4 text-sm font-medium">
               <li>
                 <Link
-                  href={localizedPath('/about')}
-                  className="hover:text-accent transition-colors"
-                >
-                  About
-                </Link>
-              </li>
-              <li>
-                <Link
                   href={localizedPath('/pricing')}
                   className="hover:text-accent transition-colors"
                 >
@@ -85,6 +77,30 @@ export const Footer = (): JSX.Element => {
                   className="hover:text-accent transition-colors"
                 >
                   All Tools
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={localizedPath('/tools/ai-image-upscaler')}
+                  className="hover:text-accent transition-colors"
+                >
+                  AI Image Upscaler
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={localizedPath('/tools/ai-photo-enhancer')}
+                  className="hover:text-accent transition-colors"
+                >
+                  AI Photo Enhancer
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={localizedPath('/tools/transparent-background-maker')}
+                  className="hover:text-accent transition-colors"
+                >
+                  Transparent Background Maker
                 </Link>
               </li>
               <li>
@@ -140,6 +156,14 @@ export const Footer = (): JSX.Element => {
                   Tool Alternatives
                 </Link>
               </li>
+              <li>
+                <Link
+                  href={localizedPath('/blog/best-free-ai-image-upscaler-2026-tested-compared')}
+                  className="hover:text-accent transition-colors"
+                >
+                  Best Free Upscalers
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -149,6 +173,14 @@ export const Footer = (): JSX.Element => {
               {t('support')}
             </h4>
             <ul className="space-y-4 text-sm font-medium">
+              <li>
+                <Link
+                  href={localizedPath('/about')}
+                  className="hover:text-accent transition-colors"
+                >
+                  About
+                </Link>
+              </li>
               <li>
                 <Link
                   href={localizedPath('/contact')}
@@ -207,12 +239,6 @@ export const Footer = (): JSX.Element => {
           <div className="flex items-center gap-6">
             <LocaleSwitcher />
             <div className="flex gap-8 text-xs font-black uppercase tracking-widest">
-              <Link href={localizedPath('/privacy')} className="hover:text-white transition-colors">
-                {t('privacy')}
-              </Link>
-              <Link href={localizedPath('/terms')} className="hover:text-white transition-colors">
-                {t('terms')}
-              </Link>
               <Link href={localizedPath('/help')} className="hover:text-white transition-colors">
                 {t('help')}
               </Link>

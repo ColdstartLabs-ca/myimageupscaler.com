@@ -1735,3 +1735,47 @@ Why it mattered:
 
 - Improved AI/search attribution visibility.
 - Created historical baseline for blog CTR and 3-Kings refresh work.
+
+## 2026-08-13: GSC Index-Bloat Pruning (lane-3)
+
+Changes:
+
+- Added the committed pSEO performance snapshot, monthly sync/report scripts, and the 85% indexation gate.
+- Added shared eligibility filtering to sitemap generation and metadata robots directives, plus pruned-page hub links.
+- Added sitemap, metadata, internal-link, gate, and live-route regression coverage; expanded footer links to tools and the roundup.
+
+Why it mattered:
+
+- Pages with no clicks or impressions beyond the 90-day grace period can remain reachable with `noindex, follow` while leaving submitted sitemaps focused on proven URLs.
+- The committed snapshot and gate make future low-indexation matrix expansion fail with an actionable reason.
+
+Validation:
+
+- Focused SEO unit tests, TypeScript, and the pruned-page Playwright test passed.
+- Empty GSC input correctly exited non-zero without writing a snapshot.
+- `yarn seo:indexation:gate` passed against the committed 59.07% baseline because this lane adds no new pSEO rows.
+
+Follow-up:
+
+- After deploy, review the GSC request-indexing backlog and manually request indexing for any unchecked URLs.
+- Recheck Crawled–currently-not-indexed, indexed count, non-brand clicks, and sitemap indexation at the PRD checkpoints; refresh the snapshot monthly.
+
+### Lane-3 review repair
+
+Source: [PRD 03 — Index Bloat Pruning](../../PRDs/gsc-recovery-2026-08/03-index-bloat-pruning.md)
+
+Changes:
+
+- Routed every direct pSEO sitemap page producer through the shared eligibility policy and preserved blog/static sitemap behavior.
+- Made the publication gate compare committed pSEO inventory changes against `HEAD^` by default, with an explicit `--base-ref` override.
+- Seeded the monthly performance snapshot from all emitted category/locale URLs so an exact locale zero verdict is retained.
+- Added `yarn seo:verify:gsc --set=cni --base-url=...` for the post-deploy sitemap/noindex overlap check.
+
+Validation:
+
+- Affected SEO unit tests and TypeScript passed; all new regression controls were observed red before implementation and green after repair.
+- `yarn seo:indexation:gate` passed with the committed snapshot-only lane change.
+
+Follow-up:
+
+- Run the verifier after deploy with the reviewed or refreshed CNI export; the local worktree has no live GSC export by design.
