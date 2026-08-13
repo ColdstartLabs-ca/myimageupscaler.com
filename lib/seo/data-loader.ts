@@ -21,7 +21,7 @@ import useCasesDataFile from '@/app/seo/data/use-cases.json';
 import alternativesDataFile from '@/app/seo/data/alternatives.json';
 import platformsDataFile from '@/app/seo/data/platforms.json';
 import formatScaleDataFile from '@/app/seo/data/format-scale.json';
-import { GIF_FORMAT_OWNER_SLUG, isGifFormatScaleSlug } from '@/lib/seo/gif-intent';
+import { isClusterMember, isClusterOwner } from '@/lib/seo/intent-ownership';
 import platformFormatDataFile from '@/app/seo/data/platform-format.json';
 import deviceUseDataFile from '@/app/seo/data/device-use.json';
 import type {
@@ -226,10 +226,14 @@ export const getAllAlternatives = cache(async (): Promise<IAlternativePage[]> =>
 export const getAllScaleSlugs = cache(async (): Promise<string[]> => {
   const scaleData = scaleDataFile as unknown as IPSEODataFile<IScalePage>;
   // Only return slugs that have actual JSON data - no fallback generation
-  return scaleData.pages.map(page => page.slug);
+  return scaleData.pages
+    .filter(page => !isClusterMember(`/scale/${page.slug}`))
+    .map(page => page.slug);
 });
 
 export const getScaleData = cache(async (slug: string): Promise<IScalePage | null> => {
+  if (isClusterMember(`/scale/${slug}`)) return null;
+
   const scaleData = scaleDataFile as unknown as IPSEODataFile<IScalePage>;
   const page = scaleData.pages.find(p => p.slug === slug);
 
@@ -361,12 +365,12 @@ export const getAllAIFeaturePages = cache(async (): Promise<IAIFeaturePage[]> =>
 // Format × Scale Multiplier Pages
 export const getAllFormatScaleSlugs = cache(async (): Promise<string[]> => {
   return formatScaleData.pages
-    .filter(page => !isGifFormatScaleSlug(page.slug))
+    .filter(page => !isClusterMember(`/format-scale/${page.slug}`))
     .map(page => page.slug);
 });
 
 export const getFormatScaleData = cache(async (slug: string): Promise<IFormatScalePage | null> => {
-  if (isGifFormatScaleSlug(slug)) return null;
+  if (isClusterMember(`/format-scale/${slug}`)) return null;
 
   const page = formatScaleData.pages.find(p => p.slug === slug);
   return page || null;
@@ -374,7 +378,7 @@ export const getFormatScaleData = cache(async (slug: string): Promise<IFormatSca
 
 export const getAllFormatScale = cache(async (): Promise<IFormatScalePage[]> => {
   return formatScaleData.pages
-    .filter(page => !isGifFormatScaleSlug(page.slug))
+    .filter(page => !isClusterMember(`/format-scale/${page.slug}`))
     .map(page => ({
       ...page,
       category: 'format-scale' as const,
@@ -763,7 +767,7 @@ export const getFormatDataWithLocale = cache(
   async (slug: string, locale: Locale = 'en'): Promise<ILocalizedDataResult<IFormatPage>> => {
     const isLocalized = isCategoryLocalized('formats', locale);
 
-    if (slug === GIF_FORMAT_OWNER_SLUG && locale !== 'en') {
+    if (isClusterOwner(`/formats/${slug}`) && locale !== 'en') {
       return {
         data: null,
         hasTranslation: false,
@@ -945,6 +949,14 @@ export const getScaleDataWithLocale = cache(
   async (slug: string, locale: Locale = 'en'): Promise<ILocalizedDataResult<IScalePage>> => {
     const isLocalized = isCategoryLocalized('scale', locale);
 
+    if (isClusterMember(`/scale/${slug}`)) {
+      return {
+        data: null,
+        hasTranslation: false,
+        isLocalizedCategory: isLocalized,
+      };
+    }
+
     if (locale !== 'en' && !isLocalized) {
       return {
         data: null,
@@ -999,7 +1011,7 @@ export const getFormatScaleDataWithLocale = cache(
   async (slug: string, locale: Locale = 'en'): Promise<ILocalizedDataResult<IFormatScalePage>> => {
     const isLocalized = isCategoryLocalized('format-scale', locale);
 
-    if (isGifFormatScaleSlug(slug)) {
+    if (isClusterMember(`/format-scale/${slug}`)) {
       return {
         data: null,
         hasTranslation: false,

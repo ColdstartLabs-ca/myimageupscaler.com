@@ -14,7 +14,7 @@ import type { PSEOCategory } from './url-utils';
 import { clientEnv } from '@shared/config/env';
 import { getLocalizedPath, generateSitemapHreflangLinks } from './hreflang-generator';
 import { getSitemapResponseHeaders } from './sitemap-generator';
-import { GIF_FORMAT_OWNER_SLUG } from './gif-intent';
+import { isClusterMember, isClusterOwner } from './intent-ownership';
 import { INTERACTIVE_TOOL_PATHS, isLocalizedInteractiveSlug } from './interactive-tool-routes';
 
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
@@ -90,8 +90,10 @@ export function generateLocaleCategorySitemapResponse(
   pages: ILocaleSitemapPage[],
   priority: number = 0.8
 ): NextResponse {
-  const routedPages =
-    category === 'formats' ? pages.filter(page => page.slug !== GIF_FORMAT_OWNER_SLUG) : pages;
+  const routedPages = pages.filter(page => {
+    const pagePath = `/${categoryPath}/${page.slug}`;
+    return !isClusterOwner(pagePath) && !isClusterMember(pagePath);
+  });
   const localeCategoryPath = getLocalizedPath(`/${categoryPath}`, locale);
 
   const categoryEntry = buildUrlEntry(

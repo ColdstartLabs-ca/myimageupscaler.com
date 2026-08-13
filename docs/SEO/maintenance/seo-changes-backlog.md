@@ -169,6 +169,117 @@ Validation:
 Follow-up:
 
 - After deployment, rerun the six-URL gate on the production host, complete the Slow 4G/LCP manual checkpoint, and monitor the GSC mobile CWV checkpoints in the PRD through 2026-10-08.
+### Table-driven intent ownership and GIF measurement
+
+Source: [taxonomy cannibalization PRD](../../PRDs/gsc-recovery-2026-08/04-taxonomy-cannibalization.md)
+
+Changes:
+
+- Replaced the GIF-only ownership module with `lib/seo/intent-ownership.ts`, preserving the four existing GIF format-scale redirects and the English-only owner behavior across middleware, loaders, locale sitemaps, and hreflang.
+- Added `yarn seo:measure:cluster` and recorded the available post-consolidation GIF window in [cluster-gif-2026-08-13.md](../../../seo-reports/cluster-gif-2026-08-13.md). `/scale/upscale-16x` is measured for the baseline but remains outside the redirect table until its own gate passes.
+
+Validation:
+
+- Focused GIF, ownership, and measurement tests passed: 3 files, 18 tests.
+- GSC Search Analytics read-only measurement: 2026-08-05 through 2026-08-10 provisional window = 71 cluster clicks / 5 owner clicks; 2026-06-16 through 2026-07-13 baseline = 855 cluster clicks / 513 owner clicks.
+
+Follow-up:
+
+- Do not add the next cluster yet. Re-run the measurement for the full 2026-08-05 through 2026-09-01 window after GSC data is available; the provisional window is not the Phase 0 decision gate.
+- After deployment, verify the existing GIF redirects and request indexing for `/formats/upscale-gif-images` in GSC; no indexing request was submitted by this local change.
+- Phase 3 diagnosis reports [photo-quality-enhancer](../../../seo-reports/collapse-photo-quality-enhancer-2026-08-13.md) and [free hub](../../../seo-reports/collapse-free-hub-2026-08-13.md) record both collapse decisions: `/tools/photo-quality-enhancer` has a current ranking/visibility loss with healthy indexability, while `/free` has reduced branded demand plus weaker position; neither has a sufficiently isolated code cause for a safe edit yet.
+
+### Lane-4 Review Repair
+
+Source: [taxonomy cannibalization PRD](../../PRDs/gsc-recovery-2026-08/04-taxonomy-cannibalization.md)
+
+Changes:
+
+- Made GIF redirect expectations independent from `INTENT_CLUSTERS`, added cluster-scoped primary-keyword ownership validation, and applied table-driven suppression to scale loaders without adding a new cluster row.
+
+Validation:
+
+- Focused ownership, GIF, loader, cannibalization, keyword, measurement, and commercial-funnel tests passed: 7 files, 100 tests.
+- Each repaired negative control was observed red before restoring the implementation; full unit coverage passed (377 files, 5,303 passed, 6 skipped) and `yarn verify` passed with 0 errors / 1,647 existing warnings.
+
+Follow-up:
+
+- Keep `/scale/upscale-16x` outside `memberPaths` until the GIF Phase 0 gate has a complete 28-day measurement.
+
+### Lane-4 Fresh Repair
+
+Source: [taxonomy cannibalization PRD](../../PRDs/gsc-recovery-2026-08/04-taxonomy-cannibalization.md)
+
+Changes:
+
+- Wired the intent-ownership guard to the JSON-backed, loader-filtered `/formats/`, `/format-scale/`, and `/scale/` indexable inventory; retained the GIF-only cluster and Phase 0 deferral.
+- Required the 28-day measurement to meet the supplied pre-split owner/baseline gate and cluster-total stop-loss before reporting PASS.
+
+Validation:
+
+- Focused intent-ownership and cluster-measurement tests passed: 3 files, 14 tests.
+- Bounded TypeScript and targeted ESLint checks passed; the prior `yarn verify` was interrupted during repository-wide ESLint after the 10-minute bound. No production data or external service was mutated.
+
+Follow-up:
+
+- Keep `/scale/upscale-16x` outside `memberPaths` until the GIF Phase 0 gate has a complete 28-day measurement.
+
+### Lane-4 Repair Round 2
+
+Source: PRD 04 — Taxonomy Cannibalization
+
+Changes:
+
+- Separated the six-path post-consolidation measurement set from the PRD 04 three-path pre-split baseline: `/format-scale/gif-upscale-16x`, `/formats/upscale-gif-images`, and `/scale/upscale-16x` (supplied 847 planning clicks). Existing GIF redirect members remain unchanged.
+- Made the Phase 0 decision gate require exactly 28 inclusive days for both the measured and baseline windows; short post windows remain provisional.
+
+Validation:
+
+- Focused measurement, ownership, and GIF redirect tests passed: 3 files, 27 tests.
+- `yarn tsc`, targeted ESLint, `git diff HEAD^ HEAD --check`, and `yarn verify` passed; full verify reported 0 errors and 1,647 existing warnings.
+- No GSC query, production credential, external service, or indexing request was used for this repair.
+
+Follow-up:
+
+- Do not use a PASS result or add another cluster until a complete like-for-like 28-day post-consolidation measurement is available.
+
+### Lane-4 Review Repair Round 2
+
+Source: [taxonomy cannibalization PRD](../../PRDs/gsc-recovery-2026-08/04-taxonomy-cannibalization.md)
+
+Changes:
+
+- Added a production-orchestration regression test for `measureCluster()` so the GIF report keeps the PRD's three-path pre-split baseline separate from the six-path post-consolidation measurement set.
+- Clarified the photo-quality-enhancer diagnosis as a visibility/query-mix loss with technical indexability ruled out; no content edit was shipped.
+
+Validation:
+
+- The orchestration test passed with 3 baseline matches / 847 clicks and failed under a temporary post-consolidation baseline regression, then the production scope was restored.
+- Focused SEO tests passed: 3 files, 28 tests; `yarn tsc`, targeted ESLint, both diff checks, and `yarn verify` passed with existing warnings only.
+- No production credentials, GSC query, or external service was used.
+
+Follow-up:
+
+- Re-measure the photo-quality-enhancer query/page window after the locale/404 deployment and keep the GIF cluster on hold until a complete like-for-like 28-day measurement is available.
+
+### Lane-4 Fresh Repair Round 2
+
+Source: [taxonomy cannibalization PRD](../../PRDs/gsc-recovery-2026-08/04-taxonomy-cannibalization.md)
+
+Changes:
+
+- Added a fixed GIF Phase 0 baseline contract of 2026-06-16 through 2026-07-13 with a minimum floor of 847 clicks; caller-supplied lower baseline metrics cannot produce PASS or weaken stop-loss comparisons.
+- Documented `/scale/upscale-16x` as a deferred candidate for primary keyword `upscale 16x`, not a current GIF member; ownership remains measurement-only until the exact 28-day Phase 0 gate.
+
+Validation:
+
+- New red-first contract tests first failed in 4 places, then passed after the repair; focused SEO coverage passed: 7 files, 115 tests.
+- `yarn tsc`, targeted ESLint, both diff checks, and `yarn verify` passed; verify reported 0 errors and 1,647 existing warnings.
+- No GSC query, production credential, redirect, or external service was used; the existing provisional 2026-08-05 through 2026-08-10 report remains unchanged except for the contract and deferral documentation.
+
+Follow-up:
+
+- Do not add `/scale/upscale-16x` to `memberPaths` or ship another redirect until the complete 2026-08-05 through 2026-09-01 post-consolidation window is available and the fixed 847-click baseline gate is evaluated.
 
 ## 2026-08-10
 

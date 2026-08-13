@@ -8,7 +8,7 @@ import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '../../i18n/config';
 import type { Locale } from '../../i18n/config';
 import { clientEnv } from '@shared/config/env';
 import type { PSEOCategory } from './url-utils';
-import { GIF_FORMAT_OWNER_PATH } from './gif-intent';
+import { isClusterOwner } from './intent-ownership';
 import { isCategoryLocalized } from './localization-config';
 
 /**
@@ -63,8 +63,8 @@ export function generateHreflangAlternates(
   // Remove trailing slash for consistency (including root for homepage)
   const normalizedPath = path.replace(/\/$/, '');
 
-  if (normalizedPath === GIF_FORMAT_OWNER_PATH) {
-    const ownerUrl = `${clientEnv.BASE_URL}${GIF_FORMAT_OWNER_PATH}`;
+  if (isClusterOwner(normalizedPath)) {
+    const ownerUrl = `${clientEnv.BASE_URL}${normalizedPath}`;
     return { en: ownerUrl, 'x-default': ownerUrl };
   }
 
@@ -363,8 +363,9 @@ export function generateSitemapHreflangLinks(
   const links: string[] = [];
   const baseUrl = clientEnv.BASE_URL;
 
-  if (path.replace(/\/$/, '') === GIF_FORMAT_OWNER_PATH) {
-    const ownerUrl = `${baseUrl}${GIF_FORMAT_OWNER_PATH}`;
+  const normalizedPath = path.replace(/\/$/, '');
+  if (isClusterOwner(normalizedPath)) {
+    const ownerUrl = `${baseUrl}${normalizedPath}`;
     return [
       `    <xhtml:link rel="alternate" hreflang="en" href="${ownerUrl}"/>`,
       `    <xhtml:link rel="alternate" hreflang="x-default" href="${ownerUrl}"/>`,

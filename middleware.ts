@@ -16,7 +16,7 @@ import { DEFAULT_LOCALE, isValidLocale, LOCALE_COOKIE, type Locale } from '@/i18
 import { getLocaleFromCountry } from '@lib/i18n/country-locale-map';
 import { ENGLISH_ONLY_CATEGORIES } from '@/lib/seo/localization-config';
 import type { IReferralSource } from '@server/analytics/types';
-import { GIF_FORMAT_OWNER_PATH, isGifFormatScaleSlug } from '@/lib/seo/gif-intent';
+import { getOwnerPath, isClusterMember } from '@/lib/seo/intent-ownership';
 
 // Debug: log when middleware is loaded
 if (serverEnv.ENV === 'test') {
@@ -699,16 +699,10 @@ function handleLegacyRedirects(req: NextRequest): NextResponse | null {
     return NextResponse.redirect(url, 301);
   }
 
-  const formatScaleMatch = pathWithoutLocale.match(/^\/format-scale\/([^/]+)$/);
-  if (formatScaleMatch && isGifFormatScaleSlug(formatScaleMatch[1])) {
+  const ownerPath = getOwnerPath(pathWithoutLocale);
+  if (ownerPath && (isClusterMember(pathWithoutLocale) || localePrefix)) {
     const url = req.nextUrl.clone();
-    url.pathname = GIF_FORMAT_OWNER_PATH;
-    return NextResponse.redirect(url, 301);
-  }
-
-  if (localePrefix && pathWithoutLocale === GIF_FORMAT_OWNER_PATH) {
-    const url = req.nextUrl.clone();
-    url.pathname = GIF_FORMAT_OWNER_PATH;
+    url.pathname = ownerPath;
     return NextResponse.redirect(url, 301);
   }
 

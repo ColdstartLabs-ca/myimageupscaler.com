@@ -95,6 +95,7 @@
     "validate:seo:sitemap:structure": "tsx scripts/validate-sitemap-structure.ts",
     "validate:seo:internal-links": "npx tsx scripts/validate-internal-links.ts",
     "validate:seo:equity": "tsx scripts/validate-seo-equity.ts",
+    "seo:measure:cluster": "tsx scripts/seo/measure-cluster.ts",
     "validate:seo:pseo": "tsx scripts/validate-pseo-data.ts",
     "validate:seo:pseo:verbose": "tsx scripts/validate-pseo-data.ts --verbose",
     "validate:seo:pseo:http": "tsx scripts/validate-pseo-data.ts --curl",
