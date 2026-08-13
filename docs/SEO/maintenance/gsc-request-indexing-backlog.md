@@ -19,6 +19,45 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 - [ ] `https://myimageupscaler.com/guides/how-to-upscale-images` — owner for the retired `/guides/how-to-upsize-images` family; request indexing after deployment.
 - [ ] `https://myimageupscaler.com/tools/convert/jpg-to-webp` — canonical owner for legacy converter paths; request indexing after deployment.
 
+### PRD 06 — crawled but not indexed blog set (2026-08-13)
+
+Request indexing after the deployment that includes the indexation-report and internal-link fixes.
+Keep all 33 requests unchecked until URL Inspection confirms the post-change crawl.
+
+- [ ] `https://myimageupscaler.com/blog/enhance-pictures-in-photoshop`
+- [ ] `https://myimageupscaler.com/blog/jpg-vs-png-quality`
+- [ ] `https://myimageupscaler.com/blog/how-to-upscale-avif-tiff-bmp-image-formats`
+- [ ] `https://myimageupscaler.com/blog/picture-restoration-software`
+- [ ] `https://myimageupscaler.com/blog/windows-11-snap-layouts`
+- [ ] `https://myimageupscaler.com/blog/image-enlarger-vs-image-upscaler`
+- [ ] `https://myimageupscaler.com/blog/how-to-fix-resolution`
+- [ ] `https://myimageupscaler.com/blog/sunset-camera-settings`
+- [ ] `https://myimageupscaler.com/blog/picture-to-oil-painting-convert`
+- [ ] `https://myimageupscaler.com/blog/remove-noise-in-photoshop`
+- [ ] `https://myimageupscaler.com/blog/screenshot-upscaling-rescue-low-resolution-captures`
+- [ ] `https://myimageupscaler.com/blog/dpi-of-image`
+- [ ] `https://myimageupscaler.com/blog/best-video-upscaler`
+- [ ] `https://myimageupscaler.com/blog/why-upscaled-text-looks-blurry-how-to-fix`
+- [ ] `https://myimageupscaler.com/blog/ai-quality-enhancer`
+- [ ] `https://myimageupscaler.com/blog/damaged-old-photographs`
+- [ ] `https://myimageupscaler.com/blog/turn-image-into-illustration`
+- [ ] `https://myimageupscaler.com/blog/what-is-8k-image-resolution`
+- [ ] `https://myimageupscaler.com/blog/photo-restoration-near-me`
+- [ ] `https://myimageupscaler.com/blog/noise-reduction-in-images`
+- [ ] `https://myimageupscaler.com/blog/ai-image-extender`
+- [ ] `https://myimageupscaler.com/blog/how-to-enhance-a-picture-in-photoshop`
+- [ ] `https://myimageupscaler.com/blog/what-is-denoising`
+- [ ] `https://myimageupscaler.com/blog/image-out-of-focus`
+- [ ] `https://myimageupscaler.com/blog/enhance-picture-quality-ai`
+- [ ] `https://myimageupscaler.com/blog/how-to-preserve-old-photographs`
+- [ ] `https://myimageupscaler.com/blog/heic-iphone-photo-upscaling-guide`
+- [ ] `https://myimageupscaler.com/blog/how-to-make-png-background-transparent-free`
+- [ ] `https://myimageupscaler.com/blog/reduce-image-noise`
+- [ ] `https://myimageupscaler.com/blog/noise-reduction-in-image`
+- [ ] `https://myimageupscaler.com/blog/ai-photo-restoration`
+- [ ] `https://myimageupscaler.com/blog/how-to-clear-up-a-photo`
+- [ ] `https://myimageupscaler.com/blog/best-image-upscaling-tools-2026`
+
 - [x] `https://myimageupscaler.com/`
 - [x] `https://myimageupscaler.com/blog/best-ai-upscaler` — daily request-indexing quota reached on 2026-07-10; retry later.
 - [x] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared` — refreshed 2026-07-20; request indexing for the latest version.

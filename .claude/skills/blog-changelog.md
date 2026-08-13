@@ -1,5 +1,15 @@
 # Blog Changelog
 
+## 2026-08-13
+
+### SEO: Bulk roundup evidence repair
+
+**Affected:** best-bulk-image-upscalers-2026
+**Why:** The local roundup needed to satisfy the comparison checklist without presenting unrun tools, versions, or quality claims as tested evidence.
+**Changes:**
+
+- `best-bulk-image-upscalers-2026` — narrowed the comparison to a reproducible local Sharp 0.34.5 four-input record, added provenance-backed visuals, explicit limitations, a verdict table, and updated publication boundaries.
+
 ## 2026-08-10
 
 ### Edit: Pixelated photos proof-led CTR support pass

@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '../supabase/supabaseAdmin';
+import { serverEnv } from '@shared/config/env';
 import type {
   IBlogPost,
   IBlogPostMeta,
@@ -156,19 +157,29 @@ async function getPostFromDatabase(slug: string): Promise<IBlogPost | null> {
  */
 async function getDatabaseSlugs(): Promise<string[]> {
   try {
+    if (!serverEnv.SUPABASE_SERVICE_ROLE_KEY) {
+      throw new Error(
+        'SUPABASE_SERVICE_ROLE_KEY is required to load the published database blog inventory'
+      );
+    }
+
     const { data, error } = await supabaseAdmin
       .from('blog_posts')
       .select('slug')
       .eq('status', 'published');
 
     if (error) {
-      if (error.code === 'PGRST205') return [];
-      throw error;
+      throw new Error(
+        `Supabase published blog inventory query failed (${error.code ?? 'unknown'}): ${error.message ?? 'unknown database error'}`
+      );
     }
 
     return (data || []).map(p => p.slug);
-  } catch {
-    return [];
+  } catch (error) {
+    throw new Error(
+      `Published blog inventory unavailable: could not load published slugs from blog_posts. ${error instanceof Error ? error.message : String(error)}`,
+      { cause: error }
+    );
   }
 }
 
@@ -460,10 +471,11 @@ export async function getPublishedPostBySlug(slug: string): Promise<IBlogPost | 
 }
 
 /**
- * Get all published slugs for static generation
- * Combines slugs from both static data and database
+ * Get all published slugs, failing closed when the database inventory cannot be
+ * loaded. Use this for SEO audits and validators, where a silently short
+ * inventory would report success while skipping URLs.
  */
-export async function getAllPublishedSlugs(): Promise<string[]> {
+export async function getAllPublishedSlugsStrict(): Promise<string[]> {
   const [staticSlugs, dbSlugs] = await Promise.all([
     Promise.resolve(getStaticDataSlugs()),
     getDatabaseSlugs(),
@@ -472,6 +484,26 @@ export async function getAllPublishedSlugs(): Promise<string[]> {
   // Combine and deduplicate
   const allSlugs = new Set([...staticSlugs, ...dbSlugs]);
   return Array.from(allSlugs);
+}
+
+/**
+ * Get all published slugs for static generation
+ * Combines slugs from both static data and database
+ *
+ * Degrades to the static inventory when the database is unreachable so a build
+ * without database credentials still renders the MDX posts.
+ */
+export async function getAllPublishedSlugs(): Promise<string[]> {
+  try {
+    return await getAllPublishedSlugsStrict();
+  } catch (error) {
+    console.error(
+      `Falling back to the static blog inventory for static generation: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
+    return getStaticDataSlugs();
+  }
 }
 
 /**

@@ -30,6 +30,16 @@ describe('blog post above-the-fold layout', () => {
     expect(pageSource).not.toContain('CompactToolsBanner');
   });
 
+  it('renders the informational CTA before the hero with the fixing-pixels destination', () => {
+    expect(pageSource).toContain('variant="aboveFold"');
+    expect(pageSource).toContain("href: '/tools/ai-image-upscaler'");
+    const ctaSource = fs.readFileSync(
+      path.resolve(process.cwd(), 'client/components/blog/BlogCTA.tsx'),
+      'utf8'
+    );
+    expect(ctaSource).toContain('data-testid="blog-above-fold-cta"');
+  });
+
   it('uses smaller mobile prose so article content starts sooner', () => {
     expect(pageSource).toContain('prose-base');
     expect(pageSource).toContain('lg:prose-lg');

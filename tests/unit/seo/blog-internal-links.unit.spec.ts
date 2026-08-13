@@ -1,9 +1,23 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync, readdirSync } from 'fs';
+import { existsSync, readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
+import { BLOCKED_BLOG_SLUGS } from '@shared/constants/blocked-blog-slugs';
+import {
+  getSeoEquityInboundLinkCounts,
+  getSeoEquitySnapshot,
+  validateSeoEquityPromotedUrls,
+} from '@lib/seo/seo-equity';
 
 const ROOT = join(__dirname, '../../..');
 const BLOG_DIR = join(ROOT, 'content/blog');
+const BLOG_DATA_PATH = join(ROOT, 'content/blog-data.json');
+const LOCAL_BULK_ROUNDUP_SLUG = 'best-bulk-image-upscalers-2026';
+const LOCAL_BULK_ROUNDUP_URL = 'https://myimageupscaler.com/blog/best-bulk-image-upscalers-2026';
+const LOCAL_BULK_ROUNDUP_INBOUND_SOURCES = [
+  'upscale-product-photos-amazon-etsy-guide.mdx',
+  'ai-image-enhancement-ecommerce-guide.mdx',
+] as const;
+const LOCAL_BULK_ROUNDUP_EVIDENCE_MARKER = 'Only Sharp 0.34.5 was executed locally';
 
 const PSEO_LINK_PATTERN = /\]\(\/(scale|free|formats|use-cases|alternatives|compare)\//;
 
@@ -67,7 +81,8 @@ describe('Blog → pSEO internal linking', () => {
 
   it('pSEO links in blog posts should use descriptive anchor text (not "click here" or "here")', () => {
     // Matches markdown links where the anchor text is just "here", "click here", or "this"
-    const BAD_ANCHOR_PATTERN = /\[(click here|here|this)\]\(\/(scale|free|formats|use-cases|alternatives|tools\/ai)\//i;
+    const BAD_ANCHOR_PATTERN =
+      /\[(click here|here|this)\]\(\/(scale|free|formats|use-cases|alternatives|tools\/ai)\//i;
     const files = readdirSync(BLOG_DIR).filter(f => f.endsWith('.mdx'));
     for (const f of files) {
       const content = readFileSync(join(BLOG_DIR, f), 'utf-8');
@@ -142,5 +157,105 @@ describe('Blog → pSEO internal linking', () => {
         expectedPath
       );
     }
+  });
+});
+
+describe('Local published roundup inbound-link contract', () => {
+  it('requires a source artifact and a source-backed compiled published inventory entry', () => {
+    const sourcePath = join(BLOG_DIR, `${LOCAL_BULK_ROUNDUP_SLUG}.mdx`);
+    expect(existsSync(sourcePath)).toBe(true);
+    const sourceContent = readFileSync(sourcePath, 'utf8');
+
+    const blogData = JSON.parse(readFileSync(BLOG_DATA_PATH, 'utf8')) as {
+      posts: Array<{ slug: string; title: string; date: string; content: string }>;
+    };
+    const compiledPost = blogData.posts.find(post => post.slug === LOCAL_BULK_ROUNDUP_SLUG);
+    expect(compiledPost).toMatchObject({
+      slug: LOCAL_BULK_ROUNDUP_SLUG,
+      title: 'Best Bulk Image Upscalers for Batch Photos (2026)',
+      date: '2026-08-13',
+    });
+    expect(sourceContent).toContain(LOCAL_BULK_ROUNDUP_EVIDENCE_MARKER);
+    expect(compiledPost?.content).toContain(LOCAL_BULK_ROUNDUP_EVIDENCE_MARKER);
+  });
+
+  it('keeps two contextual inbound links to the bulk-upscaler roundup', () => {
+    for (const file of LOCAL_BULK_ROUNDUP_INBOUND_SOURCES) {
+      const content = readFileSync(join(BLOG_DIR, file), 'utf-8');
+      expect(content, `${file} should link to ${LOCAL_BULK_ROUNDUP_URL}`).toContain(
+        `](${LOCAL_BULK_ROUNDUP_URL})`
+      );
+    }
+  });
+});
+
+describe('Published blog inbound-link contract', () => {
+  function getLiveBlogSlugs(): string[] {
+    const snapshot = getSeoEquitySnapshot();
+    const staticBlogData = JSON.parse(
+      readFileSync(join(ROOT, 'content/blog-data.json'), 'utf8')
+    ) as { posts: Array<{ slug: string }> };
+
+    return [
+      ...new Set([
+        ...snapshot.entities
+          .filter(entity => entity.type === 'blog')
+          .map(entity => entity.url.replace(/^\/blog\//, '')),
+        ...staticBlogData.posts.map(post => post.slug),
+      ]),
+    ].filter(slug => !BLOCKED_BLOG_SLUGS.has(slug));
+  }
+
+  it('gives every published post at least two inbound internal links', () => {
+    const snapshot = getSeoEquitySnapshot();
+    const slugs = getLiveBlogSlugs();
+    const counts = getSeoEquityInboundLinkCounts(snapshot, { blogSlugs: slugs });
+
+    const underlinked = slugs.filter(slug => (counts.get(`/blog/${slug}`) ?? 0) < 2);
+
+    expect(underlinked, `Underlinked posts: ${underlinked.join(', ')}`).toHaveLength(0);
+  });
+
+  it('fails when a post loses its inbound links', () => {
+    const snapshot = structuredClone(getSeoEquitySnapshot());
+    const targetUrl = '/blog/fixing-pixelated-photos';
+    for (const source of Object.keys(snapshot.surfaces.blogFooterRelated)) {
+      snapshot.surfaces.blogFooterRelated[source] = snapshot.surfaces.blogFooterRelated[
+        source
+      ].filter(url => url !== targetUrl);
+    }
+
+    const slugs = getLiveBlogSlugs();
+    const issues = validateSeoEquityPromotedUrls(snapshot, {
+      blogSlugs: slugs,
+      routes: [
+        ...snapshot.entities.filter(entity => entity.type !== 'blog').map(entity => entity.url),
+        ...Object.keys(snapshot.surfaces.pseoRelatedBlogPosts),
+        ...Object.keys(snapshot.surfaces.hubSpokeLinks),
+      ],
+    });
+
+    expect(issues).toContain(`${targetUrl} has 0 inbound internal links (minimum 2)`);
+  });
+
+  it('does not count configured surfaces without a rendered consumer', () => {
+    const snapshot = structuredClone(getSeoEquitySnapshot());
+    const targetUrl = '/blog/fixing-pixelated-photos';
+    snapshot.surfaces.homepageBlogPicks = [];
+    snapshot.surfaces.blogIndexFeatured = [];
+    snapshot.surfaces.blogStartHere = [];
+    snapshot.surfaces.blogFooterRelated = {};
+    snapshot.surfaces.pseoRelatedBlogPosts = {
+      '/tools/ai-image-upscaler': [targetUrl],
+    };
+    snapshot.surfaces.hubSpokeLinks = {
+      '/blog': [targetUrl],
+    };
+
+    const counts = getSeoEquityInboundLinkCounts(snapshot, {
+      blogSlugs: ['fixing-pixelated-photos'],
+    });
+
+    expect(counts.get(targetUrl)).toBe(0);
   });
 });

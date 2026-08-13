@@ -112,7 +112,9 @@ describe('Blog Sitemap', () => {
       const response = await GET();
       const xml = await response.text();
 
-      expect(xml).toContain('https://myimageupscaler.com/blog/how-to-upscale-images-without-losing-quality');
+      expect(xml).toContain(
+        'https://myimageupscaler.com/blog/how-to-upscale-images-without-losing-quality'
+      );
       expect(xml).toContain('https://myimageupscaler.com/blog/how-to-convert-png-to-4k');
       expect(xml).not.toContain('/en/blog/');
     });
@@ -125,6 +127,23 @@ describe('Blog Sitemap', () => {
       const xml = await response.text();
 
       expect(xml).toContain('<loc>https://myimageupscaler.com/blog</loc>');
+    });
+
+    it('includes every published post returned by the hybrid service', async () => {
+      const publishedPosts = [
+        STATIC_POST,
+        DB_POST_1,
+        { ...DB_POST_2, slug: 'heic-iphone-photo-upscaling-guide' },
+      ];
+      mockGetAllPublishedPosts.mockResolvedValue(publishedPosts);
+
+      const { GET } = await import('@/app/sitemap-blog.xml/route');
+      const response = await GET();
+      const xml = await response.text();
+
+      for (const post of publishedPosts) {
+        expect(xml, `Missing published post ${post.slug}`).toContain(`/blog/${post.slug}`);
+      }
     });
   });
 
@@ -251,10 +270,7 @@ describe('Blog Post Schema', () => {
     // This is a static assertion — if the type changes, this test fails
     const fs = await import('fs');
     const path = await import('path');
-    const filePath = path.resolve(
-      process.cwd(),
-      'app/[locale]/blog/[slug]/page.tsx'
-    );
+    const filePath = path.resolve(process.cwd(), 'app/[locale]/blog/[slug]/page.tsx');
     const content = fs.readFileSync(filePath, 'utf8');
 
     expect(content).toContain("'@type': 'BlogPosting'");
@@ -264,10 +280,7 @@ describe('Blog Post Schema', () => {
   it('publisher name does not append extra suffix', async () => {
     const fs = await import('fs');
     const path = await import('path');
-    const filePath = path.resolve(
-      process.cwd(),
-      'app/[locale]/blog/[slug]/page.tsx'
-    );
+    const filePath = path.resolve(process.cwd(), 'app/[locale]/blog/[slug]/page.tsx');
     const content = fs.readFileSync(filePath, 'utf8');
 
     expect(content).not.toContain('`${clientEnv.APP_NAME} AI`');

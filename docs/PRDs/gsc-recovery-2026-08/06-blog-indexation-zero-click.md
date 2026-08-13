@@ -19,20 +19,20 @@ explicitly excludes `/blog/*`).
 
 **(b) Seven informational posts produce 41% of site impressions and 4.7% of clicks.**
 
-| Page | Impressions | Clicks | CTR | Position |
-| --- | ---: | ---: | ---: | ---: |
-| `/blog/fixing-pixelated-photos` | 90,070 | 13 | 0.01% | 9.6 |
-| `/blog/poster-size-dimensions-pixels` | 20,815 | 55 | 0.26% | 7.0 |
-| `/blog/topaz-labs-free-trial` | 15,141 | 175 | 1.16% | 8.0 |
-| `/blog/how-to-upscale-youtube-thumbnails` | 11,379 | 64 | 0.56% | 7.1 |
-| `/blog/best-image-upscaler` | 6,858 | 36 | 0.52% | 9.8 |
-| `/blog/best-ai-upscaler` | 6,047 | 33 | 0.55% | 9.9 |
-| `/blog/topaz-video-upscaler` | 5,449 | 13 | 0.24% | 10.2 |
-| **Total** | **~156,000** | **~389** | | |
+| Page                                      |  Impressions |   Clicks |   CTR | Position |
+| ----------------------------------------- | -----------: | -------: | ----: | -------: |
+| `/blog/fixing-pixelated-photos`           |       90,070 |       13 | 0.01% |      9.6 |
+| `/blog/poster-size-dimensions-pixels`     |       20,815 |       55 | 0.26% |      7.0 |
+| `/blog/topaz-labs-free-trial`             |       15,141 |      175 | 1.16% |      8.0 |
+| `/blog/how-to-upscale-youtube-thumbnails` |       11,379 |       64 | 0.56% |      7.1 |
+| `/blog/best-image-upscaler`               |        6,858 |       36 | 0.52% |      9.8 |
+| `/blog/best-ai-upscaler`                  |        6,047 |       33 | 0.55% |      9.9 |
+| `/blog/topaz-video-upscaler`              |        5,449 |       13 | 0.24% |     10.2 |
+| **Total**                                 | **~156,000** | **~389** |       |          |
 
 One query — "how to fix pixelated photos" — produced **88,317 impressions and 1 click at position
 9.4**. A normal page-one blue link converts at 1–2%. One click from 88K means the URL is being
-*displayed* (AI Overview, image pack, "things to know") and not clicked. Generative-AI-feature
+_displayed_ (AI Overview, image pack, "things to know") and not clicked. Generative-AI-feature
 impressions rose 24.2K → 37.6K (+55%) in the same 28 days.
 
 Consequence: site-wide CTR (2.2%) and average position (12.2) are **not health metrics** here.
@@ -109,12 +109,12 @@ at read time.
 
 ## Integration Ledger
 
-| # | New thing | Live caller (`file:line`, non-test) | Replaces | Old path removed? | Negative control |
-| --- | --- | --- | --- | --- | --- |
-| 1 | `scripts/seo/blog-indexation-report.ts` | `package.json` `seo:blog:indexation` | manual GSC reads | n/a | run with an empty GSC response → exits 1 instead of reporting "all indexed" |
-| 2 | `lib/seo/page-intent.ts` (`getPageIntent`) | `scripts/seo/blog-indexation-report.ts:TBD`, `scripts/seo/ctr-report.ts:TBD`, `client/components/blog/BlogCTA.tsx:TBD` | site-wide CTR reading | commercial/informational split replaces it in Phase 2 | classify everything as commercial → the CTR-split test goes red |
-| 3 | Inbound-link rule in `lib/seo/seo-equity.ts` | `validateSeoEquityPromotedUrls` called from `yarn verify` chain | advisory validation | strengthened in Phase 1 | publish a post with no inbound links → `yarn verify` fails |
-| 4 | Above-the-fold tool CTA on informational posts | `app/[locale]/blog/[slug]/page.tsx:TBD` | CTA only mid/end of post | Phase 3 | remove the CTA → the e2e above-the-fold test goes red |
+| #   | New thing                                      | Live caller (`file:line`, non-test)                                                                                   | Replaces                 | Old path removed?                                     | Negative control                                                            |
+| --- | ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------ | ----------------------------------------------------- | --------------------------------------------------------------------------- |
+| 1   | `scripts/seo/blog-indexation-report.ts`        | `package.json:101` (`seo:blog:indexation`)                                                                            | manual GSC reads         | n/a                                                   | run with an empty GSC response → exits 1 instead of reporting "all indexed" |
+| 2   | `lib/seo/page-intent.ts` (`getPageIntent`)     | `scripts/seo/blog-indexation-report.ts:388`, `scripts/seo/ctr-report.ts:136`, `client/components/blog/BlogCTA.tsx:69` | site-wide CTR reading    | commercial/informational split replaces it in Phase 2 | classify everything as commercial → the CTR-split test goes red             |
+| 3   | Inbound-link rule in `lib/seo/seo-equity.ts`   | `scripts/validate-seo-equity.ts:20` (called by `package.json:29` `verify`)                                            | advisory validation      | strengthened in Phase 1                               | publish a post with no inbound links → `yarn verify` fails                  |
+| 4   | Above-the-fold tool CTA on informational posts | `app/[locale]/blog/[slug]/page.tsx:394`                                                                               | CTA only mid/end of post | Phase 3                                               | remove the CTA → the e2e above-the-fold test goes red                       |
 
 ### Reachability
 
@@ -186,11 +186,11 @@ yarn seo:blog:indexation | tee /tmp/blog-index-before.txt
 
 **Tests Required:**
 
-| Test File | Test Name | Assertion | Negative control |
-| --- | --- | --- | --- |
-| `tests/unit/seo/blog-internal-links.unit.spec.ts` | `should give every published post at least two inbound internal links` | computed inbound count ≥2 for all slugs | remove a post's links → red |
-| `tests/unit/seo/blog-sitemap.unit.spec.ts` (pre-existing) | `should include every published post` | slugs from `getAllPublishedSlugs()` all appear in `sitemap-blog.xml` | drop one → red |
-| `tests/unit/seo/blog-canonical.unit.spec.ts` | `should self-canonical every published post` | canonical === the post's own URL | point one elsewhere → red |
+| Test File                                                 | Test Name                                                              | Assertion                                                            | Negative control            |
+| --------------------------------------------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------- | --------------------------- |
+| `tests/unit/seo/blog-internal-links.unit.spec.ts`         | `should give every published post at least two inbound internal links` | computed inbound count ≥2 for all slugs                              | remove a post's links → red |
+| `tests/unit/seo/blog-sitemap.unit.spec.ts` (pre-existing) | `should include every published post`                                  | slugs from `getAllPublishedSlugs()` all appear in `sitemap-blog.xml` | drop one → red              |
+| `tests/unit/seo/blog-canonical.unit.spec.ts`              | `should self-canonical every published post`                           | canonical === the post's own URL                                     | point one elsewhere → red   |
 
 **Revert check:** revert `content/seo-equity.json` → the inbound-link test fails.
 
@@ -214,11 +214,11 @@ yarn seo:blog:indexation | tee /tmp/blog-index-before.txt
 
 **Tests Required:**
 
-| Test File | Test Name | Assertion | Negative control |
-| --- | --- | --- | --- |
-| `tests/unit/seo/page-intent.unit.spec.ts` | `should classify the roundup post as commercial` | `getPageIntent('/blog/best-free-ai-image-upscaler-2026-tested-compared') === 'commercial'` | classify by path prefix only → red |
-| `tests/unit/seo/page-intent.unit.spec.ts` | `should classify the pixelated-photos guide as informational` | returns `informational` | invert → red |
-| `tests/unit/seo/page-intent.unit.spec.ts` | `should list every excluded URL in the report` | excluded set is non-empty and printed | silently drop → red |
+| Test File                                 | Test Name                                                     | Assertion                                                                                  | Negative control                   |
+| ----------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------- |
+| `tests/unit/seo/page-intent.unit.spec.ts` | `should classify the roundup post as commercial`              | `getPageIntent('/blog/best-free-ai-image-upscaler-2026-tested-compared') === 'commercial'` | classify by path prefix only → red |
+| `tests/unit/seo/page-intent.unit.spec.ts` | `should classify the pixelated-photos guide as informational` | returns `informational`                                                                    | invert → red                       |
+| `tests/unit/seo/page-intent.unit.spec.ts` | `should list every excluded URL in the report`                | excluded set is non-empty and printed                                                      | silently drop → red                |
 
 ---
 
@@ -244,10 +244,10 @@ yarn seo:blog:indexation | tee /tmp/blog-index-before.txt
 
 **Tests Required:**
 
-| Test File | Test Name | Assertion | Negative control |
-| --- | --- | --- | --- |
-| `tests/e2e/blog/above-fold-cta.spec.ts` | `should show a tool CTA without scrolling on a 390px viewport` | CTA visible in the initial viewport | move it below the fold → red |
-| `tests/unit/seo/blog-ctr-fixes.unit.spec.ts` (pre-existing) | `should answer the primary query in the first paragraph` | first paragraph contains the primary keyword | revert the copy → red |
+| Test File                                                   | Test Name                                                      | Assertion                                    | Negative control             |
+| ----------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------- | ---------------------------- |
+| `tests/e2e/blog/above-fold-cta.spec.ts`                     | `should show a tool CTA without scrolling on a 390px viewport` | CTA visible in the initial viewport          | move it below the fold → red |
+| `tests/unit/seo/blog-ctr-fixes.unit.spec.ts` (pre-existing) | `should answer the primary query in the first paragraph`       | first paragraph contains the primary keyword | revert the copy → red        |
 
 **User Verification (manual):** open each of the seven URLs on a phone-sized viewport; a tool entry
 point is visible without scrolling and leads to the right tool.
@@ -267,7 +267,9 @@ point is visible without scrolling and leads to the right tool.
 alternatives · best 8K upscaler · best bulk upscaler.
 
 **Verification:** each new roundup ships with ≥2 inbound internal links (Phase 1 rule) and is
-measured at 28 days against the 12.4% CTR benchmark. One of these is worth 200 matrix pages.
+measured at 28 days against the 12.4% CTR benchmark. Lane 6 provides the local bulk-roundup
+artifact with its inbound-link wiring; production publication, deployment, and indexing remain
+post-deploy external steps. One of these is worth 200 matrix pages.
 
 ---
 
@@ -324,12 +326,14 @@ git stash && yarn test:unit tests/unit/seo/blog-internal-links.unit.spec.ts && g
       without scrolling
 - [ ] Commercial CTR is reported separately from informational CTR, with excluded URLs named
 - [ ] No blog post was noindexed or deleted to improve a metric
-- [ ] The roundup checklist exists and the next roundup ships against it
+- [ ] The roundup checklist exists and the next roundup ships against it.
+      Lane 6's local artifact is ready.
+      Production publication, deployment, GSC/IndexNow indexing, and live measurements remain post-deploy external acceptance items.
 
 Binary done checks:
 
 - [ ] All phases complete · tests pass · `yarn verify` passes
 - [ ] Automated + manual checkpoints passed
-- [ ] Integration Ledger has zero `TBD` cells
+- [ ] Integration Ledger has every caller cell populated
 - [ ] Every gate observed red first
 - [ ] SEO backlog + GSC indexing backlog updated

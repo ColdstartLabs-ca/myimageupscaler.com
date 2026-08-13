@@ -9,6 +9,87 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-08-13
+
+### PRD 06: Blog indexation, intent reporting, and citation CTAs
+
+Changes:
+
+- Added fail-closed GSC indexation and commercial-vs-informational CTR reports with explicit excluded URLs (`scripts/seo/blog-indexation-report.ts`, `scripts/seo/ctr-report.ts`, `lib/seo/page-intent.ts`, `package.json`).
+- Enforced ≥2 inbound internal links for each non-blocked published blog slug through the verify chain and expanded `content/seo-equity.json` to cover the full live inventory.
+- Added self-canonical and above-the-fold CTA regression coverage; `/blog/fixing-pixelated-photos` now links before the hero to `/tools/ai-image-upscaler` (`app/[locale]/blog/[slug]/page.tsx`, `client/components/blog/BlogCTA.tsx`).
+- Added the 33 crawled-not-indexed URLs to the [GSC request-indexing backlog](./gsc-request-indexing-backlog.md) and created the reusable roundup checklist.
+
+Validation:
+
+- Focused SEO tests: 8 files, 45 tests passed; `yarn verify` passed with 0 errors and the existing lint warnings. The local above-the-fold Chromium check was discovered correctly but skipped because this worktree has no published database-backed blog row.
+- Production blog title/meta writes were not made: the mandated `yarn db:backup` gate stopped at missing `.env.client` in this fresh worktree.
+
+Follow-up:
+
+- Supply the production environment and rerun the backup verification before applying the seven PRD metadata edits; then deploy and request the 33 URLs over four days.
+- Evaluate the 14-day (2026-08-27) and 28-day (2026-09-10) GSC checkpoints from PRD 06.
+
+### Lane 6: Bulk roundup local publication handoff
+
+Changes:
+
+- Added contextual inbound links to `/blog/best-bulk-image-upscalers-2026` from `content/blog/upscale-product-photos-amazon-etsy-guide.mdx` and `content/blog/ai-image-enhancement-ecommerce-guide.mdx`.
+- Added a narrow `blog-internal-links` assertion for both local MDX sources; the production SEO-equity snapshot remains unchanged because this roundup is a local publishable artifact, not a production blog record.
+
+Validation:
+
+- Focused validation for the new local inbound-link contract is part of the final lane checks.
+
+Follow-up:
+
+- The local roundup is the safe publishable artifact for this lane. Production blog publication, deployment, and GSC/IndexNow indexing remain post-deploy external steps; no blog API, publish endpoint, Supabase, or production service was called.
+
+### Lane 6 final read-only repair review
+
+Source: [PRD 06](../../PRDs/gsc-recovery-2026-08/06-blog-indexation-zero-click.md)
+
+Changes:
+
+- Made current GSC status mandatory, kept the 33-row CSV as reconciliation-only history, and added exact-membership loader regression coverage.
+- Classified `/blog/best-bulk-image-upscalers-2026` as commercial for absolute and locale-prefixed URLs.
+- Replaced unverified roundup candidates with one local `sharp@0.34.5` record across face, text, low-resolution, and edge-case inputs; committed provenance-backed outputs and rebuilt `content/blog-data.json`.
+- Hardened the roundup test to require both the MDX source and its compiled published-inventory entry, while preserving both contextual inbound links.
+
+Validation:
+
+- Red-first focused run: 8 expected failures before implementation; green focused run: 34/34 tests.
+- The generated inventory was rebuilt with the equivalent local ESM loader because the sandbox denied the `tsx` CLI IPC pipe; external image checks emitted network warnings only.
+
+Follow-up:
+
+- Production publication, deployment, live measurements, GSC URL Inspection, and request-indexing remain external post-deploy acceptance work; no production write or indexing request was made.
+
+### Lane 6 final repair review round 2
+
+Source: [PRD 06](../../PRDs/gsc-recovery-2026-08/06-blog-indexation-zero-click.md)
+
+Changes:
+
+- Made the published blog inventory fail closed when the database slug query cannot load, instead of converting the failure to an empty list.
+- Explicitly reconciled the 28 historical baseline URLs absent from the checked-in 66-active-slug inventory; the named set is validated for drift and never added as ghost posts.
+- Split known GSC-unindexed rows from unavailable/unknown status rows and restored the exact roundup acceptance wording with source-backed checklist evidence tests.
+
+Validation:
+
+- Red-first focused gate: 7 expected failures before implementation; green focused gate: 23/23 tests across the indexation report, PRD claims, and published-inventory suites.
+- Affected SEO unit gate: 56/56 tests across 7 files; `yarn tsc` passed; lint completed with 0 errors and existing warnings; ICU and schema validation passed.
+- On merge to master: `yarn tsc` clean; 94 unit test files green across `tests/unit/seo` and `tests/unit/blog`.
+
+Corrections applied while squashing to master:
+
+- The lane made `getAllPublishedSlugs()` throw when the database inventory is unavailable. That function backs `generateStaticParams` in `app/[locale]/blog/[slug]/page.tsx`, so a build without `SUPABASE_SERVICE_ROLE_KEY` would have hard-failed instead of rendering the static MDX posts. Split into `getAllPublishedSlugsStrict()` (fails closed — used by `validate-seo-equity.ts` and `blog-indexation-report.ts`) and `getAllPublishedSlugs()` (logs and degrades to the static inventory — used by static generation). Covered by a regression test.
+- `validate:seo:equity` was wired into `yarn verify`, which made the default verification chain require production database credentials. It is now a standalone command; run `yarn validate:seo:equity` with a read-only database environment as a deploy-time gate.
+
+Follow-up:
+
+- [ ] Run `yarn validate:seo:equity` with the read-only database environment before deploying, then run the live indexation report. Production publication, deployment, GSC/IndexNow indexing, and 14/28-day measurement remain external post-deploy acceptance work; no production write or indexing request was made.
+
 ## Open Follow-Ups
 
 - [ ] After next deploy, complete [GSC request indexing backlog](./gsc-request-indexing-backlog.md).

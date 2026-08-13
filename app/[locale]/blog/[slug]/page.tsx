@@ -24,6 +24,7 @@ import { BlogCTA, parseCTAMarker } from '@client/components/blog/BlogCTA';
 import { buildBlogAboutEntities, buildBlogBreadcrumbJsonLd } from '@lib/seo/blog-template-signals';
 import { BLOG_SPECIALIST_PROFILE } from '@lib/blog/specialist-profile';
 import { getRelatedPostsForSlug } from '@lib/seo/seo-equity';
+import { getPageIntent } from '@lib/seo/page-intent';
 import { BlogFaqSection } from '@client/components/blog/BlogFaqSection';
 import { buildFallbackBlogFaq, buildFaqJsonLd } from '@lib/blog/blog-faq';
 
@@ -177,6 +178,54 @@ function getQuickVerdict(post: { title: string; description: string; category: s
   return `${trimmedDescription} Use the guide below to choose the right workflow, then test the result with your own image.`;
 }
 
+const INFORMATIONAL_CTA_DESTINATIONS: Record<
+  string,
+  { href: string; title: string; description: string; buttonLabel: string }
+> = {
+  'fixing-pixelated-photos': {
+    href: '/tools/ai-image-upscaler',
+    title: 'Fix the pixels in your image',
+    description: 'Try a browser-based AI upscale before you rebuild the photo from scratch.',
+    buttonLabel: 'Upscale image',
+  },
+  'poster-size-dimensions-pixels': {
+    href: '/tools/resize/image-resizer',
+    title: 'Set the right print dimensions',
+    description: 'Resize your image to the poster dimensions you just calculated.',
+    buttonLabel: 'Resize image',
+  },
+  'topaz-labs-free-trial': {
+    href: '/blog/best-free-ai-image-upscaler-2026-tested-compared',
+    title: 'Compare browser-based alternatives',
+    description: 'See current free and paid upscalers side by side before starting a trial.',
+    buttonLabel: 'See the comparison',
+  },
+  'how-to-upscale-youtube-thumbnails': {
+    href: '/tools/resize/resize-image-for-youtube',
+    title: 'Prepare a YouTube thumbnail',
+    description: 'Resize and sharpen your thumbnail for the 1280×720 upload target.',
+    buttonLabel: 'Resize thumbnail',
+  },
+  'best-image-upscaler': {
+    href: '/blog/best-free-ai-image-upscaler-2026-tested-compared',
+    title: 'Compare the leading upscalers',
+    description: 'Use the tested comparison to narrow down the right image workflow.',
+    buttonLabel: 'Compare tools',
+  },
+  'best-ai-upscaler': {
+    href: '/blog/best-free-ai-image-upscaler-2026-tested-compared',
+    title: 'Compare the leading AI upscalers',
+    description: 'Review quality, speed, and export limits before choosing a tool.',
+    buttonLabel: 'Compare tools',
+  },
+  'topaz-video-upscaler': {
+    href: '/blog/best-free-ai-image-upscaler-2026-tested-compared',
+    title: 'Compare alternatives before you buy',
+    description: 'Review browser and desktop enhancement options in one comparison.',
+    buttonLabel: 'See alternatives',
+  },
+};
+
 export async function generateStaticParams() {
   const slugs = await getAllPublishedSlugs();
   return slugs.map(slug => ({ slug }));
@@ -249,6 +298,10 @@ export default async function BlogPostPage({ params }: IPageProps) {
   const relatedPosts = snapshotRelated.length > 0 ? snapshotRelated : fallbackRelated;
 
   const postDate = getPostPublishedDate(post);
+  const pageUrl = `/blog/${slug}`;
+  const pageIntent = getPageIntent(pageUrl);
+  const aboveFoldCta =
+    pageIntent === 'informational' ? INFORMATIONAL_CTA_DESTINATIONS[slug] : undefined;
   const readingTime = post.readingTime ?? '5 min read';
   const schemaOrg = { appName: clientEnv.APP_NAME, baseUrl: clientEnv.BASE_URL };
   const quickVerdict = getQuickVerdict(post);
@@ -341,6 +394,18 @@ export default async function BlogPostPage({ params }: IPageProps) {
               </Link>
             </nav>
 
+            {aboveFoldCta && (
+              <BlogCTA
+                type="tool"
+                variant="aboveFold"
+                pageUrl={pageUrl}
+                href={aboveFoldCta.href}
+                title={aboveFoldCta.title}
+                description={aboveFoldCta.description}
+                buttonLabel={aboveFoldCta.buttonLabel}
+              />
+            )}
+
             <BlogPostHeroSection
               title={post.title}
               description={post.description}
@@ -428,7 +493,13 @@ export default async function BlogPostPage({ params }: IPageProps) {
                         // Check for CTA markers first
                         const ctaResult = parseCTAMarker(childrenAsString);
                         if (ctaResult) {
-                          return <BlogCTA type={ctaResult.type} toolSlug={ctaResult.toolSlug} />;
+                          return (
+                            <BlogCTA
+                              type={ctaResult.type}
+                              toolSlug={ctaResult.toolSlug}
+                              pageUrl={pageUrl}
+                            />
+                          );
                         }
 
                         const tipMatch = childrenAsString.match(/\[!TIP\]\s*/);

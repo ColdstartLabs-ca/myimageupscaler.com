@@ -16,6 +16,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ReactElement } from 'react';
 import { useTranslations } from 'next-intl';
+import { getPageIntent } from '@lib/seo/page-intent';
 
 export type BlogCTAType = 'try' | 'demo' | 'pricing' | 'tool';
 
@@ -29,6 +30,14 @@ interface IBlogCTAProps {
   toolSlug?: string;
   /** Tool name for display */
   toolName?: string;
+  /** Explicit destination for a page-specific CTA */
+  href?: string;
+  /** Compact variant used before the article hero */
+  variant?: 'default' | 'aboveFold';
+  /** Blog URL used to keep the compact variant informational-only */
+  pageUrl?: string;
+  /** Optional button-label override */
+  buttonLabel?: string;
 }
 
 const CTA_HREF: Record<BlogCTAType, string> = {
@@ -44,14 +53,29 @@ export function BlogCTA({
   description,
   toolSlug,
   toolName,
+  href: customHref,
+  variant = 'default',
+  pageUrl,
+  buttonLabel,
 }: IBlogCTAProps): ReactElement {
   const t = useTranslations('blog.cta');
   const trustIndicators = t.raw('trustIndicators') as string[];
 
   const displayTitle = title || t(`${type}.title`);
   const displayDescription = description || t(`${type}.description`);
-  const href = toolSlug ? `/tools/${toolSlug}` : CTA_HREF[type];
-  const buttonText = toolName ? `Try ${toolName} Free` : t(`${type}.button`);
+  const href = customHref || (toolSlug ? `/tools/${toolSlug}` : CTA_HREF[type]);
+  const buttonText = buttonLabel || (toolName ? `Try ${toolName} Free` : t(`${type}.button`));
+
+  if (variant === 'aboveFold' && pageUrl && getPageIntent(pageUrl) === 'informational') {
+    return (
+      <AboveFoldCTA
+        title={displayTitle}
+        description={displayDescription}
+        buttonText={buttonText}
+        href={href}
+      />
+    );
+  }
 
   if (type === 'try' || type === 'tool') {
     return (
@@ -83,6 +107,43 @@ export function BlogCTA({
       href={href}
       trustIndicators={trustIndicators}
     />
+  );
+}
+
+/** Compact tool entry point for readers arriving at an informational post. */
+function AboveFoldCTA({
+  title,
+  description,
+  buttonText,
+  href,
+}: {
+  title: string;
+  description: string;
+  buttonText: string;
+  href: string;
+}): ReactElement {
+  return (
+    <div
+      data-testid="blog-above-fold-cta"
+      className="not-prose mb-5 rounded-xl border border-accent/30 bg-surface px-4 py-3 shadow-sm shadow-accent/10 sm:px-5"
+    >
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent">
+            Quick option
+          </p>
+          <h2 className="mt-0.5 text-sm font-semibold text-primary">{title}</h2>
+          <p className="mt-0.5 text-xs leading-5 text-muted-foreground">{description}</p>
+        </div>
+        <Link
+          href={href}
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg gradient-cta px-3 py-2 text-xs font-semibold text-white shadow-sm shadow-accent/20 transition-opacity hover:opacity-90"
+        >
+          {buttonText}
+          <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+        </Link>
+      </div>
+    </div>
   );
 }
 
