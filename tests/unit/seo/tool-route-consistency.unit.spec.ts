@@ -4,12 +4,13 @@
  *
  * These tests ensure:
  * 1. Every slug returned by getAllToolSlugs() resolves to non-null data
- * 2. DEDICATED_ROUTE_SLUGS and TOOLS_INTERACTIVE_PATHS are in sync
+ * 2. DEDICATED_ROUTE_SLUGS and INTERACTIVE_TOOL_PATHS are in sync
  * 3. getAllToolSlugs() and DEDICATED_ROUTE_SLUGS are mutually exclusive
  * 4. Sitemap tool URLs match actual routes
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { INTERACTIVE_TOOL_PATHS } from '@/lib/seo/interactive-tool-routes';
 
 // Mock serverEnv before any imports that use it
 vi.mock('@shared/config/env', () => ({
@@ -62,27 +63,26 @@ describe('Tool Route Consistency', () => {
     });
   });
 
-  describe('DEDICATED_ROUTE_SLUGS should have matching TOOLS_INTERACTIVE_PATHS', () => {
-    it('should have TOOLS_INTERACTIVE_PATHS entry for each DEDICATED_ROUTE_SLUGS', async () => {
+  describe('DEDICATED_ROUTE_SLUGS should have matching INTERACTIVE_TOOL_PATHS', () => {
+    it('should have INTERACTIVE_TOOL_PATHS entry for each DEDICATED_ROUTE_SLUGS', async () => {
       const { DEDICATED_ROUTE_SLUGS } = await import('@/lib/seo/data-loader');
-      const { TOOLS_INTERACTIVE_PATHS } = await import('@/lib/seo/locale-sitemap-handler');
 
       const dedicatedSlugs = Array.from(DEDICATED_ROUTE_SLUGS);
-      const interactivePathsKeys = Object.keys(TOOLS_INTERACTIVE_PATHS);
+      const interactivePathsKeys = Object.keys(INTERACTIVE_TOOL_PATHS);
 
-      // Every dedicated route slug should have a corresponding path in TOOLS_INTERACTIVE_PATHS
+      // Every dedicated route slug should have a corresponding path in INTERACTIVE_TOOL_PATHS
       for (const slug of dedicatedSlugs) {
         expect(
-          TOOLS_INTERACTIVE_PATHS[slug],
-          `DEDICATED_ROUTE_SLUG "${slug}" should have matching TOOLS_INTERACTIVE_PATHS entry`
+          INTERACTIVE_TOOL_PATHS[slug as keyof typeof INTERACTIVE_TOOL_PATHS],
+          `DEDICATED_ROUTE_SLUG "${slug}" should have matching INTERACTIVE_TOOL_PATHS entry`
         ).toBeDefined();
       }
 
-      // Every TOOLS_INTERACTIVE_PATHS key should be in DEDICATED_ROUTE_SLUGS
+      // Every INTERACTIVE_TOOL_PATHS key should be in DEDICATED_ROUTE_SLUGS
       for (const slug of interactivePathsKeys) {
         expect(
           DEDICATED_ROUTE_SLUGS.has(slug),
-          `TOOLS_INTERACTIVE_PATHS key "${slug}" should be in DEDICATED_ROUTE_SLUGS`
+          `INTERACTIVE_TOOL_PATHS key "${slug}" should be in DEDICATED_ROUTE_SLUGS`
         ).toBe(true);
       }
 
@@ -91,20 +91,19 @@ describe('Tool Route Consistency', () => {
       const interactiveSet = new Set(interactivePathsKeys);
       expect(
         dedicatedSet,
-        'DEDICATED_ROUTE_SLUGS and TOOLS_INTERACTIVE_PATHS keys should match'
+        'DEDICATED_ROUTE_SLUGS and INTERACTIVE_TOOL_PATHS keys should match'
       ).toEqual(interactiveSet);
     });
 
-    it('should have exactly 15 dedicated route slugs', async () => {
+    it('should have exactly 24 dedicated route slugs', async () => {
       const { DEDICATED_ROUTE_SLUGS } = await import('@/lib/seo/data-loader');
-      const { TOOLS_INTERACTIVE_PATHS } = await import('@/lib/seo/locale-sitemap-handler');
 
       // This count should match the known dedicated routes:
-      // - 7 resize tools (image-resizer, bulk-image-resizer, + 5 social media)
-      // - 6 convert tools (png-to-jpg, jpg-to-png, webp-to-jpg, webp-to-png, jpg-to-webp, png-to-webp)
+      // - 12 resize tools (image-resizer, bulk-image-resizer, + 10 social media)
+      // - 10 convert tools (the base conversions plus four format expansions)
       // - 2 compress tools (image-compressor, bulk-image-compressor)
-      expect(DEDICATED_ROUTE_SLUGS.size).toBe(15);
-      expect(Object.keys(TOOLS_INTERACTIVE_PATHS)).toHaveLength(15);
+      expect(DEDICATED_ROUTE_SLUGS.size).toBe(24);
+      expect(Object.keys(INTERACTIVE_TOOL_PATHS)).toHaveLength(24);
     });
 
     it('should have data entries for all DEDICATED_ROUTE_SLUGS', async () => {
@@ -184,10 +183,8 @@ describe('Tool Route Consistency', () => {
 
   describe('sitemap tool URLs should match actual routes', () => {
     it('should have valid paths for all interactive tools in sitemap', async () => {
-      const { TOOLS_INTERACTIVE_PATHS } = await import('@/lib/seo/locale-sitemap-handler');
-
       // All paths should follow the pattern /tools/{subroute}/{slug}
-      for (const [slug, path] of Object.entries(TOOLS_INTERACTIVE_PATHS)) {
+      for (const [slug, path] of Object.entries(INTERACTIVE_TOOL_PATHS)) {
         expect(path.startsWith('/tools/'), `Path for "${slug}" should start with /tools/`).toBe(
           true
         );
@@ -204,8 +201,6 @@ describe('Tool Route Consistency', () => {
     });
 
     it('should map slugs to correct subroute categories', async () => {
-      const { TOOLS_INTERACTIVE_PATHS } = await import('@/lib/seo/locale-sitemap-handler');
-
       // Resize tools
       const resizeSlugs = [
         'image-resizer',
@@ -219,7 +214,7 @@ describe('Tool Route Consistency', () => {
 
       for (const slug of resizeSlugs) {
         expect(
-          TOOLS_INTERACTIVE_PATHS[slug],
+          INTERACTIVE_TOOL_PATHS[slug as keyof typeof INTERACTIVE_TOOL_PATHS],
           `Resize tool "${slug}" should map to /tools/resize/`
         ).toMatch(/^\/tools\/resize\//);
       }
@@ -236,7 +231,7 @@ describe('Tool Route Consistency', () => {
 
       for (const slug of convertSlugs) {
         expect(
-          TOOLS_INTERACTIVE_PATHS[slug],
+          INTERACTIVE_TOOL_PATHS[slug as keyof typeof INTERACTIVE_TOOL_PATHS],
           `Convert tool "${slug}" should map to /tools/convert/`
         ).toMatch(/^\/tools\/convert\//);
       }
@@ -246,7 +241,7 @@ describe('Tool Route Consistency', () => {
 
       for (const slug of compressSlugs) {
         expect(
-          TOOLS_INTERACTIVE_PATHS[slug],
+          INTERACTIVE_TOOL_PATHS[slug as keyof typeof INTERACTIVE_TOOL_PATHS],
           `Compress tool "${slug}" should map to /tools/compress/`
         ).toMatch(/^\/tools\/compress\//);
       }

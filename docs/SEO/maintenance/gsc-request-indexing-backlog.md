@@ -12,6 +12,13 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 
 ## Pending
 
+### GSC 404 recovery — request after deployment
+
+- [ ] `https://myimageupscaler.com/de/tools/resize/resize-image-for-telegram` — dedicated locale route now renders fallback tool content; request indexing after deployment.
+- [ ] `https://myimageupscaler.com/use-cases-expanded/real-estate-photography` — restored page route and sitemap registration; request indexing after deployment.
+- [ ] `https://myimageupscaler.com/guides/how-to-upscale-images` — owner for the retired `/guides/how-to-upsize-images` family; request indexing after deployment.
+- [ ] `https://myimageupscaler.com/tools/convert/jpg-to-webp` — canonical owner for legacy converter paths; request indexing after deployment.
+
 - [x] `https://myimageupscaler.com/`
 - [x] `https://myimageupscaler.com/blog/best-ai-upscaler` — daily request-indexing quota reached on 2026-07-10; retry later.
 - [x] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared` — refreshed 2026-07-20; request indexing for the latest version.

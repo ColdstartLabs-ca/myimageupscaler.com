@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getAllTools, getAllInteractiveTools } from '@/lib/seo/data-loader';
-import { TOOLS_INTERACTIVE_PATHS } from '@/lib/seo/locale-sitemap-handler';
+import { INTERACTIVE_TOOL_PATHS } from '@/lib/seo/interactive-tool-routes';
 import { generateCategoryMetadata } from '@/lib/seo/metadata-factory';
 import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 import { HreflangLinks } from '@client/components/seo/HreflangLinks';
@@ -73,7 +73,8 @@ const CATEGORY_GROUPS: { label: string; description: string; slugs: string[] }[]
 ];
 
 function getToolHref(slug: string, locale: Locale): string {
-  const path = TOOLS_INTERACTIVE_PATHS[slug] ?? `/tools/${slug}`;
+  const path =
+    INTERACTIVE_TOOL_PATHS[slug as keyof typeof INTERACTIVE_TOOL_PATHS] ?? `/tools/${slug}`;
   return locale === 'en' ? path : `/${locale}${path}`;
 }
 

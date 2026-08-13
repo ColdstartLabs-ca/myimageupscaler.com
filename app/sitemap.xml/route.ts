@@ -30,6 +30,7 @@ const ENGLISH_ONLY_SITEMAP_CATEGORIES = [
   'ai-photo-editor',
   'comparisons-expanded',
   'personas-expanded',
+  'use-cases-expanded',
   'technical-guides',
 ];
 

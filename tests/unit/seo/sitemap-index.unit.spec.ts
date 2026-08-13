@@ -81,9 +81,8 @@ describe('Sitemap Index Localization', () => {
     it('should calculate correct total sitemap index count', () => {
       // English-only sitemap categories (not in LOCALIZED or ENGLISH_ONLY arrays)
       const EXTRA_ENGLISH_ONLY = ['static', 'blog'];
-      // use-cases-expanded has data but no routed pages, so it must not be published.
       const routedEnglishOnlySitemapCount =
-        ENGLISH_ONLY_CATEGORIES.length - 1 + EXTRA_ENGLISH_ONLY.length;
+        ENGLISH_ONLY_CATEGORIES.length + EXTRA_ENGLISH_ONLY.length;
 
       // Localized: 1 English + 6 non-English per category
       const localizedEnglishCount = LOCALIZED_CATEGORIES.length; // 10
@@ -92,8 +91,8 @@ describe('Sitemap Index Localization', () => {
       const totalSitemaps =
         routedEnglishOnlySitemapCount + localizedEnglishCount + localeSpecificCount;
 
-      // 13 routed English-only + 2 extra + 10 localized English + 60 locale-specific
-      expect(totalSitemaps).toBe(85);
+      // 14 routed English-only + 2 extra + 10 localized English + 60 locale-specific
+      expect(totalSitemaps).toBe(86);
     });
 
     it('should have correct locale count', () => {
@@ -159,31 +158,31 @@ describe('Sitemap Index Route', () => {
     expect(xml).toContain('sitemap-ai-features.xml');
   });
 
-  it('should exclude sitemap categories whose routes do not exist', async () => {
+  it('should include the registered use-cases-expanded sitemap', async () => {
     const { GET } = await import('@/app/sitemap.xml/route');
     const response = await GET();
     const xml = await response.text();
 
-    expect(xml).not.toContain('sitemap-use-cases-expanded.xml');
+    expect(xml).toContain('sitemap-use-cases-expanded.xml');
   });
 
-  it('should return gone for the retired use-cases-expanded child sitemap', async () => {
+  it('should serve the use-cases-expanded child sitemap', async () => {
     const { GET } = await import('@/app/sitemap-use-cases-expanded.xml/route');
 
     const response = await GET();
 
-    expect(response.status).toBe(410);
-    expect(await response.text()).toContain('retired');
+    expect(response.status).toBe(200);
+    expect(await response.text()).toContain('/use-cases-expanded/real-estate-photography');
   });
 
-  it('should include 85 total sitemaps (15 routed English-only + 10×7 localized)', async () => {
+  it('should include 86 total sitemaps (16 routed English-only + 10×7 localized)', async () => {
     const { GET } = await import('@/app/sitemap.xml/route');
     const response = await GET();
     const xml = await response.text();
 
     const matches = xml.match(/<sitemap>/g);
-    // 15 routed English-only + (10 localized × 7 locales) = 15 + 70 = 85
-    expect(matches).toHaveLength(85);
+    // 16 routed English-only + (10 localized × 7 locales) = 16 + 70 = 86
+    expect(matches).toHaveLength(86);
   });
 });
 

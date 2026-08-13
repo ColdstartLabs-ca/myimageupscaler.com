@@ -128,9 +128,7 @@ export function urlFamily(url: string): string {
   } catch {
     pathname = url;
   }
-  const segments = stripLocalePrefix(pathname)
-    .split('/')
-    .filter(Boolean);
+  const segments = stripLocalePrefix(pathname).split('/').filter(Boolean);
   if (segments.length === 0) return '/';
   if (segments[0] === 'tools' && ['resize', 'convert', 'compress'].includes(segments[1] ?? '')) {
     return `/tools/${segments[1]}`;
@@ -165,10 +163,13 @@ export function evaluateExpectation(
   switch (set) {
     case '404': {
       if (observation.status === 200) return { ok: true, reason: '200' };
-      if (REDIRECT_STATUSES.has(observation.status)) {
+      if (observation.status === 301) {
         const destination = observation.finalUrl ?? observation.location ?? 'unknown';
         if (observation.finalStatus === undefined) {
-          return { ok: false, reason: `${observation.status} → ${destination} (destination not checked)` };
+          return {
+            ok: false,
+            reason: `${observation.status} → ${destination} (destination not checked)`,
+          };
         }
         if (observation.finalStatus !== 200) {
           return {
@@ -188,7 +189,8 @@ export function evaluateExpectation(
     }
 
     case '5xx': {
-      if (observation.status >= 500) return { ok: false, reason: `server error ${observation.status}` };
+      if (observation.status >= 500)
+        return { ok: false, reason: `server error ${observation.status}` };
       return { ok: true, reason: `${observation.status}` };
     }
 

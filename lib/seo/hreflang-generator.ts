@@ -355,7 +355,11 @@ export function getOpenGraphMetadata(
  * // Returns array with only English + x-default (compare is English-only)
  * ```
  */
-export function generateSitemapHreflangLinks(path: string, category?: PSEOCategory): string[] {
+export function generateSitemapHreflangLinks(
+  path: string,
+  category?: PSEOCategory,
+  availableLocales?: readonly Locale[]
+): string[] {
   const links: string[] = [];
   const baseUrl = clientEnv.BASE_URL;
 
@@ -369,9 +373,12 @@ export function generateSitemapHreflangLinks(path: string, category?: PSEOCatego
 
   // Determine which locales to include
   // If category is specified, only include locales where the page exists
-  const localesToInclude = category
+  const categoryLocales = category
     ? SUPPORTED_LOCALES.filter(locale => isCategoryLocalized(category, locale))
     : SUPPORTED_LOCALES;
+  const localesToInclude = availableLocales
+    ? categoryLocales.filter(locale => availableLocales.includes(locale))
+    : categoryLocales;
 
   // Generate xhtml:link for each available locale
   for (const locale of localesToInclude) {

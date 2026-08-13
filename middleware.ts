@@ -16,10 +16,7 @@ import { DEFAULT_LOCALE, isValidLocale, LOCALE_COOKIE, type Locale } from '@/i18
 import { getLocaleFromCountry } from '@lib/i18n/country-locale-map';
 import { ENGLISH_ONLY_CATEGORIES } from '@/lib/seo/localization-config';
 import type { IReferralSource } from '@server/analytics/types';
-import {
-  GIF_FORMAT_OWNER_PATH,
-  isGifFormatScaleSlug,
-} from '@/lib/seo/gif-intent';
+import { GIF_FORMAT_OWNER_PATH, isGifFormatScaleSlug } from '@/lib/seo/gif-intent';
 
 // Debug: log when middleware is loaded
 if (serverEnv.ENV === 'test') {
@@ -629,8 +626,76 @@ function handleLegacyRedirects(req: NextRequest): NextResponse | null {
   // This happens when locale detection fails and returns the string "undefined"
   if (pathWithoutLocale.startsWith('/undefined/') || pathname.startsWith('/undefined/')) {
     const url = req.nextUrl.clone();
-    // Strip /undefined/ and redirect to English path
-    url.pathname = pathname.replace(/^\/undefined/, '');
+    const platformSlug = pathWithoutLocale.slice('/undefined/'.length);
+    const knownPlatformSlugs = new Set([
+      'midjourney-upscaler',
+      'canva-upscaler',
+      'dalle-upscaler',
+      'stable-diffusion-upscaler',
+      'photoshop-upscaler',
+    ]);
+    url.pathname = knownPlatformSlugs.has(platformSlug) ? `/platforms/${platformSlug}` : '/';
+    return NextResponse.redirect(url, 301);
+  }
+
+  // Normalize casing for tool paths before Next's route matcher runs.
+  if (pathWithoutLocale.startsWith('/tools/')) {
+    const normalizedToolsPath = pathWithoutLocale
+      .toLowerCase()
+      .replace(/^\/tools\/converter\//, '/tools/convert/');
+    if (normalizedToolsPath !== pathWithoutLocale) {
+      const url = req.nextUrl.clone();
+      url.pathname = `${localePrefix}${normalizedToolsPath}`;
+      return NextResponse.redirect(url, 301);
+    }
+  }
+
+  // Redirect translated-slug guesses to the canonical English tool slug while preserving locale.
+  const translatedResizeMatch = pathWithoutLocale.match(
+    /^\/tools\/resize\/(redimensionneur-image|redimensionner-image|redimensionneur-image-lot|ridimensionare-immagine-in-blocco|ridimensiona-immagine-in-blocco)$/
+  );
+  const translatedResizeSlug = translatedResizeMatch?.[1];
+  if (translatedResizeSlug) {
+    const destination =
+      translatedResizeSlug.includes('lot') || translatedResizeSlug.includes('blocco')
+        ? '/tools/resize/bulk-image-resizer'
+        : '/tools/resize/image-resizer';
+    const url = req.nextUrl.clone();
+    url.pathname = `${localePrefix}${destination}`;
+    return NextResponse.redirect(url, 301);
+  }
+
+  const translatedSocialMatch =
+    pathWithoutLocale.match(
+      /^\/tools\/resize\/(?:redimensionneur|redimensionner)-image-pour-(youtube|instagram|facebook|twitter|linkedin)$/
+    ) ??
+    pathWithoutLocale.match(
+      /^\/tools\/resize\/(?:ridimensionare|ridimensiona)-immagine-per-(youtube|instagram|facebook|twitter|linkedin)$/
+    ) ??
+    pathWithoutLocale.match(/^\/tools\/resize\/redimensionar-imagem-para-(instagram|facebook)$/);
+  if (translatedSocialMatch?.[1]) {
+    const url = req.nextUrl.clone();
+    url.pathname = `${localePrefix}/tools/resize/resize-image-for-${translatedSocialMatch[1]}`;
+    return NextResponse.redirect(url, 301);
+  }
+
+  const translatedCompressMatch = pathWithoutLocale.match(
+    /^\/tools\/compress\/(compresseur-image|compresseur-image-lot|compressore-immagini|compressore-immagini-in-blocco|compressor-de-imagem|bulk-imagem-compressor)$/
+  );
+  if (translatedCompressMatch?.[1]) {
+    const isBulk =
+      translatedCompressMatch[1].includes('lot') ||
+      translatedCompressMatch[1].includes('blocco') ||
+      translatedCompressMatch[1].startsWith('bulk-');
+    const url = req.nextUrl.clone();
+    url.pathname = `${localePrefix}/tools/compress/${isBulk ? 'bulk-image-compressor' : 'image-compressor'}`;
+    return NextResponse.redirect(url, 301);
+  }
+
+  // Known junk paths from the GSC export have no page owner.
+  if (pathWithoutLocale === '/&' || pathWithoutLocale === '/$' || pathWithoutLocale === '/5') {
+    const url = req.nextUrl.clone();
+    url.pathname = '/';
     return NextResponse.redirect(url, 301);
   }
 
@@ -645,62 +710,6 @@ function handleLegacyRedirects(req: NextRequest): NextResponse | null {
     const url = req.nextUrl.clone();
     url.pathname = GIF_FORMAT_OWNER_PATH;
     return NextResponse.redirect(url, 301);
-  }
-
-  // Define redirects without locale prefix
-  // Note: No trailing slashes to avoid redirect chains (/{locale}/path/ -> /{locale}/path)
-  const redirectMap: Record<string, string> = {
-    // Existing bulk tools
-    '/tools/bulk-image-resizer': '/tools/resize/bulk-image-resizer',
-    '/tools/bulk-image-compressor': '/tools/compress/bulk-image-compressor',
-
-    // NEW: Dedicated-route tools accessed at wrong path
-    '/tools/png-to-jpg': '/tools/convert/png-to-jpg',
-    '/tools/jpg-to-png': '/tools/convert/jpg-to-png',
-    '/tools/webp-to-jpg': '/tools/convert/webp-to-jpg',
-    '/tools/webp-to-png': '/tools/convert/webp-to-png',
-    '/tools/jpg-to-webp': '/tools/convert/jpg-to-webp',
-    '/tools/png-to-webp': '/tools/convert/png-to-webp',
-    '/tools/image-compressor': '/tools/compress/image-compressor',
-    '/tools/image-resizer': '/tools/resize/image-resizer',
-    '/tools/resize-image-for-instagram': '/tools/resize/resize-image-for-instagram',
-    '/tools/resize-image-for-youtube': '/tools/resize/resize-image-for-youtube',
-    '/tools/resize-image-for-facebook': '/tools/resize/resize-image-for-facebook',
-    '/tools/resize-image-for-twitter': '/tools/resize/resize-image-for-twitter',
-    '/tools/resize-image-for-linkedin': '/tools/resize/resize-image-for-linkedin',
-
-    // NEW: Misrouted category URLs (from GSC 404 list)
-    '/tools/free-ai-upscaler': '/free/free-ai-upscaler',
-
-    // NEW: /article/ → correct category
-    '/article/upscale-arw-images': '/camera-raw/upscale-arw-images',
-    '/article/photography-business-enhancement':
-      '/industry-insights/photography-business-enhancement',
-    '/article/family-photo-preservation': '/photo-restoration/family-photo-preservation',
-
-    // NEW: Wrong category slug
-    '/industry-insights/real-estate-photo-enhancement': '/use-cases/real-estate-photo-enhancement',
-
-    // SEO CTR cannibalization redirects — consolidate competing blog URLs
-    '/blog/photo-enhancement-upscaling-vs-quality':
-      '/blog/ai-image-upscaling-vs-sharpening-explained',
-    '/blog/best-free-ai-image-upscaler-tools-2026':
-      '/blog/best-free-ai-image-upscaler-2026-tested-compared',
-    '/blog/free-upscaler-no-sign-up': '/blog/free-ai-upscaler-no-watermark',
-    '/blog/upscale-image-online-free': '/blog/free-ai-upscaler-no-watermark',
-    '/blog/ai-vs-traditional-image-upscaling': '/blog/ai-image-upscaling-vs-sharpening-explained',
-    '/blog/how-ai-image-upscaling-works-explained': '/blog/how-ai-image-upscaling-works-guide',
-    '/blog/restore-old-photos-online': '/use-cases/old-photo-restoration',
-  };
-
-  // Check if path (without locale) matches a redirect
-  const newRedirectPath = redirectMap[pathWithoutLocale];
-
-  if (newRedirectPath) {
-    const url = req.nextUrl.clone();
-    // Preserve locale prefix in the redirect
-    url.pathname = `${localePrefix}${newRedirectPath}`;
-    return NextResponse.redirect(url, 301); // Permanent redirect for SEO
   }
 
   // Redirect English-only pSEO categories accessed with a non-English locale prefix

@@ -6,23 +6,9 @@ import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { generateToolSchema } from '@/lib/seo/schema-generator';
 import { clientEnv } from '@shared/config/env';
 import type { IToolPage, IPSEODataFile } from '@/lib/seo/pseo-types';
+import { CONVERSION_SLUGS } from '@/lib/seo/interactive-tool-routes';
 
 const toolsData = interactiveToolsData as IPSEODataFile<IToolPage>;
-
-// Conversion tool slugs from interactive-tools.json
-const CONVERSION_SLUGS = [
-  'png-to-jpg',
-  'jpg-to-png',
-  'webp-to-jpg',
-  'webp-to-png',
-  'jpg-to-webp',
-  'png-to-webp',
-  // Phase 1 expansion — format converter variants
-  'bmp-to-png',
-  'gif-to-png',
-  'gif-to-webp',
-  'bmp-to-webp',
-];
 
 // Force static rendering for Cloudflare Workers 10ms CPU limit
 // Prevents SSR timeouts on Googlebot requests
@@ -68,7 +54,7 @@ export default async function ConversionToolPage({ params }: IPageProps) {
   const { slug } = await params;
 
   // Only allow conversion tool slugs
-  if (!CONVERSION_SLUGS.includes(slug)) {
+  if (!(CONVERSION_SLUGS as readonly string[]).includes(slug)) {
     notFound();
   }
 

@@ -15,6 +15,7 @@ import { clientEnv } from '@shared/config/env';
 import { getLocalizedPath, generateSitemapHreflangLinks } from './hreflang-generator';
 import { getSitemapResponseHeaders } from './sitemap-generator';
 import { GIF_FORMAT_OWNER_SLUG } from './gif-intent';
+import { INTERACTIVE_TOOL_PATHS, isLocalizedInteractiveSlug } from './interactive-tool-routes';
 
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
 
@@ -28,44 +29,31 @@ export interface ILocaleSitemapPage {
 }
 
 /**
- * Interactive tool URL mappings shared between English and locale-specific tools sitemaps.
- * Maps tool slugs to their actual route paths.
- */
-export const TOOLS_INTERACTIVE_PATHS: Record<string, string> = {
-  'image-resizer': '/tools/resize/image-resizer',
-  'bulk-image-resizer': '/tools/resize/bulk-image-resizer',
-  'resize-image-for-instagram': '/tools/resize/resize-image-for-instagram',
-  'resize-image-for-youtube': '/tools/resize/resize-image-for-youtube',
-  'resize-image-for-facebook': '/tools/resize/resize-image-for-facebook',
-  'resize-image-for-twitter': '/tools/resize/resize-image-for-twitter',
-  'resize-image-for-linkedin': '/tools/resize/resize-image-for-linkedin',
-  'png-to-jpg': '/tools/convert/png-to-jpg',
-  'jpg-to-png': '/tools/convert/jpg-to-png',
-  'webp-to-jpg': '/tools/convert/webp-to-jpg',
-  'webp-to-png': '/tools/convert/webp-to-png',
-  'jpg-to-webp': '/tools/convert/jpg-to-webp',
-  'png-to-webp': '/tools/convert/png-to-webp',
-  'image-compressor': '/tools/compress/image-compressor',
-  'bulk-image-compressor': '/tools/compress/bulk-image-compressor',
-};
-
-/**
  * Build sitemap pages list for tools category,
  * combining static tools and interactive tools with their custom paths.
  */
 export function buildToolsSitemapPages(
   staticTools: Array<{ slug: string; lastUpdated: string; title: string; ogImage?: string }>,
   interactiveTools: Array<{ slug: string; lastUpdated: string; title: string; ogImage?: string }>,
-  additionalTools: Array<{ slug: string; lastUpdated: string; title: string; ogImage?: string }> = []
+  additionalTools: Array<{
+    slug: string;
+    lastUpdated: string;
+    title: string;
+    ogImage?: string;
+  }> = []
 ): ILocaleSitemapPage[] {
-  const existingInteractiveSlugs = new Set(interactiveTools.map(tool => tool.slug));
+  const isLocaleSitemapTool = (tool: { slug: string }) =>
+    !(tool.slug in INTERACTIVE_TOOL_PATHS) || isLocalizedInteractiveSlug(tool.slug);
+  const localizedInteractiveTools = interactiveTools.filter(isLocaleSitemapTool);
+  const existingInteractiveSlugs = new Set(localizedInteractiveTools.map(tool => tool.slug));
   const routedAdditionalTools = additionalTools.filter(
     (tool, index) =>
-      tool.slug in TOOLS_INTERACTIVE_PATHS &&
+      tool.slug in INTERACTIVE_TOOL_PATHS &&
+      isLocalizedInteractiveSlug(tool.slug) &&
       !existingInteractiveSlugs.has(tool.slug) &&
       additionalTools.findIndex(candidate => candidate.slug === tool.slug) === index
   );
-  const routedInteractiveTools = [...interactiveTools, ...routedAdditionalTools];
+  const routedInteractiveTools = [...localizedInteractiveTools, ...routedAdditionalTools];
 
   return [
     ...staticTools.map(t => ({
@@ -79,7 +67,7 @@ export function buildToolsSitemapPages(
       lastUpdated: t.lastUpdated,
       title: t.title,
       ogImage: t.ogImage,
-      customPath: TOOLS_INTERACTIVE_PATHS[t.slug],
+      customPath: INTERACTIVE_TOOL_PATHS[t.slug as keyof typeof INTERACTIVE_TOOL_PATHS],
     })),
   ];
 }
@@ -103,9 +91,7 @@ export function generateLocaleCategorySitemapResponse(
   priority: number = 0.8
 ): NextResponse {
   const routedPages =
-    category === 'formats'
-      ? pages.filter(page => page.slug !== GIF_FORMAT_OWNER_SLUG)
-      : pages;
+    category === 'formats' ? pages.filter(page => page.slug !== GIF_FORMAT_OWNER_SLUG) : pages;
   const localeCategoryPath = getLocalizedPath(`/${categoryPath}`, locale);
 
   const categoryEntry = buildUrlEntry(
@@ -123,7 +109,20 @@ export function generateLocaleCategorySitemapResponse(
       ? `\n    <image:image>\n      <image:loc>${page.ogImage.startsWith('http') ? page.ogImage : `${BASE_URL}${page.ogImage}`}</image:loc>\n      <image:title>${escapeXml(page.title || page.slug)}</image:title>\n    </image:image>`
       : '';
 
-    return buildUrlEntry(englishPath, localePath, page.lastUpdated, priority, category, imageXml);
+    const availableLocales =
+      category === 'tools' && page.customPath && !isLocalizedInteractiveSlug(page.slug)
+        ? (['en'] as const)
+        : undefined;
+
+    return buildUrlEntry(
+      englishPath,
+      localePath,
+      page.lastUpdated,
+      priority,
+      category,
+      imageXml,
+      availableLocales
+    );
   });
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -143,9 +142,12 @@ function buildUrlEntry(
   lastmod: string,
   priority: number,
   category: PSEOCategory,
-  extraXml: string = ''
+  extraXml: string = '',
+  availableLocales?: readonly Locale[]
 ): string {
-  const hreflangLinks = generateSitemapHreflangLinks(englishPath, category).join('\n');
+  const hreflangLinks = generateSitemapHreflangLinks(englishPath, category, availableLocales).join(
+    '\n'
+  );
   return `  <url>
     <loc>${BASE_URL}${localePath}</loc>
     <lastmod>${lastmod}</lastmod>

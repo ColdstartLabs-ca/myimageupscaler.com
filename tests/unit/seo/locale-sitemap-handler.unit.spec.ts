@@ -7,9 +7,9 @@ import { describe, it, expect, vi } from 'vitest';
 import {
   generateLocaleCategorySitemapResponse,
   buildToolsSitemapPages,
-  TOOLS_INTERACTIVE_PATHS,
   type ILocaleSitemapPage,
 } from '@/lib/seo/locale-sitemap-handler';
+import { INTERACTIVE_TOOL_PATHS } from '@/lib/seo/interactive-tool-routes';
 
 vi.mock('@shared/config/env', () => ({
   clientEnv: {
@@ -83,13 +83,7 @@ describe('generateLocaleCategorySitemapResponse', () => {
   });
 
   it('should use correct priority', async () => {
-    const response = generateLocaleCategorySitemapResponse(
-      'de',
-      'scale',
-      'scale',
-      mockPages,
-      0.8
-    );
+    const response = generateLocaleCategorySitemapResponse('de', 'scale', 'scale', mockPages, 0.8);
 
     const xml = await response.text();
     expect(xml).toContain('<priority>0.8</priority>');
@@ -115,9 +109,7 @@ describe('generateLocaleCategorySitemapResponse', () => {
 
     const xml = await response.text();
     expect(xml).toContain('<image:image>');
-    expect(xml).toContain(
-      '<image:loc>https://myimageupscaler.com/images/test.png</image:loc>'
-    );
+    expect(xml).toContain('<image:loc>https://myimageupscaler.com/images/test.png</image:loc>');
     expect(xml).toContain('<image:title>Page With Image</image:title>');
   });
 
@@ -140,9 +132,7 @@ describe('generateLocaleCategorySitemapResponse', () => {
 
     const xml = await response.text();
     // Should use the custom path with locale prefix
-    expect(xml).toContain(
-      '<loc>https://myimageupscaler.com/ja/tools/resize/image-resizer</loc>'
-    );
+    expect(xml).toContain('<loc>https://myimageupscaler.com/ja/tools/resize/image-resizer</loc>');
   });
 
   it('should generate valid XML structure', async () => {
@@ -165,9 +155,7 @@ describe('generateLocaleCategorySitemapResponse', () => {
 
 describe('buildToolsSitemapPages', () => {
   it('should combine static and interactive tools', () => {
-    const staticTools = [
-      { slug: 'ai-upscaler', lastUpdated: '2026-01-15', title: 'AI Upscaler' },
-    ];
+    const staticTools = [{ slug: 'ai-upscaler', lastUpdated: '2026-01-15', title: 'AI Upscaler' }];
     const interactiveTools = [
       { slug: 'image-resizer', lastUpdated: '2026-01-20', title: 'Image Resizer' },
     ];
@@ -220,14 +208,14 @@ describe('buildToolsSitemapPages', () => {
   });
 });
 
-describe('TOOLS_INTERACTIVE_PATHS', () => {
+describe('INTERACTIVE_TOOL_PATHS', () => {
   it('should contain all interactive tool paths', () => {
-    expect(TOOLS_INTERACTIVE_PATHS['image-resizer']).toBe('/tools/resize/image-resizer');
-    expect(TOOLS_INTERACTIVE_PATHS['png-to-jpg']).toBe('/tools/convert/png-to-jpg');
-    expect(TOOLS_INTERACTIVE_PATHS['image-compressor']).toBe('/tools/compress/image-compressor');
+    expect(INTERACTIVE_TOOL_PATHS['image-resizer']).toBe('/tools/resize/image-resizer');
+    expect(INTERACTIVE_TOOL_PATHS['png-to-jpg']).toBe('/tools/convert/png-to-jpg');
+    expect(INTERACTIVE_TOOL_PATHS['image-compressor']).toBe('/tools/compress/image-compressor');
   });
 
-  it('should have 15 interactive tool path mappings', () => {
-    expect(Object.keys(TOOLS_INTERACTIVE_PATHS)).toHaveLength(15);
+  it('should have 24 interactive tool path mappings', () => {
+    expect(Object.keys(INTERACTIVE_TOOL_PATHS)).toHaveLength(24);
   });
 });

@@ -8,6 +8,7 @@ import { cache } from 'react';
 import { serverEnv } from '@shared/config/env';
 import { Locale, SUPPORTED_LOCALES } from '@/i18n/config';
 import { isCategoryLocalized } from './localization-config';
+import { INTERACTIVE_TOOL_PATHS } from './interactive-tool-routes';
 
 import toolsDataFile from '@/app/seo/data/tools.json';
 import interactiveToolsDataFile from '@/app/seo/data/interactive-tools.json';
@@ -20,10 +21,7 @@ import useCasesDataFile from '@/app/seo/data/use-cases.json';
 import alternativesDataFile from '@/app/seo/data/alternatives.json';
 import platformsDataFile from '@/app/seo/data/platforms.json';
 import formatScaleDataFile from '@/app/seo/data/format-scale.json';
-import {
-  GIF_FORMAT_OWNER_SLUG,
-  isGifFormatScaleSlug,
-} from '@/lib/seo/gif-intent';
+import { GIF_FORMAT_OWNER_SLUG, isGifFormatScaleSlug } from '@/lib/seo/gif-intent';
 import platformFormatDataFile from '@/app/seo/data/platform-format.json';
 import deviceUseDataFile from '@/app/seo/data/device-use.json';
 import type {
@@ -58,23 +56,7 @@ const interactiveToolsData = interactiveToolsDataFile as unknown as IPSEODataFil
  * Slugs that have dedicated sub-routes (e.g., /tools/resize/image-resizer).
  * These should NOT appear in /tools/[slug] static params.
  */
-export const DEDICATED_ROUTE_SLUGS = new Set([
-  'image-resizer',
-  'bulk-image-resizer',
-  'resize-image-for-instagram',
-  'resize-image-for-youtube',
-  'resize-image-for-facebook',
-  'resize-image-for-twitter',
-  'resize-image-for-linkedin',
-  'png-to-jpg',
-  'jpg-to-png',
-  'webp-to-jpg',
-  'webp-to-png',
-  'jpg-to-webp',
-  'png-to-webp',
-  'image-compressor',
-  'bulk-image-compressor',
-]);
+export const DEDICATED_ROUTE_SLUGS = new Set(Object.keys(INTERACTIVE_TOOL_PATHS));
 const formatsData = formatsDataFile as unknown as IPSEODataFile<IFormatPage>;
 const useCasesData = useCasesDataFile as unknown as IPSEODataFile<IUseCasePage>;
 const alternativesData = alternativesDataFile as unknown as IPSEODataFile<IAlternativePage>;

@@ -25,7 +25,7 @@ Maintenance rules:
 
 ## 2026-08-13
 
-### GSC Recovery PRD Set (planning only — no site changes yet)
+### GSC Recovery PRD Set (planning)
 
 Source: GSC coverage + Core Web Vitals exports of 2026-08-12/08-10 and the 2026-08-13 audit report. Raw exports committed to `docs/PRDs/gsc-recovery-2026-08/data/`.
 
@@ -43,6 +43,31 @@ Shipped with the PRDs (PRD 01 Phase 0): `lib/seo/gsc-verification.ts` + `scripts
 Validation: `yarn verify` passed; 1,050 SEO unit tests green. Live baselines 2026-08-13 — `--set=404`: **212 of 303 still violating** (206 still 404, 6 redirect into a 404, 91 already fixed by earlier work); `--set=5xx`: 0 of 5 violating, because the four Japanese social-resize URLs now `301` into `/ja/tools/resize/*` (GSC **Validate fix** can be run for them) and the 1102 URL answered 200 on that request — intermittent, so not resolved. Negative controls observed: `--expect=404` flips the verdict on live data, and mutating the 404 expectation to always-pass turns 6 unit tests red.
 
 Follow-up: implement in order 01 → 02/05 → 03 → 04/06; each PRD's post-deploy GSC checkpoints are dated inside it.
+### PRD 01 — GSC 404 elimination (shipped to master)
+
+Changes:
+
+- Centralized the 24 interactive resize/convert/compress slugs and their canonical paths; locale pages now render English fallback copy with `noindex, follow` for untranslated dedicated tools.
+- Removed divergent sitemap path maps, restricted locale hreflang to translated dedicated tools, and restored the `use-cases-expanded` page plus sitemap registration.
+- Generated 314 permanent 301 legacy redirects from the GSC export and SEO data owners, wired them into `next.config.js`, and removed the duplicated static middleware map. Middleware retains casing, translated-slug, junk-path, and `undefined` platform normalization.
+- Locale-prefixed legacy blog redirects now go directly to unprefixed canonical blog URLs, avoiding the middleware's second hop; the combined redirect table has no duplicate sources.
+- Added the reusable GSC verifier CLI and unit coverage for route parity, sitemap parity, redirects, and pSEO category registration.
+
+Validation:
+
+- Full unit suite passed: 379 files, 5,316 tests, with 1 skipped file and 6 skipped tests. `yarn verify` and `yarn build` passed; the generated redirect build reported zero undocumented unmapped GSC paths.
+- Production deployment and post-deploy GSC validation are still pending.
+
+Follow-up:
+
+- After deployment, run `yarn seo:verify:gsc --set=404 --base-url=https://myimageupscaler.com`, submit changed owners through IndexNow, and use GSC **Validate Fix** only after the live gate reports zero 404s.
+
+Localized-runtime repairs folded into the same change: localized resize/convert/compress pages keep translated display copy but take `toolComponent` and `toolConfig` from the canonical English runtime record (covers incomplete Japanese YouTube data and unsafe Spanish/Portuguese converter records, and stops `/es/tools/compress/image-compressor` rendering `ImageResizer`). The 404 verifier now accepts only a direct 200 or a single 301 to a 200 — 302/303/307/308 stay violations.
+
+Follow-up:
+
+- Production deployment and post-deploy GSC validation remain pending. The local production build reaches static-page generation but is still blocked by the pre-existing `use-cases-expanded/web-design-development` data/template mismatch and placeholder Supabase environment.
+- The source PRD still contains TBD caller cells.
 
 ## 2026-08-10
 

@@ -8,26 +8,11 @@ import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { generateToolSchema } from '@/lib/seo/schema-generator';
 import { clientEnv } from '@shared/config/env';
 import type { IToolPage, IBulkToolPage, IPSEODataFile } from '@/lib/seo/pseo-types';
+import { RESIZE_SLUGS } from '@/lib/seo/interactive-tool-routes';
 
 const toolsData = interactiveToolsData as IPSEODataFile<IToolPage>;
 const bulkData = bulkToolsData as unknown as IPSEODataFile<IBulkToolPage>;
 const socialData = socialMediaResizeData as unknown as IPSEODataFile<IToolPage>;
-
-// Resize tool slugs from interactive-tools.json, bulk-tools.json, and social-media-resize.json
-const RESIZE_SLUGS = [
-  'image-resizer',
-  'resize-image-for-instagram',
-  'resize-image-for-youtube',
-  'resize-image-for-facebook',
-  'resize-image-for-twitter',
-  'resize-image-for-linkedin',
-  'resize-image-for-pinterest',
-  'resize-image-for-tiktok',
-  'resize-image-for-discord',
-  'resize-image-for-reddit',
-  'resize-image-for-telegram',
-  'bulk-image-resizer',
-];
 
 function findToolBySlug(slug: string): IToolPage | null {
   const tool = toolsData.pages.find(p => p.slug === slug);
@@ -83,7 +68,7 @@ export default async function ResizeToolPage({ params }: IPageProps) {
   const { slug } = await params;
 
   // Only allow resize tool slugs
-  if (!RESIZE_SLUGS.includes(slug)) {
+  if (!(RESIZE_SLUGS as readonly string[]).includes(slug)) {
     notFound();
   }
 

@@ -15,9 +15,10 @@ import type {
 } from '@/lib/seo/pseo-types';
 import type { Locale } from '@/i18n/config';
 import { SUPPORTED_LOCALES } from '@/i18n/config';
-
-// Compress tool slugs from interactive-tools.json
-const COMPRESS_SLUGS = ['image-compressor', 'bulk-image-compressor'];
+import {
+  COMPRESS_SLUGS,
+  withCanonicalInteractiveToolRuntime,
+} from '@/lib/seo/interactive-tool-routes';
 
 interface IPageProps {
   params: Promise<{ slug: string; locale: Locale }>;
@@ -76,7 +77,7 @@ export default async function CompressToolPage({ params }: IPageProps) {
   const t = await getTranslations('interactive-tools');
 
   // Only allow compress tool slugs
-  if (!COMPRESS_SLUGS.includes(slug)) {
+  if (!(COMPRESS_SLUGS as readonly string[]).includes(slug)) {
     notFound();
   }
 
@@ -88,7 +89,7 @@ export default async function CompressToolPage({ params }: IPageProps) {
   }
 
   // Build tool data from translations - satisfies IToolPage interface
-  const tool: IToolPage = {
+  const tool: IToolPage = withCanonicalInteractiveToolRuntime<IToolPage>({
     slug,
     title: toolData.title as string,
     metaTitle: toolData.metaTitle as string,
@@ -123,7 +124,7 @@ export default async function CompressToolPage({ params }: IPageProps) {
     acceptedFormats: Array.isArray(toolData.acceptedFormats)
       ? (toolData.acceptedFormats as string[])
       : [],
-  };
+  });
 
   // Generate rich schema markup with @graph structure (SoftwareApplication + FAQPage + BreadcrumbList)
   const schema = generateToolSchema(tool, locale);

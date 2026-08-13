@@ -33,16 +33,22 @@ function observation(overrides: Partial<IUrlObservation>): IUrlObservation {
 
 describe('GSC verification — CSV parsing', () => {
   it('should parse URLs from a GSC export and skip the header', () => {
-    const csv = 'URL,Last crawled\nhttps://myimageupscaler.com/a,2026-08-08\nhttps://myimageupscaler.com/b,2026-08-07\n';
+    const csv =
+      'URL,Last crawled\nhttps://myimageupscaler.com/a,2026-08-08\nhttps://myimageupscaler.com/b,2026-08-07\n';
 
-    expect(parseGscCsv(csv)).toEqual(['https://myimageupscaler.com/a', 'https://myimageupscaler.com/b']);
+    expect(parseGscCsv(csv)).toEqual([
+      'https://myimageupscaler.com/a',
+      'https://myimageupscaler.com/b',
+    ]);
   });
 
   it('should parse every committed GSC export the harness advertises', () => {
     for (const set of GSC_SETS) {
       const file = path.join(DATA_DIR, SET_CSV_FILES[set]);
       expect(existsSync(file), `${SET_CSV_FILES[set]} is missing`).toBe(true);
-      expect(parseGscCsv(readFileSync(file, 'utf8')).length, `${set} parsed empty`).toBeGreaterThan(0);
+      expect(parseGscCsv(readFileSync(file, 'utf8')).length, `${set} parsed empty`).toBeGreaterThan(
+        0
+      );
     }
   });
 });
@@ -52,7 +58,7 @@ describe('GSC verification — 404 set', () => {
     expect(evaluateExpectation('404', observation({ status: 200 })).ok).toBe(true);
   });
 
-  it('should pass a URL that now redirects to a live page', () => {
+  it('should pass a URL with one HTTP 301 redirect to a live page', () => {
     const result = evaluateExpectation(
       '404',
       observation({
@@ -67,6 +73,24 @@ describe('GSC verification — 404 set', () => {
     expect(result.ok).toBe(true);
     expect(result.reason).toContain('301');
   });
+
+  it.each([302, 303, 307, 308])(
+    'should reject a non-301 %s redirect even when the destination returns 200',
+    status => {
+      const result = evaluateExpectation(
+        '404',
+        observation({
+          status,
+          finalUrl: 'https://myimageupscaler.com/blog/upscale-anime',
+          finalStatus: 200,
+          redirectHops: 1,
+        })
+      );
+
+      expect(result.ok).toBe(false);
+      expect(result.reason).toContain(String(status));
+    }
+  );
 
   it('should fail a redirect whose destination still returns 404', () => {
     const result = evaluateExpectation(
@@ -87,7 +111,12 @@ describe('GSC verification — 404 set', () => {
   it('should fail a redirect chain even when it ends at a live page', () => {
     const result = evaluateExpectation(
       '404',
-      observation({ status: 301, finalUrl: 'https://myimageupscaler.com/blog', finalStatus: 200, redirectHops: 3 })
+      observation({
+        status: 301,
+        finalUrl: 'https://myimageupscaler.com/blog',
+        finalStatus: 200,
+        redirectHops: 3,
+      })
     );
 
     expect(result.ok).toBe(false);
@@ -136,7 +165,8 @@ describe('GSC verification — noindex and crawled-not-indexed sets', () => {
 
   it('should pass a noindexed URL that was removed from the sitemaps', () => {
     expect(
-      evaluateExpectation('noindex', observation({ robots: 'noindex, follow', inSitemap: false })).ok
+      evaluateExpectation('noindex', observation({ robots: 'noindex, follow', inSitemap: false }))
+        .ok
     ).toBe(true);
   });
 
@@ -188,9 +218,9 @@ describe('GSC verification — duplicate-canonical set', () => {
   });
 
   it('should ignore the trailing slash when comparing canonicals', () => {
-    expect(isSameUrl('https://myimageupscaler.com/de/tools/', 'https://myimageupscaler.com/de/tools')).toBe(
-      true
-    );
+    expect(
+      isSameUrl('https://myimageupscaler.com/de/tools/', 'https://myimageupscaler.com/de/tools')
+    ).toBe(true);
   });
 });
 
@@ -213,20 +243,29 @@ describe('GSC verification — negative control and failures', () => {
 
 describe('GSC verification — HTML and sitemap parsing', () => {
   it('should extract the canonical href regardless of attribute order', () => {
-    expect(extractCanonical('<link href="https://x.test/a" rel="canonical"/>')).toBe('https://x.test/a');
-    expect(extractCanonical('<link rel="canonical" href="https://x.test/b"/>')).toBe('https://x.test/b');
+    expect(extractCanonical('<link href="https://x.test/a" rel="canonical"/>')).toBe(
+      'https://x.test/a'
+    );
+    expect(extractCanonical('<link rel="canonical" href="https://x.test/b"/>')).toBe(
+      'https://x.test/b'
+    );
   });
 
   it('should not mistake another link tag for the canonical', () => {
-    expect(extractCanonical('<link rel="alternate" hreflang="de" href="https://x.test/de"/>')).toBeUndefined();
+    expect(
+      extractCanonical('<link rel="alternate" hreflang="de" href="https://x.test/de"/>')
+    ).toBeUndefined();
   });
 
   it('should extract the robots meta content', () => {
-    expect(extractRobotsMeta('<meta name="robots" content="noindex, follow">')).toBe('noindex, follow');
+    expect(extractRobotsMeta('<meta name="robots" content="noindex, follow">')).toBe(
+      'noindex, follow'
+    );
   });
 
   it('should extract loc values from a sitemap index', () => {
-    const xml = '<sitemapindex><sitemap><loc>https://x.test/sitemap-tools.xml</loc></sitemap></sitemapindex>';
+    const xml =
+      '<sitemapindex><sitemap><loc>https://x.test/sitemap-tools.xml</loc></sitemap></sitemapindex>';
 
     expect(extractSitemapLocs(xml)).toEqual(['https://x.test/sitemap-tools.xml']);
   });

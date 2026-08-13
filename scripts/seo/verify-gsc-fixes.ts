@@ -15,7 +15,7 @@
  *   yarn seo:verify:gsc --set=cni --limit=50
  *
  * Sets and what counts as a violation:
- *   404     — anything that is not 200 or a redirect
+ *   404     — anything that is not 200 or a single HTTP 301 to a live 200 page
  *   5xx     — any status >= 500
  *   noindex — URL is noindexed AND still submitted in a sitemap
  *   cni     — same rule as noindex (PRD 03's index-bloat gate)
@@ -186,7 +186,8 @@ async function main(): Promise<void> {
   if (urls.length === 0) fail(`no URLs parsed from ${csvPath}`);
 
   console.log(`GSC verify — set=${set}  urls=${urls.length}  base=${baseUrl}`);
-  if (expectStatus !== undefined) console.log(`  negative control: expecting status ${expectStatus}`);
+  if (expectStatus !== undefined)
+    console.log(`  negative control: expecting status ${expectStatus}`);
 
   const sitemapUrls = needsSitemap ? await collectSitemapUrls() : null;
   if (sitemapUrls) console.log(`  sitemap URLs collected: ${sitemapUrls.size}`);
@@ -198,7 +199,10 @@ async function main(): Promise<void> {
     while (cursor < urls.length) {
       const url = urls[cursor++];
       const observation = await observe(url, sitemapUrls);
-      results.push({ observation, expectation: evaluateExpectation(set, observation, expectStatus) });
+      results.push({
+        observation,
+        expectation: evaluateExpectation(set, observation, expectStatus),
+      });
       if (results.length % 25 === 0) {
         console.log(`  … ${results.length}/${urls.length}`);
       }
@@ -214,13 +218,18 @@ async function main(): Promise<void> {
   console.log('\nBy URL family:');
   for (const summary of summaries) {
     const marker = summary.violations > 0 ? '✖' : '✓';
-    console.log(`  ${marker} ${summary.family.padEnd(24)} ${summary.violations}/${summary.total} violating`);
+    console.log(
+      `  ${marker} ${summary.family.padEnd(24)} ${summary.violations}/${summary.total} violating`
+    );
     for (const example of summary.examples) {
       console.log(`      ${example.url} — ${example.reason}`);
     }
   }
 
-  const reportPath = path.join(REPORT_DIR, `gsc-verify-${set}-${dayjs().format('YYYY-MM-DD')}.json`);
+  const reportPath = path.join(
+    REPORT_DIR,
+    `gsc-verify-${set}-${dayjs().format('YYYY-MM-DD')}.json`
+  );
   mkdirSync(REPORT_DIR, { recursive: true });
   writeFileSync(
     reportPath,

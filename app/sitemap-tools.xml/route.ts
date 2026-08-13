@@ -17,42 +17,21 @@ import {
 import interactiveToolsData from '@/app/seo/data/interactive-tools.json';
 import socialMediaResizeData from '@/app/seo/data/social-media-resize.json';
 import type { IToolPage, IPSEODataFile } from '@/lib/seo/pseo-types';
+import {
+  INTERACTIVE_TOOL_PATHS,
+  isLocalizedInteractiveSlug,
+} from '@/lib/seo/interactive-tool-routes';
 
 const CATEGORY = 'tools' as const;
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
 
-// Interactive tool URL mappings (slug -> path)
-// Maps redirect URLs to their destination URLs for sitemap
-const INTERACTIVE_TOOL_PATHS: Record<string, string> = {
-  // Resize tools
-  'image-resizer': '/tools/resize/image-resizer',
-  'bulk-image-resizer': '/tools/resize/bulk-image-resizer', // 301 redirect destination
-  'resize-image-for-instagram': '/tools/resize/resize-image-for-instagram',
-  'resize-image-for-youtube': '/tools/resize/resize-image-for-youtube',
-  'resize-image-for-facebook': '/tools/resize/resize-image-for-facebook',
-  'resize-image-for-twitter': '/tools/resize/resize-image-for-twitter',
-  'resize-image-for-linkedin': '/tools/resize/resize-image-for-linkedin',
-  'resize-image-for-pinterest': '/tools/resize/resize-image-for-pinterest',
-  'resize-image-for-tiktok': '/tools/resize/resize-image-for-tiktok',
-  'resize-image-for-discord': '/tools/resize/resize-image-for-discord',
-  'resize-image-for-reddit': '/tools/resize/resize-image-for-reddit',
-  'resize-image-for-telegram': '/tools/resize/resize-image-for-telegram',
-  // Convert tools
-  'png-to-jpg': '/tools/convert/png-to-jpg',
-  'jpg-to-png': '/tools/convert/jpg-to-png',
-  'webp-to-jpg': '/tools/convert/webp-to-jpg',
-  'webp-to-png': '/tools/convert/webp-to-png',
-  'jpg-to-webp': '/tools/convert/jpg-to-webp',
-  'png-to-webp': '/tools/convert/png-to-webp',
-  // Phase 1 expansion — format converter variants
-  'bmp-to-png': '/tools/convert/bmp-to-png',
-  'gif-to-png': '/tools/convert/gif-to-png',
-  'gif-to-webp': '/tools/convert/gif-to-webp',
-  'bmp-to-webp': '/tools/convert/bmp-to-webp',
-  // Compress tools
-  'image-compressor': '/tools/compress/image-compressor',
-  'bulk-image-compressor': '/tools/compress/bulk-image-compressor', // 301 redirect destination
-};
+function getInteractiveToolPath(slug: string, fallback: string): string {
+  return INTERACTIVE_TOOL_PATHS[slug as keyof typeof INTERACTIVE_TOOL_PATHS] ?? fallback;
+}
+
+function getInteractiveToolLocales(slug: string): readonly ['en'] | undefined {
+  return slug in INTERACTIVE_TOOL_PATHS && !isLocalizedInteractiveSlug(slug) ? ['en'] : undefined;
+}
 
 export async function GET() {
   const staticTools = await getAllTools();
@@ -98,8 +77,12 @@ ${hreflangLinks}${
   .join('\n')}
 ${interactiveTools
   .map(tool => {
-    const path = INTERACTIVE_TOOL_PATHS[tool.slug] || `/tools/${tool.slug}`;
-    const hreflangLinks = generateSitemapHreflangLinks(path, CATEGORY).join('\n');
+    const path = getInteractiveToolPath(tool.slug, `/tools/${tool.slug}`);
+    const hreflangLinks = generateSitemapHreflangLinks(
+      path,
+      CATEGORY,
+      getInteractiveToolLocales(tool.slug)
+    ).join('\n');
     return `  <url>
     <loc>${BASE_URL}${path}</loc>
     <lastmod>${tool.lastUpdated}</lastmod>
@@ -119,8 +102,12 @@ ${hreflangLinks}${
   .join('\n')}
 ${socialMediaResizeTools
   .map(tool => {
-    const path = INTERACTIVE_TOOL_PATHS[tool.slug] || `/tools/resize/${tool.slug}`;
-    const hreflangLinks = generateSitemapHreflangLinks(path, CATEGORY).join('\n');
+    const path = getInteractiveToolPath(tool.slug, `/tools/resize/${tool.slug}`);
+    const hreflangLinks = generateSitemapHreflangLinks(
+      path,
+      CATEGORY,
+      getInteractiveToolLocales(tool.slug)
+    ).join('\n');
     return `  <url>
     <loc>${BASE_URL}${path}</loc>
     <lastmod>${tool.lastUpdated}</lastmod>

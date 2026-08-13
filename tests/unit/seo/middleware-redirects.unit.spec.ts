@@ -1,12 +1,11 @@
 /**
- * Middleware Redirects Unit Tests
- * Tests legacy URL redirects for SEO (misrouted URLs from GSC 404 list)
+ * Middleware redirect tests for pattern-based edge normalization.
+ * Static legacy redirects are covered by legacy-redirects.unit.spec.ts.
  */
 
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NextRequest, NextResponse } from 'next/server';
 
-// Mock all dependencies
 vi.mock('@supabase/supabase-js', () => ({
   createClient: vi.fn(),
 }));
@@ -32,7 +31,17 @@ vi.mock('@shared/utils/supabase/middleware', () => ({
   updateSession: vi.fn(),
 }));
 
-describe('Middleware Legacy Redirects', () => {
+async function runMiddleware(pathname: string) {
+  const { updateSession } = await import('@shared/utils/supabase/middleware');
+  (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
+    user: null,
+    supabaseResponse: NextResponse.next(),
+  });
+  const { middleware } = await import('../../../middleware');
+  return middleware(new NextRequest(`http://localhost${pathname}`, { method: 'GET' }));
+}
+
+describe('Middleware pattern redirects', () => {
   let consoleSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
@@ -41,486 +50,75 @@ describe('Middleware Legacy Redirects', () => {
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
     consoleSpy.mockRestore();
   });
 
-  describe('English-only blog URL normalization', () => {
-    test('rewrites an unprefixed blog URL to the English route without changing the public URL', async () => {
-      const { middleware } = await import('../../../middleware');
-      const request = new NextRequest('http://localhost/blog/mejorar-calidad-imagen-ia-gratis', {
-        headers: { 'accept-language': 'es-ES,es;q=0.9' },
-      });
-
-      const response = await middleware(request);
-
-      expect(response.headers.get('x-middleware-rewrite')).toBe(
-        'http://localhost/en/blog/mejorar-calidad-imagen-ia-gratis'
-      );
+  test('rewrites an unprefixed blog URL to the English route without changing the public URL', async () => {
+    const { middleware } = await import('../../../middleware');
+    const request = new NextRequest('http://localhost/blog/mejorar-calidad-imagen-ia-gratis', {
+      headers: { 'accept-language': 'es-ES,es;q=0.9' },
     });
 
-    test('redirects locale-prefixed blog URLs to the canonical unprefixed URL', async () => {
-      const { middleware } = await import('../../../middleware');
-      const request = new NextRequest('http://localhost/es/blog/mejorar-calidad-imagen-ia-gratis');
+    const response = await middleware(request);
 
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      expect(response.headers.get('location')).toBe(
-        'http://localhost/blog/mejorar-calidad-imagen-ia-gratis'
-      );
-    });
-  });
-
-  describe('Dedicated-route tools accessed at wrong path', () => {
-    test('should redirect /tools/png-to-jpg to /tools/convert/png-to-jpg', async () => {
-      const { middleware } = await import('../../../middleware');
-      const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: null,
-        supabaseResponse: NextResponse.next(),
-      });
-
-      const request = new NextRequest('http://localhost/tools/png-to-jpg', {
-        method: 'GET',
-      });
-
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      expect(response.headers.get('location')).toBe('http://localhost/tools/convert/png-to-jpg');
-    });
-
-    test('should redirect /es/tools/png-to-jpg to /es/tools/convert/png-to-jpg preserving locale', async () => {
-      const { middleware } = await import('../../../middleware');
-      const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: null,
-        supabaseResponse: NextResponse.next(),
-      });
-
-      const request = new NextRequest('http://localhost/es/tools/png-to-jpg', {
-        method: 'GET',
-      });
-
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      expect(response.headers.get('location')).toBe('http://localhost/es/tools/convert/png-to-jpg');
-    });
-
-    test('should redirect /tools/jpg-to-png to /tools/convert/jpg-to-png', async () => {
-      const { middleware } = await import('../../../middleware');
-      const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: null,
-        supabaseResponse: NextResponse.next(),
-      });
-
-      const request = new NextRequest('http://localhost/tools/jpg-to-png', {
-        method: 'GET',
-      });
-
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      expect(response.headers.get('location')).toBe('http://localhost/tools/convert/jpg-to-png');
-    });
-
-    test('should redirect /tools/webp-to-jpg to /tools/convert/webp-to-jpg', async () => {
-      const { middleware } = await import('../../../middleware');
-      const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: null,
-        supabaseResponse: NextResponse.next(),
-      });
-
-      const request = new NextRequest('http://localhost/tools/webp-to-jpg', {
-        method: 'GET',
-      });
-
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      expect(response.headers.get('location')).toBe('http://localhost/tools/convert/webp-to-jpg');
-    });
-
-    test('should redirect /tools/webp-to-png to /tools/convert/webp-to-png', async () => {
-      const { middleware } = await import('../../../middleware');
-      const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: null,
-        supabaseResponse: NextResponse.next(),
-      });
-
-      const request = new NextRequest('http://localhost/tools/webp-to-png', {
-        method: 'GET',
-      });
-
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      expect(response.headers.get('location')).toBe('http://localhost/tools/convert/webp-to-png');
-    });
-
-    test('should redirect /tools/jpg-to-webp to /tools/convert/jpg-to-webp', async () => {
-      const { middleware } = await import('../../../middleware');
-      const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: null,
-        supabaseResponse: NextResponse.next(),
-      });
-
-      const request = new NextRequest('http://localhost/tools/jpg-to-webp', {
-        method: 'GET',
-      });
-
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      expect(response.headers.get('location')).toBe('http://localhost/tools/convert/jpg-to-webp');
-    });
-
-    test('should redirect /tools/png-to-webp to /tools/convert/png-to-webp', async () => {
-      const { middleware } = await import('../../../middleware');
-      const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: null,
-        supabaseResponse: NextResponse.next(),
-      });
-
-      const request = new NextRequest('http://localhost/tools/png-to-webp', {
-        method: 'GET',
-      });
-
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      expect(response.headers.get('location')).toBe('http://localhost/tools/convert/png-to-webp');
-    });
-
-    test('should redirect /tools/image-compressor to /tools/compress/image-compressor', async () => {
-      const { middleware } = await import('../../../middleware');
-      const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: null,
-        supabaseResponse: NextResponse.next(),
-      });
-
-      const request = new NextRequest('http://localhost/tools/image-compressor', {
-        method: 'GET',
-      });
-
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      expect(response.headers.get('location')).toBe(
-        'http://localhost/tools/compress/image-compressor'
-      );
-    });
-
-    test('should redirect /tools/image-resizer to /tools/resize/image-resizer', async () => {
-      const { middleware } = await import('../../../middleware');
-      const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: null,
-        supabaseResponse: NextResponse.next(),
-      });
-
-      const request = new NextRequest('http://localhost/tools/image-resizer', {
-        method: 'GET',
-      });
-
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      expect(response.headers.get('location')).toBe('http://localhost/tools/resize/image-resizer');
-    });
-
-    test.each(['instagram', 'youtube', 'facebook', 'twitter', 'linkedin'])(
-      'should redirect legacy Japanese %s resize URLs to the dedicated route',
-      async platform => {
-        const { middleware } = await import('../../../middleware');
-        const request = new NextRequest(
-          `http://localhost/ja/tools/resize-image-for-${platform}`,
-          { method: 'GET' }
-        );
-
-        const response = await middleware(request);
-
-        expect(response.status).toBe(301);
-        expect(response.headers.get('location')).toBe(
-          `http://localhost/ja/tools/resize/resize-image-for-${platform}`
-        );
-      }
-    );
-
-    test.each(['instagram', 'youtube', 'facebook', 'twitter', 'linkedin'])(
-      'should redirect legacy English %s resize URLs to the dedicated route',
-      async platform => {
-        const { middleware } = await import('../../../middleware');
-        const request = new NextRequest(
-          `http://localhost/tools/resize-image-for-${platform}`,
-          { method: 'GET' }
-        );
-
-        const response = await middleware(request);
-
-        expect(response.status).toBe(301);
-        expect(response.headers.get('location')).toBe(
-          `http://localhost/tools/resize/resize-image-for-${platform}`
-        );
-      }
+    expect(response.headers.get('x-middleware-rewrite')).toBe(
+      'http://localhost/en/blog/mejorar-calidad-imagen-ia-gratis'
     );
   });
 
-  describe('Misrouted category URLs', () => {
-    test('should redirect /tools/free-ai-upscaler to /free/free-ai-upscaler', async () => {
-      const { middleware } = await import('../../../middleware');
-      const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: null,
-        supabaseResponse: NextResponse.next(),
-      });
+  test('redirects locale-prefixed blog URLs to the canonical unprefixed URL', async () => {
+    const { middleware } = await import('../../../middleware');
+    const response = await middleware(
+      new NextRequest('http://localhost/es/blog/mejorar-calidad-imagen-ia-gratis')
+    );
 
-      const request = new NextRequest('http://localhost/tools/free-ai-upscaler', {
-        method: 'GET',
-      });
-
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      expect(response.headers.get('location')).toBe('http://localhost/free/free-ai-upscaler');
-    });
+    expect(response.status).toBe(301);
+    expect(response.headers.get('location')).toBe(
+      'http://localhost/blog/mejorar-calidad-imagen-ia-gratis'
+    );
   });
 
-  describe('/article/ to correct category redirects', () => {
-    test('should redirect /article/upscale-arw-images to /camera-raw/upscale-arw-images', async () => {
-      const { middleware } = await import('../../../middleware');
-      const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: null,
-        supabaseResponse: NextResponse.next(),
-      });
+  test.each([
+    ['/tools/Converter/jpg-to-webp', '/tools/convert/jpg-to-webp'],
+    ['/tools/resize/resize-image-for-YouTube', '/tools/resize/resize-image-for-youtube'],
+  ])('normalizes tool casing: %s', async (source, destination) => {
+    const response = await runMiddleware(source);
 
-      const request = new NextRequest('http://localhost/article/upscale-arw-images', {
-        method: 'GET',
-      });
-
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      expect(response.headers.get('location')).toBe(
-        'http://localhost/camera-raw/upscale-arw-images'
-      );
-    });
-
-    test('should redirect /article/photography-business-enhancement to /industry-insights/photography-business-enhancement', async () => {
-      const { middleware } = await import('../../../middleware');
-      const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: null,
-        supabaseResponse: NextResponse.next(),
-      });
-
-      const request = new NextRequest('http://localhost/article/photography-business-enhancement', {
-        method: 'GET',
-      });
-
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      expect(response.headers.get('location')).toBe(
-        'http://localhost/industry-insights/photography-business-enhancement'
-      );
-    });
-
-    test('should redirect /article/family-photo-preservation to /photo-restoration/family-photo-preservation', async () => {
-      const { middleware } = await import('../../../middleware');
-      const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: null,
-        supabaseResponse: NextResponse.next(),
-      });
-
-      const request = new NextRequest('http://localhost/article/family-photo-preservation', {
-        method: 'GET',
-      });
-
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      expect(response.headers.get('location')).toBe(
-        'http://localhost/photo-restoration/family-photo-preservation'
-      );
-    });
+    expect(response.status).toBe(301);
+    expect(response.headers.get('location')).toBe(`http://localhost${destination}`);
   });
 
-  describe('Wrong category slug redirects', () => {
-    test('should redirect /industry-insights/real-estate-photo-enhancement to /use-cases/real-estate-photo-enhancement', async () => {
-      const { middleware } = await import('../../../middleware');
-      const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: null,
-        supabaseResponse: NextResponse.next(),
-      });
+  test.each([
+    [
+      '/tools/resize/redimensionner-image-pour-instagram',
+      '/tools/resize/resize-image-for-instagram',
+    ],
+    ['/tools/compress/compresseur-image-lot', '/tools/compress/bulk-image-compressor'],
+  ])('normalizes translated tool slugs: %s', async (source, destination) => {
+    const response = await runMiddleware(source);
 
-      const request = new NextRequest(
-        'http://localhost/industry-insights/real-estate-photo-enhancement',
-        {
-          method: 'GET',
-        }
-      );
-
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      expect(response.headers.get('location')).toBe(
-        'http://localhost/use-cases/real-estate-photo-enhancement'
-      );
-    });
+    expect(response.status).toBe(301);
+    expect(response.headers.get('location')).toBe(`http://localhost${destination}`);
   });
 
-  describe('/undefined/ prefix bug handling', () => {
-    test('should redirect /undefined/midjourney-upscaler to /midjourney-upscaler stripping undefined', async () => {
-      const { middleware } = await import('../../../middleware');
-      const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: null,
-        supabaseResponse: NextResponse.next(),
-      });
+  test.each(['/&', '/$', '/5'])('redirects junk path %s to the homepage', async source => {
+    const response = await runMiddleware(source);
 
-      const request = new NextRequest('http://localhost/undefined/midjourney-upscaler', {
-        method: 'GET',
-      });
-
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      expect(response.headers.get('location')).toBe('http://localhost/midjourney-upscaler');
-    });
-
-    test('should redirect /undefined/tools/png-to-jpg to /tools/png-to-jpg (strips undefined only)', async () => {
-      const { middleware } = await import('../../../middleware');
-      const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: null,
-        supabaseResponse: NextResponse.next(),
-      });
-
-      const request = new NextRequest('http://localhost/undefined/tools/png-to-jpg', {
-        method: 'GET',
-      });
-
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      // The middleware strips /undefined/ and returns 301 to /tools/png-to-jpg
-      // The redirectMap logic would apply on the next request to /tools/png-to-jpg
-      // (middleware processes one redirect at a time)
-      expect(response.headers.get('location')).toBe('http://localhost/tools/png-to-jpg');
-    });
+    expect(response.status).toBe(301);
+    expect(response.headers.get('location')).toBe('http://localhost/');
   });
 
-  describe('Existing bulk tool redirects (regression)', () => {
-    test('should redirect /tools/bulk-image-resizer to /tools/resize/bulk-image-resizer', async () => {
-      const { middleware } = await import('../../../middleware');
-      const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: null,
-        supabaseResponse: NextResponse.next(),
-      });
+  test('redirects an undefined platform prefix to its real owner route', async () => {
+    const response = await runMiddleware('/undefined/midjourney-upscaler');
 
-      const request = new NextRequest('http://localhost/tools/bulk-image-resizer', {
-        method: 'GET',
-      });
-
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      expect(response.headers.get('location')).toBe(
-        'http://localhost/tools/resize/bulk-image-resizer'
-      );
-    });
-
-    test('should redirect /tools/bulk-image-compressor to /tools/compress/bulk-image-compressor', async () => {
-      const { middleware } = await import('../../../middleware');
-      const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: null,
-        supabaseResponse: NextResponse.next(),
-      });
-
-      const request = new NextRequest('http://localhost/tools/bulk-image-compressor', {
-        method: 'GET',
-      });
-
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      expect(response.headers.get('location')).toBe(
-        'http://localhost/tools/compress/bulk-image-compressor'
-      );
-    });
+    expect(response.status).toBe(301);
+    expect(response.headers.get('location')).toBe('http://localhost/platforms/midjourney-upscaler');
   });
 
-  describe('Locale preservation in redirects', () => {
-    test('should preserve /de prefix when redirecting /de/tools/png-to-webp', async () => {
-      const { middleware } = await import('../../../middleware');
-      const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: null,
-        supabaseResponse: NextResponse.next(),
-      });
+  test('strips a locale from an English-only pSEO route', async () => {
+    const response = await runMiddleware('/fr/photo-restoration');
 
-      const request = new NextRequest('http://localhost/de/tools/png-to-webp', {
-        method: 'GET',
-      });
-
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      expect(response.headers.get('location')).toBe(
-        'http://localhost/de/tools/convert/png-to-webp'
-      );
-    });
-
-    test('should preserve /fr prefix when redirecting /fr/article/upscale-arw-images', async () => {
-      const { middleware } = await import('../../../middleware');
-      const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: null,
-        supabaseResponse: NextResponse.next(),
-      });
-
-      const request = new NextRequest('http://localhost/fr/article/upscale-arw-images', {
-        method: 'GET',
-      });
-
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      expect(response.headers.get('location')).toBe(
-        'http://localhost/fr/camera-raw/upscale-arw-images'
-      );
-    });
-
-    test('should preserve /it prefix when redirecting /it/tools/free-ai-upscaler', async () => {
-      const { middleware } = await import('../../../middleware');
-      const { updateSession } = await import('@shared/utils/supabase/middleware');
-      (updateSession as ReturnType<typeof vi.fn>).mockResolvedValue({
-        user: null,
-        supabaseResponse: NextResponse.next(),
-      });
-
-      const request = new NextRequest('http://localhost/it/tools/free-ai-upscaler', {
-        method: 'GET',
-      });
-
-      const response = await middleware(request);
-
-      expect(response.status).toBe(301);
-      expect(response.headers.get('location')).toBe('http://localhost/it/free/free-ai-upscaler');
-    });
+    expect(response.status).toBe(301);
+    expect(response.headers.get('location')).toBe('http://localhost/photo-restoration');
   });
 });

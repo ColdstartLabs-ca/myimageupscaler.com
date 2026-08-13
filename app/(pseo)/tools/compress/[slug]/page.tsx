@@ -6,12 +6,10 @@ import { InteractiveToolPageTemplate } from '@/app/(pseo)/_components/pseo/templ
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 import { clientEnv } from '@shared/config/env';
 import type { IToolPage, IBulkToolPage, IPSEODataFile } from '@/lib/seo/pseo-types';
+import { COMPRESS_SLUGS } from '@/lib/seo/interactive-tool-routes';
 
 const toolsData = interactiveToolsData as IPSEODataFile<IToolPage>;
 const bulkData = bulkToolsData as unknown as IPSEODataFile<IBulkToolPage>;
-
-// Compress tool slugs from interactive-tools.json and bulk-tools.json
-const COMPRESS_SLUGS = ['image-compressor', 'bulk-image-compressor'];
 
 function findToolBySlug(slug: string): IToolPage | null {
   const tool = toolsData.pages.find(p => p.slug === slug);
@@ -65,7 +63,7 @@ export default async function CompressToolPage({ params }: IPageProps) {
   const { slug } = await params;
 
   // Only allow compress tool slugs
-  if (!COMPRESS_SLUGS.includes(slug)) {
+  if (!(COMPRESS_SLUGS as readonly string[]).includes(slug)) {
     notFound();
   }
 

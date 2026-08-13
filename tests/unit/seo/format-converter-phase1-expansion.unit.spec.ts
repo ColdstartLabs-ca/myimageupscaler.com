@@ -9,13 +9,14 @@
  *  2. metaTitle / metaDescription lengths within Google limits
  *  3. No duplicate metaTitle across the full FormatConverter family
  *  4. toolComponent correctly set and toolConfig matches expected shape
- *  5. Every slug is registered in the sitemap path map and renders under /tools/convert/
+ *  5. Every slug is registered in the shared sitemap path map and renders under /tools/convert/
  *  6. relatedTools cross-references resolve to real slugs
  */
 
 import { describe, it, expect } from 'vitest';
 import fs from 'fs';
 import path from 'path';
+import { CONVERSION_SLUGS, INTERACTIVE_TOOL_PATHS } from '@/lib/seo/interactive-tool-routes';
 
 interface IToolConfig {
   defaultTargetFormat?: string;
@@ -147,15 +148,8 @@ describe('Phase 1 FormatConverter expansion (issue #98) — data integrity', () 
 });
 
 describe('Phase 1 FormatConverter expansion — sitemap registration', () => {
-  // Read sitemap route source and extract the INTERACTIVE_TOOL_PATHS map
-  const sitemapSource = fs.readFileSync(
-    path.resolve(process.cwd(), 'app/sitemap-tools.xml/route.ts'),
-    'utf-8'
-  );
-
   it.each(PHASE_1_NEW_SLUGS)('%s is mapped to /tools/convert/%s in sitemap', slug => {
-    const expectedMapping = `'${slug}': '/tools/convert/${slug}'`;
-    expect(sitemapSource).toContain(expectedMapping);
+    expect(INTERACTIVE_TOOL_PATHS[slug]).toBe(`/tools/convert/${slug}`);
   });
 
   it('converter subroute registers the four new slugs', () => {
@@ -164,7 +158,8 @@ describe('Phase 1 FormatConverter expansion — sitemap registration', () => {
       'utf-8'
     );
     for (const slug of PHASE_1_NEW_SLUGS) {
-      expect(pageSource).toContain(`'${slug}'`);
+      expect(CONVERSION_SLUGS).toContain(slug);
+      expect(pageSource).toContain('CONVERSION_SLUGS');
     }
   });
 });
