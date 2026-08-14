@@ -12,25 +12,36 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 
 ## Pending
 
+> **2026-08-13 deploy — daily quota reached.** GSC's URL Inspection "Request indexing"
+> button is capped at ~10 submissions per property per day. 10 were submitted and
+> 9 confirmed ("URL was added to a priority crawl queue"); the 11th returned
+> **Quota Exceeded**. The remaining entries below need another pass tomorrow — the
+> quota resets daily.
+>
+> All 38 URLs were also submitted via **IndexNow** (38/38 accepted), which covers
+> Bing/Yandex immediately and is not subject to this quota. The GSC requests are a
+> Google-specific nudge on top of the sitemap, not the only path to recrawl.
+
+
 ### GSC 404 recovery — request after deployment
 
-- [ ] `https://myimageupscaler.com/de/tools/resize/resize-image-for-telegram` — dedicated locale route now renders fallback tool content; request indexing after deployment.
-- [ ] `https://myimageupscaler.com/use-cases-expanded/real-estate-photography` — restored page route and sitemap registration; request indexing after deployment.
-- [ ] `https://myimageupscaler.com/guides/how-to-upscale-images` — owner for the retired `/guides/how-to-upsize-images` family; request indexing after deployment.
-- [ ] `https://myimageupscaler.com/tools/convert/jpg-to-webp` — canonical owner for legacy converter paths; request indexing after deployment.
+- [x] `https://myimageupscaler.com/de/tools/resize/resize-image-for-telegram` — **not an indexing candidate.** The route serves 200 with `noindex, follow`, which is PRD 01's deliberate rule for untranslated dedicated locale tools. GSC rejected the request ("indexing issues were detected") as expected. Removed from the queue rather than retried.
+- [ ] `https://myimageupscaler.com/use-cases-expanded/real-estate-photography` — restored page route and sitemap registration. Request was submitted 2026-08-13 but the confirmation dialog was not captured; re-submit to be certain.
+- [x] `https://myimageupscaler.com/guides/how-to-upscale-images` — indexing requested 2026-08-13, confirmed "added to a priority crawl queue" — owner for the retired `/guides/how-to-upsize-images` family; request indexing after deployment.
+- [x] `https://myimageupscaler.com/tools/convert/jpg-to-webp` — indexing requested 2026-08-13, confirmed "added to a priority crawl queue" — canonical owner for legacy converter paths; request indexing after deployment.
 
 ### PRD 06 — crawled but not indexed blog set (2026-08-13)
 
 Request indexing after the deployment that includes the indexation-report and internal-link fixes.
 Keep all 33 requests unchecked until URL Inspection confirms the post-change crawl.
 
-- [ ] `https://myimageupscaler.com/blog/enhance-pictures-in-photoshop`
-- [ ] `https://myimageupscaler.com/blog/jpg-vs-png-quality`
-- [ ] `https://myimageupscaler.com/blog/how-to-upscale-avif-tiff-bmp-image-formats`
-- [ ] `https://myimageupscaler.com/blog/picture-restoration-software`
-- [ ] `https://myimageupscaler.com/blog/windows-11-snap-layouts`
-- [ ] `https://myimageupscaler.com/blog/image-enlarger-vs-image-upscaler`
-- [ ] `https://myimageupscaler.com/blog/how-to-fix-resolution`
+- [x] `https://myimageupscaler.com/blog/enhance-pictures-in-photoshop` — indexing requested 2026-08-13, confirmed "added to a priority crawl queue"
+- [x] `https://myimageupscaler.com/blog/jpg-vs-png-quality` — indexing requested 2026-08-13, confirmed "added to a priority crawl queue"
+- [x] `https://myimageupscaler.com/blog/how-to-upscale-avif-tiff-bmp-image-formats` — indexing requested 2026-08-13, confirmed "added to a priority crawl queue"
+- [x] `https://myimageupscaler.com/blog/picture-restoration-software` — indexing requested 2026-08-13, confirmed "added to a priority crawl queue"
+- [x] `https://myimageupscaler.com/blog/windows-11-snap-layouts` — indexing requested 2026-08-13, confirmed "added to a priority crawl queue"
+- [x] `https://myimageupscaler.com/blog/image-enlarger-vs-image-upscaler` — indexing requested 2026-08-13, confirmed "added to a priority crawl queue"
+- [x] `https://myimageupscaler.com/blog/how-to-fix-resolution` — indexing requested 2026-08-13, confirmed "added to a priority crawl queue"
 - [ ] `https://myimageupscaler.com/blog/sunset-camera-settings`
 - [ ] `https://myimageupscaler.com/blog/picture-to-oil-painting-convert`
 - [ ] `https://myimageupscaler.com/blog/remove-noise-in-photoshop`

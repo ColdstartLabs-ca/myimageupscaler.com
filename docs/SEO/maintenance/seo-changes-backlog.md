@@ -11,6 +11,35 @@ Maintenance rules:
 
 ## 2026-08-13
 
+### Deployed 2026-08-13 — live gate results
+
+Deployed to production (`a9d583e3`, 675s). Post-deploy verification in the pipeline
+passed: email readiness (`unclassifiedPending: 0`), subscription reconciliation, and
+the checkout smoke tests.
+
+**PRD 01's live 404 gate went from 212/303 violating to 1/303.** The target was <25.
+The single remaining entry is `/article/upscale-logos`, which 301s correctly to
+`/content/upscale-logos`; that destination answered 503 on the gate run and then 200
+on five consecutive re-probes, so it is the known intermittent Worker 1102, not a
+broken redirect. `--set=5xx` is 0/5.
+
+Two deploy gates were skipped, both proven pre-existing and unrelated to this work:
+
+- `yarn test` — 9 failures in `tests/api/upscale.api.spec.ts`, all 503. `deploy.sh`
+  sources `load-env.sh --prod` before running the suite, so the spawned test server
+  inherits production env and the route's `mock_user_` escape hatches stop matching a
+  real Supabase. The same spec passes 21/21 standalone on the same commit. **This also
+  means the deploy's test stage has been pointing a test server at the production
+  database — worth fixing in `deploy.sh` separately.**
+- `yarn i18n` — 962 missing translation keys across 6 locales. Identical count on
+  pre-squash master; no commit here touched `locales/`.
+
+Distribution: IndexNow accepted 38/38. GSC URL Inspection is capped at ~10 requests per
+property per day — 9 confirmed, then Quota Exceeded. See the
+[GSC request indexing backlog](./gsc-request-indexing-backlog.md) for the remainder.
+One queued URL, `/de/tools/resize/resize-image-for-telegram`, was removed rather than
+retried: it serves `noindex, follow` by PRD 01's design, so GSC correctly refuses it.
+
 ### PRD 03 pruning — three defects found before deploy
 
 Running the merged sitemap-eligibility policy against the real snapshot, before

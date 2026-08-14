@@ -2,7 +2,7 @@
   "set": "5xx",
   "baseUrl": "https://myimageupscaler.com",
   "expectStatus": null,
-  "generatedAt": "2026-08-13T07:10:15.119Z",
+  "generatedAt": "2026-08-14T03:44:55.238Z",
   "totals": {
     "checked": 5,
     "violations": 0
@@ -26,7 +26,7 @@
       "observation": {
         "url": "https://myimageupscaler.com/ja/platform-format/lightroom-upscaler-avif",
         "status": 200,
-        "responseTimeMs": 423
+        "responseTimeMs": 2002
       },
       "expectation": {
         "ok": true,
@@ -37,20 +37,11 @@
       "observation": {
         "url": "https://myimageupscaler.com/ja/tools/resize-image-for-facebook",
         "status": 301,
-        "responseTimeMs": 750,
-        "location": "/ja/tools/resize/resize-image-for-facebook"
-      },
-      "expectation": {
-        "ok": true,
-        "reason": "301"
-      }
-    },
-    {
-      "observation": {
-        "url": "https://myimageupscaler.com/ja/tools/resize-image-for-linkedin",
-        "status": 301,
-        "responseTimeMs": 771,
-        "location": "/ja/tools/resize/resize-image-for-linkedin"
+        "responseTimeMs": 985,
+        "location": "/ja/tools/resize/resize-image-for-facebook",
+        "finalStatus": 200,
+        "finalUrl": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-facebook",
+        "redirectHops": 1
       },
       "expectation": {
         "ok": true,
@@ -61,8 +52,26 @@
       "observation": {
         "url": "https://myimageupscaler.com/ja/tools/resize-image-for-instagram",
         "status": 301,
-        "responseTimeMs": 965,
-        "location": "/ja/tools/resize/resize-image-for-instagram"
+        "responseTimeMs": 992,
+        "location": "/ja/tools/resize/resize-image-for-instagram",
+        "finalStatus": 200,
+        "finalUrl": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-instagram",
+        "redirectHops": 1
+      },
+      "expectation": {
+        "ok": true,
+        "reason": "301"
+      }
+    },
+    {
+      "observation": {
+        "url": "https://myimageupscaler.com/ja/tools/resize-image-for-linkedin",
+        "status": 301,
+        "responseTimeMs": 991,
+        "location": "/ja/tools/resize/resize-image-for-linkedin",
+        "finalStatus": 200,
+        "finalUrl": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-linkedin",
+        "redirectHops": 1
       },
       "expectation": {
         "ok": true,
@@ -73,8 +82,11 @@
       "observation": {
         "url": "https://myimageupscaler.com/ja/tools/resize-image-for-twitter",
         "status": 301,
-        "responseTimeMs": 784,
-        "location": "/ja/tools/resize/resize-image-for-twitter"
+        "responseTimeMs": 1109,
+        "location": "/ja/tools/resize/resize-image-for-twitter",
+        "finalStatus": 200,
+        "finalUrl": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-twitter",
+        "redirectHops": 1
       },
       "expectation": {
         "ok": true,
