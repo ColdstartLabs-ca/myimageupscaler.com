@@ -8,6 +8,7 @@
 
 import performanceSnapshot from '@/content/pseo-performance.json';
 import type { Locale } from '@/i18n/config';
+import { LEGACY_REDIRECTS } from './legacy-redirects';
 import { PSEO_CATEGORIES, type PSEOCategory } from './url-utils';
 
 export const GRACE_PERIOD_DAYS = 90;
@@ -23,6 +24,24 @@ export const PINNED_SLUGS = new Set([
   'formats/upscale-jpg-images',
   'scale/upscale-4x',
 ]);
+
+/**
+ * Every destination of a legacy 301 is a consolidation owner: the impressions
+ * it is being handed still sit on the retired source URL, so the performance
+ * snapshot reports zero for the owner. Pruning it would de-list exactly the
+ * pages the redirect table funnels signals into. Owners are pinned by
+ * construction, and the set is derived rather than hand-maintained so it can
+ * never drift from the redirect table.
+ */
+export const REDIRECT_OWNER_KEYS: ReadonlySet<string> = new Set(
+  LEGACY_REDIRECTS.flatMap(redirect => {
+    const destination = redirect.destination.replace(/^\/:locale/, '');
+    if (!destination.startsWith('/') || destination.includes(':')) return [];
+
+    const identity = getPathIdentity(destination);
+    return identity ? [`${identity.category}/${identity.slug}`] : [];
+  })
+);
 
 export interface IPagePerformance {
   category: string;
@@ -54,9 +73,33 @@ function key(category: string, slug: string, locale: string): string {
   return `${category}/${slug}/${locale}`;
 }
 
-const performanceByKey = new Map(
-  snapshot.pages.map(page => [key(page.category, page.slug, page.locale || 'en'), page])
-);
+/**
+ * The snapshot can carry more than one row per identity (1,111 rows for 1,030
+ * identities), because a page can be reached through more than one sitemap
+ * path. Last-write-wins silently hid real traffic behind a zero-impression
+ * duplicate for all 81 affected identities and pruned pages that were in fact
+ * earning impressions. Merge instead, taking the strongest observation: a page
+ * counts as earning if any row for it reports traffic. Max rather than sum, so
+ * a duplicate that is the same measurement twice cannot inflate a report.
+ */
+function mergePerformance(a: IPagePerformance, b: IPagePerformance): IPagePerformance {
+  const newerLastUpdated =
+    !a.lastUpdated || (b.lastUpdated && b.lastUpdated > a.lastUpdated) ? b.lastUpdated : a.lastUpdated;
+
+  return {
+    ...a,
+    impressions: Math.max(a.impressions, b.impressions),
+    clicks: Math.max(a.clicks, b.clicks),
+    lastUpdated: newerLastUpdated,
+  };
+}
+
+const performanceByKey = new Map<string, IPagePerformance>();
+for (const page of snapshot.pages) {
+  const pageKey = key(page.category, page.slug, page.locale || 'en');
+  const existing = performanceByKey.get(pageKey);
+  performanceByKey.set(pageKey, existing ? mergePerformance(existing, page) : page);
+}
 
 function getPerformanceRecord(
   category: string,
@@ -97,7 +140,9 @@ export function shouldSubmit(
   const normalizedLocale = locale || 'en';
   const pageKey = `${category}/${slug}`;
 
-  if (category === 'blog' || PINNED_SLUGS.has(pageKey)) return true;
+  if (category === 'blog' || PINNED_SLUGS.has(pageKey) || REDIRECT_OWNER_KEYS.has(pageKey)) {
+    return true;
+  }
 
   const effectiveLastUpdated =
     typeof lastUpdatedOrNow === 'string'
@@ -133,7 +178,7 @@ export function getEligibilityReason(
 ): 'blog' | 'pinned' | 'impressions' | 'grace-period' | 'untracked' | 'pruned' {
   const pageKey = `${category}/${slug}`;
   if (category === 'blog') return 'blog';
-  if (PINNED_SLUGS.has(pageKey)) return 'pinned';
+  if (PINNED_SLUGS.has(pageKey) || REDIRECT_OWNER_KEYS.has(pageKey)) return 'pinned';
 
   const performance = getPagePerformance(category, slug, locale);
   if (!performance) {
@@ -174,10 +219,18 @@ function getPathIdentity(
  * Path-level adapter used by shared sitemap entry generators.
  * Category hubs and non-pSEO URLs are not page candidates and remain emitted.
  */
-export function shouldSubmitPath(pathname: string, lastUpdated?: string): boolean {
+export function shouldSubmitPath(
+  pathname: string,
+  lastUpdated?: string,
+  locale?: Locale | string
+): boolean {
   const identity = getPathIdentity(pathname);
   if (!identity) return true;
-  return shouldSubmit(identity.category, identity.slug, identity.locale, lastUpdated);
+
+  // Locale-specific sitemaps carry unprefixed paths, so the path alone always
+  // looks English. Callers that know which locale's sitemap they are building
+  // must say so, or every locale gets filtered against the English record.
+  return shouldSubmit(identity.category, identity.slug, locale || identity.locale, lastUpdated);
 }
 
 export function filterEligiblePages<T extends { slug: string; lastUpdated?: string }>(
@@ -205,7 +258,7 @@ export function filterEligibleSitemapEntries<T>(
   getLastUpdated: (entry: T) => string | undefined
 ): T[] {
   const eligibleEntries = entries.filter(entry =>
-    shouldSubmitPath(getPath(entry), getLastUpdated(entry))
+    shouldSubmitPath(getPath(entry), getLastUpdated(entry), locale)
   );
   logSitemapEligibility(category, locale, entries.length, entries.length - eligibleEntries.length);
   return eligibleEntries;

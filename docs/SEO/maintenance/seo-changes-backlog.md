@@ -11,6 +11,44 @@ Maintenance rules:
 
 ## 2026-08-13
 
+### PRD 03 pruning — three defects found before deploy
+
+Running the merged sitemap-eligibility policy against the real snapshot, before
+any deploy, found three bugs. All three made the pruner de-list pages it should
+have kept. Each is now covered by a regression test in
+`tests/unit/seo/redirect-destination-eligibility.unit.spec.ts`.
+
+1. **Redirect owners were pruned.** 28 of the 115 PRD 01 redirect destinations
+   were dropped from the sitemaps — including `/tools/convert/png-to-jpg`,
+   `/tools/resize/resize-image-for-instagram`, `/free/free-ai-upscaler`, and
+   `/guides/how-to-upscale-images`. A redirect destination is a consolidation
+   owner: its impressions still sit on the retired source, so the snapshot
+   reports zero for the owner. PRD 01 would have funnelled 301s into pages PRD 03
+   simultaneously removed from the sitemaps. `REDIRECT_OWNER_KEYS` is now derived
+   from `LEGACY_REDIRECTS` so it cannot drift from the redirect table.
+2. **Duplicate snapshot rows hid real traffic.** `content/pseo-performance.json`
+   holds 1,111 rows for 1,030 identities. The index was last-write-wins, and in
+   **all 81** duplicated identities the zero-impression row won, hiding real
+   impressions and pruning the page. Rows are now merged with `Math.max` rather
+   than overwritten.
+3. **Every locale was judged by the English record.** `generateLocalizedSitemap`
+   and `filterEligibleSitemapEntries` passed unprefixed paths to
+   `shouldSubmitPath`, which then defaulted to `en`, so the French, German,
+   Japanese, … sitemaps all inherited the English verdict. Both now pass their
+   locale explicitly.
+
+Net effect on the next deploy: 474 of 991 identities drop out of the sitemaps
+(47.8%), essentially all non-English — which is PRD 03's intent. In English only
+the degenerate `category/category` hub artifacts in the snapshot are prunable, so
+PRD 03 removes no English page today. The reviewer's open finding stands: the
+snapshot's identity derivation still emits duplicate and hub-shaped rows, and
+`yarn seo:sync:performance` should be corrected before the pruner is trusted to
+do more than it currently does.
+
+`yarn seo:verify:gsc` was declared twice in `package.json` (PRD 01's
+`verify-gsc-fixes.ts` and PRD 03's `verify-gsc.ts`); the later key silently won.
+PRD 03's is now `yarn seo:verify:cni`.
+
 ### GSC recovery 2026-08 — squash status
 
 Five of the six PRD lanes are squashed onto `master`, one commit each: PRD 01

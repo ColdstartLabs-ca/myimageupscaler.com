@@ -14,7 +14,7 @@ describe('sitemap eligibility', () => {
         category: 'tools',
         entries: [
           {
-            path: '/tools/resize/resize-image-for-instagram',
+            path: '/tools/convert/svg-to-jpg',
             lastModified: OLD_DATE,
           },
           {
@@ -26,7 +26,7 @@ describe('sitemap eligibility', () => {
       'fr'
     );
 
-    expect(xml).not.toContain('/tools/resize/resize-image-for-instagram');
+    expect(xml).not.toContain('/tools/convert/svg-to-jpg');
     expect(xml).toContain('/tools/convert/convert-jpeg-to-png');
     expect(xml.match(/<loc>/g)).toHaveLength(2);
   });
@@ -49,7 +49,7 @@ describe('sitemap eligibility', () => {
         category: 'tools',
         entries: [
           {
-            path: '/tools/resize/resize-image-for-instagram',
+            path: '/tools/convert/svg-to-jpg',
             lastModified: OLD_DATE,
           },
           {
@@ -68,14 +68,14 @@ describe('sitemap eligibility', () => {
 
   it('filters locale sitemap pages through the same policy', async () => {
     const pages: ILocaleSitemapPage[] = [
-      { slug: 'resize-image-for-instagram', lastUpdated: OLD_DATE },
+      { slug: 'svg-to-jpg', lastUpdated: OLD_DATE },
       { slug: 'convert-jpeg-to-png', lastUpdated: OLD_DATE },
     ];
 
     const response = generateLocaleCategorySitemapResponse('fr', 'tools', 'tools', pages);
     const xml = await response.text();
 
-    expect(xml).not.toContain('/fr/tools/resize/resize-image-for-instagram');
+    expect(xml).not.toContain('/fr/tools/convert/svg-to-jpg');
     expect(xml).toContain('/fr/tools/convert-jpeg-to-png');
   });
 });

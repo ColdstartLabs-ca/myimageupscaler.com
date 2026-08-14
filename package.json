@@ -48,7 +48,7 @@
     "seo:sync:performance": "tsx scripts/seo/sync-page-performance.ts",
     "seo:indexation:report": "tsx scripts/seo/sync-page-performance.ts --report-only",
     "seo:indexation:gate": "tsx scripts/seo/check-indexation-gate.ts",
-    "seo:verify:gsc": "tsx scripts/seo/verify-gsc.ts",
+    "seo:verify:cni": "tsx scripts/seo/verify-gsc.ts",
     "test:billing": "playwright test --project=integration --grep 'proof'",
     "test:billing:e2e": "playwright test --project=chromium tests/e2e/*-proof.e2e.spec.ts",
     "test:smoke": "playwright test --config=playwright.smoke.config.ts",

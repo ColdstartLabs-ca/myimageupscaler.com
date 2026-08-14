@@ -125,7 +125,7 @@ export function generateSitemapUrlEntry(entry: ISitemapUrlEntry): string {
   // Shared entry point for English and custom-path sitemap routes. Returning an
   // empty fragment keeps the caller's existing XML assembly intact while
   // preventing a pruned pSEO URL from becoming a submitted <loc>.
-  if (!shouldSubmitPath(path, entry.lastModified)) return '';
+  if (!shouldSubmitPath(path, entry.lastModified, entry.locale)) return '';
 
   // IMPORTANT: Always use the canonical (English) URL in sitemaps
   // The locale parameter is now ignored for URL generation
@@ -178,7 +178,9 @@ export function generateLocalizedSitemap(
     includeHreflang: false, // No hreflang for category index
   });
 
-  const eligibleEntries = entries.filter(entry => shouldSubmitPath(entry.path, entry.lastModified));
+  const eligibleEntries = entries.filter(entry =>
+    shouldSubmitPath(entry.path, entry.lastModified, entry.locale || locale)
+  );
   logSitemapEligibility(category, locale, entries.length, entries.length - eligibleEntries.length);
 
   // Generate eligible page entries

@@ -34,7 +34,7 @@ describe('pSEO page eligibility', () => {
 
   it('prunes an old zero-impression page from the committed verdict', () => {
     expect(
-      shouldSubmit('tools', 'resize-image-for-instagram', 'fr', '2025-01-01T00:00:00.000Z', NOW)
+      shouldSubmit('tools', 'svg-to-jpg', 'fr', '2025-01-01T00:00:00.000Z', NOW)
     ).toBe(false);
   });
 

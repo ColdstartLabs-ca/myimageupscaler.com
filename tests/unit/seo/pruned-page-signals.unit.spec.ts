@@ -27,7 +27,7 @@ const page = (slug: string, lastUpdated = '2025-01-01T00:00:00.000Z') => ({
 
 describe('pruned page signals', () => {
   it('noindexes but follows a pruned page', () => {
-    const metadata = generateMetadata(page('resize-image-for-instagram'), 'tools', 'fr');
+    const metadata = generateMetadata(page('svg-to-jpg'), 'tools', 'fr');
 
     expect(metadata.robots).toMatchObject({ index: false, follow: true });
   });

@@ -60,10 +60,12 @@ describe('direct pSEO sitemap producers', () => {
   it('drops an old zero-impression page from a direct route entry list', () => {
     const info = vi.spyOn(console, 'info').mockImplementation(() => undefined);
 
+    // tiff-format-guide earns impressions in English and none in German, so
+    // the drop only happens when the locale is honoured.
     const eligible = filterEligibleSitemapEntries(
-      [{ slug: 'bmp-format-guide', lastUpdated: '2025-12-26T00:00:00Z' }],
+      [{ slug: 'tiff-format-guide', lastUpdated: '2025-12-26T00:00:00Z' }],
       'guides',
-      'en',
+      'de',
       page => `/guides/${page.slug}`,
       page => page.lastUpdated
     );
@@ -77,19 +79,27 @@ describe('direct pSEO sitemap producers', () => {
 vi.mock('@/lib/seo/data-loader', () => ({
   getAllGuides: vi.fn().mockResolvedValue([
     {
-      slug: 'bmp-format-guide',
-      title: 'BMP format guide',
+      slug: 'tiff-format-guide',
+      title: 'TIFF format guide',
       lastUpdated: '2025-12-26T00:00:00Z',
     },
   ]),
 }));
 
 describe('guides sitemap route', () => {
-  it('does not emit an ineligible page URL', async () => {
+  it('does not emit a page that is ineligible in that locale', async () => {
+    const { GET } = await import('@/app/sitemap-guides-de.xml/route');
+    const response = await GET();
+    const xml = await response.text();
+
+    expect(xml).not.toContain('/guides/tiff-format-guide');
+  });
+
+  it('still emits the same page in the locale where it earns impressions', async () => {
     const { GET } = await import('@/app/sitemap-guides.xml/route');
     const response = await GET();
     const xml = await response.text();
 
-    expect(xml).not.toContain('/guides/bmp-format-guide');
+    expect(xml).toContain('/guides/tiff-format-guide');
   });
 });
