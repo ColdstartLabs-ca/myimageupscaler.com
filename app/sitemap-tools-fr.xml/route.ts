@@ -16,9 +16,7 @@ import type { IToolPage, IPSEODataFile } from '@/lib/seo/pseo-types';
 export async function GET() {
   const staticTools = await getAllTools();
   const interactiveTools = (interactiveToolsData as IPSEODataFile<IToolPage>).pages;
-  const socialResizeTools = (
-    socialMediaResizeData as unknown as IPSEODataFile<IToolPage>
-  ).pages;
+  const socialResizeTools = (socialMediaResizeData as unknown as IPSEODataFile<IToolPage>).pages;
   const pages = buildToolsSitemapPages(staticTools, interactiveTools, socialResizeTools);
   return generateLocaleCategorySitemapResponse('fr', 'tools', 'tools', pages, 0.9);
 }

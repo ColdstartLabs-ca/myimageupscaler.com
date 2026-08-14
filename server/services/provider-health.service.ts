@@ -70,7 +70,9 @@ function firstRow<T>(data: T | T[] | null): T | null {
  */
 function isTestEnvironment(): boolean {
   return (
-    serverEnv.ENV === 'test' || serverEnv.NODE_ENV === 'test' || serverEnv.PLAYWRIGHT_TEST === 'true'
+    serverEnv.ENV === 'test' ||
+    serverEnv.NODE_ENV === 'test' ||
+    serverEnv.PLAYWRIGHT_TEST === 'true'
   );
 }
 
