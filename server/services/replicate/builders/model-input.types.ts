@@ -51,6 +51,7 @@ export interface IModelInputBuilder<T = unknown> {
  */
 export type IModelInput =
   | IRealEsrganInput
+  | IRealEsrganLargeInput
   | IGfpganInput
   | IClarityUpscalerInput
   | IFluxKontextInput
@@ -72,6 +73,14 @@ export interface IRealEsrganInput {
   image: string;
   scale: 2 | 4;
   face_enhance: boolean;
+}
+
+/**
+ * Real-ESRGAN Large input (unguarded build used for oversized Quick requests)
+ */
+export interface IRealEsrganLargeInput {
+  image: string;
+  upscale: 2 | 4;
 }
 
 /**

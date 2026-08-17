@@ -27,6 +27,7 @@ export type SubscriptionTier = 'free' | 'hobby' | 'pro' | 'business';
 
 export type ModelId =
   | 'real-esrgan'
+  | 'real-esrgan-large'
   | 'gfpgan'
   | 'nano-banana'
   | 'nano-banana-pro'
@@ -74,6 +75,8 @@ export interface IModelConfig {
   isEnabled: boolean;
   /** Minimum tier required */
   tierRestriction?: SubscriptionTier;
+  /** Internal-only processing target: never listed as a user-selectable model */
+  isInternal?: boolean;
 }
 
 /**

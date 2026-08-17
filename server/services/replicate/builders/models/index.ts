@@ -6,6 +6,7 @@
 
 export { BaseModelInputBuilder } from './base-model.builder';
 export { RealEsrganBuilder } from './real-esrgan.builder';
+export { RealEsrganLargeBuilder } from './real-esrgan-large.builder';
 export { GfpganBuilder } from './gfpgan.builder';
 export { ClarityUpscalerBuilder } from './clarity-upscaler.builder';
 export { FluxKontextBuilder } from './flux-kontext.builder';

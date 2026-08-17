@@ -91,7 +91,7 @@ export async function prepareFileForProcessing(
       scale === 2 &&
       width <= SCALE_PRESERVING_FALLBACK_MAX_SIDE &&
       height <= SCALE_PRESERVING_FALLBACK_MAX_SIDE &&
-      pixels <= MODEL_MAX_INPUT_PIXELS['clarity-upscaler'];
+      pixels <= MODEL_MAX_INPUT_PIXELS['real-esrgan-large'];
 
     if ((fitsRealEsrgan || fitsScalePreservingFallback) && file.size <= maxBytes) {
       return {
@@ -104,7 +104,7 @@ export async function prepareFileForProcessing(
 
     requiresResize = true;
     if (scale === 2) {
-      resizeMaxPixels = MODEL_MAX_INPUT_PIXELS['clarity-upscaler'];
+      resizeMaxPixels = MODEL_MAX_INPUT_PIXELS['real-esrgan-large'];
       resizeMaxSide = SCALE_PRESERVING_FALLBACK_MAX_SIDE;
     } else {
       resizeMaxPixels = realEsrganMaxPixels;

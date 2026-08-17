@@ -4,6 +4,7 @@ import type { IUpscaleInput } from '@shared/validation/upscale.schema';
 import { createModelInputContext } from './model-input.types';
 import {
   RealEsrganBuilder,
+  RealEsrganLargeBuilder,
   GfpganBuilder,
   ClarityUpscalerBuilder,
   FluxKontextBuilder,
@@ -38,6 +39,7 @@ export class ModelInputBuilderOrchestrator {
    */
   private registerDefaultBuilders(): void {
     this.register(new RealEsrganBuilder());
+    this.register(new RealEsrganLargeBuilder());
     this.register(new GfpganBuilder());
     this.register(new ClarityUpscalerBuilder());
     this.register(new FluxKontextBuilder());

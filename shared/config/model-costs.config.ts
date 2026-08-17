@@ -9,6 +9,7 @@
  */
 export const MODEL_MAX_INPUT_PIXELS: Record<string, number> = {
   'real-esrgan': 2_096_704, // Replicate provider GPU limit (1448x1448); larger Quick 2x uses tiled fallback
+  'real-esrgan-large': 4_194_304, // 2048x2048 verified; cjwbw build tiles internally with no pixel guard
   gfpgan: 1_500_000, // 1.5M pixels - GPU memory limit
   'realesrgan-anime': 1_500_000, // 1.5M pixels - GPU memory limit
   'clarity-upscaler': 4_194_304, // 2048x2048 verified with tiled processing
@@ -44,6 +45,7 @@ export const MODEL_SCALE_TO_RESOLUTION: Record<string, Record<number, string>> =
 export const MODEL_COSTS = {
   // Cost per run for each model (USD)
   REAL_ESRGAN_COST: 0.0017,
+  REAL_ESRGAN_LARGE_COST: 0.0047, // cjwbw/real-esrgan on T4 - measured 21s at 2048x2048 (2x)
   GFPGAN_COST: 0.0025,
   NANO_BANANA_COST: 0.0, // Google Gemini free tier (500 req/day)
   CLARITY_UPSCALER_COST: 0.017,
@@ -54,7 +56,7 @@ export const MODEL_COSTS = {
   NANO_BANANA_2_COST: MODEL_RESOLUTION_PROVIDER_COSTS['nano-banana-2']['2K'],
   QWEN_IMAGE_EDIT_COST: 0.03, // qwen/qwen-image-edit-2511 - budget image editing
   SEEDREAM_COST: 0.04, // bytedance/seedream-4.5 - image editing
-  REALESRGAN_ANIME_COST: 0.0022, // xinntao/realesrgan - anime upscaling
+  REALESRGAN_ANIME_COST: 0.007, // lqhl/realesrgan on L40S - measured 7s at 2x (28s at 4x)
   P_IMAGE_EDIT_COST: 0.01, // prunaai/p-image-edit - fast budget image editing
   FLUX_KONTEXT_FAST_COST: 0.01, // prunaai/flux-kontext-fast - fast flux kontext image editing
 

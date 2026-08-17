@@ -29,6 +29,8 @@ import type {
  */
 const DEFAULT_MODEL_VERSIONS: Record<string, string> = {
   'real-esrgan': 'nightmareai/real-esrgan',
+  'real-esrgan-large':
+    'cjwbw/real-esrgan:d0ee3d708c9b911f122a4ad90046c5d26a0293b99476d697f6bb7f2e251ce2d4',
   gfpgan: 'xinntao/gfpgan:6129309904ce4debfde78de5c209bce0022af40e197e132f08be8ccce3050393',
   'nano-banana': 'gemini-2.5-flash-image',
   'clarity-upscaler':
@@ -37,8 +39,11 @@ const DEFAULT_MODEL_VERSIONS: Record<string, string> = {
   'nano-banana-pro': 'google/nano-banana-pro',
   'qwen-image-edit': 'qwen/qwen-image-edit-2511',
   seedream: 'bytedance/seedream-4.5',
+  // xinntao/realesrgan processes the image and then fails every run with
+  // "Cog: Got error trying to upload output files". lqhl/realesrgan exposes the
+  // same input schema and the same anime6B weights, and returns its output.
   'realesrgan-anime':
-    'xinntao/realesrgan:1b976a4d456ed9e4d1a846597b7614e79eadad3032e9124fa63859db0fd59b56',
+    'lqhl/realesrgan:56f2be05920413e1189c32a5fb2f767b357187c887d67114cace11c18d86ab49',
   'p-image-edit': 'prunaai/p-image-edit',
   'flux-kontext-fast': 'prunaai/flux-kontext-fast',
   'clarity-pro-upscaler':
@@ -53,6 +58,7 @@ const DEFAULT_MODEL_VERSIONS: Record<string, string> = {
  */
 const MODEL_COSTS: Record<string, number> = {
   'real-esrgan': CONFIG_MODEL_COSTS.REAL_ESRGAN_COST,
+  'real-esrgan-large': CONFIG_MODEL_COSTS.REAL_ESRGAN_LARGE_COST,
   gfpgan: CONFIG_MODEL_COSTS.GFPGAN_COST,
   'nano-banana': CONFIG_MODEL_COSTS.NANO_BANANA_COST, // Google Gemini free tier (500 req/day)
   'clarity-upscaler': CONFIG_MODEL_COSTS.CLARITY_UPSCALER_COST,
@@ -73,6 +79,7 @@ const MODEL_COSTS: Record<string, number> = {
  */
 const MODEL_CREDIT_MULTIPLIERS: Record<string, number> = {
   'real-esrgan': CREDIT_COSTS.REAL_ESRGAN_MULTIPLIER,
+  'real-esrgan-large': CREDIT_COSTS.REAL_ESRGAN_LARGE_MULTIPLIER,
   gfpgan: CREDIT_COSTS.GFPGAN_MULTIPLIER,
   'nano-banana': CREDIT_COSTS.NANO_BANANA_MULTIPLIER,
   'clarity-upscaler': CREDIT_COSTS.CLARITY_UPSCALER_MULTIPLIER,
@@ -167,6 +174,27 @@ export class ModelRegistry {
         maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
         supportedScales: [CONFIG_MODEL_COSTS.DEFAULT_SCALE, CONFIG_MODEL_COSTS.MAX_SCALE_STANDARD], // Real-ESRGAN only supports 2x and 4x
         isEnabled: true, // Always enabled as fallback
+      },
+      // Real-ESRGAN Large (internal scale-preserving fallback)
+      // Same Real-ESRGAN weights as the Quick model, built without the
+      // 2,096,704 pixel guard, so oversized Quick 2x requests keep their
+      // dimensions without paying the diffusion-upscaler price.
+      {
+        id: 'real-esrgan-large',
+        displayName: 'Upscale',
+        provider: 'replicate',
+        modelVersion: this.getModelVersion('real-esrgan-large'),
+        capabilities: ['upscale', 'denoise'],
+        costPerRun: MODEL_COSTS['real-esrgan-large'],
+        creditMultiplier: MODEL_CREDIT_MULTIPLIERS['real-esrgan-large'],
+        qualityScore: 8.5,
+        processingTimeMs: TIMEOUTS.REAL_ESRGAN_LARGE_PROCESSING_TIME,
+        maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
+        maxInputPixels: MODEL_MAX_INPUT_PIXELS['real-esrgan-large'],
+        maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
+        supportedScales: [CONFIG_MODEL_COSTS.DEFAULT_SCALE, CONFIG_MODEL_COSTS.MAX_SCALE_STANDARD],
+        isEnabled: true,
+        isInternal: true,
       },
       // GFPGAN (Face Restore / Old Photos)
       {
@@ -471,7 +499,7 @@ export class ModelRegistry {
    * Get all enabled models
    */
   getEnabledModels(): IModelConfig[] {
-    return Array.from(this.models.values()).filter(model => model.isEnabled);
+    return Array.from(this.models.values()).filter(model => model.isEnabled && !model.isInternal);
   }
 
   /**

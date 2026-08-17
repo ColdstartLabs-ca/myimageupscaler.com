@@ -19,7 +19,10 @@ import { ModelRegistry } from '@server/services/model-registry';
 import type { SubscriptionTier } from '@server/services/model-registry.types';
 import { providerHealthService } from '@server/services/provider-health.service';
 import { ReplicateError } from '@server/services/replicate.service';
-import { resolveScalePreservingModel } from '@server/services/scale-preserving-model';
+import {
+  SCALE_PRESERVING_FALLBACK_CANDIDATES,
+  resolveScalePreservingModel,
+} from '@server/services/scale-preserving-model';
 import { creditManager } from '@server/services/replicate/utils/credit-manager';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv, isProduction } from '@shared/config/env';
@@ -847,18 +850,24 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         height: inputDimensions.height,
         scale: config.scale,
       });
-      const fallbackModel = modelRegistry.getModel(scaleSafeModel.modelId);
+      // Candidates are ordered cheapest-first: only fall through to the
+      // costlier target when the preferred one is disabled.
+      const availableFallbackId = scaleSafeModel.usedFallback
+        ? SCALE_PRESERVING_FALLBACK_CANDIDATES.find(
+            candidateId => modelRegistry.getModel(candidateId)?.isEnabled
+          )
+        : undefined;
 
-      if (scaleSafeModel.usedFallback && fallbackModel?.isEnabled) {
+      if (availableFallbackId) {
         logger.info('Using scale-preserving model fallback', {
           userId,
           requestedModelId: resolvedModelId,
-          processingModelId: scaleSafeModel.modelId,
+          processingModelId: availableFallbackId,
           inputWidth: inputDimensions.width,
           inputHeight: inputDimensions.height,
           requestedScale: config.scale,
         });
-        resolvedModelId = scaleSafeModel.modelId;
+        resolvedModelId = availableFallbackId;
       } else if (scaleSafeModel.usedFallback) {
         logger.warn('Scale-preserving model fallback unavailable', {
           userId,

@@ -13,7 +13,7 @@ describe('resolveScalePreservingModel', () => {
     ).toEqual({ modelId: 'real-esrgan', usedFallback: false });
   });
 
-  it('uses the tiled Clarity model for Quick 2x when Real-ESRGAN cannot fit the original', () => {
+  it('uses the unguarded Real-ESRGAN build for Quick 2x when the default model cannot fit the original', () => {
     expect(
       resolveScalePreservingModel({
         modelId: 'real-esrgan',
@@ -21,7 +21,7 @@ describe('resolveScalePreservingModel', () => {
         height: 2048,
         scale: 2,
       })
-    ).toEqual({ modelId: 'clarity-upscaler', usedFallback: true });
+    ).toEqual({ modelId: 'real-esrgan-large', usedFallback: true });
   });
 
   it('does not route unverified extreme aspect ratios through the fallback', () => {

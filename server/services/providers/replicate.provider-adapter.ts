@@ -15,13 +15,14 @@ import { BaseProviderAdapter } from './base-provider-adapter';
 /**
  * Replicate provider configuration
  */
-const REPLICATE_CONFIG: IProviderConfig = {
+export const REPLICATE_CONFIG: IProviderConfig = {
   provider: AIProvider.REPLICATE,
   tier: ProviderTier.PAID, // Pay-as-you-go, no free tier
   priority: 2, // Lower priority than free providers
   enabled: true,
   supportedModels: [
     'real-esrgan',
+    'real-esrgan-large',
     'gfpgan',
     'clarity-upscaler',
     'flux-2-pro',

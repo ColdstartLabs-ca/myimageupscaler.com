@@ -426,6 +426,7 @@ export type SubscriptionTier = 'free' | 'hobby' | 'pro' | 'business';
 
 export type ModelId =
   | 'real-esrgan'
+  | 'real-esrgan-large'
   | 'gfpgan'
   | 'nano-banana'
   | 'nano-banana-pro'

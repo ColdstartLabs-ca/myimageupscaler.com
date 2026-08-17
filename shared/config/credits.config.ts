@@ -12,6 +12,7 @@ export const CREDIT_COSTS = {
 
   // Model credit multipliers
   REAL_ESRGAN_MULTIPLIER: 1,
+  REAL_ESRGAN_LARGE_MULTIPLIER: 1, // cjwbw/real-esrgan - internal Quick fallback, billed as Quick
   GFPGAN_MULTIPLIER: 2,
   NANO_BANANA_MULTIPLIER: 2,
   CLARITY_UPSCALER_MULTIPLIER: 4,
