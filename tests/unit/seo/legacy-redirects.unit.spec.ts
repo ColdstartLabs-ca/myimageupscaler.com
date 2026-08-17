@@ -69,6 +69,18 @@ function findRedirect(source: string) {
   });
 }
 
+/**
+ * middleware.ts lowercases any /tools/ path before Next's route matcher runs,
+ * so mixed-case tool URLs are already 301'd to their canonical slug. They must
+ * NOT get a LEGACY_REDIRECTS entry: next.config redirects run before middleware
+ * and `next dev` matches their sources case-insensitively, so a case-only rule
+ * matches its own destination and loops. Covered by middleware-redirects.unit.spec.ts.
+ */
+function isMiddlewareCaseNormalized(source: string): boolean {
+  const withoutLocale = source.replace(/^\/[a-z]{2}(?=\/)/, '');
+  return withoutLocale.startsWith('/tools/') && withoutLocale !== withoutLocale.toLowerCase();
+}
+
 function isRoutedPage(source: string): boolean {
   if (/^\/(?:[a-z]{2}\/)?use-cases-expanded\//.test(source)) return true;
   if (/^\/(?:[a-z]{2}\/)?tools\/(?:resize|convert|compress)\/[a-z0-9-]+$/.test(source)) {
@@ -88,7 +100,7 @@ describe('generated legacy redirects', () => {
     const urls = parseGscCsv(fs.readFileSync(DATA_PATH, 'utf8'));
     const missing = urls.filter(url => {
       const source = new URL(url).pathname;
-      return !findRedirect(source) && !isRoutedPage(source);
+      return !findRedirect(source) && !isRoutedPage(source) && !isMiddlewareCaseNormalized(source);
     });
 
     expect(missing, `unmapped GSC sources: ${missing.join(', ')}`).toEqual([]);

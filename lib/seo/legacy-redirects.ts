@@ -740,18 +740,6 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
     statusCode: 301,
   },
   {
-    source: '/:locale(en|fr|de|es|it|ja|pt)/tools/resize/resize-image-for-Twitter',
-    destination: '/:locale(en|fr|de|es|it|ja|pt)/tools/resize/resize-image-for-twitter',
-    permanent: true,
-    statusCode: 301,
-  },
-  {
-    source: '/:locale(en|fr|de|es|it|ja|pt)/tools/resize/resize-image-for-YouTube',
-    destination: '/:locale(en|fr|de|es|it|ja|pt)/tools/resize/resize-image-for-youtube',
-    permanent: true,
-    statusCode: 301,
-  },
-  {
     source: '/:locale(en|fr|de|es|it|ja|pt)/tools/resize/ridimensiona-immagine-in-blocco',
     destination: '/:locale(en|fr|de|es|it|ja|pt)/tools/resize/bulk-image-resizer',
     permanent: true,
@@ -1743,18 +1731,6 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
   {
     source: '/tools/resize/redimensionneur-image-lot',
     destination: '/tools/resize/bulk-image-resizer',
-    permanent: true,
-    statusCode: 301,
-  },
-  {
-    source: '/tools/resize/resize-image-for-Twitter',
-    destination: '/tools/resize/resize-image-for-twitter',
-    permanent: true,
-    statusCode: 301,
-  },
-  {
-    source: '/tools/resize/resize-image-for-YouTube',
-    destination: '/tools/resize/resize-image-for-youtube',
     permanent: true,
     statusCode: 301,
   },

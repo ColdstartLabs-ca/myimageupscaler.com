@@ -11,6 +11,33 @@ Maintenance rules:
 
 ## 2026-08-17
 
+### Removed Case-Only Legacy Redirects That Loop in Dev
+
+Source: `yarn deploy` blocked by `tests/validate-internal-links.e2e.spec.ts` failing with `ERR_TOO_MANY_REDIRECTS` on `/tools/resize/resize-image-for-youtube`.
+
+Evidence:
+
+- `63bb04f9` (2026-08-13, "fix(seo): eliminate GSC 404s (PRD 01)") added four `LEGACY_REDIRECTS` rules whose source and destination differ only by case: `/tools/resize/resize-image-for-YouTube` and `-Twitter`, each in bare and `:locale`-prefixed form.
+- `next.config` redirects run before middleware and `next dev` matches their sources case-insensitively, so each rule matched its own destination and looped.
+- Production was never affected: `/tools/resize/resize-image-for-YouTube` returns `301` to the lowercase slug and the lowercase slug returns `200` with `0` redirects, verified with a cache-busting query so the check reached origin.
+- `middleware.ts:641` already lowercases every `/tools/` path, so the four rules were redundant as well as unsafe. `tests/unit/seo/middleware-redirects.unit.spec.ts` already asserts `/tools/resize/resize-image-for-YouTube` → lowercase.
+
+Changes:
+
+- Removed the four case-only rules from `lib/seo/legacy-redirects.ts` (314 → 310 rules).
+- Added `tests/unit/seo/legacy-redirect-loops.unit.spec.ts` guarding against case-only and self-referential redirect rules.
+- Taught the GSC 404 coverage assertion in `tests/unit/seo/legacy-redirects.unit.spec.ts` that mixed-case `/tools/` sources are handled by middleware casing normalization, not by `LEGACY_REDIRECTS`.
+
+Validation:
+
+- `npx vitest run tests/unit/seo/`: 99 files, 1170 tests passed.
+- `tests/validate-internal-links.e2e.spec.ts` + `tests/e2e/seo/sitemap-duplicates.e2e.spec.ts`: 8 passed; internal link report 38/38 valid, 0 broken.
+
+Follow-up:
+
+- No GSC re-indexing needed: the mixed-case URLs still 301 to the same canonical destination, only via middleware instead of the config redirect.
+- The same deploy run showed `sitemap-duplicates` failing against production on both attempts; a re-check of all 87 sub-sitemaps returned `200` for every one and the test then passed. Treated as transient (likely edge rate limiting from 87 rapid sequential fetches). Watch for recurrence before adding retry/backoff to that spec.
+
 ### Best-Free Upscaler Proof-Led CTR Support Pass
 
 Source: autonomous blog growth operator using fresh GSC 28-day data through 2026-08-14 (`/tmp/miu-gsc-28-current.json`), fresh GA4 organic data through 2026-08-16 (`/tmp/miu-ga-28-current.json`), current SEO/indexing backlogs, blog changelog, prior blog monitor/opportunity state, and recent git history.
