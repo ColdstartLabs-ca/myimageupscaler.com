@@ -65,3 +65,30 @@ available. Do not treat the pre-fix rates above as a post-deploy measurement.
 - **Next action:** Inspect high-memory inputs and worker limits, add safeguards, and monitor the failure rate.
 - **Status:** Open
 
+### 2026-08-15T22:15:20+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 39 in the sampled window
+- **Evidence:** `{"count_15m": 16, "count_3h": 39, "live_health": {"api_health": {"latency_ms": 1150, "status": 200}, "homepage": {"latency_ms": 1608, "status": 200}}, "rate_15m": 0.1203, "rate_3h": 0.02057, "requests_15m": 133, "requests_3h": 1896}`
+- **Assessment:** 39 errors in 3h (2.1% of 1,896 requests) and 16 in the last 15m (12.0%), while endpoints remain healthy.
+- **Next action:** Investigate worker memory usage and request sizes, then monitor the error rate after mitigation.
+- **Status:** Open
+
+### 2026-08-16T05:22:40+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 42 in the sampled window
+- **Evidence:** `{"count_15m": 5, "count_3h": 42, "live_health": {"api_health": {"latency_ms": 1474, "status": 200}, "homepage": {"latency_ms": 2130, "status": 200}}, "rate_15m": 0.04202, "rate_3h": 0.0167, "requests_15m": 119, "requests_3h": 2515}`
+- **Assessment:** 42 memory failures in 2,515 requests over 3h, rising to 4.2% in 15m; endpoints remain healthy.
+- **Next action:** Inspect affected image sizes and worker memory limits, then reproduce and tune or constrain workloads.
+- **Status:** Open
+
+### 2026-08-16T16:33:10+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 48 in the sampled window
+- **Evidence:** `{"count_15m": 3, "count_3h": 48, "live_health": {"api_health": {"latency_ms": 1236, "status": 200}, "homepage": {"latency_ms": 2134, "status": 200}}, "rate_15m": 0.01345, "rate_3h": 0.01564, "requests_15m": 223, "requests_3h": 3070}`
+- **Assessment:** 48 memory-exceeded failures in 3h across 3070 requests while health checks remain 200.
+- **Next action:** Inspect worker memory limits, image-size distribution, and failing jobs; add mitigation if needed.
+- **Status:** Open
+
