@@ -104,6 +104,13 @@ else
     echo ""
 fi
 
+# The Playwright test servers run `next dev`, which generates route types under
+# .next/dev/types. Tearing those servers down at the end of a run can leave the
+# files half-written, and `tsc --noEmit` then fails on the truncated generated
+# output instead of on real source errors. They are dev-only artifacts that
+# neither `next build` nor the production typecheck needs, so drop them first.
+rm -rf "$PROJECT_ROOT/.next/dev"
+
 echo -e "${CYAN}▸ Running required verification...${NC}"
 if ! yarn verify; then
     echo -e "${RED}✗ Verification failed. Deployment blocked.${NC}"
