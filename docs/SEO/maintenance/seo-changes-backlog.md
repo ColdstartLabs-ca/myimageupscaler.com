@@ -37,7 +37,7 @@ Validation:
 
 Follow-up:
 
-- Commit: this commit (`fix(seo): support best-free upscaler ctr recovery`); final hash is recorded in the operator delivery.
+- Commit: implementation commit `638179f3` (`fix(seo): support best-free upscaler ctr recovery`); this backlog hash-recording commit is recorded in the operator delivery.
 - Deploy state: production blog DB content is live immediately; repo test/backlog/changelog changes are local until this commit is pushed/deployed.
 - Manual action: request indexing for `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared` in GSC URL Inspection; the backlog row is now unchecked for the 2026-08-17 version.
 - Next trigger: on or after 2026-09-01, compare the first complete 14-day GSC window after this edit. If the exact 2026 best-free-upscaler cluster remains avg position 3-10 with zero clicks, stop snippet/body tests and evaluate whether SERP intent wants a shorter hands-on ranking table or stronger above-fold comparison disclosure.
