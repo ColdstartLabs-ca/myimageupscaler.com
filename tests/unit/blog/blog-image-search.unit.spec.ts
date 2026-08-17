@@ -12,6 +12,14 @@ import type { IBlogImageMetadataWithDb } from '@shared/validation/blog.schema';
  * by tags and/or image type with authentication and validation.
  */
 
+// Mock the Baselime logger. createLogger resolves a Cloudflare ExecutionContext
+// and throws when one is unavailable outside development with an API key set, so
+// it fails under vitest whenever production env vars are loaded (as the deploy
+// script does). Matches the mock used by the other route unit specs.
+vi.mock('@server/monitoring/logger', () => ({
+  createLogger: () => ({ error: vi.fn(), flush: vi.fn(), info: vi.fn(), warn: vi.fn() }),
+}));
+
 // Mock the searchBlogImages service function
 vi.mock('@server/services/blogImageStorage.service', () => ({
   searchBlogImages: vi.fn(),
