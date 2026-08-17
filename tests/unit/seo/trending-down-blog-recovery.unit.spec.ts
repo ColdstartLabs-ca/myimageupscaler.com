@@ -7,8 +7,9 @@ const RECOVERY_METADATA = [
     targetTerms: ['best', 'free', 'ai', 'image', 'upscaler', '2026'],
     title: 'Best Free AI Image Upscaler 2026: Only 3 Worked',
     description:
-      'Best free AI image upscaler 2026: we tested 12 tools for quality, speed, no signup, no watermark, and 4K/8K output. See winners and try free.',
+      'Find the best free AI image upscaler for 2026: we tested 12 and only 3 produced clean results. Compare no-signup limits, watermarks, 4K/8K output, and speed.',
   },
+
   {
     slug: 'best-image-upscaler',
     targetTerms: ['best', 'image', 'upscaling', 'software', '2026'],
@@ -31,6 +32,14 @@ const RECOVERY_METADATA = [
       'How to fix pixelated photos online: use a tested 2x/4x AI workflow. See when to upscale, sharpen, or rescan blocky images before editing makes them worse.',
   },
 ] as const;
+
+const BEST_FREE_UPSCALER_BODY_CONTRACT = {
+  h1: 'Best Free AI Image Upscaler 2026: Only 3 Worked',
+  proofModule: 'What Our 2026 Test Actually Found',
+  testSummary: 'Only three produced clean, usable exports',
+  staleCreditClaim: '10 free credits',
+  currentCreditClaim: '5 welcome credits',
+} as const;
 
 const PIXELATED_PHOTOS_BODY_CONTRACT = {
   opening: 'To fix pixelated photos online, use a 2x or 4x AI upscale before sharpening.',
@@ -79,6 +88,21 @@ describe('Trending-down blog SERP recovery metadata', () => {
     expect(new Set(RECOVERY_METADATA.map(recovery => recovery.title)).size).toBe(
       RECOVERY_METADATA.length
     );
+  });
+
+  it('records the best-free-upscaler proof-led body support pass', () => {
+    const bodyText = [
+      BEST_FREE_UPSCALER_BODY_CONTRACT.h1,
+      BEST_FREE_UPSCALER_BODY_CONTRACT.proofModule,
+      BEST_FREE_UPSCALER_BODY_CONTRACT.testSummary,
+      BEST_FREE_UPSCALER_BODY_CONTRACT.currentCreditClaim,
+    ].join('\n');
+
+    expect(bodyText).toContain('Only 3 Worked');
+    expect(bodyText).toContain('What Our 2026 Test Actually Found');
+    expect(bodyText).toContain('Only three produced clean, usable exports');
+    expect(bodyText).toContain(BEST_FREE_UPSCALER_BODY_CONTRACT.currentCreditClaim);
+    expect(bodyText).not.toContain(BEST_FREE_UPSCALER_BODY_CONTRACT.staleCreditClaim);
   });
 
   it('records the pixelated-photos proof-led body support pass', () => {

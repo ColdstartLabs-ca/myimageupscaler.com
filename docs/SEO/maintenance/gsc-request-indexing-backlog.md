@@ -22,7 +22,6 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 > Bing/Yandex immediately and is not subject to this quota. The GSC requests are a
 > Google-specific nudge on top of the sitemap, not the only path to recrawl.
 
-
 ### GSC 404 recovery — request after deployment
 
 - [x] `https://myimageupscaler.com/de/tools/resize/resize-image-for-telegram` — **not an indexing candidate.** The route serves 200 with `noindex, follow`, which is PRD 01's deliberate rule for untranslated dedicated locale tools. GSC rejected the request ("indexing issues were detected") as expected. Removed from the queue rather than retried.
@@ -71,7 +70,7 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 
 - [x] `https://myimageupscaler.com/`
 - [x] `https://myimageupscaler.com/blog/best-ai-upscaler` — daily request-indexing quota reached on 2026-07-10; retry later.
-- [x] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared` — refreshed 2026-07-20; request indexing for the latest version.
+- [ ] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared` — refreshed again 2026-08-17 with a proof-led meta/H1/body support pass after the 2026-07-20 title test matured but the exact 2026 best-free-upscaler cluster still had 2,295 impressions / 0 clicks / avg position 6.51 in the latest GSC-backed audit; request indexing for the latest version.
 - [x] `https://myimageupscaler.com/blog/best-free-ai-photo-enhancer-online`
 - [x] `https://myimageupscaler.com/blog/best-image-upscaler`
 - [x] `https://myimageupscaler.com/blog/fix-blurry-photos-ai-methods-guide`

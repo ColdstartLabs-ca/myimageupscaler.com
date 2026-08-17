@@ -9,6 +9,39 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-08-17
+
+### Best-Free Upscaler Proof-Led CTR Support Pass
+
+Source: autonomous blog growth operator using fresh GSC 28-day data through 2026-08-14 (`/tmp/miu-gsc-28-current.json`), fresh GA4 organic data through 2026-08-16 (`/tmp/miu-ga-28-current.json`), current SEO/indexing backlogs, blog changelog, prior blog monitor/opportunity state, and recent git history.
+
+Evidence:
+
+- The recorded 2026-08-04 follow-up for `/blog/best-free-ai-image-upscaler-2026-tested-compared` had matured. Fresh audit data shows the exact best-free-upscaler 2026 subset at 2,295 impressions / 0 clicks / avg position 6.51, including `best free ai image upscaler 2026` at 257 impressions / 0 clicks.
+- Page-level GSC remains strong at 11,310 impressions / 1,397 clicks / 12.35% CTR, so the page is the canonical owner and should not be replaced by a duplicate post.
+- Pixelated-photos is inside the 2026-08-10 → 2026-08-25 lag window; the safe highest-value action was the matured best-free-upscaler body/snippet support pass.
+
+Changes:
+
+- Updated the production blog record for `/blog/best-free-ai-image-upscaler-2026-tested-compared` directly via Supabase service role because the production blog API still returns `500` (`Server configuration error`) for blog GET.
+- Changed `description` and `seo_description` to a proof-led 157-character snippet: `Find the best free AI image upscaler for 2026: we tested 12 and only 3 produced clean results. Compare no-signup limits, watermarks, 4K/8K output, and speed.`
+- Aligned the visible H1 with the existing winning SERP title, added a `What Our 2026 Test Actually Found` proof module above the comparison, and corrected stale `10 free credits` copy to `5 welcome credits`.
+- Updated `tests/unit/seo/trending-down-blog-recovery.unit.spec.ts`, `.claude/skills/blog-changelog.md`, and the existing GSC request-indexing backlog row in place.
+
+Validation:
+
+- Fresh production DB backups created before the write: `backups/backup_2026-08-17_10-33-40.schema.sql.gz` and `backups/backup_2026-08-17_10-33-40.data.sql.gz`; `yarn db:backups` listed both and `gzip -t` passed for both archives.
+- Supabase readback confirmed the new metadata, H1 contract, proof module, no remaining `10 free credits`, and `updated_at: 2026-08-17T17:38:35.679125+00:00`.
+- Live production HTML returned `200`, self-canonical, contained the new meta description and `What Our 2026 Test Actually Found`, and no longer contained `10 free credits`.
+- Focused test and `yarn verify` run in this job; final results and commit hash are recorded in the operator delivery.
+
+Follow-up:
+
+- Commit: this commit (`fix(seo): support best-free upscaler ctr recovery`); final hash is recorded in the operator delivery.
+- Deploy state: production blog DB content is live immediately; repo test/backlog/changelog changes are local until this commit is pushed/deployed.
+- Manual action: request indexing for `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared` in GSC URL Inspection; the backlog row is now unchecked for the 2026-08-17 version.
+- Next trigger: on or after 2026-09-01, compare the first complete 14-day GSC window after this edit. If the exact 2026 best-free-upscaler cluster remains avg position 3-10 with zero clicks, stop snippet/body tests and evaluate whether SERP intent wants a shorter hands-on ranking table or stronger above-fold comparison disclosure.
+
 ## 2026-08-13
 
 ### Deployed 2026-08-13 — live gate results
@@ -227,6 +260,7 @@ Shipped with the PRDs (PRD 01 Phase 0): `lib/seo/gsc-verification.ts` + `scripts
 Validation: `yarn verify` passed; 1,050 SEO unit tests green. Live baselines 2026-08-13 — `--set=404`: **212 of 303 still violating** (206 still 404, 6 redirect into a 404, 91 already fixed by earlier work); `--set=5xx`: 0 of 5 violating, because the four Japanese social-resize URLs now `301` into `/ja/tools/resize/*` (GSC **Validate fix** can be run for them) and the 1102 URL answered 200 on that request — intermittent, so not resolved. Negative controls observed: `--expect=404` flips the verdict on live data, and mutating the 404 expectation to always-pass turns 6 unit tests red.
 
 Follow-up: implement in order 01 → 02/05 → 03 → 04/06; each PRD's post-deploy GSC checkpoints are dated inside it.
+
 ### PRD 01 — GSC 404 elimination (shipped to master)
 
 Changes:
@@ -252,6 +286,7 @@ Follow-up:
 
 - Production deployment and post-deploy GSC validation remain pending. The local production build reaches static-page generation but is still blocked by the pre-existing `use-cases-expanded/web-design-development` data/template mismatch and placeholder Supabase environment.
 - The source PRD still contains TBD caller cells.
+
 ### LCP image delivery and budget gate
 
 Source: [GSC recovery LCP page-experience PRD](../../PRDs/gsc-recovery-2026-08/05-lcp-page-experience.md)
@@ -272,6 +307,7 @@ Validation:
 Follow-up:
 
 - After deployment, rerun the six-URL gate on the production host, complete the Slow 4G/LCP manual checkpoint, and monitor the GSC mobile CWV checkpoints in the PRD through 2026-10-08.
+
 ### Table-driven intent ownership and GIF measurement
 
 Source: [taxonomy cannibalization PRD](../../PRDs/gsc-recovery-2026-08/04-taxonomy-cannibalization.md)

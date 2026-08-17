@@ -1,5 +1,15 @@
 # Blog Changelog
 
+## 2026-08-17
+
+### Edit: Best-free upscaler proof-led CTR support pass
+
+**Affected:** best-free-ai-image-upscaler-2026-tested-compared
+**Why:** Fresh 28-day GSC through 2026-08-14 showed the 2026-07-20 title test matured but the exact 2026 best-free-upscaler cluster still had 2,295 impressions / 0 clicks / avg position 6.51 in the audit subset; broad page CTR was healthy, so the safe move was body/snippet support rather than another title test or a duplicate post.
+**Changes:**
+
+- `best-free-ai-image-upscaler-2026-tested-compared` — updated production description/SEO description, aligned the H1 with the winning SERP title, added a "What Our 2026 Test Actually Found" proof module, and corrected the stale `10 free credits` body claim to `5 welcome credits`.
+
 ## 2026-08-13
 
 ### SEO: Bulk roundup evidence repair
