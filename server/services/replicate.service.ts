@@ -1,4 +1,9 @@
-import { isRateLimitError, isTransientUpstreamError, withRetry } from '@server/utils/retry';
+import {
+  isGpuContentionError,
+  isRateLimitError,
+  isTransientUpstreamError,
+  withRetry,
+} from '@server/utils/retry';
 import { serverEnv } from '@shared/config/env';
 import { serializeError } from '@shared/utils/errors';
 import type { IUpscaleInput } from '@shared/validation/upscale.schema';
@@ -59,6 +64,30 @@ function isMeaningfulImageReference(value: unknown): value is string {
  * Cost: ~$0.0017/image on T4 GPU
  * Speed: ~1-2 seconds per image
  */
+
+/**
+ * Build a per-request retry decision.
+ *
+ * Rate limits and transient blips fail fast, so they keep the full retry
+ * budget. A GPU-contention attempt burns ~16s median of provider time before
+ * it dies, so only one retry fits inside the route's 2-minute processing
+ * budget - a second would surface as a timeout instead of a clear error.
+ *
+ * The counter is per request: each call gets its own contention budget.
+ */
+export function createReplicateRetryPolicy(maxContentionRetries = 1): (message: string) => boolean {
+  let contentionRetries = 0;
+
+  return (message: string): boolean => {
+    if (isGpuContentionError(message)) {
+      contentionRetries += 1;
+      return contentionRetries <= maxContentionRetries;
+    }
+
+    return isRateLimitError(message) || isTransientUpstreamError(message);
+  };
+}
+
 export class ReplicateService implements IImageProcessor {
   public readonly providerName = 'Replicate';
   private replicate: Replicate;
@@ -267,6 +296,8 @@ export class ReplicateService implements IImageProcessor {
     const replicateInput = this.buildModelInput(selectedModel, imageDataUrl, input);
     this.ensureImageInputPresent(replicateInput);
 
+    const shouldRetryReplicateError = createReplicateRetryPolicy();
+
     try {
       // Run with retry for rate limits and transient provider/output failures.
       return await withRetry(
@@ -278,10 +309,7 @@ export class ReplicateService implements IImageProcessor {
           return parseReplicateResponse(output);
         },
         {
-          shouldRetry: err => {
-            const message = serializeError(err);
-            return isRateLimitError(message) || isTransientUpstreamError(message);
-          },
+          shouldRetry: err => shouldRetryReplicateError(serializeError(err)),
           onRetry: (attempt, delayMs, err) => {
             console.log(
               `[Replicate] Retrying in ${delayMs}ms (attempt ${attempt}/3): ${serializeError(err)}`

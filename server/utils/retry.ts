@@ -59,6 +59,23 @@ export function isTransientUpstreamError(message: string): boolean {
 }
 
 /**
+ * Contention on a shared provider GPU: the card was busy, not the image too
+ * big. The same request succeeds on a quieter GPU, so it is worth retrying.
+ *
+ * The model's own size guard ("greater than the max size that fits in GPU
+ * memory on this hardware") is excluded: that input is genuinely too large and
+ * no amount of retrying changes it.
+ */
+export function isGpuContentionError(message: string): boolean {
+  const lowerMessage = message.toLowerCase();
+
+  return (
+    (lowerMessage.includes('out of memory') || lowerMessage.includes('oom')) &&
+    !lowerMessage.includes('greater than the max size')
+  );
+}
+
+/**
  * Execute a function with exponential backoff retry on rate limit errors
  */
 export async function withRetry<T>(fn: () => Promise<T>, options: IRetryOptions = {}): Promise<T> {

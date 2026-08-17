@@ -18,9 +18,13 @@ describe('ReplicateErrorMapper', () => {
     mapper = new ReplicateErrorMapper();
   });
 
+  // A CUDA OOM is contention on Replicate's shared GPU, not an oversized
+  // input: the model rejects genuinely large images with its own size guard
+  // before allocating. Production data (Aug 8-17) showed 140 such failures,
+  // all previously told to "try a smaller image".
   describe('GPU OOM Error Detection', () => {
-    it('should map "GPU memory" to IMAGE_TOO_LARGE', () => {
-      const error = new Error('CUDA out of GPU memory: allocation failed');
+    it('should map a bare "GPU memory" fault to IMAGE_TOO_LARGE', () => {
+      const error = new Error('GPU memory allocation failed');
       const result = mapper.mapError(error);
 
       expect(result).toBeInstanceOf(ReplicateError);
@@ -38,28 +42,28 @@ describe('ReplicateErrorMapper', () => {
       expect(result.code).toBe(ReplicateErrorCode.IMAGE_TOO_LARGE);
     });
 
-    it('should map "out of memory" to IMAGE_TOO_LARGE', () => {
+    it('should map "out of memory" to PROVIDER_UNAVAILABLE (shared GPU was busy)', () => {
       const error = new Error('RuntimeError: out of memory detected');
       const result = mapper.mapError(error);
 
       expect(result).toBeInstanceOf(ReplicateError);
-      expect(result.code).toBe(ReplicateErrorCode.IMAGE_TOO_LARGE);
+      expect(result.code).toBe(ReplicateErrorCode.PROVIDER_UNAVAILABLE);
     });
 
-    it('should map "OOM" to IMAGE_TOO_LARGE', () => {
+    it('should map "OOM" to PROVIDER_UNAVAILABLE (shared GPU was busy)', () => {
       const error = new Error('Process killed by OOM killer');
       const result = mapper.mapError(error);
 
       expect(result).toBeInstanceOf(ReplicateError);
-      expect(result.code).toBe(ReplicateErrorCode.IMAGE_TOO_LARGE);
+      expect(result.code).toBe(ReplicateErrorCode.PROVIDER_UNAVAILABLE);
     });
 
-    it('should map "CUDA out of memory" to IMAGE_TOO_LARGE', () => {
+    it('should map "CUDA out of memory" to PROVIDER_UNAVAILABLE (shared GPU was busy)', () => {
       const error = new Error('CUDA out of memory error');
       const result = mapper.mapError(error);
 
       expect(result).toBeInstanceOf(ReplicateError);
-      expect(result.code).toBe(ReplicateErrorCode.IMAGE_TOO_LARGE);
+      expect(result.code).toBe(ReplicateErrorCode.PROVIDER_UNAVAILABLE);
     });
 
     it('should NOT map generic "CUDA error" to IMAGE_TOO_LARGE (too broad)', () => {
@@ -78,7 +82,7 @@ describe('ReplicateErrorMapper', () => {
       const result = mapper.mapError(error);
 
       expect(result).toBeInstanceOf(ReplicateError);
-      expect(result.code).toBe(ReplicateErrorCode.IMAGE_TOO_LARGE);
+      expect(result.code).toBe(ReplicateErrorCode.PROVIDER_UNAVAILABLE);
     });
   });
 
@@ -161,7 +165,9 @@ describe('ReplicateErrorMapper', () => {
 
   describe('throwError', () => {
     it('should throw mapped error', () => {
-      const error = new Error('CUDA out of memory');
+      const error = new Error(
+        'total number of pixels 12000000 greater than the max size that fits in GPU memory on this hardware'
+      );
 
       expect(() => mapper.throwError(error)).toThrow(ReplicateError);
       expect(() => mapper.throwError(error)).toThrow('too large');

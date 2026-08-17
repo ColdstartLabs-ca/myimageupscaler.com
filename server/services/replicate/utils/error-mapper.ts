@@ -149,6 +149,20 @@ export class ReplicateErrorMapper {
       return new ReplicateError('No output returned from Replicate.', ReplicateErrorCode.NO_OUTPUT);
     }
 
+    // A CUDA OOM means the shared GPU was busy, not that the image was too big:
+    // the model rejects genuinely oversized inputs with its own size guard
+    // before allocating anything. Telling this user to shrink a valid image
+    // sends them to fix something that was never wrong.
+    if (
+      (lowerMessage.includes('out of memory') || lowerMessage.includes('oom')) &&
+      !lowerMessage.includes('greater than the max size')
+    ) {
+      return new ReplicateError(
+        'The image service was busy. Please try again in a moment.',
+        ReplicateErrorCode.PROVIDER_UNAVAILABLE
+      );
+    }
+
     // Check for GPU memory errors (image too large for model's hardware)
     // Safety net if client-side resize fails or server dimension check is bypassed
     // Note: normalise to lower-case for case-insensitive matching; avoid overly-broad
