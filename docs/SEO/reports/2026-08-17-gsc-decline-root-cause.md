@@ -94,18 +94,53 @@ The spike produced no revenue: signups rose +112% (883 → 1,876/week) while wee
 | Paid advertising stopped                                     | GA4 has no paid channel                                                                                                                   |
 | New signups fail to activate                                 | Activation is fine: 60% before → 66% now                                                                                                  |
 
-## 7. Separate live defect (unrelated to July)
+## 7. Separate live defect (unrelated to July) — diagnosed and fixed 2026-08-18
 
-`processing_jobs` failures begin Aug 11 and spike to **92 on Aug 17**. Failure rate ~6.8% of jobs in the Aug 1–16 window.
+`processing_jobs` failures appeared to begin Aug 11, but that is when the edge-failure observation route was added (`a4fc9ab0`, Aug 10), not when the failures began. Two independent causes:
 
-| Error                            | Count |
-| -------------------------------- | ----- |
-| `edge_error`                     | 115   |
-| `replicate_image_too_large`      | 109   |
-| `batch_limit_exceeded`           | 16    |
-| `insufficient_effective_credits` | 11    |
+### 7a. Worker out of memory → non-JSON 503 → `edge_error`
 
-Not investigated further in this pass.
+Cloudflare Workers analytics shows the `myimageupscaler` Worker hitting `exceededMemory` **~300 times every day**, not just since Aug 11:
+
+| Date   | exceededMemory | successful requests |
+| ------ | -------------- | ------------------- |
+| Aug 13 | 339            | 21,391              |
+| Aug 14 | 295            | 22,853              |
+| Aug 15 | 259            | 21,243              |
+| Aug 16 | 317            | 21,841              |
+| Aug 17 | 298            | 22,434              |
+
+Every `edge_error` row is HTTP **503**, non-JSON, spread across many colos (EZE, BOS, YUL, GRU) — Cloudflare's own error page, not an application response. The DB captured only ~50/day of the ~300 because the client-side reporter is best-effort with a 2s timeout and requires an access token, so **the real damage was ~6x what `processing_jobs` showed**.
+
+Cause: the upscale payload is base64 inside a JSON body, and every validation helper called `imageData.split(',')[1]`, allocating a full copy of a multi-megabyte string. JS strings are UTF-16, so each copy costs ~2 bytes per character. For a 25MB paid-tier image (33.3M base64 chars = 66.6MB per copy) against a 128MB isolate:
+
+| Allocation                                  | Cost    |
+| ------------------------------------------- | ------- |
+| `req.json()` raw text                       | 66.6 MB |
+| parsed JSON string                          | 66.6 MB |
+| Zod `.refine()` `split(',')`                | 66.6 MB |
+| `route.ts` base64 check `split(',')`        | 66.6 MB |
+| `getBase64Size` `split(',')` + `/=/g` match | 66.6 MB |
+| `validateMagicBytes` `split(',')`           | 66.6 MB |
+| `decodeImageDimensions` `split(',')`        | 66.6 MB |
+
+The size check ran _after_ most of these, so it could never reject anything in time.
+
+Fixed: reject the body from `Content-Length` before `req.json()`; read the payload by offset (`getBase64PayloadOffset` / `getBase64PayloadLength` / `readBase64Prefix`) everywhere else; count base64 padding from the tail. The 413 releases the batch slot, or a user retrying with a smaller image is locked out of their own quota.
+
+**Open architectural limit:** the advertised 25MB paid tier is not achievable with base64-in-JSON on a 128MB Worker — the raw text plus parsed string alone are ~4 bytes per body byte. The body cap is 24MB (~18MB image). Raising it needs direct-to-storage upload, not a bigger constant.
+
+### 7b. `replicate_image_too_large` — already fixed
+
+`70022404` and `f5f0eac5` (Aug 17) diagnosed this as CUDA OOM from GPU contention being mislabelled as an oversized image, plus oversized Quick 2x requests being rerouted to a 14x more expensive model. Shipped in the Aug 17 deploy: **33 failures on Aug 17 → 2 on Aug 18**.
+
+## 7c. Second blocking auth path — fixed 2026-08-18
+
+`route.ts` returned 202 `setupStatus: 'pending'` when a free profile could not be classified. `completeAccountSetup` retried three times with no backoff and then threw, and every auth call site treats a throw as fatal — the same blocking shape as the 404/500. Pending is now retried with backoff (150ms, 400ms) and returned rather than thrown; the upscale route already models a pending profile via `isAccountSetupPending`.
+
+## 7d. Sweep of everything else from `229b6b87` — clean
+
+Audited and cleared: `PurchaseModal` is dismissible three ways and `hardGate` is gone from the codebase; `upgrade-prompt-dismissals` feeds an analytics property only and gates nothing; `useBatchQueue` handles `FreeLimitExceededError` and `BatchLimitError` as item-level errors with a dismissible toast; the `credit-manager` change is additive error metadata; `isAccountSetupPending` self-clears once any grant row exists, so it cannot latch.
 
 ## 8. Measurement traps found
 
@@ -127,7 +162,17 @@ Tests added in `tests/unit/anti-freeloader/users-setup.unit.spec.ts` (verified r
 
 ## 10. Open items
 
-1. **The 202 `setupStatus: 'pending'` path** (`route.ts:77-83`) is still a blocker of the same shape — the client retries 3× with no backoff, then throws, and the user never enters the app. Left in place deliberately; needs a product decision.
-2. **`processing_jobs` failure spike** since Aug 11 (§7).
-3. **Re-justify the abuse prevention.** Any future tightening should be checked against the signups-per-IP series in §3 first.
-4. **Watch signups per organic click weekly.** Recovery toward 0.7–0.8 confirms the fix; no movement within two weeks means a second blocker remains.
+1. **Uploads must move off base64-in-JSON.** The 25MB paid tier cannot work on a 128MB Worker (§7a). Until direct-to-storage upload exists, the effective ceiling is ~18MB and larger images get a clean 413 instead of a silent 503. This is the only known unresolved product gap from this investigation.
+2. **Re-justify the abuse prevention.** Any future tightening should be checked against the signups-per-IP series in §3 first.
+3. **Watch signups per organic click weekly.** Recovery toward 0.7–0.8 confirms the fix; no movement within two weeks means a further blocker remains.
+4. **Watch `exceededMemory` in Cloudflare Workers analytics.** It should fall from ~300/day toward zero. It is the honest counter — `processing_jobs` only ever captured ~1 in 6.
+
+## 11. Closed in this investigation
+
+| Item                                               | Commit                 |
+| -------------------------------------------------- | ---------------------- |
+| `/api/users/setup` 404/500 hard-fails              | `6d3a1946`             |
+| Worker OOM on image upload (`edge_error` 503s)     | `0e9c7140`             |
+| 202 `pending` blocking the auth gate               | `0e9c7140`             |
+| `replicate_image_too_large` (CUDA OOM mislabelled) | `70022404`, `f5f0eac5` |
+| Sweep of all other `229b6b87` surfaces             | clean, §7d             |

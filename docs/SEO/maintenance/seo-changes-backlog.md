@@ -1969,3 +1969,22 @@ Follow-up:
 
 - Track signups per organic click weekly. Recovery toward 0.7–0.8 confirms the fix; no movement in two weeks means a second blocker remains.
 - The 202 `setupStatus: 'pending'` path in the same route is still a blocker of the same shape — needs a product decision.
+
+## 2026-08-18: Worker OOM and the Second Blocking Auth Path
+
+Investigation: [2026-08-17 GSC decline root cause](../reports/2026-08-17-gsc-decline-root-cause.md) §7
+
+Changes (`0e9c7140`):
+
+- Upscale requests now reject an oversized body from `Content-Length` before `req.json()` reads it, and every base64 helper reads by offset instead of allocating a full `split(',')` copy. The Worker was hitting Cloudflare's 128MB limit ~300x/day and answering with a non-JSON 503.
+- `completeAccountSetup` treats `setupStatus: 'pending'` as an answer instead of throwing after three instant retries — the same blocking shape fixed in `6d3a1946`, on a different path.
+
+Why it mattered:
+
+- `processing_jobs` recorded only ~50 edge failures/day against ~300 real `exceededMemory` events, because the client reporter is best-effort with a 2s timeout. **Cloudflare Workers analytics is the honest counter here, not the database.**
+- Failures that never reach the app also never reach GSC-visible behavior, but they do suppress signups, which is what the GSC decline was actually measuring.
+
+Follow-up:
+
+- Watch `exceededMemory` in Workers analytics; it should trend from ~300/day toward zero.
+- The advertised 25MB paid tier still cannot work with base64-in-JSON on a 128MB Worker. Effective ceiling is ~18MB with a clean 413 above it. Raising it needs direct-to-storage upload.
