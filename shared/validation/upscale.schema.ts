@@ -48,18 +48,47 @@ export const IMAGE_VALIDATION = {
   MIN_DIMENSION: 64,
   MAX_DIMENSION: 8192,
   MAX_PIXELS: 1_500_000, // ~1225x1225 max - GPU memory limit for upscaling (matches real-esrgan)
+  // Ceiling for the whole JSON request body, not the decoded image. The Worker
+  // gets 128MB; `req.json()` holds the raw text and the parsed string, and JS
+  // strings are UTF-16, so peak is ~4 bytes per body byte. 24MB of body is
+  // ~96MB peak, which leaves headroom for the rest of the request.
+  MAX_REQUEST_BYTES: 24 * 1024 * 1024,
 };
+
+/**
+ * Index where the base64 payload starts, skipping any `data:...;base64,` prefix.
+ *
+ * These strings are megabytes. Every full copy costs ~2 bytes per character
+ * against the Worker's 128MB limit, so callers take an offset and slice only
+ * the bytes they actually read rather than splitting the whole payload.
+ */
+export function getBase64PayloadOffset(imageData: string): number {
+  if (!imageData.startsWith('data:')) return 0;
+  const comma = imageData.indexOf(',');
+  return comma === -1 ? 0 : comma + 1;
+}
+
+/** Length of the base64 payload without materializing it. */
+export function getBase64PayloadLength(imageData: string): number {
+  return Math.max(0, imageData.length - getBase64PayloadOffset(imageData));
+}
+
+/** Read the first `length` characters of the payload without copying the rest. */
+export function readBase64Prefix(imageData: string, length: number): string {
+  const offset = getBase64PayloadOffset(imageData);
+  return imageData.slice(offset, offset + length);
+}
 
 /**
  * Calculate the approximate size of base64 data in bytes
  */
 export function getBase64Size(base64: string): number {
-  // Remove data URL prefix if present
-  const data = base64.includes(',') ? base64.split(',')[1] : base64;
-  // Base64 encodes 3 bytes into 4 characters, so multiply by 0.75
-  // Account for padding characters
-  const padding = (data.match(/=/g) || []).length;
-  return Math.floor((data.length * 3) / 4) - padding;
+  const length = getBase64PayloadLength(base64);
+  if (length === 0) return 0;
+  // Base64 padding is at most two '=' and always at the very end, so the tail
+  // answers it — scanning the full payload would allocate a match array per call.
+  const padding = base64.endsWith('==') ? 2 : base64.endsWith('=') ? 1 : 0;
+  return Math.floor((length * 3) / 4) - padding;
 }
 
 /**
@@ -177,15 +206,9 @@ export const upscaleSchema = z.object({
     .string()
     .min(1, 'Image data is required')
     .refine(
-      data => {
-        // Basic check that it looks like base64 data
-        // Allows for data URLs or raw base64
-        if (data.startsWith('data:')) {
-          const base64Part = data.split(',')[1];
-          return base64Part && base64Part.length > 0;
-        }
-        return data.length > 0;
-      },
+      // Length arithmetic only — splitting here would copy the whole payload
+      // before the request has been size-checked.
+      data => getBase64PayloadLength(data) > 0,
       { message: 'Invalid image data format' }
     ),
   mimeType: z
@@ -279,10 +302,7 @@ export function validateMagicBytes(
   _claimedMimeType?: string
 ): IImageValidationResult & { detectedMimeType?: string } {
   try {
-    // Extract base64 data
-    const base64Data = imageData.includes(',') ? imageData.split(',')[1] : imageData;
-
-    if (!base64Data || base64Data.length < 16) {
+    if (getBase64PayloadLength(imageData) < 16) {
       return {
         valid: false,
         error: 'Image data too short for format detection',
@@ -290,7 +310,7 @@ export function validateMagicBytes(
     }
 
     // Decode first 12 bytes (enough for all checks)
-    const binaryString = atob(base64Data.slice(0, 16));
+    const binaryString = atob(readBase64Prefix(imageData, 16));
     const bytes = new Uint8Array(binaryString.length);
     for (let i = 0; i < binaryString.length; i++) {
       bytes[i] = binaryString.charCodeAt(i);
@@ -359,17 +379,15 @@ export function validateMagicBytes(
  * Works for JPEG, PNG, and WebP
  */
 export function decodeImageDimensions(imageData: string): { width: number; height: number } | null {
-  const base64Data = imageData.includes(',') ? imageData.split(',')[1] : imageData;
-
   // Decode enough bytes for dimension extraction
   // Phone JPEGs often have 20-60KB EXIF blocks before SOF marker
   // Reading ~32KB ensures we can find dimensions in 99%+ of JPEGs
   // Align slice to multiple of 4 (base64 requirement) to avoid atob errors
-  const rawSliceLen = Math.min(base64Data.length, 44000);
+  const rawSliceLen = Math.min(getBase64PayloadLength(imageData), 44000);
   const sliceLen = Math.floor(rawSliceLen / 4) * 4;
   let binaryString: string;
   try {
-    binaryString = atob(base64Data.slice(0, sliceLen));
+    binaryString = atob(readBase64Prefix(imageData, sliceLen));
   } catch {
     return null; // Invalid base64 - can't decode dimensions
   }

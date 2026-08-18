@@ -109,10 +109,17 @@ vi.mock('@/lib/anti-freeloader/check-freeloader', () => ({
 vi.mock('@shared/validation/upscale.schema', () => ({
   upscaleSchema: { parse: mocks.parseUpscale },
   decodeImageDimensions: () => null,
+  getBase64PayloadLength: (value: string) =>
+    value.length - (value.startsWith('data:') ? value.indexOf(',') + 1 : 0),
+  getBase64PayloadOffset: (value: string) =>
+    value.startsWith('data:') ? value.indexOf(',') + 1 : 0,
   validateImageDimensions: () => ({ valid: true }),
   validateImageSizeForTier: () => ({ valid: true }),
   validateMagicBytes: () => ({ valid: true, detectedMimeType: 'image/jpeg' }),
-  IMAGE_VALIDATION: { ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/webp', 'image/heic'] },
+  IMAGE_VALIDATION: {
+    ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/webp', 'image/heic'],
+    MAX_REQUEST_BYTES: 24 * 1024 * 1024,
+  },
 }));
 
 import { POST } from '@/app/api/upscale/route';

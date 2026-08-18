@@ -38,6 +38,8 @@ import { isAccountSetupPending, isFreeleaderBlocked } from '@/lib/anti-freeloade
 import { ErrorCodes, createErrorResponse } from '@shared/utils/errors';
 import {
   decodeImageDimensions,
+  getBase64PayloadLength,
+  getBase64PayloadOffset,
   IMAGE_VALIDATION,
   upscaleSchema,
   validateImageDimensions,
@@ -600,17 +602,36 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
     batchSlotAcquired = true;
 
-    // 5. Parse and validate request body
+    // 5. Reject an oversized body before reading it. Buffering it first is what
+    // kills the Worker: `req.json()` holds the raw text and the parsed string,
+    // both UTF-16, so a large payload exceeds the 128MB limit and Cloudflare
+    // returns a non-JSON 503 the client cannot interpret.
+    const declaredBodyBytes = Number(req.headers.get('content-length') ?? '0');
+    if (
+      Number.isFinite(declaredBodyBytes) &&
+      declaredBodyBytes > IMAGE_VALIDATION.MAX_REQUEST_BYTES
+    ) {
+      // No credits are charged yet, but the batch slot is already held. Release
+      // it, or a user retrying with a smaller image is locked out of their own quota.
+      await refundAfterRouteFailure('request_body_too_large', { declaredBodyBytes });
+      const { body: errorBody, status } = createErrorResponse(
+        ErrorCodes.VALIDATION_ERROR,
+        'This image is too large to process in a single request. Please resize it and try again.',
+        413
+      );
+      return NextResponse.json(errorBody, { status });
+    }
+
+    // 6. Parse and validate request body
     const body = await req.json();
     const validatedInput = upscaleSchema.parse(body);
     requestedQualityTier = validatedInput.config.qualityTier;
     requestedScale = validatedInput.config.scale;
 
-    // 6. Additional validation: Check if image data is valid base64
+    // 7. Additional validation: Check if image data is valid base64
     try {
       const imageData = validatedInput.imageData;
-      const base64Data = imageData.startsWith('data:') ? imageData.split(',')[1] : imageData;
-      if (!base64Data) {
+      if (getBase64PayloadLength(imageData) === 0) {
         logFailure('invalid_base64_missing_payload');
         const { body: errorBody, status } = createErrorResponse(
           ErrorCodes.VALIDATION_ERROR,
@@ -620,9 +641,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         return NextResponse.json(errorBody, { status });
       }
 
-      // Simple base64 validation using web-compatible approach
-      const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
-      if (!base64Regex.test(base64Data)) {
+      // Sticky match from the payload offset: same rule as before, without
+      // copying megabytes of base64 just to run the test against it.
+      const base64Regex = /[A-Za-z0-9+/]*={0,2}$/y;
+      base64Regex.lastIndex = getBase64PayloadOffset(imageData);
+      if (!base64Regex.test(imageData)) {
         logFailure('invalid_base64_characters');
         const { body: errorBody, status } = createErrorResponse(
           ErrorCodes.VALIDATION_ERROR,

@@ -1,6 +1,19 @@
 export interface IAccountSetupResult {
-  success: true;
-  setupStatus: 'complete';
+  success: boolean;
+  /**
+   * `pending` means the server could not classify the profile yet. It is not an
+   * error: the upscale route already handles a pending profile, and a later
+   * setup call (sign-in, auth state change) completes it. Authentication must
+   * never be blocked on it — that stranded users with a valid account on an
+   * error screen.
+   */
+  setupStatus: 'complete' | 'pending';
+}
+
+const SETUP_RETRY_DELAYS_MS = [150, 400];
+
+function isSetupStatus(value: unknown): value is IAccountSetupResult['setupStatus'] {
+  return value === 'complete' || value === 'pending';
 }
 
 interface IAccountSetupAttribution {
@@ -78,9 +91,11 @@ function getAccountSetupAttribution(): IAccountSetupAttribution {
 
 export async function completeAccountSetup(
   accessToken: string,
-  fetchImpl: typeof fetch = fetch
+  fetchImpl: typeof fetch = fetch,
+  sleep: (ms: number) => Promise<void> = ms => new Promise(resolve => setTimeout(resolve, ms))
 ): Promise<IAccountSetupResult> {
   let lastError: Error | undefined;
+  let lastPending: IAccountSetupResult | undefined;
 
   for (let attempt = 1; attempt <= MAX_SETUP_ATTEMPTS; attempt += 1) {
     try {
@@ -98,15 +113,29 @@ export async function completeAccountSetup(
       }
 
       const result = (await response.json()) as Partial<IAccountSetupResult>;
-      if (result.success !== true || result.setupStatus !== 'complete') {
+      if (!isSetupStatus(result.setupStatus)) {
         throw new Error('Account setup did not return a terminal decision');
       }
 
-      return result as IAccountSetupResult;
+      if (result.setupStatus === 'complete') {
+        return { success: result.success === true, setupStatus: 'complete' };
+      }
+
+      // Pending is a real answer, so stop treating it as a failure. Retry with a
+      // short backoff — the profile row usually lands within a few hundred ms —
+      // and hand it back rather than throwing if it never settles.
+      lastPending = { success: false, setupStatus: 'pending' };
+      lastError = undefined;
     } catch (error) {
       lastError = error instanceof Error ? error : new Error('Account setup failed');
     }
+
+    const delay = SETUP_RETRY_DELAYS_MS[attempt - 1];
+    if (attempt < MAX_SETUP_ATTEMPTS && delay) {
+      await sleep(delay);
+    }
   }
 
+  if (lastPending) return lastPending;
   throw lastError ?? new Error('Account setup failed');
 }

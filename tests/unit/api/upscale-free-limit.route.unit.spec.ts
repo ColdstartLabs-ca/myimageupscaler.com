@@ -122,12 +122,19 @@ vi.mock('@shared/validation/upscale.schema', () => ({
     parse: mocks.parseUpscale,
   },
   decodeImageDimensions: () => null,
+  getBase64PayloadLength: (value: string) =>
+    value.length - (value.startsWith('data:') ? value.indexOf(',') + 1 : 0),
+  getBase64PayloadOffset: (value: string) =>
+    value.startsWith('data:') ? value.indexOf(',') + 1 : 0,
   validateImageDimensions: () => ({ valid: true }),
   validateImageSizeForTier: () => ({ valid: true }),
   // The route enforces the allowlist against the *detected* type, so the double must
   // report one and expose the allowlist it is checked against.
   validateMagicBytes: () => ({ valid: true, detectedMimeType: 'image/jpeg' }),
-  IMAGE_VALIDATION: { ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/webp', 'image/heic'] },
+  IMAGE_VALIDATION: {
+    ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/webp', 'image/heic'],
+    MAX_REQUEST_BYTES: 24 * 1024 * 1024,
+  },
 }));
 
 import { POST } from '@/app/api/upscale/route';
