@@ -149,6 +149,42 @@ describe('POST /api/users/setup', () => {
     expect(mockTrackServerEvent).not.toHaveBeenCalled();
   });
 
+  it('completes setup instead of 404ing when the profile row has not been created yet', async () => {
+    mockProfile(null as unknown as Record<string, unknown>);
+
+    const res = await POST(makeRequest({ userId: 'user-123', country: 'US' }));
+
+    expect(res.status).toBe(200);
+    await expect(res.json()).resolves.toEqual({
+      success: true,
+      setupStatus: 'complete',
+      creditGrantDeferred: true,
+    });
+    expect(mockClaimFreeCreditGrant).not.toHaveBeenCalled();
+  });
+
+  it('completes setup instead of 500ing when the free credit grant fails', async () => {
+    mockClaimFreeCreditGrant.mockRejectedValue(new Error('claim_free_credit_grant failed'));
+
+    const res = await POST(makeRequest({ userId: 'user-123', country: 'US', ip: '203.0.113.42' }));
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body).toMatchObject({
+      success: true,
+      setupStatus: 'complete',
+      creditGrantDeferred: true,
+    });
+  });
+
+  it('does not report a deferred grant when the grant succeeds', async () => {
+    const res = await POST(makeRequest({ userId: 'user-123', country: 'US', ip: '203.0.113.42' }));
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.creditGrantDeferred).toBeUndefined();
+  });
+
   it('tracks a reduced grant without storing a raw IP or browser fingerprint', async () => {
     mockClaimFreeCreditGrant.mockResolvedValue({
       grantedCredits: 3,

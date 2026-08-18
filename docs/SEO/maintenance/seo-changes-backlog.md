@@ -1945,3 +1945,27 @@ Validation:
 Follow-up:
 
 - Run the verifier after deploy with the reviewed or refreshed CNI export; the local worktree has no live GSC export by design.
+
+## 2026-08-17: GSC Decline Root Cause — Not SEO
+
+Investigation: [2026-08-17 GSC decline root cause](../reports/2026-08-17-gsc-decline-root-cause.md)
+
+Finding:
+
+- The GSC click decline since mid-July is **not** an SEO regression. Non-brand organic clicks are near their all-time high; brand-query clicks simply reverted to their April/May baseline after a Jun 20–Jul 17 spike, at unchanged position 1.0.
+- The real loss is signup conversion: signups per GSC organic click fell 0.83 → 0.44 the week of deploy `229b6b87` (Jul 17, "prevent free tier credit abuse") and never recovered after the Jul 22 rollback.
+- The multi-accounting the deploy targeted is not present in the data: signups per distinct signup IP is 1.00–1.05 in every week of 2026.
+
+Change:
+
+- Made `/api/users/setup` non-blocking again (missing profile row, failed credit grant). Both previously returned 404/500, which the client gates authentication on — users ended up with a valid account and an error screen.
+
+Why it mattered for SEO:
+
+- Site-wide GSC average position and impressions are actively misleading for this property: the query "how to fix pixelated photos" contributes ~86k impressions for 3 clicks. Excluding it, impressions grew +4.8%, not +22%. Do not read the site-wide averages without segmenting brand vs non-brand.
+- GSC `dimensions: ["date","query"]` with `rowLimit: 25000` silently truncates across a multi-day pull (clicks-descending). Query day-by-day.
+
+Follow-up:
+
+- Track signups per organic click weekly. Recovery toward 0.7–0.8 confirms the fix; no movement in two weeks means a second blocker remains.
+- The 202 `setupStatus: 'pending'` path in the same route is still a blocker of the same shape — needs a product decision.

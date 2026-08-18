@@ -53,8 +53,17 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     .eq('id', userId)
     .single();
 
+  // Setup must never block authentication. A missing profile row means the auth
+  // record has outrun its trigger; the next setup call (sign-in, auth state
+  // change) classifies the profile and grants credits.
   if (!profile) {
-    return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
+    logger.error('Profile row missing during setup', { userId });
+    await logger.flush();
+    return NextResponse.json({
+      success: true,
+      setupStatus: 'complete',
+      creditGrantDeferred: true,
+    });
   }
 
   const alreadySetup = Boolean(profile?.region_tier);
@@ -69,6 +78,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   let grant;
+  let creditGrantDeferred = false;
   const isUnsubscribedFreeProfile =
     isFreeTierProfile(profile.subscription_tier) &&
     profile.subscription_status !== 'active' &&
@@ -86,12 +96,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     try {
       grant = await claimFreeCreditGrant(req, userId, resolvedProfile.region_tier);
     } catch (error) {
+      // A failed grant costs the user credits, never their account. The grant is
+      // idempotent per user, so the next setup call retries it safely.
       logger.error('Failed to claim free credits', { userId, error: String(error) });
-      return NextResponse.json({ error: 'Failed to grant free credits' }, { status: 500 });
+      creditGrantDeferred = true;
     }
 
     const requestedCredits = getFreeCreditsForTier(resolvedProfile.region_tier);
-    if (!grant.existingGrant && grant.grantedCredits < requestedCredits) {
+    if (grant && !grant.existingGrant && grant.grantedCredits < requestedCredits) {
       trackServerEvent(
         'free_credits_reduced',
         {
@@ -132,5 +144,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     success: true,
     setupStatus: 'complete',
     ...(alreadySetup || grant?.existingGrant ? { alreadySetup: true } : {}),
+    ...(creditGrantDeferred ? { creditGrantDeferred: true } : {}),
   });
 }
