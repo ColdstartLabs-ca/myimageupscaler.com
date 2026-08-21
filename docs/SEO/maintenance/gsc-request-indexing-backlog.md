@@ -25,7 +25,7 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 ### GSC 404 recovery — request after deployment
 
 - [x] `https://myimageupscaler.com/de/tools/resize/resize-image-for-telegram` — **not an indexing candidate.** The route serves 200 with `noindex, follow`, which is PRD 01's deliberate rule for untranslated dedicated locale tools. GSC rejected the request ("indexing issues were detected") as expected. Removed from the queue rather than retried.
-- [ ] `https://myimageupscaler.com/use-cases-expanded/real-estate-photography` — restored page route and sitemap registration. Request was submitted 2026-08-13 but the confirmation dialog was not captured; re-submit to be certain.
+- [x] `https://myimageupscaler.com/use-cases-expanded/real-estate-photography` — indexing requested 2026-08-21, confirmed "added to a priority crawl queue" — restored page route and sitemap registration.
 - [x] `https://myimageupscaler.com/guides/how-to-upscale-images` — indexing requested 2026-08-13, confirmed "added to a priority crawl queue" — owner for the retired `/guides/how-to-upsize-images` family; request indexing after deployment.
 - [x] `https://myimageupscaler.com/tools/convert/jpg-to-webp` — indexing requested 2026-08-13, confirmed "added to a priority crawl queue" — canonical owner for legacy converter paths; request indexing after deployment.
 
@@ -41,8 +41,8 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 - [x] `https://myimageupscaler.com/blog/windows-11-snap-layouts` — indexing requested 2026-08-13, confirmed "added to a priority crawl queue"
 - [x] `https://myimageupscaler.com/blog/image-enlarger-vs-image-upscaler` — indexing requested 2026-08-13, confirmed "added to a priority crawl queue"
 - [x] `https://myimageupscaler.com/blog/how-to-fix-resolution` — indexing requested 2026-08-13, confirmed "added to a priority crawl queue"
-- [ ] `https://myimageupscaler.com/blog/sunset-camera-settings`
-- [ ] `https://myimageupscaler.com/blog/picture-to-oil-painting-convert`
+- [x] `https://myimageupscaler.com/blog/sunset-camera-settings` — indexing requested 2026-08-21, confirmed "added to a priority crawl queue"
+- [x] `https://myimageupscaler.com/blog/picture-to-oil-painting-convert` — indexing requested 2026-08-21, confirmed "added to a priority crawl queue"
 - [ ] `https://myimageupscaler.com/blog/remove-noise-in-photoshop`
 - [ ] `https://myimageupscaler.com/blog/screenshot-upscaling-rescue-low-resolution-captures`
 - [ ] `https://myimageupscaler.com/blog/dpi-of-image`
