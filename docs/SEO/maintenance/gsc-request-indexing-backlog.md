@@ -22,6 +22,10 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 > Bing/Yandex immediately and is not subject to this quota. The GSC requests are a
 > Google-specific nudge on top of the sitemap, not the only path to recrawl.
 
+### Dashboard noindex cleanup — request after deployment
+
+- [ ] `https://myimageupscaler.com/dashboard` — after deploying the 2026-08-24 dashboard index-removal fix, request indexing/recrawl in GSC URL Inspection so Google can see `X-Robots-Tag: noindex, follow` and remove the private app URL from branded SERPs.
+
 ### GSC 404 recovery — request after deployment
 
 - [x] `https://myimageupscaler.com/de/tools/resize/resize-image-for-telegram` — **not an indexing candidate.** The route serves 200 with `noindex, follow`, which is PRD 01's deliberate rule for untranslated dedicated locale tools. GSC rejected the request ("indexing issues were detected") as expected. Removed from the queue rather than retried.

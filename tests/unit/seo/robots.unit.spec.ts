@@ -111,7 +111,7 @@ describe('robots.ts', () => {
       });
     });
 
-    it('AI bot rules should disallow /dashboard/ and /admin/', async () => {
+    it('AI bot rules should allow dashboard recrawls for noindex removal and disallow /admin/', async () => {
       const { default: robots } = await import('@/app/robots');
       const result = robots();
 
@@ -129,7 +129,7 @@ describe('robots.ts', () => {
         const rule = result.rules.find(r => typeof r === 'object' && r.userAgent === userAgent);
 
         expect(rule).toBeDefined();
-        expect(rule?.disallow).toContain('/dashboard/');
+        expect(rule?.disallow).not.toContain('/dashboard/');
         expect(rule?.disallow).toContain('/admin/');
       });
     });
@@ -174,7 +174,7 @@ describe('robots.ts', () => {
       });
     });
 
-    it('wildcard rule should disallow protected paths', async () => {
+    it('wildcard rule should allow dashboard recrawls for noindex removal and disallow protected paths', async () => {
       const { default: robots } = await import('@/app/robots');
       const result = robots();
 
@@ -183,7 +183,7 @@ describe('robots.ts', () => {
       );
 
       expect(wildcardRule?.disallow).toContain('/api/');
-      expect(wildcardRule?.disallow).toContain('/dashboard/');
+      expect(wildcardRule?.disallow).not.toContain('/dashboard/');
       expect(wildcardRule?.disallow).toContain('/admin/');
       expect(wildcardRule?.disallow).toContain('/_next/');
       expect(wildcardRule?.disallow).toContain('/private/');

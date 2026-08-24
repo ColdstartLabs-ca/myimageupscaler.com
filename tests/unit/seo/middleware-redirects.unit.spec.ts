@@ -115,6 +115,18 @@ describe('Middleware pattern redirects', () => {
     expect(response.headers.get('location')).toBe('http://localhost/platforms/midjourney-upscaler');
   });
 
+  test('adds a noindex header to dashboard redirects so Google can remove private app URLs', async () => {
+    const response = await runMiddleware('/dashboard');
+
+    expect(response.headers.get('x-robots-tag')).toBe('noindex, follow');
+  });
+
+  test('adds a noindex header to locale-prefixed dashboard responses', async () => {
+    const response = await runMiddleware('/pt/dashboard/history');
+
+    expect(response.headers.get('x-robots-tag')).toBe('noindex, follow');
+  });
+
   test('strips a locale from an English-only pSEO route', async () => {
     const response = await runMiddleware('/fr/photo-restoration');
 

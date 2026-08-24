@@ -140,6 +140,14 @@ function isDashboardPath(pathname: string): boolean {
   return false;
 }
 
+function applyDashboardNoindex(response: NextResponse, pathname: string): NextResponse {
+  if (isDashboardPath(pathname)) {
+    response.headers.set('X-Robots-Tag', 'noindex, follow');
+  }
+
+  return response;
+}
+
 /**
  * Extract the path without locale prefix for consistent handling
  * /pt/dashboard -> /dashboard, /dashboard -> /dashboard
@@ -550,6 +558,7 @@ async function handleLocaleRouting(req: NextRequest): Promise<NextResponse | nul
       url.pathname = `/en${pathname === '/' ? '' : pathname}`;
       const response = NextResponse.rewrite(url);
       applySecurityHeaders(response);
+      applyDashboardNoindex(response, pathname);
       return response;
     }
 
@@ -559,6 +568,7 @@ async function handleLocaleRouting(req: NextRequest): Promise<NextResponse | nul
 
     // Apply security headers
     applySecurityHeaders(response);
+    applyDashboardNoindex(response, pathname);
 
     // Set locale cookie
     response.cookies.set(LOCALE_COOKIE, detectedLocale, {
@@ -869,7 +879,7 @@ async function handlePageRoute(req: NextRequest, pathname: string): Promise<Next
       // Clear any existing search params for clean redirect
       url.searchParams.delete('login');
       url.searchParams.delete('next');
-      return NextResponse.redirect(url);
+      return applyDashboardNoindex(NextResponse.redirect(url), pathname);
     }
   }
 
@@ -885,10 +895,10 @@ async function handlePageRoute(req: NextRequest, pathname: string): Promise<Next
     url.searchParams.set('login', '1');
     url.searchParams.set('next', pathname);
 
-    return NextResponse.redirect(url);
+    return applyDashboardNoindex(NextResponse.redirect(url), pathname);
   }
 
-  return response;
+  return applyDashboardNoindex(response, pathname);
 }
 
 /**

@@ -9,6 +9,42 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-08-24
+
+### Dashboard SERP Removal Signal
+
+Source: autonomous blog growth operator using fresh GSC 28-day data through 2026-08-21 (`/tmp/miu-gsc-28-2026-08-24.json`), fresh GA4 organic data through 2026-08-23 (`/tmp/miu-ga-28-2026-08-24.json`), current SEO/indexing backlogs, blog changelog, the 2026-08-22 growth plan, and recent git history.
+
+Evidence:
+
+- The 2026-08-22 growth plan marked dashboard SERP cleanup as the next safe technical SEO action: dashboard URLs are private app surfaces, but `robots.txt` disallow prevents Google from recrawling them to see a removal signal.
+- Fresh GSC still shows `https://myimageupscaler.com/dashboard` in branded SERPs with 1,441 impressions / 7 clicks / avg position 2.91 over 2026-07-25 through 2026-08-21, including `myimageupscaler` at 1,070 impressions and `my image upscaler` at 160 impressions.
+- Active blog CTR experiments are still gated: `/blog/fixing-pixelated-photos` should not be judged before 2026-08-27 and `/blog/best-free-ai-image-upscaler-2026-tested-compared` before 2026-09-03.
+
+Changes:
+
+- Removed `/dashboard/` from the wildcard and AI-bot `robots.txt` disallow rules so crawlers can recrawl dashboard URLs.
+- Added `X-Robots-Tag: noindex, follow` to dashboard middleware responses, including locale-prefixed dashboard responses and dashboard locale rewrites.
+- Added regression coverage in `tests/unit/seo/robots.unit.spec.ts` and `tests/unit/seo/middleware-redirects.unit.spec.ts`.
+- Added `https://myimageupscaler.com/dashboard` to the GSC request-indexing backlog without duplicating existing rows.
+
+Why:
+
+- This satisfies action class B: a concrete technical indexability fix backed by GSC evidence, while avoiding unsafe repeated edits on blog pages that are still inside measurement-lag windows.
+
+Validation:
+
+- Red-first focused test run failed on the new robots/noindex expectations before implementation.
+- `yarn vitest run tests/unit/seo/robots.unit.spec.ts tests/unit/seo/middleware-redirects.unit.spec.ts` passed: 2 files, 27 tests.
+- `yarn verify` result and commit hash are recorded in the operator delivery.
+
+Follow-up:
+
+- Commit: this commit (`fix(seo): noindex dashboard SERP URLs`); final hash is recorded in the operator delivery.
+- Deploy state: not deployed; code/backlog changes are local until pushed/deployed.
+- After deploy, verify `https://myimageupscaler.com/robots.txt` no longer disallows `/dashboard/`, verify `https://myimageupscaler.com/dashboard` returns `X-Robots-Tag: noindex, follow`, then request recrawl/indexing for the pending dashboard backlog row in GSC URL Inspection.
+- Next trigger: on or after 2026-09-08, check branded GSC query/page rows for `/dashboard`; if impressions persist after a confirmed post-deploy crawl, use GSC removals for the private app URL.
+
 ## 2026-08-17
 
 ### Removed Case-Only Legacy Redirects That Loop in Dev

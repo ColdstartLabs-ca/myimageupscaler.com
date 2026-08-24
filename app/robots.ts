@@ -21,53 +21,44 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: [
-          '/api/',
-          '/dashboard/',
-          '/admin/',
-          '/_next/',
-          '/private/',
-          '/*.json$',
-          '/success',
-          '/canceled',
-        ],
+        disallow: ['/api/', '/admin/', '/_next/', '/private/', '/*.json$', '/success', '/canceled'],
       },
       // AI Search Engine Bots — explicitly allowed for AEO/GEO visibility
       {
         userAgent: 'GPTBot',
         allow: '/',
-        disallow: ['/api/', '/dashboard/', '/admin/', '/private/'],
+        disallow: ['/api/', '/admin/', '/private/'],
       },
       {
         userAgent: 'ChatGPT-User',
         allow: '/',
-        disallow: ['/api/', '/dashboard/', '/admin/', '/private/'],
+        disallow: ['/api/', '/admin/', '/private/'],
       },
       {
         userAgent: 'Google-Extended',
         allow: '/',
-        disallow: ['/api/', '/dashboard/', '/admin/', '/private/'],
+        disallow: ['/api/', '/admin/', '/private/'],
       },
       {
         userAgent: 'ClaudeBot',
         allow: '/',
-        disallow: ['/api/', '/dashboard/', '/admin/', '/private/'],
+        disallow: ['/api/', '/admin/', '/private/'],
       },
       {
         userAgent: 'PerplexityBot',
         allow: '/',
-        disallow: ['/api/', '/dashboard/', '/admin/', '/private/'],
+        disallow: ['/api/', '/admin/', '/private/'],
       },
       {
         userAgent: 'anthropic-ai',
         allow: '/',
-        disallow: ['/api/', '/dashboard/', '/admin/', '/private/'],
+        disallow: ['/api/', '/admin/', '/private/'],
       },
       // Common Crawl — used as training data by many open-source AI models
       {
         userAgent: 'CCBot',
         allow: '/',
-        disallow: ['/api/', '/dashboard/', '/admin/', '/private/'],
+        disallow: ['/api/', '/admin/', '/private/'],
       },
     ],
     sitemap: `${BASE_URL}/sitemap.xml`,
