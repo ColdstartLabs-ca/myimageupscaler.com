@@ -92,3 +92,30 @@ available. Do not treat the pre-fix rates above as a post-deploy measurement.
 - **Next action:** Inspect worker memory limits, image-size distribution, and failing jobs; add mitigation if needed.
 - **Status:** Open
 
+### 2026-08-22T09:14:00+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 14 in the sampled window
+- **Evidence:** `{"count_15m": 1, "count_3h": 14, "live_health": {"api_health": {"latency_ms": 1104, "status": 200}, "homepage": {"latency_ms": 1476, "status": 200}}, "rate_15m": 0.0068, "rate_3h": 0.00614, "requests_15m": 147, "requests_3h": 2280}`
+- **Assessment:** 14 memory exceedances in 2,280 requests over 3h (0.61%), including 1 in the last 15m, while endpoints remain healthy.
+- **Next action:** Investigate affected image sizes and worker memory limits, then backlog a targeted fix.
+- **Status:** Open
+
+### 2026-08-23T01:31:03+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 19 in the sampled window
+- **Evidence:** `{"count_15m": 1, "count_3h": 19, "live_health": {"api_health": {"latency_ms": 1271, "status": 200}, "homepage": {"latency_ms": 1622, "status": 200}}, "rate_15m": 0.00495, "rate_3h": 0.0059, "requests_15m": 202, "requests_3h": 3223}`
+- **Assessment:** 19 exceeded-memory events across 3,223 requests in 3h (0.59%), with healthy HTTP 200 endpoints and no broad outage.
+- **Next action:** Inspect affected image sizes and worker memory limits, then tune or cap workloads and monitor recurrence.
+- **Status:** Open
+
+### 2026-08-23T12:42:51+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 39 in the sampled window
+- **Evidence:** `{"count_15m": 2, "count_3h": 39, "live_health": {"api_health": {"latency_ms": 1004, "status": 200}, "homepage": {"latency_ms": 1408, "status": 200}}, "rate_15m": 0.00637, "rate_3h": 0.01461, "requests_15m": 314, "requests_3h": 2670}`
+- **Assessment:** 39 exceeded-memory errors in 3h (1.46%) recur while health endpoints remain up.
+- **Next action:** Inspect worker memory usage and workload sizes, then tune limits or batching.
+- **Status:** Open
+

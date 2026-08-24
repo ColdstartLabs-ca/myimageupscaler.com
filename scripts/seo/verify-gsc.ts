@@ -103,19 +103,41 @@ function extractLocs(xml: string): string[] {
   return [...xml.matchAll(/<loc>\s*([^<]+?)\s*<\/loc>/gi)].map(match => match[1].trim());
 }
 
+// Production bot protection 503s requests with no User-Agent and intermittently
+// rate-limits rapid sequential fetches; send a browser-like UA and retry with backoff.
+const BROWSER_UA =
+  'Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0';
+const RETRYABLE_STATUSES = new Set([429, 503]);
+const MAX_ATTEMPTS = 4;
+const FETCH_DELAY_MS = 250;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function fetchText(url: string, description: string): Promise<string> {
-  let response: Response;
-  try {
-    response = await fetch(url);
-  } catch (error) {
-    throw new Error(
-      `Unable to fetch ${description} at ${url}: ${error instanceof Error ? error.message : String(error)}`
-    );
+  let lastStatus = 0;
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+    if (attempt > 1) await sleep(1000 * 2 ** (attempt - 2)); // 1s, 2s, 4s
+    let response: Response;
+    try {
+      response = await fetch(url, { headers: { 'User-Agent': BROWSER_UA } });
+    } catch (error) {
+      throw new Error(
+        `Unable to fetch ${description} at ${url}: ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
+    lastStatus = response.status;
+    if (response.ok) {
+      const text = await response.text();
+      await sleep(FETCH_DELAY_MS);
+      return text;
+    }
+    if (!RETRYABLE_STATUSES.has(lastStatus)) break;
   }
-  if (!response.ok) {
-    throw new Error(`Unable to fetch ${description} at ${url}: HTTP ${response.status}.`);
-  }
-  return response.text();
+  throw new Error(
+    `Unable to fetch ${description} at ${url}: HTTP ${lastStatus}${lastStatus === 503 ? ' (bot protection rate limit)' : ''}.`
+  );
 }
 
 async function fetchSitemapUrls(baseUrl: string): Promise<string[]> {

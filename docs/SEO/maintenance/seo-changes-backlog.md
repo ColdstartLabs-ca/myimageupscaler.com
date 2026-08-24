@@ -45,6 +45,28 @@ Follow-up:
 - After deploy, verify `https://myimageupscaler.com/robots.txt` no longer disallows `/dashboard/`, verify `https://myimageupscaler.com/dashboard` returns `X-Robots-Tag: noindex, follow`, then request recrawl/indexing for the pending dashboard backlog row in GSC URL Inspection.
 - Next trigger: on or after 2026-09-08, check branded GSC query/page rows for `/dashboard`; if impressions persist after a confirmed post-deploy crawl, use GSC removals for the private app URL.
 
+## 2026-08-22
+
+### Corrected SEO Growth Plan Decision Gates
+
+Source: [SEO growth plan 2026-08-22](../reports/seo-growth-plan-2026-08-22.md)
+
+Changes:
+
+- Corrected the plan so historical CNI/sitemap overlap is classified before removal instead of treated as a bulk-pruning gate.
+- Reclassified the pixelated-photo overlap as non-material (the owner holds 99.2% of query impressions) and set an August 27 measurement gate for 14 complete post-refresh GSC days.
+- Replaced speculative AI Overview, brand-fragmentation, and broad ranking-collapse conclusions with explicit SERP, funnel, and post-deploy validation gates.
+- Marked the August 17-18 signup and Worker fixes, July commercial-funnel instrumentation, and GIF consolidation as completed work awaiting clean post-change measurement.
+
+Validation:
+
+- Cross-checked the report against the fresh GSC/GA4 synthesis, repository history, both SEO maintenance backlogs, the August 17 root-cause report, and Google's Search Status Dashboard.
+- Documentation-only change; no production URL, metadata, sitemap, robots directive, redirect, or analytics configuration changed.
+
+Follow-up:
+
+- Run the dated August 25, August 27, and September 3 checks in the report. No GSC request-indexing or IndexNow action is introduced by this documentation correction.
+
 ## 2026-08-17
 
 ### Removed Case-Only Legacy Redirects That Loop in Dev

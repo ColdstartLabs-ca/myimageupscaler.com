@@ -1080,3 +1080,13 @@ The validator-passing 9:1 execution batch contains nine reverified pending recom
 | Date       | Status      | Subreddit        | Thread                                                                                                          | Title                                            | Target page | Link decision | Notes                                                                                                                        |
 | ---------- | ----------- | ---------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ | ----------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | 2026-08-17 | recommended | r/AskPhotography | https://www.reddit.com/r/AskPhotography/comments/1vr16sp/lightroom_mobile_export_setti_gs_to_instagram/ | Lightroom mobile export setti gs to Instagram? | none        | no link       | New full draft in validated action sheet; Atom and embed verified; manual authenticated commentability check required. |
+
+## 2026-08-19 rerun — Reddit SEO opportunity monitor
+
+Action sheet: `/tmp/reddit-seo-response-myimageupscaler-com-2026-08-19-rerun.md`.
+
+The validator-passing 9:1 execution batch contains nine reverified pending recommendations and one newly discovered no-link opportunity. Fresh GSC query/page data selected the linked blog target. Current Reddit embeds showed intact posts, visible timestamps, and Comment controls; manual authenticated commentability checks remain required. No Reddit posts were made by automation.
+
+| Date       | Status      | Subreddit    | Thread                                                                    | Title   | Target page | Link decision | Notes                                                                                                                |
+| ---------- | ----------- | ------------ | ------------------------------------------------------------------------- | ------- | ----------- | ------------- | -------------------------------------------------------------------------------------------------------------------- |
+| 2026-08-19 | recommended | r/EtsySellers | https://www.reddit.com/r/EtsySellers/comments/1vouplb/advice/             | Advice? | none        | no link       | New full draft in validated action sheet; Atom and embed verified; manual authenticated commentability check required. |
