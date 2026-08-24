@@ -30,7 +30,7 @@ describe('Bug Fix: Server-side Image Validation', () => {
   describe('IMAGE_VALIDATION constants', () => {
     test('should export correct size limits', () => {
       expect(IMAGE_VALIDATION.MAX_SIZE_FREE).toBe(5 * 1024 * 1024); // 5MB
-      expect(IMAGE_VALIDATION.MAX_SIZE_PAID).toBe(25 * 1024 * 1024); // 25MB
+      expect(IMAGE_VALIDATION.MAX_SIZE_PAID).toBe(10 * 1024 * 1024); // 10MB - Worker body cap
       expect(IMAGE_VALIDATION.MAX_SIZE_DEFAULT).toBe(5 * 1024 * 1024); // 5MB default
     });
 

@@ -118,7 +118,7 @@ vi.mock('@shared/validation/upscale.schema', () => ({
   validateMagicBytes: () => ({ valid: true, detectedMimeType: 'image/jpeg' }),
   IMAGE_VALIDATION: {
     ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/webp', 'image/heic'],
-    MAX_REQUEST_BYTES: 24 * 1024 * 1024,
+    MAX_REQUEST_BYTES: 16 * 1024 * 1024,
   },
 }));
 

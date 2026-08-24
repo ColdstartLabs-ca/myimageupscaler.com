@@ -99,7 +99,7 @@ describe('upscale request memory guards', () => {
   describe('MAX_REQUEST_BYTES', () => {
     test('caps the request body below what the 128MB Worker can buffer', () => {
       // Peak is ~4 bytes per body byte (raw text + parsed string, both UTF-16).
-      expect(IMAGE_VALIDATION.MAX_REQUEST_BYTES).toBe(24 * 1024 * 1024);
+      expect(IMAGE_VALIDATION.MAX_REQUEST_BYTES).toBe(16 * 1024 * 1024);
       expect(IMAGE_VALIDATION.MAX_REQUEST_BYTES * 4).toBeLessThan(128 * 1024 * 1024);
     });
 

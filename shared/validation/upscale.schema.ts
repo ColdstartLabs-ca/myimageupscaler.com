@@ -42,7 +42,11 @@ const nanoBananaProConfigSchema = z.object({
  */
 export const IMAGE_VALIDATION = {
   MAX_SIZE_FREE: 5 * 1024 * 1024, // 5MB for free tier
-  MAX_SIZE_PAID: 25 * 1024 * 1024, // 25MB for paid tier
+  // 10MB, not 25MB. A 25MB image base64-encodes to ~33MB of body, which the
+  // Worker cannot buffer: the paid ceiling was above MAX_REQUEST_BYTES, so a
+  // paid user uploading the size we advertised was rejected or killed the
+  // Worker outright. 10MB * 1.4 envelope = 14MB of body, inside the cap.
+  MAX_SIZE_PAID: 10 * 1024 * 1024, // 10MB for paid tier
   MAX_SIZE_DEFAULT: 5 * 1024 * 1024, // Default to free tier limit
   ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/webp', 'image/heic'] as const,
   MIN_DIMENSION: 64,
@@ -50,9 +54,11 @@ export const IMAGE_VALIDATION = {
   MAX_PIXELS: 1_500_000, // ~1225x1225 max - GPU memory limit for upscaling (matches real-esrgan)
   // Ceiling for the whole JSON request body, not the decoded image. The Worker
   // gets 128MB; `req.json()` holds the raw text and the parsed string, and JS
-  // strings are UTF-16, so peak is ~4 bytes per body byte. 24MB of body is
-  // ~96MB peak, which leaves headroom for the rest of the request.
-  MAX_REQUEST_BYTES: 24 * 1024 * 1024,
+  // strings are UTF-16, so peak is ~4 bytes per body byte. 24MB of body peaked
+  // at ~96MB and left only ~32MB for the runtime, the decoded image and the
+  // provider response, so the Worker still died under the guard. 16MB caps the
+  // peak at 64MB, half the heap.
+  MAX_REQUEST_BYTES: 16 * 1024 * 1024,
 };
 
 /**
