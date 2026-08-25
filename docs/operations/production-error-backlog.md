@@ -119,3 +119,12 @@ available. Do not treat the pre-fix rates above as a post-deploy measurement.
 - **Next action:** Inspect worker memory usage and workload sizes, then tune limits or batching.
 - **Status:** Open
 
+### 2026-08-25T03:21:54+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 11 in the sampled window
+- **Evidence:** `{"count_15m": 0, "count_3h": 11, "live_health": {"api_health": {"latency_ms": 1244, "status": 200}, "homepage": {"latency_ms": 2403, "status": 200}}, "rate_15m": 0.0, "rate_3h": 0.00542, "requests_15m": 112, "requests_3h": 2029}`
+- **Assessment:** 11 memory-limit failures in 3 hours at a 0.54% rate, with healthy endpoints and no failures in the last 15 minutes.
+- **Next action:** Review worker memory usage and limits, then reproduce and mitigate the failing workload.
+- **Status:** Open
+

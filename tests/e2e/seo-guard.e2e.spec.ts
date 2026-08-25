@@ -91,8 +91,11 @@ test.describe('SEO Guard - Deploy Blocker', () => {
 
       // Should disallow private areas
       expect(text).toContain('Disallow: /api/');
-      expect(text).toContain('Disallow: /dashboard/');
       expect(text).toContain('Disallow: /admin/');
+
+      // Dashboard stays crawlable on purpose so Google can recrawl it and see the
+      // X-Robots-Tag noindex removal signal (see docs/SEO/maintenance/seo-changes-backlog.md 2026-08-24).
+      expect(text).not.toContain('Disallow: /dashboard/');
 
       // Should reference sitemap
       expect(text).toMatch(/Sitemap:|sitemap:/);
@@ -946,9 +949,18 @@ test.describe('SEO Guard - Deploy Blocker', () => {
 
       // Should disallow all private routes
       expect(text).toContain('Disallow: /api/');
-      expect(text).toContain('Disallow: /dashboard/');
       expect(text).toContain('Disallow: /admin/');
       expect(text).toContain('Disallow: /private/');
+
+      // Dashboard is deindexed via X-Robots-Tag, not robots.txt, so the crawler can
+      // still fetch it and observe the noindex.
+      expect(text).not.toContain('Disallow: /dashboard/');
+    });
+
+    test('dashboard responses carry the noindex removal signal', async ({ request }) => {
+      const response = await request.get('/dashboard', { maxRedirects: 0 });
+
+      expect(response.headers()['x-robots-tag']).toBe('noindex, follow');
     });
 
     test('success and canceled pages are disallowed', async ({ request }) => {

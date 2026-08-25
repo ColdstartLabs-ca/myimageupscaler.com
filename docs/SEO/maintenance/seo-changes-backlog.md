@@ -11,6 +11,22 @@ Maintenance rules:
 
 ## 2026-08-24
 
+### SEO Guard E2E Realigned With The Dashboard Noindex Signal
+
+What changed:
+
+- `tests/e2e/seo-guard.e2e.spec.ts` no longer asserts `Disallow: /dashboard/` in robots.txt; both robots tests now assert its absence so the removal signal cannot be reverted silently.
+- Added an e2e deploy-blocker check that `/dashboard` responds with `X-Robots-Tag: noindex, follow` (unredirected), covering the actual deindex mechanism at the HTTP layer.
+
+Why:
+
+- The Dashboard SERP Removal Signal entry below intentionally dropped `/dashboard/` from robots.txt and moved deindexing to a middleware `X-Robots-Tag`. The e2e guard still encoded the old contract and failed the pre-deploy run.
+
+Validation:
+
+- `npx playwright test tests/e2e/seo-guard.e2e.spec.ts --project=chromium`: all pass, including the new noindex header check.
+- `yarn verify`: pass.
+
 ### Dashboard SERP Removal Signal
 
 Source: autonomous blog growth operator using fresh GSC 28-day data through 2026-08-21 (`/tmp/miu-gsc-28-2026-08-24.json`), fresh GA4 organic data through 2026-08-23 (`/tmp/miu-ga-28-2026-08-24.json`), current SEO/indexing backlogs, blog changelog, the 2026-08-22 growth plan, and recent git history.

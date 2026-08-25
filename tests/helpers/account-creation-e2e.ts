@@ -53,7 +53,6 @@ interface ICreateUserOptions {
 interface ICompleteBrowserSetupOptions {
   pauseSetup?: boolean;
   setupStatus?: number;
-  expectSetupError?: boolean;
 }
 
 interface IDeferred {
@@ -418,7 +417,7 @@ export class AccountCreationHarness {
 
     await page.goto(path);
 
-    if (options.setupStatus || options.expectSetupError) {
+    if (options.setupStatus) {
       return;
     }
 

@@ -213,10 +213,11 @@ test.describe('Account creation free-credit hardening', () => {
     });
     await harness.assertNoDecision(user.id);
 
-    await harness.completeOAuthCallback(page, user, { ip }, { expectSetupError: true });
+    // Pending is an answer, not a failure: sign-in must complete and land the user
+    // on the dashboard with no grant burned yet.
+    await harness.completeOAuthCallback(page, user, { ip });
 
-    await expect(page).not.toHaveURL(/\/dashboard/);
-    await expect(page.getByRole('heading', { name: 'Sign In Error' })).toBeVisible();
+    await harness.assertDashboardCredits(page, 0);
     await harness.assertNoDecision(user.id);
 
     await harness.completeOAuthCallback(page, user, { country: 'US', ip });
@@ -235,8 +236,8 @@ test.describe('Account creation free-credit hardening', () => {
     const user = await harness.createUser();
     const identity = { ip: nextIp() };
 
-    await harness.completeOAuthCallback(page, user, identity, { expectSetupError: true });
-    await expect(page.getByRole('heading', { name: 'Sign In Error' })).toBeVisible();
+    await harness.completeOAuthCallback(page, user, identity);
+    await harness.assertDashboardCredits(page, 0);
     await harness.assertNoDecision(user.id);
     const before = await harness.readState(user.id);
 
