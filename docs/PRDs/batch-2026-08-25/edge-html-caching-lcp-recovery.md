@@ -23,6 +23,33 @@
 - `package.json` (`seo:pagespeed`, `verify`)
 - `tests/unit/middleware/referral-detection.unit.spec.ts`
 
+### Correction from the 2026-08-25 22:00 UTC re-probe
+
+The claim below that "HTML returns no cache header at all" is imprecise. Cold, cookie-less
+requests return an **explicit** anti-cache header, which is a stronger blocker than an absent one:
+
+```
+/                    cache-control: private, no-cache, no-store, max-age=0, must-revalidate
+/pricing             cache-control: private, no-cache, no-store, max-age=0, must-revalidate
+/blog                cache-control: private, no-cache, no-store, max-age=0, must-revalidate
+/scale/2k-upscaler   cache-control: s-maxage=86400, stale-while-revalidate=31449600
+                     x-nextjs-cache: MISS
+```
+
+So there are two distinct populations, and Phase 3's Cache Rule alone will not fix the first:
+
+- **pSEO routes** already emit a correct `s-maxage` and only lack a populated incremental cache —
+  Phase 2 addresses these.
+- **App routes** (`/`, `/pricing`, `/blog`) emit `no-store`, which Cloudflare will honour no matter
+  what the Cache Rule says. Find and remove whatever sets it before Phase 3, or Phase 3 will pass
+  its gate on pSEO URLs while every app route stays uncached — a toy-proof pass.
+
+Confirmed unchanged: `set-cookie: miu_referral_source=direct` is present on **every** cold response,
+including the pSEO ones. Phase 1 stands as written. The `locale` cookie is set only on the redirect
+path (`middleware.ts:574`), not on cold requests, so it is not a second cause here — but that
+redirect is owned by [`locale-surface-retraction.md`](./locale-surface-retraction.md) Phase 3, which
+should land before this PRD's Phase 3 gate is read.
+
 ### Current behavior (measured, not assumed)
 
 Probes run 2026-08-25 against production:

@@ -11,6 +11,61 @@ Maintenance rules:
 
 ## 2026-08-25
 
+### PRD Batch Extended With The August 12 Cliff Triage (PRDs 4-6)
+
+Source: `The August 12 Cliff` GSC triage (data through 2026-08-23), re-verified against production
+2026-08-25 22:00-22:25 UTC before any PRD was written.
+
+Changes (documentation only — no production URL, metadata, sitemap, robots directive, redirect, or
+analytics configuration changed):
+
+- Added `docs/PRDs/batch-2026-08-25/redirect-and-404-integrity.md` (CRITICAL), `locale-surface-retraction.md` (HIGH),
+  and `pseo-matrix-soft-404-repair.md` (HIGH).
+- Rewrote the batch README to hold both investigations, reconcile them, and add a per-surface
+  ownership map so the six PRDs cannot collide.
+- Added a re-probe correction to `edge-html-caching-lcp-recovery.md` and a cross-locale redirect
+  input to `gif-intent-defragmentation.md`.
+
+Defects verified live (each becomes a PRD gate, none fixed yet):
+
+- The GSC-404 coverage gate passes falsely twice over: `legacy-redirects.unit.spec.ts:11-22` compares
+  a `page.slug` against a path (so `/tools/resize-image-for-discord` is "routed" while 404ing live),
+  and it reads a fixture frozen 2026-08-08.
+- `app/not-found.tsx` exports no `metadata`; the 404 page ships an empty `<title>`.
+- `middleware.ts:566` issues a **307** off explicit English URLs including the root when a `locale`
+  cookie is present, and `:574` pins that cookie for a year.
+- `app/seo/data/scale.json` has no translations field while `scale` sits in `LOCALIZED_CATEGORIES`
+  and `/es/scale/2k-upscaler` emits 8 hreflang alternates over English copy.
+- `app/[locale]/(pseo)/**/page.tsx` — 17 routes bail with `if (!result.data) return {}` in
+  `generateMetadata` while 10 of them fall back to English in the component, producing 200 responses
+  with the site-default title and **no robots meta**. All three of the PDF's named
+  crawled-not-indexed examples are in this set.
+- `page-eligibility.ts:70` inherits the English performance row for locale variants, so
+  `en impressions: 1` keeps all seven locales submitted. `getEligibilityReason` has zero non-test consumers.
+
+PDF claims that did NOT reproduce, recorded as out of scope with evidence:
+
+- The six 5xx responses are already fixed (`seo-reports/gsc-verify-5xx-2026-08-13.json`, 0 violations).
+- `/blog?page=999` returns 200, not 500 — no pagination bounding needed.
+- `/en/blog?page=43` already 301s correctly (though it mangles a second query parameter).
+- The "Aug 11-12 restructure" dating is unconfirmed: the repo's restructure commits `a8c0514d` and
+  `63bb04f9` are both dated 2026-08-13.
+
+Validation:
+
+- `yarn verify`: pass (120s) — schema validation, i18n completeness, and the indexation gate all green.
+- All live probes used a real UA and cache-busting query strings so checks reached origin.
+
+Follow-up:
+
+- Execution order and the no-collision surface map are in `docs/PRDs/batch-2026-08-25/README.md`.
+- PRD 6 Phase 4 (matrix pruning) is gated: do not start until PRD 6 Phase 2 has been live 14 complete
+  GSC days + the 3-day lag.
+- Dated recovery reading for all three: **2026-09-22** (28 complete GSC days + lag). PRD 6 Phase 5
+  wires the `image upscaler` head-term verdict (282 → 75 clicks, pos 9.5 → 14.4) to that date.
+- Extend PRD 3 with a daily-granularity step-change detector: the blended weekly headline hid a
+  4.4-position break for twelve days.
+
 ### GSC Priority Crawl Pass Completed
 
 Changes:

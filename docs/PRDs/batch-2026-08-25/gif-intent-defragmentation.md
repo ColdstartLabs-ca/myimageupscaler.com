@@ -56,6 +56,26 @@ This is the same impression-weighted-mix artifact that made sitewide position lo
 
 Blog post total, now: 59 queries · 11 clicks · 671 impressions. It out-earns the designated owner on both head queries and in total.
 
+### New input from the 2026-08-25 production re-probe
+
+Add to this PRD's Phase 2 scope (localized variant absorption):
+
+```
+/es/format-scale/gif-upscale-2x   301 -> https://myimageupscaler.com/formats/upscale-gif-images
+/format-scale/gif-upscale-16x     301 -> https://myimageupscaler.com/formats/upscale-gif-images
+```
+
+The Spanish member redirects **cross-locale**, into the English owner. A locale-prefixed URL should
+resolve to its own locale's owner or be retracted deliberately — never silently relocated to English.
+Whichever `memberPaths` fix Phase 2 adopts must decide this case explicitly.
+
+Separately: `The August 12 Cliff` (2026-08-23) prescribes **reversing** this consolidation —
+keeping `/format-scale/gif-upscale-16x` canonical because it held position 6.8 while the merged
+target sits at 16 and sliding. That is the same conclusion this PRD's Phase 3 reaches through a
+measured gate rather than by assertion. **Treat the PDF as corroboration of the fail branch, not as
+authority to skip Phase 3's measurement** — the reading is what decides direction, and it must be
+taken fresh at execution time.
+
 ### Named cause (the incumbent's fail branch requires one)
 
 The incumbent's Phase 5 says: _"the recheck report must name a specific cause (redirect not consolidated in-index, owner content mismatch for GIF intent, or ongoing localized cannibalization)."_
