@@ -9,6 +9,27 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-08-25
+
+### GSC Priority Crawl Pass Completed
+
+Changes:
+
+- Verified live `/dashboard` returns `noindex, follow`; GSC rejected the indexing request as expected for this private app surface.
+- Google accepted 11 blog URLs into the priority crawl queue: `remove-noise-in-photoshop`, `best-free-ai-image-upscaler-2026-tested-compared`, `fixing-pixelated-photos`, `screenshot-upscaling-rescue-low-resolution-captures`, `dpi-of-image`, `best-video-upscaler`, `why-upscaled-text-looks-blurry-how-to-fix`, `ai-quality-enhancer`, `damaged-old-photographs`, `turn-image-into-illustration`, and `what-is-8k-image-resolution`.
+- Updated [GSC request indexing backlog](./gsc-request-indexing-backlog.md) in commit `92674463` (`docs(seo): record GSC indexing pass`).
+
+Validation:
+
+- GSC URL Inspection visibly confirmed all 11 priority-crawl requests.
+- The next request, `/blog/photo-restoration-near-me`, returned `Quota Exceeded`; 15 URLs remain for the next daily reset.
+- Live dashboard noindex behavior and the expected GSC rejection were recorded.
+
+Follow-up:
+
+- Resume manual GSC request indexing after the next daily quota reset, starting with `/blog/photo-restoration-near-me`.
+- Do not retry `/dashboard` unless its intentional noindex policy changes.
+
 ## 2026-08-24
 
 ### SEO Guard E2E Realigned With The Dashboard Noindex Signal
