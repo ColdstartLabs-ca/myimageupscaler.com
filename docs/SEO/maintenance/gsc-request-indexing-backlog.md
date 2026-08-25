@@ -22,9 +22,24 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 > Bing/Yandex immediately and is not subject to this quota. The GSC requests are a
 > Google-specific nudge on top of the sitemap, not the only path to recrawl.
 
+> **2026-08-25 browser pass — daily quota reached after 11 accepted requests.**
+> The following blog URLs were visibly accepted with "URL was added to a priority
+> crawl queue": `/blog/remove-noise-in-photoshop`,
+> `/blog/best-free-ai-image-upscaler-2026-tested-compared`,
+> `/blog/fixing-pixelated-photos`,
+> `/blog/screenshot-upscaling-rescue-low-resolution-captures`, `/blog/dpi-of-image`,
+> `/blog/best-video-upscaler`, `/blog/why-upscaled-text-looks-blurry-how-to-fix`,
+> `/blog/ai-quality-enhancer`, `/blog/damaged-old-photographs`,
+> `/blog/turn-image-into-illustration`, and `/blog/what-is-8k-image-resolution`.
+> The next attempt, `/blog/photo-restoration-near-me`, returned **Quota Exceeded**;
+> it remains unchecked for the next daily reset. The dashboard request was rejected
+> during live testing because the deployed URL correctly exposes `noindex, follow`;
+> it is recorded below as an intentional noindex cleanup, not as an accepted
+> indexing request.
+
 ### Dashboard noindex cleanup — request after deployment
 
-- [ ] `https://myimageupscaler.com/dashboard` — after deploying the 2026-08-24 dashboard index-removal fix, request indexing/recrawl in GSC URL Inspection so Google can see `X-Robots-Tag: noindex, follow` and remove the private app URL from branded SERPs.
+- [x] `https://myimageupscaler.com/dashboard` — **not an indexing candidate.** Live production returns `X-Robots-Tag: noindex, follow`; GSC live testing detected the indexing issue and rejected the request on 2026-08-25 as expected. The noindex signal is now verified; do not retry the indexing request.
 
 ### GSC 404 recovery — request after deployment
 
@@ -47,15 +62,15 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 - [x] `https://myimageupscaler.com/blog/how-to-fix-resolution` — indexing requested 2026-08-13, confirmed "added to a priority crawl queue"
 - [x] `https://myimageupscaler.com/blog/sunset-camera-settings` — indexing requested 2026-08-21, confirmed "added to a priority crawl queue"
 - [x] `https://myimageupscaler.com/blog/picture-to-oil-painting-convert` — indexing requested 2026-08-21, confirmed "added to a priority crawl queue"
-- [ ] `https://myimageupscaler.com/blog/remove-noise-in-photoshop`
-- [ ] `https://myimageupscaler.com/blog/screenshot-upscaling-rescue-low-resolution-captures`
-- [ ] `https://myimageupscaler.com/blog/dpi-of-image`
-- [ ] `https://myimageupscaler.com/blog/best-video-upscaler`
-- [ ] `https://myimageupscaler.com/blog/why-upscaled-text-looks-blurry-how-to-fix`
-- [ ] `https://myimageupscaler.com/blog/ai-quality-enhancer`
-- [ ] `https://myimageupscaler.com/blog/damaged-old-photographs`
-- [ ] `https://myimageupscaler.com/blog/turn-image-into-illustration`
-- [ ] `https://myimageupscaler.com/blog/what-is-8k-image-resolution`
+- [x] `https://myimageupscaler.com/blog/remove-noise-in-photoshop` — indexing requested 2026-08-25, confirmed "added to a priority crawl queue"
+- [x] `https://myimageupscaler.com/blog/screenshot-upscaling-rescue-low-resolution-captures` — indexing requested 2026-08-25, confirmed "added to a priority crawl queue"
+- [x] `https://myimageupscaler.com/blog/dpi-of-image` — indexing requested 2026-08-25, confirmed "added to a priority crawl queue"
+- [x] `https://myimageupscaler.com/blog/best-video-upscaler` — indexing requested 2026-08-25, confirmed "added to a priority crawl queue"
+- [x] `https://myimageupscaler.com/blog/why-upscaled-text-looks-blurry-how-to-fix` — indexing requested 2026-08-25, confirmed "added to a priority crawl queue"
+- [x] `https://myimageupscaler.com/blog/ai-quality-enhancer` — indexing requested 2026-08-25, confirmed "added to a priority crawl queue"
+- [x] `https://myimageupscaler.com/blog/damaged-old-photographs` — indexing requested 2026-08-25, confirmed "added to a priority crawl queue"
+- [x] `https://myimageupscaler.com/blog/turn-image-into-illustration` — indexing requested 2026-08-25, confirmed "added to a priority crawl queue"
+- [x] `https://myimageupscaler.com/blog/what-is-8k-image-resolution` — indexing requested 2026-08-25, confirmed "added to a priority crawl queue"
 - [ ] `https://myimageupscaler.com/blog/photo-restoration-near-me`
 - [ ] `https://myimageupscaler.com/blog/noise-reduction-in-images`
 - [ ] `https://myimageupscaler.com/blog/ai-image-extender`
@@ -74,12 +89,12 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 
 - [x] `https://myimageupscaler.com/`
 - [x] `https://myimageupscaler.com/blog/best-ai-upscaler` — daily request-indexing quota reached on 2026-07-10; retry later.
-- [ ] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared` — refreshed again 2026-08-17 with a proof-led meta/H1/body support pass after the 2026-07-20 title test matured but the exact 2026 best-free-upscaler cluster still had 2,295 impressions / 0 clicks / avg position 6.51 in the latest GSC-backed audit; request indexing for the latest version.
+- [x] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared` — refreshed again 2026-08-17 with a proof-led meta/H1/body support pass after the 2026-07-20 title test matured but the exact 2026 best-free-upscaler cluster still had 2,295 impressions / 0 clicks / avg position 6.51 in the latest GSC-backed audit; indexing requested 2026-08-25, confirmed "added to a priority crawl queue".
 - [x] `https://myimageupscaler.com/blog/best-free-ai-photo-enhancer-online`
 - [x] `https://myimageupscaler.com/blog/best-image-upscaler`
 - [x] `https://myimageupscaler.com/blog/fix-blurry-photos-ai-methods-guide`
 - [x] `https://myimageupscaler.com/blog/fix-pixelated-image`
-- [ ] `https://myimageupscaler.com/blog/fixing-pixelated-photos` — refreshed again 2026-08-10 with a proof-led meta/body support pass after the 2026-07-27 title test still produced 0 clicks on 32,210 impressions for `how to fix pixelated photos` in the latest complete 14-day GSC window; request indexing for the latest version.
+- [x] `https://myimageupscaler.com/blog/fixing-pixelated-photos` — refreshed again 2026-08-10 with a proof-led meta/body support pass after the 2026-07-27 title test still produced 0 clicks on 32,210 impressions for `how to fix pixelated photos` in the latest complete 14-day GSC window; indexing requested 2026-08-25, confirmed "added to a priority crawl queue".
 - [x] `https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark`
 - [x] `https://myimageupscaler.com/blog/how-to-upscale-midjourney-images-for-print`
 - [x] `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails`
