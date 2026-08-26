@@ -14,6 +14,7 @@ import {
   validateHreflangAlternates,
 } from '@/lib/seo/hreflang-generator';
 import { SUPPORTED_LOCALES } from '@/i18n/config';
+import { isTranslatedPair } from '@/lib/seo/localization-config';
 import { clientEnv } from '@shared/config/env';
 
 describe('Hreflang Homepage - Phase 5: Homepage Cannibalization Fix', () => {
@@ -131,8 +132,9 @@ describe('Hreflang Homepage - Phase 5: Homepage Cannibalization Fix', () => {
     it('should generate hreflang for scale pages with category parameter', () => {
       const alternates = generateHreflangAlternates('/scale/2x-upscaler', 'scale');
 
-      // Should have all 7 locales (scale is a localized category)
-      expect(Object.keys(alternates)).toHaveLength(8); // 7 locales + x-default
+      const measuredLocales = SUPPORTED_LOCALES.filter(locale => isTranslatedPair('scale', locale));
+      expect(Object.keys(alternates)).toHaveLength(measuredLocales.length + 1);
+      expect(measuredLocales).toEqual(['en']);
 
       // x-default should point to English scale page
       expect(alternates['x-default']).toBe(`${BASE_URL}/scale/2x-upscaler`);

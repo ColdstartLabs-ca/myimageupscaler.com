@@ -58,6 +58,7 @@ Logs go to stderr. JSON goes to stdout unless `--output` is set.
 {
   "summary": {},
   "comparison": {},
+  "quarantinedQueries": [],
   "searchTypeSummary": {},
   "searchTypes": {
     "web": {
@@ -100,13 +101,22 @@ node ./.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs --site=myimageupscaler.
 
 Focus on:
 
-1. `summary` and `comparison` for current vs previous period movement
-2. `searchTypeSummary` to see whether growth is coming from web or image search
-3. `growthOverview.quickWins` for striking-distance queries
-4. `growthOverview.contentCreation` for new content ideas
-5. `ctrOptimization` and `pageCtrOpportunities` for snippet/title work
-6. `cannibalization` for duplicate intent collisions
-7. `indexing.summary` for non-passing or canonical-problem pages
+1. `comparison.brandSplit`, including its explicit `unclassified` privacy-suppressed segment,
+   `quarantinedQueries`, and
+   `comparison.stableCohortPosition` before any blended headline. Lead with non-brand clicks,
+   state branded movement separately, never attribute `unclassified` rows to either segment, and
+   use the stable cohort for ranking claims.
+2. `summary` and `comparison` for the retained raw totals, including `ctrExQuarantine` and
+   `positionExQuarantine` alongside the raw figures.
+3. `searchTypeSummary` to see whether growth is coming from web or image search.
+4. `growthOverview.quickWins`, content creation, CTR, cannibalization, and indexing blockers.
+
+Queries with more than 5,000 impressions and CTR below 0.05% are named in
+`quarantinedQueries`, remain flagged in the raw query array, and are excluded only from the clean
+CTR/position siblings. Review the named rows before reinstating one; never silently delete them.
+
+A query holding position 1.0 while impressions fall is a demand change, not a ranking change. It
+must not justify a title, metadata, or content rewrite.
 
 ### Single-URL Visibility Drop
 
@@ -141,6 +151,7 @@ node ./.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs --site=myimageupscaler.
 
 Present findings as a markdown report with:
 
+- Non-brand click movement first, with branded demand and quarantined clusters stated separately
 - Period and comparison window
 - Search-type mix
 - Quick wins

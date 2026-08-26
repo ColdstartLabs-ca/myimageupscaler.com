@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getDeviceUseDataWithLocale, getAllDeviceUseSlugs } from '@/lib/seo/data-loader';
-import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
+import { resolveLocalePageMetadata } from '@/lib/seo/locale-page-metadata';
 import { generatePSEOSchema } from '@/lib/seo/schema-generator';
 import { getRelatedPages } from '@/lib/seo/related-pages';
 import { DeviceUsePageTemplate } from '@/app/(pseo)/_components/pseo/templates/DeviceUsePageTemplate';
@@ -22,16 +22,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: IDeviceUsePageProps): Promise<Metadata> {
   const { slug, locale } = await params;
-  const result = await getDeviceUseDataWithLocale(slug, locale);
-
-  if (!result.data) return {};
-
-  const { alternates: _alternates, ...metaWithoutAlternates } = generatePageMetadata(
-    result.data,
-    'device-use',
-    locale
-  );
-  return metaWithoutAlternates;
+  return resolveLocalePageMetadata(getDeviceUseDataWithLocale, 'device-use', slug, locale);
 }
 
 export default async function DeviceUsePage({ params }: IDeviceUsePageProps) {

@@ -1,6 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 vi.mock('@shared/config/env', () => ({
+  clientEnv: {
+    BASE_URL: 'https://myimageupscaler.com',
+    APP_NAME: 'MyImageUpscaler',
+  },
   serverEnv: { ENV: 'test' },
 }));
 

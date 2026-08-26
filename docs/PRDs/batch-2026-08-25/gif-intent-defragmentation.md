@@ -1,6 +1,6 @@
 # PRD: GIF Intent Defragmentation
 
-**Status:** Not started
+**Status:** In progress — Phases 0-2 complete; manual Phase 3 checkpoint open
 **Created:** 2026-08-25
 **Owner:** TBD
 **Supersedes:** Phases 5 and 5b of [`gif-intent-recovery-live-signal-verification.md`](../gif-intent-recovery-live-signal-verification.md) (2026-08-04). This PRD **executes that PRD's documented fail branch**. It does not restate its Phases 1-4, which shipped.
@@ -169,7 +169,7 @@ flowchart TD
 **How will this feature be reached?**
 
 - [x] Entry point: organic Google visitors on GIF tool queries; plus the deploy pipeline for the gate
-- [x] Pre-existing files EDITED: `lib/seo/intent-ownership.ts`, `app/seo/data/*.json`, `tests/unit/seo/gif-intent-consolidation.unit.spec.ts`, `package.json`, `scripts/deploy/deploy.sh`, the incumbent PRD
+- [ ] Pre-existing files EDITED: Phase 0-2 files are edited; Phase 3 owner data and Phase 5 deploy wiring remain open
 - [x] Registration: `INTENT_CLUSTERS` is already consumed by middleware, data loading, sitemap, and hreflang — one edit propagates to all four
 
 **Is this user-facing?**
@@ -186,7 +186,7 @@ flowchart TD
 **What does this replace?**
 
 - [x] Replaces: English-only `memberPaths` → replaced Phase 2
-- [x] Replaces: de-facto split ownership between the pSEO owner and the blog → resolved Phase 3, loser 301s to winner in the same phase
+- [ ] Replaces: de-facto split ownership between the pSEO owner and the blog → pending the Phase 3 manual checkpoint; no loser redirect has been shipped
 - [x] Replaces: the unenforced `baselineContract` → enforced Phase 1, wired Phase 5
 
 ---

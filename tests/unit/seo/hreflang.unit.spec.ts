@@ -16,6 +16,8 @@ import {
   getOpenGraphLocale,
 } from '@/lib/seo/hreflang-generator';
 import type { PSEOCategory } from '@/lib/seo/url-utils';
+import { isTranslatedPair } from '@/lib/seo/localization-config';
+import { SUPPORTED_LOCALES } from '@/i18n/config';
 
 // Mock the clientEnv to use a consistent base URL for testing
 vi.mock('@shared/config/env', () => ({
@@ -73,7 +75,8 @@ describe('Hreflang Generator', () => {
       const alternates = generatePSEOHreflangAlternates(category, slug);
 
       expect(alternates.en).toBe('https://myimageupscaler.com/tools/ai-image-upscaler');
-      expect(alternates.es).toBe('https://myimageupscaler.com/es/tools/ai-image-upscaler');
+      expect(alternates.es).toBeUndefined();
+      expect(alternates.fr).toBe('https://myimageupscaler.com/fr/tools/ai-image-upscaler');
       expect(alternates['x-default']).toBe('https://myimageupscaler.com/tools/ai-image-upscaler');
     });
 
@@ -84,7 +87,9 @@ describe('Hreflang Generator', () => {
         const alternates = generatePSEOHreflangAlternates(category, 'test-page');
 
         expect(alternates.en).toBe(`https://myimageupscaler.com/${category}/test-page`);
-        expect(alternates.es).toBe(`https://myimageupscaler.com/es/${category}/test-page`);
+        for (const locale of SUPPORTED_LOCALES.filter(locale => locale !== 'en')) {
+          expect(Boolean(alternates[locale])).toBe(isTranslatedPair(category, locale));
+        }
         expect(alternates['x-default']).toBe(`https://myimageupscaler.com/${category}/test-page`);
       });
     });
@@ -255,8 +260,10 @@ describe('Hreflang Generator', () => {
       const slug = 'ai-image-upscaler';
       const alternates = generatePSEOHreflangAlternates(category, slug);
 
-      // Verify structure includes all supported locales + x-default
-      const expectedKeys = [...['en', 'es', 'pt', 'de', 'fr', 'it', 'ja'], 'x-default'];
+      const expectedKeys = [
+        ...SUPPORTED_LOCALES.filter(locale => isTranslatedPair(category, locale)),
+        'x-default',
+      ];
       expect(Object.keys(alternates).sort()).toEqual(expectedKeys.sort());
 
       // Verify all URLs are valid

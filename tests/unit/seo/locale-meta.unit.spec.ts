@@ -53,9 +53,10 @@ describe('Locale Meta Tag Optimization - Phase 3: French Homepage', () => {
 
       // Check if French translations have SEO section with optimized titles
       const hasSeoSection = frenchCommonTranslations.seo !== undefined;
-      const frenchHomeTitle = frenchCommonTranslations.seo?.homeTitle ||
-                               frenchCommonTranslations.homepage?.heroTitle ||
-                               '';
+      const frenchHomeTitle =
+        frenchCommonTranslations.seo?.homeTitle ||
+        frenchCommonTranslations.homepage?.heroTitle ||
+        '';
 
       // The title should contain quality-related keywords in French or English
       // French keywords might be: "améliorer la qualité", "enhance quality"
@@ -71,9 +72,10 @@ describe('Locale Meta Tag Optimization - Phase 3: French Homepage', () => {
     });
 
     it('should include "enhance quality" phrase in French meta description', () => {
-      const frenchDescription = frenchCommonTranslations.seo?.homeDescription ||
-                                frenchCommonTranslations.homepage?.heroDescription ||
-                                '';
+      const frenchDescription =
+        frenchCommonTranslations.seo?.homeDescription ||
+        frenchCommonTranslations.homepage?.heroDescription ||
+        '';
 
       // Should target "enhance quality" and "increase photo quality" keywords
       const hasRelevantKeywords =
@@ -87,18 +89,20 @@ describe('Locale Meta Tag Optimization - Phase 3: French Homepage', () => {
     });
 
     it('should have meta title within SEO best practices (30-60 chars)', () => {
-      const frenchTitle = frenchCommonTranslations.seo?.homeTitle ||
-                          frenchCommonTranslations.homepage?.heroTitle ||
-                          '';
+      const frenchTitle =
+        frenchCommonTranslations.seo?.homeTitle ||
+        frenchCommonTranslations.homepage?.heroTitle ||
+        '';
 
       expect(frenchTitle.length).toBeGreaterThanOrEqual(30);
       expect(frenchTitle.length).toBeLessThanOrEqual(100); // Allow some flexibility for translations
     });
 
     it('should have meta description within SEO best practices (120-160 chars)', () => {
-      const frenchDescription = frenchCommonTranslations.seo?.homeDescription ||
-                                frenchCommonTranslations.homepage?.heroDescription ||
-                                '';
+      const frenchDescription =
+        frenchCommonTranslations.seo?.homeDescription ||
+        frenchCommonTranslations.homepage?.heroDescription ||
+        '';
 
       expect(frenchDescription.length).toBeGreaterThanOrEqual(50);
       expect(frenchDescription.length).toBeLessThanOrEqual(200);
@@ -110,7 +114,8 @@ describe('Locale Meta Tag Optimization - Phase 3: French Homepage', () => {
       // The English homepage title is working (3 clicks for "image upscaler")
       // The homepage uses heroTitle + heroTitleHighlight pattern
       const englishHeroTitle = englishCommonTranslations.homepage?.heroTitle || '';
-      const englishHeroTitleHighlight = englishCommonTranslations.homepage?.heroTitleHighlight || '';
+      const englishHeroTitleHighlight =
+        englishCommonTranslations.homepage?.heroTitleHighlight || '';
 
       // Combined title should include key brand elements
       const hasBrandKeywords =
@@ -208,9 +213,8 @@ describe('Locale Meta Tag Optimization - Phase 4: German Transparent Background 
     it('should have German-optimized meta title containing "transparent" and "PNG"', () => {
       expect(germanTransparentBackgroundMaker).toBeDefined();
 
-      const metaTitle = germanTransparentBackgroundMaker.metaTitle ||
-                       germanTransparentBackgroundMaker.title ||
-                       '';
+      const metaTitle =
+        germanTransparentBackgroundMaker.metaTitle || germanTransparentBackgroundMaker.title || '';
 
       // Should target German keywords:
       // - "png transparent machen" (37 impressions)
@@ -226,9 +230,8 @@ describe('Locale Meta Tag Optimization - Phase 4: German Transparent Background 
     it('should target "hintergrund" (background) keyword in title', () => {
       expect(germanTransparentBackgroundMaker).toBeDefined();
 
-      const metaTitle = germanTransparentBackgroundMaker.metaTitle ||
-                       germanTransparentBackgroundMaker.title ||
-                       '';
+      const metaTitle =
+        germanTransparentBackgroundMaker.metaTitle || germanTransparentBackgroundMaker.title || '';
 
       // Should contain "hintergrund" for "png hintergrund transparent" queries
       const hasHintergrundKeyword = metaTitle.toLowerCase().includes('hintergrund');
@@ -239,16 +242,14 @@ describe('Locale Meta Tag Optimization - Phase 4: German Transparent Background 
     it('should include "machen" or "erstellen" keyword for German queries', () => {
       expect(germanTransparentBackgroundMaker).toBeDefined();
 
-      const metaTitle = germanTransparentBackgroundMaker.metaTitle ||
-                       germanTransparentBackgroundMaker.title ||
-                       '';
+      const metaTitle =
+        germanTransparentBackgroundMaker.metaTitle || germanTransparentBackgroundMaker.title || '';
 
       // Should target "machen" (make/do) or "erstellen" (create) verb
       // "png transparent machen" has 37 impressions - highest priority keyword
       // Current title uses "erstellen" but "machen" is better for SEO
       const hasActionKeyword =
-        metaTitle.toLowerCase().includes('machen') ||
-        metaTitle.toLowerCase().includes('erstellen');
+        metaTitle.toLowerCase().includes('machen') || metaTitle.toLowerCase().includes('erstellen');
 
       expect(hasActionKeyword).toBe(true);
     });
@@ -256,9 +257,8 @@ describe('Locale Meta Tag Optimization - Phase 4: German Transparent Background 
     it('should have title length within SEO best practices', () => {
       expect(germanTransparentBackgroundMaker).toBeDefined();
 
-      const metaTitle = germanTransparentBackgroundMaker.metaTitle ||
-                       germanTransparentBackgroundMaker.title ||
-                       '';
+      const metaTitle =
+        germanTransparentBackgroundMaker.metaTitle || germanTransparentBackgroundMaker.title || '';
 
       expect(metaTitle.length).toBeGreaterThanOrEqual(30);
       expect(metaTitle.length).toBeLessThanOrEqual(100);
@@ -315,17 +315,14 @@ describe('Locale Meta Tag Optimization - Phase 4: German Transparent Background 
     it('should match search intent with German H1 heading', () => {
       expect(germanTransparentBackgroundMaker).toBeDefined();
 
-      const h1 = germanTransparentBackgroundMaker.h1 ||
-                germanTransparentBackgroundMaker.title ||
-                '';
+      const h1 =
+        germanTransparentBackgroundMaker.h1 || germanTransparentBackgroundMaker.title || '';
 
       expect(h1.length).toBeGreaterThan(0);
 
       // H1 should be in German and relevant to transparent background making
       const hasGermanIndicator =
-        h1.includes('Hintergrund') ||
-        h1.includes('Maker') ||
-        h1.includes('Transparent');
+        h1.includes('Hintergrund') || h1.includes('Maker') || h1.includes('Transparent');
 
       expect(hasGermanIndicator).toBe(true);
     });
@@ -442,8 +439,7 @@ describe('Locale Meta Tag Loading - Translation Files', () => {
 
           // At least one reference to the brand should exist
           const hasBrandReference =
-            metaOgSiteName.includes(brandName) ||
-            JSON.stringify(translations).includes(brandName);
+            metaOgSiteName.includes(brandName) || JSON.stringify(translations).includes(brandName);
 
           expect(hasBrandReference).toBe(true);
         }
@@ -497,19 +493,18 @@ describe('Integration Tests - Locale Meta Generation', () => {
   });
 
   describe('Hreflang generation for localized pages', () => {
-    it('should include all locales in hreflang for localized tools', async () => {
+    it('should include only measured translated locales for tools', async () => {
       const { generateHreflangAlternates } = await import('@/lib/seo/hreflang-generator');
 
       const alternates = generateHreflangAlternates('/tools/transparent-background-maker', 'tools');
 
-      // Should have all supported locales
       expect(alternates.en).toBeDefined();
       expect(alternates.de).toBeDefined();
       expect(alternates.fr).toBeDefined();
-      expect(alternates.es).toBeDefined();
       expect(alternates.pt).toBeDefined();
-      expect(alternates.it).toBeDefined();
-      expect(alternates.ja).toBeDefined();
+      expect(alternates.es).toBeUndefined();
+      expect(alternates.it).toBeUndefined();
+      expect(alternates.ja).toBeUndefined();
       expect(alternates['x-default']).toBeDefined();
     });
 

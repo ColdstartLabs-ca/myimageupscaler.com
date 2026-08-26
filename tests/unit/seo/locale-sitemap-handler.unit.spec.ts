@@ -25,8 +25,8 @@ vi.mock('@shared/config/env', () => ({
 
 describe('generateLocaleCategorySitemapResponse', () => {
   const mockPages: ILocaleSitemapPage[] = [
-    { slug: 'page-one', lastUpdated: '2026-01-15T00:00:00.000Z', title: 'Page One' },
-    { slug: 'page-two', lastUpdated: '2026-01-20T00:00:00.000Z', title: 'Page Two' },
+    { slug: 'page-one', lastUpdated: '2026-08-25T00:00:00.000Z', title: 'Page One' },
+    { slug: 'page-two', lastUpdated: '2026-08-25T00:00:00.000Z', title: 'Page Two' },
   ];
 
   it('should return a valid XML response', () => {
@@ -83,7 +83,13 @@ describe('generateLocaleCategorySitemapResponse', () => {
   });
 
   it('should use correct priority', async () => {
-    const response = generateLocaleCategorySitemapResponse('de', 'scale', 'scale', mockPages, 0.8);
+    const response = generateLocaleCategorySitemapResponse(
+      'de',
+      'alternatives',
+      'alternatives',
+      mockPages,
+      0.8
+    );
 
     const xml = await response.text();
     expect(xml).toContain('<priority>0.8</priority>');
@@ -93,14 +99,14 @@ describe('generateLocaleCategorySitemapResponse', () => {
     const pagesWithImages: ILocaleSitemapPage[] = [
       {
         slug: 'with-image',
-        lastUpdated: '2026-01-15T00:00:00.000Z',
+        lastUpdated: '2026-08-25T00:00:00.000Z',
         title: 'Page With Image',
         ogImage: '/images/test.png',
       },
     ];
 
     const response = generateLocaleCategorySitemapResponse(
-      'fr',
+      'de',
       'formats',
       'formats',
       pagesWithImages,
@@ -117,13 +123,13 @@ describe('generateLocaleCategorySitemapResponse', () => {
     const pagesWithCustomPath: ILocaleSitemapPage[] = [
       {
         slug: 'image-resizer',
-        lastUpdated: '2026-01-15T00:00:00.000Z',
+        lastUpdated: '2026-08-25T00:00:00.000Z',
         customPath: '/tools/resize/image-resizer',
       },
     ];
 
     const response = generateLocaleCategorySitemapResponse(
-      'ja',
+      'fr',
       'tools',
       'tools',
       pagesWithCustomPath,
@@ -132,7 +138,7 @@ describe('generateLocaleCategorySitemapResponse', () => {
 
     const xml = await response.text();
     // Should use the custom path with locale prefix
-    expect(xml).toContain('<loc>https://myimageupscaler.com/ja/tools/resize/image-resizer</loc>');
+    expect(xml).toContain('<loc>https://myimageupscaler.com/fr/tools/resize/image-resizer</loc>');
   });
 
   it('should generate valid XML structure', async () => {

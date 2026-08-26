@@ -34,7 +34,7 @@ describe('pSEO Per-Page Noindex', () => {
       intro: 'Test intro',
       primaryKeyword: 'test',
       secondaryKeywords: [],
-      lastUpdated: '2024-01-01',
+      lastUpdated: '2026-08-25',
       noindex: true,
     };
     const metadata = generateMetadata(page as any, 'compare');
@@ -51,7 +51,7 @@ describe('pSEO Per-Page Noindex', () => {
       intro: 'Test intro',
       primaryKeyword: 'test',
       secondaryKeywords: [],
-      lastUpdated: '2024-01-01',
+      lastUpdated: '2026-08-25',
     };
     const metadata = generateMetadata(page as any, 'compare');
     expect((metadata.robots as any).index).toBe(true);
@@ -67,7 +67,7 @@ describe('pSEO Per-Page Noindex', () => {
       intro: 'Test intro',
       primaryKeyword: 'test',
       secondaryKeywords: [],
-      lastUpdated: '2024-01-01',
+      lastUpdated: '2026-08-25',
       noindex: false,
     };
     const metadata = generateMetadata(page as any, 'compare');
@@ -107,7 +107,7 @@ describe('pSEO Category-Level Noindex (NOINDEX_CATEGORIES)', () => {
       intro: 'Test',
       primaryKeyword: 'test',
       secondaryKeywords: [],
-      lastUpdated: '2024-01-01',
+      lastUpdated: '2026-08-25',
     };
     const metadata = generateMetadata(page as any, 'compare');
     expect((metadata.robots as any).index).toBe(true);
@@ -124,7 +124,7 @@ describe('pSEO Category-Level Noindex (NOINDEX_CATEGORIES)', () => {
       intro: 'Test',
       primaryKeyword: 'test',
       secondaryKeywords: [],
-      lastUpdated: '2024-01-01',
+      lastUpdated: '2026-08-25',
       noindex: true,
     };
     const metadata = generateMetadata(page as any, 'compare');

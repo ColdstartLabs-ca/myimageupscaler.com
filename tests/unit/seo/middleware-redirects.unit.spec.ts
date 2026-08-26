@@ -127,6 +127,34 @@ describe('Middleware pattern redirects', () => {
     expect(response.headers.get('x-robots-tag')).toBe('noindex, follow');
   });
 
+  test.each(['/', '/pricing'])(
+    'should not redirect %s for a stored Spanish locale',
+    async pathname => {
+      const { middleware } = await import('../../../middleware');
+      const response = await middleware(
+        new NextRequest(`http://localhost${pathname}`, {
+          headers: { cookie: 'locale=es', 'x-test-env': 'true' },
+        })
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.headers.get('location')).toBeNull();
+      expect(response.headers.get('x-middleware-rewrite')).toBe(
+        `http://localhost/en${pathname === '/' ? '' : pathname}`
+      );
+    }
+  );
+
+  test('should not redirect pricing on a geo header', async () => {
+    const { middleware } = await import('../../../middleware');
+    const response = await middleware(
+      new NextRequest('http://localhost/pricing', { headers: { 'x-test-country': 'ES' } })
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('location')).toBeNull();
+  });
+
   test('strips a locale from an English-only pSEO route', async () => {
     const response = await runMiddleware('/fr/photo-restoration');
 

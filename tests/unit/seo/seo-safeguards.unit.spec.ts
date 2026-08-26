@@ -288,20 +288,14 @@ describe('SEO Safeguards — Localization Config', () => {
   const configPath = path.resolve(__dirname, '../../../lib/seo/localization-config.ts');
   const configSource = fs.readFileSync(configPath, 'utf-8');
 
-  // Extract constants from the file for validation
-  const LOCALIZED_CATEGORIES_MATCH = configSource.match(
-    /export\s+const\s+LOCALIZED_CATEGORIES.*?=\s*\[([\s\S]*?)\];/
-  );
   const ENGLISH_ONLY_CATEGORIES_MATCH = configSource.match(
     /export\s+const\s+ENGLISH_ONLY_CATEGORIES.*?=\s*\[([\s\S]*?)\];/
   );
 
-  it('LOCALIZED_CATEGORIES must have exactly 10 entries', () => {
-    expect(LOCALIZED_CATEGORIES_MATCH).toBeTruthy();
-    const categories = LOCALIZED_CATEGORIES_MATCH![1];
-    // Count the number of array entries (each entry is like 'tools', 'formats', etc.)
-    const categoryCount = (categories.match(/'[^']+'/g) || []).length;
-    expect(categoryCount).toBe(10);
+  it('LOCALIZED_CATEGORIES must be derived from measured translated pairs', () => {
+    expect(configSource).toMatch(
+      /export\s+const\s+LOCALIZED_CATEGORIES[\s\S]*PSEO_CATEGORIES\.filter[\s\S]*isTranslatedPair/
+    );
   });
 
   it('ENGLISH_ONLY_CATEGORIES must have exactly 14 entries', () => {
@@ -312,24 +306,19 @@ describe('SEO Safeguards — Localization Config', () => {
     expect(categoryCount).toBe(14);
   });
 
-  it('ALL_CATEGORIES must be union of LOCALIZED and ENGLISH_ONLY', () => {
-    expect(configSource).toMatch(
-      /export\s+const\s+ALL_CATEGORIES.*?LOCALIZED_CATEGORIES.*?ENGLISH_ONLY_CATEGORIES/
-    );
+  it('ALL_CATEGORIES must preserve the complete pSEO registry', () => {
+    expect(configSource).toMatch(/export\s+const\s+ALL_CATEGORIES.*?PSEO_CATEGORIES/);
   });
 
   it('isCategoryLocalized must return true for English locale', () => {
-    expect(configSource).toMatch(/if\s+\(locale\s+===\s+['"]en['"]\)\s*\{[\s\S]*?return\s+true/);
+    expect(configSource).toMatch(/if\s+\(locale\s+===\s+['"]en['"]\)\s+return\s+true/);
   });
 
   it('LOCALIZATION_STATUS must have all categories defined', () => {
     // Should have LOCALIZATION_STATUS constant with all categories
     expect(configSource).toMatch(/export\s+const\s+LOCALIZATION_STATUS/);
 
-    // Check for some key categories
-    expect(configSource).toMatch(/tools\s*:\s*\{/);
-    expect(configSource).toMatch(/formats\s*:\s*\{/);
-    expect(configSource).toMatch(/compare\s*:\s*\{/);
+    expect(configSource).toMatch(/Object\.fromEntries\([\s\S]*PSEO_CATEGORIES\.map/);
   });
 
   it('LOCALIZATION_STATUS entries must have required properties', () => {

@@ -9,7 +9,7 @@ import type { Locale } from '../../i18n/config';
 import { clientEnv } from '@shared/config/env';
 import type { PSEOCategory } from './url-utils';
 import { isClusterOwner } from './intent-ownership';
-import { isCategoryLocalized } from './localization-config';
+import { isTranslatedPair } from './localization-config';
 
 /**
  * Get available locales for a category
@@ -25,7 +25,7 @@ function getAvailableLocales(category?: PSEOCategory): Locale[] {
   }
 
   // Filter locales to only those where this category is localized
-  return SUPPORTED_LOCALES.filter(locale => isCategoryLocalized(category, locale));
+  return SUPPORTED_LOCALES.filter(locale => isTranslatedPair(category, locale));
 }
 
 /**
@@ -375,7 +375,7 @@ export function generateSitemapHreflangLinks(
   // Determine which locales to include
   // If category is specified, only include locales where the page exists
   const categoryLocales = category
-    ? SUPPORTED_LOCALES.filter(locale => isCategoryLocalized(category, locale))
+    ? SUPPORTED_LOCALES.filter(locale => isTranslatedPair(category, locale))
     : SUPPORTED_LOCALES;
   const localesToInclude = availableLocales
     ? categoryLocales.filter(locale => availableLocales.includes(locale))

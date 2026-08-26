@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getPlatformDataWithLocale, getAllPlatformSlugs } from '@/lib/seo/data-loader';
-import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
+import { resolveLocalePageMetadata } from '@/lib/seo/locale-page-metadata';
 import { generatePSEOSchema } from '@/lib/seo/schema-generator';
 import { getRelatedPages } from '@/lib/seo/related-pages';
 import { PlatformPageTemplate } from '@/app/(pseo)/_components/pseo/templates/PlatformPageTemplate';
@@ -23,26 +23,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: IPlatformPageProps): Promise<Metadata> {
   const { slug, locale } = await params;
 
-  // Platforms is English-only — localized pages should not be indexed
-  if (locale !== 'en') {
-    const enResult = await getPlatformDataWithLocale(slug, 'en');
-    return {
-      title: enResult.data?.metaTitle || '',
-      description: enResult.data?.metaDescription || '',
-      robots: { index: false, follow: true },
-    };
-  }
-
-  const result = await getPlatformDataWithLocale(slug, locale);
-  if (!result.data) return {};
-
-  // Strip alternates — SeoMetaTags handles canonical and HreflangLinks handles hreflang in JSX.
-  const { alternates: _alternates, ...metaWithoutAlternates } = generatePageMetadata(
-    result.data,
-    'platforms',
-    locale
-  );
-  return metaWithoutAlternates;
+  return resolveLocalePageMetadata(getPlatformDataWithLocale, 'platforms', slug, locale);
 }
 
 export default async function PlatformPage({ params }: IPlatformPageProps) {

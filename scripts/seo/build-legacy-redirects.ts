@@ -43,11 +43,17 @@ const FORMER_MIDDLEWARE_REDIRECTS: Record<string, string> = {
   '/tools/resize-image-for-facebook': '/tools/resize/resize-image-for-facebook',
   '/tools/resize-image-for-twitter': '/tools/resize/resize-image-for-twitter',
   '/tools/resize-image-for-linkedin': '/tools/resize/resize-image-for-linkedin',
+  '/tools/resize-image-for-discord': '/tools/resize/resize-image-for-discord',
+  '/tools/resize-image-for-telegram': '/tools/resize/resize-image-for-telegram',
+  '/tools/convert/png-in-jpg': '/tools/convert/png-to-jpg',
+  '/tools/Imagem-cutout-tool': '/tools/image-cutout-tool',
   '/tools/free-ai-upscaler': '/free/free-ai-upscaler',
   '/article/upscale-arw-images': '/camera-raw/upscale-arw-images',
   '/article/photography-business-enhancement':
     '/industry-insights/photography-business-enhancement',
   '/article/family-photo-preservation': '/photo-restoration/family-photo-preservation',
+  '/article/upscale-product-photos': '/content/upscale-product-photos',
+  '/article/vintage-photo-colorization': '/photo-restoration/vintage-photo-colorization',
   '/industry-insights/real-estate-photo-enhancement': '/use-cases/real-estate-photo-enhancement',
   '/blog/photo-enhancement-upscaling-vs-quality':
     '/blog/ai-image-upscaling-vs-sharpening-explained',
@@ -376,6 +382,9 @@ const unmapped = new Set<string>();
 
 function addRedirect(source: string, destination: string): void {
   if (source === destination) return;
+  // Next matches redirect sources case-insensitively. A case-only rule therefore
+  // matches its own destination forever; middleware already canonicalizes tool casing.
+  if (source.toLowerCase() === destination.toLowerCase()) return;
   const existing = redirects.get(source);
   if (existing && existing !== destination) {
     throw new Error(`Conflicting redirect for ${source}: ${existing} vs ${destination}`);

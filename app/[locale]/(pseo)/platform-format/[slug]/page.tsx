@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getPlatformFormatDataWithLocale, getAllPlatformFormatSlugs } from '@/lib/seo/data-loader';
-import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
+import { resolveLocalePageMetadata } from '@/lib/seo/locale-page-metadata';
 import { generatePSEOSchema } from '@/lib/seo/schema-generator';
 import { getRelatedPages } from '@/lib/seo/related-pages';
 import { PlatformFormatPageTemplate } from '@/app/(pseo)/_components/pseo/templates/PlatformFormatPageTemplate';
@@ -22,16 +22,12 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: IPlatformFormatPageProps): Promise<Metadata> {
   const { slug, locale } = await params;
-  const result = await getPlatformFormatDataWithLocale(slug, locale);
-
-  if (!result.data) return {};
-
-  const { alternates: _alternates, ...metaWithoutAlternates } = generatePageMetadata(
-    result.data,
+  return resolveLocalePageMetadata(
+    getPlatformFormatDataWithLocale,
     'platform-format',
+    slug,
     locale
   );
-  return metaWithoutAlternates;
 }
 
 export default async function PlatformFormatPage({ params }: IPlatformFormatPageProps) {

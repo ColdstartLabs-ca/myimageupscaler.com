@@ -1,0 +1,13 @@
+{
+  "generatedAt": "2026-08-25T17:01:00-07:00",
+  "query": "image upscaler",
+  "position": 10.668390264284968,
+  "clicks": 404,
+  "impressions": 19146,
+  "period": {
+    "startDate": "2026-07-26",
+    "endDate": "2026-08-22",
+    "days": 28
+  },
+  "source": "GSC Search Analytics API, web query dimension"
+}

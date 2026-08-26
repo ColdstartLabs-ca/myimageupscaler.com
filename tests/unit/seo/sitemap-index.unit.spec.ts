@@ -4,7 +4,11 @@
  */
 
 import { describe, it, expect, vi } from 'vitest';
-import { LOCALIZED_CATEGORIES, ENGLISH_ONLY_CATEGORIES } from '@/lib/seo/localization-config';
+import {
+  LOCALIZED_CATEGORIES,
+  ENGLISH_ONLY_CATEGORIES,
+  isTranslatedPair,
+} from '@/lib/seo/localization-config';
 import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/i18n/config';
 
 // Mock the clientEnv
@@ -22,24 +26,15 @@ vi.mock('@shared/config/env', () => ({
 
 describe('Sitemap Index Localization', () => {
   describe('LOCALIZED_CATEGORIES', () => {
-    it('should include all 10 localized categories', () => {
-      const expectedCategories = [
-        'tools',
-        'formats',
-        'free',
-        'guides',
-        'scale',
-        'alternatives',
-        'use-cases',
-        'format-scale',
-        'platform-format',
-        'device-use',
-      ];
-
-      expect(LOCALIZED_CATEGORIES).toHaveLength(10);
-      expectedCategories.forEach(category => {
-        expect(LOCALIZED_CATEGORIES).toContain(category);
-      });
+    it('should include only categories with measured translated pairs', () => {
+      expect(LOCALIZED_CATEGORIES).toContain('device-use');
+      expect(LOCALIZED_CATEGORIES).toContain('tools');
+      expect(LOCALIZED_CATEGORIES).not.toContain('scale');
+      for (const category of LOCALIZED_CATEGORIES) {
+        expect(
+          SUPPORTED_LOCALES.some(locale => locale !== 'en' && isTranslatedPair(category, locale))
+        ).toBe(true);
+      }
     });
 
     it('should not include English-only categories', () => {
@@ -73,9 +68,17 @@ describe('Sitemap Index Localization', () => {
 
   describe('Sitemap Count Calculation', () => {
     it('should calculate correct number of sitemaps for localized categories', () => {
-      // Each localized category generates 7 sitemaps (1 English + 6 locale-specific)
-      const localizedSitemapCount = LOCALIZED_CATEGORIES.length * SUPPORTED_LOCALES.length;
-      expect(localizedSitemapCount).toBe(70); // 10 categories × 7 locales
+      const localizedSitemapCount =
+        LOCALIZED_CATEGORIES.length +
+        LOCALIZED_CATEGORIES.reduce(
+          (count, category) =>
+            count +
+            SUPPORTED_LOCALES.filter(
+              locale => locale !== DEFAULT_LOCALE && isTranslatedPair(category, locale)
+            ).length,
+          0
+        );
+      expect(localizedSitemapCount).toBe(27);
     });
 
     it('should calculate correct total sitemap index count', () => {
@@ -84,15 +87,20 @@ describe('Sitemap Index Localization', () => {
       const routedEnglishOnlySitemapCount =
         ENGLISH_ONLY_CATEGORIES.length + EXTRA_ENGLISH_ONLY.length;
 
-      // Localized: 1 English + 6 non-English per category
-      const localizedEnglishCount = LOCALIZED_CATEGORIES.length; // 10
-      const localeSpecificCount = LOCALIZED_CATEGORIES.length * (SUPPORTED_LOCALES.length - 1); // 10 × 6 = 60
+      const localizedEnglishCount = LOCALIZED_CATEGORIES.length;
+      const localeSpecificCount = LOCALIZED_CATEGORIES.reduce(
+        (count, category) =>
+          count +
+          SUPPORTED_LOCALES.filter(
+            locale => locale !== DEFAULT_LOCALE && isTranslatedPair(category, locale)
+          ).length,
+        0
+      );
 
       const totalSitemaps =
         routedEnglishOnlySitemapCount + localizedEnglishCount + localeSpecificCount;
 
-      // 14 routed English-only + 2 extra + 10 localized English + 60 locale-specific
-      expect(totalSitemaps).toBe(86);
+      expect(totalSitemaps).toBe(43);
     });
 
     it('should have correct locale count', () => {
@@ -175,14 +183,13 @@ describe('Sitemap Index Route', () => {
     expect(await response.text()).toContain('/use-cases-expanded/real-estate-photography');
   });
 
-  it('should include 86 total sitemaps (16 routed English-only + 10×7 localized)', async () => {
+  it('should include only measured category-locale sitemap pairs', async () => {
     const { GET } = await import('@/app/sitemap.xml/route');
     const response = await GET();
     const xml = await response.text();
 
     const matches = xml.match(/<sitemap>/g);
-    // 16 routed English-only + (10 localized × 7 locales) = 16 + 70 = 86
-    expect(matches).toHaveLength(86);
+    expect(matches).toHaveLength(43);
   });
 });
 
@@ -191,12 +198,8 @@ describe('Sitemap Generator Integration', () => {
     // Import the actual module to test integration
     const { isCategoryLocalized } = await import('@/lib/seo/localization-config');
 
-    // All localized categories should return true for non-English locales
-    LOCALIZED_CATEGORIES.forEach(category => {
-      expect(isCategoryLocalized(category, 'es')).toBe(true);
-      expect(isCategoryLocalized(category, 'pt')).toBe(true);
-      expect(isCategoryLocalized(category, 'de')).toBe(true);
-    });
+    expect(isCategoryLocalized('device-use', 'fr')).toBe(true);
+    expect(isCategoryLocalized('scale', 'es')).toBe(false);
 
     // English-only categories should return false for non-English locales
     ENGLISH_ONLY_CATEGORIES.forEach(category => {

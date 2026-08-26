@@ -1,0 +1,1517 @@
+{
+  "generatedAt": "2026-08-25T23:42:14.458Z",
+  "pairs": [
+    {
+      "category": "tools",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "tools",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 1,
+      "englishMirror": 2,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "tools",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "tools",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "tools",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "tools",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "tools",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 2,
+      "englishMirror": 1,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "formats",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "formats",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 3,
+      "missing": 0
+    },
+    {
+      "category": "formats",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "formats",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "formats",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 3,
+      "missing": 0
+    },
+    {
+      "category": "formats",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 3,
+      "missing": 0
+    },
+    {
+      "category": "formats",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "scale",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "scale",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "scale",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "scale",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "scale",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "scale",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "scale",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "use-cases",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "use-cases",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 3,
+      "missing": 0
+    },
+    {
+      "category": "use-cases",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 3,
+      "missing": 0
+    },
+    {
+      "category": "use-cases",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 3,
+      "missing": 0
+    },
+    {
+      "category": "use-cases",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "use-cases",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 3,
+      "missing": 0
+    },
+    {
+      "category": "use-cases",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "compare",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "compare",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "compare",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "compare",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "compare",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "compare",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "compare",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "comparisons-expanded",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "comparisons-expanded",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "comparisons-expanded",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "comparisons-expanded",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "comparisons-expanded",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "comparisons-expanded",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "comparisons-expanded",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "alternatives",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "alternatives",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "alternatives",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "alternatives",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "alternatives",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "alternatives",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "alternatives",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "guides",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "guides",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "guides",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "guides",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "guides",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "guides",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "guides",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "technical-guides",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "technical-guides",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "technical-guides",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "technical-guides",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "technical-guides",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "technical-guides",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "technical-guides",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "free",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "free",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "free",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "free",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "free",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "free",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "free",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "bulk-tools",
+      "locale": "en",
+      "sampled": 2,
+      "translated": 2,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "bulk-tools",
+      "locale": "es",
+      "sampled": 2,
+      "translated": 0,
+      "englishMirror": 2,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "bulk-tools",
+      "locale": "pt",
+      "sampled": 2,
+      "translated": 0,
+      "englishMirror": 2,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "bulk-tools",
+      "locale": "de",
+      "sampled": 2,
+      "translated": 0,
+      "englishMirror": 2,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "bulk-tools",
+      "locale": "fr",
+      "sampled": 2,
+      "translated": 0,
+      "englishMirror": 2,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "bulk-tools",
+      "locale": "it",
+      "sampled": 2,
+      "translated": 0,
+      "englishMirror": 2,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "bulk-tools",
+      "locale": "ja",
+      "sampled": 2,
+      "translated": 0,
+      "englishMirror": 2,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "platforms",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "platforms",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "platforms",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "platforms",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "platforms",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "platforms",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "platforms",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "content",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "content",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "content",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "content",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "content",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "content",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "content",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "ai-features",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "ai-features",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "ai-features",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "ai-features",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "ai-features",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "ai-features",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "ai-features",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "device-use",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "device-use",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 3,
+      "missing": 0
+    },
+    {
+      "category": "device-use",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "device-use",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "device-use",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "device-use",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 2,
+      "englishMirror": 0,
+      "soft404": 1,
+      "missing": 0
+    },
+    {
+      "category": "device-use",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 2,
+      "englishMirror": 0,
+      "soft404": 1,
+      "missing": 0
+    },
+    {
+      "category": "format-scale",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "format-scale",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 3,
+      "missing": 0
+    },
+    {
+      "category": "format-scale",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 3,
+      "missing": 0
+    },
+    {
+      "category": "format-scale",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 3,
+      "missing": 0
+    },
+    {
+      "category": "format-scale",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 3,
+      "missing": 0
+    },
+    {
+      "category": "format-scale",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 1,
+      "englishMirror": 0,
+      "soft404": 2,
+      "missing": 0
+    },
+    {
+      "category": "format-scale",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "platform-format",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "platform-format",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 3,
+      "missing": 0
+    },
+    {
+      "category": "platform-format",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 3,
+      "missing": 0
+    },
+    {
+      "category": "platform-format",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 3,
+      "missing": 0
+    },
+    {
+      "category": "platform-format",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "platform-format",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "platform-format",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 2,
+      "englishMirror": 0,
+      "soft404": 1,
+      "missing": 0
+    },
+    {
+      "category": "photo-restoration",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "photo-restoration",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "photo-restoration",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "photo-restoration",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "photo-restoration",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "photo-restoration",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "photo-restoration",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "camera-raw",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "camera-raw",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "camera-raw",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "camera-raw",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "camera-raw",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "camera-raw",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "camera-raw",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "industry-insights",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "industry-insights",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "industry-insights",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "industry-insights",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "industry-insights",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "industry-insights",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "industry-insights",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "device-optimization",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "device-optimization",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "device-optimization",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "device-optimization",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "device-optimization",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "device-optimization",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "device-optimization",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "personas-expanded",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "personas-expanded",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "personas-expanded",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "personas-expanded",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "personas-expanded",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "personas-expanded",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "personas-expanded",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "use-cases-expanded",
+      "locale": "en",
+      "sampled": 3,
+      "translated": 3,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "use-cases-expanded",
+      "locale": "es",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "use-cases-expanded",
+      "locale": "pt",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "use-cases-expanded",
+      "locale": "de",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "use-cases-expanded",
+      "locale": "fr",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "use-cases-expanded",
+      "locale": "it",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "use-cases-expanded",
+      "locale": "ja",
+      "sampled": 3,
+      "translated": 0,
+      "englishMirror": 3,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "ai-photo-editor",
+      "locale": "en",
+      "sampled": 0,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "ai-photo-editor",
+      "locale": "es",
+      "sampled": 0,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "ai-photo-editor",
+      "locale": "pt",
+      "sampled": 0,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "ai-photo-editor",
+      "locale": "de",
+      "sampled": 0,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "ai-photo-editor",
+      "locale": "fr",
+      "sampled": 0,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "ai-photo-editor",
+      "locale": "it",
+      "sampled": 0,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    },
+    {
+      "category": "ai-photo-editor",
+      "locale": "ja",
+      "sampled": 0,
+      "translated": 0,
+      "englishMirror": 0,
+      "soft404": 0,
+      "missing": 0
+    }
+  ]
+}

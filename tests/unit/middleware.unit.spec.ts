@@ -528,7 +528,7 @@ describe('Authentication Middleware', () => {
       expect(response.status).not.toBe(301);
     });
 
-    test('should NOT redirect /en/photo-restoration (English locale)', async () => {
+    test('should canonicalize /en/photo-restoration to the locale-less English URL', async () => {
       const { middleware } = await import('../../middleware');
 
       const request = new NextRequest('http://localhost/en/photo-restoration', {
@@ -537,7 +537,8 @@ describe('Authentication Middleware', () => {
 
       const response = await middleware(request);
 
-      expect(response.status).not.toBe(301);
+      expect(response.status).toBe(301);
+      expect(response.headers.get('location')).toBe('http://localhost/photo-restoration');
     });
 
     test('should NOT redirect /fr/tools/image-upscaler (localized category)', async () => {

@@ -10,7 +10,7 @@
 import { NextResponse } from 'next/server';
 import { clientEnv } from '@shared/config/env';
 import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/i18n/config';
-import { LOCALIZED_CATEGORIES } from '@/lib/seo/localization-config';
+import { LOCALIZED_CATEGORIES, isTranslatedPair } from '@/lib/seo/localization-config';
 
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
 
@@ -56,7 +56,7 @@ export async function GET() {
 
     // Locale-specific sitemaps for non-English locales
     for (const locale of SUPPORTED_LOCALES) {
-      if (locale !== DEFAULT_LOCALE) {
+      if (locale !== DEFAULT_LOCALE && isTranslatedPair(category, locale)) {
         sitemapEntries.push({ name: `sitemap-${category}-${locale}.xml`, lastmod });
       }
     }

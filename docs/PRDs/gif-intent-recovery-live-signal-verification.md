@@ -421,6 +421,14 @@ Reply "continue" to proceed to Phase 4.
 - [ ] Owner average position **≤8.0** (from 19.11)
 - [ ] `gif upscaler` `pageCount` **≤3** (from 5) — confirms the localized/blog surfaces are not absorbing the consolidation
 
+**2026-08-25 verdict: FAILED.** Four of five thresholds failed: redirected and localized
+members remain in both head-query page splits; owner share was 66.7% (30/45), combined clicks
+were 45, and `gif upscaler` had six competing pages. The apparent 7.90 owner-position pass is
+false: the owner footprint collapsed from 115 queries / 3,564 impressions to 65 / 426 while its
+head-query positions fell to 13.9–32.3. Named cause: index-level fragmentation across redirects,
+localized variants, and `/blog/gif-upscaler`. Execution moved to
+[`batch-2026-08-25/gif-intent-defragmentation.md`](./batch-2026-08-25/gif-intent-defragmentation.md).
+
 **Homepage gate (separate, hold-and-measure):**
 
 - [ ] Homepage metadata **unchanged** — the loss is branded demand at position 1.01, which metadata cannot move
@@ -445,6 +453,12 @@ These pages are **already fixed**. This gate decides whether each fix worked. Ed
 | **P4** `poster size in pixels` → `/blog/poster-size-dimensions-pixels` (07-22 snippet) | **2026-08-08** | `poster size in pixels` clicks > 0 and page CTR ≥ 1.0% (from 0.30%)               | Same SERP-feature check — dimension queries are prime featured-snippet/zero-click territory.                                                                                                                                                                   |
 | **P5** `best free ai image upscaler 2026`                                              | **2026-08-06** | No action either way                                                              | **Locked: no edits.** Page holds 761 clicks at 12.91% CTR. Record the reading and move on.                                                                                                                                                                     |
 | Cannibalization watch                                                                  | with Phase 5   | `how to fix pixelated photos` `pageCount` stays ≤6 with competitors under 200 imp | Only then consider consolidation                                                                                                                                                                                                                               |
+
+**P1 verdict: FAILED.** The 90-day reading was 168,153 impressions, 3 clicks, and 0.0018% CTR,
+far below the 0.50% bar. Reclassify it as structurally zero-click and stop snippet spending. The
+automatic quarantine mechanism is owned by
+[`batch-2026-08-25/seo-reporting-signal-hygiene.md`](./batch-2026-08-25/seo-reporting-signal-hygiene.md).
+P4, P5, and the cannibalization watch remain open because this reconciliation did not run them.
 
 **Negative control for this gate:** run each threshold against the pre-fix data in `/tmp/gsc-miu-home-gif-28-2026-08-04.json`. Every one must **fail**. A gate the old data passes is measuring nothing.
 
@@ -653,12 +667,14 @@ _(Filled in during implementation — a phase is not complete until its block is
 
 ### Phase 5
 
-- Threshold table with actuals: _pending_
+- Threshold table with actuals: **FAILED 2026-08-25** — 4/5 failed; see
+  `docs/SEO/reports/gif-intent-gate-2026-08-25.md`.
 - Negative control (old export must fail all thresholds): _pending_
 
 ### Phase 5b (monitored issues — verdicts only)
 
-- P1 `fixing-pixelated-photos` verdict on 2026-08-13: _pending_
+- P1 `fixing-pixelated-photos` verdict on 2026-08-13: **FAILED** — structurally zero-click;
+  handed to reporting quarantine.
 - P4 `poster-size-dimensions-pixels` verdict on 2026-08-08: _pending_
 - P5 reading on 2026-08-06 (no action): _pending_
 - Proof of no re-edit before each decision date (`git log --since` on the affected pages): _pending_

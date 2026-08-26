@@ -344,6 +344,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
     statusCode: 301,
   },
   {
+    source: '/:locale(en|fr|de|es|it|ja|pt)/article/upscale-product-photos',
+    destination: '/content/upscale-product-photos',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
     source: '/:locale(en|fr|de|es|it|ja|pt)/article/upscale-screenshots',
     destination: '/content/upscale-screenshots',
     permanent: true,
@@ -352,6 +358,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
   {
     source: '/:locale(en|fr|de|es|it|ja|pt)/article/upscale-vintage-photos',
     destination: '/content/upscale-vintage-photos',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
+    source: '/:locale(en|fr|de|es|it|ja|pt)/article/vintage-photo-colorization',
+    destination: '/photo-restoration/vintage-photo-colorization',
     permanent: true,
     statusCode: 301,
   },
@@ -542,6 +554,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
     statusCode: 301,
   },
   {
+    source: '/:locale(en|fr|de|es|it|ja|pt)/tools/convert/png-in-jpg',
+    destination: '/:locale(en|fr|de|es|it|ja|pt)/tools/convert/png-to-jpg',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
     source: '/:locale(en|fr|de|es|it|ja|pt)/tools/convert/png-in-webp',
     destination: '/:locale(en|fr|de|es|it|ja|pt)/tools/convert/png-to-webp',
     permanent: true,
@@ -620,6 +638,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
     statusCode: 301,
   },
   {
+    source: '/:locale(en|fr|de|es|it|ja|pt)/tools/Imagem-cutout-tool',
+    destination: '/:locale(en|fr|de|es|it|ja|pt)/tools/image-cutout-tool',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
     source: '/:locale(en|fr|de|es|it|ja|pt)/tools/jpg-to-png',
     destination: '/:locale(en|fr|de|es|it|ja|pt)/tools/convert/jpg-to-png',
     permanent: true,
@@ -644,6 +668,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
     statusCode: 301,
   },
   {
+    source: '/:locale(en|fr|de|es|it|ja|pt)/tools/resize-image-for-discord',
+    destination: '/:locale(en|fr|de|es|it|ja|pt)/tools/resize/resize-image-for-discord',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
     source: '/:locale(en|fr|de|es|it|ja|pt)/tools/resize-image-for-facebook',
     destination: '/:locale(en|fr|de|es|it|ja|pt)/tools/resize/resize-image-for-facebook',
     permanent: true,
@@ -664,6 +694,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
   {
     source: '/:locale(en|fr|de|es|it|ja|pt)/tools/resize-image-for-reddit',
     destination: '/:locale(en|fr|de|es|it|ja|pt)/tools/resize/resize-image-for-reddit',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
+    source: '/:locale(en|fr|de|es|it|ja|pt)/tools/resize-image-for-telegram',
+    destination: '/:locale(en|fr|de|es|it|ja|pt)/tools/resize/resize-image-for-telegram',
     permanent: true,
     statusCode: 301,
   },
@@ -1116,6 +1152,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
     statusCode: 301,
   },
   {
+    source: '/article/upscale-product-photos',
+    destination: '/content/upscale-product-photos',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
     source: '/article/upscale-screenshots',
     destination: '/content/upscale-screenshots',
     permanent: true,
@@ -1124,6 +1166,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
   {
     source: '/article/upscale-vintage-photos',
     destination: '/content/upscale-vintage-photos',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
+    source: '/article/vintage-photo-colorization',
+    destination: '/photo-restoration/vintage-photo-colorization',
     permanent: true,
     statusCode: 301,
   },
@@ -1537,6 +1585,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
     statusCode: 301,
   },
   {
+    source: '/tools/convert/png-in-jpg',
+    destination: '/tools/convert/png-to-jpg',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
     source: '/tools/convert/png-in-webp',
     destination: '/tools/convert/png-to-webp',
     permanent: true,
@@ -1615,6 +1669,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
     statusCode: 301,
   },
   {
+    source: '/tools/Imagem-cutout-tool',
+    destination: '/tools/image-cutout-tool',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
     source: '/tools/jpg-to-png',
     destination: '/tools/convert/jpg-to-png',
     permanent: true,
@@ -1639,6 +1699,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
     statusCode: 301,
   },
   {
+    source: '/tools/resize-image-for-discord',
+    destination: '/tools/resize/resize-image-for-discord',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
     source: '/tools/resize-image-for-facebook',
     destination: '/tools/resize/resize-image-for-facebook',
     permanent: true,
@@ -1659,6 +1725,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
   {
     source: '/tools/resize-image-for-reddit',
     destination: '/tools/resize/resize-image-for-reddit',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
+    source: '/tools/resize-image-for-telegram',
+    destination: '/tools/resize/resize-image-for-telegram',
     permanent: true,
     statusCode: 301,
   },

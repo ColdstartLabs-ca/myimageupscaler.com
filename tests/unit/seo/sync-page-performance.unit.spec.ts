@@ -13,15 +13,17 @@ const range = {
 };
 
 describe('pSEO performance inventory', () => {
-  it('seeds every emitted locale for localized categories', () => {
+  it('seeds only locales backed by measured translated pairs', () => {
     const inventory = buildInventory([
       { category: 'guides', slug: 'bmp-format-guide', lastUpdated: '2025-12-26T00:00:00Z' },
+      { category: 'alternatives', slug: 'topaz-gigapixel', lastUpdated: '2026-08-25' },
       { category: 'ai-features', slug: 'ai-artifact-removal-upscaler', lastUpdated: '2026-02-11' },
     ]);
 
-    expect(inventory.filter(page => page.category === 'guides')).toHaveLength(7);
+    expect(inventory.filter(page => page.category === 'guides')).toHaveLength(1);
+    expect(inventory.filter(page => page.category === 'alternatives')).toHaveLength(7);
     expect(inventory.filter(page => page.category === 'ai-features')).toHaveLength(1);
-    expect(inventory.some(page => page.category === 'guides' && page.locale === 'fr')).toBe(true);
+    expect(inventory.some(page => page.category === 'guides' && page.locale === 'fr')).toBe(false);
   });
 
   it('keeps an exact locale zero row instead of falling back to English', () => {

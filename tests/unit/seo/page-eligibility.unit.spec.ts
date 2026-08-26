@@ -33,9 +33,19 @@ describe('pSEO page eligibility', () => {
   });
 
   it('prunes an old zero-impression page from the committed verdict', () => {
-    expect(
-      shouldSubmit('tools', 'svg-to-jpg', 'fr', '2025-01-01T00:00:00.000Z', NOW)
-    ).toBe(false);
+    expect(shouldSubmit('tools', 'svg-to-jpg', 'fr', '2025-01-01T00:00:00.000Z', NOW)).toBe(false);
+  });
+
+  it('should not inherit English impressions for a locale variant', () => {
+    expect(shouldSubmit('platform-format', 'dalle-upscaler-png', 'de', '2026-01-06', NOW)).toBe(
+      false
+    );
+  });
+
+  it('should not submit a locale variant with no snapshot row', () => {
+    expect(shouldSubmit('platform-format', 'dalle-upscaler-png', 'ja', '2026-01-06', NOW)).toBe(
+      false
+    );
   });
 
   it('keeps explicitly pinned pages', () => {

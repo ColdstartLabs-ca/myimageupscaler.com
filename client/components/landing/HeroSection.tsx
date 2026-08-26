@@ -1,10 +1,9 @@
-import { ChatGPTBadge } from '@client/components/landing/ChatGPTBadge';
+import { ReferralBadge } from '@client/components/landing/ReferralBadge';
 import { HeroActions } from '@client/components/landing/HeroActions';
 import { HeroBeforeAfter } from '@client/components/landing/HeroBeforeAfter';
 import { HeroTrustBar } from '@client/components/landing/HeroTrustBar';
 import { HERO_COMPARISON_IMAGES } from '@client/components/landing/heroAssets';
 import { getFreeCreditsForTier, getRegionTier } from '@/lib/anti-freeloader/region-classifier';
-import type { IReferralSource } from '@server/analytics/types';
 import { Check } from 'lucide-react';
 import { headers } from 'next/headers';
 import { getTranslations } from 'next-intl/server';
@@ -12,24 +11,12 @@ import { getTranslations } from 'next-intl/server';
 /**
  * AI search engine referral sources that should show a badge
  */
-type IBadgeReferralSource = Extract<
-  IReferralSource,
-  'chatgpt' | 'perplexity' | 'claude' | 'google_sge'
->;
-
-function isBadgeSource(source: IReferralSource | null): source is IBadgeReferralSource {
-  return source !== null && ['chatgpt', 'perplexity', 'claude', 'google_sge'].includes(source);
-}
-
 export async function HeroSection(): Promise<JSX.Element> {
   const t = await getTranslations('homepage');
   const headersList = await headers();
   const country = headersList.get('CF-IPCountry') ?? headersList.get('cf-ipcountry') ?? '';
   const freeCredits = getFreeCreditsForTier(getRegionTier(country));
 
-  // Get referral source from middleware header (server-rendered, zero CLS)
-  const referralSource = headersList.get('x-referral-source') as IReferralSource | null;
-  const showAiBadge = isBadgeSource(referralSource);
   const heroTrustItems = [
     { label: 'Free to start', icon: <Check size={18} /> },
     { label: 'No watermarks', icon: <Check size={18} /> },
@@ -61,11 +48,7 @@ export async function HeroSection(): Promise<JSX.Element> {
     <section className="relative animate-hero-fade-in pb-8 pt-6 lg:pb-16 lg:pt-12">
       <div className="relative z-10 mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-8">
         {/* AI Search Badge - shown for ChatGPT/Perplexity/Claude/SGE referrals */}
-        {showAiBadge && (
-          <div className="mb-3 lg:mb-5 lg:ml-1">
-            <ChatGPTBadge source={referralSource} />
-          </div>
-        )}
+        <ReferralBadge />
 
         {/*
           Mobile: compact headline → slider → CTAs (slider above the fold).

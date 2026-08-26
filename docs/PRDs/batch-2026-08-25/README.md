@@ -16,6 +16,19 @@ CWV export; `The August 12 Cliff` GSC triage; and live production probes run 202
 
 ---
 
+## Execution status — 2026-08-25
+
+| PRD                        | Implemented now                                                                                                                                                                                                             | Open gate                                                                                                                                                                                                  |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Edge HTML caching          | Anonymous referral attribution moved into the browser; R2 bucket and guarded Cache Rule are active; the Webpack OpenNext build is 7.89 MiB compressed; isolated preview deployment and repeat R2 `HIT` responses are proven | Production deploy, live edge-cache proof, authenticated isolation check, and 28-day CWV reading remain open                                                                                                |
+| GIF defragmentation        | Phases 0-2: incumbent verdicts, red cluster gate, and exact localized membership                                                                                                                                            | Phase 3 is an irreversible owner migration requiring the manual checkpoint and a verified production backup; Phases 4-5 follow its deploy date                                                             |
+| Reporting hygiene          | Brand/unclassified split, phantom quarantine, stable cohort, skill workflow, and report replay are complete                                                                                                                 | None locally; use the new output on the next analysis run                                                                                                                                                  |
+| Redirect and 404 integrity | Routed-path fix, generated redirect table, loop protection, 404 metadata, and strict source/destination resolution guards are implemented                                                                                   | A fresh GSC Pages 404 export is required before retiring the frozen fixture; the live destination gate also remains red while `/guides` and one localized bulk-tool route intermittently return Worker 503 |
+| Locale retraction          | Rendered coverage audit, measured pair policy, metadata/hreflang/sitemap retraction, explicit-navigation behavior, and `/en/*` 301 are complete                                                                             | Deploy and post-deploy GSC observation                                                                                                                                                                     |
+| pSEO soft-404 repair       | Locale metadata fallback, locale-strict eligibility, live reason logging, production audit, and head-term gate are complete                                                                                                 | Pruning waits for 14 complete post-deploy GSC days; first head-term decision is 2026-09-22                                                                                                                 |
+
+---
+
 ## Finding A — the 28-day decomposition (PRDs 1-3)
 
 The reported **-21.86% clicks** over the last 28 days decomposes as:

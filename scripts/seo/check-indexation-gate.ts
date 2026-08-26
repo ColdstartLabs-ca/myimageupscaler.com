@@ -35,7 +35,7 @@ export interface IIndexationGateResult {
   reason: string;
 }
 
-function ageInDays(dateValue: string, now: Date): number {
+export function ageInDays(dateValue: string, now: Date): number {
   const date = new Date(dateValue);
   if (Number.isNaN(date.getTime())) return Infinity;
   return (now.getTime() - date.getTime()) / (24 * 60 * 60 * 1000);

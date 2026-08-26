@@ -23,6 +23,9 @@ export const PINNED_SLUGS = new Set([
   'tools/image-resizer',
   'formats/upscale-jpg-images',
   'scale/upscale-4x',
+  // Locale-surface positive control: verified French content must survive
+  // performance pruning while untranslated mirrors are retracted.
+  'device-use/mobile-ecommerce-upscaler',
 ]);
 
 /**
@@ -84,7 +87,9 @@ function key(category: string, slug: string, locale: string): string {
  */
 function mergePerformance(a: IPagePerformance, b: IPagePerformance): IPagePerformance {
   const newerLastUpdated =
-    !a.lastUpdated || (b.lastUpdated && b.lastUpdated > a.lastUpdated) ? b.lastUpdated : a.lastUpdated;
+    !a.lastUpdated || (b.lastUpdated && b.lastUpdated > a.lastUpdated)
+      ? b.lastUpdated
+      : a.lastUpdated;
 
   return {
     ...a,
@@ -106,10 +111,7 @@ function getPerformanceRecord(
   slug: string,
   locale: string
 ): IPagePerformance | undefined {
-  return (
-    performanceByKey.get(key(category, slug, locale)) ??
-    (locale === 'en' ? undefined : performanceByKey.get(key(category, slug, 'en')))
-  );
+  return performanceByKey.get(key(category, slug, locale));
 }
 
 function isWithinGracePeriod(lastUpdated: string | undefined, now: Date): boolean {
@@ -151,10 +153,9 @@ export function shouldSubmit(
   const effectiveNow = lastUpdatedOrNow instanceof Date ? lastUpdatedOrNow : now;
   const performance = getPerformanceRecord(category, slug, normalizedLocale);
 
-  // A page absent from the snapshot has not been measured yet. Keep it
-  // discoverable until the next sync records an explicit zero-impression row;
-  // the publication gate handles new rows before they can accumulate.
-  if (!performance) return true;
+  // An absent locale row must not inherit an English page's demand indefinitely.
+  // Genuinely new pages still receive the same bounded grace period.
+  if (!performance) return isWithinGracePeriod(effectiveLastUpdated, effectiveNow);
 
   if (performance && (performance.impressions > 0 || performance.clicks > 0)) return true;
 
@@ -200,7 +201,7 @@ export function isPSEOCategory(value: string): value is PSEOCategory {
   return (PSEO_CATEGORIES as readonly string[]).includes(value);
 }
 
-function getPathIdentity(
+export function getPathIdentity(
   pathname: string
 ): { category: PSEOCategory; slug: string; locale: string } | null {
   const segments = pathname.split('/').filter(Boolean);
@@ -237,12 +238,16 @@ export function filterEligiblePages<T extends { slug: string; lastUpdated?: stri
   pages: readonly T[],
   category: string,
   locale: Locale | string = 'en'
-): { pages: T[]; skipped: number } {
-  const eligiblePages = pages.filter(page =>
-    shouldSubmit(category, page.slug, locale, page.lastUpdated)
-  );
+): { pages: T[]; skipped: number; reasons: Record<string, number> } {
+  const reasons: Record<string, number> = {};
+  const eligiblePages = pages.filter(page => {
+    if (shouldSubmit(category, page.slug, locale, page.lastUpdated)) return true;
+    const reason = getEligibilityReason(category, page.slug, locale, page.lastUpdated);
+    reasons[reason] = (reasons[reason] ?? 0) + 1;
+    return false;
+  });
 
-  return { pages: eligiblePages, skipped: pages.length - eligiblePages.length };
+  return { pages: eligiblePages, skipped: pages.length - eligiblePages.length, reasons };
 }
 
 /**
@@ -268,9 +273,12 @@ export function logSitemapEligibility(
   category: string,
   locale: Locale | string,
   considered: number,
-  skipped: number
+  skipped: number,
+  reasons?: Readonly<Record<string, number>>
 ): void {
+  const reasonSuffix =
+    reasons && Object.keys(reasons).length > 0 ? ` reasons=${JSON.stringify(reasons)}` : '';
   console.info(
-    `[sitemap:${category}:${locale}] considered=${considered} submitted=${considered - skipped} skipped=${skipped}`
+    `[sitemap:${category}:${locale}] considered=${considered} submitted=${considered - skipped} skipped=${skipped}${reasonSuffix}`
   );
 }

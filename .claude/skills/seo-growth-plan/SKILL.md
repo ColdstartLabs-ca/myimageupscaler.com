@@ -112,15 +112,16 @@ node ./.claude/skills/seo-growth-plan/scripts/seo-synthesize.cjs \
 
 Work through in this order:
 
-1. `summary.crosscheck` — verify tracking is sane before reading anything else
-2. `summary.gsc` + `summary.ga` — headline performance and organic share
-3. `priorityActions` — top 15 ranked actions; these are the output
-4. `opportunities.conversionOpportunities` — biggest revenue lever
-5. `opportunities.intentMismatch` — quick CX fixes
-6. `opportunities.strikingDistance.rankingOpportunities` — safe SEO work
-7. `opportunities.correlatedDeclines` — fire-fighting
-8. `opportunities.cannibalization` — consolidation work
-9. `opportunities.trackingGaps` — data quality issues to fix first
+1. In the source GSC JSON, read `comparison.brandSplit`, its `unclassified` privacy-suppressed
+   segment, `quarantinedQueries`, and `comparison.stableCohortPosition`; lead with classified
+   non-brand clicks and separate branded, unclassified, and quarantined movement.
+2. `summary.crosscheck` — verify tracking is sane before reading anything else.
+3. `summary.gsc` + `summary.ga` — headline performance and organic share.
+4. `priorityActions` — ranked actions, followed by conversion, intent, ranking, decline,
+   cannibalization, and tracking-gap clusters.
+
+Do not convert falling impressions at position 1.0 into a metadata recommendation; that is branded
+demand movement, not a ranking decline.
 
 ### Step 3: Produce The Report
 

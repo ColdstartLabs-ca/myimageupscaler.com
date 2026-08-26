@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getUseCaseDataWithLocale, getAllUseCaseSlugs } from '@/lib/seo/data-loader';
-import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
+import { resolveLocalePageMetadata } from '@/lib/seo/locale-page-metadata';
 import { generateUseCaseSchema } from '@/lib/seo/schema-generator';
 import { UseCasePageTemplate } from '@/app/(pseo)/_components/pseo/templates/UseCasePageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
@@ -21,16 +21,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: IUseCasePageProps): Promise<Metadata> {
   const { slug, locale } = await params;
-  const result = await getUseCaseDataWithLocale(slug, locale);
-
-  if (!result.data) return {};
-
-  const { alternates: _alternates, ...metaWithoutAlternates } = generatePageMetadata(
-    result.data,
-    'use-cases',
-    locale
-  );
-  return metaWithoutAlternates;
+  return resolveLocalePageMetadata(getUseCaseDataWithLocale, 'use-cases', slug, locale);
 }
 
 export default async function UseCasePage({ params }: IUseCasePageProps) {

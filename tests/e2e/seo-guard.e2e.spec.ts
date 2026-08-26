@@ -26,23 +26,49 @@
  */
 
 import { test, expect } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { SUPPORTED_LOCALES } from '@/i18n/config';
 
-// Constants from i18n/config.ts and lib/seo/localization-config.ts
-const SUPPORTED_LOCALES = ['en', 'es', 'pt', 'de', 'fr', 'it', 'ja'] as const;
+interface ILocaleCoveragePair {
+  category: string;
+  locale: string;
+  sampled: number;
+  translated: number;
+  englishMirror: number;
+  soft404: number;
+  missing: number;
+}
+
+const coverageArtifact = JSON.parse(
+  readFileSync(join(process.cwd(), 'seo-reports/locale-coverage-2026-08-25.json'), 'utf8')
+) as { pairs: ILocaleCoveragePair[] };
+
+const isTranslatedPair = (category: string, locale: string): boolean => {
+  if (locale === 'en') return true;
+  const pair = coverageArtifact.pairs.find(
+    candidate => candidate.category === category && candidate.locale === locale
+  );
+  return Boolean(
+    pair &&
+    pair.sampled > 0 &&
+    pair.translated === pair.sampled &&
+    pair.englishMirror === 0 &&
+    pair.soft404 === 0 &&
+    pair.missing === 0
+  );
+};
+
 const LOCALIZED_CATEGORIES = [
-  'tools',
-  'formats',
-  'free',
-  'guides',
-  'scale',
-  'alternatives',
-  'use-cases',
-  'format-scale',
-  'platform-format',
-  'device-use',
-] as const;
+  ...new Set(
+    coverageArtifact.pairs
+      .filter(pair => pair.locale !== 'en' && isTranslatedPair(pair.category, pair.locale))
+      .map(pair => pair.category)
+  ),
+];
 const ENGLISH_ONLY_CATEGORIES = [
   'compare',
+  'comparisons-expanded',
   'platforms',
   'bulk-tools',
   'content',
@@ -51,16 +77,23 @@ const ENGLISH_ONLY_CATEGORIES = [
   'industry-insights',
   'device-optimization',
   'ai-features',
-  'comparisons-expanded',
+  'technical-guides',
   'personas-expanded',
   'use-cases-expanded',
-  'technical-guides',
   'ai-photo-editor',
 ] as const;
 
-// Total sitemaps: 16 English-only + (10 localized × 7 locales) = 16 + 70 = 86
-// English-only: static + blog + 14 ENGLISH_ONLY_CATEGORIES = 16
-const TOTAL_SITEMAP_COUNT = 86;
+const TOTAL_SITEMAP_COUNT =
+  2 +
+  ENGLISH_ONLY_CATEGORIES.length +
+  LOCALIZED_CATEGORIES.length +
+  LOCALIZED_CATEGORIES.reduce(
+    (count, category) =>
+      count +
+      SUPPORTED_LOCALES.filter(locale => locale !== 'en' && isTranslatedPair(category, locale))
+        .length,
+    0
+  );
 
 // Base URL for production checks (canonical URLs should always use this)
 const PRODUCTION_BASE_URL = 'https://myimageupscaler.com';
@@ -173,7 +206,7 @@ test.describe('SEO Guard - Deploy Blocker', () => {
       // Should contain locale-specific sitemaps for localized categories
       for (const category of LOCALIZED_CATEGORIES) {
         for (const locale of SUPPORTED_LOCALES) {
-          if (locale !== 'en') {
+          if (locale !== 'en' && isTranslatedPair(category, locale)) {
             expect(sitemapUrls).toContain(
               `${PRODUCTION_BASE_URL}/sitemap-${category}-${locale}.xml`
             );
@@ -443,11 +476,7 @@ test.describe('SEO Guard - Deploy Blocker', () => {
       await page.goto('/tools/ai-image-upscaler');
       await page.waitForLoadState('domcontentloaded');
 
-      // Should have alternates for locales that have 'ai-image-upscaler' as their slug.
-      // es and it use different translated slugs for this tool (e.g. amplificador-de-imágenes-con-ia),
-      // so hreflang is intentionally omitted for those locales on this page.
-      const localesWithThisSlug = SUPPORTED_LOCALES.filter(l => l !== 'es' && l !== 'it');
-      for (const locale of localesWithThisSlug) {
+      for (const locale of SUPPORTED_LOCALES.filter(locale => isTranslatedPair('tools', locale))) {
         const hreflangLink = page.locator(`link[rel="alternate"][hreflang="${locale}"]`).first();
         await expect(hreflangLink, `${locale} hreflang should exist`).toBeAttached();
       }
@@ -462,7 +491,9 @@ test.describe('SEO Guard - Deploy Blocker', () => {
   // Group 9: pSEO Tool Page SEO (Locale)
   // ========================================================================
   test.describe('pSEO Tool Page SEO - Locale', () => {
-    test('Spanish tool page has locale-specific canonical and hreflang', async ({ page }) => {
+    test('Spanish tool fallback keeps its canonical but retracts unverified hreflang', async ({
+      page,
+    }) => {
       // Use ai-background-remover: it has the same slug in Spanish (unlike ai-image-upscaler
       // which uses a translated slug, making /es/tools/ai-image-upscaler a noindex fallback page).
       await page.goto('/es/tools/ai-background-remover');
@@ -481,12 +512,10 @@ test.describe('SEO Guard - Deploy Blocker', () => {
       await ogLocale.waitFor({ state: 'attached', timeout: 10000 });
       expect(await ogLocale.getAttribute('content')).toBe('es_ES');
 
-      // Should have all hreflang links including Spanish
+      // Spanish tools did not pass the rendered translation audit, so advertising this
+      // fallback as a translated alternate would be misleading.
       const esLink = page.locator('link[rel="alternate"][hreflang="es"]').first();
-      await expect(esLink).toBeAttached();
-      expect(await esLink.getAttribute('href')).toBe(
-        `${PRODUCTION_BASE_URL}/es/tools/ai-background-remover`
-      );
+      await expect(esLink).toHaveCount(0);
     });
 
     test('locale tool page SoftwareApplication has correct inLanguage', async ({ page }) => {
@@ -649,6 +678,34 @@ test.describe('SEO Guard - Deploy Blocker', () => {
     });
   });
 
+  test.describe('Locale preference suggestion', () => {
+    for (const viewport of [
+      { name: 'mobile', width: 390, height: 844 },
+      { name: 'desktop', width: 1280, height: 800 },
+    ]) {
+      test(`should offer and persist the stored locale on ${viewport.name}`, async ({ page }) => {
+        await page.setViewportSize(viewport);
+        await page.goto('/pricing');
+        await page.evaluate(() => {
+          document.cookie = 'locale=es;path=/;samesite=lax';
+        });
+        await page.reload();
+
+        await expect(page).toHaveURL(/\/pricing$/);
+        const suggestion = page
+          .getByRole('banner')
+          .getByRole('button', { name: 'Switch to Español' });
+        await expect(suggestion).toBeVisible({ timeout: 15000 });
+        await suggestion.click();
+
+        await expect(page).toHaveURL(/\/es\/pricing$/);
+        expect(await page.context().cookies()).toContainEqual(
+          expect.objectContaining({ name: 'locale', value: 'es' })
+        );
+      });
+    }
+  });
+
   // ========================================================================
   // Group 13: Locale Sitemaps
   // ========================================================================
@@ -656,10 +713,10 @@ test.describe('SEO Guard - Deploy Blocker', () => {
     test('locale sitemaps exist for localized categories', async ({ request }) => {
       // Sample locale sitemaps to check
       const sampleSitemaps = [
-        { path: '/sitemap-tools-es.xml', locale: 'es', category: 'tools' },
+        { path: '/sitemap-tools-pt.xml', locale: 'pt', category: 'tools' },
         { path: '/sitemap-tools-de.xml', locale: 'de', category: 'tools' },
         { path: '/sitemap-formats-pt.xml', locale: 'pt', category: 'formats' },
-        { path: '/sitemap-guides-fr.xml', locale: 'fr', category: 'guides' },
+        { path: '/sitemap-use-cases-fr.xml', locale: 'fr', category: 'use-cases' },
       ];
 
       for (const { path, locale, category } of sampleSitemaps) {
@@ -897,6 +954,11 @@ test.describe('SEO Guard - Deploy Blocker', () => {
       // Should have 404 status code
       const response = await page.request.get('/this-page-does-not-exist');
       expect(response.status()).toBe(404);
+    });
+
+    test('should render a non-empty title on the 404 page', async ({ page }) => {
+      await page.goto('/definitely-not-a-page-1234');
+      expect(await page.title()).toContain('Not Found');
     });
   });
 

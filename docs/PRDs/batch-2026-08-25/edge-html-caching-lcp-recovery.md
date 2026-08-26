@@ -1,6 +1,6 @@
 # PRD: Edge HTML Caching & LCP Recovery
 
-**Status:** Not started
+**Status:** In progress — R2 preview proven; production Cache Rule and deploy remain
 **Created:** 2026-08-25
 **Owner:** TBD
 **Source data:** `myimageupscaler.com-core-web-vitals-Issue-2026-08-25.zip` (GSC CWV export), live header probes 2026-08-25
@@ -224,17 +224,25 @@ Proved on the **real production subject**: `/blog/fixing-pixelated-photos`, the 
 
 **Implementation:**
 
-- [ ] Create the R2 bucket (`wrangler r2 bucket create myimageupscaler-inc-cache`).
-- [ ] Add the binding to `wrangler.json` next to the existing `assets` and `services` blocks.
-- [ ] Replace the empty `defineCloudflareConfig({})` body.
-- [ ] Deploy to a preview Worker first and probe it before touching production.
+- [x] Create the R2 bucket (`myimageupscaler-inc-cache`, private Standard storage, 2026-08-25).
+- [x] Add the binding to `wrangler.json` next to the existing `assets` and `services` blocks.
+- [x] Replace the empty `defineCloudflareConfig({})` body.
+- [x] Deploy to a preview Worker first and probe it before touching production.
+
+Preview checkpoint (2026-08-25): `wrangler.preview.json` targets the isolated
+`myimageupscaler-cache-preview` Worker with no routes. Cloudflare initially rejected the Turbopack
+artifact with error `10027` at 12.17 MiB compressed. Building Next.js with Webpack reduced the
+upload to 7.89 MiB, and preview version `9a7dbf83-3b06-4ae0-ba17-2fa9d80e5d03` deployed at
+`https://myimageupscaler-cache-preview.jfurtado141.workers.dev`. Repeat requests to
+`/formats/upscale-gif-images` and `/tools/ai-image-upscaler` returned `200`,
+`x-nextjs-cache: HIT`, and no `Set-Cookie`. No production route or Worker version changed.
 
 **Wiring:**
 
-- [ ] Caller edited: `open-next.config.ts` — consumed by the generated `.open-next/worker.js` on every request
-- [ ] Registration: `wrangler.json` R2 binding
-- [ ] Old path: implicit no-cache fallback superseded
-- [ ] Ledger rows filled: #2, #3
+- [x] Caller edited: `open-next.config.ts` — consumed by the generated `.open-next/worker.js` on every request
+- [x] Registration: `wrangler.json` R2 binding
+- [x] Old path: implicit no-cache fallback superseded
+- [x] Ledger rows filled: #2, #3
 
 **Tests Required:**
 
@@ -245,10 +253,11 @@ Proved on the **real production subject**: `/blog/fixing-pixelated-photos`, the 
 
 **Revert check:** emptying `open-next.config.ts` turns both tests red.
 
-**User Verification (manual — performance-sensitive):**
+**Preview verification (manual):**
 
-- Action: `for i in 1 2 3; do curl -so /dev/null -w "%{time_starttransfer}\n" -H 'Accept-Encoding: br' <preview-url>/blog/fixing-pixelated-photos; done`
-- Expected: runs 2 and 3 under **0.4s** (baseline: 1.15s / 2.29s / 2.05s / 2.07s)
+- Action: `for i in 1 2 3; do curl -so /dev/null -D - <preview-url>/formats/upscale-gif-images | grep -i x-nextjs-cache; done`
+- Observed: runs 2 and 3 returned `x-nextjs-cache: HIT`. The `workers.dev` preview has no zone
+  Cache Rule, so the **0.4s** TTFB budget remains a production edge-cache acceptance criterion.
 
 ---
 
@@ -262,16 +271,16 @@ Proved on the **real production subject**: `/blog/fixing-pixelated-photos`, the 
 
 **Implementation:**
 
-- [ ] Add a Cache Rule matching `http.request.uri.path` not starting with `/api/` and not `/dashboard*`, action _Eligible for cache_, Edge TTL "Respect origin" (origin already sends `s-maxage=86400, stale-while-revalidate=31449600`).
-- [ ] **Exclude authenticated surfaces explicitly** — `/dashboard`, `/api/*`, and any route that legitimately varies per user. Bypass on the presence of a Supabase auth cookie.
-- [ ] Write the probe to assert, for a fixed list of representative routes (`/`, `/blog/fixing-pixelated-photos`, `/formats/upscale-gif-images`, `/tools/ai-image-upscaler`): no `Set-Cookie`, a present `cf-cache-status`, and TTFB under budget on a warm second request.
+- [x] Add a Cache Rule matching anonymous `GET`/`HEAD` requests, action _Eligible for cache_, Edge TTL "Respect origin" (origin already sends `s-maxage=86400, stale-while-revalidate=31449600`).
+- [x] **Exclude authenticated surfaces explicitly** — `/dashboard`, `/workspace`, `/api/*`, all localized private variants, and any request containing a Supabase `sb-` auth cookie.
+- [x] Write the probe to assert, for a fixed list of representative routes (`/`, `/blog/fixing-pixelated-photos`, `/formats/upscale-gif-images`, `/tools/ai-image-upscaler`): no `Set-Cookie`, a present `cf-cache-status`, and TTFB under budget on a warm second request.
 
 **Wiring:**
 
-- [ ] Caller edited: `package.json` `verify` script invokes `seo:cache:gate`
-- [ ] Registration: script registered in `package.json`
-- [ ] Old path: n/a
-- [ ] Ledger rows filled: #4, #5
+- [x] Caller edited: `package.json` `verify` script invokes `seo:cache:gate`
+- [x] Registration: script registered in `package.json`
+- [x] Old path: n/a
+- [x] Ledger rows filled: #4, #5
 
 **Tests Required:**
 

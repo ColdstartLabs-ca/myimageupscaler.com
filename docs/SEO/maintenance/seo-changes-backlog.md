@@ -11,6 +11,60 @@ Maintenance rules:
 
 ## 2026-08-25
 
+### August 25 PRD Batch — Immediate Phases Implemented
+
+Changes:
+
+- Repaired exact legacy redirect coverage, added titled/noindex 404 metadata, and committed dated
+  live-resolution evidence. A fresh GSC Coverage export is still required before replacing the
+  frozen 2026-08-08 source. The resolution artifact now also probes all 281 expanded redirect
+  destinations and fails on non-200 owners; production currently alternates between 200 and 503
+  for `/guides` and one localized bulk-compressor owner.
+- Repaired locale pSEO metadata fallback parity, exact-locale eligibility and reason logging;
+  measured rendered locale coverage and retracted English mirrors from metadata, hreflang, and
+  sitemaps while preserving the French `device-use` positive control.
+- Canonicalized `/en/*` with query-preserving 301s and made locale-less URLs explicit English
+  rewrites. Public HTML no longer writes referral or automatic locale cookies; referral attribution
+  and language suggestions now run client-side.
+- Wired OpenNext long-lived regional R2 caching, its Wrangler binding, deterministic config tests,
+  a production `cf-cache-status: HIT` gate, and an early Supabase image-origin preconnect. Enabled
+  R2 and created the private Standard-class `myimageupscaler-inc-cache` bucket. Added an isolated
+  `myimageupscaler-cache-preview` Wrangler target with no production routes. Changed the Next.js
+  production build from Turbopack to Webpack after Cloudflare error `10027`; this reduced the
+  compressed upload from 12.17 MiB to 7.89 MiB. The isolated Worker deployed successfully, and
+  repeat requests to `/formats/upscale-gif-images` and `/tools/ai-image-upscaler` returned `200`
+  with `x-nextjs-cache: HIT` and no `Set-Cookie`. Activated the `Cache anonymous HTML` zone rule
+  with origin-controlled TTL and explicit API, dashboard, workspace, localized-private-route, and
+  Supabase-auth-cookie exclusions. The production Worker was not changed.
+- Added honest GSC reporting segments (`branded`, `nonBranded`, `unclassified`), phantom-query
+  quarantine, stable-cohort position, the pSEO head-term gate, and the GIF cluster stop-loss gate.
+  The GIF gate is red at 197/847 clicks; localized scale members now redirect by exact declared
+  membership while localized owner copies remain live.
+
+Validation:
+
+- Focused redirect, pSEO, locale, cache, reporting, and GIF suites pass; TypeScript passes.
+- Real GSC replay for 2026-07-26→2026-08-22 reconciles 7,331 clicks as 1,053 branded, 2,671
+  classified non-brand, and 3,607 privacy-suppressed/unclassified clicks; `how to fix pixelated
+photos` is quarantined by name with Brazil/desktop dimension evidence.
+- Fresh GIF decision evidence still selects `/blog/gif-upscaler` over the pSEO owner on both head
+  queries. The irreversible Phase 3 owner migration remains behind its required manual checkpoint.
+- Affected SEO/middleware unit coverage passed 1,243/1,243. Locale-routing browser coverage passed
+  34/34 without retries, including mobile/desktop switch suggestions. `yarn verify` passed TypeScript,
+  lint, ICU, schema, indexation, and cache-config stages; its production cache gate correctly stayed
+  red because deployed HTML still emits `Set-Cookie`, has no `cf-cache-status`, and exceeds 1.3s TTFB.
+- The deployment SEO guard now derives its 43-sitemap and hreflang expectations from the committed
+  rendered-locale evidence; 47/47 Chromium guard checks pass after removing stale universal-locale
+  assumptions. Cache configuration and LCP-hint unit coverage passes 8/8.
+
+Follow-up:
+
+- **2026-09-22:** run `yarn seo:gate:head-term` and record whether `image upscaler` returned below
+  position 10; run the redirect, locale, pSEO, and GIF 28-day GSC recovery readings after their
+  deployments and three-day lag.
+- Deploy the validated Worker to production, then run the production cache gate and authenticated
+  dashboard isolation check.
+
 ### PRD Batch Extended With The August 12 Cliff Triage (PRDs 4-6)
 
 Source: `The August 12 Cliff` GSC triage (data through 2026-08-23), re-verified against production

@@ -35,6 +35,11 @@ export interface IMeasureClusterArgs {
   outputPath?: string;
 }
 
+export interface IClusterGateResult {
+  exitCode: 0 | 1;
+  message: string;
+}
+
 export type ClusterMeasurementScope = 'post-consolidation' | 'pre-split-baseline';
 
 export function normalizePagePath(pageUrl: string): string {
@@ -141,6 +146,20 @@ export function summarizeClusterRows(
     owner: byPath[cluster.ownerPath],
     cluster: finalizeMetrics(clusterMetrics),
     byPath,
+  };
+}
+
+export function evaluateClusterGate(
+  cluster: IIntentCluster,
+  measurement: IClusterMeasurement,
+  reportPath: string
+): IClusterGateResult {
+  const measuredClicks = measurement.cluster.clicks;
+  const floor = cluster.baselineContract.minimumClicks;
+  const passed = measuredClicks >= floor;
+  return {
+    exitCode: passed ? 0 : 1,
+    message: `Cluster "${cluster.intent}" measured ${formatNumber(measuredClicks)} clicks against the ${formatNumber(floor)}-click floor. Report: ${reportPath}`,
   };
 }
 
@@ -369,24 +388,61 @@ export async function measureCluster(args: IMeasureClusterArgs): Promise<string>
   return outputPath;
 }
 
+export async function gateCluster(args: IMeasureClusterArgs): Promise<IClusterGateResult> {
+  const outputPath = await measureCluster(args);
+  const cluster = getCluster(args.clusterName);
+
+  if (!serverEnv.GSC_SERVICE_ACCOUNT_EMAIL || !serverEnv.GSC_PRIVATE_KEY) {
+    throw new Error('GSC_SERVICE_ACCOUNT_EMAIL and GSC_PRIVATE_KEY are required');
+  }
+  const accessToken = await createGscAccessToken(
+    serverEnv.GSC_SERVICE_ACCOUNT_EMAIL,
+    serverEnv.GSC_PRIVATE_KEY
+  );
+  const measurement = await fetchMeasurement(
+    accessToken,
+    serverEnv.GSC_SITE_URL,
+    cluster,
+    args.window,
+    'post-consolidation'
+  );
+  return evaluateClusterGate(cluster, measurement, outputPath);
+}
+
 async function main(): Promise<void> {
   const clusterName = getArgument('cluster');
   const windowValue = getArgument('window');
   const baselineValue = getArgument('baseline');
+  const gate = process.argv.includes('--gate');
 
-  if (!clusterName || !windowValue || !baselineValue) {
+  if (!clusterName || !windowValue) {
     throw new Error(
-      'Usage: yarn seo:measure:cluster --cluster=gif --window=YYYY-MM-DD:YYYY-MM-DD --baseline=YYYY-MM-DD:YYYY-MM-DD [--out=path]'
+      'Usage: yarn seo:measure:cluster --cluster=gif --window=YYYY-MM-DD:YYYY-MM-DD [--baseline=YYYY-MM-DD:YYYY-MM-DD] [--gate] [--out=path]'
     );
   }
 
+  const cluster = getCluster(clusterName);
   const outputPath = getArgument('out');
-  const output = await measureCluster({
+  const args = {
     clusterName,
     window: parseDateRange(windowValue, 'window'),
-    baseline: parseDateRange(baselineValue, 'baseline'),
+    baseline: baselineValue
+      ? parseDateRange(baselineValue, 'baseline')
+      : {
+          startDate: cluster.baselineContract.startDate,
+          endDate: cluster.baselineContract.endDate,
+        },
     outputPath,
-  });
+  };
+
+  if (gate) {
+    const result = await gateCluster(args);
+    console.log(result.message);
+    process.exitCode = result.exitCode;
+    return;
+  }
+
+  const output = await measureCluster(args);
 
   console.log(`Wrote cluster measurement: ${output}`);
 }

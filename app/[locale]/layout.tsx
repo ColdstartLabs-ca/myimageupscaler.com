@@ -125,6 +125,7 @@ export default async function LocaleLayout({ children, params }: ILocaleLayoutPr
       suppressHydrationWarning
     >
       <head>
+        <link rel="preconnect" href="https://xqysaylskffsfwunczbd.supabase.co" crossOrigin="" />
         {/* Logo preloads — the logo is the LCP element on mobile (above the fold in sticky nav).
             Media queries match the xs: 475px Tailwind breakpoint so each device only fetches its logo. */}
         <link
@@ -142,7 +143,6 @@ export default async function LocaleLayout({ children, params }: ILocaleLayoutPr
           fetchPriority="high"
         />
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="" />
-        <link rel="preconnect" href="https://xqysaylskffsfwunczbd.supabase.co" crossOrigin="" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://analytics.ahrefs.com" />
         <link rel="dns-prefetch" href="https://js.stripe.com" />

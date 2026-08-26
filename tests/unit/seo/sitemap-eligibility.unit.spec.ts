@@ -8,7 +8,7 @@ import {
 const OLD_DATE = '2025-01-01T00:00:00.000Z';
 
 describe('sitemap eligibility', () => {
-  it('excludes zero-impression matrix pages from generated sitemaps', () => {
+  it('excludes zero-impression and untracked locale variants from generated sitemaps', () => {
     const xml = generateLocalizedSitemap(
       {
         category: 'tools',
@@ -27,8 +27,8 @@ describe('sitemap eligibility', () => {
     );
 
     expect(xml).not.toContain('/tools/convert/svg-to-jpg');
-    expect(xml).toContain('/tools/convert/convert-jpeg-to-png');
-    expect(xml.match(/<loc>/g)).toHaveLength(2);
+    expect(xml).not.toContain('/tools/convert/convert-jpeg-to-png');
+    expect(xml.match(/<loc>/g)).toHaveLength(1);
   });
 
   it('keeps a click-producing page submitted', () => {
@@ -62,11 +62,32 @@ describe('sitemap eligibility', () => {
     );
 
     expect(info).toHaveBeenCalledWith(expect.stringContaining('[sitemap:tools:fr]'));
-    expect(info).toHaveBeenCalledWith(expect.stringContaining('skipped=1'));
+    expect(info).toHaveBeenCalledWith(expect.stringContaining('skipped=2'));
+    info.mockRestore();
+  });
+
+  it('should log an eligibility reason for every excluded URL', () => {
+    const info = vi.spyOn(console, 'info').mockImplementation(() => undefined);
+
+    generateLocalizedSitemap(
+      {
+        category: 'platform-format',
+        entries: [
+          {
+            path: '/platform-format/dalle-upscaler-png',
+            lastModified: '2026-01-06',
+          },
+        ],
+      },
+      'ja'
+    );
+
+    expect(info).toHaveBeenCalledWith(expect.stringContaining('reasons={"untracked":1}'));
     info.mockRestore();
   });
 
   it('filters locale sitemap pages through the same policy', async () => {
+    const info = vi.spyOn(console, 'info').mockImplementation(() => undefined);
     const pages: ILocaleSitemapPage[] = [
       { slug: 'svg-to-jpg', lastUpdated: OLD_DATE },
       { slug: 'convert-jpeg-to-png', lastUpdated: OLD_DATE },
@@ -76,6 +97,10 @@ describe('sitemap eligibility', () => {
     const xml = await response.text();
 
     expect(xml).not.toContain('/fr/tools/convert/svg-to-jpg');
-    expect(xml).toContain('/fr/tools/convert-jpeg-to-png');
+    expect(xml).not.toContain('/fr/tools/convert-jpeg-to-png');
+    expect(info).toHaveBeenCalledWith(
+      expect.stringContaining('reasons={"pruned":1,"untracked":1}')
+    );
+    info.mockRestore();
   });
 });

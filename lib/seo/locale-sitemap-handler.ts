@@ -17,6 +17,7 @@ import { filterEligiblePages, logSitemapEligibility } from './page-eligibility';
 import { getSitemapResponseHeaders } from './sitemap-generator';
 import { isClusterMember, isClusterOwner } from './intent-ownership';
 import { INTERACTIVE_TOOL_PATHS, isLocalizedInteractiveSlug } from './interactive-tool-routes';
+import { isTranslatedPair } from './localization-config';
 
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
 
@@ -91,21 +92,27 @@ export function generateLocaleCategorySitemapResponse(
   pages: ILocaleSitemapPage[],
   priority: number = 0.8
 ): NextResponse {
-  const routedPages = pages.filter(page => {
+  const routedPages = (isTranslatedPair(category, locale) ? pages : []).filter(page => {
     const pagePath = `/${categoryPath}/${page.slug}`;
     return !isClusterOwner(pagePath) && !isClusterMember(pagePath);
   });
-  const { pages: eligiblePages, skipped } = filterEligiblePages(routedPages, category, locale);
-  logSitemapEligibility(category, locale, routedPages.length, skipped);
+  const {
+    pages: eligiblePages,
+    skipped,
+    reasons,
+  } = filterEligiblePages(routedPages, category, locale);
+  logSitemapEligibility(category, locale, routedPages.length, skipped, reasons);
   const localeCategoryPath = getLocalizedPath(`/${categoryPath}`, locale);
 
-  const categoryEntry = buildUrlEntry(
-    `/${categoryPath}`,
-    localeCategoryPath,
-    new Date().toISOString(),
-    priority,
-    category
-  );
+  const categoryEntry = isTranslatedPair(category, locale)
+    ? buildUrlEntry(
+        `/${categoryPath}`,
+        localeCategoryPath,
+        new Date().toISOString(),
+        priority,
+        category
+      )
+    : '';
 
   const pageEntries = eligiblePages.map(page => {
     const englishPath = page.customPath || `/${categoryPath}/${page.slug}`;

@@ -7,19 +7,8 @@ import { parseGscCsv } from '@/lib/seo/gsc-verification';
 
 const ROOT = path.resolve(__dirname, '../../..');
 const DATA_PATH = path.join(ROOT, 'docs/PRDs/gsc-recovery-2026-08/data/gsc-404.csv');
+const RESOLUTION_PATH = path.join(ROOT, 'seo-reports/404-resolution-2026-08-25.json');
 const LOCALE_PATTERN = ':locale(en|fr|de|es|it|ja|pt)';
-const ROUTED_TOOL_SLUGS = new Set(
-  fs
-    .readdirSync(path.join(ROOT, 'app/seo/data'))
-    .filter(file => file.endsWith('.json'))
-    .flatMap(file => {
-      const data = JSON.parse(fs.readFileSync(path.join(ROOT, 'app/seo/data', file), 'utf8')) as {
-        category?: string;
-        pages?: Array<{ slug: string }>;
-      };
-      return data.category === 'tools' ? (data.pages ?? []).map(page => page.slug) : [];
-    })
-);
 
 const FORMER_MIDDLEWARE_REDIRECTS: Array<[string, string]> = [
   ['/tools/bulk-image-resizer', '/tools/resize/bulk-image-resizer'],
@@ -81,14 +70,15 @@ function isMiddlewareCaseNormalized(source: string): boolean {
   return withoutLocale.startsWith('/tools/') && withoutLocale !== withoutLocale.toLowerCase();
 }
 
-function isRoutedPage(source: string): boolean {
-  if (/^\/(?:[a-z]{2}\/)?use-cases-expanded\//.test(source)) return true;
-  if (/^\/(?:[a-z]{2}\/)?tools\/(?:resize|convert|compress)\/[a-z0-9-]+$/.test(source)) {
-    return true;
-  }
-
-  const genericToolMatch = source.match(/^\/(?:[a-z]{2}\/)?tools\/([^/]+)$/);
-  return Boolean(genericToolMatch && ROUTED_TOOL_SLUGS.has(genericToolMatch[1]));
+function loadLivePaths(): Set<string> {
+  const artifact = JSON.parse(fs.readFileSync(RESOLUTION_PATH, 'utf8')) as {
+    resolutions: Array<{ url: string; finalStatus: number; hops: number }>;
+  };
+  return new Set(
+    artifact.resolutions
+      .filter(row => row.finalStatus === 200 && row.hops === 0)
+      .map(row => new URL(row.url).pathname)
+  );
 }
 
 describe('generated legacy redirects', () => {
@@ -96,11 +86,18 @@ describe('generated legacy redirects', () => {
     expect(UNMAPPED_LEGACY_PATHS).toEqual([]);
   });
 
-  it('should map every GSC 404 source to a redirect or an explicitly routed page', () => {
+  it('should map every GSC 404 path to a redirect, a live 200, or a documented exemption', () => {
     const urls = parseGscCsv(fs.readFileSync(DATA_PATH, 'utf8'));
+    const livePaths = loadLivePaths();
+    const documented = new Set<string>(UNMAPPED_LEGACY_PATHS);
     const missing = urls.filter(url => {
       const source = new URL(url).pathname;
-      return !findRedirect(source) && !isRoutedPage(source) && !isMiddlewareCaseNormalized(source);
+      return (
+        !findRedirect(source) &&
+        !livePaths.has(source) &&
+        !documented.has(source) &&
+        !isMiddlewareCaseNormalized(source)
+      );
     });
 
     expect(missing, `unmapped GSC sources: ${missing.join(', ')}`).toEqual([]);
@@ -164,6 +161,21 @@ describe('generated legacy redirects', () => {
       const entry = findRedirect(source);
       expect(entry, `${source} is missing`).toBeDefined();
       expect(entry?.destination, source).toBe(destination);
+    }
+  });
+
+  it('should redirect the live-verified August 25 legacy 404s to equivalent pages', () => {
+    const expected = new Map([
+      ['/tools/resize-image-for-discord', '/tools/resize/resize-image-for-discord'],
+      ['/tools/resize-image-for-telegram', '/tools/resize/resize-image-for-telegram'],
+      ['/tools/convert/png-in-jpg', '/tools/convert/png-to-jpg'],
+      ['/article/upscale-product-photos', '/content/upscale-product-photos'],
+      ['/article/vintage-photo-colorization', '/photo-restoration/vintage-photo-colorization'],
+      ['/tools/Imagem-cutout-tool', '/tools/image-cutout-tool'],
+    ]);
+
+    for (const [source, destination] of expected) {
+      expect(findRedirect(source)?.destination, source).toBe(destination);
     }
   });
 });

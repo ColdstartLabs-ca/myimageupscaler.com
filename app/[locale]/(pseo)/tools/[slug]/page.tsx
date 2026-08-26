@@ -1,10 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import {
-  getToolDataWithLocale,
-  getAllToolSlugs,
-  generateMetadata as generatePageMetadata,
-} from '@/lib/seo';
+import { getToolDataWithLocale, getAllToolSlugs } from '@/lib/seo';
+import { resolveLocalePageMetadata } from '@/lib/seo/locale-page-metadata';
 import { getAvailableLocalesForToolSlug } from '@/lib/seo/data-loader';
 import { getRelatedPages } from '@/lib/seo/related-pages';
 import { ToolPageTemplate } from '@/app/(pseo)/_components/pseo/templates/ToolPageTemplate';
@@ -29,34 +26,7 @@ export async function generateStaticParams() {
 // Generate metadata using factory
 export async function generateMetadata({ params }: IToolPageProps): Promise<Metadata> {
   const { slug, locale } = await params;
-  const result = await getToolDataWithLocale(slug, locale);
-
-  // Locale has no translation for this slug — use English data but noindex
-  if (!result.data && locale !== 'en') {
-    const enResult = await getToolDataWithLocale(slug, 'en');
-    if (!enResult.data) return {};
-    // Exclude alternates: SeoMetaTags handles canonical and HreflangLinks handles hreflang in JSX.
-    // Including alternates.canonical here would create a duplicate <link rel="canonical">.
-    const { alternates: _alternates, ...metaWithoutAlternates } = generatePageMetadata(
-      enResult.data,
-      'tools',
-      locale
-    );
-    return {
-      ...metaWithoutAlternates,
-      robots: { index: false, follow: false },
-    };
-  }
-
-  if (!result.data) return {};
-
-  // Strip alternates — SeoMetaTags handles canonical and HreflangLinks handles hreflang in JSX.
-  const { alternates: _alternates, ...metaWithoutAlternates } = generatePageMetadata(
-    result.data,
-    'tools',
-    locale
-  );
-  return metaWithoutAlternates;
+  return resolveLocalePageMetadata(getToolDataWithLocale, 'tools', slug, locale);
 }
 
 export default async function ToolPage({ params }: IToolPageProps) {

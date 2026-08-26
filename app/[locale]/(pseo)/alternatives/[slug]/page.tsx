@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getAlternativeDataWithLocale, getAllAlternativeSlugs } from '@/lib/seo/data-loader';
-import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
+import { resolveLocalePageMetadata } from '@/lib/seo/locale-page-metadata';
 import { generateAlternativeSchema } from '@/lib/seo/schema-generator';
 import { AlternativePageTemplate } from '@/app/(pseo)/_components/pseo/templates/AlternativePageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
@@ -21,16 +21,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: IAlternativePageProps): Promise<Metadata> {
   const { slug, locale } = await params;
-  const result = await getAlternativeDataWithLocale(slug, locale);
-
-  if (!result.data) return {};
-
-  const { alternates: _alternates, ...metaWithoutAlternates } = generatePageMetadata(
-    result.data,
-    'alternatives',
-    locale
-  );
-  return metaWithoutAlternates;
+  return resolveLocalePageMetadata(getAlternativeDataWithLocale, 'alternatives', slug, locale);
 }
 
 export default async function AlternativePage({ params }: IAlternativePageProps) {

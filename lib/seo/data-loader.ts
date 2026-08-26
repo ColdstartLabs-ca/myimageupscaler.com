@@ -21,7 +21,7 @@ import useCasesDataFile from '@/app/seo/data/use-cases.json';
 import alternativesDataFile from '@/app/seo/data/alternatives.json';
 import platformsDataFile from '@/app/seo/data/platforms.json';
 import formatScaleDataFile from '@/app/seo/data/format-scale.json';
-import { isClusterMember, isClusterOwner } from '@/lib/seo/intent-ownership';
+import { isClusterMember } from '@/lib/seo/intent-ownership';
 import platformFormatDataFile from '@/app/seo/data/platform-format.json';
 import deviceUseDataFile from '@/app/seo/data/device-use.json';
 import type {
@@ -766,14 +766,6 @@ export const getAvailableLocalesForToolSlug = cache(async (slug: string): Promis
 export const getFormatDataWithLocale = cache(
   async (slug: string, locale: Locale = 'en'): Promise<ILocalizedDataResult<IFormatPage>> => {
     const isLocalized = isCategoryLocalized('formats', locale);
-
-    if (isClusterOwner(`/formats/${slug}`) && locale !== 'en') {
-      return {
-        data: null,
-        hasTranslation: false,
-        isLocalizedCategory: isLocalized,
-      };
-    }
 
     if (locale !== 'en' && !isLocalized) {
       return {

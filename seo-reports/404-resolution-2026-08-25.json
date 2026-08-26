@@ -1,0 +1,4096 @@
+{
+  "generatedAt": "2026-08-26T02:00:24.844Z",
+  "source": "gsc-404.csv",
+  "resolutions": [
+    {
+      "url": "https://myimageupscaler.com/tools/convert/webp-in-png",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/webp-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/bulk-image-resizer",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/bulk-tools/bulk-image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/image-formats-comparison",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/technical-guides/image-formats-comparison"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/Converter/jpg-to-webp",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/jpg-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/blog/how-to-batch-edit-photos",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/damaged-photo-repair",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/photo-restoration/damaged-photo-repair"
+    },
+    {
+      "url": "https://myimageupscaler.com/blog/how-to-change-frame-rate-video",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared"
+    },
+    {
+      "url": "https://myimageupscaler.com/&",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/"
+    },
+    {
+      "url": "https://myimageupscaler.com/blog/10-best-ai-tools-for-photo-editing",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared"
+    },
+    {
+      "url": "https://myimageupscaler.com/use-cases-expanded/social-media-content-creation?ref=narrareach-blog.ghost.io",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/use-cases-expanded/social-media-content-creation"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/resize/resize-image-for-telegram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/resize/resize-image-for-telegram"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize-image-for-linkedin",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-linkedin"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/compress/compresseur-image",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/compress/image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/upscale-olympus-orf-images",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/camera-raw/upscale-olympus-orf-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/ecommerce-product-photo-enhancement",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/ecommerce-product-photo-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/photographers",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/photographers"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-telegram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/resize/resize-image-for-telegram"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-telegram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-telegram"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/redimensionneur-image",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/old-photo-restoration-guide",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/photo-restoration/old-photo-restoration-guide"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/upscale-panasonic-rw2-images",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/camera-raw/upscale-panasonic-rw2-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/travel-tourism-enhancement",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/travel-tourism-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/Imagem-resizer",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/blog/how-to-remove-background-from-logo",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize-image-for-instagram",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-instagram"
+    },
+    {
+      "url": "https://myimageupscaler.com/search?q=%7Bsearch_term_string%7D",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/?q=%7Bsearch_term_string%7D"
+    },
+    {
+      "url": "https://myimageupscaler.com/comparison/midjourney-vs-stable-diffusion-upscaler",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/compare/midjourney-vs-stable-diffusion-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/convert/png-in-webp",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/png-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize-image-for-facebook",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-facebook"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/ai-upscaling-technical-guide",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/technical-guides/ai-upscaling-technical-guide"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/convert/png-en-jpg",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/png-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/comparisons/online-vs-desktop-upscalers",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/comparisons-expanded/online-vs-desktop-upscalers"
+    },
+    {
+      "url": "https://myimageupscaler.com/personas",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/use-cases"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/upscale-fuji-raf-images",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/camera-raw/upscale-fuji-raf-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/blog/sample-article-title-for-testing",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/upscale-old-family-photos",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/content/upscale-old-family-photos"
+    },
+    {
+      "url": "https://myimageupscaler.com/comparisons/privacy-security-upscaling",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/comparisons-expanded/privacy-security-upscaling"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/convert/jpg-en-webp",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/jpg-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/convert/gif-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/convert/gif-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/redimensionner-image-pour-youtube",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-youtube"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/wearable-device-image-optimization",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/device-optimization/wearable-device-image-optimization"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/convert/gif-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/convert/gif-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/convert/bmp-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/convert/bmp-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/convert/gif-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/convert/gif-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-reddit",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-reddit"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/resize/resize-image-for-discord",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/resize/resize-image-for-discord"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-reddit",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-reddit"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/convert/bmp-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/convert/bmp-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-pinterest",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-pinterest"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/convert/gif-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/convert/gif-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/use-cases-expanded/medical-scientific-imaging",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/use-cases-expanded/medical-scientific-imaging"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/convert/gif-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/convert/gif-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/convert/bmp-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/convert/bmp-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/convert/gif-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/convert/gif-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-tiktok",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-tiktok"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-telegram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-telegram"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/resize/resize-image-for-reddit",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/resize/resize-image-for-reddit"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/resize/resize-image-for-reddit",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/resize/resize-image-for-reddit"
+    },
+    {
+      "url": "https://myimageupscaler.com/use-cases-expanded/real-estate-photography",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/use-cases-expanded/real-estate-photography"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/convert/gif-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/convert/gif-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/convert/gif-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/convert/gif-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-discord",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-discord"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-pinterest",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-pinterest"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/convert/bmp-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/convert/bmp-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/convert/gif-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/convert/gif-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/use-cases-expanded/ai-generated-optimization",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/use-cases-expanded/ai-generated-optimization"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/resize/resize-image-for-pinterest",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/resize/resize-image-for-pinterest"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/convert/bmp-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/convert/bmp-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-pinterest",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/resize/resize-image-for-pinterest"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/convert/gif-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/convert/gif-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-pinterest",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-pinterest"
+    },
+    {
+      "url": "https://myimageupscaler.com/personas/web-developers",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/web-developers"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/graphic-design-workflow-enhancement",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/graphic-design-workflow-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/upscale-leica-dng-images",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/camera-raw/upscale-leica-dng-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/color-theory-for-image-enhancement",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/technical-guides/color-theory-for-image-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-tiktok",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/resize/resize-image-for-tiktok"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/batch-image-processing-guide",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/technical-guides/batch-image-processing-guide"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/speed-vs-quality-tradeoffs",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/comparisons-expanded/speed-vs-quality-tradeoffs"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/convert/jpg-in-png",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/jpg-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/bulk-image-compressor",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/bulk-tools/bulk-image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/redimensionner-image-pour-instagram",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-instagram"
+    },
+    {
+      "url": "https://myimageupscaler.com/personas/graphic-designers",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/graphic-designers"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/convert/webp-in-jpg",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/webp-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/comparisons/ai-models-comparison",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/comparisons-expanded/ai-models-comparison"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/neural-networks-image-processing",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/technical-guides/neural-networks-image-processing"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize-image-for-tiktok",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-tiktok"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/marketing-teams",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/marketing-teams"
+    },
+    {
+      "url": "https://myimageupscaler.com/comparisons/free-vs-paid-upscaling-solutions",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/comparisons-expanded/free-vs-paid-upscaling-solutions"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/free-vs-paid-upscaling-solutions",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/comparisons-expanded/free-vs-paid-upscaling-solutions"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/upscale-logos",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/content/upscale-logos"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/colorize-photo",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/ai-photo-enhancer"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/background-remover",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/ai-background-remover"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/print-shops",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/print-shops"
+    },
+    {
+      "url": "https://myimageupscaler.com/$",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/convert/bmp-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/convert/bmp-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/use-cases-expanded/social-media-content-creation",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/use-cases-expanded/social-media-content-creation"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/ridimensionare-immagine-per-instagram",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-instagram"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/compress/compressore-immagini-in-blocco",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/compress/bulk-image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/5",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/"
+    },
+    {
+      "url": "https://myimageupscaler.com/personas/content-creators",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/content-creators"
+    },
+    {
+      "url": "https://myimageupscaler.com/personas/small-business",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/small-business"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/upscale-digital-art",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/content/upscale-digital-art"
+    },
+    {
+      "url": "https://myimageupscaler.com/personas/marketing-teams",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/marketing-teams"
+    },
+    {
+      "url": "https://myimageupscaler.com/technical-guides",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/guides"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/ai-models-comparison",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/comparisons-expanded/ai-models-comparison"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize-image-for-youtube",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-youtube"
+    },
+    {
+      "url": "https://myimageupscaler.com/blog/10-best-ai-tools-for-photo-editing-in-2026",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared"
+    },
+    {
+      "url": "https://myimageupscaler.com/use-cases-expanded/digital-marketing-materials",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/use-cases-expanded/digital-marketing-materials"
+    },
+    {
+      "url": "https://myimageupscaler.com/comparisons",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/compare"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/web-developers",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/web-developers"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/image-scaling-algorithms",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/technical-guides/image-scaling-algorithms"
+    },
+    {
+      "url": "https://myimageupscaler.com/personas/print-shops",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/print-shops"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/convert/webp-en-jpg",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/webp-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/content-creators",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/content-creators"
+    },
+    {
+      "url": "https://myimageupscaler.com/comparisons/batch-processing-workflows",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/comparisons-expanded/batch-processing-workflows"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/ai-vs-traditional-upscaling",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/comparisons-expanded/ai-vs-traditional-upscaling"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/small-business",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/small-business"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/game-developers",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/game-developers"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/legal-documentation-enhancement",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/legal-documentation-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/image-compression-techniques",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/technical-guides/image-compression-techniques"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/convert/bmp-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/convert/bmp-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/resize/resize-image-for-pinterest",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/resize/resize-image-for-pinterest"
+    },
+    {
+      "url": "https://myimageupscaler.com/use-cases-expanded/print-publishing-workflows",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/use-cases-expanded/print-publishing-workflows"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/manufacturing-industrial-enhancement",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/manufacturing-industrial-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/comparisons/ai-vs-traditional-upscaling",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/comparisons-expanded/ai-vs-traditional-upscaling"
+    },
+    {
+      "url": "https://myimageupscaler.com/personas/real-estate-agents",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/real-estate-agents"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/graphic-designers",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/graphic-designers"
+    },
+    {
+      "url": "https://myimageupscaler.com/auth/signup",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/ecommerce-sellers",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/ecommerce-sellers"
+    },
+    {
+      "url": "https://myimageupscaler.com/comparisons/speed-vs-quality-tradeoffs",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/comparisons-expanded/speed-vs-quality-tradeoffs"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/online-vs-desktop-upscalers",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/comparisons-expanded/online-vs-desktop-upscalers"
+    },
+    {
+      "url": "https://myimageupscaler.com/personas/photographers",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/photographers"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/image-resolution-explained",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/technical-guides/image-resolution-explained"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/resize/redimensionar-imagem-para-instagram",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-instagram"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/Converter/png-to-webp",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/png-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/upscale-hasselblad-3fr-images",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/camera-raw/upscale-hasselblad-3fr-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/personas/game-developers",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/game-developers"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize-image-for-reddit",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-reddit"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/print-media-enhancement",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/print-media-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/compress/compressor-de-imagem",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/compress/image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/web-optimization-images",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/technical-guides/web-optimization-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/real-estate-agents",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/real-estate-agents"
+    },
+    {
+      "url": "https://myimageupscaler.com/personas/ecommerce-sellers",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/ecommerce-sellers"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/convert/gif-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/convert/gif-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/signup",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/"
+    },
+    {
+      "url": "https://myimageupscaler.com/use-cases/anime-illustration-upscaling",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/use-cases/anime-image-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize-image-for-twitter",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-twitter"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/batch-processing-workflows",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/comparisons-expanded/batch-processing-workflows"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/Converter/webp-to-jpg",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/webp-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-discord",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-discord"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/sports-fitness-enhancement",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/sports-fitness-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/convert/bmp-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/convert/bmp-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/convert/bmp-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/convert/bmp-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-reddit",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-reddit"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/resize/resize-image-for-tiktok",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/resize/resize-image-for-tiktok"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-tiktok",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-tiktok"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-tiktok",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-tiktok"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/resize/resize-image-for-tiktok",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/resize/resize-image-for-tiktok"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-reddit",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/resize/resize-image-for-reddit"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/resize/resize-image-for-telegram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/resize/resize-image-for-telegram"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-discord",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-discord"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/resize/resize-image-for-discord",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/resize/resize-image-for-discord"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-telegram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-telegram"
+    },
+    {
+      "url": "https://myimageupscaler.com/use-cases-expanded/restoration-preservation",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/use-cases-expanded/restoration-preservation"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/convert/gif-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/convert/gif-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/convert/bmp-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/convert/bmp-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/use-cases-expanded/product-photography-enhancement",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/use-cases-expanded/product-photography-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/use-cases-expanded/architecture-construction",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/use-cases-expanded/architecture-construction"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/upscale-nef-images",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/camera-raw/upscale-nef-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/convert/convert-to-webp",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/png-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/resize-image-for-pinterest",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-pinterest"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/resize/redimensionar-imagem-para-facebook",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-facebook"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/redimensionner-image-pour-facebook",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-facebook"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/smart-tv-image-optimization",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/device-optimization/smart-tv-image-optimization"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/social-media-marketing-enhancement",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/social-media-marketing-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/upscale-vintage-photos",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/content/upscale-vintage-photos"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/upscale-cr2-images",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/camera-raw/upscale-cr2-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/resize-image-for-YouTube",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-youtube"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/education-content-enhancement",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/education-content-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/convert/png-para-jpg",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/convert/png-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/redimensionner-image-pour-twitter",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-twitter"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/upscale-portraits",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/content/upscale-portraits"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/Converter/jpg-to-png",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/jpg-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/upscale-screenshots",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/content/upscale-screenshots"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/upscale-anime",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/content/upscale-anime"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/compress/compressore-immagini",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/compress/image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/photo-conservation-methods",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/photo-restoration/photo-conservation-methods"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/convert/png-en-webp",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/png-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/bulk-Imagem-resizer",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/bulk-image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/redimensionneur-image-lot",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/bulk-image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/compress/compresseur-image-lot",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/compress/bulk-image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/IA-background-remover",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/ai-background-remover"
+    },
+    {
+      "url": "https://myimageupscaler.com/upscaler",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/ai-image-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/convert/webp-en-png",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/webp-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/auth/register",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/ridimensiona-immagine-in-blocco",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/bulk-image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/redimensionner-image-pour-linkedin",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-linkedin"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/resize-image-for-Twitter",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-twitter"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/compress/bulk-Imagem-compressor",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/compress/bulk-image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/article",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/blog"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/ridimensionare-immagine-per-youtube",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-youtube"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/ridimensiona-immagine-per-linkedin",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-linkedin"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/background-changer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/background-changer"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/jpg-to-pdf",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/jpg-to-pdf"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/photo-quality-enhancer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/photo-quality-enhancer"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/pdf-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/pdf-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/background-changer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/background-changer"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/ocr-online",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/ocr-online"
+    },
+    {
+      "url": "https://myimageupscaler.com/undefined/midjourney-upscaler",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/platforms/midjourney-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/ocr-online",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/ocr-online"
+    },
+    {
+      "url": "https://myimageupscaler.com/undefined/canva-upscaler",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/platforms/canva-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/png-to-jpg",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/es/tools/convert/png-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/bmp-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/bmp-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/heic-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/heic-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/bmp-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/bmp-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/image-to-text",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/image-to-text"
+    },
+    {
+      "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-clipdrop",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/compare/best-ai-upscalers"
+    },
+    {
+      "url": "https://myimageupscaler.com/undefined/dalle-upscaler",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/platforms/dalle-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/undefined/stable-diffusion-upscaler",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/platforms/stable-diffusion-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/nonprofit-visual-enhancement",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/nonprofit-visual-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/tablet-image-optimization",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/device-optimization/tablet-image-optimization"
+    },
+    {
+      "url": "https://myimageupscaler.com/undefined/photoshop-upscaler",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/platforms/photoshop-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/image-to-text",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/image-to-text"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/image-to-text",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/image-to-text"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/heic-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/heic-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/heic-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/heic-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/jpg-to-pdf",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/jpg-to-pdf"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/pdf-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/pdf-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/image-to-pdf",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/image-to-pdf"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/gif-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/gif-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/heic-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/heic-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/gif-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/gif-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/pdf-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/pdf-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/background-changer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/background-changer"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/jpg-to-pdf",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/jpg-to-pdf"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/image-to-pdf",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/image-to-pdf"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/heic-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/heic-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/gif-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/gif-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/image-to-text",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/image-to-text"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/ocr-online",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/ocr-online"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/gif-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/gif-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/ocr-online",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/ocr-online"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/background-changer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/background-changer"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/heic-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/heic-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/image-to-pdf",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/image-to-pdf"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/bmp-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/bmp-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/gif-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/gif-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/jpg-to-pdf",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/jpg-to-pdf"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/image-to-pdf",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/image-to-pdf"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/ocr-online",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/ocr-online"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/pdf-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/pdf-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/image-to-pdf",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/image-to-pdf"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/svg-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/svg-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/ocr-online",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/ocr-online"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/pdf-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/pdf-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/gif-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/gif-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/heic-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/heic-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/svg-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/svg-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/make-image-transparent",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/make-image-transparent"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/pdf-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/pdf-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/heic-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/heic-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/make-image-transparent",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/make-image-transparent"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/photo-quality-enhancer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/photo-quality-enhancer"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/heic-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/heic-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/image-to-pdf",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/image-to-pdf"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/jpg-to-pdf",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/jpg-to-pdf"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/heic-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/heic-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/pdf-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/pdf-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/make-image-transparent",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/make-image-transparent"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/photo-quality-enhancer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/photo-quality-enhancer"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/bmp-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/bmp-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/pdf-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/pdf-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/pdf-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/pdf-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/make-image-transparent",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/make-image-transparent"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/make-image-transparent",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/make-image-transparent"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/pdf-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/pdf-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/image-to-text",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/image-to-text"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/heic-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/heic-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/bmp-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/bmp-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/jpg-to-pdf",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/jpg-to-pdf"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/background-changer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/background-changer"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/bmp-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/bmp-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/pdf-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/pdf-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/heic-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/heic-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/guides/how-to-upsize-images",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/de/guides/how-to-upscale-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/guides/how-to-upsize-images",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/pt/guides/how-to-upscale-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-imgupscaler",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/compare/best-ai-upscalers"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/guides/how-to-upsize-images",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/es/guides/how-to-upscale-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/guides/how-to-upsize-images",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/it/guides/how-to-upscale-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/industry-insights/real-estate-photo-enhancement",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/use-cases/real-estate-photo-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/guides/how-to-upsize-images",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/fr/guides/how-to-upscale-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/free-ai-upscaler",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/fr/free/free-ai-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/ridimensionare-immagine-per-facebook",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-facebook"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/webp-to-png",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/webp-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/blog/best-free-image-upscalers-comparison",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/upscale-arw-images",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/camera-raw/upscale-arw-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/photography-business-enhancement",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/photography-business-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/free-ai-upscaler",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/pt/free/free-ai-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/free-ai-upscaler",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/free/free-ai-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/article/family-photo-preservation",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/photo-restoration/family-photo-preservation"
+    },
+    {
+      "url": "https://myimageupscaler.com/guides/how-to-upsize-images",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/guides/how-to-upscale-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/content/upscale-digital-art",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/content/upscale-digital-art"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/photo-restoration",
+      "status": 301,
+      "finalStatus": 200,
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/photo-restoration"
+    }
+  ],
+  "destinationResolutions": [
+    {
+      "url": "https://myimageupscaler.com/comparisons-expanded/ai-models-comparison",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/comparisons-expanded/ai-models-comparison"
+    },
+    {
+      "url": "https://myimageupscaler.com/technical-guides/ai-upscaling-technical-guide",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/technical-guides/ai-upscaling-technical-guide"
+    },
+    {
+      "url": "https://myimageupscaler.com/comparisons-expanded/ai-vs-traditional-upscaling",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/comparisons-expanded/ai-vs-traditional-upscaling"
+    },
+    {
+      "url": "https://myimageupscaler.com/technical-guides/batch-image-processing-guide",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/technical-guides/batch-image-processing-guide"
+    },
+    {
+      "url": "https://myimageupscaler.com/comparisons-expanded/batch-processing-workflows",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/comparisons-expanded/batch-processing-workflows"
+    },
+    {
+      "url": "https://myimageupscaler.com/bulk-tools/bulk-image-compressor",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/bulk-tools/bulk-image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/bulk-tools/bulk-image-resizer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/bulk-tools/bulk-image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/technical-guides/color-theory-for-image-enhancement",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/technical-guides/color-theory-for-image-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/personas-expanded/content-creators",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/content-creators"
+    },
+    {
+      "url": "https://myimageupscaler.com/photo-restoration/damaged-photo-repair",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/photo-restoration/damaged-photo-repair"
+    },
+    {
+      "url": "https://myimageupscaler.com/industry-insights/ecommerce-product-photo-enhancement",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/ecommerce-product-photo-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/personas-expanded/ecommerce-sellers",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/ecommerce-sellers"
+    },
+    {
+      "url": "https://myimageupscaler.com/industry-insights/education-content-enhancement",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/education-content-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/photo-restoration/family-photo-preservation",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/photo-restoration/family-photo-preservation"
+    },
+    {
+      "url": "https://myimageupscaler.com/comparisons-expanded/free-vs-paid-upscaling-solutions",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/comparisons-expanded/free-vs-paid-upscaling-solutions"
+    },
+    {
+      "url": "https://myimageupscaler.com/personas-expanded/game-developers",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/game-developers"
+    },
+    {
+      "url": "https://myimageupscaler.com/industry-insights/graphic-design-workflow-enhancement",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/graphic-design-workflow-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/personas-expanded/graphic-designers",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/graphic-designers"
+    },
+    {
+      "url": "https://myimageupscaler.com/technical-guides/image-compression-techniques",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/technical-guides/image-compression-techniques"
+    },
+    {
+      "url": "https://myimageupscaler.com/technical-guides/image-formats-comparison",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/technical-guides/image-formats-comparison"
+    },
+    {
+      "url": "https://myimageupscaler.com/technical-guides/image-resolution-explained",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/technical-guides/image-resolution-explained"
+    },
+    {
+      "url": "https://myimageupscaler.com/technical-guides/image-scaling-algorithms",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/technical-guides/image-scaling-algorithms"
+    },
+    {
+      "url": "https://myimageupscaler.com/industry-insights/legal-documentation-enhancement",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/legal-documentation-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/industry-insights/manufacturing-industrial-enhancement",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/manufacturing-industrial-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/personas-expanded/marketing-teams",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/marketing-teams"
+    },
+    {
+      "url": "https://myimageupscaler.com/technical-guides/neural-networks-image-processing",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/technical-guides/neural-networks-image-processing"
+    },
+    {
+      "url": "https://myimageupscaler.com/industry-insights/nonprofit-visual-enhancement",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/nonprofit-visual-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/photo-restoration/old-photo-restoration-guide",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/photo-restoration/old-photo-restoration-guide"
+    },
+    {
+      "url": "https://myimageupscaler.com/comparisons-expanded/online-vs-desktop-upscalers",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/comparisons-expanded/online-vs-desktop-upscalers"
+    },
+    {
+      "url": "https://myimageupscaler.com/photo-restoration/photo-conservation-methods",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/photo-restoration/photo-conservation-methods"
+    },
+    {
+      "url": "https://myimageupscaler.com/personas-expanded/photographers",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/photographers"
+    },
+    {
+      "url": "https://myimageupscaler.com/industry-insights/photography-business-enhancement",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/photography-business-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/industry-insights/print-media-enhancement",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/print-media-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/personas-expanded/print-shops",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/print-shops"
+    },
+    {
+      "url": "https://myimageupscaler.com/personas-expanded/real-estate-agents",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/real-estate-agents"
+    },
+    {
+      "url": "https://myimageupscaler.com/personas-expanded/small-business",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/small-business"
+    },
+    {
+      "url": "https://myimageupscaler.com/device-optimization/smart-tv-image-optimization",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/device-optimization/smart-tv-image-optimization"
+    },
+    {
+      "url": "https://myimageupscaler.com/industry-insights/social-media-marketing-enhancement",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/social-media-marketing-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/comparisons-expanded/speed-vs-quality-tradeoffs",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/comparisons-expanded/speed-vs-quality-tradeoffs"
+    },
+    {
+      "url": "https://myimageupscaler.com/industry-insights/sports-fitness-enhancement",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/sports-fitness-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/device-optimization/tablet-image-optimization",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/device-optimization/tablet-image-optimization"
+    },
+    {
+      "url": "https://myimageupscaler.com/industry-insights/travel-tourism-enhancement",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/industry-insights/travel-tourism-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/content/upscale-anime",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/content/upscale-anime"
+    },
+    {
+      "url": "https://myimageupscaler.com/camera-raw/upscale-arw-images",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/camera-raw/upscale-arw-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/camera-raw/upscale-cr2-images",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/camera-raw/upscale-cr2-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/content/upscale-digital-art",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/content/upscale-digital-art"
+    },
+    {
+      "url": "https://myimageupscaler.com/camera-raw/upscale-fuji-raf-images",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/camera-raw/upscale-fuji-raf-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/camera-raw/upscale-hasselblad-3fr-images",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/camera-raw/upscale-hasselblad-3fr-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/camera-raw/upscale-leica-dng-images",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/camera-raw/upscale-leica-dng-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/content/upscale-logos",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/content/upscale-logos"
+    },
+    {
+      "url": "https://myimageupscaler.com/camera-raw/upscale-nef-images",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/camera-raw/upscale-nef-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/content/upscale-old-family-photos",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/content/upscale-old-family-photos"
+    },
+    {
+      "url": "https://myimageupscaler.com/camera-raw/upscale-olympus-orf-images",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/camera-raw/upscale-olympus-orf-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/camera-raw/upscale-panasonic-rw2-images",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/camera-raw/upscale-panasonic-rw2-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/content/upscale-portraits",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/content/upscale-portraits"
+    },
+    {
+      "url": "https://myimageupscaler.com/content/upscale-product-photos",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/content/upscale-product-photos"
+    },
+    {
+      "url": "https://myimageupscaler.com/content/upscale-screenshots",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/content/upscale-screenshots"
+    },
+    {
+      "url": "https://myimageupscaler.com/content/upscale-vintage-photos",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/content/upscale-vintage-photos"
+    },
+    {
+      "url": "https://myimageupscaler.com/photo-restoration/vintage-photo-colorization",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/photo-restoration/vintage-photo-colorization"
+    },
+    {
+      "url": "https://myimageupscaler.com/device-optimization/wearable-device-image-optimization",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/device-optimization/wearable-device-image-optimization"
+    },
+    {
+      "url": "https://myimageupscaler.com/personas-expanded/web-developers",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/personas-expanded/web-developers"
+    },
+    {
+      "url": "https://myimageupscaler.com/technical-guides/web-optimization-images",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/technical-guides/web-optimization-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared"
+    },
+    {
+      "url": "https://myimageupscaler.com/blog/ai-image-upscaling-vs-sharpening-explained",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/blog/ai-image-upscaling-vs-sharpening-explained"
+    },
+    {
+      "url": "https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark"
+    },
+    {
+      "url": "https://myimageupscaler.com/blog/how-ai-image-upscaling-works-guide",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/blog/how-ai-image-upscaling-works-guide"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/use-cases/old-photo-restoration",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/use-cases/old-photo-restoration"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/use-cases/old-photo-restoration",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/use-cases/old-photo-restoration"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/use-cases/old-photo-restoration",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/use-cases/old-photo-restoration"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/use-cases/old-photo-restoration",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/use-cases/old-photo-restoration"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/use-cases/old-photo-restoration",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/use-cases/old-photo-restoration"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/use-cases/old-photo-restoration",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/use-cases/old-photo-restoration"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/use-cases/old-photo-restoration",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/use-cases/old-photo-restoration"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/ai-background-remover",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/ai-background-remover"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/ai-background-remover",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/ai-background-remover"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/ai-background-remover",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/ai-background-remover"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/ai-background-remover",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/ai-background-remover"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/ai-background-remover",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/ai-background-remover"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/ai-background-remover",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/ai-background-remover"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/ai-background-remover",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/ai-background-remover"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/compress/bulk-image-compressor",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/compress/bulk-image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/compress/bulk-image-compressor",
+      "status": 503,
+      "finalStatus": 503,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/compress/bulk-image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/compress/bulk-image-compressor",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/compress/bulk-image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/compress/bulk-image-compressor",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/compress/bulk-image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/compress/bulk-image-compressor",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/compress/bulk-image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/compress/bulk-image-compressor",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/compress/bulk-image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/compress/bulk-image-compressor",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/compress/bulk-image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/resize/bulk-image-resizer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/resize/bulk-image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/resize/bulk-image-resizer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/resize/bulk-image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/resize/bulk-image-resizer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/resize/bulk-image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/resize/bulk-image-resizer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/resize/bulk-image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/resize/bulk-image-resizer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/resize/bulk-image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/resize/bulk-image-resizer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/resize/bulk-image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/resize/bulk-image-resizer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/resize/bulk-image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/ai-photo-enhancer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/ai-photo-enhancer"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/ai-photo-enhancer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/ai-photo-enhancer"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/ai-photo-enhancer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/ai-photo-enhancer"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/ai-photo-enhancer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/ai-photo-enhancer"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/ai-photo-enhancer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/ai-photo-enhancer"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/ai-photo-enhancer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/ai-photo-enhancer"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/ai-photo-enhancer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/ai-photo-enhancer"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/compress/image-compressor",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/compress/image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/compress/image-compressor",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/compress/image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/compress/image-compressor",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/compress/image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/compress/image-compressor",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/compress/image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/compress/image-compressor",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/compress/image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/compress/image-compressor",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/compress/image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/compress/image-compressor",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/compress/image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/convert/png-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/convert/png-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/convert/png-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/convert/png-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/convert/png-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/convert/png-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/convert/png-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/convert/png-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/convert/png-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/convert/png-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/convert/png-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/convert/png-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/convert/png-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/convert/png-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/convert/jpg-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/convert/jpg-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/convert/jpg-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/convert/jpg-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/convert/jpg-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/convert/jpg-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/convert/jpg-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/convert/jpg-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/convert/jpg-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/convert/jpg-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/convert/jpg-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/convert/jpg-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/convert/jpg-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/convert/jpg-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/convert/jpg-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/convert/jpg-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/convert/jpg-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/convert/jpg-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/convert/jpg-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/convert/jpg-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/convert/jpg-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/convert/jpg-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/convert/jpg-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/convert/jpg-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/convert/jpg-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/convert/jpg-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/convert/jpg-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/convert/jpg-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/convert/png-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/convert/png-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/convert/png-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/convert/png-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/convert/png-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/convert/png-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/convert/png-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/convert/png-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/convert/png-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/convert/png-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/convert/png-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/convert/png-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/convert/png-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/convert/png-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/convert/webp-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/convert/webp-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/convert/webp-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/convert/webp-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/convert/webp-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/convert/webp-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/convert/webp-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/convert/webp-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/convert/webp-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/convert/webp-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/convert/webp-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/convert/webp-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/convert/webp-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/convert/webp-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/convert/webp-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/convert/webp-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/convert/webp-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/convert/webp-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/convert/webp-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/convert/webp-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/convert/webp-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/convert/webp-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/convert/webp-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/convert/webp-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/convert/webp-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/convert/webp-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/convert/webp-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/convert/webp-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/free/free-ai-upscaler",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/free/free-ai-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/free/free-ai-upscaler",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/free/free-ai-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/free/free-ai-upscaler",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/free/free-ai-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/free/free-ai-upscaler",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/free/free-ai-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/free/free-ai-upscaler",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/free/free-ai-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/free/free-ai-upscaler",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/free/free-ai-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/free/free-ai-upscaler",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/free/free-ai-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/resize/image-resizer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/resize/image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/resize/image-resizer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/resize/image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/resize/image-resizer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/resize/image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/resize/image-resizer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/resize/image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/resize/image-resizer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/resize/image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/resize/image-resizer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/resize/image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/resize/image-resizer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/resize/image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/image-cutout-tool",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/image-cutout-tool"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/image-cutout-tool",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/image-cutout-tool"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/image-cutout-tool",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/image-cutout-tool"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/image-cutout-tool",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/image-cutout-tool"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/image-cutout-tool",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/image-cutout-tool"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/image-cutout-tool",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/image-cutout-tool"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/image-cutout-tool",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/image-cutout-tool"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/resize/resize-image-for-discord",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/resize/resize-image-for-discord"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-discord",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/resize/resize-image-for-discord"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-discord",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-discord"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/resize/resize-image-for-discord",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/resize/resize-image-for-discord"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-discord",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-discord"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/resize/resize-image-for-discord",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/resize/resize-image-for-discord"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-discord",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-discord"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/resize/resize-image-for-facebook",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/resize/resize-image-for-facebook"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-facebook",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/resize/resize-image-for-facebook"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-facebook",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-facebook"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/resize/resize-image-for-facebook",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/resize/resize-image-for-facebook"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-facebook",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-facebook"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/resize/resize-image-for-facebook",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/resize/resize-image-for-facebook"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-facebook",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-facebook"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/resize/resize-image-for-instagram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/resize/resize-image-for-instagram"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-instagram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/resize/resize-image-for-instagram"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-instagram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-instagram"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/resize/resize-image-for-instagram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/resize/resize-image-for-instagram"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-instagram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-instagram"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/resize/resize-image-for-instagram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/resize/resize-image-for-instagram"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-instagram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-instagram"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/resize/resize-image-for-linkedin",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/resize/resize-image-for-linkedin"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-linkedin",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/resize/resize-image-for-linkedin"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-linkedin",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-linkedin"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/resize/resize-image-for-linkedin",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/resize/resize-image-for-linkedin"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-linkedin",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-linkedin"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/resize/resize-image-for-linkedin",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/resize/resize-image-for-linkedin"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-linkedin",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-linkedin"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/resize/resize-image-for-reddit",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/resize/resize-image-for-reddit"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-reddit",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/resize/resize-image-for-reddit"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-reddit",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-reddit"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/resize/resize-image-for-reddit",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/resize/resize-image-for-reddit"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-reddit",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-reddit"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/resize/resize-image-for-reddit",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/resize/resize-image-for-reddit"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-reddit",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-reddit"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/resize/resize-image-for-telegram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/resize/resize-image-for-telegram"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-telegram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/resize/resize-image-for-telegram"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-telegram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-telegram"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/resize/resize-image-for-telegram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/resize/resize-image-for-telegram"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-telegram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-telegram"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/resize/resize-image-for-telegram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/resize/resize-image-for-telegram"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-telegram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-telegram"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/resize/resize-image-for-tiktok",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/resize/resize-image-for-tiktok"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-tiktok",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/resize/resize-image-for-tiktok"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-tiktok",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-tiktok"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/resize/resize-image-for-tiktok",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/resize/resize-image-for-tiktok"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-tiktok",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-tiktok"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/resize/resize-image-for-tiktok",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/resize/resize-image-for-tiktok"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-tiktok",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-tiktok"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/resize/resize-image-for-twitter",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/resize/resize-image-for-twitter"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-twitter",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/resize/resize-image-for-twitter"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-twitter",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-twitter"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/resize/resize-image-for-twitter",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/resize/resize-image-for-twitter"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-twitter",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-twitter"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/resize/resize-image-for-twitter",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/resize/resize-image-for-twitter"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-twitter",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-twitter"
+    },
+    {
+      "url": "https://myimageupscaler.com/en/tools/resize/resize-image-for-youtube",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/en/tools/resize/resize-image-for-youtube"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-youtube",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/tools/resize/resize-image-for-youtube"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-youtube",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/tools/resize/resize-image-for-youtube"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/tools/resize/resize-image-for-youtube",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/tools/resize/resize-image-for-youtube"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-youtube",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/tools/resize/resize-image-for-youtube"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/tools/resize/resize-image-for-youtube",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/tools/resize/resize-image-for-youtube"
+    },
+    {
+      "url": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-youtube",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/ja/tools/resize/resize-image-for-youtube"
+    },
+    {
+      "url": "https://myimageupscaler.com/",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/"
+    },
+    {
+      "url": "https://myimageupscaler.com/blog",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/blog"
+    },
+    {
+      "url": "https://myimageupscaler.com/use-cases/old-photo-restoration",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/use-cases/old-photo-restoration"
+    },
+    {
+      "url": "https://myimageupscaler.com/compare/best-ai-upscalers",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/compare/best-ai-upscalers"
+    },
+    {
+      "url": "https://myimageupscaler.com/compare/midjourney-vs-stable-diffusion-upscaler",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/compare/midjourney-vs-stable-diffusion-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/compare",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/compare"
+    },
+    {
+      "url": "https://myimageupscaler.com/comparisons-expanded/privacy-security-upscaling",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/comparisons-expanded/privacy-security-upscaling"
+    },
+    {
+      "url": "https://myimageupscaler.com/de/guides/how-to-upscale-images",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/de/guides/how-to-upscale-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/es/guides/how-to-upscale-images",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/es/guides/how-to-upscale-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/fr/guides/how-to-upscale-images",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/fr/guides/how-to-upscale-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/photo-restoration",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/photo-restoration"
+    },
+    {
+      "url": "https://myimageupscaler.com/guides/how-to-upscale-images",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/guides/how-to-upscale-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/use-cases/real-estate-photo-enhancement",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/use-cases/real-estate-photo-enhancement"
+    },
+    {
+      "url": "https://myimageupscaler.com/it/guides/how-to-upscale-images",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/it/guides/how-to-upscale-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/use-cases",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/use-cases"
+    },
+    {
+      "url": "https://myimageupscaler.com/pt/guides/how-to-upscale-images",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/pt/guides/how-to-upscale-images"
+    },
+    {
+      "url": "https://myimageupscaler.com/guides",
+      "status": 503,
+      "finalStatus": 503,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/guides"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/ai-background-remover",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/ai-background-remover"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/compress/bulk-image-compressor",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/compress/bulk-image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/bulk-image-resizer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/bulk-image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/ai-photo-enhancer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/ai-photo-enhancer"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/compress/image-compressor",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/compress/image-compressor"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/convert/png-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/png-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/convert/jpg-to-webp",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/jpg-to-webp"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/convert/jpg-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/jpg-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/convert/png-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/png-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/convert/webp-to-jpg",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/webp-to-jpg"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/convert/webp-to-png",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/webp-to-png"
+    },
+    {
+      "url": "https://myimageupscaler.com/free/free-ai-upscaler",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/free/free-ai-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/image-resizer",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/image-resizer"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/image-cutout-tool",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/image-cutout-tool"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/resize-image-for-discord",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-discord"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/resize-image-for-facebook",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-facebook"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/resize-image-for-instagram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-instagram"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/resize-image-for-linkedin",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-linkedin"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/resize-image-for-reddit",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-reddit"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/resize-image-for-telegram",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-telegram"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/resize-image-for-tiktok",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-tiktok"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/resize-image-for-twitter",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-twitter"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/resize/resize-image-for-youtube",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-youtube"
+    },
+    {
+      "url": "https://myimageupscaler.com/platforms/canva-upscaler",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/platforms/canva-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/platforms/dalle-upscaler",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/platforms/dalle-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/platforms/midjourney-upscaler",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/platforms/midjourney-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/platforms/photoshop-upscaler",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/platforms/photoshop-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/platforms/stable-diffusion-upscaler",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/platforms/stable-diffusion-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/tools/ai-image-upscaler",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/tools/ai-image-upscaler"
+    },
+    {
+      "url": "https://myimageupscaler.com/use-cases/anime-image-upscaler",
+      "status": 200,
+      "finalStatus": 200,
+      "hops": 0,
+      "finalUrl": "https://myimageupscaler.com/use-cases/anime-image-upscaler"
+    }
+  ]
+}

@@ -9,8 +9,13 @@
 import { clientEnv } from '@shared/config/env';
 import { SUPPORTED_LOCALES, DEFAULT_LOCALE, type Locale } from '@/i18n/config';
 import { generateSitemapHreflangLinks } from './hreflang-generator';
-import { isCategoryLocalized as checkCategoryLocalized } from './localization-config';
-import { logSitemapEligibility, shouldSubmitPath } from './page-eligibility';
+import { isTranslatedPair } from './localization-config';
+import {
+  getEligibilityReason,
+  getPathIdentity,
+  logSitemapEligibility,
+  shouldSubmitPath,
+} from './page-eligibility';
 import type { PSEOCategory } from './url-utils';
 
 // Re-export for convenience
@@ -178,10 +183,30 @@ export function generateLocalizedSitemap(
     includeHreflang: false, // No hreflang for category index
   });
 
-  const eligibleEntries = entries.filter(entry =>
-    shouldSubmitPath(entry.path, entry.lastModified, entry.locale || locale)
+  const reasons: Record<string, number> = {};
+  const eligibleEntries = entries.filter(entry => {
+    const entryLocale = entry.locale || locale;
+    if (shouldSubmitPath(entry.path, entry.lastModified, entryLocale)) return true;
+
+    const identity = getPathIdentity(entry.path);
+    if (identity) {
+      const reason = getEligibilityReason(
+        identity.category,
+        identity.slug,
+        entryLocale,
+        entry.lastModified
+      );
+      reasons[reason] = (reasons[reason] ?? 0) + 1;
+    }
+    return false;
+  });
+  logSitemapEligibility(
+    category,
+    locale,
+    entries.length,
+    entries.length - eligibleEntries.length,
+    reasons
   );
-  logSitemapEligibility(category, locale, entries.length, entries.length - eligibleEntries.length);
 
   // Generate eligible page entries
   const pageEntries = eligibleEntries.map(entry =>
@@ -252,9 +277,7 @@ export function generateSitemapIndexEntries(
  * @returns True if category is localized for this locale
  */
 export function isCategoryLocalized(category: string, locale: Locale): boolean {
-  // Use localization config for single source of truth
-  // Cast to PSEOCategory as sitemaps may use string category names
-  return checkCategoryLocalized(category as PSEOCategory, locale);
+  return isTranslatedPair(category as PSEOCategory, locale);
 }
 
 /**

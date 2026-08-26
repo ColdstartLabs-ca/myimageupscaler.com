@@ -29,24 +29,29 @@ Logs go to stderr. JSON goes to stdout unless `--output` is passed.
 
 Read `/tmp/gsc-DOMAIN.json` and prioritize:
 
-1. `summary` and `comparison`
-   - clicks, impressions, CTR, and position versus the previous period
-2. `searchTypeSummary`
+1. `comparison.brandSplit`, its `unclassified` privacy-suppressed segment,
+   `quarantinedQueries`, and `comparison.stableCohortPosition`
+   - open with classified non-brand clicks; state branded, unclassified, and quarantined movement separately
+   - use stable-cohort position for ranking-change claims
+2. `summary` and `comparison`
+   - retain raw totals, then cite `ctrExQuarantine` and `positionExQuarantine` alongside them
+3. `searchTypeSummary`
    - whether web or image search is actually moving
-3. `topNonBrandedQueries`
+4. `topNonBrandedQueries`
    - raw non-branded demand without navigational terms
-4. `growthOverview.quickWins`
+5. `growthOverview.quickWins`
    - keywords already close enough to move with page optimization
-5. `growthOverview.contentCreation`
+6. `growthOverview.contentCreation`
    - queries that likely need dedicated content
-6. `ctrOptimization` and `pageCtrOpportunities`
+7. `ctrOptimization` and `pageCtrOpportunities`
    - pages or queries ranking well enough that snippet work matters
-7. `cannibalization`
+8. `cannibalization`
    - multiple URLs splitting one intent
-8. `indexing.summary`
+9. `indexing.summary`
    - non-passing pages, canonical mismatches, broken fetch states
-9. `searchAppearance`
-   - rich result or SERP feature signals
+10. `searchAppearance`
+
+- rich result or SERP feature signals
 
 ## Blog SEO Audit (Title/Meta + Intent)
 
@@ -65,6 +70,7 @@ The audit checks:
 5. **CTR vs position benchmark** — compares actual CTR against expected CTR for the page's average position
 
 Read `/tmp/blog-audit-DOMAIN.json` and include the findings in the CTR Fixes section. Prioritize posts with:
+
 - High impressions + error-severity issues (biggest impact)
 - Intent mismatches (these explain why impressions exist but clicks don't)
 - Missing seo_title on long titles (guaranteed SERP truncation)
@@ -73,9 +79,13 @@ Read `/tmp/blog-audit-DOMAIN.json` and include the findings in the CTR Fixes sec
 
 ### 1. Performance Summary
 
-- Current period versus previous period
+- Non-brand clicks first; branded clicks and quarantined queries separately
+- Current period versus previous period, with raw and quarantine-excluded CTR/position
 - Search-type mix
 - Device and country notes only if they materially affect prioritization
+
+Never recommend metadata changes because a branded query at position 1.0 lost impressions. That
+is a demand change, not a ranking decline.
 
 ### 2. Quick Wins
 
@@ -118,27 +128,35 @@ Present findings as a compact markdown report:
 **Previous Period:** [start] to [end]
 
 ## Summary
+
 [key totals and changes]
 
 ## Search Type Mix
+
 [web vs image vs others]
 
 ## Quick Wins
+
 [top opportunities table]
 
 ## Content Creation Opportunities
+
 [top topics table]
 
 ## CTR Fixes
+
 [top snippet/title opportunities]
 
 ## Cannibalization
+
 [queries competing across multiple URLs]
 
 ## Technical Blockers
+
 [indexing and canonical issues]
 
 ## Prioritized Actions
+
 1. ...
 2. ...
 3. ...

@@ -1,34 +1,43 @@
 /**
- * pSEO Localization Configuration
- *
- * Defines which categories are localized and which are English-only.
- * Used to determine when to show English-only banner.
+ * pSEO localization policy derived from rendered production coverage.
+ * Re-run `yarn seo:measure:locales` to refresh the committed evidence.
  */
-import type { PSEOCategory } from './url-utils';
-import { Locale } from '@/i18n/config';
+import coverageArtifact from '@/seo-reports/locale-coverage-2026-08-25.json';
+import { SUPPORTED_LOCALES, type Locale } from '@/i18n/config';
+import { PSEO_CATEGORIES, type PSEOCategory } from './url-utils';
 
-/**
- * Categories that have full translations for all supported locales
- * Updated: 2026-01-31 - Categories with complete translations for all 7 languages
- */
-export const LOCALIZED_CATEGORIES: PSEOCategory[] = [
-  'tools',
-  'formats',
-  'free',
-  'guides',
-  'scale',
-  'alternatives',
-  'use-cases',
-  'format-scale',
-  'platform-format',
-  'device-use',
-];
+interface ILocaleCoveragePair {
+  category: string;
+  locale: string;
+  sampled: number;
+  translated: number;
+  englishMirror: number;
+  soft404: number;
+  missing: number;
+}
 
-/**
- * Categories that are English-only (no translations available)
- * Updated: 2026-02-11 - Added ai-features, comparisons-expanded, personas-expanded, technical-guides, use-cases-expanded as English-only categories
- * These categories only exist in English and should not generate hreflang links
- */
+const coveragePairs = (coverageArtifact as { pairs: ILocaleCoveragePair[] }).pairs;
+
+/** A pair is translated only when every rendered sample differs cleanly from English. */
+export function isTranslatedPair(category: PSEOCategory, locale: Locale): boolean {
+  if (locale === 'en') return true;
+  const pair = coveragePairs.find(row => row.category === category && row.locale === locale);
+  return Boolean(
+    pair &&
+    pair.sampled > 0 &&
+    pair.translated === pair.sampled &&
+    pair.englishMirror === 0 &&
+    pair.soft404 === 0 &&
+    pair.missing === 0
+  );
+}
+
+/** Categories with at least one measured non-English translation pair. */
+export const LOCALIZED_CATEGORIES: PSEOCategory[] = PSEO_CATEGORIES.filter(category =>
+  SUPPORTED_LOCALES.some(locale => locale !== 'en' && isTranslatedPair(category, locale))
+);
+
+/** Categories intentionally routed only in English. */
 export const ENGLISH_ONLY_CATEGORIES: PSEOCategory[] = [
   'compare',
   'comparisons-expanded',
@@ -46,227 +55,48 @@ export const ENGLISH_ONLY_CATEGORIES: PSEOCategory[] = [
   'ai-photo-editor',
 ];
 
-/**
- * All pSEO categories
- * Note: Not all categories are currently included in LOCALIZED_CATEGORIES or ENGLISH_ONLY_CATEGORIES
- * This is a transitional state during localization work
- */
-export const ALL_CATEGORIES: PSEOCategory[] = [...LOCALIZED_CATEGORIES, ...ENGLISH_ONLY_CATEGORIES];
+export const ALL_CATEGORIES: PSEOCategory[] = [...PSEO_CATEGORIES];
 
-/**
- * Check if a category is localized for a given locale
- * @param category - The pSEO category to check
- * @param locale - The locale to check against
- * @returns true if category is localized for locale
- */
 export function isCategoryLocalized(category: PSEOCategory, locale: Locale): boolean {
-  // English is always supported
-  if (locale === 'en') {
-    return true;
-  }
-
-  // Check if category is in localized list
-  return LOCALIZED_CATEGORIES.includes(category);
+  return isTranslatedPair(category, locale);
 }
 
-/**
- * Check if a category is English-only
- * @param category - The pSEO category to check
- * @returns true if category is English-only
- */
 export function isCategoryEnglishOnly(category: PSEOCategory): boolean {
   return ENGLISH_ONLY_CATEGORIES.includes(category);
 }
 
-/**
- * Get English-only categories list
- * @returns Array of English-only category names
- */
 export function getEnglishOnlyCategories(): PSEOCategory[] {
   return [...ENGLISH_ONLY_CATEGORIES];
 }
 
-/**
- * Get localized categories list
- * @returns Array of localized category names
- */
 export function getLocalizedCategories(): PSEOCategory[] {
   return [...LOCALIZED_CATEGORIES];
 }
 
-/**
- * Check if a page should show English-only banner
- * @param category - The pSEO category
- * @param locale - The current locale
- * @param hasTranslation - Whether a translation exists for specific page
- * @returns true if banner should be shown
- */
 export function shouldShowEnglishOnlyBanner(
   category: PSEOCategory,
   locale: Locale,
   hasTranslation: boolean
 ): boolean {
-  // Don't show for English locale
-  if (locale === 'en') {
-    return false;
-  }
-
-  // Show if category is English-only
-  if (isCategoryEnglishOnly(category)) {
-    return true;
-  }
-
-  // Show if category is localized but translation doesn't exist
-  if (isCategoryLocalized(category, locale) && !hasTranslation) {
-    return true;
-  }
-
-  return false;
+  if (locale === 'en') return false;
+  return !hasTranslation || !isTranslatedPair(category, locale);
 }
 
-/**
- * Get English version path for a page
- * @param currentPath - The current localized path
- * @returns The English version path
- */
 export function getEnglishPath(currentPath: string): string {
-  // Remove locale prefix if present
   const pathWithoutLocale = currentPath.replace(/^\/[a-z]{2}(\/|$)/, '/');
-
-  // Ensure it starts with /
   return pathWithoutLocale.startsWith('/') ? pathWithoutLocale : `/${pathWithoutLocale}`;
 }
 
-/**
- * All supported locales for localized categories
- * Updated: 2026-01-07 - All 7 languages now have complete translations
- */
-const ALL_SUPPORTED_LOCALES: Locale[] = ['en', 'es', 'pt', 'de', 'fr', 'it', 'ja'];
-
-/**
- * Configuration for each category's localization status
- * Updated: 2026-02-11 - Added ai-features as English-only category
- */
-export const LOCALIZATION_STATUS = {
-  tools: {
-    localized: true,
-    supportedLocales: ALL_SUPPORTED_LOCALES,
-    notes: 'Core tool pages fully localized for all 7 languages',
-  },
-  formats: {
-    localized: true,
-    supportedLocales: ALL_SUPPORTED_LOCALES,
-    notes: 'Format guide pages fully localized for all 7 languages',
-  },
-  free: {
-    localized: true,
-    supportedLocales: ALL_SUPPORTED_LOCALES,
-    notes: 'Free tool pages fully localized for all 7 languages',
-  },
-  guides: {
-    localized: true,
-    supportedLocales: ALL_SUPPORTED_LOCALES,
-    notes: 'Guide pages fully localized for all 7 languages',
-  },
-  scale: {
-    localized: true,
-    supportedLocales: ALL_SUPPORTED_LOCALES,
-    notes: 'Scale pages fully localized for all 7 languages',
-  },
-  alternatives: {
-    localized: true,
-    supportedLocales: ALL_SUPPORTED_LOCALES,
-    notes: 'Alternative pages fully localized for all 7 languages (updated 2025-01-15)',
-  },
-  'use-cases': {
-    localized: true,
-    supportedLocales: ALL_SUPPORTED_LOCALES,
-    notes: 'Use case pages fully localized for all 7 languages (updated 2025-01-15)',
-  },
-  'format-scale': {
-    localized: true,
-    supportedLocales: ALL_SUPPORTED_LOCALES,
-    notes: 'Format-scale multiplier pages fully localized for all 7 languages (updated 2025-01-15)',
-  },
-  'platform-format': {
-    localized: true,
-    supportedLocales: ALL_SUPPORTED_LOCALES,
-    notes:
-      'Platform-format multiplier pages fully localized for all 7 languages (updated 2025-01-15)',
-  },
-  'device-use': {
-    localized: true,
-    supportedLocales: ALL_SUPPORTED_LOCALES,
-    notes: 'Device-use pages fully localized for all 7 languages (updated 2025-01-15)',
-  },
-  compare: {
-    localized: false,
-    supportedLocales: ['en'] as Locale[],
-    notes: 'Comparison pages are English-only',
-  },
-  platforms: {
-    localized: false,
-    supportedLocales: ['en'] as Locale[],
-    notes: 'Platform pages are English-only',
-  },
-  'bulk-tools': {
-    localized: false,
-    supportedLocales: ['en'] as Locale[],
-    notes: 'Bulk tools pages are English-only (2026-01-31)',
-  },
-  content: {
-    localized: false,
-    supportedLocales: ['en'] as Locale[],
-    notes: 'Content category pages are English-only (2026-01-31)',
-  },
-  'photo-restoration': {
-    localized: false,
-    supportedLocales: ['en'] as Locale[],
-    notes: 'Photo restoration pages are English-only (2026-01-31)',
-  },
-  'camera-raw': {
-    localized: false,
-    supportedLocales: ['en'] as Locale[],
-    notes: 'Camera RAW pages are English-only (2026-01-31)',
-  },
-  'industry-insights': {
-    localized: false,
-    supportedLocales: ['en'] as Locale[],
-    notes: 'Industry insights pages are English-only (2026-01-31)',
-  },
-  'device-optimization': {
-    localized: false,
-    supportedLocales: ['en'] as Locale[],
-    notes: 'Device optimization pages are English-only (2026-01-31)',
-  },
-  'ai-features': {
-    localized: false,
-    supportedLocales: ['en'] as Locale[],
-    notes: 'AI enhancement features pages are English-only (updated 2026-02-11)',
-  },
-  'comparisons-expanded': {
-    localized: false,
-    supportedLocales: ['en'] as Locale[],
-    notes: 'Expanded comparison pages are English-only (7 pages, added 2026-02-11)',
-  },
-  'technical-guides': {
-    localized: false,
-    supportedLocales: ['en'] as Locale[],
-    notes: 'Technical guides are English-only (10 pages, added 2026-02-11)',
-  },
-  'personas-expanded': {
-    localized: false,
-    supportedLocales: ['en'] as Locale[],
-    notes: 'Expanded persona pages are English-only (10 pages, added 2026-02-11)',
-  },
-  'use-cases-expanded': {
-    localized: false,
-    supportedLocales: ['en'] as Locale[],
-    notes: 'Expanded use case pages are English-only (10 pages, added 2026-02-11)',
-  },
-  'ai-photo-editor': {
-    localized: false,
-    supportedLocales: ['en'] as Locale[],
-    notes: 'AI Photo Editor hub page is English-only (added 2026-04-23)',
-  },
-} as const;
+export const LOCALIZATION_STATUS = Object.fromEntries(
+  PSEO_CATEGORIES.map(category => {
+    const supportedLocales = SUPPORTED_LOCALES.filter(locale => isTranslatedPair(category, locale));
+    return [
+      category,
+      {
+        localized: supportedLocales.length > 1,
+        supportedLocales,
+        notes: `Derived from ${coverageArtifact.generatedAt} rendered locale coverage`,
+      },
+    ];
+  })
+) as Record<PSEOCategory, { localized: boolean; supportedLocales: Locale[]; notes: string }>;

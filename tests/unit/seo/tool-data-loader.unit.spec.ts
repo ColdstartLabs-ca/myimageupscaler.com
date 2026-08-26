@@ -8,6 +8,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock serverEnv before any imports that use it
 vi.mock('@shared/config/env', () => ({
+  clientEnv: {
+    BASE_URL: 'https://myimageupscaler.com',
+    APP_NAME: 'MyImageUpscaler',
+  },
   serverEnv: {
     ENV: 'test',
   },
@@ -45,8 +49,8 @@ describe('getToolDataWithLocale', () => {
   it('should return localized interactive tool data for non-English locale', async () => {
     const { getToolDataWithLocale } = await import('@/lib/seo/data-loader');
 
-    // 'image-compressor' exists in localized interactive-tools.json files (e.g., es, de)
-    const result = await getToolDataWithLocale('image-compressor', 'es');
+    // French is a measured translated tools pair; Spanish is partially mirrored and retracted.
+    const result = await getToolDataWithLocale('image-compressor', 'fr');
 
     expect(result.data).not.toBeNull();
     expect(result.data?.slug).toBe('image-compressor');

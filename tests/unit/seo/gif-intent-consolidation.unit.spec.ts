@@ -54,15 +54,18 @@ describe('GIF search-intent consolidation', () => {
     expect(response.headers.get('location')).toBe('http://localhost/formats/upscale-gif-images');
   });
 
-  test('collapses localized GIF scale variants to the truthful English owner', async () => {
-    const { middleware } = await import('../../../middleware');
-    const request = new NextRequest('http://localhost/es/format-scale/gif-upscale-16x');
+  test.each(['pt', 'es', 'de', 'fr', 'it', 'ja'])(
+    'collapses %s GIF scale variants to the truthful English owner',
+    async locale => {
+      const { middleware } = await import('../../../middleware');
+      const request = new NextRequest(`http://localhost/${locale}/format-scale/gif-upscale-4x`);
 
-    const response = await middleware(request);
+      const response = await middleware(request);
 
-    expect(response.status).toBe(301);
-    expect(response.headers.get('location')).toBe('http://localhost/formats/upscale-gif-images');
-  });
+      expect(response.status).toBe(301);
+      expect(response.headers.get('location')).toBe('http://localhost/formats/upscale-gif-images');
+    }
+  );
 
   test('removes GIF scale URLs from static generation, loaders, and the sitemap', async () => {
     const {
@@ -99,28 +102,13 @@ describe('GIF search-intent consolidation', () => {
     expect(copy).not.toContain('no registration');
   });
 
-  test('consolidates localized GIF owners into the truthful English owner', async () => {
+  test('should keep serving the localized owner copy', async () => {
     const { middleware } = await import('../../../middleware');
-    const { getFormatDataWithLocale } = await import('@/lib/seo/data-loader');
-    const { generateSitemapHreflangLinks } = await import('@/lib/seo/hreflang-generator');
-    const { GET } = await import('@/app/sitemap-formats-ja.xml/route');
 
     const response = await middleware(
-      new NextRequest('http://localhost/ja/formats/upscale-gif-images')
+      new NextRequest('http://localhost/es/formats/upscale-gif-images')
     );
-    expect(response.status).toBe(301);
-    expect(response.headers.get('location')).toBe('http://localhost/formats/upscale-gif-images');
-
-    expect((await getFormatDataWithLocale('upscale-gif-images', 'ja')).data).toBeNull();
-
-    const sitemap = await (await GET()).text();
-    expect(sitemap).not.toContain('/ja/formats/upscale-gif-images');
-
-    const hreflang = generateSitemapHreflangLinks('/formats/upscale-gif-images', 'formats').join(
-      '\n'
-    );
-    expect(hreflang).toContain('hreflang="en"');
-    expect(hreflang).toContain('hreflang="x-default"');
-    expect(hreflang).not.toContain('hreflang="ja"');
+    expect(response.status).toBe(200);
+    expect(response.headers.get('location')).toBeNull();
   });
 });

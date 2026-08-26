@@ -9,6 +9,7 @@
 import formatScaleDataFile from '@/app/seo/data/format-scale.json';
 import formatsDataFile from '@/app/seo/data/formats.json';
 import scaleDataFile from '@/app/seo/data/scale.json';
+import { SUPPORTED_LOCALES } from '@/i18n/config';
 
 export interface IIntentCluster {
   intent: string;
@@ -55,16 +56,22 @@ export interface IIndexableIntentPage {
  * Clusters are added only after their measured consolidation gate passes.
  * The GIF row preserves the already-shipped consolidation exactly.
  */
+const GIF_SCALE_MEMBER_PATHS = [
+  '/format-scale/gif-upscale-2x',
+  '/format-scale/gif-upscale-4x',
+  '/format-scale/gif-upscale-8x',
+  '/format-scale/gif-upscale-16x',
+] as const;
+
+const LOCALIZED_GIF_SCALE_MEMBER_PATHS = SUPPORTED_LOCALES.filter(
+  locale => locale !== 'en'
+).flatMap(locale => GIF_SCALE_MEMBER_PATHS.map(memberPath => `/${locale}${memberPath}`));
+
 export const INTENT_CLUSTERS: readonly IIntentCluster[] = [
   {
     intent: 'gif',
     ownerPath: '/formats/upscale-gif-images',
-    memberPaths: [
-      '/format-scale/gif-upscale-2x',
-      '/format-scale/gif-upscale-4x',
-      '/format-scale/gif-upscale-8x',
-      '/format-scale/gif-upscale-16x',
-    ],
+    memberPaths: [...GIF_SCALE_MEMBER_PATHS, ...LOCALIZED_GIF_SCALE_MEMBER_PATHS],
     primaryKeywordOwners: [
       {
         keyword: 'upscale gif images',
@@ -77,7 +84,7 @@ export const INTENT_CLUSTERS: readonly IIntentCluster[] = [
       minimumClicks: 847,
     },
     // This competing scale URL remains measurement-only until the exact 28-day Phase 0 gate.
-    measurementPaths: ['/scale/upscale-16x'],
+    measurementPaths: ['/blog/gif-upscaler'],
     // It targets "upscale 16x", not the GIF owner's current intent member.
     deferredCandidates: [
       {

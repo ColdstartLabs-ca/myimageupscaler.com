@@ -31,6 +31,7 @@ vi.mock('node:fs/promises', () => ({
 
 import { INTENT_CLUSTERS } from '@/lib/seo/intent-ownership';
 import {
+  evaluateClusterGate,
   measureCluster,
   normalizePagePath,
   parseDateRange,
@@ -81,7 +82,7 @@ describe('cluster measurement', () => {
         position: 8,
       },
       {
-        keys: [cluster.measurementPaths![0]],
+        keys: ['/scale/upscale-16x'],
         clicks: 329,
         impressions: 1000,
         ctr: 0.329,
@@ -118,7 +119,7 @@ describe('cluster measurement', () => {
     expect(report).toContain(
       '| `/formats/upscale-gif-images` | 513 | 1,000 | 51.30% | 7.00 | 513 |'
     );
-    expect(report).toContain('| `/scale/upscale-16x` | 329 | 1,000 | 32.90% | 8.00 | 329 |');
+    expect(report).toContain('| `/scale/upscale-16x` | 0 | 0 | 0.00% | 0.00 | 329 |');
     expect(report).toContain('| `/format-scale/gif-upscale-2x` | 11 | 100 | 11.00% | 10.00 | — |');
     expect(report).toContain('| `/format-scale/gif-upscale-4x` | 13 | 100 | 13.00% | 11.00 | — |');
     expect(report).toContain('| `/format-scale/gif-upscale-8x` | 17 | 100 | 17.00% | 12.00 | — |');
@@ -200,6 +201,55 @@ describe('cluster measurement', () => {
     expect(measurement.cluster.position).toBeCloseTo(5.8333, 3);
   });
 
+  test('should exit non-zero when cluster clicks fall below the baseline floor', () => {
+    const measurement = summarizeClusterRows(
+      cluster,
+      [{ keys: [cluster.ownerPath], clicks: 90, impressions: 1000, ctr: 0.09, position: 8 }],
+      { startDate: '2026-07-26', endDate: '2026-08-22' }
+    );
+    const result = evaluateClusterGate(cluster, measurement, 'seo-reports/cluster-gif.md');
+    expect(result.exitCode).toBe(1);
+    expect(result.message).toContain('Cluster "gif" measured 90 clicks');
+    expect(result.message).toContain('847-click floor');
+    expect(result.message).toContain('seo-reports/cluster-gif.md');
+  });
+
+  test('should exit zero when cluster clicks meet the floor', () => {
+    const measurement = summarizeClusterRows(
+      cluster,
+      [{ keys: [cluster.ownerPath], clicks: 900, impressions: 1000, ctr: 0.9, position: 5 }],
+      { startDate: '2026-07-26', endDate: '2026-08-22' }
+    );
+    expect(evaluateClusterGate(cluster, measurement, '/tmp/report.md').exitCode).toBe(0);
+  });
+
+  test('should count localized and blog URLs in the cluster measurement', () => {
+    const measurement = summarizeClusterRows(
+      cluster,
+      [
+        {
+          keys: ['https://myimageupscaler.com/pt/format-scale/gif-upscale-4x'],
+          clicks: 3,
+          impressions: 30,
+          ctr: 0.1,
+          position: 7.2,
+        },
+        {
+          keys: ['https://myimageupscaler.com/blog/gif-upscaler'],
+          clicks: 11,
+          impressions: 671,
+          ctr: 11 / 671,
+          position: 6,
+        },
+      ],
+      { startDate: '2026-08-09', endDate: '2026-08-22' }
+    );
+    expect(measurement.matchedRows).toBe(2);
+    expect(measurement.cluster.clicks).toBe(14);
+    expect(measurement.byPath).toHaveProperty('/pt/format-scale/gif-upscale-4x');
+    expect(measurement.byPath).toHaveProperty('/blog/gif-upscaler');
+  });
+
   test('uses the PRD 04 three-path baseline instead of the six-path post set', () => {
     const rows = [
       {
@@ -238,7 +288,7 @@ describe('cluster measurement', () => {
         position: 7,
       },
       {
-        keys: [cluster.measurementPaths![0]],
+        keys: ['/scale/upscale-16x'],
         clicks: 329,
         impressions: 1000,
         ctr: 0.329,
@@ -258,8 +308,8 @@ describe('cluster measurement', () => {
       'pre-split-baseline'
     );
 
-    expect(post.matchedRows).toBe(6);
-    expect(post.cluster.clicks).toBe(855);
+    expect(post.matchedRows).toBe(5);
+    expect(post.cluster.clicks).toBe(526);
     expect(baseline.matchedRows).toBe(3);
     expect(baseline.cluster.clicks).toBe(847);
     expect(Object.keys(baseline.byPath)).toEqual([
@@ -427,7 +477,7 @@ describe('cluster measurement', () => {
           position: 7,
         },
         {
-          keys: [cluster.measurementPaths![0]],
+          keys: ['/scale/upscale-16x'],
           clicks: 329,
           impressions: 500,
           ctr: 0.658,

@@ -95,18 +95,12 @@ test.describe('Language Switcher', () => {
       await dropdown.waitFor({ state: 'visible', timeout: 5000 });
 
       // Check for English option
-      const englishOption = page
-        .locator('button')
-        .filter({ hasText: /english/i })
-        .and(page.locator('footer *'));
+      const englishOption = dropdown.getByRole('button', { name: 'English', exact: true });
 
       await expect(englishOption).toBeVisible();
 
       // Check for Spanish option
-      const spanishOption = page
-        .locator('button')
-        .filter({ hasText: /español|spanish/i })
-        .and(page.locator('footer *'));
+      const spanishOption = dropdown.getByRole('button', { name: 'Español', exact: true });
 
       await expect(spanishOption).toBeVisible();
     });
@@ -159,9 +153,8 @@ test.describe('Language Switcher', () => {
 
       // Click Spanish option
       const spanishOption = page
-        .locator('button')
-        .filter({ hasText: /español|spanish/i })
-        .and(page.locator('footer *'));
+        .locator('footer .glass-dropdown')
+        .getByRole('button', { name: 'Español', exact: true });
 
       await spanishOption.click();
 
@@ -196,9 +189,8 @@ test.describe('Language Switcher', () => {
 
       // Click English option
       const englishOption = page
-        .locator('button')
-        .filter({ hasText: /english/i })
-        .and(page.locator('footer *'));
+        .locator('footer .glass-dropdown')
+        .getByRole('button', { name: 'English', exact: true });
 
       await englishOption.click();
 
@@ -220,13 +212,24 @@ test.describe('Language Switcher', () => {
       page,
       context,
     }) => {
-      // Navigate to Spanish version
-      await page.goto('/es');
+      // Explicitly select Spanish; direct navigation must not write preference cookies.
+      await page.goto('/');
 
       // Wait for page to load
       await page.waitForLoadState('domcontentloaded');
 
-      // Verify we're on Spanish version
+      const switcherButton = page
+        .locator('footer')
+        .getByRole('button')
+        .filter({
+          has: page.locator('svg'),
+        });
+      await switcherButton.click();
+      await page
+        .locator('footer .glass-dropdown')
+        .getByRole('button', { name: 'Español', exact: true })
+        .click();
+      await page.waitForLoadState('domcontentloaded');
       expect(page.url()).toContain('/es');
 
       // Check that locale cookie is set
@@ -271,9 +274,8 @@ test.describe('Language Switcher', () => {
       await switcherButton.click();
 
       const englishOption = page
-        .locator('button')
-        .filter({ hasText: /english/i })
-        .and(page.locator('footer *'));
+        .locator('footer .glass-dropdown')
+        .getByRole('button', { name: 'English', exact: true });
 
       await englishOption.click();
 
@@ -299,13 +301,25 @@ test.describe('Language Switcher', () => {
     });
 
     test('should maintain locale when navigating between pages', async ({ page }) => {
-      // Start on Spanish homepage
-      await page.goto('/es');
+      // Start by explicitly selecting Spanish so persistence is intentional.
+      await page.goto('/');
 
       // Wait for page to load
       await page.waitForLoadState('domcontentloaded');
 
-      // Verify we're on Spanish homepage
+      const switcherButton = page
+        .locator('footer')
+        .getByRole('button')
+        .filter({
+          has: page.locator('svg'),
+        });
+      await switcherButton.click();
+      await page
+        .locator('footer .glass-dropdown')
+        .getByRole('button', { name: 'Español', exact: true })
+        .click();
+      await page.waitForLoadState('domcontentloaded');
+
       expect(page.url()).toContain('/es');
 
       // Navigate to pricing page (should maintain /es/ prefix)

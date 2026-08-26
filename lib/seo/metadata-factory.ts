@@ -17,6 +17,7 @@ import {
 } from './hreflang-generator';
 import { enforceMetaLengths } from './meta-generator';
 import { shouldSubmit } from './page-eligibility';
+import { isTranslatedPair } from './localization-config';
 import type { Locale } from '../../i18n/config';
 
 const BASE_URL = clientEnv.BASE_URL;
@@ -69,7 +70,8 @@ export function generateMetadata(
   const shouldNoindex =
     page.noindex === true ||
     NOINDEX_CATEGORIES.includes(category) ||
-    !shouldSubmit(category, page.slug, locale, page.lastUpdated);
+    !shouldSubmit(category, page.slug, locale, page.lastUpdated) ||
+    !isTranslatedPair(category, locale);
 
   return {
     title: truncatedTitle,

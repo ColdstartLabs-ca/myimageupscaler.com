@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getFormatScaleDataWithLocale, getAllFormatScaleSlugs } from '@/lib/seo/data-loader';
-import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-factory';
+import { resolveLocalePageMetadata } from '@/lib/seo/locale-page-metadata';
 import { generatePSEOSchema } from '@/lib/seo/schema-generator';
 import { getRelatedPages } from '@/lib/seo/related-pages';
 import { FormatScalePageTemplate } from '@/app/(pseo)/_components/pseo/templates/FormatScalePageTemplate';
@@ -22,16 +22,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: IFormatScalePageProps): Promise<Metadata> {
   const { slug, locale } = await params;
-  const result = await getFormatScaleDataWithLocale(slug, locale);
-
-  if (!result.data) return {};
-
-  const { alternates: _alternates, ...metaWithoutAlternates } = generatePageMetadata(
-    result.data,
-    'format-scale',
-    locale
-  );
-  return metaWithoutAlternates;
+  return resolveLocalePageMetadata(getFormatScaleDataWithLocale, 'format-scale', slug, locale);
 }
 
 export default async function FormatScalePage({ params }: IFormatScalePageProps) {

@@ -31,13 +31,13 @@ describe('getAvailableLocalesForToolSlug', () => {
     expect(locales).toContain('en');
   });
 
-  it('includes locales that have a translation for remove-bg (de, fr, pt, es)', async () => {
+  it('includes only measured translated locales for remove-bg', async () => {
     const { getAvailableLocalesForToolSlug } = await import('@/lib/seo/data-loader');
     const locales = await getAvailableLocalesForToolSlug('remove-bg');
     expect(locales).toContain('de');
     expect(locales).toContain('fr');
     expect(locales).toContain('pt');
-    expect(locales).toContain('es');
+    expect(locales).not.toContain('es');
   });
 
   it('excludes "it" for remove-bg (Italian uses a different slug)', async () => {
@@ -64,10 +64,10 @@ describe('getAvailableLocalesForToolSlug', () => {
     expect(locales).toContain('en');
   });
 
-  it('includes "ja" for ai-image-upscaler (Japanese has this slug)', async () => {
+  it('excludes Japanese when the measured tools pair contains an English mirror', async () => {
     const { getAvailableLocalesForToolSlug } = await import('@/lib/seo/data-loader');
     const locales = await getAvailableLocalesForToolSlug('ai-image-upscaler');
-    expect(locales).toContain('ja');
+    expect(locales).not.toContain('ja');
   });
 });
 

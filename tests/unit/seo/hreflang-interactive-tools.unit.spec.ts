@@ -40,9 +40,9 @@ const NEW_TOOL_SLUGS = [
 ];
 
 describe('Hreflang for new interactive tools (PR #13)', () => {
-  it.each(NEW_TOOL_SLUGS)('%s has all 7 locale alternates', slug => {
+  it.each(NEW_TOOL_SLUGS)('%s has only measured locale alternates', slug => {
     const alternates = generatePSEOHreflangAlternates(CATEGORY, slug);
-    const locales = ['en', 'es', 'pt', 'de', 'fr', 'it', 'ja'];
+    const locales = ['en', 'pt', 'de', 'fr'];
     locales.forEach(locale => {
       expect(alternates[locale]).toBeDefined();
       expect(alternates[locale]).toMatch(/^https?:\/\//);
@@ -71,9 +71,9 @@ describe('Hreflang for interactive tools', () => {
       expect(alternates.de).toContain(`/de/tools/${SLUG}`);
     });
 
-    it('transparent-background-maker has es hreflang', () => {
+    it('transparent-background-maker omits unmeasured es hreflang', () => {
       const alternates = generatePSEOHreflangAlternates(CATEGORY, SLUG);
-      expect(alternates.es).toContain(`/es/tools/${SLUG}`);
+      expect(alternates.es).toBeUndefined();
     });
 
     it('transparent-background-maker has fr hreflang', () => {
@@ -81,14 +81,14 @@ describe('Hreflang for interactive tools', () => {
       expect(alternates.fr).toContain(`/fr/tools/${SLUG}`);
     });
 
-    it('transparent-background-maker has it hreflang', () => {
+    it('transparent-background-maker omits unmeasured it hreflang', () => {
       const alternates = generatePSEOHreflangAlternates(CATEGORY, SLUG);
-      expect(alternates.it).toContain(`/it/tools/${SLUG}`);
+      expect(alternates.it).toBeUndefined();
     });
 
-    it('transparent-background-maker has ja hreflang', () => {
+    it('transparent-background-maker omits partially mirrored ja hreflang', () => {
       const alternates = generatePSEOHreflangAlternates(CATEGORY, SLUG);
-      expect(alternates.ja).toContain(`/ja/tools/${SLUG}`);
+      expect(alternates.ja).toBeUndefined();
     });
 
     it('transparent-background-maker has pt hreflang', () => {
@@ -109,10 +109,10 @@ describe('Hreflang for interactive tools', () => {
       expect(alternates['x-default']).not.toMatch(/\/[a-z]{2}\/tools\//);
     });
 
-    it('all 7 locales present for tools category', () => {
+    it('only translated locales and x-default are present for tools', () => {
       const alternates = generatePSEOHreflangAlternates(CATEGORY, SLUG);
       // 7 locale keys (en, es, pt, de, fr, it, ja) + x-default = 8 keys minimum
-      expect(Object.keys(alternates).length).toBeGreaterThanOrEqual(7);
+      expect(Object.keys(alternates)).toEqual(['en', 'pt', 'de', 'fr', 'x-default']);
     });
 
     it('all locale URLs are valid absolute URLs', () => {
@@ -135,9 +135,9 @@ describe('Hreflang for interactive tools', () => {
       expect(alternates['x-default']).toContain(`/tools/${SLUG}`);
     });
 
-    it('all 7 locales present for tools category', () => {
+    it('only measured locale alternates are present for tools', () => {
       const alternates = generateHreflangAlternates(`/tools/${SLUG}`, CATEGORY);
-      expect(Object.keys(alternates).length).toBeGreaterThanOrEqual(7);
+      expect(Object.keys(alternates)).toEqual(['en', 'pt', 'de', 'fr', 'x-default']);
     });
   });
 

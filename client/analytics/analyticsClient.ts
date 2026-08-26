@@ -34,6 +34,7 @@ import { isDevelopment, isTest, clientEnv } from '@shared/config/env';
 import { multiplexer } from '@shared/analytics/analyticsMultiplexer';
 import { AmplitudeProvider } from '@shared/analytics/providers/amplitude-provider';
 import { GA4Provider } from '@shared/analytics/providers/ga4-provider';
+import { getBrowserReferralSource } from './referralSource';
 
 // =============================================================================
 // Constants
@@ -44,7 +45,6 @@ const SESSION_ID_KEY = 'pp_session_id';
 const FIRST_TOUCH_UTM_STORAGE_KEY = 'miu_first_touch_utm';
 const FIRST_TOUCH_UTM_COOKIE_KEY = 'miu_first_touch_utm';
 const LAST_VISIT_KEY = 'miu_last_visit';
-const REFERRAL_SOURCE_COOKIE_KEY = 'miu_referral_source';
 const ENTRY_PAGE_KEY = 'miu_entry_page';
 
 interface IFirstTouchUtm {
@@ -218,38 +218,8 @@ function storeFirstTouchUtm(value: IFirstTouchUtm): void {
   }
 }
 
-/**
- * Get referral source from cookie or header.
- * Reads the first-touch referral source set by middleware.
- * Falls back to x-referral-source header if cookie is not set.
- */
 function getReferralSource(): IReferralSource | null {
-  if (typeof window === 'undefined') return null;
-
-  // First try to read from cookie
-  const cookiePrefix = `${REFERRAL_SOURCE_COOKIE_KEY}=`;
-  const rawCookie = document.cookie
-    .split(';')
-    .map(cookie => cookie.trim())
-    .find(cookie => cookie.startsWith(cookiePrefix));
-
-  if (rawCookie) {
-    const referralSource = rawCookie.slice(cookiePrefix.length);
-    if (
-      referralSource &&
-      ['chatgpt', 'perplexity', 'claude', 'google_sge', 'google', 'direct', 'other'].includes(
-        referralSource
-      )
-    ) {
-      return referralSource as IReferralSource;
-    }
-  }
-
-  // Fallback: check if we're in a browser environment with access to response headers
-  // Note: Response headers are not directly accessible in client-side JavaScript,
-  // but the middleware may have set a meta tag or other mechanism
-  // For now, return null if cookie is not set
-  return null;
+  return getBrowserReferralSource(getFirstTouchUtmFromCookie()?.utmSource);
 }
 
 /**

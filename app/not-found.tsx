@@ -1,5 +1,11 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { Home, Search } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Page Not Found | MyImageUpscaler',
+  robots: { index: false, follow: true },
+};
 
 /**
  * Global 404 Not Found page

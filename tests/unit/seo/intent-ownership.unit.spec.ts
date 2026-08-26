@@ -96,6 +96,17 @@ describe('intent ownership', () => {
     expect(getOwnerPath(memberPath)).toBe(ownerPath);
   });
 
+  test('should require exact localized membership for a localized redirect', async () => {
+    const localizedMember = '/pt/format-scale/gif-upscale-4x';
+    expect(isClusterMember(localizedMember)).toBe(true);
+    expect(getOwnerPath(localizedMember)).toBe(EXPECTED_GIF_OWNER_PATH);
+
+    const { middleware } = await import('../../../middleware');
+    const response = await middleware(new NextRequest(`http://localhost${localizedMember}`));
+    expect(response.status).toBe(301);
+    expect(response.headers.get('location')).toBe(`http://localhost${EXPECTED_GIF_OWNER_PATH}`);
+  });
+
   test('should never make an owner a member of another cluster', () => {
     const owners = new Set(INTENT_CLUSTERS.map(cluster => cluster.ownerPath));
     const members = INTENT_CLUSTERS.flatMap(cluster => cluster.memberPaths);
@@ -124,7 +135,9 @@ describe('intent ownership', () => {
         primaryKeyword: 'upscale 16x',
       },
     ]);
-    expect(gifCluster.measurementPaths).toContain('/scale/upscale-16x');
+    expect(gifCluster.measurementPaths).toContain('/blog/gif-upscaler');
+    expect(gifCluster.memberPaths).toContain('/pt/format-scale/gif-upscale-4x');
+    expect(gifCluster.memberPaths).toContain('/es/format-scale/gif-upscale-2x');
     expect(gifCluster.memberPaths).not.toContain('/scale/upscale-16x');
   });
 
