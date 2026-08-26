@@ -65,4 +65,11 @@ describe('yarn deploy safety gates', () => {
       'env -u CLOUDFLARE_API_TOKEN npx opennextjs-cloudflare deploy'
     );
   });
+
+  test('retries a failed OpenNext Worker upload with Wrangler after the cache is populated', () => {
+    expect(deployStepScript).toContain('OPEN_NEXT_DEPLOY=true npx wrangler deploy');
+    expect(deployStepScript).toContain(
+      'env -u CLOUDFLARE_API_TOKEN OPEN_NEXT_DEPLOY=true npx wrangler deploy'
+    );
+  });
 });

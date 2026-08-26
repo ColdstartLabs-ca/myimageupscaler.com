@@ -49,6 +49,22 @@ Follow-up:
 - Replace the production API token with one that includes R2 Object Read & Write so future deploys
   do not need the local OAuth fallback. No GSC or IndexNow action is needed.
 
+### OpenNext Worker Upload Retry Added
+
+Changes:
+
+- Added a Wrangler retry after OpenNext has populated R2 when Cloudflare rejects the first Worker
+  version upload during transient module validation.
+
+Validation:
+
+- The same built Worker uploaded successfully with `OPEN_NEXT_DEPLOY=true npx wrangler deploy`;
+  deployment unit coverage now asserts both token and OAuth retry paths.
+
+Follow-up:
+
+- Keep the production token's R2 permission follow-up above; no GSC or IndexNow action is needed.
+
 ## 2026-08-25
 
 ### Local dev image delivery restored
