@@ -129,6 +129,21 @@ describe('upscale request memory guards', () => {
       expect(decodeImageDimensions(dataUrl(png))).toEqual({ width: 1, height: 1 });
     });
 
+    test('upscaleSchema accepts a storage reference without image bytes', () => {
+      const config = { qualityTier: 'quick', scale: 2 };
+      const storageInput = {
+        storagePath: 'user-1/11111111-1111-4111-8111-111111111111.png',
+        jobId: '11111111-1111-4111-8111-111111111111',
+        mimeType: 'image/png',
+        config,
+      };
+
+      expect(upscaleSchema.safeParse(storageInput).success).toBe(true);
+      expect(
+        upscaleSchema.safeParse({ ...storageInput, imageData: dataUrl(PNG_HEADER_B64) }).success
+      ).toBe(false);
+    });
+
     test('upscaleSchema accepts a data URL and rejects an empty payload', () => {
       const config = { qualityTier: 'quick', scale: 2 };
       expect(

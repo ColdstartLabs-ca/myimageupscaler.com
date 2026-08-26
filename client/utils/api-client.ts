@@ -364,9 +364,10 @@ export const processImage = async (
       };
     }
 
-    // Stage 1: Preparing
+    // Stage 1: Preparing. Upload bytes directly to private temporary storage so
+    // the Cloudflare Worker never buffers a base64 JSON payload in its 128MB heap.
     onProgress(10, ProcessingStage.PREPARING);
-    const base64Data = await fileToBase64(file);
+    const jobId = crypto.randomUUID();
 
     let enhancementPrompt: string | undefined;
     let resolvedModel: string;
@@ -410,11 +411,40 @@ export const processImage = async (
       headers.Authorization = `Bearer ${accessToken}`;
     }
 
+    const uploadGrantResponse = await fetch('/api/upscale/upload', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        filename: file.name,
+        mimeType: file.type || 'image/jpeg',
+        sizeBytes: file.size,
+        jobId,
+      }),
+    });
+    if (!uploadGrantResponse.ok) {
+      const errorData = await parseJsonResponse<IApiErrorResponse>(uploadGrantResponse);
+      throw new Error(getApiErrorMessage(errorData.error) || 'Failed to prepare image upload');
+    }
+    const uploadGrant = await parseJsonResponse<{
+      storagePath: string;
+      uploadToken: string;
+    }>(uploadGrantResponse);
+    const { error: uploadError } = await createClient()
+      .storage.from('upscale-input')
+      .uploadToSignedUrl(uploadGrant.storagePath, uploadGrant.uploadToken, file, {
+        contentType: file.type || 'image/jpeg',
+        upsert: false,
+      });
+    if (uploadError) {
+      throw new Error(`Failed to upload image: ${uploadError.message}`);
+    }
+
     const response = await fetch('/api/upscale', {
       method: 'POST',
       headers,
       body: JSON.stringify({
-        imageData: base64Data,
+        storagePath: uploadGrant.storagePath,
+        jobId,
         mimeType: file.type || 'image/jpeg',
         // Pass enhancement prompt if available
         enhancementPrompt,

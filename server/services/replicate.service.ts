@@ -281,8 +281,8 @@ export class ReplicateService implements IImageProcessor {
     // Prepare image data - ensure it's a data URL
     this.ensureInputImageDataPresent(input);
 
-    let imageDataUrl = input.imageData.trim();
-    if (!imageDataUrl.startsWith('data:')) {
+    let imageDataUrl = input.imageData!.trim();
+    if (!imageDataUrl.startsWith('data:') && !/^https:\/\//i.test(imageDataUrl)) {
       const mimeType = input.mimeType || 'image/jpeg';
       imageDataUrl = `data:${mimeType};base64,${imageDataUrl}`;
     }

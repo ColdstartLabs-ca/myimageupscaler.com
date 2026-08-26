@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
+import { randomUUID } from 'node:crypto';
 import { InsufficientCreditsError } from '../../image-generation.service';
 import type { ICreditDeduction } from '../../image-processor.interface';
 import { getEmailLifecycleService } from '@server/services/email-lifecycle.service';
@@ -31,17 +32,18 @@ export class CreditManager {
   async deductCredits(
     userId: string,
     amount: number,
-    provider: string = 'Replicate'
+    provider: string = 'Replicate',
+    requestedJobId?: string
   ): Promise<ICreditDeduction> {
-    const jobId = this.generateJobId(provider);
+    const jobId = requestedJobId ?? randomUUID();
 
     const { data: balanceResult, error: creditError } = await supabaseAdmin.rpc(
-      'consume_credits_v2',
+      'consume_credits_v3',
       {
-        target_user_id: userId,
-        amount,
-        ref_id: jobId,
-        description: `Image processing via ${provider} (${amount} credits)`,
+        p_user_id: userId,
+        p_amount: amount,
+        p_job_id: jobId,
+        p_description: `Image processing via ${provider} (${amount} credits)`,
       }
     );
 
@@ -81,13 +83,10 @@ export class CreditManager {
     >,
     description = 'Credit refund for failed processing'
   ): Promise<boolean> {
-    const { error } = await supabaseAdmin.rpc('refund_consumed_credits', {
+    const { error } = await supabaseAdmin.rpc('refund_processing_credit_reservation', {
       p_user_id: userId,
-      p_amount: deduction.amount,
       p_job_id: deduction.jobId,
-      p_subscription_amount: deduction.subscriptionAmount,
-      p_purchased_amount: deduction.purchasedAmount,
-      p_description: description,
+      p_failure_reason: description,
     });
 
     if (error) {
@@ -98,15 +97,21 @@ export class CreditManager {
     return true;
   }
 
-  /**
-   * Generate a unique job ID for credit tracking
-   *
-   * @param provider - The provider name (prefix)
-   * @returns A unique job ID
-   */
-  private generateJobId(provider: string): string {
-    const prefix = provider.toLowerCase().slice(0, 3); // First 3 chars of provider
-    return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+  async completeReservation(
+    userId: string,
+    jobId: string,
+    output: { imageUrl?: string; mimeType?: string; expiresAt?: string }
+  ): Promise<boolean> {
+    if (!output.imageUrl) return false;
+    const { data, error } = await supabaseAdmin.rpc('complete_processing_credit_reservation', {
+      p_user_id: userId,
+      p_job_id: jobId,
+      p_output_url: output.imageUrl,
+      p_output_mime_type: output.mimeType ?? 'image/png',
+      p_output_expires_at: output.expiresAt ?? null,
+    });
+    if (error) throw new Error(`Failed to complete credit reservation: ${error.message}`);
+    return data === true;
   }
 
   private async queueLowBalanceAlert(userId: string, newBalance: number): Promise<void> {

@@ -207,75 +207,97 @@ export function getMaxPixelsForQualityTier(qualityTier: QualityTier): number | n
  * the limit depends on user tier. Use validateImageSizeForTier() after
  * determining user subscription status.
  */
-export const upscaleSchema = z.object({
-  imageData: z
-    .string()
-    .min(1, 'Image data is required')
-    .refine(
-      // Length arithmetic only — splitting here would copy the whole payload
-      // before the request has been size-checked.
-      data => getBase64PayloadLength(data) > 0,
-      { message: 'Invalid image data format' }
-    ),
-  mimeType: z
-    .string()
-    .default('image/jpeg')
-    .refine(
-      type =>
-        IMAGE_VALIDATION.ALLOWED_TYPES.includes(
-          type as (typeof IMAGE_VALIDATION.ALLOWED_TYPES)[number]
-        ),
-      { message: `Invalid image type. Allowed: ${IMAGE_VALIDATION.ALLOWED_TYPES.join(', ')}` }
-    ),
-  // Enhancement prompt from LLM analysis (legacy - will be removed)
-  enhancementPrompt: z.string().optional(),
-  config: z.object({
-    // New quality tier based configuration
-    qualityTier: z
-      .enum([
-        'auto',
-        'quick',
-        'face-restore',
-        'fast-edit',
-        'budget-edit',
-        'budget-old-photo',
-        'seedream-edit',
-        'anime-upscale',
-        'hd-upscale',
-        'face-pro',
-        'ultra',
-        'lighting-fix',
-        'resume-photo',
-        'photo-repair',
-        'clarity-pro',
-        'crisp-upscale',
-        'nano-banana-2',
-      ])
-      .default('auto'),
-    scale: z.union([z.literal(2), z.literal(4), z.literal(8)]).default(2),
-    targetResolution: z.enum(['2k', '4k', '8k']).optional(),
+export const upscaleSchema = z
+  .object({
+    imageData: z
+      .string()
+      .min(1, 'Image data is required')
+      .refine(
+        // Length arithmetic only — splitting here would copy the whole payload
+        // before the request has been size-checked.
+        data => getBase64PayloadLength(data) > 0,
+        { message: 'Invalid image data format' }
+      )
+      .optional(),
+    storagePath: z.string().trim().min(1).max(200).optional(),
+    jobId: z.string().uuid().optional(),
+    mimeType: z
+      .string()
+      .default('image/jpeg')
+      .refine(
+        type =>
+          IMAGE_VALIDATION.ALLOWED_TYPES.includes(
+            type as (typeof IMAGE_VALIDATION.ALLOWED_TYPES)[number]
+          ),
+        { message: `Invalid image type. Allowed: ${IMAGE_VALIDATION.ALLOWED_TYPES.join(', ')}` }
+      ),
+    // Enhancement prompt from LLM analysis (legacy - will be removed)
+    enhancementPrompt: z.string().optional(),
+    config: z.object({
+      // New quality tier based configuration
+      qualityTier: z
+        .enum([
+          'auto',
+          'quick',
+          'face-restore',
+          'fast-edit',
+          'budget-edit',
+          'budget-old-photo',
+          'seedream-edit',
+          'anime-upscale',
+          'hd-upscale',
+          'face-pro',
+          'ultra',
+          'lighting-fix',
+          'resume-photo',
+          'photo-repair',
+          'clarity-pro',
+          'crisp-upscale',
+          'nano-banana-2',
+        ])
+        .default('auto'),
+      scale: z.union([z.literal(2), z.literal(4), z.literal(8)]).default(2),
+      targetResolution: z.enum(['2k', '4k', '8k']).optional(),
 
-    // Additional options (replaces mode + toggles)
-    additionalOptions: z
-      .object({
-        smartAnalysis: z.boolean().default(false), // AI suggests enhancements (hidden when tier='auto')
-        enhance: z.boolean().default(false), // Enable enhancement processing
-        enhanceFaces: z.boolean().default(false), // Face restoration - user opt-in
-        preserveText: z.boolean().default(false), // Text preservation - user opt-in
-        customInstructions: z.string().optional(), // Custom LLM prompt (opens modal when enabled)
-        enhancement: enhancementSettingsSchema.optional(), // Detailed enhancement settings
-      })
-      .default({
-        smartAnalysis: false,
-        enhance: false,
-        enhanceFaces: false,
-        preserveText: false,
-      }),
+      // Additional options (replaces mode + toggles)
+      additionalOptions: z
+        .object({
+          smartAnalysis: z.boolean().default(false), // AI suggests enhancements (hidden when tier='auto')
+          enhance: z.boolean().default(false), // Enable enhancement processing
+          enhanceFaces: z.boolean().default(false), // Face restoration - user opt-in
+          preserveText: z.boolean().default(false), // Text preservation - user opt-in
+          customInstructions: z.string().optional(), // Custom LLM prompt (opens modal when enabled)
+          enhancement: enhancementSettingsSchema.optional(), // Detailed enhancement settings
+        })
+        .default({
+          smartAnalysis: false,
+          enhance: false,
+          enhanceFaces: false,
+          preserveText: false,
+        }),
 
-    // Studio tier specific configuration (only for 'studio' tier)
-    nanoBananaProConfig: nanoBananaProConfigSchema.optional(),
-  }),
-});
+      // Studio tier specific configuration (only for 'studio' tier)
+      nanoBananaProConfig: nanoBananaProConfigSchema.optional(),
+    }),
+  })
+  .superRefine((input, context) => {
+    const hasInlineImage = typeof input.imageData === 'string';
+    const hasStorageImage = typeof input.storagePath === 'string';
+    if (hasInlineImage === hasStorageImage) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Provide exactly one image source',
+        path: ['imageData'],
+      });
+    }
+    if (hasStorageImage && !input.jobId) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'A job ID is required for a temporary storage image',
+        path: ['jobId'],
+      });
+    }
+  });
 
 /**
  * Magic bytes for supported image formats
@@ -450,5 +472,10 @@ export function decodeImageDimensions(imageData: string): { width: number; heigh
   return null; // Could not decode
 }
 
-export type IUpscaleInput = z.infer<typeof upscaleSchema>;
-export type IUpscaleConfig = z.infer<typeof upscaleSchema>['config'];
+type IParsedUpscaleRequest = z.infer<typeof upscaleSchema>;
+
+/** Internal processor input after storage/base64 resolution. */
+export type IUpscaleInput = Omit<IParsedUpscaleRequest, 'imageData' | 'storagePath' | 'jobId'> & {
+  imageData: string;
+};
+export type IUpscaleConfig = IParsedUpscaleRequest['config'];

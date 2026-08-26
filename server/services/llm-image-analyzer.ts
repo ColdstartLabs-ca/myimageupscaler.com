@@ -46,8 +46,10 @@ export class LLMImageAnalyzer {
     }
   }
 
-  private formatDataUrl(base64Image: string, mimeType: string): string {
-    return base64Image.startsWith('data:') ? base64Image : `data:${mimeType};base64,${base64Image}`;
+  private formatDataUrl(imageReference: string, mimeType: string): string {
+    return imageReference.startsWith('data:') || /^https:\/\//i.test(imageReference)
+      ? imageReference
+      : `data:${mimeType};base64,${imageReference}`;
   }
 
   private async analyzeWithOpenRouter(

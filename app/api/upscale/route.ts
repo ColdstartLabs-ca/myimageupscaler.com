@@ -18,6 +18,10 @@ import { LLMImageAnalyzer } from '@server/services/llm-image-analyzer';
 import { ModelRegistry } from '@server/services/model-registry';
 import type { SubscriptionTier } from '@server/services/model-registry.types';
 import { providerHealthService } from '@server/services/provider-health.service';
+import {
+  removeUpscaleInput,
+  resolveUpscaleInput,
+} from '@server/services/upscale-input-storage.service';
 import { ReplicateError } from '@server/services/replicate.service';
 import {
   SCALE_PRESERVING_FALLBACK_CANDIDATES,
@@ -140,15 +144,18 @@ async function analyzeImageForProcessing(
       };
     }
 
-    // Extract base64 data (remove data URL prefix if present)
-    const base64Data = imageData.startsWith('data:') ? imageData.split(',')[1] : imageData;
+    // Storage-backed requests pass a short signed HTTPS URL directly. Legacy
+    // inline requests still strip the data-URL prefix for analyzer compatibility.
+    const analysisInput = /^https:\/\//i.test(imageData)
+      ? imageData
+      : imageData.slice(getBase64PayloadOffset(imageData));
     const mimeType = options.mimeType || 'image/jpeg';
 
     // Call LLM analyzer directly
     // When suggestTier is false, the AI only provides enhancement suggestions (no model recommendation)
     const llmAnalyzer = new LLMImageAnalyzer();
     const analysisResult = await llmAnalyzer.analyze(
-      base64Data,
+      analysisInput,
       mimeType,
       eligibleModelIds,
       options.suggestTier
@@ -208,6 +215,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   let coreTerminalEventEmitted = false;
   const requestId = req.headers.get('x-request-id') || req.headers.get('cf-ray') || undefined;
   let creditsRefunded = false;
+  let temporaryStoragePath: string | undefined;
   let latestFailure: { failureReason: string } | null = null;
   let failureRowWriteScheduled = false;
   const pendingFailureRowWrites: Array<() => Promise<void>> = [];
@@ -622,69 +630,88 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json(errorBody, { status });
     }
 
-    // 6. Parse and validate request body
+    // 6. Parse and validate request body. New clients upload image bytes to
+    // private storage first; the legacy inline shape remains during rollout.
     const body = await req.json();
     const validatedInput = upscaleSchema.parse(body);
     requestedQualityTier = validatedInput.config.qualityTier;
     requestedScale = validatedInput.config.scale;
 
-    // 7. Additional validation: Check if image data is valid base64
-    try {
-      const imageData = validatedInput.imageData;
-      if (getBase64PayloadLength(imageData) === 0) {
-        logFailure('invalid_base64_missing_payload');
+    let processingImageReference: string;
+    let validationImageData: string;
+    let inputFileSizeBytes: number;
+    if (validatedInput.storagePath) {
+      const storedInput = await resolveUpscaleInput({
+        userId,
+        storagePath: validatedInput.storagePath,
+        claimedMimeType: validatedInput.mimeType,
+        isPaidUser,
+      });
+      temporaryStoragePath = validatedInput.storagePath;
+      processingImageReference = storedInput.imageReference;
+      validationImageData = storedInput.validationImageData;
+      inputFileSizeBytes = storedInput.sizeBytes;
+    } else {
+      processingImageReference = validatedInput.imageData as string;
+      validationImageData = processingImageReference;
+      inputFileSizeBytes = estimateBase64ByteLength(processingImageReference) ?? 0;
+
+      // 7. Additional validation: Check if inline image data is valid base64.
+      try {
+        if (getBase64PayloadLength(validationImageData) === 0) {
+          logFailure('invalid_base64_missing_payload');
+          const { body: errorBody, status } = createErrorResponse(
+            ErrorCodes.VALIDATION_ERROR,
+            'Invalid image data format - missing base64 data',
+            400
+          );
+          return NextResponse.json(errorBody, { status });
+        }
+
+        const base64Regex = /[A-Za-z0-9+/]*={0,2}$/y;
+        base64Regex.lastIndex = getBase64PayloadOffset(validationImageData);
+        if (!base64Regex.test(validationImageData)) {
+          logFailure('invalid_base64_characters');
+          const { body: errorBody, status } = createErrorResponse(
+            ErrorCodes.VALIDATION_ERROR,
+            'Invalid image data format - not valid base64',
+            400
+          );
+          return NextResponse.json(errorBody, { status });
+        }
+      } catch {
+        logFailure('invalid_image_data_exception');
         const { body: errorBody, status } = createErrorResponse(
           ErrorCodes.VALIDATION_ERROR,
-          'Invalid image data format - missing base64 data',
+          'Invalid image data format',
           400
         );
         return NextResponse.json(errorBody, { status });
       }
 
-      // Sticky match from the payload offset: same rule as before, without
-      // copying megabytes of base64 just to run the test against it.
-      const base64Regex = /[A-Za-z0-9+/]*={0,2}$/y;
-      base64Regex.lastIndex = getBase64PayloadOffset(imageData);
-      if (!base64Regex.test(imageData)) {
-        logFailure('invalid_base64_characters');
+      // Storage inputs are checked against actual object metadata by
+      // resolveUpscaleInput; legacy inline requests still use decoded size.
+      const sizeValidation = validateImageSizeForTier(validationImageData, isPaidUser);
+      if (!sizeValidation.valid) {
+        logFailure('file_size_validation_failed', {
+          isPaidUser,
+          validationError: sizeValidation.error,
+          sizeBytes: sizeValidation.sizeBytes,
+        });
         const { body: errorBody, status } = createErrorResponse(
           ErrorCodes.VALIDATION_ERROR,
-          'Invalid image data format - not valid base64',
+          sizeValidation.error || 'Image size validation failed',
           400
         );
         return NextResponse.json(errorBody, { status });
       }
-    } catch {
-      logFailure('invalid_image_data_exception');
-      const { body: errorBody, status } = createErrorResponse(
-        ErrorCodes.VALIDATION_ERROR,
-        'Invalid image data format',
-        400
-      );
-      return NextResponse.json(errorBody, { status });
     }
 
     // Note: User tier validation now happens in the 3-branch logic section
 
-    // 8. Validate image size based on user tier (BEFORE charging credits)
-    const sizeValidation = validateImageSizeForTier(validatedInput.imageData, isPaidUser);
-    if (!sizeValidation.valid) {
-      logFailure('file_size_validation_failed', {
-        isPaidUser,
-        validationError: sizeValidation.error,
-        sizeBytes: sizeValidation.sizeBytes,
-      });
-      const { body: errorBody, status } = createErrorResponse(
-        ErrorCodes.VALIDATION_ERROR,
-        sizeValidation.error || 'Image size validation failed',
-        400
-      );
-      return NextResponse.json(errorBody, { status });
-    }
-
     // 8a. Resolve the real image format from magic bytes. The client-supplied MIME is
     // only a hint — the detected type is what we validate against and use downstream.
-    const magicValidation = validateMagicBytes(validatedInput.imageData, validatedInput.mimeType);
+    const magicValidation = validateMagicBytes(validationImageData, validatedInput.mimeType);
     if (!magicValidation.valid) {
       logFailure('magic_bytes_validation_failed', {
         claimedMime: validatedInput.mimeType,
@@ -717,7 +744,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const effectiveMimeType = detectedMimeType as typeof validatedInput.mimeType;
 
     // 8b. Decode and validate input dimensions
-    inputDimensions = decodeImageDimensions(validatedInput.imageData);
+    inputDimensions = decodeImageDimensions(validationImageData);
     if (inputDimensions) {
       const dimValidation = validateImageDimensions(inputDimensions.width, inputDimensions.height);
       if (!dimValidation.valid) {
@@ -782,7 +809,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     if (config.qualityTier === 'auto') {
       // Branch A: Auto tier - Always run AI analysis for tier + enhancements
       logger.info('Auto tier selected, running AI analysis', { userId });
-      const analysis = await analyzeImageForProcessing(validatedInput.imageData, {
+      const analysis = await analyzeImageForProcessing(processingImageReference, {
         suggestTier: true,
         userTier: userTier || 'free',
         mimeType: effectiveMimeType,
@@ -816,7 +843,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         userId,
         userSelectedTier: config.qualityTier,
       });
-      const analysis = await analyzeImageForProcessing(validatedInput.imageData, {
+      const analysis = await analyzeImageForProcessing(processingImageReference, {
         suggestTier: false, // Important: Don't ask AI for model recommendation
         userTier: userTier || 'free',
         mimeType: effectiveMimeType,
@@ -1123,7 +1150,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Create legacy-compatible input for the processor
     // Map new quality tier system to legacy format that processors understand
     const legacyInputForProcessor = {
-      imageData: validatedInput.imageData,
+      imageData: processingImageReference,
       mimeType: effectiveMimeType,
       enhancementPrompt: validatedInput.enhancementPrompt,
       config: {
@@ -1235,7 +1262,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       outputWidth: dimensions?.output.width,
       outputHeight: dimensions?.output.height,
       fileType: effectiveMimeType,
-      fileSizeBytes: estimateBase64ByteLength(validatedInput.imageData),
+      fileSizeBytes: inputFileSizeBytes,
       durationMs,
     });
 
@@ -1514,6 +1541,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       await Promise.all(pendingFailureRowWrites.map(write => write()));
     } catch {
       // Failure telemetry must never mask the original route response.
+    }
+    if (temporaryStoragePath) {
+      try {
+        await removeUpscaleInput(temporaryStoragePath);
+      } catch (error) {
+        logger.warn('Failed to remove temporary upscale input', {
+          storagePath: temporaryStoragePath,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
     }
     await logger.flush();
   }

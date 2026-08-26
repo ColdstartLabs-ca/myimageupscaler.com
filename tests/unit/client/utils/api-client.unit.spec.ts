@@ -4,12 +4,18 @@ import { DEFAULT_ENHANCEMENT_SETTINGS, type IUpscaleConfig } from '@/shared/type
 const mocks = vi.hoisted(() => ({
   getSession: vi.fn(),
   track: vi.fn(),
+  uploadToSignedUrl: vi.fn(),
 }));
 
 vi.mock('@shared/utils/supabase/client', () => ({
   createClient: vi.fn(() => ({
     auth: {
       getSession: mocks.getSession,
+    },
+    storage: {
+      from: vi.fn(() => ({
+        uploadToSignedUrl: mocks.uploadToSignedUrl,
+      })),
     },
   })),
 }));
@@ -44,6 +50,59 @@ describe('upscale API response handling', () => {
   afterEach(() => {
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
+  });
+
+  it('uploads image bytes directly to storage before dispatching the upscale job', async () => {
+    mocks.uploadToSignedUrl.mockResolvedValue({ data: { path: 'user-1/job-1.png' }, error: null });
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' })
+      )
+      .mockResolvedValueOnce(
+        Response.json({
+          imageUrl: 'https://replicate.delivery/output.png',
+          processing: { creditsRemaining: 4, creditsUsed: 1 },
+        })
+      );
+    vi.stubGlobal('fetch', fetchMock);
+    vi.stubGlobal('crypto', { randomUUID: () => '11111111-1111-4111-8111-111111111111' });
+
+    const file = new File(['image-bytes'], 'source.png', { type: 'image/png' });
+    await expect(processImage(file, config, vi.fn())).resolves.toMatchObject({
+      imageUrl: 'https://replicate.delivery/output.png',
+      creditsRemaining: 4,
+      creditsUsed: 1,
+    });
+
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      1,
+      '/api/upscale/upload',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({
+          filename: 'source.png',
+          mimeType: 'image/png',
+          sizeBytes: file.size,
+          jobId: '11111111-1111-4111-8111-111111111111',
+        }),
+      })
+    );
+    expect(mocks.uploadToSignedUrl).toHaveBeenCalledWith(
+      'user-1/job-1.png',
+      'signed-token',
+      file,
+      expect.objectContaining({ contentType: 'image/png', upsert: false })
+    );
+
+    const upscaleBody = JSON.parse(String(fetchMock.mock.calls[1][1]?.body));
+    expect(upscaleBody).toMatchObject({
+      storagePath: 'user-1/job-1.png',
+      mimeType: 'image/png',
+      jobId: '11111111-1111-4111-8111-111111111111',
+      config,
+    });
+    expect(upscaleBody).not.toHaveProperty('imageData');
   });
 
   it('should throw UpscaleEdgeError when response is HTML', async () => {
