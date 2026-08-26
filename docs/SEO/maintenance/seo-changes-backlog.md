@@ -11,6 +11,24 @@ Maintenance rules:
 
 ## 2026-08-25
 
+### Local dev image delivery restored
+
+Changes:
+
+- Added a development-only rewrite mapping `/cdn-cgi/image/:options/:path*` to the untransformed
+  asset (`lib/dev/cdn-cgi-rewrite.ts`, wired in `next.config.js`). The custom image loader has
+  emitted Cloudflare Image Resizing URLs since the PRD 05 LCP work (`52619af4`, 2026-08-13); that
+  endpoint only exists at the Cloudflare edge, so every `<Image>` 404'd under `next dev`.
+- Production behavior is unchanged: the rewrite returns an empty list outside development, and the
+  loader still emits `/cdn-cgi/image/...` for every non-dev build.
+
+Validation:
+
+- New unit coverage in `tests/unit/seo/cdn-cgi-dev-rewrite.unit.spec.ts` (dev returns the rewrite;
+  production/test/undefined return none); existing image-optimization contract tests still pass 5/5.
+- Live dev check: every `/cdn-cgi/image/...` URL on `/`, `/tools/ai-image-upscaler`,
+  `/blog/fixing-pixelated-photos`, and `/formats/upscale-gif-images` now returns 200.
+
 ### August 25 PRD Batch — Immediate Phases Implemented
 
 Changes:
