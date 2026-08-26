@@ -42,11 +42,9 @@ const nanoBananaProConfigSchema = z.object({
  */
 export const IMAGE_VALIDATION = {
   MAX_SIZE_FREE: 5 * 1024 * 1024, // 5MB for free tier
-  // 10MB, not 25MB. A 25MB image base64-encodes to ~33MB of body, which the
-  // Worker cannot buffer: the paid ceiling was above MAX_REQUEST_BYTES, so a
-  // paid user uploading the size we advertised was rejected or killed the
-  // Worker outright. 10MB * 1.4 envelope = 14MB of body, inside the cap.
-  MAX_SIZE_PAID: 10 * 1024 * 1024, // 10MB for paid tier
+  // Paid images upload directly to private storage, so their bytes never enter
+  // the Worker's base64 JSON request body.
+  MAX_SIZE_PAID: 25 * 1024 * 1024, // 25MB for paid tier
   MAX_SIZE_DEFAULT: 5 * 1024 * 1024, // Default to free tier limit
   ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/webp', 'image/heic'] as const,
   MIN_DIMENSION: 64,

@@ -26,6 +26,8 @@ export interface ICreditDeduction {
 export interface IProcessImageOptions {
   /** Pre-calculated credit cost from the route. If provided, processor uses this instead of recalculating. */
   creditCost?: number;
+  /** Caller-owned durable reservation/job id, minted before direct upload. */
+  reservationJobId?: string;
   /** Provider-cost details resolved by the API route from the same inputs used for billing. */
   costAttribution?: IProcessingCostAttribution;
   /**

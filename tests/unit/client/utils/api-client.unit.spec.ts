@@ -4,6 +4,7 @@ import { DEFAULT_ENHANCEMENT_SETTINGS, type IUpscaleConfig } from '@/shared/type
 const mocks = vi.hoisted(() => ({
   getSession: vi.fn(),
   track: vi.fn(),
+  storageFrom: vi.fn(),
   uploadToSignedUrl: vi.fn(),
 }));
 
@@ -13,7 +14,7 @@ vi.mock('@shared/utils/supabase/client', () => ({
       getSession: mocks.getSession,
     },
     storage: {
-      from: vi.fn(() => ({
+      from: mocks.storageFrom.mockImplementation(() => ({
         uploadToSignedUrl: mocks.uploadToSignedUrl,
       })),
     },
@@ -45,6 +46,19 @@ describe('upscale API response handling', () => {
     mocks.getSession.mockResolvedValue({
       data: { session: { access_token: 'token-123' } },
     });
+    class LoadingImage {
+      onload: (() => void) | null = null;
+      onerror: (() => void) | null = null;
+      set src(_value: string) {
+        queueMicrotask(() => this.onload?.());
+      }
+    }
+    vi.stubGlobal('Image', LoadingImage);
+    vi.stubGlobal('URL', {
+      ...URL,
+      createObjectURL: vi.fn(() => 'blob:https://app.test/output-1'),
+      revokeObjectURL: vi.fn(),
+    });
   });
 
   afterEach(() => {
@@ -61,16 +75,22 @@ describe('upscale API response handling', () => {
       )
       .mockResolvedValueOnce(
         Response.json({
-          imageUrl: 'https://replicate.delivery/output.png',
-          processing: { creditsRemaining: 4, creditsUsed: 1 },
+          mimeType: 'image/png',
+          processing: {
+            creditsRemaining: 4,
+            creditsUsed: 1,
+            reservationJobId: '11111111-1111-4111-8111-111111111111',
+            deliveryToken: 'delivery-token-'.padEnd(43, 'x'),
+          },
         })
-      );
+      )
+      .mockResolvedValueOnce(new Response(new Blob(['image-bytes']), { status: 200 }));
     vi.stubGlobal('fetch', fetchMock);
     vi.stubGlobal('crypto', { randomUUID: () => '11111111-1111-4111-8111-111111111111' });
 
     const file = new File(['image-bytes'], 'source.png', { type: 'image/png' });
     await expect(processImage(file, config, vi.fn())).resolves.toMatchObject({
-      imageUrl: 'https://replicate.delivery/output.png',
+      imageUrl: 'blob:https://app.test/output-1',
       creditsRemaining: 4,
       creditsUsed: 1,
     });
@@ -94,6 +114,7 @@ describe('upscale API response handling', () => {
       file,
       expect.objectContaining({ contentType: 'image/png', upsert: false })
     );
+    expect(mocks.storageFrom).toHaveBeenCalledWith('upscale-inputs');
 
     const upscaleBody = JSON.parse(String(fetchMock.mock.calls[1][1]?.body));
     expect(upscaleBody).toMatchObject({
@@ -103,6 +124,122 @@ describe('upscale API response handling', () => {
       config,
     });
     expect(upscaleBody).not.toHaveProperty('imageData');
+  });
+
+  it('downloads staged output through the same job/token capability without exposing raw provider URLs', async () => {
+    mocks.uploadToSignedUrl.mockResolvedValue({ data: { path: 'user-1/job-1.png' }, error: null });
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' })
+      )
+      .mockResolvedValueOnce(
+        Response.json({
+          mimeType: 'image/png',
+          processing: {
+            creditsRemaining: 4,
+            creditsUsed: 1,
+            reservationJobId: '11111111-1111-4111-8111-111111111111',
+            deliveryToken: 'delivery-token-'.padEnd(43, 'x'),
+          },
+        })
+      )
+      .mockResolvedValueOnce(new Response(new Blob(['image-bytes']), { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+    vi.stubGlobal('crypto', { randomUUID: () => '11111111-1111-4111-8111-111111111111' });
+
+    const file = new File(['image-bytes'], 'source.png', { type: 'image/png' });
+    await expect(processImage(file, config, vi.fn())).resolves.toMatchObject({
+      imageUrl: 'blob:https://app.test/output-1',
+    });
+
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      3,
+      '/api/upscale/output',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({
+          reservationJobId: '11111111-1111-4111-8111-111111111111',
+          deliveryToken: 'delivery-token-'.padEnd(43, 'x'),
+        }),
+      })
+    );
+    expect(JSON.stringify(fetchMock.mock.calls[1][1]?.body)).not.toContain('replicate.delivery');
+  });
+
+  it('retries the same output capability after a transient stream/blob failure without another upscale call', async () => {
+    mocks.uploadToSignedUrl.mockResolvedValue({ data: { path: 'user-1/job-1.png' }, error: null });
+    const abortingResponse = new Response(
+      new ReadableStream({
+        pull(controller) {
+          controller.error(new Error('stream aborted'));
+        },
+      }),
+      { status: 200 }
+    );
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' })
+      )
+      .mockResolvedValueOnce(
+        Response.json({
+          mimeType: 'image/png',
+          processing: {
+            creditsRemaining: 4,
+            creditsUsed: 1,
+            reservationJobId: '11111111-1111-4111-8111-111111111111',
+            deliveryToken: 'delivery-token-'.padEnd(43, 'x'),
+          },
+        })
+      )
+      .mockResolvedValueOnce(abortingResponse)
+      .mockResolvedValueOnce(new Response(new Blob(['image-bytes']), { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+    vi.stubGlobal('crypto', { randomUUID: () => '11111111-1111-4111-8111-111111111111' });
+
+    const file = new File(['image-bytes'], 'source.png', { type: 'image/png' });
+
+    await expect(processImage(file, config, vi.fn())).resolves.toMatchObject({
+      imageUrl: 'blob:https://app.test/output-1',
+    });
+
+    expect(fetchMock.mock.calls.filter(call => call[0] === '/api/upscale')).toHaveLength(1);
+    expect(fetchMock.mock.calls.filter(call => call[0] === '/api/upscale/output')).toHaveLength(2);
+    expect(fetchMock.mock.calls[2][1]?.body).toBe(fetchMock.mock.calls[3][1]?.body);
+  });
+
+  it('does not retry 4xx output capability failures', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    mocks.uploadToSignedUrl.mockResolvedValue({ data: { path: 'user-1/job-1.png' }, error: null });
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' })
+      )
+      .mockResolvedValueOnce(
+        Response.json({
+          mimeType: 'image/png',
+          processing: {
+            creditsRemaining: 4,
+            creditsUsed: 1,
+            reservationJobId: '11111111-1111-4111-8111-111111111111',
+            deliveryToken: 'delivery-token-'.padEnd(43, 'x'),
+          },
+        })
+      )
+      .mockResolvedValueOnce(
+        Response.json({ error: { message: 'Output capability was not found' } }, { status: 404 })
+      );
+    vi.stubGlobal('fetch', fetchMock);
+    vi.stubGlobal('crypto', { randomUUID: () => '11111111-1111-4111-8111-111111111111' });
+
+    const file = new File(['image-bytes'], 'source.png', { type: 'image/png' });
+
+    await expect(processImage(file, config, vi.fn())).rejects.toThrow(
+      'Output capability was not found'
+    );
+    expect(fetchMock.mock.calls.filter(call => call[0] === '/api/upscale/output')).toHaveLength(1);
   });
 
   it('should throw UpscaleEdgeError when response is HTML', async () => {

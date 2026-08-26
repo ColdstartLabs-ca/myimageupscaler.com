@@ -335,11 +335,13 @@ describe('ImageGenerationService', () => {
       const result = await service.processImage(userId, input);
 
       // Assert
-      expect(mockSupabaseRpc).toHaveBeenCalledWith('consume_credits_v2', {
-        target_user_id: userId,
-        amount: creditCost,
-        ref_id: expect.stringMatching(/^gen_\d+_[a-z0-9]+$/),
-        description: `Image processing (${input.config.qualityTier} tier, ${creditCost} credits)`,
+      expect(mockSupabaseRpc).toHaveBeenCalledWith('consume_credits_v3', {
+        p_user_id: userId,
+        p_amount: creditCost,
+        p_job_id: expect.stringMatching(
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+        ),
+        p_description: `Image processing via Gemini (${creditCost} credits)`,
       });
 
       expect(mockTrackServerEvent).toHaveBeenCalledWith(
@@ -379,13 +381,47 @@ describe('ImageGenerationService', () => {
       });
 
       // Assert
-      expect(mockSupabaseRpc).toHaveBeenCalledWith('consume_credits_v2', {
-        target_user_id: userId,
-        amount: preCalculatedCost,
-        ref_id: expect.any(String),
-        description: expect.stringContaining(`${preCalculatedCost} credits`),
+      expect(mockSupabaseRpc).toHaveBeenCalledWith('consume_credits_v3', {
+        p_user_id: userId,
+        p_amount: preCalculatedCost,
+        p_job_id: expect.any(String),
+        p_description: expect.stringContaining(`${preCalculatedCost} credits`),
       });
       expect(result.creditsRemaining).toBe(100);
+    });
+
+    it('uses the caller reservation job id for Gemini v3 credit reservations', async () => {
+      const userId = 'user-123';
+      const input = createMockInput();
+      mockSupabaseRpc.mockResolvedValueOnce({
+        data: [{ new_total_balance: 91, consumed_subscription: 0, consumed_purchased: 5 }],
+        error: null,
+      });
+      mockGenerateContent.mockResolvedValueOnce(createMockGeminiResponse());
+
+      const deductions: unknown[] = [];
+      const result = await service.processImage(userId, input, {
+        creditCost: 5,
+        reservationJobId: '11111111-1111-4111-8111-111111111111',
+        onCreditsDeducted: deduction => deductions.push(deduction),
+      });
+
+      expect(mockSupabaseRpc).toHaveBeenCalledWith('consume_credits_v3', {
+        p_user_id: userId,
+        p_amount: 5,
+        p_job_id: '11111111-1111-4111-8111-111111111111',
+        p_description: 'Image processing via Gemini (5 credits)',
+      });
+      expect(deductions).toEqual([
+        {
+          amount: 5,
+          jobId: '11111111-1111-4111-8111-111111111111',
+          newBalance: 91,
+          subscriptionAmount: 0,
+          purchasedAmount: 5,
+        },
+      ]);
+      expect(result.creditsRemaining).toBe(91);
     });
 
     it('should still resolve when cost telemetry insertion fails', async () => {
@@ -517,7 +553,6 @@ describe('ImageGenerationService', () => {
       // Arrange
       const userId = 'user-123';
       const input = createMockInput();
-      const creditCost = 1;
 
       // Mock successful deduction
       mockSupabaseRpc
@@ -542,13 +577,12 @@ describe('ImageGenerationService', () => {
 
       // Verify refund was called
       expect(mockSupabaseRpc).toHaveBeenCalledTimes(2);
-      expect(mockSupabaseRpc).toHaveBeenCalledWith('refund_consumed_credits', {
+      expect(mockSupabaseRpc).toHaveBeenCalledWith('refund_processing_credit_reservation', {
         p_user_id: userId,
-        p_amount: creditCost,
-        p_job_id: expect.stringMatching(/^gen_\d+_[a-z0-9]+$/),
-        p_subscription_amount: creditCost,
-        p_purchased_amount: 0,
-        p_description: 'Credit refund for failed Gemini processing',
+        p_job_id: expect.stringMatching(
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+        ),
+        p_failure_reason: 'Credit refund for failed Gemini processing',
       });
     });
 
@@ -724,7 +758,10 @@ describe('ImageGenerationService', () => {
       await expect(service.processImage(userId, input)).rejects.toThrow(AIGenerationError);
 
       // Verify error was logged
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to refund credits:', expect.any(Object));
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Failed to refund credit reservation:',
+        expect.any(Object)
+      );
 
       consoleErrorSpy.mockRestore();
     });

@@ -25,7 +25,8 @@ const mocks = vi.hoisted(() => ({
       this.providerStatus = providerStatus;
     }
   },
-  refundCredits: vi.fn(),
+  refundReservation: vi.fn(),
+  recordDeliverableOutput: vi.fn(),
   processImage: vi.fn(),
   providerAvailability: vi.fn(),
   acquireProviderPermit: vi.fn(),
@@ -96,7 +97,10 @@ vi.mock('@server/services/scale-preserving-model', () => ({
   resolveScalePreservingModel: () => ({ usedFallback: false, modelId: 'real-esrgan' }),
 }));
 vi.mock('@server/services/replicate/utils/credit-manager', () => ({
-  creditManager: { refundCredits: mocks.refundCredits },
+  creditManager: {
+    refundReservation: mocks.refundReservation,
+    recordDeliverableOutput: mocks.recordDeliverableOutput,
+  },
 }));
 vi.mock('@server/supabase/supabaseAdmin', () => ({ supabaseAdmin: { from: mocks.from } }));
 vi.mock('@shared/config/env', () => ({
@@ -177,7 +181,8 @@ describe('POST /api/upscale free limit errors', () => {
     vi.clearAllMocks();
     mocks.rateLimit.mockResolvedValue({ success: true, remaining: 4, reset: Date.now() + 60_000 });
     mocks.setupPending.mockReturnValue(false);
-    mocks.refundCredits.mockResolvedValue(true);
+    mocks.refundReservation.mockResolvedValue(true);
+    mocks.recordDeliverableOutput.mockResolvedValue(true);
     mocks.providerAvailability.mockResolvedValue({
       available: true,
       status: 'closed',
@@ -270,10 +275,19 @@ describe('POST /api/upscale free limit errors', () => {
       pricingModel: 'per-resolution',
       providerCostUsd: 0.3,
     });
-    mocks.processImage.mockResolvedValue({
-      imageData: 'result',
-      mimeType: 'image/png',
-      creditsRemaining: 75,
+    mocks.processImage.mockImplementation(async (_userId, _input, options) => {
+      options?.onCreditsDeducted?.({
+        amount: 25,
+        newBalance: 75,
+        jobId: '11111111-1111-4111-8111-111111111111',
+        subscriptionAmount: 25,
+        purchasedAmount: 0,
+      });
+      return {
+        imageUrl: 'https://output.test/result.png',
+        mimeType: 'image/png',
+        creditsRemaining: 75,
+      };
     });
 
     const response = await POST(request());
@@ -339,10 +353,19 @@ describe('POST /api/upscale free limit errors', () => {
       pricingModel: 'per-resolution',
       providerCostUsd: 0.3,
     });
-    mocks.processImage.mockResolvedValue({
-      imageData: 'result',
-      mimeType: 'image/png',
-      creditsRemaining: 74,
+    mocks.processImage.mockImplementation(async (_userId, _input, options) => {
+      options?.onCreditsDeducted?.({
+        amount: 26,
+        newBalance: 74,
+        jobId: '22222222-2222-4222-8222-222222222222',
+        subscriptionAmount: 26,
+        purchasedAmount: 0,
+      });
+      return {
+        imageUrl: 'https://output.test/result.png',
+        mimeType: 'image/png',
+        creditsRemaining: 74,
+      };
     });
 
     const estimateResponse = await estimateCredits(
@@ -662,7 +685,7 @@ describe('POST /api/upscale free limit errors', () => {
       },
     });
     expect(JSON.stringify(payload)).not.toMatch(/replicate|https?:\/\/|buy|purchase|billing/i);
-    expect(mocks.refundCredits).not.toHaveBeenCalled();
+    expect(mocks.refundReservation).not.toHaveBeenCalled();
     expect(mocks.batchRelease).toHaveBeenCalledWith('user-1');
   });
 
@@ -695,7 +718,7 @@ describe('POST /api/upscale free limit errors', () => {
     const response = await POST(request());
 
     expect(response.status).toBe(422);
-    expect(mocks.refundCredits).toHaveBeenCalled();
+    expect(mocks.refundReservation).toHaveBeenCalled();
     expect(mocks.batchRelease).not.toHaveBeenCalled();
     expect(mocks.recordProviderFailure).not.toHaveBeenCalled();
   });

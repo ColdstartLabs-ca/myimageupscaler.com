@@ -4,6 +4,7 @@ import { NextRequest } from 'next/server';
 const mocks = vi.hoisted(() => ({
   claimAlert: vi.fn(),
   releaseAlertClaim: vi.fn(),
+  reconcileStaleReservations: vi.fn(),
   send: vi.fn(),
   loggerError: vi.fn(),
   flush: vi.fn(),
@@ -13,6 +14,11 @@ vi.mock('@server/services/provider-health.service', () => ({
   providerHealthService: {
     claimAlert: mocks.claimAlert,
     releaseAlertClaim: mocks.releaseAlertClaim,
+  },
+}));
+vi.mock('@server/services/replicate/utils/credit-manager', () => ({
+  creditManager: {
+    reconcileStaleReservations: mocks.reconcileStaleReservations,
   },
 }));
 vi.mock('@server/services/email.service', () => ({
@@ -47,6 +53,7 @@ describe('POST /api/cron/provider-health', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.send.mockResolvedValue({ success: true });
+    mocks.reconcileStaleReservations.mockResolvedValue({ refundedCount: 0, quarantinedCount: 0 });
   });
 
   it('should page the admin when the PRD threshold is claimed', async () => {
@@ -84,6 +91,48 @@ describe('POST /api/cron/provider-health', () => {
       expect.objectContaining({ failureRatio: 0.6, billingFailures: 2 })
     );
     expect(mocks.flush).toHaveBeenCalled();
+    expect(mocks.reconcileStaleReservations).toHaveBeenCalledWith(10 * 60, 100);
+  });
+
+  it('runs stale reservation reconciliation only after cron authentication succeeds', async () => {
+    const response = await POST(request('wrong'));
+
+    expect(response.status).toBe(401);
+    expect(mocks.claimAlert).not.toHaveBeenCalled();
+    expect(mocks.reconcileStaleReservations).not.toHaveBeenCalled();
+  });
+
+  it('keeps provider health successful when stale reservation reconciliation fails', async () => {
+    mocks.claimAlert.mockResolvedValue({
+      shouldAlert: false,
+      severity: null,
+      attempts: 4,
+      failures: 0,
+      failureRatio: 0,
+      baselineRatio: null,
+      billingFailures: 0,
+      circuitStatus: 'closed',
+      retryAt: null,
+    });
+    mocks.reconcileStaleReservations.mockRejectedValue(new Error('db unavailable'));
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({ success: true, alerted: false });
+    expect(mocks.loggerError).toHaveBeenCalledWith(
+      'Stale credit reservation reconciliation failed',
+      expect.objectContaining({ error: 'db unavailable' })
+    );
+  });
+
+  it('still attempts stale reservation reconciliation when provider health summary fails', async () => {
+    mocks.claimAlert.mockResolvedValue(null);
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(500);
+    expect(mocks.reconcileStaleReservations).toHaveBeenCalledWith(10 * 60, 100);
   });
 
   it('should not send when volume or failure ratio is below threshold', async () => {

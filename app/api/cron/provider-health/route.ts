@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createLogger } from '@server/monitoring/logger';
 import { getEmailService } from '@server/services/email.service';
 import { providerHealthService } from '@server/services/provider-health.service';
+import { creditManager } from '@server/services/replicate/utils/credit-manager';
 import { serverEnv } from '@shared/config/env';
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -11,6 +12,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (request.headers.get('x-cron-secret') !== serverEnv.CRON_SECRET) {
       logger.warn('Unauthorized provider health cron request');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    try {
+      const reconciliation = await creditManager.reconcileStaleReservations(10 * 60, 100);
+      logger.info('Stale credit reservation reconciliation completed', reconciliation);
+    } catch (error) {
+      logger.error('Stale credit reservation reconciliation failed', {
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
 
     const snapshot = await providerHealthService.claimAlert();

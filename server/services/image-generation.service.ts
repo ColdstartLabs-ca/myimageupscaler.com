@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { trackServerEvent } from '@server/analytics';
 import { GoogleGenAI } from '@google/genai';
@@ -206,18 +208,18 @@ export class ImageGenerationService implements IImageProcessor {
     input: IUpscaleInput,
     options?: IProcessImageOptions
   ): Promise<IImageProcessorResult> {
-    const jobId = `gen_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    const jobId = options?.reservationJobId ?? randomUUID();
     // Use pre-calculated credit cost if provided, otherwise calculate locally
     const creditCost = options?.creditCost ?? calculateCreditCost(input.config);
 
-    // Step 1: Deduct credits atomically using FIFO (subscription first, then purchased)
+    // Step 1: Reserve credits atomically using the durable v3 contract.
     const { data: balanceResult, error: creditError } = await supabaseAdmin.rpc(
-      'consume_credits_v2',
+      'consume_credits_v3',
       {
-        target_user_id: userId,
-        amount: creditCost,
-        ref_id: jobId,
-        description: `Image processing (${input.config.qualityTier} tier, ${creditCost} credits)`,
+        p_user_id: userId,
+        p_amount: creditCost,
+        p_job_id: jobId,
+        p_description: `Image processing via Gemini (${creditCost} credits)`,
       }
     );
 
@@ -271,8 +273,8 @@ export class ImageGenerationService implements IImageProcessor {
         creditsRemaining: newBalance,
       };
     } catch (error) {
-      // Step 3: Refund on failure
-      await creditManager.refundCredits(
+      // Step 3: Refund the exact v3 reservation on failure
+      await creditManager.refundReservation(
         userId,
         deduction,
         'Credit refund for failed Gemini processing'

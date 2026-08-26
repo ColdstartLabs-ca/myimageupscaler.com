@@ -13,7 +13,10 @@ const mocks = vi.hoisted(() => ({
   recordProviderFailure: vi.fn(),
   recordProviderSuccess: vi.fn(),
   rateLimit: vi.fn(),
-  refundCredits: vi.fn(),
+  refundReservation: vi.fn(),
+  recordDeliverableOutput: vi.fn(),
+  stageGeminiOutput: vi.fn(),
+  removeUpscaleInput: vi.fn(),
   setupPending: vi.fn(),
   track: vi.fn(),
   parseUpscale: vi.fn(),
@@ -80,12 +83,20 @@ vi.mock('@server/services/provider-health.service', () => ({
     recordSuccess: mocks.recordProviderSuccess,
   },
 }));
+vi.mock('@server/services/upscale-input-storage.service', () => ({
+  resolveUpscaleInput: vi.fn(),
+  removeUpscaleInput: mocks.removeUpscaleInput,
+  stageGeminiOutput: mocks.stageGeminiOutput,
+}));
 vi.mock('@server/services/replicate.service', () => ({ ReplicateError: mocks.ReplicateError }));
 vi.mock('@server/services/scale-preserving-model', () => ({
   resolveScalePreservingModel: () => ({ usedFallback: false, modelId: 'real-esrgan' }),
 }));
 vi.mock('@server/services/replicate/utils/credit-manager', () => ({
-  creditManager: { refundCredits: mocks.refundCredits },
+  creditManager: {
+    refundReservation: mocks.refundReservation,
+    recordDeliverableOutput: mocks.recordDeliverableOutput,
+  },
 }));
 vi.mock('@server/supabase/supabaseAdmin', () => ({ supabaseAdmin: { from: mocks.from } }));
 vi.mock('@shared/config/env', () => ({
@@ -148,7 +159,16 @@ describe('POST /api/upscale failure recording', () => {
     vi.clearAllMocks();
     mocks.rateLimit.mockResolvedValue({ success: true, remaining: 4, reset: Date.now() + 60_000 });
     mocks.setupPending.mockReturnValue(false);
-    mocks.refundCredits.mockResolvedValue(true);
+    mocks.refundReservation.mockResolvedValue(true);
+    mocks.recordDeliverableOutput.mockResolvedValue(true);
+    mocks.stageGeminiOutput.mockResolvedValue({
+      imageUrl:
+        'https://storage.example/object/sign/upscale-inputs/user-1/outputs/result.png?token=abc',
+      mimeType: 'image/png',
+      expiresAt: 1795737600000,
+      storagePath: 'user-1/outputs/11111111-1111-4111-8111-111111111111.png',
+    });
+    mocks.removeUpscaleInput.mockResolvedValue(undefined);
     mocks.batchRelease.mockResolvedValue(true);
     mocks.providerAvailability.mockResolvedValue({
       available: true,
@@ -197,6 +217,258 @@ describe('POST /api/upscale failure recording', () => {
       };
     });
     mocks.insert.mockResolvedValue({ error: null });
+  });
+
+  it('completes the durable reservation only after a usable output URL exists', async () => {
+    mocks.processImage.mockImplementation(
+      async (
+        _userId: string,
+        _input: unknown,
+        options: { onCreditsDeducted?: (deduction: Record<string, unknown>) => void }
+      ) => {
+        options.onCreditsDeducted?.({
+          amount: 1,
+          subscriptionAmount: 1,
+          purchasedAmount: 0,
+          jobId: '11111111-1111-4111-8111-111111111111',
+        });
+        return {
+          imageUrl: 'https://output.test/result.png',
+          mimeType: 'image/png',
+          expiresAt: 1795737600000,
+          creditsRemaining: 4,
+        };
+      }
+    );
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(200);
+    const responseBody = await response.json();
+    expect(responseBody).toMatchObject({
+      processing: {
+        reservationJobId: '11111111-1111-4111-8111-111111111111',
+        deliveryToken: expect.any(String),
+      },
+    });
+    expect(responseBody).not.toHaveProperty('imageUrl');
+    expect(responseBody).not.toHaveProperty('imageData');
+    expect(mocks.recordDeliverableOutput).toHaveBeenCalledWith(
+      'user-1',
+      '11111111-1111-4111-8111-111111111111',
+      {
+        imageUrl: 'https://output.test/result.png',
+        mimeType: 'image/png',
+        expiresAt: 1795737600000,
+        deliveryTokenHash: expect.stringMatching(/^[a-f0-9]{64}$/),
+      }
+    );
+    expect(mocks.refundReservation).not.toHaveBeenCalled();
+  });
+
+  it('stages Gemini inline image data before recording a durable capability-only success', async () => {
+    mocks.processImage.mockImplementation(
+      async (
+        _userId: string,
+        _input: unknown,
+        options: { onCreditsDeducted?: (deduction: Record<string, unknown>) => void }
+      ) => {
+        options.onCreditsDeducted?.({
+          amount: 1,
+          subscriptionAmount: 1,
+          purchasedAmount: 0,
+          jobId: '11111111-1111-4111-8111-111111111111',
+        });
+        return {
+          imageData: 'data:image/png;base64,iVBORw0KGgo=',
+          mimeType: 'image/png',
+          creditsRemaining: 4,
+        };
+      }
+    );
+    mocks.stageGeminiOutput.mockResolvedValue({
+      imageUrl:
+        'https://storage.example/object/sign/upscale-inputs/user-1/outputs/11111111-1111-4111-8111-111111111111.png?token=abc',
+      mimeType: 'image/png',
+      expiresAt: 1795737600000,
+      storagePath: 'user-1/outputs/11111111-1111-4111-8111-111111111111.png',
+    });
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(200);
+    const responseBody = await response.json();
+    expect(JSON.stringify(responseBody)).not.toContain('iVBORw0KGgo');
+    expect(JSON.stringify(responseBody)).not.toContain('storage.example');
+    expect(responseBody.processing).toMatchObject({
+      reservationJobId: '11111111-1111-4111-8111-111111111111',
+      deliveryToken: expect.any(String),
+    });
+    expect(mocks.stageGeminiOutput).toHaveBeenCalledWith({
+      userId: 'user-1',
+      jobId: '11111111-1111-4111-8111-111111111111',
+      imageData: 'data:image/png;base64,iVBORw0KGgo=',
+    });
+    expect(mocks.recordDeliverableOutput).toHaveBeenCalledWith(
+      'user-1',
+      '11111111-1111-4111-8111-111111111111',
+      expect.objectContaining({
+        imageUrl:
+          'https://storage.example/object/sign/upscale-inputs/user-1/outputs/11111111-1111-4111-8111-111111111111.png?token=abc',
+        mimeType: 'image/png',
+        expiresAt: 1795737600000,
+      })
+    );
+    expect(mocks.refundReservation).not.toHaveBeenCalled();
+  });
+
+  it('refunds the v3 reservation when Gemini output staging fails', async () => {
+    mocks.processImage.mockImplementation(
+      async (
+        _userId: string,
+        _input: unknown,
+        options: { onCreditsDeducted?: (deduction: Record<string, unknown>) => void }
+      ) => {
+        options.onCreditsDeducted?.({
+          amount: 1,
+          subscriptionAmount: 1,
+          purchasedAmount: 0,
+          jobId: '33333333-3333-4333-8333-333333333333',
+        });
+        return {
+          imageData: 'data:image/png;base64,iVBORw0KGgo=',
+          mimeType: 'image/png',
+          creditsRemaining: 4,
+        };
+      }
+    );
+    mocks.stageGeminiOutput.mockRejectedValue(new Error('storage unavailable'));
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(503);
+    expect(mocks.recordDeliverableOutput).not.toHaveBeenCalled();
+    expect(mocks.refundReservation).toHaveBeenCalledWith(
+      'user-1',
+      expect.objectContaining({ jobId: '33333333-3333-4333-8333-333333333333', amount: 1 }),
+      expect.stringContaining('durable_result_not_deliverable')
+    );
+  });
+
+  it('removes staged Gemini output and refunds when recording the deliverable fails', async () => {
+    mocks.processImage.mockImplementation(
+      async (
+        _userId: string,
+        _input: unknown,
+        options: { onCreditsDeducted?: (deduction: Record<string, unknown>) => void }
+      ) => {
+        options.onCreditsDeducted?.({
+          amount: 1,
+          subscriptionAmount: 1,
+          purchasedAmount: 0,
+          jobId: '44444444-4444-4444-8444-444444444444',
+        });
+        return {
+          imageData: 'data:image/png;base64,iVBORw0KGgo=',
+          mimeType: 'image/png',
+          creditsRemaining: 4,
+        };
+      }
+    );
+    mocks.stageGeminiOutput.mockResolvedValue({
+      imageUrl:
+        'https://storage.example/object/sign/upscale-inputs/user-1/outputs/output.png?token=abc',
+      mimeType: 'image/png',
+      expiresAt: 1795737600000,
+      storagePath: 'user-1/outputs/44444444-4444-4444-8444-444444444444.png',
+    });
+    mocks.recordDeliverableOutput.mockResolvedValue(false);
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(503);
+    expect(mocks.removeUpscaleInput).toHaveBeenCalledWith(
+      'user-1/outputs/44444444-4444-4444-8444-444444444444.png'
+    );
+    expect(mocks.refundReservation).toHaveBeenCalledWith(
+      'user-1',
+      expect.objectContaining({ jobId: '44444444-4444-4444-8444-444444444444', amount: 1 }),
+      expect.stringContaining('durable_result_not_deliverable')
+    );
+  });
+
+  it('removes staged Gemini output and refunds when recording the deliverable throws', async () => {
+    mocks.processImage.mockImplementation(
+      async (
+        _userId: string,
+        _input: unknown,
+        options: { onCreditsDeducted?: (deduction: Record<string, unknown>) => void }
+      ) => {
+        options.onCreditsDeducted?.({
+          amount: 1,
+          subscriptionAmount: 1,
+          purchasedAmount: 0,
+          jobId: '55555555-5555-4555-8555-555555555555',
+        });
+        return {
+          imageData: 'data:image/png;base64,iVBORw0KGgo=',
+          mimeType: 'image/png',
+          creditsRemaining: 4,
+        };
+      }
+    );
+    mocks.stageGeminiOutput.mockResolvedValue({
+      imageUrl:
+        'https://storage.example/object/sign/upscale-inputs/user-1/outputs/output.png?token=abc',
+      mimeType: 'image/png',
+      expiresAt: 1795737600000,
+      storagePath: 'user-1/outputs/55555555-5555-4555-8555-555555555555.png',
+    });
+    mocks.recordDeliverableOutput.mockRejectedValue(new Error('record failed'));
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(503);
+    expect(mocks.removeUpscaleInput).toHaveBeenCalledWith(
+      'user-1/outputs/55555555-5555-4555-8555-555555555555.png'
+    );
+    expect(mocks.refundReservation).toHaveBeenCalledWith(
+      'user-1',
+      expect.objectContaining({ jobId: '55555555-5555-4555-8555-555555555555', amount: 1 }),
+      expect.stringContaining('durable_result_not_deliverable')
+    );
+  });
+
+  it('refunds and fails when provider completed but the result is not durably deliverable', async () => {
+    mocks.processImage.mockImplementation(
+      async (
+        _userId: string,
+        _input: unknown,
+        options: { onCreditsDeducted?: (deduction: Record<string, unknown>) => void }
+      ) => {
+        options.onCreditsDeducted?.({
+          amount: 1,
+          subscriptionAmount: 1,
+          purchasedAmount: 0,
+          jobId: '22222222-2222-4222-8222-222222222222',
+        });
+        return {
+          imageData: 'data:image/png;base64,result',
+          mimeType: 'image/png',
+          creditsRemaining: 4,
+        };
+      }
+    );
+    mocks.recordDeliverableOutput.mockResolvedValue(false);
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(503);
+    expect(mocks.refundReservation).toHaveBeenCalledWith(
+      'user-1',
+      expect.objectContaining({ jobId: '22222222-2222-4222-8222-222222222222', amount: 1 }),
+      expect.stringContaining('durable_result_not_deliverable')
+    );
   });
 
   it('should insert a failed processing_jobs row when upscale fails', async () => {

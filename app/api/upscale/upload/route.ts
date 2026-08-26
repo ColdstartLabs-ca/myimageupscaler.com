@@ -3,7 +3,7 @@ import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
-const BUCKET_NAME = 'upscale-input';
+const BUCKET_NAME = 'upscale-inputs';
 const uploadRequestSchema = z.object({
   filename: z.string().trim().min(1).max(255),
   mimeType: z.enum(IMAGE_VALIDATION.ALLOWED_TYPES),

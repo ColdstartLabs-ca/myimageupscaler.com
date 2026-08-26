@@ -1029,11 +1029,13 @@ describe('ReplicateService', () => {
 
       await service.processImage('user-123', input);
 
-      expect(mockSupabaseRpc).toHaveBeenCalledWith('consume_credits_v2', {
-        target_user_id: 'user-123',
-        amount: 10,
-        ref_id: expect.stringMatching(/^rep_\d+_[a-z0-9]+$/),
-        description: 'Image processing via Replicate (10 credits)',
+      expect(mockSupabaseRpc).toHaveBeenCalledWith('consume_credits_v3', {
+        p_user_id: 'user-123',
+        p_amount: 10,
+        p_job_id: expect.stringMatching(
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+        ),
+        p_description: 'Image processing via Replicate (10 credits)',
       });
     });
 
@@ -1106,13 +1108,10 @@ describe('ReplicateService', () => {
       await expect(service.processImage('user-123', input)).rejects.toThrow();
 
       // Verify refund was called
-      expect(mockSupabaseRpc).toHaveBeenCalledWith('refund_consumed_credits', {
+      expect(mockSupabaseRpc).toHaveBeenCalledWith('refund_processing_credit_reservation', {
         p_user_id: 'user-123',
-        p_amount: 10,
-        p_job_id: expect.stringMatching(/^rep_\d+_[a-z0-9]+$/),
-        p_subscription_amount: 10,
-        p_purchased_amount: 0,
-        p_description: 'Credit refund for failed Replicate processing',
+        p_job_id: expect.any(String),
+        p_failure_reason: 'Credit refund for failed Replicate processing',
       });
     });
 
@@ -1124,11 +1123,11 @@ describe('ReplicateService', () => {
 
       await service.processImage('user-123', input, options);
 
-      expect(mockSupabaseRpc).toHaveBeenCalledWith('consume_credits_v2', {
-        target_user_id: 'user-123',
-        amount: 25,
-        ref_id: expect.any(String),
-        description: 'Image processing via Replicate (25 credits)',
+      expect(mockSupabaseRpc).toHaveBeenCalledWith('consume_credits_v3', {
+        p_user_id: 'user-123',
+        p_amount: 25,
+        p_job_id: expect.any(String),
+        p_description: 'Image processing via Replicate (25 credits)',
       });
       expect(calculateCreditCost).not.toHaveBeenCalled();
     });
@@ -1330,7 +1329,10 @@ describe('ReplicateService', () => {
       );
 
       // Verify refund was called
-      expect(mockSupabaseRpc).toHaveBeenCalledWith('refund_consumed_credits', expect.any(Object));
+      expect(mockSupabaseRpc).toHaveBeenCalledWith(
+        'refund_processing_credit_reservation',
+        expect.any(Object)
+      );
     });
 
     test('should throw ReplicateError for NSFW/safety violations', async () => {
@@ -1489,7 +1491,10 @@ describe('ReplicateService', () => {
 
       await expect(service.processImage('user-123', input)).rejects.toThrow();
 
-      expect(consoleSpy).toHaveBeenCalledWith('Failed to refund credits:', expect.any(Object));
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Failed to refund credit reservation:',
+        expect.any(Object)
+      );
 
       consoleSpy.mockRestore();
     });
@@ -1524,9 +1529,11 @@ describe('ReplicateService', () => {
       await service.processImage('user-123', input);
 
       const creditCall = mockSupabaseRpc.mock.calls[0];
-      const jobId = creditCall[1].ref_id;
+      const jobId = creditCall[1].p_job_id;
 
-      expect(jobId).toMatch(/^rep_\d+_[a-z0-9]+$/);
+      expect(jobId).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+      );
       expect(jobId.length).toBeGreaterThan(10);
     });
   });

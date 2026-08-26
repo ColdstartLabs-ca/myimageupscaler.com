@@ -1,3 +1,4 @@
+import { randomBytes, createHash } from 'node:crypto';
 import type { IUpscaleResponse, ModelId, QualityTier } from '@/shared/types/coreflow.types';
 import { trackServerEvent } from '@server/analytics';
 import {
@@ -21,6 +22,7 @@ import { providerHealthService } from '@server/services/provider-health.service'
 import {
   removeUpscaleInput,
   resolveUpscaleInput,
+  stageGeminiOutput,
 } from '@server/services/upscale-input-storage.service';
 import { ReplicateError } from '@server/services/replicate.service';
 import {
@@ -346,7 +348,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     routeRefundAttempted = true;
     const refunded = creditDeduction
-      ? await creditManager.refundCredits(
+      ? await creditManager.refundReservation(
           userId,
           creditDeduction,
           `Route-level refund after upscale failure: ${failureReason}`
@@ -1189,6 +1191,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const result = await Promise.race([
       processor.processImage(userId, legacyInputForProcessor as never, {
         creditCost,
+        reservationJobId: validatedInput.jobId,
         costAttribution: {
           modelId: resolvedModelId,
           qualityTier: resolvedTier,
@@ -1211,6 +1214,84 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     ]);
     await providerHealthService.recordSuccess();
     providerAttemptStarted = false;
+
+    const deliveryToken = randomBytes(32).toString('base64url');
+    const deliveryTokenHash = createHash('sha256').update(deliveryToken).digest('hex');
+    let deliverableOutput: {
+      imageUrl?: string;
+      mimeType?: string;
+      expiresAt?: string | number;
+      storagePath?: string;
+    } = {
+      imageUrl: result.imageUrl,
+      mimeType: result.mimeType,
+      expiresAt: result.expiresAt,
+    };
+    if (!deliverableOutput.imageUrl && result.imageData && creditDeduction) {
+      try {
+        deliverableOutput = await stageGeminiOutput({
+          userId,
+          jobId: creditDeduction.jobId,
+          imageData: result.imageData,
+        });
+      } catch {
+        await refundAfterRouteFailure('durable_result_not_deliverable', {
+          hasImageUrl: false,
+          hasImageData: true,
+          stageFailure: true,
+        });
+        await trackProcessingFailure({
+          errorType: 'durable_result_not_deliverable',
+          reason: 'durable_result_not_deliverable',
+          retryable: true,
+        });
+        const { body, status } = createErrorResponse(
+          ErrorCodes.AI_UNAVAILABLE,
+          TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE,
+          503,
+          { suppressPurchaseCtas: true }
+        );
+        return NextResponse.json(body, { status });
+      }
+    }
+    let recordedDeliverableOutput = false;
+    if (creditDeduction) {
+      try {
+        recordedDeliverableOutput = await creditManager.recordDeliverableOutput(
+          userId,
+          creditDeduction.jobId,
+          {
+            imageUrl: deliverableOutput.imageUrl,
+            mimeType: deliverableOutput.mimeType,
+            expiresAt: deliverableOutput.expiresAt,
+            deliveryTokenHash,
+          }
+        );
+      } catch {
+        recordedDeliverableOutput = false;
+      }
+    }
+    if (!recordedDeliverableOutput) {
+      if (deliverableOutput.storagePath) {
+        await removeUpscaleInput(deliverableOutput.storagePath).catch(() => undefined);
+      }
+      await refundAfterRouteFailure('durable_result_not_deliverable', {
+        hasImageUrl: Boolean(deliverableOutput.imageUrl),
+        hasImageData: Boolean(result.imageData),
+      });
+      await trackProcessingFailure({
+        errorType: 'durable_result_not_deliverable',
+        reason: 'durable_result_not_deliverable',
+        retryable: true,
+      });
+      const { body, status } = createErrorResponse(
+        ErrorCodes.AI_UNAVAILABLE,
+        TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE,
+        503,
+        { suppressPurchaseCtas: true }
+      );
+      return NextResponse.json(body, { status });
+    }
 
     const durationMs = Date.now() - startTime;
 
@@ -1280,16 +1361,17 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const response: IUpscaleResponse = {
       success: true,
-      imageData: result.imageData, // Legacy base64 support (may be undefined)
-      imageUrl: result.imageUrl, // New URL-based result (Cloudflare Workers optimized)
-      expiresAt: result.expiresAt, // Expiry timestamp for URL
-      mimeType: result.mimeType || 'image/png',
+      expiresAt:
+        typeof deliverableOutput.expiresAt === 'number' ? deliverableOutput.expiresAt : undefined, // Expiry timestamp for staged output
+      mimeType: deliverableOutput.mimeType || 'image/png',
       processing: {
         modelUsed: resolvedModelId,
         modelDisplayName,
         processingTimeMs: durationMs,
         creditsUsed: creditCost,
         creditsRemaining: result.creditsRemaining,
+        reservationJobId: creditDeduction?.jobId,
+        deliveryToken,
         ...(isInternalScaleFallback ? { dimensionPreservingFallback: true } : {}),
       },
       // Include usedTier for Auto tier responses so UI can show what was actually used
@@ -1309,6 +1391,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // 12. Return successful response with enhanced information and batch headers
     return NextResponse.json(response, {
       headers: {
+        'Cache-Control': 'no-store',
+        'Referrer-Policy': 'no-referrer',
         'X-Batch-Limit': batchUsage.limit.toString(),
         'X-Batch-Current': batchUsage.current.toString(),
         'X-Batch-Reset': batchUsage.resetAt.toISOString(),

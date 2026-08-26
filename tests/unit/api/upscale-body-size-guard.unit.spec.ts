@@ -72,7 +72,7 @@ vi.mock('@server/services/scale-preserving-model', () => ({
   resolveScalePreservingModel: () => ({ usedFallback: false, modelId: 'real-esrgan' }),
 }));
 vi.mock('@server/services/replicate/utils/credit-manager', () => ({
-  creditManager: { refundCredits: vi.fn() },
+  creditManager: { refundReservation: vi.fn() },
 }));
 vi.mock('@server/supabase/supabaseAdmin', () => ({ supabaseAdmin: { from: mocks.from } }));
 vi.mock('@shared/config/env', () => ({

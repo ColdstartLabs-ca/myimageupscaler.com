@@ -7,10 +7,10 @@ const WORKER_PEAK_MULTIPLIER = 4;
 const BASE64_ENVELOPE_OVERHEAD = 1.4;
 const WORKER_MEMORY_LIMIT = 128 * 1024 * 1024;
 
-describe('paid tier fits through the Worker', () => {
-  test('a max-size paid upload produces a body under the request cap', () => {
+describe('paid tier bypasses the Worker body cap', () => {
+  test('a max-size paid upload requires the direct-storage path', () => {
     const bodyBytes = IMAGE_VALIDATION.MAX_SIZE_PAID * BASE64_ENVELOPE_OVERHEAD;
-    expect(bodyBytes).toBeLessThan(IMAGE_VALIDATION.MAX_REQUEST_BYTES);
+    expect(bodyBytes).toBeGreaterThan(IMAGE_VALIDATION.MAX_REQUEST_BYTES);
   });
 
   test('the request cap leaves half the Worker heap for everything else', () => {

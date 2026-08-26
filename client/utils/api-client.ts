@@ -89,14 +89,97 @@ interface IApiErrorResponse {
 }
 
 interface IProcessImageApiResponse {
-  imageData?: string;
-  imageUrl?: string;
+  expiresAt?: number;
+  mimeType?: string;
   processing?: {
     creditsRemaining?: number;
     creditsUsed?: number;
     modelDisplayName?: string;
     dimensionPreservingFallback?: boolean;
+    reservationJobId?: string;
+    deliveryToken?: string;
   };
+}
+
+const DELIVERED_IMAGE_LOAD_TIMEOUT_MS = 15_000;
+
+class OutputCapabilityError extends Error {}
+
+async function verifyDeliveredImageIsUsable(imageUrl: string): Promise<void> {
+  if (typeof Image === 'undefined') {
+    throw new Error('Received image URL could not be loaded');
+  }
+
+  await new Promise<void>((resolve, reject) => {
+    const image = new Image();
+    let settled = false;
+    let timeout: ReturnType<typeof setTimeout>;
+    const finish = (error?: Error) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeout);
+      image.onload = null;
+      image.onerror = null;
+      if (error) reject(error);
+      else resolve();
+    };
+    timeout = setTimeout(
+      () => finish(new Error('Received image URL could not be loaded')),
+      DELIVERED_IMAGE_LOAD_TIMEOUT_MS
+    );
+
+    image.onload = () => finish();
+    image.onerror = () => finish(new Error('Received image URL could not be loaded'));
+    image.src = imageUrl;
+  });
+}
+
+async function fetchRetryableOutputBlobUrl(
+  capability: { reservationJobId: string; deliveryToken: string },
+  headers: Record<string, string>
+): Promise<string> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      const response = await fetch('/api/upscale/output', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(capability),
+        signal: AbortSignal.timeout(TIMEOUTS.REPLICATE_TIMEOUT),
+      });
+
+      if (!response.ok) {
+        if (response.status >= 400 && response.status < 500) {
+          const errorData = await parseJsonResponse<IApiErrorResponse>(response).catch(
+            () => undefined
+          );
+          throw new OutputCapabilityError(
+            getApiErrorMessage(errorData?.error) || 'Unable to retrieve generated output'
+          );
+        }
+        lastError = new Error('Unable to retrieve generated output');
+        continue;
+      }
+
+      const blob = await response.blob();
+      const imageUrl = URL.createObjectURL(blob);
+      try {
+        await verifyDeliveredImageIsUsable(imageUrl);
+      } catch (error) {
+        URL.revokeObjectURL(imageUrl);
+        throw error;
+      }
+      return imageUrl;
+    } catch (error) {
+      if (error instanceof OutputCapabilityError) {
+        throw error;
+      }
+      lastError = error;
+      if (attempt === 3) break;
+    }
+  }
+
+  throw lastError instanceof Error ? lastError : new Error('Unable to retrieve generated output');
 }
 
 function getApiErrorDetails(error: IApiErrorResponse['error']): IApiErrorDetails | undefined {
@@ -430,7 +513,7 @@ export const processImage = async (
       uploadToken: string;
     }>(uploadGrantResponse);
     const { error: uploadError } = await createClient()
-      .storage.from('upscale-input')
+      .storage.from('upscale-inputs')
       .uploadToSignedUrl(uploadGrant.storagePath, uploadGrant.uploadToken, file, {
         contentType: file.type || 'image/jpeg',
         upsert: false,
@@ -500,19 +583,24 @@ export const processImage = async (
 
     const data = await parseJsonResponse<IProcessImageApiResponse>(response);
 
-    // Validate we got image data in some form
-    if (!data.imageUrl && !data.imageData) {
+    // Validate we got either a legacy inline image or a retryable output capability.
+    const outputCapability =
+      data.processing?.reservationJobId && data.processing?.deliveryToken
+        ? {
+            reservationJobId: data.processing.reservationJobId,
+            deliveryToken: data.processing.deliveryToken,
+          }
+        : null;
+    if (!outputCapability) {
       throw new Error('No image data received from server');
     }
 
+    const imageUrl = await fetchRetryableOutputBlobUrl(outputCapability, headers);
+
     onProgress(100, ProcessingStage.FINALIZING);
 
-    // Return both URL and base64 - consumer decides which to use
-    // imageUrl: Direct URL for <img> display (no CORS issues, faster)
-    // imageData: Base64 for legacy support or when base64 is needed
     return {
-      imageUrl: data.imageUrl,
-      imageData: data.imageData,
+      imageUrl,
       creditsRemaining: data.processing?.creditsRemaining ?? 0,
       creditsUsed: data.processing?.creditsUsed ?? 0,
       modelDisplayName: data.processing?.modelDisplayName,

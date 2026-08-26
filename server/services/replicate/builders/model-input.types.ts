@@ -241,9 +241,10 @@ export function createModelInputContext(input: IUpscaleInput): IModelInputContex
   const { enhance, enhanceFaces, preserveText, enhancement, customInstructions } =
     additionalOptions;
 
-  // Ensure image is a data URL
+  // Preserve provider-fetchable HTTPS references from direct storage uploads;
+  // only raw base64 payloads need a data URL wrapper.
   let imageDataUrl = imageData;
-  if (!imageData.startsWith('data:')) {
+  if (!imageData.startsWith('data:') && !/^https:\/\//i.test(imageData)) {
     imageDataUrl = `data:${mimeType || 'image/jpeg'};base64,${imageData}`;
   }
 

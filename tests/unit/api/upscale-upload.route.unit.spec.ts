@@ -68,6 +68,7 @@ describe('POST /api/upscale/upload', () => {
       'user-1/11111111-1111-4111-8111-111111111111.png',
       { upsert: false }
     );
+    expect(mocks.storageFrom).toHaveBeenCalledWith('upscale-inputs');
   });
 
   it('rejects a declared file above the free-tier limit before granting upload', async () => {
@@ -82,5 +83,33 @@ describe('POST /api/upscale/upload', () => {
 
     expect(response.status).toBe(413);
     expect(mocks.createSignedUploadUrl).not.toHaveBeenCalled();
+  });
+
+  it('grants a paid upload for the reported 10.05 MiB JPEG regression', async () => {
+    mocks.from.mockReturnValue({
+      select: () => ({
+        eq: () => ({
+          single: async () => ({
+            data: {
+              subscription_status: 'active',
+              subscription_tier: 'pro',
+              purchased_credits_balance: 0,
+            },
+            error: null,
+          }),
+        }),
+      }),
+    });
+
+    const response = await POST(
+      request({
+        filename: 'os-x-yosemite-half-dome-yosemite-national-park-yosemite-4832x2718-4047.jpg',
+        mimeType: 'image/jpeg',
+        sizeBytes: 10_539_824,
+        jobId: '11111111-1111-4111-8111-111111111111',
+      })
+    );
+
+    expect(response.status).toBe(200);
   });
 });

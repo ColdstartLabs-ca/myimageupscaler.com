@@ -627,9 +627,7 @@ export interface IDimensionsInfo {
 
 export interface IUpscaleResponse {
   success: boolean;
-  imageData?: string; // Legacy base64 data URL (deprecated for Workers)
-  imageUrl?: string; // Direct URL to result image (Cloudflare Workers optimized)
-  expiresAt?: number; // Timestamp when imageUrl expires
+  expiresAt?: number; // Timestamp when staged output expires
   mimeType: string;
   processing: {
     modelUsed: string;
@@ -637,6 +635,10 @@ export interface IUpscaleResponse {
     processingTimeMs: number;
     creditsUsed: number;
     creditsRemaining: number;
+    /** Durable reservation id the browser must acknowledge after receiving a usable result. */
+    reservationJobId?: string;
+    /** Plaintext delivery token returned only with the upscale JSON; ack hashes it server-side. */
+    deliveryToken?: string;
     /** Set when the source was too large for the tier's model, so a tiled model ran instead to keep the original dimensions. Billing still follows the selected tier. */
     dimensionPreservingFallback?: boolean;
   };

@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const mocks = vi.hoisted(() => ({
   storageFrom: vi.fn(),
   list: vi.fn(),
+  upload: vi.fn(),
+  remove: vi.fn(),
   createSignedUrl: vi.fn(),
 }));
 
@@ -10,13 +12,21 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: { storage: { from: mocks.storageFrom } },
 }));
 
-import { resolveUpscaleInput } from '@server/services/upscale-input-storage.service';
+import {
+  resolveUpscaleInput,
+  stageGeminiOutput,
+} from '@server/services/upscale-input-storage.service';
 import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
 
 describe('resolveUpscaleInput', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.storageFrom.mockReturnValue({ list: mocks.list, createSignedUrl: mocks.createSignedUrl });
+    mocks.storageFrom.mockReturnValue({
+      list: mocks.list,
+      upload: mocks.upload,
+      remove: mocks.remove,
+      createSignedUrl: mocks.createSignedUrl,
+    });
     mocks.list.mockResolvedValue({
       data: [
         {
@@ -59,6 +69,7 @@ describe('resolveUpscaleInput', () => {
       'https://storage.example/signed',
       expect.objectContaining({ headers: { Range: 'bytes=0-65535' } })
     );
+    expect(mocks.storageFrom).toHaveBeenCalledWith('upscale-inputs');
   });
 
   it('rejects an object outside the authenticated user prefix', async () => {
@@ -93,5 +104,82 @@ describe('resolveUpscaleInput', () => {
       })
     ).rejects.toThrow(/upload limit/i);
     expect(mocks.createSignedUrl).not.toHaveBeenCalled();
+  });
+});
+
+describe('stageGeminiOutput', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.storageFrom.mockReturnValue({
+      list: mocks.list,
+      upload: mocks.upload,
+      remove: mocks.remove,
+      createSignedUrl: mocks.createSignedUrl,
+    });
+    mocks.upload.mockResolvedValue({ data: { path: 'user-1/outputs/job-1.png' }, error: null });
+    mocks.createSignedUrl.mockResolvedValue({
+      data: {
+        signedUrl:
+          'https://storage.example/object/sign/upscale-inputs/user-1/outputs/job-1.png?token=abc',
+      },
+      error: null,
+    });
+  });
+
+  it('validates and stages Gemini inline bytes under the authenticated user outputs prefix', async () => {
+    const staged = await stageGeminiOutput({
+      userId: 'user-1',
+      jobId: '11111111-1111-4111-8111-111111111111',
+      imageData: 'data:image/png;base64,iVBORw0KGgo=',
+    });
+
+    expect(staged).toEqual({
+      imageUrl:
+        'https://storage.example/object/sign/upscale-inputs/user-1/outputs/job-1.png?token=abc',
+      mimeType: 'image/png',
+      expiresAt: expect.any(Number),
+      storagePath: 'user-1/outputs/11111111-1111-4111-8111-111111111111.png',
+    });
+    expect(mocks.storageFrom).toHaveBeenCalledWith('upscale-inputs');
+    expect(mocks.upload).toHaveBeenCalledWith(
+      'user-1/outputs/11111111-1111-4111-8111-111111111111.png',
+      Buffer.from('89504e470d0a1a0a', 'hex'),
+      {
+        contentType: 'image/png',
+        upsert: true,
+      }
+    );
+    expect(mocks.createSignedUrl).toHaveBeenCalledWith(
+      'user-1/outputs/11111111-1111-4111-8111-111111111111.png',
+      expect.any(Number)
+    );
+  });
+
+  it('rejects empty, non-image, non-base64, or oversized Gemini output before upload', async () => {
+    await expect(
+      stageGeminiOutput({
+        userId: 'user-1',
+        jobId: 'job-1',
+        imageData: 'data:text/html;base64,PGgxPg==',
+      })
+    ).rejects.toThrow(/unsupported/i);
+    await expect(
+      stageGeminiOutput({ userId: 'user-1', jobId: 'job-1', imageData: 'data:image/png;base64,' })
+    ).rejects.toThrow(/empty/i);
+    await expect(
+      stageGeminiOutput({
+        userId: 'user-1',
+        jobId: 'job-1',
+        imageData: 'data:image/png;base64,abc',
+      })
+    ).rejects.toThrow(/base64/i);
+    await expect(
+      stageGeminiOutput({
+        userId: 'user-1',
+        jobId: 'job-1',
+        imageData: `data:image/png;base64,${Buffer.alloc(IMAGE_VALIDATION.MAX_SIZE_PAID + 1).toString('base64')}`,
+      })
+    ).rejects.toThrow(/too large/i);
+    expect(mocks.upload).not.toHaveBeenCalled();
   });
 });

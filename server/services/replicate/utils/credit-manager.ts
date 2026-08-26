@@ -1,5 +1,5 @@
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { InsufficientCreditsError } from '../../image-generation.service';
 import type { ICreditDeduction } from '../../image-processor.interface';
 import { getEmailLifecycleService } from '@server/services/email-lifecycle.service';
@@ -11,6 +11,12 @@ export interface ICreditOperationResult {
   success: boolean;
   newBalance: number;
   jobId: string;
+}
+
+export interface IDeliverableReservationOutput {
+  imageUrl: string;
+  mimeType: string;
+  expiresAt: string | null;
 }
 
 /**
@@ -83,10 +89,13 @@ export class CreditManager {
     >,
     description = 'Credit refund for failed processing'
   ): Promise<boolean> {
-    const { error } = await supabaseAdmin.rpc('refund_processing_credit_reservation', {
+    const { error } = await supabaseAdmin.rpc('refund_consumed_credits', {
       p_user_id: userId,
+      p_amount: deduction.amount,
       p_job_id: deduction.jobId,
-      p_failure_reason: description,
+      p_subscription_amount: deduction.subscriptionAmount,
+      p_purchased_amount: deduction.purchasedAmount,
+      p_description: description,
     });
 
     if (error) {
@@ -97,21 +106,121 @@ export class CreditManager {
     return true;
   }
 
-  async completeReservation(
+  async refundReservation(
+    userId: string,
+    deduction: Pick<
+      ICreditDeduction,
+      'amount' | 'jobId' | 'subscriptionAmount' | 'purchasedAmount'
+    >,
+    description = 'Credit refund for failed processing'
+  ): Promise<boolean> {
+    const { data, error } = await supabaseAdmin.rpc('refund_processing_credit_reservation', {
+      p_user_id: userId,
+      p_job_id: deduction.jobId,
+      p_failure_reason: description,
+    });
+
+    if (error) {
+      console.error('Failed to refund credit reservation:', error);
+      return false;
+    }
+
+    return data === true;
+  }
+
+  async recordDeliverableOutput(
     userId: string,
     jobId: string,
-    output: { imageUrl?: string; mimeType?: string; expiresAt?: string }
+    output: {
+      imageUrl?: string;
+      mimeType?: string;
+      expiresAt?: string | number;
+      deliveryTokenHash: string;
+    }
   ): Promise<boolean> {
     if (!output.imageUrl) return false;
-    const { data, error } = await supabaseAdmin.rpc('complete_processing_credit_reservation', {
+    const expiresAt =
+      typeof output.expiresAt === 'number'
+        ? new Date(output.expiresAt).toISOString()
+        : (output.expiresAt ?? null);
+    const { data, error } = await supabaseAdmin.rpc('record_processing_credit_reservation_output', {
       p_user_id: userId,
       p_job_id: jobId,
       p_output_url: output.imageUrl,
       p_output_mime_type: output.mimeType ?? 'image/png',
-      p_output_expires_at: output.expiresAt ?? null,
+      p_output_expires_at: expiresAt,
+      p_delivery_token_hash: output.deliveryTokenHash,
     });
-    if (error) throw new Error(`Failed to complete credit reservation: ${error.message}`);
+    if (error) throw new Error(`Failed to record credit reservation output: ${error.message}`);
     return data === true;
+  }
+
+  async retrieveDeliverableOutput(
+    userId: string,
+    jobId: string,
+    deliveryToken: string
+  ): Promise<IDeliverableReservationOutput | null> {
+    const deliveryTokenHash = createHash('sha256').update(deliveryToken).digest('hex');
+    const { data, error } = await supabaseAdmin.rpc(
+      'retrieve_processing_credit_reservation_output',
+      {
+        p_user_id: userId,
+        p_job_id: jobId,
+        p_delivery_token_hash: deliveryTokenHash,
+      }
+    );
+    if (error) throw new Error(`Failed to retrieve credit reservation output: ${error.message}`);
+    const row = Array.isArray(data) ? data[0] : data;
+    if (!row?.output_url) return null;
+    return {
+      imageUrl: row.output_url,
+      mimeType: row.output_mime_type ?? 'image/png',
+      expiresAt: row.output_expires_at ?? null,
+    };
+  }
+
+  async acknowledgeReceipt(
+    userId: string,
+    jobId: string,
+    output: {
+      imageUrl: string;
+      mimeType?: string;
+      expiresAt?: string | number | null;
+      deliveryToken: string;
+    }
+  ): Promise<boolean> {
+    const expiresAt =
+      typeof output.expiresAt === 'number'
+        ? new Date(output.expiresAt).toISOString()
+        : (output.expiresAt ?? null);
+    const deliveryTokenHash = createHash('sha256').update(output.deliveryToken).digest('hex');
+    const { data, error } = await supabaseAdmin.rpc('acknowledge_processing_credit_reservation', {
+      p_user_id: userId,
+      p_job_id: jobId,
+      p_output_url: output.imageUrl,
+      p_output_mime_type: output.mimeType ?? 'image/png',
+      p_output_expires_at: expiresAt,
+      p_delivery_token_hash: deliveryTokenHash,
+    });
+    if (error) throw new Error(`Failed to acknowledge credit reservation: ${error.message}`);
+    return data === true;
+  }
+
+  async reconcileStaleReservations(
+    staleAfterSeconds: number,
+    limit = 100
+  ): Promise<{ refundedCount: number; quarantinedCount: number }> {
+    const staleBefore = new Date(Date.now() - staleAfterSeconds * 1000).toISOString();
+    const { data, error } = await supabaseAdmin.rpc('reconcile_stale_credit_reservations', {
+      p_stale_before: staleBefore,
+      p_limit: limit,
+    });
+    if (error) throw new Error(`Failed to reconcile stale credit reservations: ${error.message}`);
+    const row = Array.isArray(data) ? (data[0] ?? {}) : (data ?? {});
+    return {
+      refundedCount: Number(row.refunded_count ?? 0),
+      quarantinedCount: Number(row.quarantined_count ?? 0),
+    };
   }
 
   private async queueLowBalanceAlert(userId: string, newBalance: number): Promise<void> {

@@ -126,7 +126,12 @@ export class ReplicateService implements IImageProcessor {
     this.ensureInputImageDataPresent(input);
 
     // Step 1: Deduct credits atomically using CreditManager
-    const deduction = await creditManager.deductCredits(userId, creditCost, this.providerName);
+    const deduction = await creditManager.deductCredits(
+      userId,
+      creditCost,
+      this.providerName,
+      options?.reservationJobId
+    );
     options?.onCreditsDeducted?.(deduction);
 
     try {
@@ -148,7 +153,7 @@ export class ReplicateService implements IImageProcessor {
       };
     } catch (error) {
       // Step 3: Refund on failure
-      await creditManager.refundCredits(
+      await creditManager.refundReservation(
         userId,
         deduction,
         'Credit refund for failed Replicate processing'
