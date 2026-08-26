@@ -15,7 +15,8 @@
    `9a7dbf83-3b06-4ae0-ba17-2fa9d80e5d03` deployed without a production route.
 
 3. Request `/formats/upscale-gif-images` three times. Requests two and three must return
-   `x-nextjs-cache: HIT` and complete in under 400 ms before production deployment.
+   `x-opennext-cache: HIT` (or `x-nextjs-cache: HIT` when Next's incremental cache serves the
+   response) with shared `s-maxage` and complete in under 400 ms before production deployment.
 
 ## Cache HTML rule
 
