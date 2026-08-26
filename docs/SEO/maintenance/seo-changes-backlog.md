@@ -30,6 +30,25 @@ Follow-up:
 - The deploy itself runs `yarn seo:cache:gate` against the deployed production URL; no GSC or
   IndexNow action is needed for this deployment-flow correction.
 
+### R2 Permission Fallback Added To Deploy
+
+Changes:
+
+- OpenNext now checks R2 access with the production Cloudflare token and falls back to the
+  authenticated Wrangler OAuth session only for cache population and the main Worker deploy when
+  that token lacks R2 object permission.
+
+Validation:
+
+- Production-token R2 listing failed with Cloudflare authentication error `10000`; OAuth R2
+  write/delete probe succeeded for the same account and the temporary object was removed.
+- Deployment unit coverage asserts the guarded fallback.
+
+Follow-up:
+
+- Replace the production API token with one that includes R2 Object Read & Write so future deploys
+  do not need the local OAuth fallback. No GSC or IndexNow action is needed.
+
 ## 2026-08-25
 
 ### Local dev image delivery restored

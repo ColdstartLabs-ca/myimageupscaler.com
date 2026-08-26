@@ -3,6 +3,10 @@ import path from 'node:path';
 import { describe, expect, test } from 'vitest';
 
 const deployScript = readFileSync(path.resolve(process.cwd(), 'scripts/deploy/deploy.sh'), 'utf8');
+const deployStepScript = readFileSync(
+  path.resolve(process.cwd(), 'scripts/deploy/steps/03-deploy.sh'),
+  'utf8'
+);
 
 describe('yarn deploy safety gates', () => {
   test('runs the Stripe guard before loading or building production configuration', () => {
@@ -17,12 +21,8 @@ describe('yarn deploy safety gates', () => {
   });
 
   test('allows skipping tests and i18n without bypassing production safety checks', () => {
-    expect(deployScript).toContain(
-      '--skip-tests) SKIP_TESTS="true" ;;'
-    );
-    expect(deployScript).toContain(
-      '--skip-i18n) SKIP_I18N="true" ;;'
-    );
+    expect(deployScript).toContain('--skip-tests) SKIP_TESTS="true" ;;');
+    expect(deployScript).toContain('--skip-i18n) SKIP_I18N="true" ;;');
     expect(deployScript).toContain('if [ "$SKIP_TESTS" = "false" ]; then');
     expect(deployScript).toContain('if [ "$SKIP_I18N" = "false" ]; then');
     expect(deployScript).not.toContain('--skip-seo-guard');
@@ -54,5 +54,15 @@ describe('yarn deploy safety gates', () => {
       deployScript.indexOf('if [ "$SKIP_TESTS" = "false" ]; then')
     );
     expect(deployScript).not.toContain('--skip-migrations');
+  });
+
+  test('falls back to Wrangler OAuth only for OpenNext R2 deployment when the production token lacks R2 access', () => {
+    expect(deployStepScript).toContain('npx wrangler r2 bucket list >/dev/null 2>&1');
+    expect(deployStepScript).toContain(
+      'env -u CLOUDFLARE_API_TOKEN npx wrangler r2 bucket list >/dev/null 2>&1'
+    );
+    expect(deployStepScript).toContain(
+      'env -u CLOUDFLARE_API_TOKEN npx opennextjs-cloudflare deploy'
+    );
   });
 });
