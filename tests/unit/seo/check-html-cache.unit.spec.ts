@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import packageJson from '../../../package.json';
 import { evaluateHtmlCacheObservation, HTML_CACHE_ROUTES } from '@/scripts/seo/check-html-cache';
+
+const postDeployVerifyScript = readFileSync(
+  path.resolve(process.cwd(), 'scripts/deploy/steps/06-verify.sh'),
+  'utf8'
+);
 
 describe('production HTML cache gate', () => {
   it('should fail when an HTML response carries Set-Cookie', () => {
@@ -56,10 +63,11 @@ describe('production HTML cache gate', () => {
     ).toEqual(['Authenticated dashboard routes are outside the HTML cache contract.']);
   });
 
-  it('should wire the cache gate into verify', () => {
+  it('should verify static cache config before deploy and live cache behavior after deploy', () => {
     expect(packageJson.scripts['seo:cache:gate']).toBe('tsx scripts/seo/check-html-cache.ts');
     expect(packageJson.scripts['seo:cache:config']).toContain('opennext-cache-config.unit.spec.ts');
     expect(packageJson.scripts.verify).toContain('yarn seo:cache:config');
-    expect(packageJson.scripts.verify).toContain('yarn seo:cache:gate');
+    expect(packageJson.scripts.verify).not.toContain('yarn seo:cache:gate');
+    expect(postDeployVerifyScript).toContain('yarn seo:cache:gate -- --base-url="$url"');
   });
 });

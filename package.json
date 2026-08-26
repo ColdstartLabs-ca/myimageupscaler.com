@@ -26,7 +26,7 @@
     "tsc": "tsc --noEmit",
     "prepare": "husky",
     "postinstall": "playwright install chromium chromium-headless-shell || echo '⚠️  Playwright browser install failed — run: npx playwright install chromium chromium-headless-shell'",
-    "verify": "yarn tsc && yarn lint && yarn i18n:icu && yarn validate:seo:schema && yarn seo:indexation:gate && yarn seo:cache:config && yarn seo:cache:gate",
+    "verify": "yarn tsc && yarn lint && yarn i18n:icu && yarn validate:seo:schema && yarn seo:indexation:gate && yarn seo:cache:config",
     "seo:pagespeed": "tsx scripts/seo-pagespeed-check.ts --budget-lcp=2.5",
     "verify:prod:schema": "./scripts/deploy/verify-prod-schema.sh",
     "verify:full": "yarn verify && yarn test:unit && yarn test:e2e:full",

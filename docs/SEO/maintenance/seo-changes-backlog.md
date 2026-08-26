@@ -9,6 +9,27 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-08-26
+
+### Production HTML Cache Gate Moved After Deployment
+
+Changes:
+
+- Kept the deterministic OpenNext cache configuration test in pre-deploy `yarn verify`, but moved
+  the live `cf-cache-status`, `Set-Cookie`, and TTFB gate into post-deploy verification.
+- This removes the rollout deadlock where the currently deployed Worker had to satisfy the new cache
+  contract before the Worker containing the cache fixes could be deployed.
+
+Validation:
+
+- `tests/unit/seo/check-html-cache.unit.spec.ts` now enforces the pre-deploy/static and
+  post-deploy/live split.
+
+Follow-up:
+
+- The deploy itself runs `yarn seo:cache:gate` against the deployed production URL; no GSC or
+  IndexNow action is needed for this deployment-flow correction.
+
 ## 2026-08-25
 
 ### Local dev image delivery restored

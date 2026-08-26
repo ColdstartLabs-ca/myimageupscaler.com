@@ -14,6 +14,7 @@ step_verify() {
         status=$(curl -s -o /dev/null -w "%{http_code}" "$url/api/health" 2>/dev/null || echo "000")
         if [[ "$status" == "200" ]]; then
             log_success "Health check passed"
+            _verify_html_cache "$url"
             _verify_provider_health_cron "$url"
             _verify_webhook_secret "$url"
             _verify_recovery_lifecycle_dry_run "$url"
@@ -27,6 +28,18 @@ step_verify() {
     done
 
     log_warn "Health check didn't return 200 (may still be propagating)"
+}
+
+_verify_html_cache() {
+    local url="$1"
+
+    log_info "Verifying deployed anonymous HTML cache..."
+    cd "$PROJECT_ROOT"
+    if yarn seo:cache:gate -- --base-url="$url"; then
+        log_success "Anonymous HTML cache verified"
+        return 0
+    fi
+    log_error "Deployed anonymous HTML cache verification failed"
 }
 
 _verify_email_delivery_readiness() {
