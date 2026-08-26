@@ -13,6 +13,10 @@ describe('OpenNext incremental cache configuration', () => {
     expect((cache as unknown as { opts: { mode: string } }).opts.mode).toBe('long-lived');
   });
 
+  it('should intercept cached HTML before invoking the Next server bundle', () => {
+    expect(cloudflareConfig.dangerous?.enableCacheInterception).toBe(true);
+  });
+
   it('should bind the incremental cache R2 bucket', () => {
     expect(wranglerConfig.r2_buckets).toContainEqual({
       binding: 'NEXT_INC_CACHE_R2_BUCKET',

@@ -15,8 +15,17 @@ import {
   generateHreflangAlternates,
 } from '@/lib/seo/hreflang-generator';
 import { serverEnv } from '@shared/config/env';
-import type { Locale } from '@/i18n/config';
+import { SUPPORTED_LOCALES, type Locale } from '@/i18n/config';
 import commonTranslations from '@/locales/en/common.json';
+
+// The landing page is public HTML. Keep it in the OpenNext incremental cache so
+// anonymous requests do not render the full page inside the Worker each time.
+export const dynamic = 'force-static';
+export const revalidate = 86400;
+
+export function generateStaticParams() {
+  return SUPPORTED_LOCALES.map(locale => ({ locale }));
+}
 
 /**
  * Helper function to load locale-specific translations for metadata

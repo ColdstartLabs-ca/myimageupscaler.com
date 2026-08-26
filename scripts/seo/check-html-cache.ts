@@ -13,9 +13,17 @@ export const MAX_WARM_TTFB_MS = 400;
 
 export interface IHtmlCacheObservation {
   route: string;
+  status?: number;
   cacheStatus: string | null;
+  nextCacheStatus?: string | null;
+  openNextCacheStatus?: string | null;
+  cacheControl?: string | null;
   setCookie: string | null;
   ttfbMs: number;
+}
+
+function isHit(value: string | null | undefined): boolean {
+  return value?.trim().toUpperCase() === 'HIT';
 }
 
 export function evaluateHtmlCacheObservation(observation: IHtmlCacheObservation): string[] {
@@ -24,10 +32,21 @@ export function evaluateHtmlCacheObservation(observation: IHtmlCacheObservation)
   }
 
   const errors: string[] = [];
+  if (observation.status !== undefined && (observation.status < 200 || observation.status >= 300)) {
+    errors.push(`${observation.route} returned HTTP ${observation.status}.`);
+  }
   if (observation.setCookie) errors.push(`${observation.route} returned Set-Cookie.`);
   if (!observation.cacheStatus) {
-    errors.push(`${observation.route} has no cf-cache-status.`);
-  } else if (observation.cacheStatus.toUpperCase() !== 'HIT') {
+    const workerCacheHit =
+      isHit(observation.nextCacheStatus) || isHit(observation.openNextCacheStatus);
+    if (!workerCacheHit) {
+      errors.push(
+        `${observation.route} has no cf-cache-status or Worker cache HIT (x-nextjs-cache/x-opennext-cache).`
+      );
+    } else if (!/\bs-maxage\s*=\s*\d+/i.test(observation.cacheControl ?? '')) {
+      errors.push(`${observation.route} Worker cache HIT lacks shared s-maxage cache-control.`);
+    }
+  } else if (!isHit(observation.cacheStatus)) {
     errors.push(
       `${observation.route} warm cf-cache-status was ${observation.cacheStatus}, not HIT.`
     );
@@ -50,7 +69,11 @@ async function request(baseUrl: string, route: string): Promise<IHtmlCacheObserv
   await response.body?.cancel();
   return {
     route,
+    status: response.status,
     cacheStatus: response.headers.get('cf-cache-status'),
+    nextCacheStatus: response.headers.get('x-nextjs-cache'),
+    openNextCacheStatus: response.headers.get('x-opennext-cache'),
+    cacheControl: response.headers.get('cache-control'),
     setCookie: response.headers.get('set-cookie'),
     ttfbMs,
   };
@@ -63,7 +86,11 @@ export async function runHtmlCacheGate(baseUrl = 'https://myimageupscaler.com'):
     const warm = await request(baseUrl, route);
     errors.push(...evaluateHtmlCacheObservation(warm));
     console.log(
-      `${route}: cf-cache-status=${warm.cacheStatus || 'absent'} ttfb=${Math.round(warm.ttfbMs)}ms`
+      `${route}: status=${warm.status ?? 'unknown'} ` +
+        `cf-cache-status=${warm.cacheStatus || 'absent'} ` +
+        `x-nextjs-cache=${warm.nextCacheStatus || 'absent'} ` +
+        `x-opennext-cache=${warm.openNextCacheStatus || 'absent'} ` +
+        `ttfb=${Math.round(warm.ttfbMs)}ms`
     );
   }
   return errors;

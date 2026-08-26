@@ -21,15 +21,29 @@ describe('production HTML cache gate', () => {
     ).toContain('/ returned Set-Cookie.');
   });
 
-  it('should fail when cf-cache-status is absent', () => {
+  it('should fail when the cache probe returns a non-success response', () => {
+    expect(
+      evaluateHtmlCacheObservation({
+        route: '/blog/example',
+        status: 404,
+        cacheStatus: 'HIT',
+        setCookie: null,
+        ttfbMs: 80,
+      })
+    ).toContain('/blog/example returned HTTP 404.');
+  });
+
+  it('should accept a Worker cache HIT when Cloudflare does not emit cf-cache-status', () => {
     expect(
       evaluateHtmlCacheObservation({
         route: '/blog/example',
         cacheStatus: null,
+        openNextCacheStatus: 'HIT',
+        cacheControl: 's-maxage=86400, stale-while-revalidate=2592000',
         setCookie: null,
         ttfbMs: 80,
       })
-    ).toContain('/blog/example has no cf-cache-status.');
+    ).toEqual([]);
     expect(
       evaluateHtmlCacheObservation({
         route: '/blog/example',
@@ -38,6 +52,32 @@ describe('production HTML cache gate', () => {
         ttfbMs: 80,
       })
     ).toEqual([]);
+  });
+
+  it('should fail when neither Cloudflare nor Worker cache proof is present', () => {
+    expect(
+      evaluateHtmlCacheObservation({
+        route: '/blog/example',
+        cacheStatus: null,
+        setCookie: null,
+        ttfbMs: 80,
+      })
+    ).toContain(
+      '/blog/example has no cf-cache-status or Worker cache HIT (x-nextjs-cache/x-opennext-cache).'
+    );
+  });
+
+  it('should require shared cache-control for a Worker cache HIT', () => {
+    expect(
+      evaluateHtmlCacheObservation({
+        route: '/blog/example',
+        cacheStatus: null,
+        nextCacheStatus: 'HIT',
+        cacheControl: 'private, no-cache',
+        setCookie: null,
+        ttfbMs: 80,
+      })
+    ).toContain('/blog/example Worker cache HIT lacks shared s-maxage cache-control.');
   });
 
   it('should fail when a warm response is still a cache miss', () => {

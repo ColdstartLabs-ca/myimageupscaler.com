@@ -11,6 +11,27 @@ Maintenance rules:
 
 ## 2026-08-26
 
+### OpenNext Worker HTML Cache Contract Aligned
+
+Changes:
+
+- Enabled OpenNext cache interception and static generation for every localized homepage so
+  anonymous HTML can be served from the R2 incremental cache before the Worker renders Next.js.
+- Updated the post-deploy HTML gate to accept `x-opennext-cache: HIT` or `x-nextjs-cache: HIT`
+  with shared `s-maxage` when Cloudflare omits `cf-cache-status` for a direct Worker response;
+  an emitted Cloudflare status must still be `HIT`, and `Set-Cookie`/slow TTFB remain failures.
+
+Validation:
+
+- `next build --webpack` generated `/en`, `/es`, `/pt`, `/de`, `/fr`, `/it`, and `/ja` as SSG
+  routes with 24-hour revalidation.
+- Focused cache, homepage, and static-route tests pass.
+
+Follow-up:
+
+- Deploy the validated Worker, then run the post-deploy cache gate and authenticated dashboard
+  isolation check.
+
 ### Production HTML Cache Gate Moved After Deployment
 
 Changes:
