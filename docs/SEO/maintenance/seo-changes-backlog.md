@@ -11,6 +11,22 @@ Maintenance rules:
 
 ## 2026-08-26
 
+### HTML Cache Smoke Gate Stabilized
+
+Changes:
+
+- Changed the post-deploy HTML cache latency check from one warm request to the median of three,
+  while still requiring every response to prove a valid cache hit and meet response safety checks.
+
+Validation:
+
+- `check-html-cache.unit.spec.ts` passes, including isolated-outlier and sustained-latency cases.
+- Production cache verification passes with HTTP 200, OpenNext `HIT`, and 47–63 ms median TTFB.
+
+Follow-up:
+
+- No GSC or IndexNow action is needed because URLs, metadata, and indexation behavior did not change.
+
 ### Redirect Destination Liveness Evidence Refreshed
 
 Changes:

@@ -2,7 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import packageJson from '../../../package.json';
-import { evaluateHtmlCacheObservation, HTML_CACHE_ROUTES } from '@/scripts/seo/check-html-cache';
+import {
+  evaluateHtmlCacheObservation,
+  evaluateWarmHtmlCacheSamples,
+  HTML_CACHE_ROUTES,
+} from '@/scripts/seo/check-html-cache';
 
 const postDeployVerifyScript = readFileSync(
   path.resolve(process.cwd(), 'scripts/deploy/steps/06-verify.sh'),
@@ -89,6 +93,36 @@ describe('production HTML cache gate', () => {
         ttfbMs: 80,
       })
     ).toContain('/formats/upscale-gif-images warm cf-cache-status was MISS, not HIT.');
+  });
+
+  it('should use median warm TTFB so one network outlier does not block deployment', () => {
+    const samples = [55, 910, 70].map(ttfbMs => ({
+      route: '/blog/example',
+      status: 200,
+      cacheStatus: null,
+      openNextCacheStatus: 'HIT',
+      cacheControl: 's-maxage=86400, stale-while-revalidate=2592000',
+      setCookie: null,
+      ttfbMs,
+    }));
+
+    expect(evaluateWarmHtmlCacheSamples(samples)).toEqual([]);
+  });
+
+  it('should fail when the median warm TTFB exceeds the budget', () => {
+    const samples = [500, 900, 600].map(ttfbMs => ({
+      route: '/blog/example',
+      status: 200,
+      cacheStatus: null,
+      openNextCacheStatus: 'HIT',
+      cacheControl: 's-maxage=86400, stale-while-revalidate=2592000',
+      setCookie: null,
+      ttfbMs,
+    }));
+
+    expect(evaluateWarmHtmlCacheSamples(samples)).toContain(
+      '/blog/example median warm TTFB was 600ms (budget: <400ms).'
+    );
   });
 
   it('should exclude dashboard from the HTML cache contract', () => {
