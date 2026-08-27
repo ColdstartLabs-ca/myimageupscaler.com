@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-26T02:00:24.844Z",
+  "generatedAt": "2026-08-27T02:41:23.171Z",
   "source": "gsc-404.csv",
   "resolutions": [
     {
@@ -2589,10 +2589,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/use-cases/old-photo-restoration",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/use-cases/old-photo-restoration"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/use-cases/old-photo-restoration"
     },
     {
       "url": "https://myimageupscaler.com/es/use-cases/old-photo-restoration",
@@ -2638,10 +2638,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/ai-background-remover",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/ai-background-remover"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/ai-background-remover"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/ai-background-remover",
@@ -2687,15 +2687,15 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/compress/bulk-image-compressor",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/compress/bulk-image-compressor"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/compress/bulk-image-compressor"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/compress/bulk-image-compressor",
-      "status": 503,
-      "finalStatus": 503,
+      "status": 200,
+      "finalStatus": 200,
       "hops": 0,
       "finalUrl": "https://myimageupscaler.com/es/tools/compress/bulk-image-compressor"
     },
@@ -2736,10 +2736,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/resize/bulk-image-resizer",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/resize/bulk-image-resizer"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/bulk-image-resizer"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/resize/bulk-image-resizer",
@@ -2785,10 +2785,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/ai-photo-enhancer",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/ai-photo-enhancer"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/ai-photo-enhancer"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/ai-photo-enhancer",
@@ -2834,10 +2834,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/compress/image-compressor",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/compress/image-compressor"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/compress/image-compressor"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/compress/image-compressor",
@@ -2883,10 +2883,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/convert/png-to-webp",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/convert/png-to-webp"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/png-to-webp"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/convert/png-to-webp",
@@ -2932,10 +2932,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/convert/jpg-to-webp",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/convert/jpg-to-webp"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/jpg-to-webp"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/convert/jpg-to-webp",
@@ -2981,10 +2981,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/convert/jpg-to-png",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/convert/jpg-to-png"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/jpg-to-png"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/convert/jpg-to-png",
@@ -3030,10 +3030,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/convert/png-to-jpg",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/convert/png-to-jpg"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/png-to-jpg"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/convert/png-to-jpg",
@@ -3079,10 +3079,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/convert/webp-to-jpg",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/convert/webp-to-jpg"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/webp-to-jpg"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/convert/webp-to-jpg",
@@ -3128,10 +3128,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/convert/webp-to-png",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/convert/webp-to-png"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/convert/webp-to-png"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/convert/webp-to-png",
@@ -3177,10 +3177,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/free/free-ai-upscaler",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/free/free-ai-upscaler"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/free/free-ai-upscaler"
     },
     {
       "url": "https://myimageupscaler.com/es/free/free-ai-upscaler",
@@ -3226,10 +3226,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/resize/image-resizer",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/resize/image-resizer"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/image-resizer"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/resize/image-resizer",
@@ -3275,10 +3275,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/image-cutout-tool",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/image-cutout-tool"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/image-cutout-tool"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/image-cutout-tool",
@@ -3324,10 +3324,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/resize/resize-image-for-discord",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/resize/resize-image-for-discord"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-discord"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-discord",
@@ -3373,10 +3373,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/resize/resize-image-for-facebook",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/resize/resize-image-for-facebook"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-facebook"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-facebook",
@@ -3422,10 +3422,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/resize/resize-image-for-instagram",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/resize/resize-image-for-instagram"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-instagram"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-instagram",
@@ -3471,10 +3471,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/resize/resize-image-for-linkedin",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/resize/resize-image-for-linkedin"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-linkedin"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-linkedin",
@@ -3520,10 +3520,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/resize/resize-image-for-reddit",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/resize/resize-image-for-reddit"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-reddit"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-reddit",
@@ -3569,10 +3569,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/resize/resize-image-for-telegram",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/resize/resize-image-for-telegram"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-telegram"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-telegram",
@@ -3618,10 +3618,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/resize/resize-image-for-tiktok",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/resize/resize-image-for-tiktok"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-tiktok"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-tiktok",
@@ -3667,10 +3667,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/resize/resize-image-for-twitter",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/resize/resize-image-for-twitter"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-twitter"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-twitter",
@@ -3716,10 +3716,10 @@
     },
     {
       "url": "https://myimageupscaler.com/en/tools/resize/resize-image-for-youtube",
-      "status": 200,
+      "status": 301,
       "finalStatus": 200,
-      "hops": 0,
-      "finalUrl": "https://myimageupscaler.com/en/tools/resize/resize-image-for-youtube"
+      "hops": 1,
+      "finalUrl": "https://myimageupscaler.com/tools/resize/resize-image-for-youtube"
     },
     {
       "url": "https://myimageupscaler.com/es/tools/resize/resize-image-for-youtube",
@@ -3877,8 +3877,8 @@
     },
     {
       "url": "https://myimageupscaler.com/guides",
-      "status": 503,
-      "finalStatus": 503,
+      "status": 200,
+      "finalStatus": 200,
       "hops": 0,
       "finalUrl": "https://myimageupscaler.com/guides"
     },

@@ -11,6 +11,22 @@ Maintenance rules:
 
 ## 2026-08-26
 
+### Redirect Destination Liveness Evidence Refreshed
+
+Changes:
+
+- Refreshed the committed 404-resolution artifact after `/guides` and
+  `/es/tools/compress/bulk-image-compressor` recovered from the previously recorded transient 503s.
+
+Validation:
+
+- Both destinations returned HTTP 200 on three cache-busted production probes; the complete
+  redirect destination scan and `404-coverage-artifact.unit.spec.ts` pass.
+
+Follow-up:
+
+- No GSC or IndexNow action is needed because redirect behavior and destination URLs did not change.
+
 ### OpenNext Worker HTML Cache Contract Aligned
 
 Changes:
