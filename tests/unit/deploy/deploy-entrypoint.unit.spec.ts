@@ -7,6 +7,7 @@ const deployStepScript = readFileSync(
   path.resolve(process.cwd(), 'scripts/deploy/steps/03-deploy.sh'),
   'utf8'
 );
+const playwrightConfig = readFileSync(path.resolve(process.cwd(), 'playwright.config.ts'), 'utf8');
 
 describe('yarn deploy safety gates', () => {
   test('runs the Stripe guard before loading or building production configuration', () => {
@@ -71,5 +72,9 @@ describe('yarn deploy safety gates', () => {
     expect(deployStepScript).toContain(
       'env -u CLOUDFLARE_API_TOKEN OPEN_NEXT_DEPLOY=true npx wrangler deploy'
     );
+  });
+
+  test('does not block deploys by opening the Playwright HTML report server', () => {
+    expect(playwrightConfig).toContain("['html', { open: 'never' }]");
   });
 });

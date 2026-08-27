@@ -36,7 +36,7 @@ export default defineConfig({
   forbidOnly: isCI,
   retries: isCI ? 2 : 1,
   workers: process.env.CI ? 2 : 2, // Keep workers low to reduce shared-server contention
-  reporter: [['html'], ['list']],
+  reporter: [['html', { open: 'never' }], ['list']],
   use: {
     baseURL: `http://localhost:${TEST_PORT}`,
     trace: 'retain-on-failure', // Only keep traces on failure to save memory
