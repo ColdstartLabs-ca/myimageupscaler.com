@@ -44,7 +44,7 @@ export async function processGuestImage(input: IGuestProcessInput): Promise<IGue
     );
   }
 
-  const replicate = new Replicate({ auth: apiToken });
+  const replicate = new Replicate({ auth: apiToken, useFileOutput: false });
 
   // Prepare image data - ensure it's a data URL
   let imageDataUrl = input.imageData.trim();

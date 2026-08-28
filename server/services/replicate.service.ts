@@ -100,7 +100,14 @@ export class ReplicateService implements IImageProcessor {
       throw new Error('REPLICATE_API_TOKEN is not configured');
     }
 
-    this.replicate = new Replicate({ auth: apiToken });
+    this.replicate = new Replicate({
+      auth: apiToken,
+      // SDK 1.x turns output URLs into FileOutput streams by default. Creating
+      // one eagerly fetches the generated image and queues every chunk even
+      // though this service only reads the URL, exhausting the Worker heap for
+      // large outputs. Keep outputs as provider URLs instead.
+      useFileOutput: false,
+    });
     this.modelVersion = serverEnv.REPLICATE_MODEL_VERSION;
     this.modelId = modelId;
   }

@@ -10,9 +10,15 @@ import type { IUpscaleInput } from '@shared/validation/upscale.schema';
 import type { IModelConfig } from '../model-registry.types';
 
 // Mock dependencies - mock must be defined before any imports that use it
+const replicateConstructor = vi.hoisted(() => vi.fn());
+
 vi.mock('replicate', () => {
   class MockReplicate {
     run = vi.fn();
+
+    constructor(options: unknown) {
+      replicateConstructor(options);
+    }
   }
   return {
     default: MockReplicate,
@@ -294,6 +300,13 @@ describe('ReplicateService', () => {
   });
 
   describe('Constructor', () => {
+    test('disables eager FileOutput streams so generated images are not buffered in Worker memory', () => {
+      expect(replicateConstructor).toHaveBeenCalledWith({
+        auth: 'test-replicate-token',
+        useFileOutput: false,
+      });
+    });
+
     test('should initialize with provided modelId', () => {
       const testService = new ReplicateService('gfpgan');
       expect(testService.modelId).toBe('gfpgan');
