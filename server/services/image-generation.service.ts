@@ -16,6 +16,7 @@ import type {
 } from './image-processor.interface';
 import { creditManager } from './replicate/utils/credit-manager';
 import { recordProcessingCostTelemetry } from './cost-telemetry.service';
+import { bindReservationToWorkerRay } from './reservation-worker-binding';
 
 /**
  * Custom error class for insufficient credits
@@ -244,6 +245,7 @@ export class ImageGenerationService implements IImageProcessor {
       subscriptionAmount: result.consumed_subscription ?? creditCost,
       purchasedAmount: result.consumed_purchased ?? 0,
     };
+    await bindReservationToWorkerRay(userId, jobId, options?.workerRayId);
     options?.onCreditsDeducted?.(deduction);
 
     // Track credits deducted event

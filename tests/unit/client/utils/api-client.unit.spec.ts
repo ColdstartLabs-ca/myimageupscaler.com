@@ -124,6 +124,9 @@ describe('upscale API response handling', () => {
       config,
     });
     expect(upscaleBody).not.toHaveProperty('imageData');
+    expect(fetchMock.mock.calls[1][1]?.headers).toMatchObject({
+      'X-Upscale-Job-Id': '11111111-1111-4111-8111-111111111111',
+    });
   });
 
   it('downloads staged output through the same job/token capability without exposing raw provider URLs', async () => {

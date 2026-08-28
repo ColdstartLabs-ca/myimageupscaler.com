@@ -21,6 +21,10 @@ describe('upscale input storage and durable credit reservations migration', () =
     expect(migration).toContain('CREATE OR REPLACE FUNCTION public.consume_credits_v3');
     expect(migration).toContain('usage_transaction_id UUID NOT NULL UNIQUE');
     expect(migration).toContain('INSERT INTO public.processing_credit_reservations');
+    expect(migration).toContain(
+      'IF EXISTS (SELECT 1 FROM public.processing_credit_reservations WHERE job_id = p_job_id)'
+    );
+    expect(migration).toContain("RAISE EXCEPTION 'Reservation already exists: %', p_job_id");
   });
 
   it('makes completion and refund one-way idempotent transitions', () => {

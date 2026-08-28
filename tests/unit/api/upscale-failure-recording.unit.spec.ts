@@ -135,10 +135,14 @@ vi.mock('@shared/validation/upscale.schema', () => ({
 
 import { POST } from '@/app/api/upscale/route';
 
-function request(): NextRequest {
+function request(tailJobId?: string): NextRequest {
   return new NextRequest('http://localhost/api/upscale', {
     method: 'POST',
-    headers: { 'X-User-Id': 'user-1', 'content-type': 'application/json' },
+    headers: {
+      'X-User-Id': 'user-1',
+      'content-type': 'application/json',
+      ...(tailJobId ? { 'X-Upscale-Job-Id': tailJobId } : {}),
+    },
     body: JSON.stringify({}),
   });
 }
@@ -217,6 +221,26 @@ describe('POST /api/upscale failure recording', () => {
       };
     });
     mocks.insert.mockResolvedValue({ error: null });
+  });
+
+  it('rejects a Tail correlation header that does not match the validated reservation id', async () => {
+    mocks.parseUpscale.mockReturnValue({
+      imageData: 'data:image/jpeg;base64,/9j/',
+      mimeType: 'image/jpeg',
+      jobId: '11111111-1111-4111-8111-111111111111',
+      config: {
+        qualityTier: 'quick',
+        scale: 2,
+        additionalOptions: { smartAnalysis: false },
+      },
+      resolvedModel: 'real-esrgan',
+    });
+
+    const response = await POST(request('22222222-2222-4222-8222-222222222222'));
+
+    expect(response.status).toBe(400);
+    expect(mocks.processImage).not.toHaveBeenCalled();
+    expect(mocks.batchRelease).toHaveBeenCalled();
   });
 
   it('completes the durable reservation only after a usable output URL exists', async () => {

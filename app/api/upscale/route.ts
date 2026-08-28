@@ -636,6 +636,22 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // private storage first; the legacy inline shape remains during rollout.
     const body = await req.json();
     const validatedInput = upscaleSchema.parse(body);
+
+    // The Tail Worker observes this request header after a hard platform failure.
+    // Bind it to the same validated reservation UUID used by credit deduction so
+    // a caller cannot crash one request while refunding a different reservation.
+    const tailReservationJobId = req.headers.get('x-upscale-job-id');
+    if (tailReservationJobId && tailReservationJobId !== validatedInput.jobId) {
+      logFailure('tail_reservation_job_id_mismatch');
+      await refundAfterRouteFailure('tail_reservation_job_id_mismatch');
+      const { body: errorBody, status } = createErrorResponse(
+        ErrorCodes.VALIDATION_ERROR,
+        'Invalid processing reservation correlation',
+        400
+      );
+      return NextResponse.json(errorBody, { status });
+    }
+
     requestedQualityTier = validatedInput.config.qualityTier;
     requestedScale = validatedInput.config.scale;
 
@@ -1192,6 +1208,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       processor.processImage(userId, legacyInputForProcessor as never, {
         creditCost,
         reservationJobId: validatedInput.jobId,
+        workerRayId: req.headers.get('cf-ray') ?? undefined,
         costAttribution: {
           modelId: resolvedModelId,
           qualityTier: resolvedTier,

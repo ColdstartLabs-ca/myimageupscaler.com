@@ -68,4 +68,15 @@ step_secrets() {
             log_success "CRON_SECRET → cron worker ($cron_worker_name)"
         fi
     fi
+
+    # The Tail Worker authenticates its recovery calls with the same server-only secret.
+    local refund_tail_toml="$PROJECT_ROOT/workers/upscale-refund-tail/wrangler.toml"
+    if [[ -f "$refund_tail_toml" && -n "${CRON_SECRET:-}" ]]; then
+        local refund_tail_worker_name
+        refund_tail_worker_name=$(grep '^name' "$refund_tail_toml" | head -1 | awk -F'"' '{print $2}')
+        if [[ -n "$refund_tail_worker_name" ]]; then
+            echo "$CRON_SECRET" | npx wrangler secret put CRON_SECRET --name "$refund_tail_worker_name" 2>/dev/null
+            log_success "CRON_SECRET → refund tail worker ($refund_tail_worker_name)"
+        fi
+    fi
 }

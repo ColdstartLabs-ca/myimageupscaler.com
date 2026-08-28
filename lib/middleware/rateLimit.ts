@@ -65,6 +65,15 @@ export function isTestEnvironment(): boolean {
   // REMOVED: Amplitude key check - not reliable indicator of test environment
 }
 
+export function shouldBypassPublicRateLimit(req: NextRequest): boolean {
+  const pathname = req.nextUrl.pathname;
+  if (pathname.startsWith('/api/webhooks/')) return true;
+
+  // Secret-bearing Tail recovery calls must not share an attacker-exhaustible
+  // public IP bucket. The route still validates the secret before any DB work.
+  return pathname === '/api/cron/upscale-tail-refund' && req.headers.has('x-cron-secret');
+}
+
 /**
  * Apply public (IP-based) rate limiting
  * Returns null if the request should proceed, or a response if rate limited
@@ -73,15 +82,12 @@ export async function applyPublicRateLimit(
   req: NextRequest,
   res: NextResponse
 ): Promise<NextResponse | null> {
-  // Skip rate limiting in test environment
-  if (isTestEnvironment()) {
+  if (shouldBypassPublicRateLimit(req)) {
     return null;
   }
 
-  // Skip rate limiting for webhook routes - they authenticate via signature verification
-  // and Stripe can fire 6-8+ events in rapid succession during checkout
-  const pathname = req.nextUrl.pathname;
-  if (pathname.startsWith('/api/webhooks/')) {
+  // Skip rate limiting in test environment
+  if (isTestEnvironment()) {
     return null;
   }
 

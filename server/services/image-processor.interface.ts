@@ -28,6 +28,8 @@ export interface IProcessImageOptions {
   creditCost?: number;
   /** Caller-owned durable reservation/job id, minted before direct upload. */
   reservationJobId?: string;
+  /** Cloudflare server-issued invocation id used to authenticate Tail Worker recovery. */
+  workerRayId?: string;
   /** Provider-cost details resolved by the API route from the same inputs used for billing. */
   costAttribution?: IProcessingCostAttribution;
   /**

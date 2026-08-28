@@ -1,0 +1,11 @@
+name = "myimageupscaler-refund-tail"
+main = "index.ts"
+compatibility_date = "2025-03-02"
+
+[vars]
+API_BASE_URL = "https://myimageupscaler.com"
+
+[observability]
+enabled = true
+
+# Secret: CRON_SECRET (uploaded by scripts/deploy/steps/05-secrets.sh)

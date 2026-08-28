@@ -524,7 +524,12 @@ export const processImage = async (
 
     const response = await fetch('/api/upscale', {
       method: 'POST',
-      headers,
+      headers: {
+        ...headers,
+        // Tail Workers receive request headers even when the producer is killed
+        // before it can run catch/finally refund logic.
+        'X-Upscale-Job-Id': jobId,
+      },
       body: JSON.stringify({
         storagePath: uploadGrant.storagePath,
         jobId,

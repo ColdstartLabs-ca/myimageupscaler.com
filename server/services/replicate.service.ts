@@ -24,6 +24,7 @@ import { replicateErrorMapper } from './replicate/utils/error-mapper';
 import { ReplicateError } from './replicate/utils/error-mapper';
 import { parseReplicateResponse } from './replicate/utils/output-parser';
 import { recordProcessingCostTelemetry } from './cost-telemetry.service';
+import { bindReservationToWorkerRay } from './reservation-worker-binding';
 
 /**
  * Re-export ReplicateError for backward compatibility
@@ -139,6 +140,7 @@ export class ReplicateService implements IImageProcessor {
       this.providerName,
       options?.reservationJobId
     );
+    await bindReservationToWorkerRay(userId, deduction.jobId, options?.workerRayId);
     options?.onCreditsDeducted?.(deduction);
 
     try {

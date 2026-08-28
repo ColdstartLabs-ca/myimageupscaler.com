@@ -5,6 +5,19 @@ step_deploy() {
 
     cd "$PROJECT_ROOT"
 
+    # The producer cannot reference a Tail Worker service until that service exists.
+    if [[ -f "workers/upscale-refund-tail/wrangler.toml" ]]; then
+        log_info "Deploying upscale refund tail worker..."
+        npx wrangler deploy --config workers/upscale-refund-tail/wrangler.toml
+        local refund_tail_worker_name
+        refund_tail_worker_name=$(grep '^name' workers/upscale-refund-tail/wrangler.toml | head -1 | awk -F'"' '{print $2}')
+        if [[ -z "${CRON_SECRET:-}" || -z "$refund_tail_worker_name" ]]; then
+            log_error "CRON_SECRET and the refund Tail Worker name are required before producer deployment"
+        fi
+        echo "$CRON_SECRET" | npx wrangler secret put CRON_SECRET --name "$refund_tail_worker_name" 2>/dev/null
+        log_success "Upscale refund tail worker deployed with recovery secret"
+    fi
+
     # Main worker
     log_info "Deploying main worker..."
     # OpenNext populates the incremental-cache R2 bucket before deploying. Some

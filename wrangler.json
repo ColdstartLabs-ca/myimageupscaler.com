@@ -21,6 +21,7 @@
   "observability": {
     "enabled": true
   },
+  "tail_consumers": [{ "service": "myimageupscaler-refund-tail" }],
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",

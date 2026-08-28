@@ -549,6 +549,19 @@ describe('Rate Limiting System', () => {
       expect(result).toBeNull();
     });
 
+    test('secret-bearing Tail recovery bypasses the attacker-exhaustible public bucket', async () => {
+      const { shouldBypassPublicRateLimit } = await import('../../lib/middleware/rateLimit');
+      const { NextRequest } = await import('next/server');
+
+      const trustedShape = new NextRequest('http://localhost/api/cron/upscale-tail-refund', {
+        headers: { 'x-cron-secret': 'checked-by-route' },
+      });
+      const anonymousShape = new NextRequest('http://localhost/api/cron/upscale-tail-refund');
+
+      expect(shouldBypassPublicRateLimit(trustedShape)).toBe(true);
+      expect(shouldBypassPublicRateLimit(anonymousShape)).toBe(false);
+    });
+
     test('applyPublicRateLimit should still rate limit non-webhook public routes', async () => {
       // In test environment, rate limiting is skipped entirely,
       // so we verify the bypass logic at the code level instead
