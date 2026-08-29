@@ -111,11 +111,16 @@ function getArgValue(name: string): string | undefined {
   return undefined;
 }
 
+// Mirrors the hourly production cron parameters (workers/cron/index.ts). The eligibility
+// scan issues several sequential Supabase round-trips per profile, so a larger scan pushes
+// the Worker past its resource limits and Cloudflare answers 503 (error code 1102).
+const DRY_RUN_SCAN_LIMIT = '25';
+
 function buildCronUrl(baseUrl: string): string {
   const url = new URL('/api/cron/email-lifecycle', baseUrl);
   url.searchParams.set('dryRun', 'true');
-  url.searchParams.set('batchSize', '250');
-  url.searchParams.set('scanLimit', '500');
+  url.searchParams.set('batchSize', DRY_RUN_SCAN_LIMIT);
+  url.searchParams.set('scanLimit', DRY_RUN_SCAN_LIMIT);
   return url.toString();
 }
 

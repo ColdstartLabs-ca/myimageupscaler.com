@@ -92,7 +92,7 @@ describe('check-recovery-cron-target script helpers', () => {
 
     expect(summary.durationMs).toBe(42);
     expect(fetchImpl).toHaveBeenCalledWith(
-      'https://myimageupscaler.com/api/cron/email-lifecycle?dryRun=true&batchSize=250&scanLimit=500',
+      'https://myimageupscaler.com/api/cron/email-lifecycle?dryRun=true&batchSize=25&scanLimit=25',
       {
         method: 'POST',
         headers: {

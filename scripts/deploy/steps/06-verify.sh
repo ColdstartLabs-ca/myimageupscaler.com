@@ -115,7 +115,8 @@ _verify_recovery_lifecycle_dry_run() {
     response_file=$(mktemp)
     local response_code
     response_code=$(curl -s -o "$response_file" -w "%{http_code}" \
-        -X POST "$url/api/cron/email-lifecycle?dryRun=true&batchSize=250&scanLimit=500" \
+        --max-time 60 \
+        -X POST "$url/api/cron/email-lifecycle?dryRun=true&batchSize=25&scanLimit=25" \
         -H "x-cron-secret: $cron_secret" \
         2>/dev/null || echo "000")
 
