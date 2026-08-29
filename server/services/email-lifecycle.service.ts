@@ -256,6 +256,7 @@ export function compareLifecycleDueQueueRows(
 
 /** Per-user signals the daily eligibility scan needs, loaded in bulk for a whole batch. */
 interface IEligibilitySignals {
+  email: string | null;
   hasCompletedJob: boolean;
   hasPurchase: boolean;
   cancelingSubscription: { id: string; periodEnd: Date } | null;
@@ -266,6 +267,12 @@ interface IEligibilitySignals {
 const ELIGIBILITY_SIGNAL_CHUNK = 200;
 /** Rows per page when reading a signal table; pages until a short page ends the scan. */
 const ELIGIBILITY_SIGNAL_PAGE = 1000;
+/**
+ * Recipient email lookups in flight at once. `auth.admin` has no bulk-by-id call, so this
+ * stays one request per profile and is the scan's dominant cost; resolving them serially
+ * held a 500-profile scan at ~70s. Kept modest to stay clear of auth admin rate limits.
+ */
+const EMAIL_LOOKUP_CONCURRENCY = 8;
 
 export interface IEmailLifecycleQueueHealth {
   pending: number;
@@ -900,7 +907,7 @@ export class EmailLifecycleService {
       const userId = String(profile.id);
       const signals = signalsByUser.get(userId);
       if (!signals) continue;
-      const email = await this.resolveUserEmail(userId);
+      const email = signals.email;
       if (!email) continue;
 
       const createdAt = new Date(String(profile.created_at));
@@ -1917,7 +1924,13 @@ export class EmailLifecycleService {
     const signals = new Map<string, IEligibilitySignals>(
       userIds.map(userId => [
         userId,
-        { hasCompletedJob: false, hasPurchase: false, cancelingSubscription: null, lastJob: null },
+        {
+          email: null,
+          hasCompletedJob: false,
+          hasPurchase: false,
+          cancelingSubscription: null,
+          lastJob: null,
+        },
       ])
     );
     if (!userIds.length) return signals;
@@ -1982,7 +1995,26 @@ export class EmailLifecycleService {
       }
     }
 
+    await this.resolveEligibilityEmails(userIds, signals);
     return signals;
+  }
+
+  /** Fills in recipient emails with a bounded number of lookups in flight at a time. */
+  private async resolveEligibilityEmails(
+    userIds: string[],
+    signals: Map<string, IEligibilitySignals>
+  ): Promise<void> {
+    let cursor = 0;
+    const workerCount = Math.min(EMAIL_LOOKUP_CONCURRENCY, userIds.length);
+    await Promise.all(
+      Array.from({ length: workerCount }, async () => {
+        for (let index = cursor++; index < userIds.length; index = cursor++) {
+          const userId = userIds[index];
+          const entry = signals.get(userId);
+          if (entry) entry.email = await this.resolveUserEmail(userId);
+        }
+      })
+    );
   }
 
   private async readEligibilitySignalPages(

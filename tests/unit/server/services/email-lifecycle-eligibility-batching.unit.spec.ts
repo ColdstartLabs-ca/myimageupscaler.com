@@ -9,6 +9,8 @@ import { EmailLifecycleService } from '@server/services/email-lifecycle.service'
  */
 
 const PROFILE_COUNT = 40;
+/** Must track EMAIL_LOOKUP_CONCURRENCY in the service. */
+const EMAIL_LOOKUP_CONCURRENCY = 8;
 
 interface ITableCall {
   table: string;
@@ -19,6 +21,8 @@ interface ITableCall {
 let tableCalls: ITableCall[] = [];
 let getUserByIdCalls: string[] = [];
 let profileRows: Array<Record<string, unknown>> = [];
+let inFlightGetUserById = 0;
+let maxInFlightGetUserById = 0;
 let completedJobRows: Array<Record<string, unknown>> = [];
 let purchaseRows: Array<Record<string, unknown>> = [];
 let cancelingSubscriptionRows: Array<Record<string, unknown>> = [];
@@ -153,6 +157,10 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
       admin: {
         getUserById: vi.fn(async (userId: string) => {
           getUserByIdCalls.push(userId);
+          inFlightGetUserById++;
+          maxInFlightGetUserById = Math.max(maxInFlightGetUserById, inFlightGetUserById);
+          await new Promise(resolve => setTimeout(resolve, 1));
+          inFlightGetUserById--;
           return { data: { user: { email: `${userId}@example.com` } }, error: null };
         }),
       },
@@ -169,6 +177,8 @@ describe('queueDailyEligibilityDetailed batching', () => {
   beforeEach(() => {
     tableCalls = [];
     getUserByIdCalls = [];
+    inFlightGetUserById = 0;
+    maxInFlightGetUserById = 0;
     profileRows = makeProfiles(PROFILE_COUNT);
     completedJobRows = [];
     purchaseRows = [];
@@ -193,6 +203,16 @@ describe('queueDailyEligibilityDetailed batching', () => {
 
     expect(getUserByIdCalls.length).toBeLessThanOrEqual(PROFILE_COUNT);
     expect(new Set(getUserByIdCalls).size).toBe(getUserByIdCalls.length);
+  });
+
+  it('resolves recipient emails concurrently rather than one profile at a time', async () => {
+    const service = new EmailLifecycleService();
+    await service.queueDailyEligibilityDetailed({ dryRun: true, limit: PROFILE_COUNT });
+
+    // Serial resolution never has more than one lookup in flight, and it is what kept a
+    // 500-profile scan at ~70s in production.
+    expect(maxInFlightGetUserById).toBeGreaterThan(1);
+    expect(maxInFlightGetUserById).toBeLessThanOrEqual(EMAIL_LOOKUP_CONCURRENCY);
   });
 
   it('still classifies every profile from the batched signals', async () => {
