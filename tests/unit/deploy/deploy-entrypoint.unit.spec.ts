@@ -57,14 +57,17 @@ describe('yarn deploy safety gates', () => {
     expect(deployScript).not.toContain('--skip-migrations');
   });
 
-  test('falls back to Wrangler OAuth only for OpenNext R2 deployment when the production token lacks R2 access', () => {
-    expect(deployStepScript).toContain('npx wrangler r2 bucket list >/dev/null 2>&1');
-    expect(deployStepScript).toContain(
-      'env -u CLOUDFLARE_API_TOKEN npx wrangler r2 bucket list >/dev/null 2>&1'
+  test('populates the incremental cache before uploading the Worker', () => {
+    const populate = 'npx tsx scripts/deploy/populate-r2-cache.ts';
+
+    expect(deployStepScript).toContain(populate);
+    expect(deployStepScript.indexOf(populate)).toBeLessThan(
+      deployStepScript.indexOf('OPEN_NEXT_DEPLOY=true npx wrangler deploy')
     );
-    expect(deployStepScript).toContain(
-      'env -u CLOUDFLARE_API_TOKEN npx opennextjs-cloudflare deploy'
-    );
+  });
+
+  test('does not fall back to the rate-limited OpenNext cache upload', () => {
+    expect(deployStepScript).not.toContain('npx opennextjs-cloudflare deploy');
   });
 
   test('retries a failed OpenNext Worker upload with Wrangler after the cache is populated', () => {

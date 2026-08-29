@@ -59,6 +59,23 @@ The deploy script (`scripts/deploy/deploy.sh`) fetches secrets in step 0:
 2. Fetches `myimageupscaler-client-prod` → `.env.client.prod`
 3. Cleans up these files after deploy (success or failure)
 
+### Deploy-only keys (never reach the Worker)
+
+`myimageupscaler-api-prod` holds some keys the deploy machine uses but the Worker must
+never receive. They stay out of the Worker because `scripts/deploy/steps/05-secrets.sh`
+uploads from an explicit allowlist, not from the whole file. Do not add these to it.
+
+- `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` — R2 **S3 credentials** (Access Key ID +
+  Secret, not a Bearer API token) for the Cloudflare account API token
+  `opennext-inc-cache-deploy`, scoped Object Read & Write on `myimageupscaler-inc-cache`.
+  `scripts/deploy/populate-r2-cache.ts` uses them to upload the OpenNext incremental
+  cache over R2's S3 API, which has no bulk-put rate cap. Without them the script falls
+  back to `wrangler r2 bulk put`, which is throttled to 1100 objects per 5 minutes.
+
+To rotate: create a replacement at
+`https://dash.cloudflare.com/?to=/:account/r2/api-tokens` → **Create Account API token**,
+follow the safe update process below, then delete the old token in the dashboard.
+
 ## Updating Secrets
 
 ### CRITICAL SAFETY RULE: Never push local dev files directly to prod secrets
