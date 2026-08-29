@@ -273,6 +273,14 @@ const ELIGIBILITY_SIGNAL_PAGE = 1000;
  * held a 500-profile scan at ~70s. Kept modest to stay clear of auth admin rate limits.
  */
 const EMAIL_LOOKUP_CONCURRENCY = 8;
+/**
+ * How often the rotating half of the scan window advances. Matches the hourly cron, so
+ * the catch-up run in the same hour re-scans the same window rather than skipping one.
+ */
+const ELIGIBILITY_ROTATION_INTERVAL_MS = 60 * 60 * 1000;
+/** Columns the eligibility scan reads from `profiles`. */
+const ELIGIBILITY_PROFILE_COLUMNS =
+  'id, created_at, subscription_status, subscription_tier, subscription_credits_balance, purchased_credits_balance';
 
 export interface IEmailLifecycleQueueHealth {
   pending: number;
@@ -883,22 +891,11 @@ export class EmailLifecycleService {
   }): Promise<IQueueDailyEligibilityResult> {
     const limit = options?.limit ?? 100;
     const dryRun = options?.dryRun ?? false;
-    const { data, error } = await supabaseAdmin
-      .from('profiles')
-      .select(
-        'id, created_at, subscription_status, subscription_tier, subscription_credits_balance, purchased_credits_balance'
-      )
-      .order('created_at', { ascending: true })
-      .limit(limit);
-
-    if (error) {
-      throw new Error(`Failed to scan lifecycle eligibility: ${error.message}`);
-    }
 
     let lifecycleQueued = 0;
     let suppressionsRecorded = 0;
     let suppressionsReused = 0;
-    const profiles = (data || []) as Array<Record<string, unknown>>;
+    const profiles = await this.selectEligibilityScanProfiles(limit);
     const signalsByUser = await this.loadEligibilitySignals(
       profiles.map(profile => String(profile.id))
     );
@@ -1907,6 +1904,63 @@ export class EmailLifecycleService {
       return null;
     }
     return data.user?.email ?? null;
+  }
+
+  /**
+   * Picks which profiles this run evaluates, without widening the run's send budget.
+   *
+   * Half the budget goes to the newest signups, which is the only way the age-gated
+   * campaigns (2h/24h/72h after signup) can ever match. The other half walks the rest of
+   * the table on an hourly rotation, so every profile is reachable over a full cycle.
+   * The previous oldest-first window re-read the same accounts every hour and left the
+   * rest of the table permanently unscanned.
+   */
+  private async selectEligibilityScanProfiles(
+    limit: number
+  ): Promise<Array<Record<string, unknown>>> {
+    const recentLimit = Math.ceil(limit / 2);
+    const rotatingLimit = limit - recentLimit;
+
+    const { data: recent, error: recentError } = await supabaseAdmin
+      .from('profiles')
+      .select(ELIGIBILITY_PROFILE_COLUMNS)
+      .order('created_at', { ascending: false })
+      .limit(recentLimit);
+    if (recentError) {
+      throw new Error(`Failed to scan lifecycle eligibility: ${recentError.message}`);
+    }
+
+    const selected = [...((recent || []) as Array<Record<string, unknown>>)];
+    if (rotatingLimit < 1) return selected;
+
+    const { count, error: countError } = await supabaseAdmin
+      .from('profiles')
+      .select('id', { count: 'exact', head: true });
+    if (countError) {
+      throw new Error(`Failed to size lifecycle eligibility scan: ${countError.message}`);
+    }
+
+    const rotatable = Math.max((count ?? 0) - recentLimit, 0);
+    if (rotatable < 1) return selected;
+
+    const runIndex = Math.floor(Date.now() / ELIGIBILITY_ROTATION_INTERVAL_MS);
+    const offset = (runIndex * rotatingLimit) % rotatable;
+    const { data: rotating, error: rotatingError } = await supabaseAdmin
+      .from('profiles')
+      .select(ELIGIBILITY_PROFILE_COLUMNS)
+      .order('created_at', { ascending: true })
+      .range(offset, offset + rotatingLimit - 1);
+    if (rotatingError) {
+      throw new Error(`Failed to scan lifecycle eligibility: ${rotatingError.message}`);
+    }
+
+    const seen = new Set(selected.map(profile => String(profile.id)));
+    for (const profile of (rotating || []) as Array<Record<string, unknown>>) {
+      if (seen.has(String(profile.id))) continue;
+      seen.add(String(profile.id));
+      selected.push(profile);
+    }
+    return selected;
   }
 
   /**

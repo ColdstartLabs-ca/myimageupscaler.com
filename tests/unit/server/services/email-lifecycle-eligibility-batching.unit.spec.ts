@@ -28,12 +28,12 @@ let purchaseRows: Array<Record<string, unknown>> = [];
 let cancelingSubscriptionRows: Array<Record<string, unknown>> = [];
 
 function makeProfiles(count: number): Array<Record<string, unknown>> {
-  // Created 10 days ago: old enough for the "no upload in 3 days" campaign, young
-  // enough to stay out of the 14-day win-back branch.
-  const createdAt = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString();
+  // Staggered around 10 days old: old enough for the "no upload in 3 days" campaign,
+  // young enough to stay out of the 14-day win-back branch. Distinct timestamps make
+  // scan ordering and paging observable. Index 0 is the oldest.
   return Array.from({ length: count }, (_, index) => ({
     id: `user_${index}`,
-    created_at: createdAt,
+    created_at: new Date(Date.now() - (10 * 24 + count - index) * 60 * 60 * 1000).toISOString(),
     subscription_status: 'free',
     subscription_tier: null,
     subscription_credits_balance: 0,
@@ -41,8 +41,8 @@ function makeProfiles(count: number): Array<Record<string, unknown>> {
   }));
 }
 
-function makeChain(table: string, columns: string) {
-  const filters: Record<string, unknown> = {};
+function makeChain(table: string, columns: string, options?: { count?: string; head?: boolean }) {
+  const filters: Record<string, unknown> = { ...(options ?? {}) };
   const call: ITableCall = { table, columns, filters };
   tableCalls.push(call);
 
@@ -99,6 +99,10 @@ function makeChain(table: string, columns: string) {
     maybeSingle: vi.fn(async () => ({ data: applyOrder(rowsFor())[0] ?? null, error: null })),
     then: (resolve: (value: unknown) => void) => {
       const rows = applyOrder(rowsFor());
+      if (options?.head) {
+        resolve({ data: null, count: rows.length, error: null });
+        return;
+      }
       const range = filters.range as [number, number] | undefined;
       const limit = filters.limit as number | undefined;
       const paged = range ? rows.slice(range[0], range[1] + 1) : rows;
@@ -151,7 +155,9 @@ vi.mock('@server/services/revenue-recovery.service', () => ({
 vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: {
     from: vi.fn((table: string) => ({
-      select: vi.fn((columns: string) => makeChain(table, columns)),
+      select: vi.fn((columns: string, options?: { count?: string; head?: boolean }) =>
+        makeChain(table, columns, options)
+      ),
     })),
     auth: {
       admin: {
@@ -189,7 +195,8 @@ describe('queueDailyEligibilityDetailed batching', () => {
     const service = new EmailLifecycleService();
     await service.queueDailyEligibilityDetailed({ dryRun: true, limit: PROFILE_COUNT });
 
-    expect(callsTo('profiles')).toHaveLength(1);
+    // Newest slice + a head count + the rotating slice: constant, not per profile.
+    expect(callsTo('profiles').length).toBeLessThanOrEqual(3);
     // One bounded page per signal table for the whole batch, not one read per profile.
     expect(callsTo('processing_jobs').length).toBeLessThanOrEqual(2);
     expect(callsTo('credit_transactions').length).toBeLessThanOrEqual(2);
@@ -253,5 +260,81 @@ describe('queueDailyEligibilityDetailed batching', () => {
     // Newest job is 3 days old and portrait -> the face-restore blog nudge only.
     // Falling back to the 90-day-old job would additionally trigger winback-free-7d.
     expect(result.lifecycleQueued).toBe(1);
+  });
+});
+
+describe('queueDailyEligibilityDetailed scan window', () => {
+  const TOTAL_PROFILES = 200;
+  const SCAN_LIMIT = 20;
+
+  beforeEach(() => {
+    tableCalls = [];
+    getUserByIdCalls = [];
+    inFlightGetUserById = 0;
+    maxInFlightGetUserById = 0;
+    profileRows = makeProfiles(TOTAL_PROFILES);
+    completedJobRows = [];
+    purchaseRows = [];
+    cancelingSubscriptionRows = [];
+  });
+
+  function scannedUserIds(): string[] {
+    return [...new Set(getUserByIdCalls)];
+  }
+
+  it('scans the newest profiles so age-gated signup campaigns can reach them', async () => {
+    const service = new EmailLifecycleService();
+    await service.queueDailyEligibilityDetailed({ dryRun: true, limit: SCAN_LIMIT });
+
+    // Scanning oldest-first only ever reached accounts far past every signup window,
+    // which is why signup-no-upload-* never sent.
+    expect(scannedUserIds()).toContain(`user_${TOTAL_PROFILES - 1}`);
+  });
+
+  it('never scans more profiles than the limit, so send volume stays flat', async () => {
+    const service = new EmailLifecycleService();
+    await service.queueDailyEligibilityDetailed({ dryRun: true, limit: SCAN_LIMIT });
+
+    expect(scannedUserIds().length).toBeLessThanOrEqual(SCAN_LIMIT);
+  });
+
+  it('advances the rotating window between hourly runs', async () => {
+    const service = new EmailLifecycleService();
+    const hour = 60 * 60 * 1000;
+    const base = Date.parse('2026-08-29T00:00:00.000Z');
+
+    vi.spyOn(Date, 'now').mockReturnValue(base);
+    await service.queueDailyEligibilityDetailed({ dryRun: true, limit: SCAN_LIMIT });
+    const firstRun = scannedUserIds();
+
+    getUserByIdCalls = [];
+    vi.spyOn(Date, 'now').mockReturnValue(base + hour);
+    await service.queueDailyEligibilityDetailed({ dryRun: true, limit: SCAN_LIMIT });
+    const secondRun = scannedUserIds();
+
+    vi.restoreAllMocks();
+
+    // The newest slice is intentionally re-scanned; the rotating half must move on.
+    const carriedOver = firstRun.filter(id => secondRun.includes(id));
+    expect(carriedOver.length).toBeLessThan(firstRun.length);
+    expect(secondRun.some(id => !firstRun.includes(id))).toBe(true);
+  });
+
+  it('reaches profiles outside the newest slice within a full rotation', async () => {
+    const service = new EmailLifecycleService();
+    const hour = 60 * 60 * 1000;
+    const base = Date.parse('2026-08-29T00:00:00.000Z');
+    const seen = new Set<string>();
+
+    for (let run = 0; run < TOTAL_PROFILES; run++) {
+      getUserByIdCalls = [];
+      vi.spyOn(Date, 'now').mockReturnValue(base + run * hour);
+      await service.queueDailyEligibilityDetailed({ dryRun: true, limit: SCAN_LIMIT });
+      scannedUserIds().forEach(id => seen.add(id));
+    }
+    vi.restoreAllMocks();
+
+    // The old oldest-25 window left 26,632 of 26,657 production profiles unreachable.
+    expect(seen.size).toBe(TOTAL_PROFILES);
   });
 });
