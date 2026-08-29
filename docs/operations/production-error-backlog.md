@@ -137,6 +137,7 @@ available. Do not treat the pre-fix rates above as a post-deploy measurement.
 - **Assessment:** 30 failures in 2,507 requests over 3 hours, rising to 19 in 292 requests over 15 minutes; endpoints remain healthy.
 - **Next action:** Investigate worker memory usage and request-size patterns, then tune limits or processing.
 - **Status:** Open
+
 ### 2026-08-28T03:34:53+00:00 — `miu-228e9c035d1ccf8f` — relevant
 
 - **Signature:** `worker-myimageupscaler-status-exceededMemory`
@@ -164,3 +165,11 @@ available. Do not treat the pre-fix rates above as a post-deploy measurement.
 - **Next action:** Inspect failing image sizes and worker memory limits, then monitor the failure rate after mitigation.
 - **Status:** Open
 
+### 2026-08-29T17:13:46+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 26 in the sampled window
+- **Evidence:** `{"count_15m": 2, "count_3h": 26, "live_health": {"api_health": {"latency_ms": 433, "status": 200}, "homepage": {"latency_ms": 1148, "status": 200}}, "rate_15m": 0.01258, "rate_3h": 0.0121, "requests_15m": 159, "requests_3h": 2148}`
+- **Assessment:** 26 exceededMemory errors occurred in 3h and persisted in the last 15m, but homepage and API health both return 200.
+- **Next action:** Inspect oversized inputs and worker memory usage, then implement targeted mitigation and alerting.
+- **Status:** Open
