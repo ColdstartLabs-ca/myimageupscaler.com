@@ -137,3 +137,30 @@ available. Do not treat the pre-fix rates above as a post-deploy measurement.
 - **Assessment:** 30 failures in 2,507 requests over 3 hours, rising to 19 in 292 requests over 15 minutes; endpoints remain healthy.
 - **Next action:** Investigate worker memory usage and request-size patterns, then tune limits or processing.
 - **Status:** Open
+### 2026-08-28T03:34:53+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 23 in the sampled window
+- **Evidence:** `{"count_15m": 4, "count_3h": 23, "live_health": {"api_health": {"latency_ms": 861, "status": 200}, "homepage": {"latency_ms": 874, "status": 200}}, "rate_15m": 0.0226, "rate_3h": 0.01343, "requests_15m": 177, "requests_3h": 1712}`
+- **Assessment:** 23 exceeded-memory errors across 1712 requests in 3h, rising to 4 of 177 in 15m, while health checks remain 200.
+- **Next action:** Investigate worker memory usage and input-size patterns, then tune limits or processing before the failure rate grows.
+- **Status:** Open
+
+### 2026-08-28T05:36:59+00:00 — `miu-fb691e9458f01b78` — relevant
+
+- **Signature:** `endpoint-homepage-status-500`
+- **Count/window:** 1 in the sampled window
+- **Evidence:** `{"latency_ms": 1079, "status": 500}`
+- **Assessment:** Homepage returned 500 once while API health is 200 and workers are succeeding; no evidence of broad outage.
+- **Next action:** Investigate the homepage 500 and add a regression check.
+- **Status:** Open
+
+### 2026-08-28T19:51:24+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 18 in the sampled window
+- **Evidence:** `{"count_15m": 6, "count_3h": 18, "live_health": {"api_health": {"latency_ms": 1430, "status": 200}, "homepage": {"latency_ms": 1027, "status": 200}}, "rate_15m": 0.01818, "rate_3h": 0.01002, "requests_15m": 330, "requests_3h": 1796}`
+- **Assessment:** 18 of 1,796 jobs failed from exceeded memory (1.0%), including 6 in the last 15 minutes, while health endpoints remain 200.
+- **Next action:** Inspect failing image sizes and worker memory limits, then monitor the failure rate after mitigation.
+- **Status:** Open
+
