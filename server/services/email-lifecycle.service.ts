@@ -254,6 +254,19 @@ export function compareLifecycleDueQueueRows(
   return left.id.localeCompare(right.id);
 }
 
+/** Per-user signals the daily eligibility scan needs, loaded in bulk for a whole batch. */
+interface IEligibilitySignals {
+  hasCompletedJob: boolean;
+  hasPurchase: boolean;
+  cancelingSubscription: { id: string; periodEnd: Date } | null;
+  lastJob: { completedAt: Date; processingMode?: string } | null;
+}
+
+/** Users per `.in()` filter when loading eligibility signals, to keep request URLs bounded. */
+const ELIGIBILITY_SIGNAL_CHUNK = 200;
+/** Rows per page when reading a signal table; pages until a short page ends the scan. */
+const ELIGIBILITY_SIGNAL_PAGE = 1000;
+
 export interface IEmailLifecycleQueueHealth {
   pending: number;
   duePending: number;
@@ -878,17 +891,24 @@ export class EmailLifecycleService {
     let lifecycleQueued = 0;
     let suppressionsRecorded = 0;
     let suppressionsReused = 0;
-    for (const profile of (data || []) as Array<Record<string, unknown>>) {
+    const profiles = (data || []) as Array<Record<string, unknown>>;
+    const signalsByUser = await this.loadEligibilitySignals(
+      profiles.map(profile => String(profile.id))
+    );
+
+    for (const profile of profiles) {
       const userId = String(profile.id);
+      const signals = signalsByUser.get(userId);
+      if (!signals) continue;
       const email = await this.resolveUserEmail(userId);
       if (!email) continue;
 
       const createdAt = new Date(String(profile.created_at));
-      const uploaded = await this.userHasCompletedJob(userId);
-      const purchased = await this.userHasPurchase(userId);
-      const cancelingSubscription = await this.getCancelingSubscription(userId);
+      const uploaded = signals.hasCompletedJob;
+      const purchased = signals.hasPurchase;
+      const cancelingSubscription = signals.cancelingSubscription;
       const cancelingPeriodEnd = cancelingSubscription?.periodEnd ?? null;
-      const lastJob = await this.getLastCompletedJob(userId);
+      const lastJob = signals.lastJob;
       const lastJobAt = lastJob?.completedAt ?? null;
       const totalCredits =
         Number(profile.subscription_credits_balance ?? 0) +
@@ -1882,15 +1902,107 @@ export class EmailLifecycleService {
     return data.user?.email ?? null;
   }
 
-  private async userHasCompletedJob(userId: string): Promise<boolean> {
-    const { data, error } = await supabaseAdmin
-      .from('processing_jobs')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('status', 'completed')
-      .limit(1);
-    if (error) return false;
-    return !!data?.length;
+  /**
+   * Loads every per-user signal the daily scan needs with a bounded number of reads for
+   * the whole batch. Reading these one user at a time cost five sequential Supabase
+   * round-trips per profile, which is what kept the hourly scan limited to 25 profiles.
+   *
+   * Unlike the single-user helpers this replaced, a read failure throws instead of
+   * degrading to a default: a swallowed error here would mark an entire batch as
+   * "never uploaded" and email all of them.
+   */
+  private async loadEligibilitySignals(
+    userIds: string[]
+  ): Promise<Map<string, IEligibilitySignals>> {
+    const signals = new Map<string, IEligibilitySignals>(
+      userIds.map(userId => [
+        userId,
+        { hasCompletedJob: false, hasPurchase: false, cancelingSubscription: null, lastJob: null },
+      ])
+    );
+    if (!userIds.length) return signals;
+
+    for (let start = 0; start < userIds.length; start += ELIGIBILITY_SIGNAL_CHUNK) {
+      const chunk = userIds.slice(start, start + ELIGIBILITY_SIGNAL_CHUNK);
+
+      // Ordered newest-first so the first row seen per user is that user's latest job,
+      // matching the per-user query this replaced (including its NULLS FIRST ordering).
+      const jobRows = await this.readEligibilitySignalPages('completed jobs', (from, to) =>
+        supabaseAdmin
+          .from('processing_jobs')
+          .select('user_id, completed_at, created_at, processing_mode')
+          .in('user_id', chunk)
+          .eq('status', 'completed')
+          .order('completed_at', { ascending: false })
+          .range(from, to)
+      );
+      for (const row of jobRows) {
+        const entry = signals.get(String(row.user_id));
+        if (!entry || entry.hasCompletedJob) continue;
+        entry.hasCompletedJob = true;
+        entry.lastJob = {
+          completedAt: new Date(String(row.completed_at ?? row.created_at)),
+          processingMode: row.processing_mode ? String(row.processing_mode) : undefined,
+        };
+      }
+
+      const purchaseRows = await this.readEligibilitySignalPages('purchases', (from, to) =>
+        supabaseAdmin
+          .from('credit_transactions')
+          .select('user_id')
+          .in('user_id', chunk)
+          .in('type', ['purchase', 'subscription'])
+          .range(from, to)
+      );
+      for (const row of purchaseRows) {
+        const entry = signals.get(String(row.user_id));
+        if (entry) entry.hasPurchase = true;
+      }
+
+      // Ascending so the first row per user is the soonest period end, as before.
+      const subscriptionRows = await this.readEligibilitySignalPages(
+        'canceling subscriptions',
+        (from, to) =>
+          supabaseAdmin
+            .from('subscriptions')
+            .select('id, user_id, current_period_end')
+            .in('user_id', chunk)
+            .eq('cancel_at_period_end', true)
+            .in('status', ['active', 'trialing'])
+            .order('current_period_end', { ascending: true })
+            .range(from, to)
+      );
+      for (const row of subscriptionRows) {
+        const entry = signals.get(String(row.user_id));
+        if (!entry || entry.cancelingSubscription || !row.current_period_end) continue;
+        entry.cancelingSubscription = {
+          id: String(row.id),
+          periodEnd: new Date(String(row.current_period_end)),
+        };
+      }
+    }
+
+    return signals;
+  }
+
+  private async readEligibilitySignalPages(
+    label: string,
+    fetchPage: (
+      from: number,
+      to: number
+    ) => PromiseLike<{ data: unknown; error: { message: string } | null }>
+  ): Promise<Array<Record<string, unknown>>> {
+    const rows: Array<Record<string, unknown>> = [];
+    for (let page = 0; ; page++) {
+      const from = page * ELIGIBILITY_SIGNAL_PAGE;
+      const { data, error } = await fetchPage(from, from + ELIGIBILITY_SIGNAL_PAGE - 1);
+      if (error) {
+        throw new Error(`Failed to load ${label} for lifecycle eligibility: ${error.message}`);
+      }
+      const batch = (data || []) as Array<Record<string, unknown>>;
+      rows.push(...batch);
+      if (batch.length < ELIGIBILITY_SIGNAL_PAGE) return rows;
+    }
   }
 
   private async userHasPurchase(userId: string): Promise<boolean> {
@@ -1902,40 +2014,6 @@ export class EmailLifecycleService {
       .limit(1);
     if (error) return false;
     return !!data?.length;
-  }
-
-  private async getCancelingSubscription(
-    userId: string
-  ): Promise<{ id: string; periodEnd: Date } | null> {
-    const { data, error } = await supabaseAdmin
-      .from('subscriptions')
-      .select('id, current_period_end')
-      .eq('user_id', userId)
-      .eq('cancel_at_period_end', true)
-      .in('status', ['active', 'trialing'])
-      .order('current_period_end', { ascending: true })
-      .limit(1)
-      .maybeSingle();
-    if (error || !data?.current_period_end) return null;
-    return { id: String(data.id), periodEnd: new Date(String(data.current_period_end)) };
-  }
-
-  private async getLastCompletedJob(
-    userId: string
-  ): Promise<{ completedAt: Date; processingMode?: string } | null> {
-    const { data, error } = await supabaseAdmin
-      .from('processing_jobs')
-      .select('completed_at, created_at, processing_mode')
-      .eq('user_id', userId)
-      .eq('status', 'completed')
-      .order('completed_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    if (error || !data) return null;
-    return {
-      completedAt: new Date(String(data.completed_at ?? data.created_at)),
-      processingMode: data.processing_mode ? String(data.processing_mode) : undefined,
-    };
   }
 
   private getIntentFromProcessingMode(processingMode?: string): LifecycleIntent | null {
