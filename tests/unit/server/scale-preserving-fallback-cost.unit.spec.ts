@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { resolveScalePreservingModel } from '@server/services/scale-preserving-model';
+import {
+  getScalePreservingFallbackCandidates,
+  resolveScalePreservingModel,
+} from '@server/services/scale-preserving-model';
 import { ModelRegistry } from '@server/services/model-registry';
 import { MODEL_COSTS, MODEL_MAX_INPUT_PIXELS } from '@shared/config/model-costs.config';
 
@@ -13,6 +16,7 @@ import { MODEL_COSTS, MODEL_MAX_INPUT_PIXELS } from '@shared/config/model-costs.
  */
 describe('scale-preserving fallback cost', () => {
   const registry = ModelRegistry.getInstance();
+  const freeFallbackId = getScalePreservingFallbackCandidates(false)[0];
 
   const fallback = resolveScalePreservingModel({
     modelId: 'real-esrgan',
@@ -26,31 +30,31 @@ describe('scale-preserving fallback cost', () => {
   });
 
   it('never routes the internal fallback to the diffusion upscalers', () => {
-    expect(fallback.modelId).not.toBe('clarity-upscaler');
-    expect(fallback.modelId).not.toBe('clarity-pro-upscaler');
+    expect(freeFallbackId).not.toBe('clarity-upscaler');
+    expect(freeFallbackId).not.toBe('clarity-pro-upscaler');
   });
 
   it('keeps the fallback provider cost within 3x of a normal Quick run', () => {
     const quickCost = MODEL_COSTS.REAL_ESRGAN_COST;
-    const fallbackCost = registry.getModel(fallback.modelId)?.costPerRun ?? Number.MAX_SAFE_INTEGER;
+    const fallbackCost = registry.getModel(freeFallbackId)?.costPerRun ?? Number.MAX_SAFE_INTEGER;
 
     expect(fallbackCost).toBeLessThanOrEqual(quickCost * 3);
     expect(fallbackCost).toBeLessThan(MODEL_COSTS.CLARITY_UPSCALER_COST / 3);
   });
 
   it('covers the whole fallback band up to 2048x2048', () => {
-    expect(MODEL_MAX_INPUT_PIXELS[fallback.modelId]).toBeGreaterThanOrEqual(2048 * 2048);
+    expect(MODEL_MAX_INPUT_PIXELS[freeFallbackId]).toBeGreaterThanOrEqual(2048 * 2048);
   });
 
   it('is enabled and reachable regardless of the premium model flag', () => {
-    expect(registry.getModel(fallback.modelId)?.isEnabled).toBe(true);
+    expect(registry.getModel(freeFallbackId)?.isEnabled).toBe(true);
   });
 
   it('never offers the internal fallback as a user-selectable model', () => {
     const enabledIds = registry.getEnabledModels().map(model => model.id);
     const businessIds = registry.getModelsByTier('business').map(model => model.id);
 
-    expect(enabledIds).not.toContain(fallback.modelId);
-    expect(businessIds).not.toContain(fallback.modelId);
+    expect(enabledIds).not.toContain(freeFallbackId);
+    expect(businessIds).not.toContain(freeFallbackId);
   });
 });

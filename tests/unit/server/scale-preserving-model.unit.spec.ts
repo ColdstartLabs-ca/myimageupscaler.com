@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { resolveScalePreservingModel } from '@server/services/scale-preserving-model';
+import {
+  getScalePreservingFallbackCandidates,
+  resolveScalePreservingModel,
+} from '@server/services/scale-preserving-model';
 
 describe('resolveScalePreservingModel', () => {
   it('keeps Real-ESRGAN when the original input fits its provider limit', () => {
@@ -22,6 +25,20 @@ describe('resolveScalePreservingModel', () => {
         scale: 2,
       })
     ).toEqual({ modelId: 'real-esrgan-large', usedFallback: true });
+  });
+
+  it('prioritizes the higher-quality fallback for customers who have paid', () => {
+    expect(getScalePreservingFallbackCandidates(true)).toEqual([
+      'clarity-upscaler',
+      'real-esrgan-large',
+    ]);
+  });
+
+  it('keeps the economical fallback first for free customers', () => {
+    expect(getScalePreservingFallbackCandidates(false)).toEqual([
+      'real-esrgan-large',
+      'clarity-upscaler',
+    ]);
   });
 
   it('does not route unverified extreme aspect ratios through the fallback', () => {

@@ -32,6 +32,7 @@ const mocks = vi.hoisted(() => ({
   acquireProviderPermit: vi.fn(),
   recordProviderFailure: vi.fn(),
   recordProviderSuccess: vi.fn(),
+  createProcessorForModel: vi.fn(),
   rateLimit: vi.fn(),
   setupPending: vi.fn(),
   track: vi.fn(),
@@ -41,6 +42,9 @@ const mocks = vi.hoisted(() => ({
   modelIdToTier: vi.fn(),
   calculateCredits: vi.fn(),
   resolveResolution: vi.fn(),
+  decodeImageDimensions: vi.fn(),
+  getScalePreservingFallbackCandidates: vi.fn(),
+  resolveScalePreservingModel: vi.fn(),
 }));
 
 vi.mock('@server/analytics', () => ({ trackServerEvent: mocks.track }));
@@ -68,7 +72,7 @@ vi.mock('@server/services/image-generation.service', () => ({
 }));
 vi.mock('@server/services/image-processor.factory', () => ({
   ImageProcessorFactory: {
-    createProcessorForModel: () => ({ providerName: 'test', processImage: mocks.processImage }),
+    createProcessorForModel: mocks.createProcessorForModel,
     createProcessor: () => ({ providerName: 'test', processImage: mocks.processImage }),
   },
 }));
@@ -94,7 +98,8 @@ vi.mock('@server/services/replicate.service', () => ({
   ReplicateError: mocks.ReplicateError,
 }));
 vi.mock('@server/services/scale-preserving-model', () => ({
-  resolveScalePreservingModel: () => ({ usedFallback: false, modelId: 'real-esrgan' }),
+  getScalePreservingFallbackCandidates: mocks.getScalePreservingFallbackCandidates,
+  resolveScalePreservingModel: mocks.resolveScalePreservingModel,
 }));
 vi.mock('@server/services/replicate/utils/credit-manager', () => ({
   creditManager: {
@@ -125,7 +130,7 @@ vi.mock('@shared/validation/upscale.schema', () => ({
   upscaleSchema: {
     parse: mocks.parseUpscale,
   },
-  decodeImageDimensions: () => null,
+  decodeImageDimensions: mocks.decodeImageDimensions,
   getBase64PayloadLength: (value: string) =>
     value.length - (value.startsWith('data:') ? value.indexOf(',') + 1 : 0),
   getBase64PayloadOffset: (value: string) =>
@@ -191,6 +196,20 @@ describe('POST /api/upscale free limit errors', () => {
     mocks.acquireProviderPermit.mockResolvedValue(true);
     mocks.recordProviderFailure.mockResolvedValue(true);
     mocks.recordProviderSuccess.mockResolvedValue(true);
+    mocks.createProcessorForModel.mockReturnValue({
+      providerName: 'test',
+      processImage: mocks.processImage,
+    });
+    mocks.decodeImageDimensions.mockReturnValue(null);
+    mocks.getScalePreservingFallbackCandidates.mockImplementation(isPaidUser =>
+      isPaidUser
+        ? ['clarity-upscaler', 'real-esrgan-large']
+        : ['real-esrgan-large', 'clarity-upscaler']
+    );
+    mocks.resolveScalePreservingModel.mockReturnValue({
+      usedFallback: false,
+      modelId: 'real-esrgan',
+    });
     mocks.batchCheck.mockResolvedValue({
       allowed: true,
       current: 0,
@@ -233,6 +252,61 @@ describe('POST /api/upscale free limit errors', () => {
       },
     });
   });
+
+  it.each([
+    {
+      label: 'paid',
+      profileOverrides: { purchased_credits_balance: 50 },
+      expectedPaidClassification: true,
+      expectedModelId: 'clarity-upscaler',
+    },
+    {
+      label: 'free',
+      profileOverrides: { subscription_credits_balance: 1 },
+      expectedPaidClassification: false,
+      expectedModelId: 'real-esrgan-large',
+    },
+  ])(
+    'routes an oversized Quick 2x $label customer through the correct fallback order',
+    async ({ profileOverrides, expectedPaidClassification, expectedModelId }) => {
+      const customerProfile = profile(profileOverrides);
+      mocks.from.mockImplementation(() => ({
+        select: () => ({
+          eq: () => ({
+            single: async () => ({ data: customerProfile, error: null }),
+            maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
+          }),
+        }),
+      }));
+      mocks.decodeImageDimensions.mockReturnValue({ width: 1800, height: 1800 });
+      mocks.resolveScalePreservingModel.mockReturnValue({
+        usedFallback: true,
+        modelId: 'real-esrgan-large',
+      });
+      mocks.processImage.mockImplementation(async (_userId, _input, options) => {
+        options?.onCreditsDeducted?.({
+          amount: 1,
+          newBalance: expectedPaidClassification ? 49 : 0,
+          jobId: '33333333-3333-4333-8333-333333333333',
+          subscriptionAmount: 0,
+          purchasedAmount: expectedPaidClassification ? 1 : 0,
+        });
+        return {
+          imageUrl: 'https://output.test/result.png',
+          mimeType: 'image/png',
+          creditsRemaining: expectedPaidClassification ? 49 : 0,
+        };
+      });
+
+      const response = await POST(request());
+
+      expect(response.status).toBe(200);
+      expect(mocks.getScalePreservingFallbackCandidates).toHaveBeenCalledWith(
+        expectedPaidClassification
+      );
+      expect(mocks.createProcessorForModel).toHaveBeenCalledWith(expectedModelId);
+    }
+  );
 
   it('charges the same 25 credits priced for an ultra 4K override', async () => {
     const paidProfile = profile({

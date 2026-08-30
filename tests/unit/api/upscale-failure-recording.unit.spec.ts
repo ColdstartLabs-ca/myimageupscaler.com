@@ -90,6 +90,7 @@ vi.mock('@server/services/upscale-input-storage.service', () => ({
 }));
 vi.mock('@server/services/replicate.service', () => ({ ReplicateError: mocks.ReplicateError }));
 vi.mock('@server/services/scale-preserving-model', () => ({
+  getScalePreservingFallbackCandidates: () => ['real-esrgan-large', 'clarity-upscaler'],
   resolveScalePreservingModel: () => ({ usedFallback: false, modelId: 'real-esrgan' }),
 }));
 vi.mock('@server/services/replicate/utils/credit-manager', () => ({

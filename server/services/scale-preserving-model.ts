@@ -17,14 +17,23 @@ interface IScalePreservingModelResult {
 }
 
 /**
- * Ordered processing targets for an oversized Quick 2x request. The caller
- * uses the first enabled entry. Clarity is the last resort only: it costs
- * roughly 14x a Quick run while the user is still billed the Quick price.
+ * Cost-first processing targets for an oversized Quick 2x request.
  */
 export const SCALE_PRESERVING_FALLBACK_CANDIDATES: ModelId[] = [
   'real-esrgan-large',
   'clarity-upscaler',
 ];
+
+/**
+ * Paying customers retain the higher-quality Clarity behavior they received
+ * before the economical Real-ESRGAN fallback was introduced. Free requests
+ * stay on the cost-first path.
+ */
+export function getScalePreservingFallbackCandidates(isPaidUser: boolean): ModelId[] {
+  return isPaidUser
+    ? ['clarity-upscaler', 'real-esrgan-large']
+    : SCALE_PRESERVING_FALLBACK_CANDIDATES;
+}
 
 /**
  * The default Real-ESRGAN build rejects inputs above its hard pixel guard.

@@ -26,7 +26,7 @@ import {
 } from '@server/services/upscale-input-storage.service';
 import { ReplicateError } from '@server/services/replicate.service';
 import {
-  SCALE_PRESERVING_FALLBACK_CANDIDATES,
+  getScalePreservingFallbackCandidates,
   resolveScalePreservingModel,
 } from '@server/services/scale-preserving-model';
 import { creditManager } from '@server/services/replicate/utils/credit-manager';
@@ -918,12 +918,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         height: inputDimensions.height,
         scale: config.scale,
       });
-      // Candidates are ordered cheapest-first: only fall through to the
-      // costlier target when the preferred one is disabled.
+      // Preserve the better historical output for customers who have paid;
+      // free requests retain the economical fallback order.
+      const fallbackCandidates = getScalePreservingFallbackCandidates(isPaidUser);
       const availableFallbackId = scaleSafeModel.usedFallback
-        ? SCALE_PRESERVING_FALLBACK_CANDIDATES.find(
-            candidateId => modelRegistry.getModel(candidateId)?.isEnabled
-          )
+        ? fallbackCandidates.find(candidateId => modelRegistry.getModel(candidateId)?.isEnabled)
         : undefined;
 
       if (availableFallbackId) {
