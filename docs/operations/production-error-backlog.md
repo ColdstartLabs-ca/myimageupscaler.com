@@ -173,3 +173,21 @@ available. Do not treat the pre-fix rates above as a post-deploy measurement.
 - **Assessment:** 26 exceededMemory errors occurred in 3h and persisted in the last 15m, but homepage and API health both return 200.
 - **Next action:** Inspect oversized inputs and worker memory usage, then implement targeted mitigation and alerting.
 - **Status:** Open
+### 2026-08-30T17:36:09+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 20 in the sampled window
+- **Evidence:** `{"count_15m": 0, "count_3h": 20, "live_health": {"api_health": {"latency_ms": 436, "status": 200}, "homepage": {"latency_ms": 1026, "status": 200}}, "rate_15m": 0.0, "rate_3h": 0.00621, "requests_15m": 87, "requests_3h": 3223}`
+- **Assessment:** 20 exceeded-memory errors occurred at a 0.62% rate while endpoints and recent workers remain healthy; not an outage.
+- **Next action:** Review failed image sizes and worker memory limits, then tune or cap resource-heavy jobs.
+- **Status:** Open
+
+### 2026-08-31T17:57:00+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 21 in the sampled window
+- **Evidence:** `{"count_15m": 8, "count_3h": 21, "live_health": {"api_health": {"latency_ms": 285, "status": 200}, "homepage": {"latency_ms": 97, "status": 200}}, "rate_15m": 0.02057, "rate_3h": 0.0064, "requests_15m": 389, "requests_3h": 3283}`
+- **Assessment:** 21 failures in 3 hours (0.64%) and 8 in 15 minutes (2.06%) while homepage and API health remain 200.
+- **Next action:** Inspect failing image workloads and worker memory limits, then add regression coverage or tuning.
+- **Status:** Open
+

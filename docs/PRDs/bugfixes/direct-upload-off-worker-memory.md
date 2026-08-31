@@ -1,8 +1,13 @@
 # PRD: Move Image Uploads Off the Worker
 
-**Status:** Not started
+**Status:** Superseded on 2026-08-31
 **Date:** 2026-08-18
 **Source:** [2026-08-17 GSC decline root cause](../SEO/reports/2026-08-17-gsc-decline-root-cause.md) §7a
+
+> Direct-to-storage input and streamed output handling shipped in commits including
+> `e3244166` and `8070ab8d`, but production memory failures continued. Remaining
+> attribution, legacy-body removal, and URL-only provider work now live in
+> [`production-error-backlog-remediation.md`](production-error-backlog-remediation.md).
 
 ## Problem
 
