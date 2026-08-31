@@ -4,7 +4,7 @@ import { withRegionalCache } from '@opennextjs/cloudflare/overrides/incremental-
 
 export default defineCloudflareConfig({
   incrementalCache: withRegionalCache(r2IncrementalCache, { mode: 'long-lived' }),
-  // Serve prerendered SSG/ISR responses directly from the incremental cache
-  // before loading the Next server bundle on Cloudflare Workers.
-  enableCacheInterception: true,
+  // Cache interception requires a real revalidation queue. Without one,
+  // cache misses throw "Dummy queue is not implemented" and return HTTP 500.
+  enableCacheInterception: false,
 });

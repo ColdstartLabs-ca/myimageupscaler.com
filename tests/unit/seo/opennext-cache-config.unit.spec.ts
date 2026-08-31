@@ -13,8 +13,8 @@ describe('OpenNext incremental cache configuration', () => {
     expect((cache as unknown as { opts: { mode: string } }).opts.mode).toBe('long-lived');
   });
 
-  it('should intercept cached HTML before invoking the Next server bundle', () => {
-    expect(cloudflareConfig.dangerous?.enableCacheInterception).toBe(true);
+  it('should not intercept cached HTML without a configured revalidation queue', () => {
+    expect(cloudflareConfig.dangerous?.enableCacheInterception).toBe(false);
   });
 
   it('should bind the incremental cache R2 bucket', () => {
