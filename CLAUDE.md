@@ -53,7 +53,7 @@ For SEO-facing tasks, use `.claude/skills/seo-changes-backlog/` and skim `docs/S
 
 ## Key Paths
 
-- PRDs: `docs/PRDs/` → move to `done/` when complete
+- PRDs: Keep active PRDs in `docs/PRDs/`; once implementation and verification are complete, move the PRD to `docs/PRDs/done/`.
 - Roadmap: `docs/management/ROADMAP.md`
 - Env: `.env.client` (public) | `.env.api` (secrets)
 
