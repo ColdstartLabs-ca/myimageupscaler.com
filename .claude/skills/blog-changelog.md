@@ -1,5 +1,15 @@
 # Blog Changelog
 
+## 2026-08-31
+
+### Edit: Topaz free-trial alternative-led snippet
+
+**Affected:** topaz-labs-free-trial
+**Why:** Fresh 28-day GSC through 2026-08-28 and the governing Phase 6 PRD showed the mature Topaz free-trial cluster still click-constrained (`topaz free`: 1,197 impressions / 13 clicks / avg position 9.03; `topaz photo free trial`: 284 / 0 / avg position 5.03). The title/H1/body facts already passed, so the safe action was a narrow SEO description/body-support edit rather than a duplicate post or factual Topaz rewrite.
+**Changes:**
+
+- `topaz-labs-free-trial` — changed production `seo_description` from negation-first to alternative-led, kept Topaz trial facts intact, and added above-fold body support for MyImageUpscaler as a browser-based alternative with five welcome credits after signup.
+
 ## 2026-08-17
 
 ### Edit: Best-free upscaler proof-led CTR support pass

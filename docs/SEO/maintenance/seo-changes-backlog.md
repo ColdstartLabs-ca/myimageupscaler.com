@@ -9,6 +9,36 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-08-31
+
+### Topaz Free-Trial Snippet Recovery
+
+Source: autonomous blog growth operator using fresh 28-day GSC through 2026-08-28 (`/tmp/gsc-blog-operator-2026-08-31.json`), the current SEO/indexing backlogs, `.claude/skills/blog-changelog.md`, recent SEO reports/PRDs, and recent git history.
+
+Evidence:
+
+- GSC shows the Topaz free-trial cluster is mature and still click-constrained: `topaz free` has 1,197 impressions / 13 clicks / avg position 9.03, while `topaz photo free trial` has 284 impressions / 0 clicks / avg position 5.03 in the latest 28 days.
+- The governing PRD Phase 6 already diagnosed the old `seo_description` as negation-first (`Topaz Photo has no current free trial...`) and approved a narrow alternative-led snippet without changing the title, H1, slug, canonical, or factual Topaz content.
+
+Changes:
+
+- Updated the production blog record for `/blog/topaz-labs-free-trial` through the authenticated production blog API: changed `seo_description` to lead with a Topaz free-trial alternative and added above-fold body support that MyImageUpscaler is a browser-based alternative with five welcome credits after signup.
+- Added `tests/unit/seo/topaz-free-trial-snippet.unit.spec.ts` to lock the truthful snippet contract and one-row pending indexing state.
+- Updated the existing `https://myimageupscaler.com/blog/topaz-labs-free-trial` indexing-backlog row in place; no duplicate row was added.
+
+Validation:
+
+- Fresh production DB backups created and verified before the write: `backups/backup_2026-08-31_10-32-59.schema.sql.gz` and `backups/backup_2026-08-31_10-32-59.data.sql.gz`; `yarn db:backups` listed both and `gzip -t` passed for both archives.
+- Blog API PATCH returned 200, and API readback confirmed the new `seo_description`, body support paragraph, and `updated_at: 2026-08-31T17:34:45.426853+00:00`.
+- Live HTML still served the old cached ISR/OpenNext HTML (`x-nextjs-cache: HIT`, `s-maxage≈84095`) immediately after the API revalidation attempt; Cloudflare API token returned auth error `10000` for a targeted purge, so the public page should be rechecked after cache expiry or after the next deploy/cache purge.
+
+Follow-up:
+
+- Commit: recorded in the operator delivery after tests pass.
+- Deploy state: production blog API/DB content changed immediately; public HTML cache has not reflected it yet; repo tests/backlogs/changelog are local until commit is pushed/deployed.
+- Manual action: once the live HTML shows the new description, request indexing for `https://myimageupscaler.com/blog/topaz-labs-free-trial` in GSC URL Inspection and then mark the existing backlog row accepted.
+- Next trigger: on or after 2026-09-17, if GSC has 14 complete post-visible days and `topaz free` / `topaz photo free trial` remain below 2.5% CTR at positions 5-10, inspect the SERP before any further snippet change; revert if CTR rises but position degrades materially.
+
 ## 2026-08-26
 
 ### HTML Cache Smoke Gate Stabilized

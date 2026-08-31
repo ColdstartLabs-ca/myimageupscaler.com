@@ -132,7 +132,7 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 - [x] `https://myimageupscaler.com/blog/mejorar-calidad-imagen-ia-gratis`
 - [x] `https://myimageupscaler.com/blog/pixelcut-ai-photo-editor`
 - [x] `https://myimageupscaler.com/blog/topaz-denoise-ai`
-- [x] `https://myimageupscaler.com/blog/topaz-labs-free-trial`
+- [ ] `https://myimageupscaler.com/blog/topaz-labs-free-trial` — Topaz free-trial snippet recovery updated 2026-08-31; request indexing after the new alternative-led SEO description is visible on the live HTML cache.
 - [x] `https://myimageupscaler.com/blog/topaz-video-upscaler`
 - [x] `https://myimageupscaler.com/blog/video-upscaling-software`
 - [x] `https://myimageupscaler.com/scale/upscale-16x`
