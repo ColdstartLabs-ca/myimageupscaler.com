@@ -87,12 +87,12 @@ Add to each config:
 
 ### 5.3 Optional runtime tuning (defaults are acceptable; do not set in v1)
 
-| Env var | Default | Purpose |
-|---|---|---|
-| `NEXT_CACHE_DO_QUEUE_MAX_REVALIDATION` | `5` | Max concurrent revalidations per DO instance |
-| `NEXT_CACHE_DO_QUEUE_REVALIDATION_TIMEOUT_MS` | `10000` | Per-revalidation request timeout |
-| `NEXT_CACHE_DO_QUEUE_RETRY_INTERVAL_MS` | `2000` | Retry interval for failed revalidations |
-| `NEXT_CACHE_DO_QUEUE_MAX_RETRIES` | `6` | Max retries for a failed revalidation |
+| Env var                                       | Default | Purpose                                      |
+| --------------------------------------------- | ------- | -------------------------------------------- |
+| `NEXT_CACHE_DO_QUEUE_MAX_REVALIDATION`        | `5`     | Max concurrent revalidations per DO instance |
+| `NEXT_CACHE_DO_QUEUE_REVALIDATION_TIMEOUT_MS` | `10000` | Per-revalidation request timeout             |
+| `NEXT_CACHE_DO_QUEUE_RETRY_INTERVAL_MS`       | `2000`  | Retry interval for failed revalidations      |
+| `NEXT_CACHE_DO_QUEUE_MAX_RETRIES`             | `6`     | Max retries for a failed revalidation        |
 
 ### 5.4 Regression tests (unit, `tests/unit/seo/opennext-cache-config.unit.spec.ts`)
 
@@ -139,13 +139,13 @@ Deploy the preview worker with `queue: doQueue` bound and `enableCacheIntercepti
 
 ## 8. Risks and mitigations
 
-| Risk | Likelihood | Mitigation |
-|---|---|---|
-| DO queue blocking callers when > max concurrent revalidations | Low (default cap 5; long-lived regional cache dedupes sends) | Defaults acceptable at current traffic (~9k req/day); raise `NEXT_CACHE_DO_QUEUE_MAX_REVALIDATION` if preview shows queueing |
-| Regional Cache API out of sync with R2 (no cache purge configured) — stale content served up to 30 min | Medium (existing behavior, unchanged by this PRD) | Accepted; documented in Section 9 as follow-up |
-| Interception serves a cached error response (the unproven 500 mechanism from the incident) | Unknown — the exact 500 mechanism was not captured | Preview gate #2 exercises the exact incident scenario; production soak gates the flip; rollback is config-only |
-| First-ever DO deployment requires migration ordering | Low | Migration ships in the same deploy as the binding; preview deploy validates the wrangler config end-to-end before production |
-| Re-enabling interception regresses the performance gate | Low | The deploy script's performance gate runs on every deploy; a gate failure with healthy availability is treated as gate-noise per incident learnings, not as upload failure |
+| Risk                                                                                                   | Likelihood                                                   | Mitigation                                                                                                                                                                 |
+| ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DO queue blocking callers when > max concurrent revalidations                                          | Low (default cap 5; long-lived regional cache dedupes sends) | Defaults acceptable at current traffic (~9k req/day); raise `NEXT_CACHE_DO_QUEUE_MAX_REVALIDATION` if preview shows queueing                                               |
+| Regional Cache API out of sync with R2 (no cache purge configured) — stale content served up to 30 min | Medium (existing behavior, unchanged by this PRD)            | Accepted; documented in Section 9 as follow-up                                                                                                                             |
+| Interception serves a cached error response (the unproven 500 mechanism from the incident)             | Unknown — the exact 500 mechanism was not captured           | Preview gate #2 exercises the exact incident scenario; production soak gates the flip; rollback is config-only                                                             |
+| First-ever DO deployment requires migration ordering                                                   | Low                                                          | Migration ships in the same deploy as the binding; preview deploy validates the wrangler config end-to-end before production                                               |
+| Re-enabling interception regresses the performance gate                                                | Low                                                          | The deploy script's performance gate runs on every deploy; a gate failure with healthy availability is treated as gate-noise per incident learnings, not as upload failure |
 
 ## 9. Follow-ups (out of scope)
 
