@@ -102,6 +102,8 @@ interface IProcessImageApiResponse {
 }
 
 const DELIVERED_IMAGE_LOAD_TIMEOUT_MS = 15_000;
+const UPLOAD_MAX_ATTEMPTS = 3;
+const UPLOAD_RETRY_DELAY_MS = 100;
 
 class OutputCapabilityError extends Error {}
 
@@ -180,6 +182,68 @@ async function fetchRetryableOutputBlobUrl(
   }
 
   throw lastError instanceof Error ? lastError : new Error('Unable to retrieve generated output');
+}
+
+function getUploadErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (
+    error &&
+    typeof error === 'object' &&
+    'message' in error &&
+    typeof error.message === 'string'
+  ) {
+    return error.message;
+  }
+  return 'Unknown storage error';
+}
+
+function isCommittedUploadConflict(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+
+  const details = error as {
+    status?: unknown;
+    statusCode?: unknown;
+    message?: unknown;
+    error?: unknown;
+  };
+  const status = details.statusCode ?? details.status;
+  if (status === 409 || status === '409') return true;
+
+  return [details.message, details.error].some(
+    value => typeof value === 'string' && /already exists|duplicate/i.test(value)
+  );
+}
+
+async function uploadToSignedUrlWithRetry(
+  storagePath: string,
+  uploadToken: string,
+  file: File
+): Promise<void> {
+  const bucket = createClient().storage.from('upscale-inputs');
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= UPLOAD_MAX_ATTEMPTS; attempt += 1) {
+    try {
+      const { error } = await bucket.uploadToSignedUrl(storagePath, uploadToken, file, {
+        contentType: file.type || 'image/jpeg',
+        upsert: false,
+      });
+      if (!error) return;
+      // With an immutable grant, a response-loss after the storage commit is
+      // reported as a conflict. The server validates the stored object before
+      // it signs the provider-facing read URL.
+      if (isCommittedUploadConflict(error)) return;
+      lastError = error;
+    } catch (error) {
+      lastError = error;
+    }
+
+    if (attempt < UPLOAD_MAX_ATTEMPTS) {
+      await new Promise<void>(resolve => setTimeout(resolve, UPLOAD_RETRY_DELAY_MS * attempt));
+    }
+  }
+
+  throw new Error(`Failed to upload image: ${getUploadErrorMessage(lastError)}`);
 }
 
 function getApiErrorDetails(error: IApiErrorResponse['error']): IApiErrorDetails | undefined {
@@ -512,15 +576,7 @@ export const processImage = async (
       storagePath: string;
       uploadToken: string;
     }>(uploadGrantResponse);
-    const { error: uploadError } = await createClient()
-      .storage.from('upscale-inputs')
-      .uploadToSignedUrl(uploadGrant.storagePath, uploadGrant.uploadToken, file, {
-        contentType: file.type || 'image/jpeg',
-        upsert: false,
-      });
-    if (uploadError) {
-      throw new Error(`Failed to upload image: ${uploadError.message}`);
-    }
+    await uploadToSignedUrlWithRetry(uploadGrant.storagePath, uploadGrant.uploadToken, file);
 
     const response = await fetch('/api/upscale', {
       method: 'POST',

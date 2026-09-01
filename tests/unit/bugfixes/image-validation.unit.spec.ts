@@ -48,23 +48,20 @@ describe('Bug Fix: Server-side Image Validation', () => {
   });
 
   describe('MIME type validation', () => {
-    const validBase64 =
-      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
-    const validConfig = {
-      mode: 'upscale' as const,
-      scale: 2 as const,
-      denoise: false,
-      enhanceFace: false,
-      preserveText: false,
-    };
+    const validConfig = { qualityTier: 'quick' as const, scale: 2 as const };
+    const validStoragePath = 'user-1/11111111-1111-4111-8111-111111111111.png';
+    const validJobId = '11111111-1111-4111-8111-111111111111';
+
+    const storageInput = (mimeType: string, config = validConfig) => ({
+      storagePath: validStoragePath,
+      jobId: validJobId,
+      mimeType,
+      config,
+    });
 
     test('should accept valid MIME types', () => {
       for (const mimeType of IMAGE_VALIDATION.ALLOWED_TYPES) {
-        const result = upscaleSchema.safeParse({
-          imageData: validBase64,
-          mimeType,
-          config: validConfig,
-        });
+        const result = upscaleSchema.safeParse(storageInput(mimeType));
         expect(result.success).toBe(true);
       }
     });
@@ -73,11 +70,7 @@ describe('Bug Fix: Server-side Image Validation', () => {
       const invalidTypes = ['image/gif', 'image/bmp', 'application/pdf', 'text/plain'];
 
       for (const mimeType of invalidTypes) {
-        const result = upscaleSchema.safeParse({
-          imageData: validBase64,
-          mimeType,
-          config: validConfig,
-        });
+        const result = upscaleSchema.safeParse(storageInput(mimeType));
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(result.error.errors[0].message).toContain('Invalid image type');
@@ -191,58 +184,61 @@ describe('Bug Fix: Server-side Image Validation', () => {
   });
 
   describe('Schema validation (without size check)', () => {
-    const validConfig = {
-      mode: 'upscale' as const,
-      scale: 2 as const,
-      denoise: false,
-      enhanceFace: false,
-      preserveText: false,
+    const validInput = {
+      storagePath: 'user-1/11111111-1111-4111-8111-111111111111.png',
+      jobId: '11111111-1111-4111-8111-111111111111',
+      mimeType: 'image/png',
+      config: { qualityTier: 'quick' as const, scale: 2 as const },
     };
 
-    test('schema should accept valid base64 without size restriction', () => {
-      // The schema no longer enforces size limits (that's done by validateImageSizeForTier)
-      const smallImage =
-        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
-
-      const result = upscaleSchema.safeParse({
-        imageData: smallImage,
-        mimeType: 'image/png',
-        config: validConfig,
-      });
+    test('schema should accept a storage reference without size restriction', () => {
+      const result = upscaleSchema.safeParse(validInput);
       expect(result.success).toBe(true);
     });
 
-    test('schema should accept data URL format', () => {
-      const smallImage =
-        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
-      const dataUrl = `data:image/png;base64,${smallImage}`;
-
+    test('schema should reject inline image data', () => {
       const result = upscaleSchema.safeParse({
-        imageData: dataUrl,
-        mimeType: 'image/png',
-        config: validConfig,
+        ...validInput,
+        imageData: 'data:image/png;base64,iVBORw0KGgo=',
       });
-      expect(result.success).toBe(true);
+      expect(result.success).toBe(false);
     });
   });
 
   describe('Config validation', () => {
-    const validBase64 =
-      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+    const validInput = {
+      storagePath: 'user-1/11111111-1111-4111-8111-111111111111.png',
+      jobId: '11111111-1111-4111-8111-111111111111',
+      mimeType: 'image/png',
+    };
 
-    test('should accept valid modes', () => {
-      const modes = ['upscale', 'enhance', 'both', 'custom'] as const;
+    test('should accept valid quality tiers', () => {
+      const qualityTiers = [
+        'auto',
+        'quick',
+        'face-restore',
+        'fast-edit',
+        'budget-edit',
+        'budget-old-photo',
+        'seedream-edit',
+        'anime-upscale',
+        'hd-upscale',
+        'face-pro',
+        'ultra',
+        'lighting-fix',
+        'resume-photo',
+        'photo-repair',
+        'clarity-pro',
+        'crisp-upscale',
+        'nano-banana-2',
+      ] as const;
 
-      for (const mode of modes) {
+      for (const qualityTier of qualityTiers) {
         const result = upscaleSchema.safeParse({
-          imageData: validBase64,
-          mimeType: 'image/png',
+          ...validInput,
           config: {
-            mode,
+            qualityTier,
             scale: 2,
-            denoise: false,
-            enhanceFace: false,
-            preserveText: false,
           },
         });
         expect(result.success).toBe(true);
@@ -250,18 +246,14 @@ describe('Bug Fix: Server-side Image Validation', () => {
     });
 
     test('should accept valid scale factors', () => {
-      const scales = [2, 4] as const;
+      const scales = [2, 4, 8] as const;
 
       for (const scale of scales) {
         const result = upscaleSchema.safeParse({
-          imageData: validBase64,
-          mimeType: 'image/png',
+          ...validInput,
           config: {
-            mode: 'upscale',
+            qualityTier: 'quick',
             scale,
-            denoise: false,
-            enhanceFace: false,
-            preserveText: false,
           },
         });
         expect(result.success).toBe(true);
@@ -273,14 +265,10 @@ describe('Bug Fix: Server-side Image Validation', () => {
 
       for (const scale of invalidScales) {
         const result = upscaleSchema.safeParse({
-          imageData: validBase64,
-          mimeType: 'image/png',
+          ...validInput,
           config: {
-            mode: 'upscale',
+            qualityTier: 'quick',
             scale,
-            denoise: false,
-            enhanceFace: false,
-            preserveText: false,
           },
         });
         expect(result.success).toBe(false);
@@ -526,6 +514,34 @@ describe('Bug Fix: Decode Image Dimensions', () => {
       const dataUrl = `data:image/jpeg;base64,${jpegBase64}`;
       const result = decodeImageDimensions(dataUrl);
       expect(result).toEqual({ width: 1920, height: 1080 });
+    });
+
+    test('should extract dimensions when the JPEG SOF marker is after 32KiB', () => {
+      const jpegBytes = new Array<number>(64 * 1024).fill(0);
+      const sofOffset = 65_504;
+
+      // JPEG signature followed by a maximum-sized APP segment. The SOF marker
+      // is deliberately beyond the old 32KiB validation prefix.
+      jpegBytes[0] = 0xff;
+      jpegBytes[1] = 0xd8;
+      jpegBytes[2] = 0xff;
+      jpegBytes[3] = 0xe0;
+      jpegBytes[4] = 0xff;
+      jpegBytes[5] = 0xdc; // APP segment length: 65,500 bytes
+      jpegBytes[sofOffset] = 0xff;
+      jpegBytes[sofOffset + 1] = 0xc0;
+      jpegBytes[sofOffset + 2] = 0x00;
+      jpegBytes[sofOffset + 3] = 0x0b;
+      jpegBytes[sofOffset + 4] = 0x08;
+      jpegBytes[sofOffset + 5] = 0x04;
+      jpegBytes[sofOffset + 6] = 0x38;
+      jpegBytes[sofOffset + 7] = 0x07;
+      jpegBytes[sofOffset + 8] = 0x80;
+
+      expect(decodeImageDimensions(bytesToBase64(jpegBytes))).toEqual({
+        width: 1920,
+        height: 1080,
+      });
     });
   });
 

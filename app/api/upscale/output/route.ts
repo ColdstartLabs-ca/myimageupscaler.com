@@ -1,13 +1,14 @@
 import { creditManager } from '@server/services/replicate/utils/credit-manager';
 import { serverEnv } from '@shared/config/env';
 import { ErrorCodes, createErrorResponse, type ErrorCode } from '@shared/utils/errors';
+import { UUID_V4_PATTERN } from '@shared/validation/uuid';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 const OUTPUT_FETCH_TIMEOUT_MS = 120_000;
 
 const outputSchema = z.object({
-  reservationJobId: z.string().uuid(),
+  reservationJobId: z.string().regex(UUID_V4_PATTERN, 'Reservation job ID must be a UUIDv4'),
   deliveryToken: z.string().min(32).max(200),
 });
 

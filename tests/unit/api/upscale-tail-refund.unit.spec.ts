@@ -69,6 +69,19 @@ describe('POST /api/cron/upscale-tail-refund', () => {
     expect(mocks.from).not.toHaveBeenCalled();
   });
 
+  it('rejects UUID-shaped job IDs that are not UUIDv4', async () => {
+    const response = await POST(
+      request({
+        jobId: '77777777-7777-7777-7777-777777777777',
+        outcome: 'exception',
+        rayId: 'abc-123',
+      })
+    );
+
+    expect(response.status).toBe(400);
+    expect(mocks.from).not.toHaveBeenCalled();
+  });
+
   it('does not touch reservations that are already completed or refunded', async () => {
     mocks.maybeSingle.mockResolvedValue({
       data: { user_id: 'user-1', status: 'completed', failure_reason: 'active_ray:abc-123' },

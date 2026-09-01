@@ -230,6 +230,18 @@ describe('Provider-Aware Credits', () => {
   });
 
   describe('Legacy flat-priced models', () => {
+    it('applies the configured multiplier to shared-tier Nano Banana pricing', () => {
+      const result = calculateFinalProviderAwareCredits({
+        modelId: 'nano-banana',
+        qualityTier: 'quick',
+        scale: 2,
+      });
+
+      expect(result.pricingModel).toBe('flat');
+      expect(result.credits).toBe(2);
+      expect(result.finalCredits).toBe(2);
+    });
+
     it('uses tier-based scale multiplier for clarity-upscaler', () => {
       const result = calculateProviderAwareCredits({
         modelId: 'clarity-upscaler',

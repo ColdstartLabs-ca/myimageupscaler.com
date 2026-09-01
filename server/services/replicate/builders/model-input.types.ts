@@ -56,6 +56,7 @@ export type IModelInput =
   | IClarityUpscalerInput
   | IFluxKontextInput
   | IFlux2ProInput
+  | INanoBananaInput
   | INanoBananaProInput
   | IQwenImageEditInput
   | ISeedreamInput
@@ -122,6 +123,17 @@ export interface IFlux2ProInput {
   output_format: string;
   safety_tolerance: number;
   prompt_upsampling: boolean;
+}
+
+/**
+ * Nano Banana input
+ * Based on the Replicate google/nano-banana API schema.
+ */
+export interface INanoBananaInput {
+  prompt: string;
+  image_input: string[];
+  aspect_ratio: string;
+  output_format: string;
 }
 
 /**
@@ -248,8 +260,12 @@ export function createModelInputContext(input: IUpscaleInput): IModelInputContex
     imageDataUrl = `data:${mimeType || 'image/jpeg'};base64,${imageData}`;
   }
 
-  // Decode original image dimensions for models that need them
-  const dimensions = decodeImageDimensions(imageDataUrl);
+  // Storage-backed inputs are URLs, so use the dimensions already decoded from
+  // their bounded validation prefix instead of trying to decode the URL as base64.
+  const dimensions =
+    typeof input.originalWidth === 'number' && typeof input.originalHeight === 'number'
+      ? { width: input.originalWidth, height: input.originalHeight }
+      : decodeImageDimensions(imageDataUrl);
 
   // Look up tier-specific custom prompt (intermediate priority between user instructions and model default)
   const tierConfig = QUALITY_TIER_CONFIG[config.qualityTier];

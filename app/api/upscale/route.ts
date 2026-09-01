@@ -1,8 +1,11 @@
 import { randomBytes, createHash } from 'node:crypto';
 import type { IUpscaleResponse, ModelId, QualityTier } from '@/shared/types/coreflow.types';
+import {
+  BoundedJsonBodyTooLargeError,
+  readBoundedJsonBody,
+} from '@server/http/read-bounded-json-body';
 import { trackServerEvent } from '@server/analytics';
 import {
-  estimateBase64ByteLength,
   normalizeCoreEventProperties,
 } from '@server/analytics/core-event-contract';
 import { createLogger } from '@server/monitoring/logger';
@@ -16,13 +19,17 @@ import {
 import { ImageProcessorFactory } from '@server/services/image-processor.factory';
 import type { ICreditDeduction } from '@server/services/image-processor.interface';
 import { LLMImageAnalyzer } from '@server/services/llm-image-analyzer';
+import {
+  getAutoEligibleModels,
+  isAutoModelCompatible,
+  resolveAutoModel,
+} from '@server/services/auto-model-selection';
 import { ModelRegistry } from '@server/services/model-registry';
 import type { SubscriptionTier } from '@server/services/model-registry.types';
 import { providerHealthService } from '@server/services/provider-health.service';
 import {
   removeUpscaleInput,
   resolveUpscaleInput,
-  stageGeminiOutput,
 } from '@server/services/upscale-input-storage.service';
 import { ReplicateError } from '@server/services/replicate.service';
 import {
@@ -44,12 +51,9 @@ import { isAccountSetupPending, isFreeleaderBlocked } from '@/lib/anti-freeloade
 import { ErrorCodes, createErrorResponse } from '@shared/utils/errors';
 import {
   decodeImageDimensions,
-  getBase64PayloadLength,
-  getBase64PayloadOffset,
   IMAGE_VALIDATION,
   upscaleSchema,
   validateImageDimensions,
-  validateImageSizeForTier,
   validateMagicBytes,
 } from '@shared/validation/upscale.schema';
 import { NextRequest, NextResponse } from 'next/server';
@@ -93,6 +97,17 @@ function normalizePaidTier(tier: string | null | undefined): SubscriptionTier {
   return 'hobby';
 }
 
+function isHttpsProviderOutput(value: unknown): value is string {
+  if (typeof value !== 'string' || !value.trim()) return false;
+
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' && !url.username && !url.password;
+  } catch {
+    return false;
+  }
+}
+
 async function trackCreditWallShown(
   userId: string,
   requiredCredits: number,
@@ -115,9 +130,15 @@ async function trackCreditWallShown(
  * Returns AI analysis result with tier and enhancement suggestions
  */
 async function analyzeImageForProcessing(
-  imageData: string,
-  options: { suggestTier: boolean; userTier: SubscriptionTier; mimeType?: string }
+  imageReference: string,
+  options: {
+    suggestTier: boolean;
+    userTier: SubscriptionTier;
+    scale: 2 | 4 | 8;
+    mimeType?: string;
+  }
 ): Promise<{
+  recommendedModel?: ModelId;
   recommendedTier?: QualityTier;
   suggestedEnhancements: {
     enhanceFaces: boolean;
@@ -131,13 +152,17 @@ async function analyzeImageForProcessing(
     const modelRegistry = ModelRegistry.getInstance();
     let eligibleModels = modelRegistry.getModelsByTier(options.userTier);
 
-    // Filter out expensive models (8+ credits) for auto selection
-    eligibleModels = eligibleModels.filter(m => m.creditMultiplier < 8);
+    // Keep the analyzer's candidate list compatible with the route's scale
+    // validation. This prevents Auto 8x from recommending a 2x/4x model.
+    eligibleModels = getAutoEligibleModels(eligibleModels, options.scale);
     const eligibleModelIds = eligibleModels.map(m => m.id as ModelId);
+    const fallbackModelId = eligibleModelIds[0];
 
     if (eligibleModelIds.length === 0) {
       // Fallback if no eligible models
       return {
+        recommendedModel: undefined,
+        recommendedTier: undefined,
         suggestedEnhancements: {
           enhanceFaces: false,
           preserveText: false,
@@ -146,26 +171,31 @@ async function analyzeImageForProcessing(
       };
     }
 
-    // Storage-backed requests pass a short signed HTTPS URL directly. Legacy
-    // inline requests still strip the data-URL prefix for analyzer compatibility.
-    const analysisInput = /^https:\/\//i.test(imageData)
-      ? imageData
-      : imageData.slice(getBase64PayloadOffset(imageData));
     const mimeType = options.mimeType || 'image/jpeg';
 
     // Call LLM analyzer directly
     // When suggestTier is false, the AI only provides enhancement suggestions (no model recommendation)
     const llmAnalyzer = new LLMImageAnalyzer();
     const analysisResult = await llmAnalyzer.analyze(
-      analysisInput,
+      imageReference,
       mimeType,
       eligibleModelIds,
       options.suggestTier
     );
 
-    // Map analysis to tier if suggestTier is true
+    // Preserve the exact eligible recommendation. Some model IDs intentionally
+    // share a tier, so the tier alone is not sufficient to select the provider.
+    const recommendedModel =
+      options.suggestTier && eligibleModelIds.includes(analysisResult.recommendedModel)
+        ? analysisResult.recommendedModel
+        : options.suggestTier
+          ? fallbackModelId
+          : undefined;
+
+    // Keep the tier as the safe fallback/access classification. The exact model
+    // is selected separately below when the analyzer provided one.
     const recommendedTier = options.suggestTier
-      ? modelIdToTier(analysisResult.recommendedModel)
+      ? modelIdToTier(recommendedModel ?? eligibleModelIds[0] ?? 'real-esrgan')
       : undefined;
 
     // Determine suggested enhancements from analysis issues
@@ -176,6 +206,7 @@ async function analyzeImageForProcessing(
     );
 
     return {
+      recommendedModel,
       recommendedTier,
       suggestedEnhancements: {
         enhanceFaces: hasFaces,
@@ -612,29 +643,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
     batchSlotAcquired = true;
 
-    // 5. Reject an oversized body before reading it. Buffering it first is what
-    // kills the Worker: `req.json()` holds the raw text and the parsed string,
-    // both UTF-16, so a large payload exceeds the 128MB limit and Cloudflare
-    // returns a non-JSON 503 the client cannot interpret.
-    const declaredBodyBytes = Number(req.headers.get('content-length') ?? '0');
-    if (
-      Number.isFinite(declaredBodyBytes) &&
-      declaredBodyBytes > IMAGE_VALIDATION.MAX_REQUEST_BYTES
-    ) {
-      // No credits are charged yet, but the batch slot is already held. Release
-      // it, or a user retrying with a smaller image is locked out of their own quota.
-      await refundAfterRouteFailure('request_body_too_large', { declaredBodyBytes });
-      const { body: errorBody, status } = createErrorResponse(
-        ErrorCodes.VALIDATION_ERROR,
-        'This image is too large to process in a single request. Please resize it and try again.',
-        413
-      );
-      return NextResponse.json(errorBody, { status });
-    }
-
-    // 6. Parse and validate request body. New clients upload image bytes to
-    // private storage first; the legacy inline shape remains during rollout.
-    const body = await req.json();
+    // 5. Read only bounded metadata. The reader rejects a declared oversized
+    // body before acquiring a stream and counts actual bytes for streamed bodies.
+    const body = await readBoundedJsonBody(req, IMAGE_VALIDATION.MAX_REQUEST_BYTES);
     const validatedInput = upscaleSchema.parse(body);
 
     // The Tail Worker observes this request header after a hard platform failure.
@@ -655,75 +666,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     requestedQualityTier = validatedInput.config.qualityTier;
     requestedScale = validatedInput.config.scale;
 
-    let processingImageReference: string;
-    let validationImageData: string;
-    let inputFileSizeBytes: number;
-    if (validatedInput.storagePath) {
-      const storedInput = await resolveUpscaleInput({
-        userId,
-        storagePath: validatedInput.storagePath,
-        claimedMimeType: validatedInput.mimeType,
-        isPaidUser,
-      });
-      temporaryStoragePath = validatedInput.storagePath;
-      processingImageReference = storedInput.imageReference;
-      validationImageData = storedInput.validationImageData;
-      inputFileSizeBytes = storedInput.sizeBytes;
-    } else {
-      processingImageReference = validatedInput.imageData as string;
-      validationImageData = processingImageReference;
-      inputFileSizeBytes = estimateBase64ByteLength(processingImageReference) ?? 0;
-
-      // 7. Additional validation: Check if inline image data is valid base64.
-      try {
-        if (getBase64PayloadLength(validationImageData) === 0) {
-          logFailure('invalid_base64_missing_payload');
-          const { body: errorBody, status } = createErrorResponse(
-            ErrorCodes.VALIDATION_ERROR,
-            'Invalid image data format - missing base64 data',
-            400
-          );
-          return NextResponse.json(errorBody, { status });
-        }
-
-        const base64Regex = /[A-Za-z0-9+/]*={0,2}$/y;
-        base64Regex.lastIndex = getBase64PayloadOffset(validationImageData);
-        if (!base64Regex.test(validationImageData)) {
-          logFailure('invalid_base64_characters');
-          const { body: errorBody, status } = createErrorResponse(
-            ErrorCodes.VALIDATION_ERROR,
-            'Invalid image data format - not valid base64',
-            400
-          );
-          return NextResponse.json(errorBody, { status });
-        }
-      } catch {
-        logFailure('invalid_image_data_exception');
-        const { body: errorBody, status } = createErrorResponse(
-          ErrorCodes.VALIDATION_ERROR,
-          'Invalid image data format',
-          400
-        );
-        return NextResponse.json(errorBody, { status });
-      }
-
-      // Storage inputs are checked against actual object metadata by
-      // resolveUpscaleInput; legacy inline requests still use decoded size.
-      const sizeValidation = validateImageSizeForTier(validationImageData, isPaidUser);
-      if (!sizeValidation.valid) {
-        logFailure('file_size_validation_failed', {
-          isPaidUser,
-          validationError: sizeValidation.error,
-          sizeBytes: sizeValidation.sizeBytes,
-        });
-        const { body: errorBody, status } = createErrorResponse(
-          ErrorCodes.VALIDATION_ERROR,
-          sizeValidation.error || 'Image size validation failed',
-          400
-        );
-        return NextResponse.json(errorBody, { status });
-      }
-    }
+    const storedInput = await resolveUpscaleInput({
+      userId,
+      storagePath: validatedInput.storagePath,
+      claimedMimeType: validatedInput.mimeType,
+      isPaidUser,
+    });
+    temporaryStoragePath = validatedInput.storagePath;
+    const processingImageReference = storedInput.imageReference;
+    const validationImageData = storedInput.validationImageData;
+    const inputFileSizeBytes = storedInput.sizeBytes;
 
     // Note: User tier validation now happens in the 3-branch logic section
 
@@ -793,7 +745,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const premiumTiers = MODEL_COSTS.PREMIUM_QUALITY_TIERS as readonly QualityTier[];
 
     // Block free users from premium tiers
-    if (!isPaidUser && premiumTiers.includes(config.qualityTier)) {
+    if (
+      !isPaidUser &&
+      config.qualityTier !== 'auto' &&
+      premiumTiers.includes(config.qualityTier)
+    ) {
       logFailure('premium_tier_requires_paid', {
         tier: config.qualityTier,
       });
@@ -809,6 +765,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     if (
       !isPaidUser &&
       MODEL_COSTS.SMART_ANALYSIS_REQUIRES_PAID &&
+      config.qualityTier !== 'auto' &&
       config.additionalOptions.smartAnalysis
     ) {
       logFailure('smart_analysis_requires_paid');
@@ -823,6 +780,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // 10. New 3-branch logic for quality tier processing
     let resolvedEnhancements = config.additionalOptions;
     let didRunAIAnalysis = false;
+    const modelRegistry = ModelRegistry.getInstance();
 
     if (config.qualityTier === 'auto') {
       // Branch A: Auto tier - Always run AI analysis for tier + enhancements
@@ -830,10 +788,25 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       const analysis = await analyzeImageForProcessing(processingImageReference, {
         suggestTier: true,
         userTier: userTier || 'free',
+        scale: config.scale,
         mimeType: effectiveMimeType,
       });
-      resolvedTier = analysis.recommendedTier || 'quick';
-      resolvedModelId = (getModelForTier(resolvedTier) || 'real-esrgan') as ModelId;
+      const resolvedAutoModel = resolveAutoModel(
+        modelRegistry.getModelsByTier(userTier || 'free'),
+        config.scale,
+        analysis.recommendedModel
+      );
+      resolvedModelId = resolvedAutoModel?.id as ModelId | undefined;
+      if (!resolvedModelId) {
+        logFailure('auto_model_unavailable', { requestedScale: config.scale });
+        const { body: errorBody, status } = createErrorResponse(
+          ErrorCodes.MODEL_NOT_SUPPORTED,
+          `No model is available for Auto at ${config.scale}x scaling. Please choose a supported scale.`,
+          400
+        );
+        return NextResponse.json(errorBody, { status });
+      }
+      resolvedTier = modelIdToTier(resolvedModelId);
       resolvedEnhancements = {
         ...config.additionalOptions,
         // For Auto tier, smartAnalysis is always true (inherent to auto mode)
@@ -864,6 +837,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       const analysis = await analyzeImageForProcessing(processingImageReference, {
         suggestTier: false, // Important: Don't ask AI for model recommendation
         userTier: userTier || 'free',
+        scale: config.scale,
         mimeType: effectiveMimeType,
       });
       resolvedTier = config.qualityTier;
@@ -904,8 +878,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         enhancements: resolvedEnhancements,
       });
     }
-
-    const modelRegistry = ModelRegistry.getInstance();
 
     // Preserve the billing promise from the user's selected tier. If the default
     // Quick model cannot fit a 2x source at its provider GPU limit, route the
@@ -989,12 +961,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Enhancement-only models accept the neutral 2x request value only. Although
     // they do not perform scaling, rejecting 4x/8x prevents those values from
     // leaking into provider output-size parameters.
-    const hasNoSupportedScales = selectedModel.supportedScales.length === 0;
-    const isUnsupportedEnhancementScale = hasNoSupportedScales && config.scale !== 2;
-    if (
-      isUnsupportedEnhancementScale ||
-      (!hasNoSupportedScales && !selectedModel.supportedScales.includes(config.scale))
-    ) {
+    if (!isAutoModelCompatible(selectedModel, config.scale)) {
       logFailure('scale_not_supported', {
         tier: resolvedTier,
         modelId: resolvedModelId,
@@ -1073,13 +1040,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       config.scale,
       config.nanoBananaProConfig?.resolution
     );
+    const smartAnalysisEnabledForBilling =
+      config.qualityTier !== 'auto' && config.additionalOptions.smartAnalysis;
     const providerAware = calculateFinalProviderAwareCredits({
       modelId: billingModelId,
       qualityTier: resolvedTier,
       scale: config.scale,
       inputWidth: inputDimensions?.width,
       inputHeight: inputDimensions?.height,
-      smartAnalysis: config.additionalOptions.smartAnalysis,
+      smartAnalysis: smartAnalysisEnabledForBilling,
       targetResolution: config.targetResolution,
       effectiveResolution,
     });
@@ -1092,7 +1061,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             scale: config.scale,
             inputWidth: inputDimensions?.width,
             inputHeight: inputDimensions?.height,
-            smartAnalysis: config.additionalOptions.smartAnalysis,
+            smartAnalysis: smartAnalysisEnabledForBilling,
             effectiveResolution: resolveEffectiveResolution(
               resolvedModelId,
               config.scale,
@@ -1100,6 +1069,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             ),
           });
 
+    // The shared provider-aware calculator includes model-specific multipliers
+    // for models that do not own a dedicated quality tier.
     creditCost = providerAware.finalCredits;
 
     effectiveTotalCredits =
@@ -1169,6 +1140,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const legacyInputForProcessor = {
       imageData: processingImageReference,
       mimeType: effectiveMimeType,
+      originalWidth: inputDimensions?.width,
+      originalHeight: inputDimensions?.height,
       enhancementPrompt: validatedInput.enhancementPrompt,
       config: {
         // New quality tier system - required by calculateCreditCost
@@ -1228,48 +1201,41 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         )
       ),
     ]);
-    await providerHealthService.recordSuccess();
     providerAttemptStarted = false;
+
+    const hasInlineProviderOutput = typeof result.imageData === 'string';
+    if (hasInlineProviderOutput || !isHttpsProviderOutput(result.imageUrl)) {
+      logFailure('inline_provider_output_rejected', {
+        hasImageUrl: Boolean(result.imageUrl),
+        hasImageData: hasInlineProviderOutput,
+      });
+      await refundAfterRouteFailure('inline_provider_output_rejected', {
+        hasImageUrl: Boolean(result.imageUrl),
+        hasImageData: hasInlineProviderOutput,
+      });
+      await trackProcessingFailure({
+        errorType: 'inline_provider_output_rejected',
+        reason: 'inline_provider_output_rejected',
+        retryable: true,
+      });
+      const { body, status } = createErrorResponse(
+        ErrorCodes.AI_UNAVAILABLE,
+        TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE,
+        503,
+        { suppressPurchaseCtas: true }
+      );
+      return NextResponse.json(body, { status });
+    }
+
+    await providerHealthService.recordSuccess();
 
     const deliveryToken = randomBytes(32).toString('base64url');
     const deliveryTokenHash = createHash('sha256').update(deliveryToken).digest('hex');
-    let deliverableOutput: {
-      imageUrl?: string;
-      mimeType?: string;
-      expiresAt?: string | number;
-      storagePath?: string;
-    } = {
+    const deliverableOutput = {
       imageUrl: result.imageUrl,
       mimeType: result.mimeType,
       expiresAt: result.expiresAt,
     };
-    if (!deliverableOutput.imageUrl && result.imageData && creditDeduction) {
-      try {
-        deliverableOutput = await stageGeminiOutput({
-          userId,
-          jobId: creditDeduction.jobId,
-          imageData: result.imageData,
-        });
-      } catch {
-        await refundAfterRouteFailure('durable_result_not_deliverable', {
-          hasImageUrl: false,
-          hasImageData: true,
-          stageFailure: true,
-        });
-        await trackProcessingFailure({
-          errorType: 'durable_result_not_deliverable',
-          reason: 'durable_result_not_deliverable',
-          retryable: true,
-        });
-        const { body, status } = createErrorResponse(
-          ErrorCodes.AI_UNAVAILABLE,
-          TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE,
-          503,
-          { suppressPurchaseCtas: true }
-        );
-        return NextResponse.json(body, { status });
-      }
-    }
     let recordedDeliverableOutput = false;
     if (creditDeduction) {
       try {
@@ -1288,9 +1254,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       }
     }
     if (!recordedDeliverableOutput) {
-      if (deliverableOutput.storagePath) {
-        await removeUpscaleInput(deliverableOutput.storagePath).catch(() => undefined);
-      }
       await refundAfterRouteFailure('durable_result_not_deliverable', {
         hasImageUrl: Boolean(deliverableOutput.imageUrl),
         hasImageData: Boolean(result.imageData),
@@ -1415,9 +1378,38 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
+    if (error instanceof BoundedJsonBodyTooLargeError) {
+      logFailure('request_body_too_large', {
+        maxBytes: error.maxBytes,
+        actualBytes: error.actualBytes,
+      });
+      await refundAfterRouteFailure('request_body_too_large', {
+        maxBytes: error.maxBytes,
+        actualBytes: error.actualBytes,
+      });
+      const { body, status } = createErrorResponse(
+        ErrorCodes.VALIDATION_ERROR,
+        'This request is too large to process. Please retry with metadata only.',
+        error.statusCode
+      );
+      return NextResponse.json(body, { status });
+    }
+
+    if (error instanceof SyntaxError) {
+      logFailure('invalid_json_request_body');
+      await refundAfterRouteFailure('invalid_json_request_body');
+      const { body, status } = createErrorResponse(
+        ErrorCodes.VALIDATION_ERROR,
+        'Invalid request data',
+        400
+      );
+      return NextResponse.json(body, { status });
+    }
+
     // Handle validation errors
     if (error instanceof ZodError) {
       logFailure('zod_validation_error', { errors: error.errors });
+      await refundAfterRouteFailure('zod_validation_error');
       const { body, status } = createErrorResponse(
         ErrorCodes.VALIDATION_ERROR,
         'Invalid request data',

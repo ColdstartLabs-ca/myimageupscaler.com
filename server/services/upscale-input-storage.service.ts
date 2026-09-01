@@ -2,14 +2,15 @@ import { Buffer } from 'node:buffer';
 
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
+import { isUuidV4 } from '@shared/validation/uuid';
 
 const BUCKET_NAME = 'upscale-inputs';
-const VALIDATION_PREFIX_LAST_BYTE = 65_535;
+const VALIDATION_PREFIX_LAST_BYTE = 64 * 1024 - 1;
+const VALIDATION_PREFIX_MAX_BYTES = VALIDATION_PREFIX_LAST_BYTE + 1;
 const SIGNED_READ_SECONDS = 10 * 60;
 const GEMINI_OUTPUT_SIGNED_READ_SECONDS = 10 * 60;
 const MAX_GEMINI_OUTPUT_BYTES = IMAGE_VALIDATION.MAX_SIZE_PAID;
-const objectNamePattern =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\.(?:jpg|png|webp|heic)$/i;
+const objectExtensionPattern = /\.(?:jpg|png|webp|heic)$/i;
 const outputMimeToExtension = {
   'image/jpeg': 'jpg',
   'image/jpg': 'jpg',
@@ -18,11 +19,68 @@ const outputMimeToExtension = {
   'image/heic': 'heic',
 } as const;
 
+async function readBoundedValidationPrefix(
+  response: Response,
+  maxBytes: number
+): Promise<Uint8Array> {
+  const contentLengthHeader = response.headers.get('content-length');
+  if (contentLengthHeader !== null) {
+    const contentLength = Number(contentLengthHeader);
+    if (!Number.isSafeInteger(contentLength) || contentLength <= 0 || contentLength > maxBytes) {
+      throw new Error('Temporary image validation prefix is too large');
+    }
+  }
+
+  if (!response.body) {
+    const prefix = new Uint8Array(await response.arrayBuffer());
+    if (prefix.byteLength === 0 || prefix.byteLength > maxBytes) {
+      throw new Error('Temporary image validation prefix is invalid');
+    }
+    return prefix;
+  }
+
+  const reader = response.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let totalBytes = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      if (!value) continue;
+
+      totalBytes += value.byteLength;
+      if (totalBytes > maxBytes) {
+        throw new Error('Temporary image validation prefix is too large');
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+
+  if (totalBytes === 0) {
+    throw new Error('Temporary image validation prefix is invalid');
+  }
+
+  const prefix = new Uint8Array(totalBytes);
+  let offset = 0;
+  for (const chunk of chunks) {
+    prefix.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return prefix;
+}
+
 interface IResolveUpscaleInputParams {
   userId: string;
   storagePath: string;
   claimedMimeType: string;
   isPaidUser: boolean;
+}
+
+function isCurrentInputObjectName(objectName: string): boolean {
+  const extension = objectExtensionPattern.exec(objectName)?.[0];
+  return extension !== undefined && isUuidV4(objectName.slice(0, -extension.length));
 }
 
 export interface IResolvedUpscaleInput {
@@ -39,7 +97,7 @@ export async function resolveUpscaleInput({
   isPaidUser,
 }: IResolveUpscaleInputParams): Promise<IResolvedUpscaleInput> {
   const segments = storagePath.split('/');
-  if (segments.length !== 2 || segments[0] !== userId || !objectNamePattern.test(segments[1])) {
+  if (segments.length !== 2 || segments[0] !== userId || !isCurrentInputObjectName(segments[1])) {
     throw new Error('Temporary image must be owned by the authenticated user');
   }
 
@@ -83,10 +141,7 @@ export async function resolveUpscaleInput({
   if (prefixResponse.status !== 206) {
     throw new Error('Temporary image storage did not honor the bounded validation request');
   }
-  const prefix = new Uint8Array(await prefixResponse.arrayBuffer());
-  if (prefix.byteLength === 0 || prefix.byteLength > VALIDATION_PREFIX_LAST_BYTE + 1) {
-    throw new Error('Temporary image validation prefix is invalid');
-  }
+  const prefix = await readBoundedValidationPrefix(prefixResponse, VALIDATION_PREFIX_MAX_BYTES);
 
   return {
     imageReference: signed.signedUrl,

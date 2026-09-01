@@ -32,13 +32,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const duration = Date.now() - startTime;
     console.log(
-      `[CRON] Gallery cleanup complete: ${result.usersProcessed} users, ${result.imagesDeleted} images deleted in ${duration}ms`
+      `[CRON] Gallery cleanup complete: ${result.usersProcessed} users, ${result.imagesDeleted} images, ${result.upscaleInputsDeleted} stale upscale inputs deleted in ${duration}ms`
     );
 
     return NextResponse.json({
       success: true,
       cleaned: result.usersProcessed,
       imagesDeleted: result.imagesDeleted,
+      upscaleInputsDeleted: result.upscaleInputsDeleted,
+      upscaleInputsFailed: result.upscaleInputsFailed,
       timestamp: result.timestamp,
     });
   } catch (error) {

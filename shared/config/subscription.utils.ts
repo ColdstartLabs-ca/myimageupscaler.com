@@ -262,6 +262,18 @@ export function resolveEffectiveResolution(
 }
 
 /**
+ * Resolve the model multiplier for a model that shares another tier's base
+ * price. Dedicated tiers already include their model multiplier in the tier
+ * price, so applying it again would double-charge them.
+ */
+function getSharedTierModelMultiplier(modelId: string, qualityTier: QualityTier): number {
+  const tierModelId = QUALITY_TIER_CONFIG[qualityTier].modelId;
+  if (tierModelId === modelId) return 1;
+
+  return MODEL_CONFIG[modelId as keyof typeof MODEL_CONFIG]?.multiplier ?? 1;
+}
+
+/**
  * Calculate provider-aware credits for any model.
  * Supports flat pricing, per-image fixed pricing, and output-megapixel dynamic pricing.
  *
@@ -386,7 +398,8 @@ export function calculateProviderAwareCredits(params: {
   // --- Default: flat tier-based pricing with scale multiplier ---
   const baseCost = getCreditsForTier(qualityTier);
   const scaleMultiplier = getScaleCreditMultiplier(modelId, scale);
-  const credits = Math.ceil(baseCost * scaleMultiplier);
+  const modelMultiplier = getSharedTierModelMultiplier(modelId, qualityTier);
+  const credits = Math.ceil(baseCost * modelMultiplier * scaleMultiplier);
 
   return {
     credits: credits + smartAnalysisCost,
@@ -416,6 +429,7 @@ export function calculateFinalProviderAwareCredits(params: {
 } {
   const providerAware = calculateProviderAwareCredits(params);
   const scaleMultiplier = getScaleCreditMultiplier(params.modelId, params.scale);
+  const modelMultiplier = getSharedTierModelMultiplier(params.modelId, params.qualityTier);
   const resolutionMultiplier =
     providerAware.pricingModel === 'flat' && params.targetResolution
       ? RESOLUTION_CREDIT_MULTIPLIERS[params.targetResolution]
@@ -426,8 +440,12 @@ export function calculateFinalProviderAwareCredits(params: {
   let finalCredits = providerAware.credits;
   if (providerAware.pricingModel === 'flat') {
     finalCredits =
-      Math.ceil(getCreditsForTier(params.qualityTier) * scaleMultiplier * resolutionMultiplier) +
-      smartAnalysisCost;
+      Math.ceil(
+        getCreditsForTier(params.qualityTier) *
+          modelMultiplier *
+          scaleMultiplier *
+          resolutionMultiplier
+      ) + smartAnalysisCost;
   }
 
   const { creditCosts } = getSubscriptionConfig();

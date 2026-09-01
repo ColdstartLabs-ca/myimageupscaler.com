@@ -18,6 +18,12 @@ const mocks = vi.hoisted(() => ({
   setupPending: vi.fn(),
   track: vi.fn(),
   parseUpscale: vi.fn(),
+  processImage: vi.fn(),
+  resolveUpscaleInput: vi.fn(),
+  recordDeliverableOutput: vi.fn(),
+  calculateFinalProviderAwareCredits: vi.fn(),
+  calculateProviderAwareCredits: vi.fn(),
+  resolveEffectiveResolution: vi.fn(),
   providerAvailability: vi.fn(),
   acquireProviderPermit: vi.fn(),
 }));
@@ -35,7 +41,11 @@ vi.mock('@server/services/batch-limit.service', () => ({
   },
 }));
 vi.mock('@server/services/anti-freeloader.service', () => ({
-  ensureAntiFreeloaderProfile: vi.fn(),
+  ensureAntiFreeloaderProfile: async (
+    _request: unknown,
+    _userId: string,
+    profile: unknown
+  ) => profile,
 }));
 vi.mock('@server/services/image-generation.service', () => ({
   AIGenerationError: class AIGenerationError extends Error {},
@@ -43,8 +53,8 @@ vi.mock('@server/services/image-generation.service', () => ({
 }));
 vi.mock('@server/services/image-processor.factory', () => ({
   ImageProcessorFactory: {
-    createProcessorForModel: () => ({ providerName: 'test', processImage: vi.fn() }),
-    createProcessor: () => ({ providerName: 'test', processImage: vi.fn() }),
+    createProcessorForModel: () => ({ providerName: 'test', processImage: mocks.processImage }),
+    createProcessor: () => ({ providerName: 'test', processImage: mocks.processImage }),
   },
 }));
 vi.mock('@server/services/llm-image-analyzer', () => ({ LLMImageAnalyzer: class {} }));
@@ -73,7 +83,14 @@ vi.mock('@server/services/scale-preserving-model', () => ({
   resolveScalePreservingModel: () => ({ usedFallback: false, modelId: 'real-esrgan' }),
 }));
 vi.mock('@server/services/replicate/utils/credit-manager', () => ({
-  creditManager: { refundReservation: vi.fn() },
+  creditManager: {
+    refundReservation: vi.fn(),
+    recordDeliverableOutput: mocks.recordDeliverableOutput,
+  },
+}));
+vi.mock('@server/services/upscale-input-storage.service', () => ({
+  resolveUpscaleInput: mocks.resolveUpscaleInput,
+  removeUpscaleInput: vi.fn(),
 }));
 vi.mock('@server/supabase/supabaseAdmin', () => ({ supabaseAdmin: { from: mocks.from } }));
 vi.mock('@shared/config/env', () => ({
@@ -84,11 +101,11 @@ vi.mock('@shared/config/model-costs.config', () => ({
   MODEL_COSTS: { PREMIUM_QUALITY_TIERS: [], SMART_ANALYSIS_REQUIRES_PAID: false },
 }));
 vi.mock('@shared/config/subscription.utils', () => ({
-  calculateFinalProviderAwareCredits: vi.fn(),
-  calculateProviderAwareCredits: vi.fn(),
+  calculateFinalProviderAwareCredits: mocks.calculateFinalProviderAwareCredits,
+  calculateProviderAwareCredits: mocks.calculateProviderAwareCredits,
   getModelForTier: () => 'real-esrgan',
   modelIdToTier: vi.fn(),
-  resolveEffectiveResolution: vi.fn(),
+  resolveEffectiveResolution: mocks.resolveEffectiveResolution,
 }));
 vi.mock('@/lib/anti-freeloader/check-freeloader', () => ({
   isAccountSetupPending: mocks.setupPending,
@@ -115,12 +132,79 @@ function request(contentLength: number): NextRequest {
   return req;
 }
 
+function requestWithBody(body: unknown, headers: Record<string, string> = {}): NextRequest {
+  return new NextRequest('http://localhost/api/upscale', {
+    method: 'POST',
+    headers: {
+      'X-User-Id': 'user-1',
+      'content-type': 'application/json',
+      ...headers,
+    },
+    body: JSON.stringify(body),
+  });
+}
+
+function streamedRequest(chunks: Uint8Array[]): NextRequest {
+  let nextChunk = 0;
+  const body = new ReadableStream<Uint8Array>({
+    pull(controller) {
+      const chunk = chunks[nextChunk++];
+      if (chunk) controller.enqueue(chunk);
+      else controller.close();
+    },
+  });
+
+  return new NextRequest('http://localhost/api/upscale', {
+    method: 'POST',
+    headers: {
+      'X-User-Id': 'user-1',
+      'content-type': 'application/json',
+    },
+    body,
+    duplex: 'half',
+  } as RequestInit & { duplex: 'half' });
+}
+
 describe('POST /api/upscale request body size guard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.rateLimit.mockResolvedValue({ success: true, remaining: 4, reset: Date.now() + 60_000 });
     mocks.batchCheck.mockResolvedValue({ allowed: true, current: 1, limit: 5 });
     mocks.batchRelease.mockResolvedValue(true);
+    mocks.recordDeliverableOutput.mockResolvedValue(true);
+    mocks.calculateFinalProviderAwareCredits.mockReturnValue({
+      finalCredits: 1,
+      effectiveResolution: undefined,
+      providerCostUsd: 0.0017,
+      pricingModel: 'test',
+    });
+    mocks.calculateProviderAwareCredits.mockReturnValue({
+      finalCredits: 1,
+      effectiveResolution: undefined,
+      providerCostUsd: 0.0017,
+      pricingModel: 'test',
+    });
+    mocks.resolveUpscaleInput.mockResolvedValue({
+      imageReference: 'https://storage.example/signed-input',
+      validationImageData: 'iVBORw0KGgoAAAANSUhEUgAAAEAAAABA',
+      sizeBytes: 1024,
+      mimeType: 'image/png',
+    });
+    mocks.processImage.mockImplementation(async (_userId, _input, options) => {
+      options?.onCreditsDeducted?.({
+        amount: 1,
+        newBalance: 4,
+        jobId: '11111111-1111-4111-8111-111111111111',
+        subscriptionAmount: 1,
+        purchasedAmount: 0,
+      });
+      return {
+        imageUrl: 'https://replicate.delivery/result.png',
+        mimeType: 'image/png',
+        expiresAt: Date.now() + 60_000,
+        creditsRemaining: 4,
+      };
+    });
     mocks.setupPending.mockReturnValue(false);
     mocks.track.mockResolvedValue(true);
     mocks.providerAvailability.mockResolvedValue({
@@ -165,5 +249,52 @@ describe('POST /api/upscale request body size guard', () => {
     await POST(request(IMAGE_VALIDATION.MAX_REQUEST_BYTES + 1));
 
     expect(mocks.batchRelease).toHaveBeenCalled();
+  });
+
+  it('rejects inline image data before processing', async () => {
+    const res = await POST(
+      requestWithBody({
+        imageData: 'data:image/jpeg;base64,/9j/',
+        mimeType: 'image/jpeg',
+        config: { qualityTier: 'quick', scale: 2 },
+      })
+    );
+
+    expect(res.status).toBe(400);
+    expect(mocks.resolveUpscaleInput).not.toHaveBeenCalled();
+    expect(mocks.processImage).not.toHaveBeenCalled();
+    expect(mocks.batchRelease).toHaveBeenCalled();
+  });
+
+  it('rejects a chunked body above 64 KiB without processing it', async () => {
+    const firstChunk = new Uint8Array(64 * 1024);
+    const secondChunk = new Uint8Array([0x7b]);
+
+    const res = await POST(streamedRequest([firstChunk, secondChunk]));
+
+    expect(res.status).toBe(413);
+    expect(mocks.processImage).not.toHaveBeenCalled();
+    expect(mocks.batchRelease).toHaveBeenCalled();
+  });
+
+  it('accepts the current storage metadata payload and reaches input resolution', async () => {
+    const payload = {
+      storagePath: 'user-1/11111111-1111-4111-8111-111111111111.png',
+      jobId: '11111111-1111-4111-8111-111111111111',
+      mimeType: 'image/png',
+      resolvedModel: 'real-esrgan',
+      config: { qualityTier: 'quick', scale: 2 },
+    };
+
+    const res = await POST(requestWithBody(payload));
+
+    expect(res.status).toBe(200);
+    expect(mocks.resolveUpscaleInput).toHaveBeenCalledWith({
+      userId: 'user-1',
+      storagePath: payload.storagePath,
+      claimedMimeType: payload.mimeType,
+      isPaidUser: false,
+    });
+    expect(mocks.processImage).toHaveBeenCalled();
   });
 });

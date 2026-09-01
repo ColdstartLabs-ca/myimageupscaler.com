@@ -2349,3 +2349,23 @@ Follow-up:
 
 - Watch `exceededMemory` in Workers analytics; it should trend from ~300/day toward zero.
 - The advertised 25MB paid tier still cannot work with base64-in-JSON on a 128MB Worker. Effective ceiling is ~18MB with a clean 413 above it. Raising it needs direct-to-storage upload.
+
+## 2026-08-31
+
+### OpenNext Revalidation Queue Safety
+
+Source: [OpenNext Revalidation Queue PRD](../../PRDs/bugfixes/opennext-revalidation-queue.md)
+
+Changes:
+
+- Configured the adapter's Durable Object revalidation queue for the main and middleware bundles.
+- Added the `NEXT_CACHE_DO_QUEUE` / `DOQueueHandler` binding and SQLite migration to production and preview Wrangler configs.
+- Kept cache interception disabled pending preview acceptance; rollback remains config-only.
+
+Validation:
+
+- Added unit coverage for the queue, both bundles, and both Wrangler configs; focused tests were red before implementation and green after implementation.
+
+Follow-up:
+
+- Deploy preview with interception enabled and complete the cold, stale-hit, route-class, on-demand revalidation, and five-minute soak checks before production rollout.

@@ -83,6 +83,55 @@ describe('Replicate Builders: New Upscalers', () => {
     });
   });
 
+  describe('NanoBananaBuilder', () => {
+    const signedInputUrl = 'https://storage.example/signed-input?token=redacted';
+
+    it('builds URL-only input with the official schema', () => {
+      const input = buildModelInput('nano-banana', {
+        ...baseInput,
+        imageData: signedInputUrl,
+      });
+
+      expect(input).toEqual({
+        prompt:
+          'Preserve all text, logos, and the original composition while improving image quality.',
+        image_input: [signedInputUrl],
+        aspect_ratio: 'match_input_image',
+        output_format: 'png',
+      });
+      expect(JSON.stringify(input)).not.toContain('data:image');
+      expect(JSON.stringify(input)).not.toContain('base64');
+    });
+
+    it('preserves Text Preserve custom prompt precedence', () => {
+      const input = buildModelInput('nano-banana', {
+        ...baseInput,
+        imageData: signedInputUrl,
+        config: {
+          ...baseInput.config,
+          additionalOptions: {
+            ...baseInput.config.additionalOptions,
+            customInstructions: 'Preserve every character and logo exactly.',
+          },
+        },
+      });
+
+      expect(input).toHaveProperty(
+        'prompt',
+        'Preserve every character and logo exactly.'
+      );
+    });
+
+    it('registers Nano Banana in the live builder orchestrator', () => {
+      expect(
+        buildModelInput('nano-banana', {
+          ...baseInput,
+          imageData: signedInputUrl,
+        })
+      ).toHaveProperty('image_input', [signedInputUrl]);
+    });
+  });
+
   describe('Nano Banana resolution billing parity', () => {
     it.each([
       ['nano-banana-pro', 'ultra'],

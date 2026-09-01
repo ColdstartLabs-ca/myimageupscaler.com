@@ -1,15 +1,21 @@
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
+import {
+  BoundedJsonBodyTooLargeError,
+  readBoundedJsonBody,
+} from '@server/http/read-bounded-json-body';
 import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
+import { UUID_V4_PATTERN } from '@shared/validation/uuid';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 const BUCKET_NAME = 'upscale-inputs';
+const UPLOAD_REQUEST_MAX_BYTES = 8 * 1024;
 const uploadRequestSchema = z.object({
   filename: z.string().trim().min(1).max(255),
   mimeType: z.enum(IMAGE_VALIDATION.ALLOWED_TYPES),
   sizeBytes: z.number().int().positive(),
-  jobId: z.string().uuid(),
-});
+  jobId: z.string().regex(UUID_V4_PATTERN, 'Job ID must be a UUIDv4'),
+}).strict();
 
 const extensionByMime: Record<(typeof IMAGE_VALIDATION.ALLOWED_TYPES)[number], string> = {
   'image/jpeg': 'jpg',
@@ -37,7 +43,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
   }
 
-  const parsed = uploadRequestSchema.safeParse(await request.json().catch(() => null));
+  let requestBody: unknown;
+  try {
+    requestBody = await readBoundedJsonBody(request, UPLOAD_REQUEST_MAX_BYTES);
+  } catch (error) {
+    if (error instanceof BoundedJsonBodyTooLargeError) {
+      return NextResponse.json({ error: 'Upload request is too large' }, { status: 413 });
+    }
+
+    return NextResponse.json({ error: 'Invalid upload request' }, { status: 400 });
+  }
+
+  const parsed = uploadRequestSchema.safeParse(requestBody);
   if (!parsed.success) {
     return NextResponse.json({ error: 'Invalid upload request' }, { status: 400 });
   }
@@ -65,6 +82,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const storagePath = `${userId}/${parsed.data.jobId}.${extension}`;
   const { data, error } = await supabaseAdmin.storage
     .from(BUCKET_NAME)
+    // Keep the validated input immutable while its signed read URL is in use.
     .createSignedUploadUrl(storagePath, { upsert: false });
   if (error || !data?.token) {
     return NextResponse.json({ error: 'Unable to prepare image upload' }, { status: 503 });

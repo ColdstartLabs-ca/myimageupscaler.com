@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { MODEL_MAX_INPUT_PIXELS } from '@shared/config/model-costs.config';
 import { QUALITY_TIER_CONFIG, type QualityTier } from '@shared/types/coreflow.types';
+import { UUID_V4_PATTERN } from '@shared/validation/uuid';
 
 // Enhancement settings schema (reusable)
 const enhancementSettingsSchema = z.object({
@@ -50,13 +51,9 @@ export const IMAGE_VALIDATION = {
   MIN_DIMENSION: 64,
   MAX_DIMENSION: 8192,
   MAX_PIXELS: 1_500_000, // ~1225x1225 max - GPU memory limit for upscaling (matches real-esrgan)
-  // Ceiling for the whole JSON request body, not the decoded image. The Worker
-  // gets 128MB; `req.json()` holds the raw text and the parsed string, and JS
-  // strings are UTF-16, so peak is ~4 bytes per body byte. 24MB of body peaked
-  // at ~96MB and left only ~32MB for the runtime, the decoded image and the
-  // provider response, so the Worker still died under the guard. 16MB caps the
-  // peak at 64MB, half the heap.
-  MAX_REQUEST_BYTES: 16 * 1024 * 1024,
+  // Ceiling for the metadata-only JSON request body. Image bytes are uploaded
+  // to private storage and must never enter this request.
+  MAX_REQUEST_BYTES: 64 * 1024,
 };
 
 /**
@@ -207,18 +204,8 @@ export function getMaxPixelsForQualityTier(qualityTier: QualityTier): number | n
  */
 export const upscaleSchema = z
   .object({
-    imageData: z
-      .string()
-      .min(1, 'Image data is required')
-      .refine(
-        // Length arithmetic only — splitting here would copy the whole payload
-        // before the request has been size-checked.
-        data => getBase64PayloadLength(data) > 0,
-        { message: 'Invalid image data format' }
-      )
-      .optional(),
-    storagePath: z.string().trim().min(1).max(200).optional(),
-    jobId: z.string().uuid().optional(),
+    storagePath: z.string().trim().min(1).max(200),
+    jobId: z.string().regex(UUID_V4_PATTERN, 'Job ID must be a UUIDv4'),
     mimeType: z
       .string()
       .default('image/jpeg')
@@ -229,8 +216,10 @@ export const upscaleSchema = z
           ),
         { message: `Invalid image type. Allowed: ${IMAGE_VALIDATION.ALLOWED_TYPES.join(', ')}` }
       ),
-    // Enhancement prompt from LLM analysis (legacy - will be removed)
-    enhancementPrompt: z.string().optional(),
+    enhancementPrompt: z.string().max(2000).optional(),
+    // Retained for the current browser payload; the server resolves the model
+    // from the validated quality tier rather than trusting this hint.
+    resolvedModel: z.string().max(100).optional(),
     config: z.object({
       // New quality tier based configuration
       qualityTier: z
@@ -264,7 +253,10 @@ export const upscaleSchema = z
           enhance: z.boolean().default(false), // Enable enhancement processing
           enhanceFaces: z.boolean().default(false), // Face restoration - user opt-in
           preserveText: z.boolean().default(false), // Text preservation - user opt-in
-          customInstructions: z.string().optional(), // Custom LLM prompt (opens modal when enabled)
+          customInstructions: z
+            .string()
+            .max(2000)
+            .optional(), // Custom LLM prompt (opens modal when enabled)
           enhancement: enhancementSettingsSchema.optional(), // Detailed enhancement settings
         })
         .default({
@@ -278,24 +270,7 @@ export const upscaleSchema = z
       nanoBananaProConfig: nanoBananaProConfigSchema.optional(),
     }),
   })
-  .superRefine((input, context) => {
-    const hasInlineImage = typeof input.imageData === 'string';
-    const hasStorageImage = typeof input.storagePath === 'string';
-    if (hasInlineImage === hasStorageImage) {
-      context.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Provide exactly one image source',
-        path: ['imageData'],
-      });
-    }
-    if (hasStorageImage && !input.jobId) {
-      context.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'A job ID is required for a temporary storage image',
-        path: ['jobId'],
-      });
-    }
-  });
+  .strict();
 
 /**
  * Magic bytes for supported image formats
@@ -407,9 +382,14 @@ export function validateMagicBytes(
 export function decodeImageDimensions(imageData: string): { width: number; height: number } | null {
   // Decode enough bytes for dimension extraction
   // Phone JPEGs often have 20-60KB EXIF blocks before SOF marker
-  // Reading ~32KB ensures we can find dimensions in 99%+ of JPEGs
+  // Read the same bounded 64KiB prefix used by storage-backed validation so a
+  // delayed SOF marker cannot bypass dimension and model pixel-limit checks.
   // Align slice to multiple of 4 (base64 requirement) to avoid atob errors
-  const rawSliceLen = Math.min(getBase64PayloadLength(imageData), 44000);
+  const maxDimensionPrefixBase64Chars = 4 * Math.ceil((64 * 1024) / 3);
+  const rawSliceLen = Math.min(
+    getBase64PayloadLength(imageData),
+    maxDimensionPrefixBase64Chars
+  );
   const sliceLen = Math.floor(rawSliceLen / 4) * 4;
   let binaryString: string;
   try {
@@ -473,7 +453,10 @@ export function decodeImageDimensions(imageData: string): { width: number; heigh
 type IParsedUpscaleRequest = z.infer<typeof upscaleSchema>;
 
 /** Internal processor input after storage/base64 resolution. */
-export type IUpscaleInput = Omit<IParsedUpscaleRequest, 'imageData' | 'storagePath' | 'jobId'> & {
+export type IUpscaleInput = Omit<IParsedUpscaleRequest, 'storagePath' | 'jobId'> & {
   imageData: string;
+  /** Dimensions decoded before a storage-backed URL is handed to a provider. */
+  originalWidth?: number;
+  originalHeight?: number;
 };
 export type IUpscaleConfig = IParsedUpscaleRequest['config'];

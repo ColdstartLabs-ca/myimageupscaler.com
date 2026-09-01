@@ -14,11 +14,9 @@ import {
  * Regression: Cloudflare Worker `exceededMemory` (~300/day) returned a non-JSON
  * 503 that the client could only classify as `edge_error`.
  *
- * The upscale payload is base64 inside a JSON body. Every validation helper
- * called `imageData.split(',')[1]`, allocating a full copy of a multi-megabyte
- * string — and JS strings are UTF-16, so each copy costs ~2 bytes per character
- * against the Worker's 128MB limit. Four copies plus the raw and parsed request
- * text exceeded the limit before the size check could reject anything.
+ * Uploaded image bytes now stay in private storage. The API request contains
+ * only bounded metadata, while these helpers remain zero-copy for the bounded
+ * validation previews used by storage validation.
  *
  * These tests pin the zero-copy contract: helpers read what they need by offset.
  */
@@ -98,16 +96,13 @@ describe('upscale request memory guards', () => {
 
   describe('MAX_REQUEST_BYTES', () => {
     test('caps the request body below what the 128MB Worker can buffer', () => {
-      // Peak is ~4 bytes per body byte (raw text + parsed string, both UTF-16).
-      expect(IMAGE_VALIDATION.MAX_REQUEST_BYTES).toBe(16 * 1024 * 1024);
+      // The API body contains metadata only; image bytes never enter the Worker.
+      expect(IMAGE_VALIDATION.MAX_REQUEST_BYTES).toBe(64 * 1024);
       expect(IMAGE_VALIDATION.MAX_REQUEST_BYTES * 4).toBeLessThan(128 * 1024 * 1024);
     });
 
-    test('leaves the free tier limit comfortably inside the body cap', () => {
-      const base64Overhead = 4 / 3;
-      expect(IMAGE_VALIDATION.MAX_SIZE_FREE * base64Overhead).toBeLessThan(
-        IMAGE_VALIDATION.MAX_REQUEST_BYTES
-      );
+    test('keeps the metadata cap independent from uploaded image size', () => {
+      expect(IMAGE_VALIDATION.MAX_REQUEST_BYTES).toBeLessThan(IMAGE_VALIDATION.MAX_SIZE_FREE);
     });
   });
 
@@ -144,20 +139,15 @@ describe('upscale request memory guards', () => {
       ).toBe(false);
     });
 
-    test('upscaleSchema accepts a data URL and rejects an empty payload', () => {
+    test('upscaleSchema rejects inline image data', () => {
       const config = { qualityTier: 'quick', scale: 2 };
       expect(
         upscaleSchema.safeParse({
+          storagePath: 'user-1/11111111-1111-4111-8111-111111111111.png',
+          jobId: '11111111-1111-4111-8111-111111111111',
+          mimeType: 'image/png',
+          config,
           imageData: dataUrl(PNG_HEADER_B64),
-          mimeType: 'image/png',
-          config,
-        }).success
-      ).toBe(true);
-      expect(
-        upscaleSchema.safeParse({
-          imageData: 'data:image/png;base64,',
-          mimeType: 'image/png',
-          config,
         }).success
       ).toBe(false);
     });

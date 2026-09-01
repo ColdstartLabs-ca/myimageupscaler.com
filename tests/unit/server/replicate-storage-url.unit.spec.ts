@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { buildModelInput } from '@server/services/replicate/builders/model-input.builder';
 import { createModelInputContext } from '@server/services/replicate/builders/model-input.types';
 import { DEFAULT_ENHANCEMENT_SETTINGS } from '@shared/types/coreflow.types';
 
@@ -19,5 +20,29 @@ describe('Replicate storage URL input', () => {
     });
 
     expect(context.imageDataUrl).toBe(signedUrl);
+  });
+
+  it('preserves validated dimensions for URL-backed Seedream inputs', () => {
+    const signedUrl =
+      'https://example.supabase.co/storage/v1/object/sign/upscale-inputs/user/image.png?token=signed';
+
+    const input = buildModelInput('seedream', {
+      imageData: signedUrl,
+      mimeType: 'image/png',
+      originalWidth: 3000,
+      originalHeight: 2000,
+      config: {
+        qualityTier: 'seedream-edit',
+        scale: 2,
+        additionalOptions: DEFAULT_ENHANCEMENT_SETTINGS,
+      },
+    });
+
+    expect(input).toMatchObject({
+      image_input: [signedUrl],
+      size: 'custom',
+      width: 4096,
+      height: 2731,
+    });
   });
 });

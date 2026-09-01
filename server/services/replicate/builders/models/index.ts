@@ -11,6 +11,7 @@ export { GfpganBuilder } from './gfpgan.builder';
 export { ClarityUpscalerBuilder } from './clarity-upscaler.builder';
 export { FluxKontextBuilder } from './flux-kontext.builder';
 export { Flux2ProBuilder } from './flux-2-pro.builder';
+export { NanoBananaBuilder } from './nano-banana.builder';
 export { NanoBananaProBuilder } from './nano-banana-pro.builder';
 export { QwenImageEditBuilder } from './qwen-image-edit.builder';
 export { SeedreamBuilder } from './seedream.builder';

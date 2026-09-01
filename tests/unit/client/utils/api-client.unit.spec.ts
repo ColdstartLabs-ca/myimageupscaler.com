@@ -129,6 +129,87 @@ describe('upscale API response handling', () => {
     });
   });
 
+  it('retries the same grant idempotently after a lost upload response', async () => {
+    mocks.uploadToSignedUrl
+      .mockRejectedValueOnce(new Error('upload response lost after storage commit'))
+      .mockResolvedValueOnce({ data: { path: 'user-1/job-1.png' }, error: null });
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' })
+      )
+      .mockResolvedValueOnce(
+        Response.json({
+          mimeType: 'image/png',
+          processing: {
+            creditsRemaining: 4,
+            creditsUsed: 1,
+            reservationJobId: '11111111-1111-4111-8111-111111111111',
+            deliveryToken: 'delivery-token-'.padEnd(43, 'x'),
+          },
+        })
+      )
+      .mockResolvedValueOnce(new Response(new Blob(['image-bytes']), { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+    vi.stubGlobal('crypto', { randomUUID: () => '11111111-1111-4111-8111-111111111111' });
+
+    const file = new File(['image-bytes'], 'source.png', { type: 'image/png' });
+    await expect(processImage(file, config, vi.fn())).resolves.toMatchObject({
+      imageUrl: 'blob:https://app.test/output-1',
+    });
+
+    expect(mocks.uploadToSignedUrl).toHaveBeenCalledTimes(2);
+    expect(mocks.uploadToSignedUrl).toHaveBeenNthCalledWith(
+      1,
+      'user-1/job-1.png',
+      'signed-token',
+      file,
+      expect.objectContaining({ contentType: 'image/png', upsert: false })
+    );
+    expect(mocks.uploadToSignedUrl).toHaveBeenNthCalledWith(
+      2,
+      'user-1/job-1.png',
+      'signed-token',
+      file,
+      expect.objectContaining({ contentType: 'image/png', upsert: false })
+    );
+    expect(fetchMock.mock.calls.filter(call => call[0] === '/api/upscale')).toHaveLength(1);
+  });
+
+  it('continues after an immutable upload reports the committed object conflict', async () => {
+    mocks.uploadToSignedUrl.mockResolvedValueOnce({
+      data: null,
+      error: { statusCode: 409, message: 'The resource already exists' },
+    });
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' })
+      )
+      .mockResolvedValueOnce(
+        Response.json({
+          mimeType: 'image/png',
+          processing: {
+            creditsRemaining: 4,
+            creditsUsed: 1,
+            reservationJobId: '11111111-1111-4111-8111-111111111111',
+            deliveryToken: 'delivery-token-'.padEnd(43, 'x'),
+          },
+        })
+      )
+      .mockResolvedValueOnce(new Response(new Blob(['image-bytes']), { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+    vi.stubGlobal('crypto', { randomUUID: () => '11111111-1111-4111-8111-111111111111' });
+
+    const file = new File(['image-bytes'], 'source.png', { type: 'image/png' });
+    await expect(processImage(file, config, vi.fn())).resolves.toMatchObject({
+      imageUrl: 'blob:https://app.test/output-1',
+    });
+
+    expect(mocks.uploadToSignedUrl).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls.filter(call => call[0] === '/api/upscale')).toHaveLength(1);
+  });
+
   it('downloads staged output through the same job/token capability without exposing raw provider URLs', async () => {
     mocks.uploadToSignedUrl.mockResolvedValue({ data: { path: 'user-1/job-1.png' }, error: null });
     const fetchMock = vi

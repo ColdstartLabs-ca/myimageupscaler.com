@@ -9,6 +9,7 @@ import {
   ClarityUpscalerBuilder,
   FluxKontextBuilder,
   Flux2ProBuilder,
+  NanoBananaBuilder,
   NanoBananaProBuilder,
   QwenImageEditBuilder,
   SeedreamBuilder,
@@ -44,6 +45,7 @@ export class ModelInputBuilderOrchestrator {
     this.register(new ClarityUpscalerBuilder());
     this.register(new FluxKontextBuilder());
     this.register(new Flux2ProBuilder());
+    this.register(new NanoBananaBuilder());
     this.register(new NanoBananaProBuilder());
     this.register(new QwenImageEditBuilder());
     this.register(new SeedreamBuilder());

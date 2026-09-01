@@ -16,6 +16,7 @@ import type {
   IModelRecommendation,
   ModelProvider,
 } from './model-registry.types';
+import { getAutoEligibleModels } from './auto-model-selection';
 
 /**
  * Default model versions - used when no override is provided
@@ -23,7 +24,7 @@ import type {
  * Models:
  * - real-esrgan: Default upscale (fast, reliable)
  * - gfpgan: Face restore / old photos
- * - nano-banana: Text/logo preservation (Google Gemini free tier)
+ * - nano-banana: Text/logo preservation through Replicate
  * - clarity-upscaler: Upscale Plus (higher quality)
  * - nano-banana-pro: Upscale Ultra (premium, heavy damage repair)
  */
@@ -32,7 +33,7 @@ const DEFAULT_MODEL_VERSIONS: Record<string, string> = {
   'real-esrgan-large':
     'cjwbw/real-esrgan:d0ee3d708c9b911f122a4ad90046c5d26a0293b99476d697f6bb7f2e251ce2d4',
   gfpgan: 'xinntao/gfpgan:6129309904ce4debfde78de5c209bce0022af40e197e132f08be8ccce3050393',
-  'nano-banana': 'gemini-2.5-flash-image',
+  'nano-banana': 'google/nano-banana',
   'clarity-upscaler':
     'philz1337x/clarity-upscaler:dfad41707589d68ecdccd1dfa600d55a208f9310748e44bfe35b4a6291453d5e',
   'flux-2-pro': 'black-forest-labs/flux-2-pro',
@@ -60,7 +61,7 @@ const MODEL_COSTS: Record<string, number> = {
   'real-esrgan': CONFIG_MODEL_COSTS.REAL_ESRGAN_COST,
   'real-esrgan-large': CONFIG_MODEL_COSTS.REAL_ESRGAN_LARGE_COST,
   gfpgan: CONFIG_MODEL_COSTS.GFPGAN_COST,
-  'nano-banana': CONFIG_MODEL_COSTS.NANO_BANANA_COST, // Google Gemini free tier (500 req/day)
+  'nano-banana': CONFIG_MODEL_COSTS.NANO_BANANA_COST,
   'clarity-upscaler': CONFIG_MODEL_COSTS.CLARITY_UPSCALER_COST,
   'flux-2-pro': CONFIG_MODEL_COSTS.FLUX_2_PRO_COST,
   'nano-banana-pro': CONFIG_MODEL_COSTS.NANO_BANANA_PRO_COST,
@@ -135,7 +136,6 @@ export class ModelRegistry {
     const overrides: Record<string, string | undefined> = {
       'real-esrgan': serverEnv.MODEL_VERSION_REAL_ESRGAN,
       gfpgan: serverEnv.MODEL_VERSION_GFPGAN,
-      'nano-banana': serverEnv.MODEL_VERSION_NANO_BANANA,
       'clarity-upscaler': serverEnv.MODEL_VERSION_CLARITY_UPSCALER,
       'flux-2-pro': serverEnv.MODEL_VERSION_FLUX_2_PRO,
       'nano-banana-pro': serverEnv.MODEL_VERSION_NANO_BANANA_PRO,
@@ -217,9 +217,9 @@ export class ModelRegistry {
       {
         id: 'nano-banana',
         displayName: 'Text Preserve',
-        provider: 'gemini',
+        provider: 'replicate',
         modelVersion: this.getModelVersion('nano-banana'),
-        capabilities: ['upscale', 'text-preservation', 'enhance'],
+        capabilities: ['text-preservation', 'enhance'],
         costPerRun: MODEL_COSTS['nano-banana'],
         creditMultiplier: MODEL_CREDIT_MULTIPLIERS['nano-banana'],
         qualityScore: 8.0,
@@ -227,11 +227,9 @@ export class ModelRegistry {
         maxInputResolution: CONFIG_MODEL_COSTS.MAX_INPUT_RESOLUTION,
         maxInputPixels: MODEL_MAX_INPUT_PIXELS['nano-banana'],
         maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
-        supportedScales: [
-          CONFIG_MODEL_COSTS.DEFAULT_SCALE,
-          CONFIG_MODEL_COSTS.MAX_SCALE_STANDARD,
-          CONFIG_MODEL_COSTS.MAX_SCALE_PREMIUM,
-        ],
+        // google/nano-banana exposes no scale parameter; do not advertise
+        // dimensions the provider cannot guarantee.
+        supportedScales: [],
         isEnabled: true,
       },
       // Clarity Upscaler (Standard Face Restoration)
@@ -621,9 +619,7 @@ export class ModelRegistry {
     scale: 2 | 4 | 8
   ): IModelRecommendation {
     // Get eligible models for the user's tier
-    const eligibleModels = this.getModelsByTier(userTier).filter(m =>
-      m.supportedScales.includes(scale)
-    );
+    const eligibleModels = getAutoEligibleModels(this.getModelsByTier(userTier), scale);
 
     // Default to general upscale model
     let recommended = this.useCaseAssignments.generalUpscale;

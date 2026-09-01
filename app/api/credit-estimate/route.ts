@@ -1,11 +1,15 @@
 import type { ModelCapability } from '@/shared/types/coreflow.types';
 import { createLogger } from '@server/monitoring/logger';
+import {
+  getAutoEligibleModels,
+  isAutoModelCompatible,
+  resolveAutoModel,
+} from '@server/services/auto-model-selection';
 import { ModelRegistry } from '@server/services/model-registry';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
 import {
   calculateFinalProviderAwareCredits,
-  getCreditsForTierAtScale,
   getModelForTier,
   modelIdToTier,
   resolveEffectiveResolution,
@@ -189,13 +193,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const modelRegistry = ModelRegistry.getInstance();
 
     // Determine which model will be used
+    const requestedAuto =
+      validatedInput.config.qualityTier === 'auto' ||
+      (!validatedInput.config.qualityTier && validatedInput.config.selectedModel === 'auto');
     const tierModel = validatedInput.config.qualityTier
       ? getModelForTier(validatedInput.config.qualityTier)
       : null;
     let modelToUse: string =
-      validatedInput.config.qualityTier === 'auto'
-        ? 'auto'
-        : (tierModel ?? validatedInput.config.selectedModel);
+      requestedAuto ? 'auto' : (tierModel ?? validatedInput.config.selectedModel);
 
     if (modelToUse === 'auto' || !modelToUse) {
       // Use analysis hint to recommend model
@@ -206,7 +211,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           validatedInput.config.mode as 'upscale' | 'enhance' | 'both',
           validatedInput.config.scale
         );
-        modelToUse = recommendation.recommendedModel;
+        modelToUse =
+          resolveAutoModel(
+            modelRegistry.getModelsByTier(userTier),
+            validatedInput.config.scale,
+            recommendation.recommendedModel
+          )?.id ?? '';
       } else {
         // Choose model based on required features
         const requiredCapabilities: ModelCapability[] = [];
@@ -216,18 +226,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
         // Get models that support all required capabilities
         const availableModels = modelRegistry.getModelsByTier(userTier);
-        const suitableModels = availableModels.filter(
-          model =>
-            requiredCapabilities.every(cap => model.capabilities.includes(cap)) &&
-            model.supportedScales.includes(validatedInput.config.scale)
-        );
+        const suitableModels = getAutoEligibleModels(
+          availableModels,
+          validatedInput.config.scale
+        ).filter(model => requiredCapabilities.every(cap => model.capabilities.includes(cap)));
 
         if (suitableModels.length > 0) {
           // Choose the model with the lowest credit multiplier that supports all features
           modelToUse = suitableModels.sort((a, b) => a.creditMultiplier - b.creditMultiplier)[0].id;
         } else {
-          // Fallback to default model if no suitable model found
-          modelToUse = 'real-esrgan';
+          modelToUse = resolveAutoModel(availableModels, validatedInput.config.scale)?.id ?? '';
         }
       }
     }
@@ -255,12 +263,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     // Check if model supports the requested scale
-    const hasNoSupportedScales = model.supportedScales.length === 0;
-    const isUnsupportedEnhancementScale = hasNoSupportedScales && validatedInput.config.scale !== 2;
-    if (
-      isUnsupportedEnhancementScale ||
-      (!hasNoSupportedScales && !model.supportedScales.includes(validatedInput.config.scale))
-    ) {
+    if (!isAutoModelCompatible(model, validatedInput.config.scale)) {
       logger.warn('Model does not support scale', {
         userId,
         modelId: modelToUse,
@@ -312,7 +315,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       scale: validatedInput.config.scale,
       inputWidth,
       inputHeight,
-      smartAnalysis: validatedInput.config.additionalOptions?.smartAnalysis ?? false,
+      smartAnalysis:
+        !requestedAuto &&
+        (validatedInput.config.additionalOptions?.smartAnalysis ?? false),
       targetResolution: validatedInput.config.targetResolution,
       effectiveResolution: resolveEffectiveResolution(
         modelToUse,
@@ -334,10 +339,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const response = {
       breakdown: {
         tier,
-        tierCredits:
-          providerAware.pricingModel === 'flat'
-            ? getCreditsForTierAtScale(tier, validatedInput.config.scale)
-            : providerAware.credits,
+        tierCredits: providerAware.credits,
         scaleMultiplier: providerAware.scaleMultiplier,
         resolutionMultiplier: providerAware.resolutionMultiplier,
         totalCredits,

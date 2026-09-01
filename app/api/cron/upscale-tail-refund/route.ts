@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
+import { UUID_V4_PATTERN } from '@shared/validation/uuid';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { workerRayBinding } from '@server/services/reservation-worker-binding';
@@ -7,7 +8,7 @@ import { workerRayBinding } from '@server/services/reservation-worker-binding';
 const hardWorkerOutcomes = z.enum(['exception', 'exceededCpu', 'exceededMemory']);
 const tailRefundSchema = z
   .object({
-    jobId: z.string().uuid(),
+    jobId: z.string().regex(UUID_V4_PATTERN, 'Job ID must be a UUIDv4'),
     outcome: hardWorkerOutcomes,
     rayId: z.string().trim().min(1).max(128),
   })

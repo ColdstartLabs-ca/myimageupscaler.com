@@ -13,7 +13,7 @@ export const MODEL_MAX_INPUT_PIXELS: Record<string, number> = {
   gfpgan: 1_500_000, // 1.5M pixels - GPU memory limit
   'realesrgan-anime': 1_500_000, // 1.5M pixels - GPU memory limit
   'clarity-upscaler': 4_194_304, // 2048x2048 verified with tiled processing
-  'nano-banana': 4_000_000, // 4M pixels - Gemini handles larger inputs
+  'nano-banana': 4_000_000, // 4M pixels - Replicate model input limit
   'nano-banana-pro': 4_000_000, // 4M pixels - premium model
   'flux-2-pro': 4_000_000, // 4M pixels - premium model
   'qwen-image-edit': 2_560_000, // 2.56M pixels (1600x1600)
@@ -47,7 +47,7 @@ export const MODEL_COSTS = {
   REAL_ESRGAN_COST: 0.0017,
   REAL_ESRGAN_LARGE_COST: 0.0047, // cjwbw/real-esrgan on T4 - measured 21s at 2048x2048 (2x)
   GFPGAN_COST: 0.0025,
-  NANO_BANANA_COST: 0.0, // Google Gemini free tier (500 req/day)
+  NANO_BANANA_COST: 0.039, // Replicate google/nano-banana, verified 2026-08-31: $0.039/output image
   CLARITY_UPSCALER_COST: 0.017,
   CLARITY_PRO_UPSCALER_COST: 0.03, // philz1337x/clarity-pro-upscaler - per output megapixel, $0.03 minimum
   RECRAFT_CRISP_UPSCALE_COST: 0.006, // recraft-ai/recraft-crisp-upscale - fixed per image
@@ -225,11 +225,9 @@ export const MODEL_CONFIG = {
     processingTime: 3000,
     maxInputResolution: MODEL_COSTS.MAX_INPUT_RESOLUTION,
     maxOutputResolution: MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
-    supportedScales: [
-      MODEL_COSTS.DEFAULT_SCALE,
-      MODEL_COSTS.MAX_SCALE_STANDARD,
-      MODEL_COSTS.MAX_SCALE_PREMIUM,
-    ],
+    // google/nano-banana has no provider scale control; treat it as an
+    // enhancement-only model instead of claiming 2x/4x/8x output.
+    supportedScales: [],
     tierRestriction: null,
   },
   'clarity-upscaler': {

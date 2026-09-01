@@ -40,11 +40,16 @@ const mocks = vi.hoisted(() => ({
   getModel: vi.fn(),
   getModelForTier: vi.fn(),
   modelIdToTier: vi.fn(),
+  getModelsByTier: vi.fn(),
+  recommendModel: vi.fn(),
+  analyze: vi.fn(),
   calculateCredits: vi.fn(),
   resolveResolution: vi.fn(),
   decodeImageDimensions: vi.fn(),
   getScalePreservingFallbackCandidates: vi.fn(),
   resolveScalePreservingModel: vi.fn(),
+  resolveUpscaleInput: vi.fn(),
+  removeUpscaleInput: vi.fn(),
 }));
 
 vi.mock('@server/analytics', () => ({ trackServerEvent: mocks.track }));
@@ -76,13 +81,20 @@ vi.mock('@server/services/image-processor.factory', () => ({
     createProcessor: () => ({ providerName: 'test', processImage: mocks.processImage }),
   },
 }));
-vi.mock('@server/services/llm-image-analyzer', () => ({ LLMImageAnalyzer: class {} }));
+vi.mock('@server/services/llm-image-analyzer', () => ({
+  LLMImageAnalyzer: class {
+    analyze(...args: unknown[]) {
+      return mocks.analyze(...args);
+    }
+  },
+}));
 vi.mock('@server/services/model-registry', () => ({
   ModelRegistry: {
     getInstance: () => ({
       getMaxInputPixels: () => Number.MAX_SAFE_INTEGER,
       getModel: mocks.getModel,
-      getModelsByTier: () => [],
+      getModelsByTier: mocks.getModelsByTier,
+      recommendModel: mocks.recommendModel,
     }),
   },
 }));
@@ -93,6 +105,10 @@ vi.mock('@server/services/provider-health.service', () => ({
     recordFailure: mocks.recordProviderFailure,
     recordSuccess: mocks.recordProviderSuccess,
   },
+}));
+vi.mock('@server/services/upscale-input-storage.service', () => ({
+  resolveUpscaleInput: mocks.resolveUpscaleInput,
+  removeUpscaleInput: mocks.removeUpscaleInput,
 }));
 vi.mock('@server/services/replicate.service', () => ({
   ReplicateError: mocks.ReplicateError,
@@ -142,7 +158,7 @@ vi.mock('@shared/validation/upscale.schema', () => ({
   validateMagicBytes: () => ({ valid: true, detectedMimeType: 'image/jpeg' }),
   IMAGE_VALIDATION: {
     ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/webp', 'image/heic'],
-    MAX_REQUEST_BYTES: 16 * 1024 * 1024,
+    MAX_REQUEST_BYTES: 64 * 1024,
   },
 }));
 
@@ -228,6 +244,13 @@ describe('POST /api/upscale free limit errors', () => {
     mocks.ensureProfile.mockImplementation((_req, _userId, rawProfile) => rawProfile);
     mocks.getModelForTier.mockReturnValue('real-esrgan');
     mocks.modelIdToTier.mockReturnValue('quick');
+    mocks.getModelsByTier.mockReturnValue([]);
+    mocks.recommendModel.mockReturnValue({ recommendedModel: 'real-esrgan' });
+    mocks.analyze.mockResolvedValue({
+      recommendedModel: 'real-esrgan',
+      issues: [],
+      enhancementPrompt: undefined,
+    });
     mocks.calculateCredits.mockReturnValue({
       finalCredits: 1,
       credits: 1,
@@ -236,6 +259,13 @@ describe('POST /api/upscale free limit errors', () => {
       providerCostUsd: 0.002,
     });
     mocks.resolveResolution.mockReturnValue(undefined);
+    mocks.resolveUpscaleInput.mockResolvedValue({
+      imageReference: 'https://storage.example/signed-input?token=abc',
+      validationImageData: 'iVBORw0KGgoAAAANSUhEUg==',
+      sizeBytes: 1024,
+      mimeType: 'image/jpeg',
+    });
+    mocks.removeUpscaleInput.mockResolvedValue(undefined);
     mocks.getModel.mockReturnValue({
       isEnabled: true,
       minTier: 'free',
@@ -243,7 +273,8 @@ describe('POST /api/upscale free limit errors', () => {
       tierRestriction: null,
     });
     mocks.parseUpscale.mockReturnValue({
-      imageData: 'aGVsbG8=',
+      storagePath: 'user-1/11111111-1111-4111-8111-111111111111.jpg',
+      jobId: '11111111-1111-4111-8111-111111111111',
       mimeType: 'image/jpeg',
       config: {
         qualityTier: 'quick',
@@ -323,7 +354,8 @@ describe('POST /api/upscale free limit errors', () => {
       }),
     }));
     mocks.parseUpscale.mockReturnValue({
-      imageData: 'aGVsbG8=',
+      storagePath: 'user-1/11111111-1111-4111-8111-111111111111.jpg',
+      jobId: '11111111-1111-4111-8111-111111111111',
       mimeType: 'image/jpeg',
       config: {
         qualityTier: 'ultra',
@@ -382,9 +414,115 @@ describe('POST /api/upscale free limit errors', () => {
     );
   });
 
+  it('keeps explicit and Auto-selected Nano Banana estimates aligned with deduction', async () => {
+    const nanoModel = {
+      id: 'nano-banana',
+      isEnabled: true,
+      supportedScales: [],
+      capabilities: ['text-preservation', 'enhance'],
+      displayName: 'Text Preserve',
+      creditMultiplier: 2,
+    };
+    const explicitPayload = {
+      imageData: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJ',
+      mimeType: 'image/png',
+      config: {
+        mode: 'both',
+        scale: 2,
+        selectedModel: 'nano-banana',
+      },
+    };
+    const autoPayload = {
+      ...explicitPayload,
+      config: { ...explicitPayload.config, selectedModel: 'auto' },
+      analysisHint: { contentType: 'document' },
+    };
+    const paidProfile = profile({
+      subscription_status: 'active',
+      subscription_tier: 'hobby',
+      subscription_credits_balance: 10,
+    });
+
+    mocks.from.mockImplementation(() => ({
+      select: () => ({
+        eq: () => ({
+          single: async () => ({ data: paidProfile, error: null }),
+          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
+        }),
+      }),
+    }));
+    mocks.ensureProfile.mockReturnValue(paidProfile);
+    mocks.getModel.mockReturnValue(nanoModel);
+    mocks.getModelsByTier.mockReturnValue([nanoModel]);
+    mocks.recommendModel.mockReturnValue({ recommendedModel: 'nano-banana' });
+    mocks.calculateCredits.mockReturnValue({
+      finalCredits: 2,
+      credits: 2,
+      effectiveResolution: undefined,
+      pricingModel: 'flat',
+      providerCostUsd: 0.039,
+    });
+
+    const explicitEstimate = await estimateCredits(
+      requestWithBody('/api/credit-estimate', explicitPayload)
+    );
+    const autoEstimate = await estimateCredits(requestWithBody('/api/credit-estimate', autoPayload));
+
+    const jobId = '77777777-7777-4777-8777-777777777777';
+    mocks.parseUpscale.mockReturnValue({
+      storagePath: `user-1/${jobId}.png`,
+      jobId,
+      mimeType: 'image/png',
+      config: {
+        qualityTier: 'auto',
+        scale: 2,
+        additionalOptions: { smartAnalysis: false },
+      },
+    });
+    mocks.analyze.mockResolvedValue({
+      recommendedModel: 'nano-banana',
+      issues: [],
+      enhancementPrompt: undefined,
+    });
+    mocks.processImage.mockImplementation(async (_userId, _input, options) => {
+      options?.onCreditsDeducted?.({
+        amount: options.creditCost,
+        subscriptionAmount: options.creditCost,
+        purchasedAmount: 0,
+        jobId,
+      });
+      return {
+        imageUrl: 'https://output.test/nano.png',
+        mimeType: 'image/png',
+        creditsRemaining: 8,
+      };
+    });
+
+    vi.useFakeTimers();
+    try {
+      const upscalePromise = POST(request());
+      await vi.advanceTimersByTimeAsync(5000);
+      const upscaleResponse = await upscalePromise;
+      const explicitEstimateBody = await explicitEstimate.json();
+      const autoEstimateBody = await autoEstimate.json();
+      const upscaleBody = await upscaleResponse.json();
+
+      expect(explicitEstimateBody.breakdown.totalCredits).toBe(2);
+      expect(autoEstimateBody.breakdown.totalCredits).toBe(2);
+      expect(upscaleResponse.status).toBe(200);
+      expect(upscaleBody.processing.creditsUsed).toBe(2);
+      expect(mocks.calculateCredits).toHaveBeenLastCalledWith(
+        expect.objectContaining({ modelId: 'nano-banana', qualityTier: 'quick', scale: 2 })
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  }, 15_000);
+
   it('quotes and charges identically for the same smart-analysis 4K payload', async () => {
     const payload = {
-      imageData: 'aGVsbG8=',
+      storagePath: 'user-1/22222222-2222-4222-8222-222222222222.jpg',
+      jobId: '22222222-2222-4222-8222-222222222222',
       mimeType: 'image/jpeg',
       config: {
         qualityTier: 'ultra',
@@ -474,7 +612,8 @@ describe('POST /api/upscale free limit errors', () => {
       }),
     }));
     mocks.parseUpscale.mockReturnValue({
-      imageData: 'aGVsbG8=',
+      storagePath: 'user-1/33333333-3333-4333-8333-333333333333.jpg',
+      jobId: '33333333-3333-4333-8333-333333333333',
       mimeType: 'image/jpeg',
       config: {
         qualityTier: 'seedream-edit',

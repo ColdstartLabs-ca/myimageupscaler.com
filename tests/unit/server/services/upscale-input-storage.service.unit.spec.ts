@@ -72,11 +72,45 @@ describe('resolveUpscaleInput', () => {
     expect(mocks.storageFrom).toHaveBeenCalledWith('upscale-inputs');
   });
 
+  it('rejects a ranged response before reading an oversized body', async () => {
+    const arrayBuffer = vi.fn().mockRejectedValue(new Error('body should not be read'));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        status: 206,
+        headers: new Headers({ 'content-length': '65538' }),
+        arrayBuffer,
+      })
+    );
+
+    await expect(
+      resolveUpscaleInput({
+        userId: 'user-1',
+        storagePath: 'user-1/11111111-1111-4111-8111-111111111111.png',
+        claimedMimeType: 'image/png',
+        isPaidUser: false,
+      })
+    ).rejects.toThrow(/validation prefix is too large/i);
+    expect(arrayBuffer).not.toHaveBeenCalled();
+  });
+
   it('rejects an object outside the authenticated user prefix', async () => {
     await expect(
       resolveUpscaleInput({
         userId: 'user-1',
         storagePath: 'other-user/job.png',
+        claimedMimeType: 'image/png',
+        isPaidUser: false,
+      })
+    ).rejects.toThrow(/owned by the authenticated user/i);
+    expect(mocks.list).not.toHaveBeenCalled();
+  });
+
+  it('rejects a legacy UUID-shaped input path after the UUIDv4 contract change', async () => {
+    await expect(
+      resolveUpscaleInput({
+        userId: 'user-1',
+        storagePath: 'user-1/77777777-7777-7777-7777-777777777777.png',
         claimedMimeType: 'image/png',
         isPaidUser: false,
       })

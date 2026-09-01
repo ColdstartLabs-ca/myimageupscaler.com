@@ -21,6 +21,8 @@ const DEFAULT_PROMPTS = {
   'clarity-upscaler': 'masterpiece, best quality, highres',
   'flux-kontext-pro': 'enhance and upscale this image, improve quality and details',
   'flux-2-pro': 'Restore this image exactly as it would look in higher resolution.',
+  'nano-banana':
+    'Preserve all text, logos, and the original composition while improving image quality.',
   'nano-banana-pro': (scale: number) =>
     `Upscale this image to ${scale}x resolution with enhanced sharpness and detail.`,
   'nano-banana-2': (scale: number) =>

@@ -25,6 +25,24 @@ function request(body: Record<string, unknown>): NextRequest {
   });
 }
 
+function streamedRequest(chunks: Uint8Array[]): NextRequest {
+  let nextChunk = 0;
+  const body = new ReadableStream<Uint8Array>({
+    pull(controller) {
+      const chunk = chunks[nextChunk++];
+      if (chunk) controller.enqueue(chunk);
+      else controller.close();
+    },
+  });
+
+  return new NextRequest('http://localhost/api/upscale/upload', {
+    method: 'POST',
+    headers: { 'X-User-Id': 'user-1', 'content-type': 'application/json' },
+    body,
+    duplex: 'half',
+  } as RequestInit & { duplex: 'half' });
+}
+
 describe('POST /api/upscale/upload', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -111,5 +129,46 @@ describe('POST /api/upscale/upload', () => {
     );
 
     expect(response.status).toBe(200);
+  });
+
+  it('rejects an oversized chunked grant body before account or storage access', async () => {
+    const response = await POST(
+      streamedRequest([new Uint8Array(8 * 1024), new Uint8Array([0x7b])])
+    );
+
+    expect(response.status).toBe(413);
+    expect(mocks.from).not.toHaveBeenCalled();
+    expect(mocks.createSignedUploadUrl).not.toHaveBeenCalled();
+  });
+
+  it('rejects inline imageData instead of silently stripping it', async () => {
+    const response = await POST(
+      request({
+        filename: 'photo.png',
+        mimeType: 'image/png',
+        sizeBytes: 1024,
+        jobId: '11111111-1111-4111-8111-111111111111',
+        imageData: 'data:image/png;base64,large-inline-payload',
+      })
+    );
+
+    expect(response.status).toBe(400);
+    expect(mocks.from).not.toHaveBeenCalled();
+    expect(mocks.createSignedUploadUrl).not.toHaveBeenCalled();
+  });
+
+  it('rejects UUID-shaped job IDs that are not UUIDv4', async () => {
+    const response = await POST(
+      request({
+        filename: 'photo.png',
+        mimeType: 'image/png',
+        sizeBytes: 1024,
+        jobId: '77777777-7777-7777-7777-777777777777',
+      })
+    );
+
+    expect(response.status).toBe(400);
+    expect(mocks.from).not.toHaveBeenCalled();
+    expect(mocks.createSignedUploadUrl).not.toHaveBeenCalled();
   });
 });
