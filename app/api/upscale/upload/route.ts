@@ -3,6 +3,7 @@ import {
   BoundedJsonBodyTooLargeError,
   readBoundedJsonBody,
 } from '@server/http/read-bounded-json-body';
+import { serverEnv } from '@shared/config/env';
 import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
 import { UUID_V4_PATTERN } from '@shared/validation/uuid';
 import { NextRequest, NextResponse } from 'next/server';
@@ -10,12 +11,14 @@ import { z } from 'zod';
 
 const BUCKET_NAME = 'upscale-inputs';
 const UPLOAD_REQUEST_MAX_BYTES = 8 * 1024;
-const uploadRequestSchema = z.object({
-  filename: z.string().trim().min(1).max(255),
-  mimeType: z.enum(IMAGE_VALIDATION.ALLOWED_TYPES),
-  sizeBytes: z.number().int().positive(),
-  jobId: z.string().regex(UUID_V4_PATTERN, 'Job ID must be a UUIDv4'),
-}).strict();
+const uploadRequestSchema = z
+  .object({
+    filename: z.string().trim().min(1).max(255),
+    mimeType: z.enum(IMAGE_VALIDATION.ALLOWED_TYPES),
+    sizeBytes: z.number().int().positive(),
+    jobId: z.string().regex(UUID_V4_PATTERN, 'Job ID must be a UUIDv4'),
+  })
+  .strict();
 
 const extensionByMime: Record<(typeof IMAGE_VALIDATION.ALLOWED_TYPES)[number], string> = {
   'image/jpeg': 'jpg',
@@ -35,6 +38,29 @@ function isPaidProfile(profile: {
     (profile.purchased_credits_balance ?? 0) > 0 ||
     (profile.subscription_tier !== null && profile.subscription_tier !== 'free')
   );
+}
+
+/**
+ * Test-environment mock users have no database profile. Derive their tier from
+ * the token-encoded subscription the same way /api/upscale does
+ * (mock_user_{uuid}_sub_{status}_{tier}), so API tests can exercise the
+ * direct-upload flow.
+ */
+function resolveTestMockProfile(userId: string): {
+  subscription_status: string | null;
+  subscription_tier: string | null;
+  purchased_credits_balance: number;
+} {
+  const subMatch = userId.match(/_sub_([^_]+)_([^_]+)$/);
+  const subscriptionStatus = subMatch?.[1] ?? null;
+  const subscriptionTier = subMatch?.[2] ?? null;
+  const isActiveSub = subscriptionStatus === 'active' || subscriptionStatus === 'trialing';
+
+  return {
+    subscription_status: subscriptionStatus,
+    subscription_tier: subscriptionTier,
+    purchased_credits_balance: isActiveSub ? 0 : 1000,
+  };
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -64,11 +90,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     .select('subscription_status, subscription_tier, purchased_credits_balance')
     .eq('id', userId)
     .single();
-  if (profileError || !profile) {
+  const isTestMockUser = serverEnv.ENV === 'test' && userId.startsWith('mock_user_');
+  if ((profileError || !profile) && !isTestMockUser) {
+    return NextResponse.json({ error: 'Unable to verify account' }, { status: 503 });
+  }
+  const effectiveProfile = profile ?? (isTestMockUser ? resolveTestMockProfile(userId) : null);
+  if (!effectiveProfile) {
     return NextResponse.json({ error: 'Unable to verify account' }, { status: 503 });
   }
 
-  const maxBytes = isPaidProfile(profile)
+  const maxBytes = isPaidProfile(effectiveProfile)
     ? IMAGE_VALIDATION.MAX_SIZE_PAID
     : IMAGE_VALIDATION.MAX_SIZE_FREE;
   if (parsed.data.sizeBytes > maxBytes) {

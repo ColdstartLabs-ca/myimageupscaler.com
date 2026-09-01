@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TestContext, ApiClient } from '../helpers';
+import { TestContext, ApiClient, createCanvas, postUpscaleWithStoredImage } from '../helpers';
 
 /**
  * API Tests for True Image Upscaling PRD Features
@@ -7,11 +7,13 @@ import { TestContext, ApiClient } from '../helpers';
  * Tests for:
  * - Phase 2: Dimension reporting in response
  * - Phase 4: Scale validation per tier/model
+ *
+ * /api/upscale accepts storage metadata only, so each request first stores the
+ * test image through the direct-upload flow (see tests/helpers/upscale-input.ts).
  */
 
-// Valid 64x64 PNG test image (red square)
-const VALID_TEST_IMAGE =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAADGklEQVR4nO2bz0tUYRjHf8+V1CFZmYNxmRgmBE3kFEnkRLoYJOF+RQi4e7i6iKdOwgOO4jI1HQYfCwODXBTQm5CRO1hdvOmY3y+z3uPNWs7YxnHPjJPn1j13d3/e9r+ec79x7z/2eCwCgIQQQoAiBAhAhBECIGAECEEIgQAQJxL/5yX1pZ+ysrI/7+np+fXq1asXLVq0qK2t7UePHm3atGnTpk1bvn79+vXr168fP348Kysrn3zyyS+//PLLL7/88ssvv/zyyy67/8c//vG3v/3tz7RgAACaEAIkQBCEAKZABAgBCEAIkQBCEDJQIv6/ffv27du3/9KXvPRSv/Dcc8+99NJLv/71r3/5y1/ee+ONN/7jH//Yv/mbv8F5BgDAy0EIEwIcoEBMDZ1JvwMAgL+hbVt4enr+6Ec/+uadd97x0ksvvfTSS7/85S9/9atf/XCncz4GAGBHoASJEAOhBBYgNwRjR1BIEAJqyL179/7mN7959dVXv+aaa+7cuXPnzp07der0sccekpwDACAbQSJMAHJH8N57733xxRd/9rOf/fWvf73tttuaNWv23HPPvfTSS5/61Kd+9Kd+9atf/eM/+vGPfvSjH33vvff+9q/+6q/+6L+4AQCYFiEECIEIEQIgYQQIgQIQRCBgBBCIEAECcS/u7/7u3/t7e3t7e0dGBjYtWvX3t7e3nfffVdVVdXV1dXV1bW1tbW1tbW1tbW1dXV1dXV1dXV1dXV1dXV1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbV1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tv';
+// Valid 64x64 PNG test image (solid gray)
+const VALID_TEST_IMAGE = createCanvas(64, 64);
 
 // Shared test setup
 let ctx: TestContext;
@@ -24,20 +26,27 @@ test.afterAll(async () => {
   await ctx.cleanup();
 });
 
+async function postUpscale(
+  api: ReturnType<ApiClient['withAuth']>,
+  config: Record<string, unknown>
+) {
+  return postUpscaleWithStoredImage(
+    api,
+    { dataUrl: VALID_TEST_IMAGE, mimeType: 'image/png' },
+    config
+  );
+}
+
 test.describe('PRD: True Image Upscaling - Phase 2: Dimension Reporting', () => {
   test.describe('Upscale Models - Dimension Response', () => {
     const baseConfig = {
-      imageData: VALID_TEST_IMAGE,
-      mimeType: 'image/png',
-      config: {
-        scale: 4,
-        qualityTier: 'quick' as const,
-        additionalOptions: {
-          smartAnalysis: false,
-          enhance: false,
-          enhanceFaces: false,
-          preserveText: false,
-        },
+      scale: 4,
+      qualityTier: 'quick' as const,
+      additionalOptions: {
+        smartAnalysis: false,
+        enhance: false,
+        enhanceFaces: false,
+        preserveText: false,
       },
     };
 
@@ -49,7 +58,7 @@ test.describe('PRD: True Image Upscaling - Phase 2: Dimension Reporting', () => 
 
       // This test validates the response structure when processing succeeds
       // Note: May fail with AI service errors in test environment, but dimensions should be present
-      const response = await api.post('/api/upscale', baseConfig);
+      const response = await postUpscale(api, baseConfig);
 
       // Accept both success and AI service errors - we're validating structure.
       // A failed provider attempt surfaces as 503 (AI_UNAVAILABLE), not 500.
@@ -75,10 +84,7 @@ test.describe('PRD: True Image Upscaling - Phase 2: Dimension Reporting', () => 
       const user = await ctx.createUser({ subscription: 'active', tier: 'hobby', credits: 100 });
       const api = new ApiClient(request).withAuth(user.token);
 
-      const response = await api.post('/api/upscale', {
-        ...baseConfig,
-        config: { ...baseConfig.config, scale: 2 },
-      });
+      const response = await postUpscale(api, { ...baseConfig, scale: 2 });
 
       if (response.status === 200) {
         const data = await response.json();
@@ -95,18 +101,14 @@ test.describe('PRD: True Image Upscaling - Phase 2: Dimension Reporting', () => 
       const api = new ApiClient(request).withAuth(user.token);
 
       // flux-2-pro is enhancement-only
-      const response = await api.post('/api/upscale', {
-        imageData: VALID_TEST_IMAGE,
-        mimeType: 'image/png',
-        config: {
-          scale: 4, // Requested scale, but enhancement-only won't change dimensions
-          qualityTier: 'face-pro' as const,
-          additionalOptions: {
-            smartAnalysis: false,
-            enhance: false,
-            enhanceFaces: false,
-            preserveText: false,
-          },
+      const response = await postUpscale(api, {
+        scale: 4, // Requested scale, but enhancement-only won't change dimensions
+        qualityTier: 'face-pro',
+        additionalOptions: {
+          smartAnalysis: false,
+          enhance: false,
+          enhanceFaces: false,
+          preserveText: false,
         },
       });
 
@@ -129,20 +131,7 @@ test.describe('PRD: True Image Upscaling - Phase 4: Scale Validation', () => {
       const user = await ctx.createUser({ credits: 10 });
       const api = new ApiClient(request).withAuth(user.token);
 
-      const response = await api.post('/api/upscale', {
-        imageData: VALID_TEST_IMAGE,
-        mimeType: 'image/png',
-        config: {
-          scale: 2,
-          qualityTier: 'quick',
-          additionalOptions: {
-            smartAnalysis: false,
-            enhance: false,
-            enhanceFaces: false,
-            preserveText: false,
-          },
-        },
-      });
+      const response = await postUpscale(api, { scale: 2, qualityTier: 'quick' });
 
       // Should not fail with scale validation error (may fail for other reasons like AI service)
       if (response.status === 400) {
@@ -155,20 +144,7 @@ test.describe('PRD: True Image Upscaling - Phase 4: Scale Validation', () => {
       const user = await ctx.createUser({ credits: 10 });
       const api = new ApiClient(request).withAuth(user.token);
 
-      const response = await api.post('/api/upscale', {
-        imageData: VALID_TEST_IMAGE,
-        mimeType: 'image/png',
-        config: {
-          scale: 4,
-          qualityTier: 'quick',
-          additionalOptions: {
-            smartAnalysis: false,
-            enhance: false,
-            enhanceFaces: false,
-            preserveText: false,
-          },
-        },
-      });
+      const response = await postUpscale(api, { scale: 4, qualityTier: 'quick' });
 
       if (response.status === 400) {
         const data = await response.json();
@@ -180,20 +156,7 @@ test.describe('PRD: True Image Upscaling - Phase 4: Scale Validation', () => {
       const user = await ctx.createUser({ credits: 10 });
       const api = new ApiClient(request).withAuth(user.token);
 
-      const response = await api.post('/api/upscale', {
-        imageData: VALID_TEST_IMAGE,
-        mimeType: 'image/png',
-        config: {
-          scale: 8,
-          qualityTier: 'quick',
-          additionalOptions: {
-            smartAnalysis: false,
-            enhance: false,
-            enhanceFaces: false,
-            preserveText: false,
-          },
-        },
-      });
+      const response = await postUpscale(api, { scale: 8, qualityTier: 'quick' });
 
       response.expectStatus(400);
       await response.expectErrorCode('VALIDATION_ERROR');
@@ -208,20 +171,7 @@ test.describe('PRD: True Image Upscaling - Phase 4: Scale Validation', () => {
       const user = await ctx.createUser({ credits: 10 });
       const api = new ApiClient(request).withAuth(user.token);
 
-      const response = await api.post('/api/upscale', {
-        imageData: VALID_TEST_IMAGE,
-        mimeType: 'image/png',
-        config: {
-          scale: 8,
-          qualityTier: 'face-restore',
-          additionalOptions: {
-            smartAnalysis: false,
-            enhance: false,
-            enhanceFaces: false,
-            preserveText: false,
-          },
-        },
-      });
+      const response = await postUpscale(api, { scale: 8, qualityTier: 'face-restore' });
 
       response.expectStatus(400);
       await response.expectErrorCode('VALIDATION_ERROR');
@@ -235,20 +185,7 @@ test.describe('PRD: True Image Upscaling - Phase 4: Scale Validation', () => {
       const user = await ctx.createUser({ subscription: 'active', tier: 'starter', credits: 100 });
       const api = new ApiClient(request).withAuth(user.token);
 
-      const response = await api.post('/api/upscale', {
-        imageData: VALID_TEST_IMAGE,
-        mimeType: 'image/png',
-        config: {
-          scale: 2,
-          qualityTier: 'budget-edit',
-          additionalOptions: {
-            smartAnalysis: false,
-            enhance: false,
-            enhanceFaces: false,
-            preserveText: false,
-          },
-        },
-      });
+      const response = await postUpscale(api, { scale: 2, qualityTier: 'budget-edit' });
 
       // Scale validation (400), tier restriction (403), or AI service errors (422, 500, 503)
       expect([400, 403, 422, 500, 503]).toContain(response.status);
@@ -266,20 +203,7 @@ test.describe('PRD: True Image Upscaling - Phase 4: Scale Validation', () => {
       const user = await ctx.createUser({ subscription: 'active', tier: 'starter', credits: 100 });
       const api = new ApiClient(request).withAuth(user.token);
 
-      const response = await api.post('/api/upscale', {
-        imageData: VALID_TEST_IMAGE,
-        mimeType: 'image/png',
-        config: {
-          scale: 4,
-          qualityTier: 'face-pro',
-          additionalOptions: {
-            smartAnalysis: false,
-            enhance: false,
-            enhanceFaces: false,
-            preserveText: false,
-          },
-        },
-      });
+      const response = await postUpscale(api, { scale: 4, qualityTier: 'face-pro' });
 
       // Scale validation (400), tier restriction (403), or AI service errors (422, 500, 503)
       expect([400, 403, 422, 500, 503]).toContain(response.status);
@@ -298,20 +222,7 @@ test.describe('PRD: True Image Upscaling - Phase 4: Scale Validation', () => {
       const user = await ctx.createUser({ subscription: 'active', tier: 'starter', credits: 100 });
       const api = new ApiClient(request).withAuth(user.token);
 
-      const response = await api.post('/api/upscale', {
-        imageData: VALID_TEST_IMAGE,
-        mimeType: 'image/png',
-        config: {
-          scale: 8,
-          qualityTier: 'hd-upscale',
-          additionalOptions: {
-            smartAnalysis: false,
-            enhance: false,
-            enhanceFaces: false,
-            preserveText: false,
-          },
-        },
-      });
+      const response = await postUpscale(api, { scale: 8, qualityTier: 'hd-upscale' });
 
       // Scale validation (400), tier restriction (403), or AI service errors (422, 500, 503)
       expect([400, 403, 422, 500, 503]).toContain(response.status);
@@ -323,20 +234,7 @@ test.describe('PRD: True Image Upscaling - Phase 4: Scale Validation', () => {
       const user = await ctx.createUser({ subscription: 'active', tier: 'starter', credits: 100 });
       const api = new ApiClient(request).withAuth(user.token);
 
-      const response = await api.post('/api/upscale', {
-        imageData: VALID_TEST_IMAGE,
-        mimeType: 'image/png',
-        config: {
-          scale: 8,
-          qualityTier: 'ultra',
-          additionalOptions: {
-            smartAnalysis: false,
-            enhance: false,
-            enhanceFaces: false,
-            preserveText: false,
-          },
-        },
-      });
+      const response = await postUpscale(api, { scale: 8, qualityTier: 'ultra' });
 
       // Scale validation (400), tier restriction (403), or AI service errors (422, 500, 503)
       expect([400, 403, 422, 500, 503]).toContain(response.status);

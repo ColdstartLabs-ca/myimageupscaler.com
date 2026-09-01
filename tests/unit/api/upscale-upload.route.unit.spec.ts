@@ -13,14 +13,19 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
     storage: { from: mocks.storageFrom },
   },
 }));
+vi.mock('@shared/config/env', () => ({ serverEnv: { ENV: 'test', NODE_ENV: 'test' } }));
 
 import { POST } from '@/app/api/upscale/upload/route';
 import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
 
 function request(body: Record<string, unknown>): NextRequest {
+  return requestWithUser('user-1', body);
+}
+
+function requestWithUser(userId: string, body: Record<string, unknown>): NextRequest {
   return new NextRequest('http://localhost/api/upscale/upload', {
     method: 'POST',
-    headers: { 'X-User-Id': 'user-1', 'content-type': 'application/json' },
+    headers: { 'X-User-Id': userId, 'content-type': 'application/json' },
     body: JSON.stringify(body),
   });
 }
@@ -169,6 +174,76 @@ describe('POST /api/upscale/upload', () => {
 
     expect(response.status).toBe(400);
     expect(mocks.from).not.toHaveBeenCalled();
+    expect(mocks.createSignedUploadUrl).not.toHaveBeenCalled();
+  });
+
+  it('serves test mock users without a database profile', async () => {
+    mocks.from.mockReturnValue({
+      select: () => ({
+        eq: () => ({
+          single: async () => ({ data: null, error: { code: 'PGRST116', message: 'not found' } }),
+        }),
+      }),
+    });
+
+    const response = await POST(
+      requestWithUser('mock_user_12345678-1234-4234-8234-123456789012', {
+        filename: 'photo.png',
+        mimeType: 'image/png',
+        sizeBytes: 1024,
+        jobId: '11111111-1111-4111-8111-111111111111',
+      })
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      storagePath:
+        'mock_user_12345678-1234-4234-8234-123456789012/11111111-1111-4111-8111-111111111111.png',
+      uploadToken: 'signed-token',
+    });
+  });
+
+  it('derives a paid tier for subscribed test mock users', async () => {
+    mocks.from.mockReturnValue({
+      select: () => ({
+        eq: () => ({
+          single: async () => ({ data: null, error: { code: 'PGRST116', message: 'not found' } }),
+        }),
+      }),
+    });
+
+    const response = await POST(
+      requestWithUser('mock_user_12345678-1234-4234-8234-123456789012_sub_active_pro', {
+        filename: 'photo.jpg',
+        mimeType: 'image/jpeg',
+        sizeBytes: IMAGE_VALIDATION.MAX_SIZE_FREE + 1024,
+        jobId: '11111111-1111-4111-8111-111111111111',
+      })
+    );
+
+    expect(response.status).toBe(200);
+    expect(mocks.createSignedUploadUrl).toHaveBeenCalled();
+  });
+
+  it('still requires a database profile for non-mock users when the lookup fails', async () => {
+    mocks.from.mockReturnValue({
+      select: () => ({
+        eq: () => ({
+          single: async () => ({ data: null, error: { code: 'PGRST116', message: 'not found' } }),
+        }),
+      }),
+    });
+
+    const response = await POST(
+      requestWithUser('real-user-id', {
+        filename: 'photo.png',
+        mimeType: 'image/png',
+        sizeBytes: 1024,
+        jobId: '11111111-1111-4111-8111-111111111111',
+      })
+    );
+
+    expect(response.status).toBe(503);
     expect(mocks.createSignedUploadUrl).not.toHaveBeenCalled();
   });
 });

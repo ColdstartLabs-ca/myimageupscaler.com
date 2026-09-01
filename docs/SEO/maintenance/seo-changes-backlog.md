@@ -2354,7 +2354,7 @@ Follow-up:
 
 ### OpenNext Revalidation Queue Safety
 
-Source: [OpenNext Revalidation Queue PRD](../../PRDs/bugfixes/opennext-revalidation-queue.md)
+Source: [OpenNext Revalidation Queue PRD](../../PRDs/done/opennext-revalidation-queue.md)
 
 Changes:
 

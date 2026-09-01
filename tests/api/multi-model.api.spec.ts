@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TestContext, ApiClient, createCanvas } from '../helpers';
+import { TestContext, ApiClient, createCanvas, postUpscaleWithStoredImage } from '../helpers';
 import type { IModelInfo } from '../../shared/types/coreflow.types';
 
 test.describe('API: Multi-Model Architecture', () => {
@@ -367,10 +367,10 @@ test.describe('API: Multi-Model Architecture', () => {
         credits: 100,
       });
 
-      const response = await api.withAuth(user.token).post('/api/upscale', {
-        imageData: createCanvas(128, 128, 'png'),
-        mimeType: 'image/png',
-        config: {
+      const response = await postUpscaleWithStoredImage(
+        api.withAuth(user.token),
+        { dataUrl: createCanvas(128, 128, 'png'), mimeType: 'image/png' },
+        {
           qualityTier: 'nano-banana-2',
           scale: 8,
           additionalOptions: {
@@ -379,8 +379,8 @@ test.describe('API: Multi-Model Architecture', () => {
             enhanceFaces: false,
             preserveText: false,
           },
-        },
-      });
+        }
+      );
 
       response.expectStatus(400);
       await response.expectErrorCode('VALIDATION_ERROR');

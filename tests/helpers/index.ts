@@ -79,6 +79,13 @@ import type { IWebhookClientOptions as IWebhookClientOptionsType } from './webho
 // Test image generation for API tests
 export { createCanvas } from './test-image-generator';
 
+// Direct-upload flow for /api/upscale (metadata-only contract)
+export {
+  uploadUpscaleInput,
+  postUpscaleWithStoredImage,
+  type IUpscaleInputUpload,
+} from './upscale-input';
+
 // Existing exports (maintained for backward compatibility)
 export { TestDataManager, type ITestUser } from './test-data-manager';
 export { IntegrationTestHelpers, testFixtures, customMatchers } from './integration-test-helpers';

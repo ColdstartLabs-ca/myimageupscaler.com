@@ -1,12 +1,14 @@
 import { test, expect } from '@playwright/test';
-import { TestContext, ApiClient } from '../helpers';
-import { createCanvas } from '../helpers/test-image-generator';
+import { TestContext, ApiClient, createCanvas, postUpscaleWithStoredImage } from '../helpers';
 
 /**
  * API Tests: GPU OOM Prevention
  *
  * Validates that oversized images are rejected by the authenticated upscale
  * route before reaching Replicate, preventing GPU OOM errors and wasted credits.
+ *
+ * Images are uploaded through the direct-to-storage flow first: /api/upscale
+ * accepts metadata only and validates dimensions from the stored object.
  *
  * Tests the fixes from PR #38:
  * 1. JPEG decoder read window fix (750B → 32KB) for phone photos with large EXIF
@@ -46,11 +48,11 @@ test.describe('GPU OOM Prevention: Authenticated Route', () => {
 
     const oversizedImage = createCanvas(2100, 2000);
 
-    const response = await api.post('/api/upscale', {
-      imageData: oversizedImage,
-      mimeType: 'image/png',
-      config: UPSCALE_CONFIG,
-    });
+    const response = await postUpscaleWithStoredImage(
+      api,
+      { dataUrl: oversizedImage, mimeType: 'image/png' },
+      UPSCALE_CONFIG
+    );
 
     response.expectStatus(422);
     const body = await response.json();
@@ -66,11 +68,11 @@ test.describe('GPU OOM Prevention: Authenticated Route', () => {
     // 3000x4000 = 12MP — the exact scenario from the bug report
     const phonePhoto = createCanvas(3000, 4000, 'jpeg');
 
-    const response = await api.post('/api/upscale', {
-      imageData: phonePhoto,
-      mimeType: 'image/jpeg',
-      config: UPSCALE_CONFIG,
-    });
+    const response = await postUpscaleWithStoredImage(
+      api,
+      { dataUrl: phonePhoto, mimeType: 'image/jpeg' },
+      UPSCALE_CONFIG
+    );
 
     response.expectStatus(422);
     const body = await response.json();
@@ -85,11 +87,11 @@ test.describe('GPU OOM Prevention: Authenticated Route', () => {
 
     const oversizedImage = createCanvas(2100, 2000);
 
-    const response = await api.post('/api/upscale', {
-      imageData: oversizedImage,
-      mimeType: 'image/png',
-      config: UPSCALE_CONFIG,
-    });
+    const response = await postUpscaleWithStoredImage(
+      api,
+      { dataUrl: oversizedImage, mimeType: 'image/png' },
+      UPSCALE_CONFIG
+    );
 
     response.expectStatus(422);
     const body = await response.json();
@@ -108,11 +110,11 @@ test.describe('GPU OOM Prevention: Authenticated Route', () => {
 
     const justUnderImage = createCanvas(1300, 1300);
 
-    const response = await api.post('/api/upscale', {
-      imageData: justUnderImage,
-      mimeType: 'image/png',
-      config: UPSCALE_CONFIG,
-    });
+    const response = await postUpscaleWithStoredImage(
+      api,
+      { dataUrl: justUnderImage, mimeType: 'image/png' },
+      UPSCALE_CONFIG
+    );
 
     // Should NOT be rejected for dimensions — may fail for other reasons
     // (processing, rate limiting) but NOT IMAGE_TOO_LARGE
@@ -128,20 +130,20 @@ test.describe('GPU OOM Prevention: Authenticated Route', () => {
 
     const oversizedImage = createCanvas(3000, 4000);
 
-    const response = await api.post('/api/upscale', {
-      imageData: oversizedImage,
-      mimeType: 'image/png',
-      config: UPSCALE_CONFIG,
-    });
+    const response = await postUpscaleWithStoredImage(
+      api,
+      { dataUrl: oversizedImage, mimeType: 'image/png' },
+      UPSCALE_CONFIG
+    );
 
     response.expectStatus(422);
 
     // Credits should be unchanged — a follow-up request should not get 402
-    const response2 = await api.post('/api/upscale', {
-      imageData: SMALL_TEST_IMAGE,
-      mimeType: 'image/png',
-      config: UPSCALE_CONFIG,
-    });
+    const response2 = await postUpscaleWithStoredImage(
+      api,
+      { dataUrl: SMALL_TEST_IMAGE, mimeType: 'image/png' },
+      UPSCALE_CONFIG
+    );
 
     expect(response2.status).not.toBe(402);
   });

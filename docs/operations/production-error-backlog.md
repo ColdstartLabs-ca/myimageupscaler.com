@@ -173,6 +173,7 @@ available. Do not treat the pre-fix rates above as a post-deploy measurement.
 - **Assessment:** 26 exceededMemory errors occurred in 3h and persisted in the last 15m, but homepage and API health both return 200.
 - **Next action:** Inspect oversized inputs and worker memory usage, then implement targeted mitigation and alerting.
 - **Status:** Open
+
 ### 2026-08-30T17:36:09+00:00 — `miu-228e9c035d1ccf8f` — relevant
 
 - **Signature:** `worker-myimageupscaler-status-exceededMemory`
@@ -191,3 +192,29 @@ available. Do not treat the pre-fix rates above as a post-deploy measurement.
 - **Next action:** Inspect failing image workloads and worker memory limits, then add regression coverage or tuning.
 - **Status:** Open
 
+### 2026-09-01T06:08:46+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 23 in the sampled window
+- **Evidence:** `{"count_15m": 0, "count_3h": 23, "live_health": {"api_health": {"latency_ms": 325, "status": 200}, "homepage": {"latency_ms": 136, "status": 200}}, "rate_15m": 0.0, "rate_3h": 0.01513, "requests_15m": 164, "requests_3h": 1520}`
+- **Assessment:** 23 exceeded-memory failures among 1,520 requests over 3h (1.5%), with none in the last 15m; endpoints remain healthy.
+- **Next action:** Investigate high-memory request patterns and worker limits, then add targeted monitoring.
+- **Status:** Open
+
+### 2026-09-01T16:17:49+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 23 in the sampled window
+- **Evidence:** `{"count_15m": 6, "count_3h": 23, "live_health": {"api_health": {"latency_ms": 1222, "status": 200}, "homepage": {"latency_ms": 190, "status": 200}}, "rate_15m": 0.02055, "rate_3h": 0.00852, "requests_15m": 292, "requests_3h": 2698}`
+- **Assessment:** 23 exceeded-memory errors in 3h (0.85%; 6 in 15m) while health endpoints remain 200.
+- **Next action:** Investigate affected image sizes and worker memory limits, then tune processing or capacity.
+- **Status:** Open
+
+### 2026-09-01T21:22:42+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 40 in the sampled window
+- **Evidence:** `{"count_15m": 7, "count_3h": 40, "live_health": {"api_health": {"latency_ms": 329, "status": 200}, "homepage": {"latency_ms": 1307, "status": 200}}, "rate_15m": 0.01857, "rate_3h": 0.01713, "requests_15m": 377, "requests_3h": 2335}`
+- **Assessment:** 40 of 2335 requests (1.7%) exceeded memory in 3h while homepage and API health remain 200.
+- **Next action:** Investigate oversized inputs and worker memory limits, then add regression monitoring.
+- **Status:** Open
