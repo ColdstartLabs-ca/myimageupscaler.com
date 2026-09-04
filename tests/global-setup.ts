@@ -5,6 +5,10 @@ import { existsSync } from 'fs';
  * Ensures Playwright browsers are installed before tests run.
  * Fixes the recurring "Executable doesn't exist" error when
  * the browser cache gets cleared (WSL resets, disk cleanup, etc.)
+ *
+ * Installation is best-effort: a download failure must not abort browserless
+ * runs (api, integration). Browser projects still fail loudly later with
+ * Playwright's own "Executable doesn't exist" error.
  */
 export default function globalSetup() {
   // Ask Playwright where it expects the headless shell
@@ -22,8 +26,16 @@ export default function globalSetup() {
   }
 
   console.log('\n⚠️  Playwright browsers not found — installing...');
-  execSync('npx playwright install chromium chromium-headless-shell', {
-    stdio: 'inherit',
-  });
-  console.log('✅ Browsers installed.\n');
+  try {
+    execSync('npx playwright install chromium chromium-headless-shell', {
+      stdio: 'inherit',
+    });
+    console.log('✅ Browsers installed.\n');
+  } catch (error) {
+    console.warn(
+      `\n⚠️  Browser install failed; continuing. Browser projects will fail until it succeeds. (${
+        error instanceof Error ? error.message : String(error)
+      })\n`
+    );
+  }
 }

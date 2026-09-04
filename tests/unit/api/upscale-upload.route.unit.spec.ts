@@ -5,6 +5,7 @@ const mocks = vi.hoisted(() => ({
   from: vi.fn(),
   storageFrom: vi.fn(),
   createSignedUploadUrl: vi.fn(),
+  serverEnv: { ENV: 'test', NODE_ENV: 'test' },
 }));
 
 vi.mock('@server/supabase/supabaseAdmin', () => ({
@@ -13,7 +14,7 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
     storage: { from: mocks.storageFrom },
   },
 }));
-vi.mock('@shared/config/env', () => ({ serverEnv: { ENV: 'test', NODE_ENV: 'test' } }));
+vi.mock('@shared/config/env', () => ({ serverEnv: mocks.serverEnv }));
 
 import { POST } from '@/app/api/upscale/upload/route';
 import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
@@ -51,6 +52,7 @@ function streamedRequest(chunks: Uint8Array[]): NextRequest {
 describe('POST /api/upscale/upload', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.serverEnv.ENV = 'test';
     mocks.from.mockReturnValue({
       select: () => ({
         eq: () => ({
@@ -223,6 +225,29 @@ describe('POST /api/upscale/upload', () => {
 
     expect(response.status).toBe(200);
     expect(mocks.createSignedUploadUrl).toHaveBeenCalled();
+  });
+
+  it('refuses the mock-user fallback outside the test environment', async () => {
+    mocks.serverEnv.ENV = 'production';
+    mocks.from.mockReturnValue({
+      select: () => ({
+        eq: () => ({
+          single: async () => ({ data: null, error: { code: 'PGRST116', message: 'not found' } }),
+        }),
+      }),
+    });
+
+    const response = await POST(
+      requestWithUser('mock_user_12345678-1234-4234-8234-123456789012_sub_active_pro', {
+        filename: 'photo.jpg',
+        mimeType: 'image/jpeg',
+        sizeBytes: IMAGE_VALIDATION.MAX_SIZE_FREE + 1024,
+        jobId: '11111111-1111-4111-8111-111111111111',
+      })
+    );
+
+    expect(response.status).toBe(503);
+    expect(mocks.createSignedUploadUrl).not.toHaveBeenCalled();
   });
 
   it('still requires a database profile for non-mock users when the lookup fails', async () => {

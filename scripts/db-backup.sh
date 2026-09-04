@@ -256,6 +256,7 @@ run_supabase_cli() {
         -u npm_config_version_git_message \
         -u npm_config_version_git_tag \
         -u npm_config_version_tag_prefix \
+        npm_config_loglevel=silent \
         npx supabase "$@"
 }
 
