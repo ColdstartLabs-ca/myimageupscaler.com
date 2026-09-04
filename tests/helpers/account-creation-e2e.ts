@@ -311,23 +311,63 @@ export class AccountCreationHarness {
   }
 
   async upscale(request: APIRequestContext, user: IAccountCreationUser): Promise<APIResponse> {
-    return request.post('/api/upscale', {
+    const jobId = crypto.randomUUID();
+    const headers = buildTestHeaders(user.id, {});
+    const imageBytes = Buffer.from(
+      VALID_UPSCALE_IMAGE.slice(VALID_UPSCALE_IMAGE.indexOf(',') + 1),
+      'base64'
+    );
+    const grant = await request.post('/api/upscale/upload', {
       data: {
-        imageData: VALID_UPSCALE_IMAGE,
+        filename: 'sample.jpg',
         mimeType: 'image/jpeg',
-        config: {
-          scale: 2,
-          qualityTier: 'quick',
-          additionalOptions: {
-            smartAnalysis: false,
-            enhance: false,
-            enhanceFaces: false,
-            preserveText: false,
+        sizeBytes: imageBytes.byteLength,
+        jobId,
+      },
+      headers,
+    });
+
+    if (!grant.ok()) {
+      throw new Error(`Unable to prepare account-creation upscale input: ${await grant.text()}`);
+    }
+
+    const { storagePath, uploadToken } = (await grant.json()) as {
+      storagePath: string;
+      uploadToken: string;
+    };
+    const { error } = await this.admin.storage
+      .from('upscale-inputs')
+      .uploadToSignedUrl(storagePath, uploadToken, new Blob([imageBytes], { type: 'image/jpeg' }), {
+        contentType: 'image/jpeg',
+        upsert: false,
+      });
+
+    if (error) {
+      throw new Error(`Unable to upload account-creation upscale input: ${error.message}`);
+    }
+
+    try {
+      return await request.post('/api/upscale', {
+        data: {
+          storagePath,
+          jobId,
+          mimeType: 'image/jpeg',
+          config: {
+            scale: 2,
+            qualityTier: 'quick',
+            additionalOptions: {
+              smartAnalysis: false,
+              enhance: false,
+              enhanceFaces: false,
+              preserveText: false,
+            },
           },
         },
-      },
-      headers: buildTestHeaders(user.id, {}),
-    });
+        headers,
+      });
+    } finally {
+      await this.admin.storage.from('upscale-inputs').remove([storagePath]);
+    }
   }
 
   async expectCheckoutCreated(
