@@ -218,3 +218,39 @@ available. Do not treat the pre-fix rates above as a post-deploy measurement.
 - **Assessment:** 40 of 2335 requests (1.7%) exceeded memory in 3h while homepage and API health remain 200.
 - **Next action:** Investigate oversized inputs and worker memory limits, then add regression monitoring.
 - **Status:** Open
+
+### 2026-09-02T11:36:06+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 19 in the sampled window
+- **Evidence:** `{"count_15m": 4, "count_3h": 19, "live_health": {"api_health": {"latency_ms": 1301, "status": 200}, "homepage": {"latency_ms": 392, "status": 200}}, "rate_15m": 0.02817, "rate_3h": 0.01015, "requests_15m": 142, "requests_3h": 1871}`
+- **Assessment:** 19 of 1871 requests failed in 3h (1.02%), rising to 4 of 142 in 15m (2.82%), while endpoints remain healthy.
+- **Next action:** Inspect failing image workloads and worker memory usage, then optimize or adjust limits.
+- **Status:** Open
+
+### 2026-09-02T16:41:55+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 77 in the sampled window
+- **Evidence:** `{"count_15m": 22, "count_3h": 77, "live_health": {"api_health": {"latency_ms": 397, "status": 200}, "homepage": {"latency_ms": 117, "status": 200}}, "rate_15m": 0.07971, "rate_3h": 0.02631, "requests_15m": 276, "requests_3h": 2927}`
+- **Assessment:** 77 exceeded-memory errors in 3h (2.6%), rising to 8.0% in the last 15m, while endpoints remain healthy.
+- **Next action:** Inspect worker memory usage and job-size limits, then monitor whether the recent error-rate increase persists.
+- **Status:** Open
+
+### 2026-09-03T02:48:39+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 28 in the sampled window
+- **Evidence:** `{"count_15m": 15, "count_3h": 28, "live_health": {"api_health": {"latency_ms": 264, "status": 200}, "homepage": {"latency_ms": 1344, "status": 200}}, "rate_15m": 0.04451, "rate_3h": 0.01416, "requests_15m": 337, "requests_3h": 1977}`
+- **Assessment:** 28 of 1,977 requests failed from exceeded memory over 3h, rising to 15 of 337 in 15m, while health endpoints remain available.
+- **Next action:** Inspect failed inputs and worker memory usage, then tune limits or processing safeguards.
+- **Status:** Open
+
+### 2026-09-03T12:56:49+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 43 in the sampled window
+- **Evidence:** `{"count_15m": 0, "count_3h": 43, "live_health": {"api_health": {"latency_ms": 331, "status": 200}, "homepage": {"latency_ms": 175, "status": 200}}, "rate_15m": 0.0, "rate_3h": 0.01985, "requests_15m": 136, "requests_3h": 2166}`
+- **Assessment:** 43 memory-limit failures in 2166 requests over 3h, but zero in the last 15m and healthy endpoints.
+- **Next action:** Inspect workload memory usage and optimize or raise limits after reproducing the failures.
+- **Status:** Open
