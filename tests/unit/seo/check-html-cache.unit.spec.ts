@@ -5,6 +5,7 @@ import packageJson from '../../../package.json';
 import {
   evaluateHtmlCacheObservation,
   evaluateWarmHtmlCacheSamples,
+  getWarmHtmlCacheLatencyWarning,
   HTML_CACHE_ROUTES,
 } from '@/scripts/seo/check-html-cache';
 
@@ -95,8 +96,8 @@ describe('production HTML cache gate', () => {
     ).toContain('/formats/upscale-gif-images warm cf-cache-status was MISS, not HIT.');
   });
 
-  it('should use median warm TTFB so one network outlier does not block deployment', () => {
-    const samples = [55, 910, 70].map(ttfbMs => ({
+  it('should accept an under-budget cache hit despite repeated network outliers', () => {
+    const samples = [1178, 1142, 277, 1050, 1120].map(ttfbMs => ({
       route: '/blog/example',
       status: 200,
       cacheStatus: null,
@@ -109,8 +110,8 @@ describe('production HTML cache gate', () => {
     expect(evaluateWarmHtmlCacheSamples(samples)).toEqual([]);
   });
 
-  it('should fail when the median warm TTFB exceeds the budget', () => {
-    const samples = [500, 900, 600].map(ttfbMs => ({
+  it('should report sustained live-network latency without blocking a valid cache hit', () => {
+    const samples = [500, 900, 600, 800, 700].map(ttfbMs => ({
       route: '/blog/example',
       status: 200,
       cacheStatus: null,
@@ -120,8 +121,9 @@ describe('production HTML cache gate', () => {
       ttfbMs,
     }));
 
-    expect(evaluateWarmHtmlCacheSamples(samples)).toContain(
-      '/blog/example median warm TTFB was 600ms (budget: <400ms).'
+    expect(evaluateWarmHtmlCacheSamples(samples)).toEqual([]);
+    expect(getWarmHtmlCacheLatencyWarning(samples)).toBe(
+      '/blog/example best of 5 warm TTFB samples was 500ms (budget: <400ms).'
     );
   });
 

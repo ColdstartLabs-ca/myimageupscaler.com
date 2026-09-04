@@ -10,7 +10,7 @@ export const HTML_CACHE_ROUTES = [
 ] as const;
 
 export const MAX_WARM_TTFB_MS = 400;
-export const WARM_TTFB_SAMPLE_COUNT = 3;
+export const WARM_TTFB_SAMPLE_COUNT = 5;
 
 export interface IHtmlCacheObservation {
   route: string;
@@ -60,28 +60,25 @@ function evaluateHtmlCacheCorrectness(observation: IHtmlCacheObservation): strin
 }
 
 export function evaluateHtmlCacheObservation(observation: IHtmlCacheObservation): string[] {
-  const errors = evaluateHtmlCacheCorrectness(observation);
-  if (isDashboardRoute(observation.route)) return errors;
-  if (observation.ttfbMs >= MAX_WARM_TTFB_MS) {
-    errors.push(
-      `${observation.route} warm TTFB was ${Math.round(observation.ttfbMs)}ms (budget: <${MAX_WARM_TTFB_MS}ms).`
-    );
-  }
-  return errors;
+  return evaluateHtmlCacheCorrectness(observation);
 }
 
 export function evaluateWarmHtmlCacheSamples(observations: IHtmlCacheObservation[]): string[] {
   if (observations.length === 0) return ['HTML cache gate collected no warm samples.'];
 
-  const errors = new Set(observations.flatMap(evaluateHtmlCacheCorrectness));
-  const sortedTtfb = observations.map(observation => observation.ttfbMs).sort((a, b) => a - b);
-  const medianTtfb = sortedTtfb[Math.floor(sortedTtfb.length / 2)];
-  if (medianTtfb >= MAX_WARM_TTFB_MS) {
-    errors.add(
-      `${observations[0].route} median warm TTFB was ${Math.round(medianTtfb)}ms (budget: <${MAX_WARM_TTFB_MS}ms).`
-    );
+  return [...new Set(observations.flatMap(evaluateHtmlCacheCorrectness))];
+}
+
+export function getWarmHtmlCacheLatencyWarning(
+  observations: IHtmlCacheObservation[]
+): string | null {
+  if (observations.length === 0) return null;
+
+  const bestTtfb = Math.min(...observations.map(observation => observation.ttfbMs));
+  if (bestTtfb >= MAX_WARM_TTFB_MS) {
+    return `${observations[0].route} best of ${observations.length} warm TTFB samples was ${Math.round(bestTtfb)}ms (budget: <${MAX_WARM_TTFB_MS}ms).`;
   }
-  return [...errors];
+  return null;
 }
 
 async function request(baseUrl: string, route: string): Promise<IHtmlCacheObservation> {
@@ -113,16 +110,16 @@ export async function runHtmlCacheGate(baseUrl = 'https://myimageupscaler.com'):
       warmSamples.push(await request(baseUrl, route));
     }
     errors.push(...evaluateWarmHtmlCacheSamples(warmSamples));
-    const medianTtfb = [...warmSamples].sort((a, b) => a.ttfbMs - b.ttfbMs)[
-      Math.floor(warmSamples.length / 2)
-    ];
+    const latencyWarning = getWarmHtmlCacheLatencyWarning(warmSamples);
+    if (latencyWarning) console.warn(`WARNING: ${latencyWarning}`);
+    const bestTtfb = Math.min(...warmSamples.map(observation => observation.ttfbMs));
     const warm = warmSamples.at(-1)!;
     console.log(
       `${route}: status=${warm.status ?? 'unknown'} ` +
         `cf-cache-status=${warm.cacheStatus || 'absent'} ` +
         `x-nextjs-cache=${warm.nextCacheStatus || 'absent'} ` +
         `x-opennext-cache=${warm.openNextCacheStatus || 'absent'} ` +
-        `median-ttfb=${Math.round(medianTtfb.ttfbMs)}ms`
+        `best-ttfb=${Math.round(bestTtfb)}ms`
     );
   }
   return errors;

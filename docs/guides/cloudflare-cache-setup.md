@@ -36,11 +36,15 @@ The rule was activated on 2026-08-25 with this expression:
 After deployment, make two cookie-free requests to `/`,
 `/blog/fixing-pixelated-photos`, `/formats/upscale-gif-images`, and
 `/tools/ai-image-upscaler`. The second response must have no `Set-Cookie`, shared
-`Cache-Control` (`s-maxage`), and time to first byte below 400 ms. Cloudflare may omit
+`Cache-Control` (`s-maxage`), and valid cache-hit evidence. Cloudflare may omit
 `cf-cache-status` when the Worker returns HTML directly; in that case the response must report
 `x-opennext-cache: HIT` or `x-nextjs-cache: HIT`. If Cloudflare does emit `cf-cache-status`, it
 must be `HIT`. An authenticated `/dashboard` response must remain bypassed and must never be
 shared between users.
+
+The smoke gate samples warm TTFB five times and warns when every sample exceeds 400 ms. It does
+not block deployment on TTFB because Cloudflare/network latency is externally variable; cache
+correctness and response safety remain blocking checks.
 
 The post-deploy gate accepts either Cloudflare's CDN cache hit or OpenNext's incremental-cache
 hit. This reflects the Worker execution order: cache interception can serve prerendered HTML from

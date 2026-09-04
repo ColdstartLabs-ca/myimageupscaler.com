@@ -9,6 +9,26 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-09-03
+
+### HTML Cache Deploy Gate Made Deterministic
+
+Changes:
+
+- Kept HTTP status, `Set-Cookie`, cache-hit evidence, and shared `s-maxage` as blocking checks.
+- Changed warm TTFB to a best-of-five diagnostic warning because identical cached responses were
+  alternating between roughly 130 ms and 1.8 s at the network/Cloudflare boundary.
+
+Validation:
+
+- The focused cache-gate unit suite passes, including repeated-outlier and sustained-latency cases.
+- The production cache gate exits successfully with HTTP 200 and `x-nextjs-cache: HIT` on all four
+  probe URLs; observed best-of-five TTFB was 117–333 ms.
+
+Follow-up:
+
+- No GSC or IndexNow action is needed because URLs, content, metadata, and indexation did not change.
+
 ## 2026-08-31
 
 ### Topaz Free-Trial Snippet Recovery
