@@ -37,6 +37,12 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 > it is recorded below as an intentional noindex cleanup, not as an accepted
 > indexing request.
 
+### Three Kings refresh — request after production HTML is current
+
+- [ ] `https://myimageupscaler.com/blog/poster-size-dimensions-pixels` — 2026-09-03 Three Kings refresh; request indexing after the refreshed title, H1, description, and metadata are visible.
+- [ ] `https://myimageupscaler.com/alternatives/vs-adobe-express` — 2026-09-03 Three Kings refresh; request indexing after the refreshed title, meta description, and intro are deployed.
+- [ ] `https://myimageupscaler.com/blog/photoshop-upscale-image` — 2026-09-03 Three Kings refresh; request indexing after the refreshed opening description is visible.
+
 ### Dashboard noindex cleanup — request after deployment
 
 - [x] `https://myimageupscaler.com/dashboard` — **not an indexing candidate.** Live production returns `X-Robots-Tag: noindex, follow`; GSC live testing detected the indexing issue and rejected the request on 2026-08-25 as expected. The noindex signal is now verified; do not retry the indexing request.
@@ -105,9 +111,7 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 
 - [x] `https://myimageupscaler.com/formats/upscale-gif-images` — manually requested in GSC URL Inspection on 2026-08-08 after the GIF consolidation deploy was verified live (`/format-scale/gif-upscale-16x` → `301` to this owner, owner `200` + self-canonical, sitemap `lastmod` `2026-08-03`). Recovery checkpoint: 2026-08-22, see [SEO changes backlog](./seo-changes-backlog.md) open follow-ups.
 
-- [x] `https://myimageupscaler.com/blog/photoshop-upscale-image` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-08-01 after the 2026-05-26 change.
 - [x] `https://myimageupscaler.com/blog/photoshop-upscaler-vs-ai-tools` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-07-15 after the 2026-06-05 change.
-- [x] `https://myimageupscaler.com/blog/poster-size-dimensions-pixels` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-08-01 after the 2026-07-22 refresh.
 - [x] `https://myimageupscaler.com/blog/sharpen-a-video` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-07-23 after the 2026-06-21 change.
 - [x] `https://myimageupscaler.com/blog/text-image-enhancer` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-07-26 after the 2026-07-22 refresh.
 - [x] `https://myimageupscaler.com/blog/upscale-image-for-print-300-dpi-guide` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-08-02 after the 2026-05-26 change.
@@ -118,7 +122,6 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 - [x] `https://myimageupscaler.com/ja` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-07-31 after the 2026-06-29 change.
 - [x] `https://myimageupscaler.com/pt` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-08-01 after the 2026-06-29 change.
 
-- [x] `https://myimageupscaler.com/alternatives/vs-adobe-express`
 - [x] `https://myimageupscaler.com/blog`
 - [x] `https://myimageupscaler.com/blog/ai-image-upscaling-vs-sharpening-explained`
 - [x] `https://myimageupscaler.com/blog/ai-upscaler-muryou-osusume`

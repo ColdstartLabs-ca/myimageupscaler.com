@@ -33,6 +33,7 @@ If a page was recently refreshed, revalidated, requested for indexing, or is wai
 Use real Google Search Console exports/API data when available. Related skills may supply context:
 
 - `google-search-console-analysis` or `gsc-analysis` for fetching/filtering GSC data.
+- `gsc-causation-correlation` for event-aligned pre/post windows and the recorded MIU evidence on which edit classes actually move clicks.
 - `seo-content-3-kings-technique` for title/H1/intro refreshes.
 - `schema-markup` for JSON-LD implementation details.
 - `ai-search-optimization` when the rewrite should also improve answer-engine citation likelihood.
@@ -60,6 +61,28 @@ Use these CTR flags unless the user provides site-specific baselines:
 |            11-15 | below 1% or zero clicks |
 
 When many queries map to one URL, cluster by intent before writing. Do not optimize a page for unrelated intents; recommend a new page, consolidation, or retargeting instead.
+
+## Edit Eligibility Gates (pre-flight)
+
+Run every candidate through these gates before writing a brief. All four are backed by MIU causation evidence recorded 2026-09-03 (final GSC data 2026-05-01→2026-08-31; see `gsc-causation-correlation` SKILL.md). Each failure case below consumed real edit cycles before it was understood — gating on them is the point of this skill:
+
+- **Demand change, not a CTR problem**: impressions fell or rose while weighted position stayed roughly flat. Demand or SERP composition changed; no snippet edit applies. Example: `best free ai image upscaler 2026` impressions collapsed 986→26/week at unchanged position ~5-7 — the 07-20 title test was not the cause.
+- **Phantom/SERP-feature cluster**: CTR below ~0.1% at positions 8-12 with very large impressions. Example: `how to fix pixelated photos` produced 0-6 clicks/week through 49K impressions/week across four separate edits (2026-06-07→08-10); the traffic is SERP-feature/phantom and editing cannot earn it. Inspect the SERP before recommending anything.
+- **Junk-position bloat**: impressions growing while weighted position sits around 50-60. Example: `/blog/text-image-enhancer` after the 2026-07-22 pass grew impressions 6→60/day at position 50-60 for 6 clicks in 4 weeks. Impression growth at those positions is index bloat, not an optimization target.
+- **Open verdict window**: the URL was edited within the last 14 days and the prior test's window has not closed. Output a validation-only recommendation and the date the window closes.
+
+Gating a row out is a valid outcome: name the gate that fired and the check that would reopen the row.
+
+## Snippet Test Ladder
+
+When the gates pass, run edits as a ladder — one variable per rung, each with a closed 14-day verdict window before the next rung. This is the pattern that compounded `/blog/best-free-ai-image-upscaler-2026-tested-compared` from 5 to 493 clicks/week across five stacked 2026-05-24→06-29 edits:
+
+1. **Rung 1 — SERP title only.** One field. Annotate the change date, request indexing, close a 14-day window.
+2. **Rung 2 — meta description only** (or the other SERP-only field the diagnosis points to). Another 14-day window.
+3. **Rung 3 — proof-led body pass** (direct answer + evidence module above the fold) only after two snippet rungs have closed and were judged. This is `seo-content-3-kings-technique` scope, not a snippet test.
+4. **Stop rule**: position holds in the target band while clicks stay near zero after two closed rungs → the SERP itself absorbs the clicks. Stop editing; reclassify the row under the eligibility gates.
+
+Two edits inside one window cannot be attributed separately; if they must land close together, measure and report the program effect, not per-edit causation.
 
 ## Rewrite Workflow
 

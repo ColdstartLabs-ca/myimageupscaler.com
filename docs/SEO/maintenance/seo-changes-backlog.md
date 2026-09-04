@@ -11,6 +11,59 @@ Maintenance rules:
 
 ## 2026-09-03
 
+### Three Kings Striking-Distance Refresh
+
+Source: [Three Kings refresh opportunities](../reports/2026-09-03-three-kings-refresh-opportunities.md)
+
+Changes:
+
+- Updated the production blog records for `/blog/poster-size-dimensions-pixels` and `/blog/photoshop-upscale-image` through the authenticated blog API. The poster page now leads its title/H1, hero description, and metadata with `poster size in pixels`; the Photoshop page now answers the target how-to query in the hero description's first sentence.
+- Updated `/alternatives/vs-adobe-express` in `app/seo/data/alternatives.json` with the approved 55-character title, comparison meta description, direct intro, and `2026-09-03` last-modified date.
+- Reopened one deduplicated request-indexing row for each changed URL and added `tests/unit/seo/three-kings-refresh-2026-09-03.unit.spec.ts`.
+
+Validation:
+
+- Created and test-extracted fresh production backups: `backups/backup_2026-09-03_22-53-10.schema.sql.gz` and `backups/backup_2026-09-03_22-53-10.data.sql.gz`; `yarn db:backups` and explicit `gzip -t` checks passed.
+- Both production blog PATCH requests returned 200 with exact field readback; the focused Three Kings contract passes 3/3.
+- Pre-deploy public HTML still shows the prior values from `x-nextjs-cache: HIT`; deploy and final live verification remain required.
+
+Follow-up:
+
+- After deploy/live verification, request indexing manually for all three URLs in GSC URL Inspection, then recheck query/page position and CTR after 14 complete GSC days (target: 2026-09-21 or later).
+
+### GSC Causation Evidence Packed Into Technique Skills
+
+Changes (documentation only — no production URL, metadata, sitemap, canonical, robots, redirect, or analytics configuration changed):
+
+- Added the reusable `.claude/skills/gsc-causation-correlation/` skill: day-by-day GSC series per tracked page/query, event-aligned pre/post windows against backlog change dates, weekly buckets, and a non-brand site trend. `scripts/default-events.json` captures the 2026-05→08 change map; smoke-tested against the saved 2026-05-01→2026-08-31 final-data export.
+- Amended `serp-ctr-snippet-rewrite-technique` with edit eligibility gates (demand change, phantom/SERP-feature cluster, junk-position bloat, open verdict window) and the one-variable 14-day snippet test ladder, each citing the recorded MIU evidence.
+- Amended `cannibalization-consolidation-technique` with the Redirect Consolidation Stop-Loss: owner-strength pre-check, 28-day stop-loss gate, and noindex fallback, citing the GIF consolidation failure (owner position 7→33, cluster 847→~100 clicks).
+
+Validation:
+
+- Read-only GSC API analysis; the correlator ran against final data only. No production write, no GSC/IndexNow action, no site surface changed.
+
+Follow-up:
+
+- Judge the 2026-08-13/08-17/08-31 edits at the 2026-09-22 gates using the correlator before any further edit on those pages.
+
+### Three Kings Manager Skill (autonomous ladder runner)
+
+Changes (no production URL, metadata, sitemap, canonical, robots, or redirect changed):
+
+- Added `.claude/skills/three-kings-manager/` with `scripts/tkm.cjs` and a per-URL ladder ledger at `docs/SEO/maintenance/three-kings-ledger.json` (seeded from this backlog's real edit history, 2026-05→08).
+- The manager runs the full loop autonomously: 3-day read-only gate check (`check`), EDIT_NOW rungs executed end-to-end (draft via `seo-content-3-kings-technique`, apply via `.agents/skills/blog-edit` API mechanics after the `yarn db:backup` gate, then `record-edit` with `previousValue`), automatic WIN/FLAT/LOSS judgment of each closed 14-day window, REGRESSION rollback execution with a demand-side pre-check, `record-revert` cooling-off, and STOP rules.
+- Edit-eligibility gates (demand change, phantom cluster, junk-position bloat, open window) and outcome thresholds (WIN ≥1.2x clicks/d, LOSS ≤0.8x or position +2 without gain) encode the causation findings above.
+
+Validation:
+
+- `yarn vitest run tests/unit/seo/three-kings-manager.unit.spec.ts`: 18/18 pass (window math, gate order — junk-position precedes demand so a stable position at 50+ is not misread — outcomes, ladder/revert commands).
+- Smoke `check` against the saved 2026-05-01→08-31 final-data export judged all seeded edits retroactively: the 2026 early-June best-free-upscaler rungs judged WIN, the 08-10/08-17 proof-led passes judged LOSS, `/blog/text-image-enhancer` gated as junk-position bloat, `/blog/how-to-upscale-youtube-thumbnails` gated as demand change — all matching the manual causation study. No production write was made by this smoke run.
+
+Follow-up:
+
+- First live autonomous run executes the 5 EDIT_NOW rung-2 (meta description) candidates; the 3 REGRESSION rows require the demand-side pre-check before any revert. Schedule the loop on a 3-day cadence.
+
 ### HTML Cache Deploy Gate Made Deterministic
 
 Changes:

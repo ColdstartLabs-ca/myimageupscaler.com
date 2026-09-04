@@ -1,0 +1,350 @@
+{
+  "version": 1,
+  "windowDays": 14,
+  "seededFrom": "docs/SEO/maintenance/seo-changes-backlog.md 2026-09-03",
+  "entries": [
+    {
+      "url": "/blog/best-free-ai-image-upscaler-2026-tested-compared",
+      "label": "/blog/best-free-ai-image-upscaler-2026-tested-compared",
+      "rung": 3,
+      "lastEdit": "2026-08-17",
+      "history": [
+        {
+          "date": "2026-05-24",
+          "rung": 2,
+          "field": "seo_description",
+          "note": "metadata pass (seeded from backlog)",
+          "outcome": {
+            "verdict": "WIN",
+            "preCpd": 3.21,
+            "postCpd": 14.21,
+            "posDelta": -2.7,
+            "measuredThrough": "2026-06-06"
+          }
+        },
+        {
+          "date": "2026-05-31",
+          "rung": 1,
+          "field": "seo_title",
+          "note": "title test 1 (seeded)",
+          "outcome": {
+            "verdict": "WIN",
+            "preCpd": 9.29,
+            "postCpd": 16,
+            "posDelta": -1,
+            "measuredThrough": "2026-06-13"
+          }
+        },
+        {
+          "date": "2026-06-07",
+          "rung": 1,
+          "field": "seo_title",
+          "note": "title test 2 (seeded)",
+          "outcome": {
+            "verdict": "WIN",
+            "preCpd": 14.21,
+            "postCpd": 23.5,
+            "posDelta": -0.2,
+            "measuredThrough": "2026-06-20"
+          }
+        },
+        {
+          "date": "2026-06-29",
+          "rung": 2,
+          "field": "seo_description",
+          "note": "description test (seeded)",
+          "outcome": {
+            "verdict": "WIN",
+            "preCpd": 34.64,
+            "postCpd": 56.57,
+            "posDelta": -0.3,
+            "measuredThrough": "2026-07-12"
+          }
+        },
+        {
+          "date": "2026-07-20",
+          "rung": 1,
+          "field": "seo_title",
+          "note": "title test 3 'Only 3 Worked' (seeded)",
+          "outcome": {
+            "verdict": "FLAT",
+            "preCpd": 65.21,
+            "postCpd": 56.29,
+            "posDelta": -0.2,
+            "measuredThrough": "2026-08-02"
+          }
+        },
+        {
+          "date": "2026-08-17",
+          "rung": 3,
+          "field": "proof-led body pass",
+          "note": "proof module + 5-credit correction (seeded)",
+          "outcome": {
+            "verdict": "LOSS",
+            "preCpd": 42.71,
+            "postCpd": 28.64,
+            "posDelta": 0.5,
+            "measuredThrough": "2026-08-30"
+          }
+        }
+      ],
+      "stopRule": null
+    },
+    {
+      "url": "/blog/fixing-pixelated-photos",
+      "label": "/blog/fixing-pixelated-photos",
+      "rung": 3,
+      "lastEdit": "2026-08-10",
+      "history": [
+        {
+          "date": "2026-06-07",
+          "rung": 1,
+          "field": "seo_title",
+          "note": "3 Kings refresh (seeded)",
+          "outcome": {
+            "verdict": "WIN",
+            "preCpd": 0.07,
+            "postCpd": 0.14,
+            "posDelta": -0.2,
+            "measuredThrough": "2026-06-20"
+          }
+        },
+        {
+          "date": "2026-07-03",
+          "rung": 2,
+          "field": "seo_description",
+          "note": "CTR pass (seeded)",
+          "outcome": {
+            "verdict": "WIN",
+            "preCpd": 0,
+            "postCpd": 0.5,
+            "posDelta": -0.7,
+            "measuredThrough": "2026-07-16"
+          }
+        },
+        {
+          "date": "2026-07-27",
+          "rung": 1,
+          "field": "seo_title",
+          "note": "title escalation (seeded)",
+          "outcome": {
+            "verdict": "WIN",
+            "preCpd": 0.29,
+            "postCpd": 0.64,
+            "posDelta": 1.5,
+            "measuredThrough": "2026-08-09"
+          }
+        },
+        {
+          "date": "2026-08-10",
+          "rung": 3,
+          "field": "proof-led body pass",
+          "note": "proof-led body pass (seeded)",
+          "outcome": {
+            "verdict": "LOSS",
+            "preCpd": 0.64,
+            "postCpd": 0.36,
+            "posDelta": 0.8,
+            "measuredThrough": "2026-08-23"
+          }
+        }
+      ],
+      "stopRule": {
+        "date": "2026-08-25",
+        "reason": "phantom/SERP-feature cluster: 4 edits, CTR ~0.02% at pos 8-11 through 33-49K impressions/wk (quarantine gate 2026-08-25); evaluate consolidation with /blog/fix-pixelated-image only"
+      }
+    },
+    {
+      "url": "/blog/topaz-labs-free-trial",
+      "label": "/blog/topaz-labs-free-trial",
+      "rung": 1,
+      "lastEdit": "2026-08-31",
+      "history": [
+        {
+          "date": "2026-08-31",
+          "rung": 1,
+          "field": "seo_title",
+          "note": "alternative-led snippet; title/H1/slug unchanged",
+          "outcome": null
+        }
+      ],
+      "stopRule": null
+    },
+    {
+      "url": "/blog/best-ai-upscaler",
+      "label": "/blog/best-ai-upscaler",
+      "rung": 1,
+      "lastEdit": "2026-07-03",
+      "history": [
+        {
+          "date": "2026-07-03",
+          "rung": 1,
+          "field": "seo_title",
+          "note": "CTR pass: title, descriptions, opening summary, quick-answer table (seeded)",
+          "outcome": {
+            "verdict": "WIN",
+            "preCpd": 0.14,
+            "postCpd": 0.93,
+            "posDelta": -3.7,
+            "measuredThrough": "2026-07-16"
+          }
+        }
+      ],
+      "stopRule": null
+    },
+    {
+      "url": "/blog/topaz-video-upscaler",
+      "label": "/blog/topaz-video-upscaler",
+      "rung": 1,
+      "lastEdit": "2026-07-03",
+      "history": [
+        {
+          "date": "2026-07-03",
+          "rung": 1,
+          "field": "seo_title",
+          "note": "CTR pass: title/SEO title/descriptions/H2-intro (seeded)",
+          "outcome": {
+            "verdict": "WIN",
+            "preCpd": 0.14,
+            "postCpd": 0.43,
+            "posDelta": -1.2,
+            "measuredThrough": "2026-07-16"
+          }
+        }
+      ],
+      "stopRule": null
+    },
+    {
+      "url": "/blog/best-image-upscaler",
+      "label": "/blog/best-image-upscaler",
+      "rung": 1,
+      "lastEdit": "2026-07-14",
+      "history": [
+        {
+          "date": "2026-07-14",
+          "rung": 1,
+          "field": "seo_title",
+          "note": "trending-down CTR recovery refresh (seeded)",
+          "outcome": {
+            "verdict": "WIN",
+            "preCpd": 0.57,
+            "postCpd": 0.71,
+            "posDelta": -0.3,
+            "measuredThrough": "2026-07-27"
+          }
+        }
+      ],
+      "stopRule": null
+    },
+    {
+      "url": "/blog/how-to-upscale-youtube-thumbnails",
+      "label": "/blog/how-to-upscale-youtube-thumbnails",
+      "rung": 1,
+      "lastEdit": "2026-07-14",
+      "history": [
+        {
+          "date": "2026-07-14",
+          "rung": 1,
+          "field": "seo_title",
+          "note": "trending-down CTR recovery refresh (seeded)",
+          "outcome": {
+            "verdict": "FLAT",
+            "preCpd": 2.21,
+            "postCpd": 2.14,
+            "posDelta": 0.2,
+            "measuredThrough": "2026-07-27"
+          }
+        }
+      ],
+      "stopRule": null
+    },
+    {
+      "url": "/blog/poster-size-dimensions-pixels",
+      "label": "/blog/poster-size-dimensions-pixels",
+      "rung": 1,
+      "lastEdit": "2026-07-22",
+      "history": [
+        {
+          "date": "2026-07-22",
+          "rung": 1,
+          "field": "seo_title",
+          "note": "snippet-only pass (seeded)",
+          "outcome": {
+            "verdict": "FLAT",
+            "preCpd": 2.07,
+            "postCpd": 2.07,
+            "posDelta": 0.3,
+            "measuredThrough": "2026-08-04"
+          }
+        }
+      ],
+      "stopRule": null
+    },
+    {
+      "url": "/blog/text-image-enhancer",
+      "label": "/blog/text-image-enhancer",
+      "rung": 1,
+      "lastEdit": "2026-07-22",
+      "history": [
+        {
+          "date": "2026-07-22",
+          "rung": 1,
+          "field": "seo_title",
+          "note": "H1/title/direct-answer/table pass (seeded); grew impressions at pos 50-60 — expect bloat gate",
+          "outcome": {
+            "verdict": "WIN",
+            "preCpd": 0.07,
+            "postCpd": 0.29,
+            "posDelta": -5.3,
+            "measuredThrough": "2026-08-04"
+          }
+        }
+      ],
+      "stopRule": null
+    },
+    {
+      "url": "/blog/photo-restoration-program",
+      "label": "/blog/photo-restoration-program",
+      "rung": 3,
+      "lastEdit": "2026-07-22",
+      "history": [
+        {
+          "date": "2026-07-22",
+          "rung": 3,
+          "field": "proof-led body pass",
+          "note": "published-evidence comparison expansion (seeded)",
+          "outcome": {
+            "verdict": "LOSS",
+            "preCpd": 0,
+            "postCpd": 0,
+            "posDelta": 3.1,
+            "measuredThrough": "2026-08-04"
+          }
+        }
+      ],
+      "stopRule": null
+    },
+    {
+      "url": "/tools/ai-image-upscaler",
+      "label": "/tools/ai-image-upscaler",
+      "rung": 1,
+      "lastEdit": "2026-06-05",
+      "history": [
+        {
+          "date": "2026-06-05",
+          "rung": 1,
+          "field": "seo_title",
+          "note": "tool Three Kings: H1 + first paragraph front-loaded free/8x/online/no-signup (seeded)",
+          "outcome": {
+            "verdict": "WIN",
+            "preCpd": 3.86,
+            "postCpd": 18.86,
+            "posDelta": -0.6,
+            "measuredThrough": "2026-06-18"
+          }
+        }
+      ],
+      "stopRule": null
+    }
+  ]
+}

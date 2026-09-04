@@ -60,7 +60,7 @@ If data is missing, proceed with a labeled confidence level and state what must 
 - Pick `Primary` by intent match first, then conversions, backlinks/internal links, freshness, content depth, engagement, and existing ranking strength.
 - Use `Support` when the page answers a narrower or adjacent intent that deserves its own result.
 - Use `Merge` when two pages answer the same intent and both contain useful unique sections.
-- Use `Redirect` when the weaker URL has no independent value and a clean equivalent exists.
+- Use `Redirect` when the weaker URL has no independent value and a clean equivalent exists — after the owner-strength pre-check below; redirects transfer visits, not guaranteed rankings.
 - Use `Canonical` when duplicate/near-duplicate URLs must remain live, such as variants, sort/filter URLs, syndicated copies, or tracking-safe alternates.
 - Use `Noindex` for pages that are useful for navigation or users but dilute index quality, especially pSEO pages failing `programmatic-seo` uniqueness, data, or engagement gates.
 - Use `Internal-link` actions whenever Google is ranking the wrong URL because anchors, hubs, breadcrumbs, nav, or related links point ambiguously.
@@ -72,6 +72,18 @@ If data is missing, proceed with a labeled confidence level and state what must 
 - `free-ai-upscaler-no-watermark` and `free-upscaler-no-sign-up` should stay indexed only if they serve distinct trust/friction objections; otherwise support, merge, or redirect.
 - "AI upscaling vs sharpening" should have one primary explainer. Broader enhancement-quality pages should retarget to quality/workflow intent and link to the explainer.
 - Do not count homepage or dashboard impressions as intentional winners for non-branded blog/listicle intents unless their content actually satisfies that query.
+
+## Redirect Consolidation Stop-Loss
+
+Redirecting cannibalizing variants onto a stronger owner assumes ranking signals travel with the 301. On this property they demonstrably may not for pSEO variant families:
+
+- Evidence (final GSC data 2026-05-01→08-31): the 2026-08-08 consolidation of `/format-scale/gif-upscale-{2x,4x,8x,16x}` (and locales) onto `/formats/upscale-gif-images` collapsed the members 67→2 clicks/week, but the owner degraded from position ~7 to 18 then 33 and never recovered; the cluster fell 847→~100 clicks over the measured window. The 301 transferred the traffic, not the rankings.
+
+Required before any variant-family redirect consolidation:
+
+1. **Owner-strength pre-check**: the owner must already hold the better position/CTR on the head queries at consolidation time. If members currently outrank the owner, fix the owner first (`seo-content-3-kings-technique`, intent match, page quality) and only then redirect.
+2. **28-day stop-loss gate**: at 28 complete post-consolidation days, owner position and cluster clicks must be at or better than the pre-consolidation baseline. A red gate is a revert trigger, not a monitoring note.
+3. **Fallback path**: if the owner degrades, the fallback is `noindex, follow` on the member URLs (or restoring them), not another redirect. Record the baseline and the gate date in `seo-changes-backlog.md` before the redirect ships.
 
 ## Output Format
 
@@ -121,3 +133,4 @@ If data is missing, proceed with a labeled confidence level and state what must 
 - Do not merge genuinely different intents into one bloated page.
 - Preserve useful unique content before deleting or redirecting.
 - For pSEO sets, make decisions at both template level and individual URL level; avoid one-off fixes when the template is the cause.
+- For pSEO variant-family consolidations, apply the Redirect Consolidation Stop-Loss pre-check and gate; a 301 that degrades the owner is a revert trigger, not a sunk cost.

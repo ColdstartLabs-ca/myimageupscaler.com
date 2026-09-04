@@ -14,9 +14,9 @@ const RECOVERY_PAGES = {
   },
   posterDimensions: {
     slug: 'poster-size-dimensions-pixels',
-    seoTitle: '24×36 Poster Size in Pixels: 150–300 DPI Chart',
+    seoTitle: 'Poster Size in Pixels: 150–300 DPI Chart (24×36 & More)',
     seoDescription:
-      'See exact 24×36 poster dimensions at 150, 200, and 300 DPI, plus minimum resolution, file setup, and when to upscale before printing.',
+      'Poster size in pixels = inches × DPI. See charts for 24×36, 18×24, A-series and more at 150, 200, and 300 DPI, plus minimum print resolution tips.',
     dpiTableNearTop: true,
     welcomeCreditCopy: 'five welcome credits',
   },
@@ -73,9 +73,9 @@ describe('GSC opportunity recovery contract', () => {
     });
 
     expect(result.success).toBe(true);
-    expect(page.seoTitle).toBe('24×36 Poster Size in Pixels: 150–300 DPI Chart');
+    expect(page.seoTitle).toBe('Poster Size in Pixels: 150–300 DPI Chart (24×36 & More)');
     expect(page.seoDescription).toBe(
-      'See exact 24×36 poster dimensions at 150, 200, and 300 DPI, plus minimum resolution, file setup, and when to upscale before printing.'
+      'Poster size in pixels = inches × DPI. See charts for 24×36, 18×24, A-series and more at 150, 200, and 300 DPI, plus minimum print resolution tips.'
     );
     expect(page.dpiTableNearTop).toBe(true);
     expect(page.welcomeCreditCopy).toBe('five welcome credits');
@@ -110,7 +110,7 @@ describe('GSC opportunity recovery contract', () => {
     expect(INTENT_OWNERS.every(([, path]) => path.startsWith('/'))).toBe(true);
   });
 
-  it('keeps one request-indexing backlog row per URL and records resolved work', () => {
+  it('keeps one request-indexing backlog row per URL and records the current poster refresh', () => {
     const backlog = readFileSync('docs/SEO/maintenance/gsc-request-indexing-backlog.md', 'utf8');
     const urls = [...backlog.matchAll(/- \[[ x]\] `(https:\/\/myimageupscaler\.com[^`]+)`/g)].map(
       match => match[1]
@@ -118,8 +118,8 @@ describe('GSC opportunity recovery contract', () => {
 
     expect(new Set(urls).size).toBe(urls.length);
     expect(backlog).toContain('- [x] `https://myimageupscaler.com/`');
-    expect(backlog).toMatch(
-      /- \[x\] `https:\/\/myimageupscaler\.com\/blog\/poster-size-dimensions-pixels` — API-resolved \d{4}-\d{2}-\d{2}: `Submitted and indexed`/
+    expect(backlog).toContain(
+      '- [ ] `https://myimageupscaler.com/blog/poster-size-dimensions-pixels` — 2026-09-03 Three Kings refresh'
     );
     expect(backlog).toContain('- [x] `https://myimageupscaler.com/blog/photo-restoration-program`');
   });
