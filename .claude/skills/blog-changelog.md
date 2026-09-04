@@ -1,5 +1,16 @@
 # Blog Changelog
 
+## 2026-09-03
+
+### SEO: Three Kings striking-distance refresh
+
+**Affected:** poster-size-dimensions-pixels, photoshop-upscale-image
+**Why:** The 2026-08-04→2026-08-31 query/page GSC audit found both pages at positions 5–15 with weak above-fold phrase alignment.
+**Changes:**
+
+- `poster-size-dimensions-pixels` — changed the production title, SEO title, description, and SEO description to lead with generic `poster size in pixels` intent while retaining the 24×36 answer.
+- `photoshop-upscale-image` — changed only the production hero description so sentence one directly answers how to upscale an image in Photoshop; retained the existing H1, SEO title, SEO description, slug, and body.
+
 ## 2026-08-31
 
 ### Edit: Topaz free-trial alternative-led snippet
