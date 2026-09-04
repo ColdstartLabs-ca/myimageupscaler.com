@@ -37,11 +37,11 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 > it is recorded below as an intentional noindex cleanup, not as an accepted
 > indexing request.
 
-### Three Kings refresh — request after production HTML is current
+### Three Kings refresh — live verified, ready to request
 
-- [ ] `https://myimageupscaler.com/blog/poster-size-dimensions-pixels` — 2026-09-03 Three Kings refresh; request indexing after the refreshed title, H1, description, and metadata are visible.
-- [ ] `https://myimageupscaler.com/alternatives/vs-adobe-express` — 2026-09-03 Three Kings refresh; request indexing after the refreshed title, meta description, and intro are deployed.
-- [ ] `https://myimageupscaler.com/blog/photoshop-upscale-image` — 2026-09-03 Three Kings refresh; request indexing after the refreshed opening description is visible.
+- [ ] `https://myimageupscaler.com/blog/poster-size-dimensions-pixels` — 2026-09-03 Three Kings refresh; production HTML verified after deploy.
+- [ ] `https://myimageupscaler.com/alternatives/vs-adobe-express` — 2026-09-03 Three Kings refresh; production HTML and sitemap `lastmod` verified after deploy.
+- [ ] `https://myimageupscaler.com/blog/photoshop-upscale-image` — 2026-09-03 Three Kings refresh; production HTML verified after deploy.
 
 ### Dashboard noindex cleanup — request after deployment
 

@@ -23,13 +23,14 @@ Changes:
 
 Validation:
 
-- Created and test-extracted fresh production backups: `backups/backup_2026-09-03_22-53-10.schema.sql.gz` and `backups/backup_2026-09-03_22-53-10.data.sql.gz`; `yarn db:backups` and explicit `gzip -t` checks passed.
+- Created and test-extracted fresh production backups before the content writes: `backups/backup_2026-09-03_22-53-10.schema.sql.gz` and `backups/backup_2026-09-03_22-53-10.data.sql.gz`. The successful deploy also verified `backups/backup_2026-09-03_23-22-04.schema.sql.gz` and `backups/backup_2026-09-03_23-22-04.data.sql.gz`.
 - Both production blog PATCH requests returned 200 with exact field readback; the focused Three Kings contract passes 3/3.
-- Pre-deploy public HTML still shows the prior values from `x-nextjs-cache: HIT`; deploy and final live verification remain required.
+- Deployed Cloudflare worker version `96ac4222-1d8d-4160-9f80-367e709513af`. All three canonical URLs return 200 with the approved title/H1/meta/first-paragraph fields in live HTML; the Adobe Express sitemap row exposes `lastmod` `2026-09-03T00:00:00Z`.
+- The full test suite, `yarn verify`, the 47-test deploy SEO guard, production health/cache checks, and checkout smoke tests passed. The deploy used the supported `--skip-i18n` option because the unrelated full-locale completeness gate currently reports 962 existing missing keys; ICU validation remained enabled and passed.
 
 Follow-up:
 
-- After deploy/live verification, request indexing manually for all three URLs in GSC URL Inspection, then recheck query/page position and CTR after 14 complete GSC days (target: 2026-09-21 or later).
+- Request indexing manually for all three URLs in GSC URL Inspection, then recheck query/page position and CTR after 14 complete GSC days (target: 2026-09-21 or later).
 
 ### GSC Causation Evidence Packed Into Technique Skills
 
