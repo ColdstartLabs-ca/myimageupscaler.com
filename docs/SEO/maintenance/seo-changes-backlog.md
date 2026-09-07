@@ -11,6 +11,31 @@ Maintenance rules:
 
 ## 2026-09-07
 
+### Blog Index Parameter Deindex Signal
+
+Evidence:
+
+- Fresh 28-day GSC through 2026-09-04 (`/tmp/miu-gsc-blog-operator-2026-09-07.json`) shows Google still serving parameterized blog index variants, including `/en/blog?page=7&q=guides`, `/en/blog?page=20&q=upscale`, and `/blog?page=2&q=4k` under branded/page-query rows.
+- Live production checks before the change showed those variants canonicalized to `https://myimageupscaler.com/blog` but still emitted `<meta name="robots" content="index, follow"/>`, leaving duplicate/search-result surfaces indexable.
+- Current Three Kings/blog edit rows are governed by open windows: rung-2 pages close 2026-09-18, poster closes 2026-09-17, and topaz-labs-free-trial closes 2026-09-17; repeating content edits would violate the lag gates.
+
+Changes:
+
+- Updated `app/[locale]/blog/page.tsx` so `/blog` remains `index, follow`, while any non-empty `q` filter or `page` value other than `1` returns `noindex, follow` and keeps the canonical clean `/blog` URL.
+- Added `tests/unit/seo/blog-index-params-noindex.unit.spec.ts` to lock the metadata contract.
+- Reopened the existing `https://myimageupscaler.com/blog` indexing-backlog row in place for post-deploy recrawl; no duplicate row was added.
+
+Validation:
+
+- `yarn vitest run tests/unit/seo/blog-index-params-noindex.unit.spec.ts`: 3/3 passed.
+- Full `yarn verify`: passed (`tsc`, `eslint --fix`, ICU, Schema.org validation, indexation gate, and OpenNext cache config); eslint reported existing warnings only.
+
+Follow-up:
+
+- Commit: `bc7ab411` (`fix(seo): noindex blog index parameter variants`).
+- Deploy state: not deployed; code/backlog changes are local until pushed/deployed.
+- After deploy, verify `https://myimageupscaler.com/blog?page=2&q=4k` returns `noindex, follow` with canonical `https://myimageupscaler.com/blog`, then request recrawl for the existing `/blog` backlog row. Earliest GSC effect check: 2026-09-25.
+
 ### Three Kings Autonomous Gate Check
 
 Evidence:

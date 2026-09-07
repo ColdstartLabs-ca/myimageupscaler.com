@@ -1,5 +1,15 @@
 # Blog Changelog
 
+## 2026-09-07
+
+### SEO: Blog index parameter noindex signal
+
+**Affected:** blog index route
+**Why:** Fresh GSC through 2026-09-04 showed parameterized blog index URLs such as `/en/blog?page=7&q=guides` and `/blog?page=2&q=4k` receiving impressions while live HTML canonicalized them to `/blog` but still allowed indexing.
+**Changes:**
+
+- `app/[locale]/blog/page.tsx` — kept clean `/blog` indexable, but switched non-empty search filters and page values other than `1` to `noindex, follow` while preserving the clean canonical.
+
 ## 2026-09-04
 
 ### SEO: Three Kings rung-2 description tests

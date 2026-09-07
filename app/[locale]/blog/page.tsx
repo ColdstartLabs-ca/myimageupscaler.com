@@ -28,8 +28,12 @@ interface IBlogPageProps {
   searchParams: Promise<{ page?: string; q?: string }>;
 }
 
-export async function generateMetadata({ params }: IBlogPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+  searchParams,
+}: IBlogPageProps): Promise<Metadata> {
   const { locale } = await params;
+  const currentSearchParams = await searchParams;
   const title = 'AI Image Upscaling Blog: Guides, Tests & Photo Enhancement Tips';
   const description = `Practical AI image upscaling guides, tool comparisons, print DPI advice, and photo enhancement workflows from ${clientEnv.APP_NAME}.`;
   const openGraph = getOpenGraphMetadata(
@@ -39,12 +43,15 @@ export async function generateMetadata({ params }: IBlogPageProps): Promise<Meta
     locale
   );
   const canonicalUrl = getCanonicalUrl('/blog', locale);
+  const hasIndexableBlogParams =
+    Boolean(currentSearchParams.q?.trim()) ||
+    (Boolean(currentSearchParams.page) && currentSearchParams.page !== '1');
 
   return {
     title,
     description,
     robots: {
-      index: true,
+      index: !hasIndexableBlogParams,
       follow: true,
     },
     openGraph,

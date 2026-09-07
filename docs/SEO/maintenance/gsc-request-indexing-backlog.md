@@ -49,6 +49,10 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 - [ ] `https://myimageupscaler.com/blog/topaz-video-upscaler` — `seo_description` updated through the production API on 2026-09-04; API and live cached HTML matched on 2026-09-07. Manual GSC request remains pending because native Brave control timed out.
 - [ ] `https://myimageupscaler.com/blog/best-image-upscaler` — `seo_description` updated through the production API on 2026-09-04; API and live cached HTML matched on 2026-09-07. Manual GSC request remains pending because native Brave control timed out.
 
+### Blog index parameter deindex signal — request after deployment
+
+- [ ] `https://myimageupscaler.com/blog` — reopened 2026-09-07 for the blog index parameter deindex signal; after deploy, verify parameter URLs such as `/blog?page=2&q=4k` emit `noindex, follow` with canonical `/blog`, then request recrawl for the clean blog index.
+
 ### Dashboard noindex cleanup — request after deployment
 
 - [x] `https://myimageupscaler.com/dashboard` — **not an indexing candidate.** Live production returns `X-Robots-Tag: noindex, follow`; GSC live testing detected the indexing issue and rejected the request on 2026-08-25 as expected. The noindex signal is now verified; do not retry the indexing request.
@@ -128,7 +132,6 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 - [x] `https://myimageupscaler.com/ja` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-07-31 after the 2026-06-29 change.
 - [x] `https://myimageupscaler.com/pt` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-08-01 after the 2026-06-29 change.
 
-- [x] `https://myimageupscaler.com/blog`
 - [x] `https://myimageupscaler.com/blog/ai-image-upscaling-vs-sharpening-explained`
 - [x] `https://myimageupscaler.com/blog/ai-upscaler-muryou-osusume`
 - [x] `https://myimageupscaler.com/blog/best-ai-image-enhancer`
