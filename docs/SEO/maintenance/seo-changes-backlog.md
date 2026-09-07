@@ -32,7 +32,7 @@ Validation:
 
 Follow-up:
 
-- Commit: `bc7ab411` (`fix(seo): noindex blog index parameter variants`).
+- Commit: `e4819767` (`fix(seo): noindex blog index parameter variants`).
 - Deploy state: not deployed; code/backlog changes are local until pushed/deployed.
 - After deploy, verify `https://myimageupscaler.com/blog?page=2&q=4k` returns `noindex, follow` with canonical `https://myimageupscaler.com/blog`, then request recrawl for the existing `/blog` backlog row. Earliest GSC effect check: 2026-09-25.
 
