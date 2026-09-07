@@ -93,6 +93,32 @@ describe('three-kings-manager classify gates', () => {
     expect(v.reason).toContain('phantom');
   });
 
+  it('gates a page whose CTR is already healthy for its rank band', () => {
+    const v = tkm.classify(
+      baseEntry,
+      {
+        current: { impressions: 2495, clicks: 157, position: 8.4 },
+        prior: { impressions: 2600, clicks: 160, position: 7.7 },
+      },
+      '2026-08-16'
+    );
+    expect(v.verdict).toBe('GATED');
+    expect(v.reason).toContain('healthy CTR');
+  });
+
+  it('gates low CTR outside the 5-15 striking-distance position band', () => {
+    const v = tkm.classify(
+      baseEntry,
+      {
+        current: { impressions: 1939, clicks: 11, position: 55.8 },
+        prior: { impressions: 1800, clicks: 7, position: 49 },
+      },
+      '2026-08-16'
+    );
+    expect(v.verdict).toBe('GATED');
+    expect(v.reason).toContain('outside Three Kings position band');
+  });
+
   it('gates junk-position bloat: impressions up at position > 30', () => {
     const v = tkm.classify(
       baseEntry,

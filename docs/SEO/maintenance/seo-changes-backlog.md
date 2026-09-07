@@ -9,6 +9,54 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-09-07
+
+### Three Kings Autonomous Gate Check
+
+Evidence:
+
+- Refreshed final GSC daily evidence through 2026-09-03. The ledger returned 3 historical `REGRESSION`, 0 eligible `EDIT_NOW`, 5 `HOLD`, and 3 `GATED` rows after enforcing the position 5–15 and rank-band CTR gates.
+- The three historical body-pass regressions remain rollback-blocked: none records a `previousValue`, and all 10 retained production archives begin on 2026-09-03, after the 2026-07-22, 2026-08-10, and 2026-08-17 edits. Their measured impression deltas were -46%, -25%, and -2% respectively; none met the demand-shift exception because the -46% row also lost 3.1 positions. No prior body was guessed.
+
+Changes:
+
+- Made no production blog write or rollback. Corrected the manager so low CTR outside position 5–15 cannot produce `EDIT_NOW`; `/blog/text-image-enhancer` is now correctly gated at position 55.8. Backfilled the three historical regression outcomes' final-GSC impression deltas in the ledger so future demand-shift checks are deterministic.
+- Verified API and live cached-HTML description parity for the three 2026-09-04 rung-2 pages and `/blog/topaz-labs-free-trial`; updated their existing indexing-backlog rows in place. Manual requests remain pending because native Brave control timed out, so no indexing request is claimed.
+
+Validation:
+
+- `yarn vitest run tests/unit/seo/three-kings-manager.unit.spec.ts`: 20/20 passed. Full `yarn verify` passed.
+- `yarn db:backups` listed five schema/data pairs and `gzip -t` passed for all 10 archives. This was archive verification only; no fresh backup was required because no production write occurred.
+
+Follow-up:
+
+- Earliest eligible verdict review: 2026-09-17, when final GSC data can cover `/blog/topaz-labs-free-trial` through its closed window. Retry the four live-verified manual GSC requests when native Brave control is available.
+
+## 2026-09-04
+
+### Three Kings Rung-2 Description Tests
+
+Evidence:
+
+- Refreshed final GSC daily evidence through 2026-08-31 and ran the canonical ladder ledger. The eligible blog rows were `/blog/best-ai-upscaler`, `/blog/topaz-video-upscaler`, and `/blog/best-image-upscaler`; `/blog/poster-size-dimensions-pixels` was reconciled to its actual 2026-09-03 refresh and held inside its open window.
+- Three historical rung-3 losses remain rollback-blocked: their ledger rows lack `previousValue`, and the locally retained production backups begin after those edits. No prior body value was guessed. `/tools/ai-image-upscaler` was gated without an edit because its current 14-day CTR is already healthy (6.29% at position 8.4).
+
+Changes:
+
+- Changed only `seo_description` through the authenticated production blog API for the three eligible blog URLs: a 12-tested/use-case description for `best-ai-upscaler`; a price/restoration/stabilization/interpolation description for `topaz-video-upscaler`; and a free/paid quality/privacy/batch/print-workflow description for `best-image-upscaler`.
+- Recorded all three as rung 2 in `three-kings-ledger.json` with exact prior descriptions and a 2026-09-18 window close. Reconciled the 2026-09-03 poster refresh as rung 2 with its exact pre-change description from the retained pre-write backup and a 2026-09-17 window close.
+- Reopened the existing indexing-backlog URLs in one deduplicated section and updated the focused SEO metadata contract.
+- Hardened the Three Kings checker with a tested healthy-CTR gate so closed windows cannot produce fake `EDIT_NOW` work when a page already beats its rank-band CTR threshold.
+
+Validation:
+
+- Created and test-extracted a fresh schema/data backup immediately before each production write: `backup_2026-09-04_09-13-16`, `backup_2026-09-04_09-14-22`, and `backup_2026-09-04_09-15-21`; `yarn db:backups` listed each pair and `gzip -t` passed.
+- All three PATCH requests returned 200 and authenticated GET readback returned the exact new value. Live HTML returned 200 but remained on the prior `x-nextjs-cache: HIT` descriptions, so manual GSC requests remain blocked until the cache exposes the new metadata.
+
+Follow-up:
+
+- Recheck live HTML, then request indexing manually without claiming completion until GSC visibly accepts it. Judge the poster window from 2026-09-17 and the three new rung-2 windows from 2026-09-18 once final GSC data plus the three-day holdback are available.
+
 ## 2026-09-03
 
 ### Three Kings Striking-Distance Refresh

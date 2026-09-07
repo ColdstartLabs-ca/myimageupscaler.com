@@ -33,6 +33,8 @@ Autonomous owner of ladder discipline for MIU content edits. On invocation it ru
 
 **Executing a rung (only on EDIT_NOW) — do this immediately, do not stop to report:**
 
+`EDIT_NOW` also requires a real CTR/snippet gap inside the composed Three Kings striking-distance band (position 5–15). The checker gates pages outside that band and pages already meeting the composed `serp-ctr-snippet-rewrite-technique` rank-band CTR threshold; a closed window alone is not permission to rewrite a healthy snippet or a page whose real problem is ranking/intent.
+
 1. Rung 1 = `seo_title`, rung 2 = `seo_description`, rung 3 = proof-led body pass (direct answer + evidence module above the fold).
 2. Draft the replacement copy with `seo-content-3-kings-technique` (its Three Kings audit + competitive-gap rules define what good copy looks like).
 3. Execute the edit with the `blog-edit` skill (`.agents/skills/blog-edit/SKILL.md`) — it owns the production mechanics: `PATCH /api/blog/posts/[slug]` with `x-api-key: BLOG_API_KEY` from `.env.api`, GET readback, and the live-HTML spot check. Blog DB writes are effective immediately; repo/backlog changes ride the next deploy.

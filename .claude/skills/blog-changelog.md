@@ -1,5 +1,17 @@
 # Blog Changelog
 
+## 2026-09-04
+
+### SEO: Three Kings rung-2 description tests
+
+**Affected:** best-ai-upscaler, topaz-video-upscaler, best-image-upscaler
+**Why:** Final GSC data through 2026-08-31 closed each page's prior ladder window. The manager marked all three eligible for one-variable rung-2 tests; the replacements clarify the tested scope and decision factors without changing titles, H1s, body copy, slugs, or canonicals.
+**Changes:**
+
+- `best-ai-upscaler` — changed only `seo_description` to state the 12-test scope, image use cases, quality/artifact criteria, free limits, speed, and privacy.
+- `topaz-video-upscaler` — changed only `seo_description` to surface price, restoration, stabilization, frame interpolation, hardware, and free/cloud alternatives.
+- `best-image-upscaler` — changed only `seo_description` to compare 12 free/paid tools across quality, pricing, privacy, batch support, and print workflow.
+
 ## 2026-09-03
 
 ### SEO: Three Kings striking-distance refresh

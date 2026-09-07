@@ -84,6 +84,7 @@
             "preCpd": 42.71,
             "postCpd": 28.64,
             "posDelta": 0.5,
+            "impDelta": -2,
             "measuredThrough": "2026-08-30"
           }
         }
@@ -145,6 +146,7 @@
             "preCpd": 0.64,
             "postCpd": 0.36,
             "posDelta": 0.8,
+            "impDelta": -25,
             "measuredThrough": "2026-08-23"
           }
         }
@@ -173,8 +175,8 @@
     {
       "url": "/blog/best-ai-upscaler",
       "label": "/blog/best-ai-upscaler",
-      "rung": 1,
-      "lastEdit": "2026-07-03",
+      "rung": 2,
+      "lastEdit": "2026-09-04",
       "history": [
         {
           "date": "2026-07-03",
@@ -188,6 +190,14 @@
             "posDelta": -3.7,
             "measuredThrough": "2026-07-16"
           }
+        },
+        {
+          "date": "2026-09-04",
+          "rung": 2,
+          "field": "seo_description",
+          "note": "Rung 2: replaced generic meta with a 12-tested, use-case-led description aligned to quality, limits, speed, privacy, and artifacts.",
+          "outcome": null,
+          "previousValue": "Best AI image upscaler websites for 2026, tested by quality, artifacts, free limits, speed, privacy, and best use case before you upload."
         }
       ],
       "stopRule": null
@@ -195,8 +205,8 @@
     {
       "url": "/blog/topaz-video-upscaler",
       "label": "/blog/topaz-video-upscaler",
-      "rung": 1,
-      "lastEdit": "2026-07-03",
+      "rung": 2,
+      "lastEdit": "2026-09-04",
       "history": [
         {
           "date": "2026-07-03",
@@ -210,6 +220,14 @@
             "posDelta": -1.2,
             "measuredThrough": "2026-07-16"
           }
+        },
+        {
+          "date": "2026-09-04",
+          "rung": 2,
+          "field": "seo_description",
+          "note": "Rung 2: expanded the meta promise around price, restoration, stabilization, interpolation, hardware, and free/cloud alternatives.",
+          "outcome": null,
+          "previousValue": "Topaz Video AI vs alternatives for 2026 compared by price, features, free options, cloud tools, NLE scaling, and workflow fit."
         }
       ],
       "stopRule": null
@@ -217,8 +235,8 @@
     {
       "url": "/blog/best-image-upscaler",
       "label": "/blog/best-image-upscaler",
-      "rung": 1,
-      "lastEdit": "2026-07-14",
+      "rung": 2,
+      "lastEdit": "2026-09-04",
       "history": [
         {
           "date": "2026-07-14",
@@ -232,6 +250,14 @@
             "posDelta": -0.3,
             "measuredThrough": "2026-07-27"
           }
+        },
+        {
+          "date": "2026-09-04",
+          "rung": 2,
+          "field": "seo_description",
+          "note": "Rung 2: sharpened the meta around 12 free/paid tools, quality, pricing, privacy, batch support, and print workflow.",
+          "outcome": null,
+          "previousValue": "Compare 12 image upscaling tools for 2026, including free web apps and pro software. See output limits, pricing tradeoffs, and the best fit for your workflow."
         }
       ],
       "stopRule": null
@@ -261,8 +287,8 @@
     {
       "url": "/blog/poster-size-dimensions-pixels",
       "label": "/blog/poster-size-dimensions-pixels",
-      "rung": 1,
-      "lastEdit": "2026-07-22",
+      "rung": 2,
+      "lastEdit": "2026-09-03",
       "history": [
         {
           "date": "2026-07-22",
@@ -276,6 +302,14 @@
             "posDelta": 0.3,
             "measuredThrough": "2026-08-04"
           }
+        },
+        {
+          "date": "2026-09-03",
+          "rung": 2,
+          "field": "seo_description",
+          "note": "Reconciled 2026-09-03 Three Kings refresh: seo_description changed alongside title, hero description, and metadata; judge as a combined program effect.",
+          "outcome": null,
+          "previousValue": "See exact 24×36 poster dimensions at 150, 200, and 300 DPI, plus minimum resolution, file setup, and when to upscale before printing."
         }
       ],
       "stopRule": null
@@ -318,6 +352,7 @@
             "preCpd": 0,
             "postCpd": 0,
             "posDelta": 3.1,
+            "impDelta": -46,
             "measuredThrough": "2026-08-04"
           }
         }

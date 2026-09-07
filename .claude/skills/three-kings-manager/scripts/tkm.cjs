@@ -50,6 +50,21 @@ function classify(entry, metrics, today) {
   if (current.impressions > 5000 && ctr < 0.001 && current.position >= 8 && current.position <= 12) {
     return { verdict: 'GATED', reason: `phantom/SERP-feature signature: CTR ${(ctr * 100).toFixed(3)}% at pos ${current.position.toFixed(1)} — inspect SERP, do not edit`, nextRung: null };
   }
+  // The composed Three Kings technique only authorizes refreshes in the
+  // striking-distance band. Low CTR outside it is a ranking/intent problem,
+  // not permission for another snippet rung.
+  if (current.position < 5 || current.position > 15) {
+    return { verdict: 'GATED', reason: `outside Three Kings position band: pos ${current.position.toFixed(1)} (requires 5.0–15.0) — diagnose ranking/intent, do not edit`, nextRung: null };
+  }
+  // Three Kings is a low-CTR recovery ladder, not a reason to rewrite a snippet
+  // that already beats the rank-band threshold from the composed CTR technique.
+  const healthyCtr =
+    (current.position >= 4 && current.position < 6 && ctr >= 0.04) ||
+    (current.position >= 6 && current.position <= 10 && ctr >= 0.02) ||
+    (current.position > 10 && current.position <= 15 && ctr >= 0.01);
+  if (healthyCtr) {
+    return { verdict: 'GATED', reason: `healthy CTR ${(ctr * 100).toFixed(2)}% at pos ${current.position.toFixed(1)} — no snippet gap to edit`, nextRung: null };
+  }
   const nextRung = (entry.rung || 0) + 1;
   if (nextRung > 3) {
     return { verdict: 'VERDICT', reason: `all 3 rungs complete (last ${entry.lastEdit}); judge with gsc-causation-correlation pre/post windows, then restart the ladder only with new evidence`, nextRung: null };
