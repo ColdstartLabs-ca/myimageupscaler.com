@@ -84,7 +84,7 @@ describe('2026-09-03 Three Kings refresh contract', () => {
         backlog.match(new RegExp('- \\[([ x])\\] `' + escapedUrl + '`[^\\n]*', 'g')) ?? [];
 
       expect(rows, url).toHaveLength(1);
-      expect(rows[0], url).toContain('[ ]');
+      expect(rows[0], url).toContain('[x]');
       expect(rows[0], url).toContain('2026-09-03 Three Kings refresh');
     }
   });

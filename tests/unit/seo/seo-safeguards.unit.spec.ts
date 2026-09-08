@@ -504,11 +504,11 @@ describe('SEO Safeguards — Blog', () => {
   });
 
   describe('Blog listing page', () => {
-    it('must set explicit robots index:true directive', () => {
+    it('must set an explicit robots indexing directive for clean and parameterized URLs', () => {
       const listingPagePath = path.join(appDir, '[locale]', 'blog', 'page.tsx');
       const source = fs.readFileSync(listingPagePath, 'utf-8');
 
-      expect(source).toMatch(/robots\s*:\s*\{[\s\S]*?index\s*:\s*true/);
+      expect(source).toMatch(/robots\s*:\s*\{[\s\S]*?index\s*:\s*!hasIndexableBlogParams/);
     });
 
     it('must set canonical URL', () => {

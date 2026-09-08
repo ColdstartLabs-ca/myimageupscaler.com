@@ -7,8 +7,8 @@ const pageSource = fs.readFileSync(path.join(ROOT, 'app/[locale]/blog/page.tsx')
 
 describe('blog index search and pagination robots', () => {
   it('passes searchParams into metadata so filtered URLs can be deindexed', () => {
-    expect(pageSource).toContain(
-      'export async function generateMetadata({ params, searchParams }: IBlogPageProps)'
+    expect(pageSource).toMatch(
+      /export async function generateMetadata\(\{\s*params,\s*searchParams,\s*\}: IBlogPageProps\)/
     );
     expect(pageSource).toContain('const currentSearchParams = await searchParams;');
   });

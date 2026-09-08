@@ -119,7 +119,7 @@ describe('GSC opportunity recovery contract', () => {
     expect(new Set(urls).size).toBe(urls.length);
     expect(backlog).toContain('- [x] `https://myimageupscaler.com/`');
     expect(backlog).toContain(
-      '- [ ] `https://myimageupscaler.com/blog/poster-size-dimensions-pixels` — 2026-09-03 Three Kings refresh'
+      '- [x] `https://myimageupscaler.com/blog/poster-size-dimensions-pixels` — indexing requested 2026-09-04'
     );
     expect(backlog).toContain('- [x] `https://myimageupscaler.com/blog/photo-restoration-program`');
   });
