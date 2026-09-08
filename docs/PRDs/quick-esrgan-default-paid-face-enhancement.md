@@ -209,10 +209,14 @@ Automated implementation evidence below was executed on 2026-09-08. Provider run
 
 ### Local implementation evidence — 2026-09-08
 
-- PRD-focused unit suites pass: 15 files, 331 tests. Coverage includes direct size routing, one-shot NightmareAI → cjwbw CUDA recovery, paid model catalog policy, raw API paywall/reselection responses, Clarity Pro quote/debit parity, UI selection, attempt attribution, refund behavior and provider-aware pricing.
+- PRD-focused unit suites pass: 18 files, 369 tests. Coverage includes direct size routing, one-shot NightmareAI → cjwbw CUDA recovery, paid model catalog policy, raw API paywall/reselection responses, Clarity Pro quote/debit parity, UI selection, attempt attribution, refund behavior, provider-aware pricing and effective model-version precedence.
 - Required Phase 6 browser command passes: `yarn test:e2e tests/e2e/upscaler.e2e.spec.ts tests/e2e/guest-paywall.e2e.spec.ts` — 39 tests passed in Chromium. The three required acceptance flows assert Quick faces off, payment before face processing and the paid Clarity Pro estimate before processing.
 - Full `yarn test` completed: API 259 passed and 1 skipped; Chromium 462 passed with 1 flaky retry; Vitest 4 SEO contract tests failed. The failures are outside this change (`blog-index-params-noindex`, `gsc-opportunity-recovery`, `seo-safeguards` and `three-kings-refresh-2026-09-03`) and leave the repository release suite red until the existing SEO drift is resolved.
 - `yarn verify` passes: TypeScript, lint (0 errors; 1,667 existing warnings), ICU, schema, indexation and cache checks. It does not supply provider runtime, portrait-quality, Cloudflare transport, production-flag, rollout or independent-review evidence.
+- Read-only production configuration audit: the latest `myimageupscaler-api-prod` secret contains the pinned legacy `REPLICATE_MODEL_VERSION` for NightmareAI; `MODEL_VERSION_REAL_ESRGAN`, `MODEL_FOR_GENERAL_UPSCALE` and `ENABLE_PREMIUM_MODELS` are absent, so the application defaults resolve to the pinned NightmareAI model, `real-esrgan`, and enabled premium models. The registry now gives the dedicated override precedence, then the legacy override, then its pinned default. No secret values were recorded.
+- Read-only deployment probes: `https://myimageupscaler.com/api/health` and `https://www.myimageupscaler.com/api/health` returned HTTP 200 with healthy database checks. The current production worker was last observed in the deployment list on 2026-09-04, before commit `1bf023b8`; this is health evidence only and does not prove that this change is deployed.
+- Read-only Replicate probes authenticated successfully, but a production-token Quick smoke request returned HTTP 402 (`Insufficient credit`) before a prediction was created. No chargeable prediction, portrait artifact or benchmark result was produced. The five-fixture portrait gate, 20-job Quick gate and forced-OOM transport proof therefore remain pending an externally funded provider run.
+- The latest read-only provider history snapshot contained 100 uncontrolled 2026-09-07 predictions: 86 NightmareAI (79 succeeded, 7 failed), 11 cjwbw (all succeeded) and 3 Clarity Pro (all succeeded). The API did not expose usable output dimensions or actual costs for this snapshot, so it is caller context and not release evidence.
 
 Portrait quality gate: compare Clarity Pro against the current face-enhanced baseline on at least five permitted fixtures: clean portrait, low-resolution face, damaged photo, group photo and darker-skin portrait. Test 2× and 4×; inspect identity, eyes/teeth, skin texture, artifacts and dimensions at 100% crops. Record input/output artifacts, prediction IDs, actual price and latency. Zero unacceptable identity changes or output/scale failures; reviewer must find the paid result acceptable on every fixture. Provider marketing is not a substitute for this gate. Runtime benchmarks incur provider charges and belong to implementation validation, not this documentation task.
 
@@ -224,8 +228,8 @@ After controlled rollout, inspect Quick attempts by provider, CUDA failure rate,
 
 ## Acceptance checklist
 
-- [ ] Quick keeps pinned NightmareAI with faces off by default; eligible oversized inputs use cjwbw directly and eligible CUDA failures use one cjwbw attempt, with correct payloads and no premium fallback.
-- [ ] Face features default off and require paid access on UI, estimate, direct model, Auto and processing paths; old saved options cannot bypass payment or consent.
-- [ ] Paid face-upscale selection uses Clarity Pro at the displayed dimension-based price; existing Face Restore and Portrait Pro remain distinct paid choices.
+- [x] Quick keeps pinned NightmareAI with faces off by default; eligible oversized inputs use cjwbw directly and eligible CUDA failures use one cjwbw attempt, with correct payloads and no premium fallback.
+- [x] Face features default off and require paid access on UI, estimate, direct model, Auto and processing paths; old saved options cannot bypass payment or consent.
+- [x] Paid face-upscale selection uses Clarity Pro at the displayed dimension-based price; existing Face Restore and Portrait Pro remain distinct paid choices.
 - [ ] Quality/runtime benchmarks, red/green tests, accounting/retry proof, `yarn test`, `yarn verify` and independent phase reviews pass with actual artifacts and caller evidence.
 - [ ] Deployment checks pass; all gaps are closed before moving this PRD to `docs/PRDs/done/`.

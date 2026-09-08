@@ -1624,6 +1624,60 @@ describe('ReplicateService', () => {
       }
     });
 
+    test('should not replay a transient Quick failure through the generic retry wrapper', async () => {
+      useProductionRetry.enabled = true;
+      vi.useFakeTimers();
+
+      try {
+        const input = createUpscaleInput({ originalWidth: 1200, originalHeight: 1200 });
+        mockReplicateRun.mockRejectedValue(new Error('502 Bad Gateway'));
+
+        const resultPromise = service.processImage('user-123', input, {
+          deadlineAt: Date.now() + 120000,
+        });
+        const resultAssertion = expect(resultPromise).rejects.toMatchObject({
+          code: 'PROCESSING_FAILED',
+        });
+        await vi.runAllTimersAsync();
+
+        await resultAssertion;
+        expect(mockReplicateRun).toHaveBeenCalledTimes(1);
+        expect(mockSupabaseRpc).toHaveBeenCalledTimes(2);
+      } finally {
+        useProductionRetry.enabled = false;
+        vi.useRealTimers();
+      }
+    });
+
+    test('should pass the shared abort signal and map cancellation to a timeout', async () => {
+      useProductionRetry.enabled = true;
+      const controller = new AbortController();
+
+      try {
+        mockReplicateRun.mockImplementationOnce(async (_version: string, options: unknown) => {
+          expect((options as { signal?: AbortSignal }).signal).toBe(controller.signal);
+          controller.abort();
+          throw new Error('The operation was aborted');
+        });
+
+        await expect(
+          service.processImage(
+            'user-123',
+            createUpscaleInput({ originalWidth: 1200, originalHeight: 1200 }),
+            {
+              deadlineAt: Date.now() + 120000,
+              signal: controller.signal,
+            }
+          )
+        ).rejects.toMatchObject({ code: 'TIMEOUT' });
+
+        expect(mockReplicateRun).toHaveBeenCalledTimes(1);
+        expect(mockSupabaseRpc).toHaveBeenCalledTimes(2);
+      } finally {
+        useProductionRetry.enabled = false;
+      }
+    });
+
     test('should preserve same-model OOM retry behavior for non-Quick models', async () => {
       useProductionRetry.enabled = true;
       vi.useFakeTimers();

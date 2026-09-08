@@ -182,7 +182,8 @@ export class ReplicateService implements IImageProcessor {
         input,
         deadlineAt,
         attempts,
-        options?.costAttribution?.providerCostUsd
+        options?.costAttribution?.providerCostUsd,
+        options?.signal
       );
       await this.recordLifecycleActivation(userId);
       if (options?.costAttribution) {
@@ -387,7 +388,8 @@ export class ReplicateService implements IImageProcessor {
     input: IUpscaleInput,
     deadlineAt?: number,
     attempts?: IReplicateAttempt[],
-    quotedProviderCostUsd?: number
+    quotedProviderCostUsd?: number,
+    signal?: AbortSignal
   ): Promise<IReplicateCallResult> {
     // Prepare image data - ensure it's a data URL
     this.ensureInputImageDataPresent(input);
@@ -427,9 +429,10 @@ export class ReplicateService implements IImageProcessor {
         input,
         shouldRetryReplicateError,
         deadlineAt,
-        undefined,
+        isQuickPrimary || isDirectQuickFallback ? 0 : undefined,
         attempts,
-        quotedProviderCostUsd
+        quotedProviderCostUsd,
+        signal
       );
     } catch (error) {
       const isEligibleOom =
@@ -456,7 +459,9 @@ export class ReplicateService implements IImageProcessor {
           createReplicateRetryPolicy(0),
           deadlineAt,
           0,
-          attempts
+          attempts,
+          undefined,
+          signal
         );
       } catch (fallbackError) {
         throw replicateErrorMapper.mapError(fallbackError);
@@ -472,64 +477,92 @@ export class ReplicateService implements IImageProcessor {
     deadlineAt?: number,
     maxRetries?: number,
     attempts?: IReplicateAttempt[],
-    quotedProviderCostUsd?: number
+    quotedProviderCostUsd?: number,
+    signal?: AbortSignal
   ): Promise<IReplicateCallResult> {
     const modelVersion =
       modelId !== 'auto' ? this.getModelVersionForId(modelId) : this.modelVersion;
     const replicateInput = this.buildModelInput(modelId, imageDataUrl, input);
     this.ensureImageInputPresent(replicateInput);
 
-    return withRetry(
-      async () => {
-        const attempt: IReplicateAttempt | undefined = attempts
-          ? {
-              modelId,
-              modelVersion,
-              status: 'failed',
-              providerCostUsd: this.getAttemptProviderCost(modelId, quotedProviderCostUsd),
-            }
-          : undefined;
-        if (attempts && attempt) {
-          attempts.push(attempt);
-        }
-
-        try {
-          const runOptions = { input: replicateInput };
-          const output = attempts
-            ? await this.replicate.run(
-                modelVersion as `${string}/${string}:${string}`,
-                runOptions,
-                prediction => {
-                  if (attempt && typeof prediction?.id === 'string') {
-                    attempt.predictionId = prediction.id;
-                  }
-                }
-              )
-            : await this.replicate.run(modelVersion as `${string}/${string}:${string}`, runOptions);
-
-          const parsed = parseReplicateResponse(output);
-          if (attempt) {
-            attempt.status = 'succeeded';
-          }
-          return { ...parsed, actualModelId: modelId };
-        } catch (error) {
-          if (attempt) {
-            attempt.failureCode = replicateErrorMapper.mapError(error).code;
-          }
-          throw error;
-        }
-      },
-      {
-        ...(maxRetries === undefined ? {} : { maxRetries }),
-        ...(deadlineAt === undefined ? {} : { deadlineAt }),
-        shouldRetry: err => shouldRetryReplicateError(serializeError(err)),
-        onRetry: (attempt, delayMs, err) => {
-          console.log(
-            `[Replicate] Retrying in ${delayMs}ms (attempt ${attempt}/3): ${serializeError(err)}`
-          );
-        },
+    const throwIfProviderCallCannotStart = (): void => {
+      if (signal?.aborted || (deadlineAt !== undefined && Date.now() >= deadlineAt)) {
+        throw new ReplicateError(
+          'Image processing timed out before the provider call could finish.',
+          'TIMEOUT'
+        );
       }
-    );
+    };
+
+    try {
+      return await withRetry(
+        async () => {
+          throwIfProviderCallCannotStart();
+
+          const attempt: IReplicateAttempt | undefined = attempts
+            ? {
+                modelId,
+                modelVersion,
+                status: 'failed',
+                providerCostUsd: this.getAttemptProviderCost(modelId, quotedProviderCostUsd),
+              }
+            : undefined;
+          if (attempts && attempt) {
+            attempts.push(attempt);
+          }
+
+          try {
+            const runOptions = {
+              input: replicateInput,
+              ...(signal ? { signal } : {}),
+            };
+            const output = attempts
+              ? await this.replicate.run(
+                  modelVersion as `${string}/${string}:${string}`,
+                  runOptions,
+                  prediction => {
+                    if (attempt && typeof prediction?.id === 'string') {
+                      attempt.predictionId = prediction.id;
+                    }
+                  }
+                )
+              : await this.replicate.run(
+                  modelVersion as `${string}/${string}:${string}`,
+                  runOptions
+                );
+
+            const parsed = parseReplicateResponse(output);
+            if (attempt) {
+              attempt.status = 'succeeded';
+            }
+            return { ...parsed, actualModelId: modelId };
+          } catch (error) {
+            if (attempt) {
+              attempt.failureCode = replicateErrorMapper.mapError(error).code;
+            }
+            throw error;
+          }
+        },
+        {
+          ...(maxRetries === undefined ? {} : { maxRetries }),
+          ...(deadlineAt === undefined ? {} : { deadlineAt }),
+          shouldRetry: err => shouldRetryReplicateError(serializeError(err)),
+          onRetry: (attempt, delayMs, err) => {
+            console.log(
+              `[Replicate] Retrying in ${delayMs}ms (attempt ${attempt}/3): ${serializeError(err)}`
+            );
+          },
+        }
+      );
+    } catch (error) {
+      if (signal?.aborted || (deadlineAt !== undefined && Date.now() >= deadlineAt)) {
+        throw new ReplicateError(
+          'Image processing timed out before the provider call could finish.',
+          'TIMEOUT'
+        );
+      }
+      throw error;
+    }
   }
 
   private getAttemptProviderCost(modelId: string, quotedProviderCostUsd?: number): number {

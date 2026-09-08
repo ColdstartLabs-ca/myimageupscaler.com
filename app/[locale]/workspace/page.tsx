@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import Workspace from '@client/components/features/workspace/Workspace';
+import { serverEnv } from '@shared/config/env';
 
 /**
  * Workspace page - main image upscaling interface
@@ -8,7 +9,7 @@ import Workspace from '@client/components/features/workspace/Workspace';
 export default function WorkspacePage() {
   return (
     <Suspense>
-      <Workspace />
+      <Workspace faceEnhancementAvailable={serverEnv.ENABLE_PREMIUM_MODELS} />
     </Suspense>
   );
 }

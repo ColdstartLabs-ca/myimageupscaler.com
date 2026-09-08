@@ -78,7 +78,11 @@ import type { IImageDimensions } from '@client/components/features/image-process
 
 type MobileTab = 'upload' | 'preview' | 'queue';
 
-const Workspace: React.FC = () => {
+interface IWorkspaceProps {
+  faceEnhancementAvailable?: boolean;
+}
+
+const Workspace: React.FC<IWorkspaceProps> = ({ faceEnhancementAvailable = true }) => {
   const t = useTranslations('workspace');
   // Hook managing all queue state
   const {
@@ -560,7 +564,7 @@ const Workspace: React.FC = () => {
   };
 
   const applyPaidFaceTierSelection = () => {
-    if (!QUALITY_TIER_CONFIG['clarity-pro'].modelId) {
+    if (!faceEnhancementAvailable || !QUALITY_TIER_CONFIG['clarity-pro'].modelId) {
       showFaceEnhancementError(t('faceEnhancement.unavailableMessage'));
       return;
     }
@@ -581,6 +585,11 @@ const Workspace: React.FC = () => {
   };
 
   const handleSelectPaidFaceTier = () => {
+    if (!faceEnhancementAvailable) {
+      showFaceEnhancementError(t('faceEnhancement.unavailableMessage'));
+      return;
+    }
+
     if (purchaseCtasSuppressed) {
       showProviderUnavailable();
       return;
@@ -932,6 +941,7 @@ const Workspace: React.FC = () => {
             onUpgrade={() => openUpgradeModal(true, 'workspace_batch_sidebar')}
             onSelectPaidFaceTier={handleSelectPaidFaceTier}
             onUpgradeDirect={handleUpgradeDirect}
+            faceEnhancementAvailable={faceEnhancementAvailable}
             suppressPurchaseCtas={purchaseCtasSuppressed}
           />
         </div>

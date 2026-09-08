@@ -497,6 +497,35 @@ describe('Phase 3 paid face enhancement policy', () => {
     });
   });
 
+  it('rejects a forged face model hint on the upscale path before processing', async () => {
+    const response = await callUpscale(
+      quickPayload({
+        resolvedModel: 'clarity-pro-upscaler',
+        config: {
+          qualityTier: 'quick',
+          scale: 2,
+          additionalOptions: {
+            smartAnalysis: false,
+            enhance: true,
+            enhanceFaces: false,
+            preserveText: false,
+          },
+        },
+      })
+    );
+    const body = await json(response);
+
+    expect(response.status).toBe(400);
+    expect(body).toMatchObject({
+      error: {
+        code: 'VALIDATION_ERROR',
+        details: { requiresReselection: false, faceEnhancement: true },
+      },
+    });
+    expect(mocks.resolveUpscaleInput).not.toHaveBeenCalled();
+    expect(mocks.processImage).not.toHaveBeenCalled();
+  });
+
   it('should quote the charged Clarity Pro cost when a paying user selects face upscaling', async () => {
     currentProfile = profile({ subscription_credits_balance: 50 });
     const estimateResponse = await estimateCredits(

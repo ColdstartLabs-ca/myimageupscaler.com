@@ -95,7 +95,8 @@ export const EnhancementOptions: React.FC<IEnhancementOptionsProps> = ({
 
   // Face enhancement is a paid Clarity Pro selection. It does not apply to
   // editing-only tiers or to the separate Face Restore model.
-  const showFaceEnhancementCta = selectedTier === 'quick' && !suppressPurchaseCtas;
+  const showFaceEnhancementCta =
+    selectedTier === 'quick' && faceEnhancementAvailable && !suppressPurchaseCtas;
   const showSelectedFaceEnhancement = selectedTier === 'clarity-pro';
 
   return (

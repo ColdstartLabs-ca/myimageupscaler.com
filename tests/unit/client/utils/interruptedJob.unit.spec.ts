@@ -154,6 +154,30 @@ describe('interruptedJob', () => {
     expect(claimInterruptedJob(job.jobId)).toEqual({ status: 'needs_action' });
   });
 
+  test.each(['auto', 'hd-upscale'] as const)(
+    'requires paid face-tier reselection for a legacy %s face setting',
+    qualityTier => {
+      const job = saveInterruptedJob({
+        config: {
+          ...config,
+          qualityTier,
+          additionalOptions: {
+            ...DEFAULT_ADDITIONAL_OPTIONS,
+            enhanceFaces: true,
+          },
+        },
+        itemIds: ['item-1'],
+        requiredCredits: 1,
+      });
+
+      expect(inspectInterruptedJob()).toMatchObject({
+        status: 'needs_action',
+        reason: 'face_reselection_required',
+        job: { jobId: job.jobId, status: 'needs_action' },
+      });
+    }
+  );
+
   test('clears only the matching completed job', () => {
     const job = saveInterruptedJob({
       config,

@@ -213,6 +213,7 @@ export const SUBSCRIPTION_TIER_LEVELS: Record<SubscriptionTier, number> = {
 
 function normalizeSubscriptionTier(tier: string | null | undefined): SubscriptionTier | null {
   const normalizedTier = tier?.toLowerCase();
+  if (normalizedTier === 'starter') return 'hobby';
   return normalizedTier && normalizedTier in SUBSCRIPTION_TIER_LEVELS
     ? (normalizedTier as SubscriptionTier)
     : null;
@@ -248,11 +249,9 @@ export function getEffectiveModelAccessTier(profile: {
   subscriptionTier?: string | null;
   purchasedCreditsBalance?: number | null;
 }): SubscriptionTier {
-  const hasActiveSubscription =
-    profile.subscriptionStatus === 'active' || profile.subscriptionStatus === 'trialing';
   const subscriptionTier = normalizeSubscriptionTier(profile.subscriptionTier);
 
-  if (hasActiveSubscription && subscriptionTier) {
+  if (subscriptionTier && subscriptionTier !== 'free') {
     return subscriptionTier;
   }
 

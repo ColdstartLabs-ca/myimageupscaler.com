@@ -328,5 +328,22 @@ describe('Tier Restriction Logic', () => {
       expect(isTierAtLeast('business', '')).toBe(false);
       expect(isTierAtLeast('business', 'enterprise')).toBe(false);
     });
+
+    it('should normalize the starter alias and preserve paid plan history for catalog access', () => {
+      expect(
+        getEffectiveModelAccessTier({
+          subscriptionStatus: 'active',
+          subscriptionTier: 'starter',
+          purchasedCreditsBalance: 0,
+        })
+      ).toBe('hobby');
+      expect(
+        getEffectiveModelAccessTier({
+          subscriptionStatus: 'canceled',
+          subscriptionTier: 'pro',
+          purchasedCreditsBalance: 0,
+        })
+      ).toBe('pro');
+    });
   });
 });

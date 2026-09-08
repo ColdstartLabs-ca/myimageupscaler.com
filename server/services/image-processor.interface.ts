@@ -30,6 +30,10 @@ export interface IProcessImageOptions {
   reservationJobId?: string;
   /** Cloudflare server-issued invocation id used to authenticate Tail Worker recovery. */
   workerRayId?: string;
+  /** Absolute deadline shared by the API route and provider call. */
+  deadlineAt?: number;
+  /** Abort signal used to cancel provider work when the route deadline expires. */
+  signal?: AbortSignal;
   /** Provider-cost details resolved by the API route from the same inputs used for billing. */
   costAttribution?: IProcessingCostAttribution;
   /**

@@ -150,6 +150,7 @@ vi.mock('../BatchSidebar', () => ({
     onProcess,
     onSelectPaidFaceTier,
     onUpgradeDirect,
+    faceEnhancementAvailable = true,
   }: {
     config?: {
       qualityTier?: string;
@@ -158,6 +159,7 @@ vi.mock('../BatchSidebar', () => ({
     };
     onProcess?: () => void;
     onSelectPaidFaceTier?: () => void;
+    faceEnhancementAvailable?: boolean;
     onUpgradeDirect?: (params: { trigger: string; planId: string }) => void;
   }) => (
     <div>
@@ -168,9 +170,11 @@ vi.mock('../BatchSidebar', () => ({
       <button data-testid="batch-sidebar-process" onClick={onProcess}>
         Process
       </button>
-      <button data-testid="batch-sidebar-face-selection" onClick={onSelectPaidFaceTier}>
-        Enhance faces
-      </button>
+      {faceEnhancementAvailable && (
+        <button data-testid="batch-sidebar-face-selection" onClick={onSelectPaidFaceTier}>
+          Enhance faces
+        </button>
+      )}
       <button
         data-testid="batch-sidebar-direct-checkout"
         onClick={() => onUpgradeDirect?.({ trigger: 'model_gate', planId: 'price_test_small' })}
@@ -719,6 +723,23 @@ describe('Workspace Quality Tier Logic', () => {
       expect(screen.getByTestId('workspace-config')).toHaveTextContent('clarity-pro:2:true');
     });
     expect(mockProcessBatch).not.toHaveBeenCalled();
+  });
+
+  test('should hide face selection when the paid face model is disabled', () => {
+    mockIsFreeUser = false;
+    mockBatchQueueState.queue = [
+      {
+        id: 'item-1',
+        status: ProcessingStatus.IDLE,
+        file: new File(['test'], 'test.png', { type: 'image/png' }),
+      },
+    ];
+    mockBatchQueueState.activeId = 'item-1';
+    mockBatchQueueState.activeItem = mockBatchQueueState.queue[0];
+
+    render(<Workspace faceEnhancementAvailable={false} />);
+
+    expect(screen.queryByTestId('batch-sidebar-face-selection')).not.toBeInTheDocument();
   });
 
   test('should preserve the queued image while a free user completes face-tier purchase', async () => {

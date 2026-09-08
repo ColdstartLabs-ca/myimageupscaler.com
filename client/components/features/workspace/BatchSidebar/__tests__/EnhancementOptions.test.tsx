@@ -66,4 +66,12 @@ describe('EnhancementOptions face selection', () => {
     ).not.toBeInTheDocument();
     expect(screen.queryByRole('checkbox', { name: /enhance faces/i })).not.toBeInTheDocument();
   });
+
+  it('hides face selection when the paid face model is disabled', () => {
+    renderOptions({ faceEnhancementAvailable: false });
+
+    expect(
+      screen.queryByRole('button', { name: 'Enhance faces with Clarity Pro' })
+    ).not.toBeInTheDocument();
+  });
 });

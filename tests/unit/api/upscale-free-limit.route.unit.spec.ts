@@ -217,11 +217,7 @@ describe('POST /api/upscale free limit errors', () => {
       processImage: mocks.processImage,
     });
     mocks.decodeImageDimensions.mockReturnValue(null);
-    mocks.getScalePreservingFallbackCandidates.mockImplementation(isPaidUser =>
-      isPaidUser
-        ? ['clarity-upscaler', 'real-esrgan-large']
-        : ['real-esrgan-large', 'clarity-upscaler']
-    );
+    mocks.getScalePreservingFallbackCandidates.mockReturnValue(['real-esrgan-large']);
     mocks.resolveScalePreservingModel.mockReturnValue({
       usedFallback: false,
       modelId: 'real-esrgan',
@@ -266,12 +262,13 @@ describe('POST /api/upscale free limit errors', () => {
       mimeType: 'image/jpeg',
     });
     mocks.removeUpscaleInput.mockResolvedValue(undefined);
-    mocks.getModel.mockReturnValue({
+    mocks.getModel.mockImplementation((modelId: string) => ({
       isEnabled: true,
       minTier: 'free',
       supportedScales: [2],
       tierRestriction: null,
-    });
+      costPerRun: modelId === 'real-esrgan-large' ? 0.0047 : 0.0017,
+    }));
     mocks.parseUpscale.mockReturnValue({
       storagePath: 'user-1/11111111-1111-4111-8111-111111111111.jpg',
       jobId: '11111111-1111-4111-8111-111111111111',
@@ -289,7 +286,7 @@ describe('POST /api/upscale free limit errors', () => {
       label: 'paid',
       profileOverrides: { purchased_credits_balance: 50 },
       expectedPaidClassification: true,
-      expectedModelId: 'clarity-upscaler',
+      expectedModelId: 'real-esrgan-large',
     },
     {
       label: 'free',
@@ -336,6 +333,13 @@ describe('POST /api/upscale free limit errors', () => {
         expectedPaidClassification
       );
       expect(mocks.createProcessorForModel).toHaveBeenCalledWith(expectedModelId);
+      expect(mocks.processImage).toHaveBeenCalledWith(
+        'user-1',
+        expect.anything(),
+        expect.objectContaining({
+          costAttribution: expect.objectContaining({ providerCostUsd: 0.0047 }),
+        })
+      );
     }
   );
 
@@ -466,7 +470,9 @@ describe('POST /api/upscale free limit errors', () => {
     const explicitEstimate = await estimateCredits(
       requestWithBody('/api/credit-estimate', explicitPayload)
     );
-    const autoEstimate = await estimateCredits(requestWithBody('/api/credit-estimate', autoPayload));
+    const autoEstimate = await estimateCredits(
+      requestWithBody('/api/credit-estimate', autoPayload)
+    );
 
     const jobId = '77777777-7777-4777-8777-777777777777';
     mocks.parseUpscale.mockReturnValue({
@@ -918,12 +924,16 @@ describe('POST /api/upscale free limit errors', () => {
         _input: unknown,
         options: { onCreditsDeducted?: (deduction: Record<string, unknown>) => void }
       ) => {
-        options.onCreditsDeducted?.({
+        const deduction = {
           amount: 1,
           subscriptionAmount: 1,
           purchasedAmount: 0,
           jobId: 'job-safety',
-        });
+        };
+        options.onCreditsDeducted?.(deduction);
+        // Model the processor's reservation owner contract. Safety failures
+        // preserve the hourly slot while the processor performs the refund.
+        await mocks.refundReservation(_userId, deduction, 'processor-owned refund');
         throw new ReplicateError('raw provider safety detail', 'SAFETY');
       }
     );
@@ -931,7 +941,7 @@ describe('POST /api/upscale free limit errors', () => {
     const response = await POST(request());
 
     expect(response.status).toBe(422);
-    expect(mocks.refundReservation).toHaveBeenCalled();
+    expect(mocks.refundReservation).toHaveBeenCalledTimes(1);
     expect(mocks.batchRelease).not.toHaveBeenCalled();
     expect(mocks.recordProviderFailure).not.toHaveBeenCalled();
   });

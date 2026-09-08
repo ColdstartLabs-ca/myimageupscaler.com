@@ -760,12 +760,16 @@ describe('POST /api/upscale failure recording', () => {
         _input: unknown,
         options: { onCreditsDeducted?: (deduction: Record<string, unknown>) => void }
       ) => {
-        options.onCreditsDeducted?.({
+        const deduction = {
           amount: 1,
           subscriptionAmount: 1,
           purchasedAmount: 0,
           jobId: 'job-timeout',
-        });
+        };
+        options.onCreditsDeducted?.(deduction);
+        // Model the processor's reservation owner contract. The route must
+        // release the batch slot without issuing another refund.
+        await mocks.refundReservation('user-1', deduction, 'processor-owned refund');
         throw new mocks.ReplicateError('provider timeout', 'TIMEOUT', 503);
       }
     );
@@ -781,6 +785,7 @@ describe('POST /api/upscale failure recording', () => {
         credits_charged: 0,
       })
     );
+    expect(mocks.refundReservation).toHaveBeenCalledTimes(1);
   });
 
   it('should still return the original error when row insert throws', async () => {

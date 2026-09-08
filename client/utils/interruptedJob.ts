@@ -114,8 +114,12 @@ function isValidConfig(value: unknown): value is IUpscaleConfig {
   );
 }
 
-function hasLegacyQuickFaceEnhancement(config: IUpscaleConfig): boolean {
-  return config.qualityTier === 'quick' && config.additionalOptions.enhanceFaces === true;
+const EXPLICIT_FACE_TIERS = new Set<QualityTier>(['face-restore', 'face-pro', 'clarity-pro']);
+
+function hasLegacyFaceEnhancement(config: IUpscaleConfig): boolean {
+  return (
+    config.additionalOptions.enhanceFaces === true && !EXPLICIT_FACE_TIERS.has(config.qualityTier)
+  );
 }
 
 function isValidJob(value: unknown): value is IInterruptedJob {
@@ -239,10 +243,7 @@ export function inspectInterruptedJob(now = Date.now()): TInterruptedJobInspecti
 
   // A pre-policy saved job may contain the old Quick face checkbox. Keep it
   // claimable only after the user explicitly chooses the paid face tier.
-  if (
-    job.actionReason !== 'face_reselection_required' &&
-    hasLegacyQuickFaceEnhancement(job.config)
-  ) {
+  if (job.actionReason !== 'face_reselection_required' && hasLegacyFaceEnhancement(job.config)) {
     const staleFaceJob: IInterruptedJob = {
       ...job,
       status: 'needs_action',

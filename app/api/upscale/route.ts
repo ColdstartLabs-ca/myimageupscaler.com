@@ -378,13 +378,19 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     routeRefundAttempted = true;
-    const refunded = creditDeduction
-      ? await creditManager.refundReservation(
-          userId,
-          creditDeduction,
-          `Route-level refund after upscale failure: ${failureReason}`
-        )
-      : true;
+    // Every processor owns the reservation after it invokes onCreditsDeducted.
+    // Route-level cleanup still releases the batch slot, but must not issue a
+    // second refund while a timed-out provider call is unwinding.
+    const processorOwnsRefund = providerAttemptStarted && Boolean(creditDeduction);
+    const refunded = processorOwnsRefund
+      ? true
+      : creditDeduction
+        ? await creditManager.refundReservation(
+            userId,
+            creditDeduction,
+            `Route-level refund after upscale failure: ${failureReason}`
+          )
+        : true;
     creditsRefunded = refunded;
     const batchSlotReleased =
       refunded && releaseBatchSlot && batchSlotAcquired
@@ -396,9 +402,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     logFailure(
       creditDeduction
-        ? refunded
-          ? 'credits_refunded_after_route_failure'
-          : 'credit_refund_failed_after_route_failure'
+        ? processorOwnsRefund
+          ? 'credit_refund_owned_by_processor'
+          : refunded
+            ? 'credits_refunded_after_route_failure'
+            : 'credit_refund_failed_after_route_failure'
         : batchSlotReleased
           ? 'batch_slot_released_before_credit_deduction'
           : 'batch_slot_release_failed_before_credit_deduction',
@@ -658,6 +666,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const facePolicy = evaluateFaceEnhancementPolicy({
       request: {
         qualityTier: validatedInput.config.qualityTier,
+        selectedModel: validatedInput.resolvedModel,
         enhanceFaces: validatedInput.config.additionalOptions.enhanceFaces,
       },
       entitlement: faceEntitlement,
@@ -1137,6 +1146,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
               config.nanoBananaProConfig?.resolution
             ),
           });
+    const providerCostAttribution =
+      resolvedModelId !== billingModelId
+        ? {
+            ...providerCostPricing,
+            providerCostUsd:
+              modelRegistry.getModel(resolvedModelId)?.costPerRun ??
+              providerCostPricing.providerCostUsd,
+          }
+        : providerCostPricing;
 
     // The shared provider-aware calculator includes model-specific multipliers
     // for models that do not own a dedicated quality tier.
@@ -1244,31 +1262,44 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     providerAttemptStarted = true;
+    const processingAbortController = new AbortController();
+    const processingDeadlineAt = Date.now() + PROCESSING_TIMEOUT_MS;
+    let processingTimeout: ReturnType<typeof setTimeout> | undefined;
+    const processingPromise = processor.processImage(userId, legacyInputForProcessor as never, {
+      creditCost,
+      reservationJobId: validatedInput.jobId,
+      workerRayId: req.headers.get('cf-ray') ?? undefined,
+      deadlineAt: processingDeadlineAt,
+      signal: processingAbortController.signal,
+      costAttribution: {
+        modelId: resolvedModelId,
+        qualityTier: resolvedTier,
+        scale: config.scale,
+        effectiveResolution: providerCostAttribution.effectiveResolution,
+        providerCostUsd: providerCostAttribution.providerCostUsd,
+        creditsCharged: creditCost,
+        pricingModel: providerCostAttribution.pricingModel,
+      },
+      onCreditsDeducted: deduction => {
+        creditDeduction = deduction;
+      },
+    });
     const result = await Promise.race([
-      processor.processImage(userId, legacyInputForProcessor as never, {
-        creditCost,
-        reservationJobId: validatedInput.jobId,
-        workerRayId: req.headers.get('cf-ray') ?? undefined,
-        costAttribution: {
-          modelId: resolvedModelId,
-          qualityTier: resolvedTier,
-          scale: config.scale,
-          effectiveResolution: providerCostPricing.effectiveResolution,
-          providerCostUsd: providerCostPricing.providerCostUsd,
-          creditsCharged: creditCost,
-          pricingModel: providerCostPricing.pricingModel,
-        },
-        onCreditsDeducted: deduction => {
-          creditDeduction = deduction;
-        },
+      processingPromise,
+      new Promise<never>((_, reject) => {
+        processingTimeout = setTimeout(() => {
+          processingAbortController.abort();
+          reject(
+            new ReplicateError(
+              'Image processing timeout - request took longer than 2 minutes',
+              'TIMEOUT'
+            )
+          );
+        }, PROCESSING_TIMEOUT_MS);
       }),
-      new Promise<never>((_, reject) =>
-        setTimeout(
-          () => reject(new Error('Image processing timeout - request took longer than 2 minutes')),
-          PROCESSING_TIMEOUT_MS
-        )
-      ),
-    ]);
+    ]).finally(() => {
+      if (processingTimeout) clearTimeout(processingTimeout);
+    });
     providerAttemptStarted = false;
 
     const hasInlineProviderOutput = typeof result.imageData === 'string';

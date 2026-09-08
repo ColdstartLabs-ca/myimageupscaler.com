@@ -33,7 +33,8 @@ import { getAutoEligibleModels } from './auto-model-selection';
  * - nano-banana-pro: Upscale Ultra (premium, heavy damage repair)
  */
 const DEFAULT_MODEL_VERSIONS: Record<string, string> = {
-  'real-esrgan': 'nightmareai/real-esrgan',
+  'real-esrgan':
+    'nightmareai/real-esrgan:f121d640bd286e1fdc67f9799164c1d5be36ff74576ee11c803ae5b665dd46aa',
   'real-esrgan-large':
     'cjwbw/real-esrgan:d0ee3d708c9b911f122a4ad90046c5d26a0293b99476d697f6bb7f2e251ce2d4',
   gfpgan: 'xinntao/gfpgan:6129309904ce4debfde78de5c209bce0022af40e197e132f08be8ccce3050393',
@@ -57,6 +58,13 @@ const DEFAULT_MODEL_VERSIONS: Record<string, string> = {
     'recraft-ai/recraft-crisp-upscale:2177c1e3a177f5a76c632e467c32b413e424c23d84e43f7b036a965e305f6557',
   'nano-banana-2': 'google/nano-banana-2',
 };
+
+export function resolveRealEsrganModelVersion(
+  dedicatedOverride: string | undefined,
+  legacyGlobalOverride: string | undefined
+): string {
+  return dedicatedOverride || legacyGlobalOverride || DEFAULT_MODEL_VERSIONS['real-esrgan'];
+}
 
 /**
  * Model costs per run (USD) - now using centralized config
@@ -138,7 +146,10 @@ export class ModelRegistry {
    */
   private getModelVersion(modelId: string): string {
     const overrides: Record<string, string | undefined> = {
-      'real-esrgan': serverEnv.MODEL_VERSION_REAL_ESRGAN,
+      'real-esrgan': resolveRealEsrganModelVersion(
+        serverEnv.MODEL_VERSION_REAL_ESRGAN,
+        serverEnv.REPLICATE_MODEL_VERSION
+      ),
       gfpgan: serverEnv.MODEL_VERSION_GFPGAN,
       'clarity-upscaler': serverEnv.MODEL_VERSION_CLARITY_UPSCALER,
       'flux-2-pro': serverEnv.MODEL_VERSION_FLUX_2_PRO,
