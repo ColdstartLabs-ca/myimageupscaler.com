@@ -156,7 +156,9 @@ test.describe('built OpenNext workerd memory boundary', () => {
         UPSCALE_DURABLE_EXECUTION_ENABLED: 'true',
         UPSCALE_DURABLE_COHORT_PERCENT: '100',
         UPSCALE_EXECUTOR_BASE_URL: 'https://executor.upscale-fixture.invalid',
-        UPSCALE_EXECUTOR_WAKE_SECRET: 'local-worker-wake-secret-32-characters',
+        // Omit the optional wake secret for the attribution run; admission
+        // remains enabled by the executor base URL while no background wake is
+        // scheduled.
         AMPLITUDE_API_KEY: '',
         BASELIME_API_KEY: '',
         REPLICATE_API_TOKEN: 'fixture-provider-token',
