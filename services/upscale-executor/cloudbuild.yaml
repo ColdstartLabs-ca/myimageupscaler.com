@@ -1,0 +1,18 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --file=services/upscale-executor/Dockerfile
+      - --build-arg=UPSCALE_BUILD_ID=${_SOURCE_SHA}
+      - --tag=${_IMAGE}
+      - .
+
+images:
+  - ${_IMAGE}
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+substitutions:
+  _IMAGE: us-docker.pkg.dev/example/upscale-executor:local
+  _SOURCE_SHA: local

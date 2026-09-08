@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
   storageFrom: vi.fn(),
+  from: vi.fn(),
   listV2: vi.fn(),
   info: vi.fn(),
   upload: vi.fn(),
@@ -11,6 +12,7 @@ const mocks = vi.hoisted(() => ({
 vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: {
     storage: { from: mocks.storageFrom },
+    from: mocks.from,
   },
 }));
 
@@ -45,6 +47,13 @@ describe('cleanupStaleUpscaleInputs', () => {
       info: mocks.info,
       upload: mocks.upload,
       remove: mocks.remove,
+    });
+    mocks.from.mockReturnValue({
+      select: vi.fn(() => ({
+        in: vi.fn(() => ({
+          in: vi.fn(() => Promise.resolve({ data: [], error: null })),
+        })),
+      })),
     });
     mocks.info.mockResolvedValue({
       data: null,
@@ -208,5 +217,142 @@ describe('cleanupStaleUpscaleInputs', () => {
       metadata: { cleanup_version: '1', cleanup_cursor: '' },
       upsert: true,
     });
+  });
+
+  it('does not delete stale objects referenced by active durable inputs or retained outputs', async () => {
+    const activeInputPath = `user-1/${OLD_INPUT}`;
+    const activeOutputPath = `user-2/${FRESH_INPUT}`;
+    mocks.listV2.mockResolvedValue(
+      listResult([
+        inputObject(activeInputPath),
+        inputObject(activeOutputPath),
+        inputObject(`user-3/33333333-3333-4333-8333-333333333333.webp`),
+      ])
+    );
+    mocks.from
+      .mockReturnValueOnce({
+        select: vi.fn(() => ({
+          in: vi.fn(() => ({
+            in: vi.fn(() =>
+              Promise.resolve({
+                data: [{ input_storage_path: activeInputPath }],
+                error: null,
+              })
+            ),
+          })),
+        })),
+      })
+      .mockReturnValueOnce({
+        select: vi.fn(() => ({
+          in: vi.fn(() => ({
+            in: vi.fn(() =>
+              Promise.resolve({
+                data: [
+                  {
+                    output_storage_path: activeOutputPath,
+                    stage: 'completed',
+                    output_expires_at: '2026-09-01T12:00:00.000Z',
+                    delivery_lease_expires_at: null,
+                  },
+                ],
+                error: null,
+              })
+            ),
+          })),
+        })),
+      });
+
+    await expect(cleanupStaleUpscaleInputs(NOW)).resolves.toEqual({
+      deleted: 1,
+      failed: 0,
+    });
+    expect(mocks.remove).toHaveBeenCalledWith(['user-3/33333333-3333-4333-8333-333333333333.webp']);
+  });
+
+  it('deletes expired private attempt outputs while retaining ready, paid and actively leased outputs', async () => {
+    const paths = Array.from(
+      { length: 6 },
+      (_, index) =>
+        `user-1/outputs/33333333-3333-4333-8333-${String(index).padStart(12, '0')}/${OLD_INPUT}`
+    );
+    const future = '2026-09-01T12:00:00.000Z';
+    const past = '2026-08-31T11:00:00.000Z';
+    const rows = [
+      {
+        output_storage_path: paths[0],
+        stage: 'ready',
+        output_expires_at: past,
+        delivery_lease_expires_at: null,
+      },
+      {
+        output_storage_path: paths[1],
+        stage: 'completed',
+        output_expires_at: future,
+        delivery_lease_expires_at: null,
+      },
+      {
+        output_storage_path: paths[2],
+        stage: 'completed',
+        output_expires_at: past,
+        delivery_lease_expires_at: future,
+      },
+      {
+        output_storage_path: paths[3],
+        stage: 'completed',
+        output_expires_at: past,
+        delivery_lease_expires_at: past,
+      },
+    ];
+    mocks.listV2.mockResolvedValue(
+      listResult([
+        ...paths.map(path => inputObject(path)),
+        inputObject(`user-1/outputs/not-a-job/${OLD_INPUT}`),
+        inputObject(`user-1/outputs/33333333-3333-4333-8333-333333333333/not-an-attempt.png`),
+      ])
+    );
+    mocks.from.mockImplementation(() => ({
+      select: (columns: string) => ({
+        in: () => ({
+          in: async () => ({
+            data: columns.startsWith('output_storage_path') ? rows : [],
+            error: null,
+          }),
+        }),
+      }),
+    }));
+    await expect(cleanupStaleUpscaleInputs(NOW)).resolves.toEqual({ deleted: 3, failed: 0 });
+    expect(mocks.remove).toHaveBeenCalledWith(paths.slice(3));
+  });
+
+  it('retains private attempt outputs when the durable ledger is unavailable', async () => {
+    const output = `user-1/outputs/33333333-3333-4333-8333-333333333333/${OLD_INPUT}`;
+    mocks.listV2.mockResolvedValue(listResult([inputObject(output)]));
+    mocks.from.mockReturnValue({
+      select: () => ({
+        in: () => ({
+          in: async () => ({
+            data: null,
+            error: { code: '42P01', message: 'relation upscale_executions does not exist' },
+          }),
+        }),
+      }),
+    });
+    await expect(cleanupStaleUpscaleInputs(NOW)).resolves.toEqual({ deleted: 0, failed: 0 });
+    expect(mocks.remove).not.toHaveBeenCalled();
+  });
+
+  it('does not delete any candidates or advance the cursor after a durable-state query fails', async () => {
+    const output = `user-1/outputs/33333333-3333-4333-8333-333333333333/${OLD_INPUT}`;
+    mocks.listV2.mockResolvedValue(listResult([inputObject(output)], true, 'next-page'));
+    mocks.from.mockReturnValue({
+      select: () => ({
+        in: () => ({
+          in: async () => ({ data: null, error: { code: '42501', message: 'permission denied' } }),
+        }),
+      }),
+    });
+    await expect(cleanupStaleUpscaleInputs(NOW)).rejects.toThrow(/permission denied/);
+    expect(mocks.remove).not.toHaveBeenCalled();
+    expect(mocks.upload).not.toHaveBeenCalled();
   });
 });

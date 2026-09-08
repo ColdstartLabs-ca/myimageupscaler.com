@@ -113,4 +113,46 @@ describe('POST /api/cron/upscale-tail-refund', () => {
     await expect(response.json()).resolves.toEqual({ success: true, refunded: false });
     expect(mocks.rpc).not.toHaveBeenCalled();
   });
+
+  it('preserves a durable reservation and schedules recovery after admission death', async () => {
+    mocks.maybeSingle.mockResolvedValue({
+      data: {
+        user_id: 'user-1',
+        status: 'processing',
+        protocol_version: 'v2',
+        failure_reason: null,
+      },
+      error: null,
+    });
+    const response = await POST(request({ jobId, outcome: 'exceededMemory', rayId: 'abc-123' }));
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      success: true,
+      refunded: false,
+      durableExecution: true,
+      recoveryRequested: true,
+    });
+    expect(mocks.rpc).toHaveBeenCalledExactlyOnceWith('request_upscale_recovery', {
+      p_job_id: jobId,
+    });
+  });
+
+  it('returns a retryable error when durable recovery cannot be persisted', async () => {
+    mocks.maybeSingle.mockResolvedValue({
+      data: {
+        user_id: 'user-1',
+        status: 'processing',
+        protocol_version: 'v2',
+        failure_reason: null,
+      },
+      error: null,
+    });
+    mocks.rpc.mockResolvedValue({ data: null, error: { message: 'database unavailable' } });
+    const response = await POST(request({ jobId, outcome: 'exceededMemory', rayId: 'abc-123' }));
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toEqual({ success: false, refunded: false });
+    expect(mocks.rpc).toHaveBeenCalledExactlyOnceWith('request_upscale_recovery', {
+      p_job_id: jobId,
+    });
+  });
 });

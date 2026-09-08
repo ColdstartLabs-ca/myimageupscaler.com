@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { rateLimit, publicRateLimit } from '@server/rateLimit';
+import {
+  rateLimit,
+  publicRateLimit,
+  upscaleStatusRateLimit,
+  UPSCALE_RECOVERY_RATE_LIMIT,
+} from '@server/rateLimit';
 import { serverEnv } from '@shared/config/env';
 
 /**
@@ -126,23 +131,32 @@ export async function applyPublicRateLimit(
  */
 export async function applyUserRateLimit(
   userId: string,
-  res: NextResponse
+  res: NextResponse,
+  request?: NextRequest
 ): Promise<NextResponse | null> {
   let success, remaining, reset;
+  const pathname = request?.nextUrl.pathname;
+  const isRecovery =
+    pathname === '/api/upscale/jobs' ||
+    pathname === '/api/upscale/output' ||
+    (pathname === '/api/upscale' && request?.headers.get('X-Upscale-Protocol') === '2');
+  const limit = isRecovery ? UPSCALE_RECOVERY_RATE_LIMIT : USER_RATE_LIMIT;
 
   // Skip rate limiting in test environment but still add headers
   if (isTestEnvironment()) {
     success = true;
-    remaining = USER_RATE_LIMIT;
+    remaining = limit;
     reset = Date.now() + 10000; // 10 seconds from now
   } else {
-    const result = await rateLimit.limit(userId);
+    const result = isRecovery
+      ? await upscaleStatusRateLimit.limit(`middleware:${userId}`)
+      : await rateLimit.limit(userId);
     success = result.success;
     remaining = result.remaining;
     reset = result.reset;
   }
 
-  const rateLimitHeaders = createRateLimitHeaders(USER_RATE_LIMIT, remaining, reset);
+  const rateLimitHeaders = createRateLimitHeaders(limit, remaining, reset);
 
   if (!success) {
     return NextResponse.json(

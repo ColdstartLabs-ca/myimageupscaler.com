@@ -1,757 +1,317 @@
 import { NextRequest } from 'next/server';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
-  batchCheck: vi.fn(),
-  batchRelease: vi.fn(),
-  ensureProfile: vi.fn(),
   from: vi.fn(),
-  insert: vi.fn(),
-  analyze: vi.fn(),
-  createProcessor: vi.fn(),
-  createProcessorForModel: vi.fn(),
-  processImage: vi.fn(),
-  providerAvailability: vi.fn(),
-  acquireProviderPermit: vi.fn(),
-  recordProviderFailure: vi.fn(),
-  recordProviderSuccess: vi.fn(),
-  rateLimit: vi.fn(),
-  refundReservation: vi.fn(),
-  recordDeliverableOutput: vi.fn(),
-  resolveUpscaleInput: vi.fn(),
-  removeUpscaleInput: vi.fn(),
-  setupPending: vi.fn(),
+  getReplay: vi.fn(),
+  admit: vi.fn(),
+  input: vi.fn(),
+  removeInput: vi.fn(),
+  availability: vi.fn(),
+  rate: vi.fn(),
   track: vi.fn(),
-  parseUpscale: vi.fn(),
-  getModel: vi.fn(),
-  getModelForTier: vi.fn(),
-  calculateCredits: vi.fn(),
-  resolveResolution: vi.fn(),
-  getModelsByTier: vi.fn(),
-  modelIdToTier: vi.fn(),
-  decodeImageDimensions: vi.fn(),
-  ReplicateError: class ReplicateError extends Error {
-    constructor(
-      message: string,
-      public readonly code: string,
-      public readonly providerStatus?: number
-    ) {
-      super(message);
-      this.name = 'ReplicateError';
-    }
-  },
-}));
-
-vi.mock('@server/analytics', () => ({ trackServerEvent: mocks.track }));
-vi.mock('@server/monitoring/logger', () => ({
-  createLogger: () => ({ error: vi.fn(), flush: vi.fn(), info: vi.fn(), warn: vi.fn() }),
-}));
-vi.mock('@server/rateLimit', () => ({ upscaleRateLimit: { limit: mocks.rateLimit } }));
-vi.mock('@server/services/batch-limit.service', () => ({
-  batchLimitCheck: {
-    checkAndIncrement: mocks.batchCheck,
-    getUsage: () => ({
-      current: 1,
-      limit: 5,
-      resetAt: new Date('2026-08-10T21:00:00.000Z'),
-    }),
-    release: mocks.batchRelease,
-  },
-}));
-vi.mock('@server/services/anti-freeloader.service', () => ({
-  ensureAntiFreeloaderProfile: mocks.ensureProfile,
-}));
-vi.mock('@server/services/image-generation.service', () => ({
-  AIGenerationError: class AIGenerationError extends Error {},
-  InsufficientCreditsError: class InsufficientCreditsError extends Error {},
-}));
-vi.mock('@server/services/image-processor.factory', () => ({
-  ImageProcessorFactory: {
-    createProcessorForModel: mocks.createProcessorForModel,
-    createProcessor: mocks.createProcessor,
-  },
-}));
-vi.mock('@server/services/llm-image-analyzer', () => ({
-  LLMImageAnalyzer: class {
-    analyze(...args: unknown[]) {
-      return mocks.analyze(...args);
-    }
-  },
-}));
-vi.mock('@server/services/model-registry', () => ({
-  ModelRegistry: {
-    getInstance: () => ({
-      getMaxInputPixels: () => Number.MAX_SAFE_INTEGER,
-      getModel: mocks.getModel,
-      getModelsByTier: mocks.getModelsByTier,
-    }),
-  },
-}));
-vi.mock('@server/services/provider-health.service', () => ({
-  providerHealthService: {
-    getAvailability: mocks.providerAvailability,
-    acquireProcessingPermit: mocks.acquireProviderPermit,
-    recordFailure: mocks.recordProviderFailure,
-    recordSuccess: mocks.recordProviderSuccess,
-  },
-}));
-vi.mock('@server/services/upscale-input-storage.service', () => ({
-  resolveUpscaleInput: mocks.resolveUpscaleInput,
-  removeUpscaleInput: mocks.removeUpscaleInput,
-}));
-vi.mock('@server/services/replicate.service', () => ({ ReplicateError: mocks.ReplicateError }));
-vi.mock('@server/services/scale-preserving-model', () => ({
-  getScalePreservingFallbackCandidates: () => ['real-esrgan-large', 'clarity-upscaler'],
-  resolveScalePreservingModel: () => ({ usedFallback: false, modelId: 'real-esrgan' }),
-}));
-vi.mock('@server/services/replicate/utils/credit-manager', () => ({
-  creditManager: {
-    refundReservation: mocks.refundReservation,
-    recordDeliverableOutput: mocks.recordDeliverableOutput,
-  },
+  fetch: vi.fn(),
 }));
 vi.mock('@server/supabase/supabaseAdmin', () => ({ supabaseAdmin: { from: mocks.from } }));
+vi.mock('@server/services/upscale-job.service', async importOriginal => ({
+  ...(await importOriginal<typeof import('@server/services/upscale-job.service')>()),
+  upscaleJobService: { getReplay: mocks.getReplay, admit: mocks.admit },
+}));
+vi.mock('@server/services/upscale-input-storage.service', () => ({
+  resolveUpscaleInput: mocks.input,
+  removeUpscaleInput: mocks.removeInput,
+}));
+vi.mock('@server/services/anti-freeloader.service', () => ({
+  ensureAntiFreeloaderProfile: async (_req: unknown, _userId: unknown, profile: unknown) => profile,
+}));
+vi.mock('@server/services/provider-health.service', () => ({
+  providerHealthService: { getAvailability: mocks.availability },
+}));
+vi.mock('@server/rateLimit', () => ({ upscaleRateLimit: { limit: mocks.rate } }));
+vi.mock('@server/analytics', () => ({ trackServerEvent: mocks.track }));
+vi.mock('@server/monitoring/logger', () => ({
+  createLogger: () => ({ info: vi.fn(), warn: vi.fn(), error: vi.fn(), flush: vi.fn() }),
+}));
 vi.mock('@shared/config/env', () => ({
-  isProduction: () => false,
-  serverEnv: { AMPLITUDE_API_KEY: 'test-key', ENV: 'test' },
-}));
-vi.mock('@shared/config/model-costs.config', () => ({
-  MODEL_COSTS: { PREMIUM_QUALITY_TIERS: [], SMART_ANALYSIS_REQUIRES_PAID: false },
-}));
-vi.mock('@shared/config/subscription.utils', () => ({
-  calculateFinalProviderAwareCredits: mocks.calculateCredits,
-  calculateProviderAwareCredits: mocks.calculateCredits,
-  getModelForTier: mocks.getModelForTier,
-  modelIdToTier: mocks.modelIdToTier,
-  resolveEffectiveResolution: mocks.resolveResolution,
-}));
-vi.mock('@/lib/anti-freeloader/check-freeloader', () => ({
-  isAccountSetupPending: mocks.setupPending,
-  isFreeleaderBlocked: () => false,
-}));
-vi.mock('@shared/validation/upscale.schema', () => ({
-  upscaleSchema: { parse: mocks.parseUpscale },
-  decodeImageDimensions: mocks.decodeImageDimensions,
-  getBase64PayloadLength: (value: string) =>
-    value.length - (value.startsWith('data:') ? value.indexOf(',') + 1 : 0),
-  getBase64PayloadOffset: (value: string) =>
-    value.startsWith('data:') ? value.indexOf(',') + 1 : 0,
-  validateImageDimensions: () => ({ valid: true }),
-  validateImageSizeForTier: () => ({ valid: true }),
-  validateMagicBytes: () => ({ valid: true, detectedMimeType: 'image/jpeg' }),
-  IMAGE_VALIDATION: {
-    ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/webp', 'image/heic'],
-    MAX_REQUEST_BYTES: 64 * 1024,
+  serverEnv: {
+    ENV: 'test',
+    AMPLITUDE_API_KEY: 'test-key',
+    ENABLE_PREMIUM_MODELS: true,
+    UPSCALE_DURABLE_EXECUTION_ENABLED: true,
+    UPSCALE_DURABLE_COHORT_PERCENT: 100,
+    UPSCALE_EXECUTOR_BASE_URL: 'https://executor.example',
+    UPSCALE_EXECUTOR_SHARED_SECRET: 'test-wake-secret',
+    UPSCALE_BUILD_ID: 'test-build',
+    UPSCALE_EXECUTION_DEADLINE_SECONDS: 900,
+    UPSCALE_SUBMISSION_DEADLINE_SECONDS: 900,
   },
+  clientEnv: {},
+  isProduction: () => false,
 }));
 
 import { POST } from '@/app/api/upscale/route';
+import { ModelRegistry } from '@server/services/model-registry';
+import { UpscaleJobError, type IUpscaleAdmissionInput } from '@server/services/upscale-job.service';
 
-function request(tailJobId?: string): NextRequest {
+const jobId = '11111111-1111-4111-8111-111111111111';
+const payload = {
+  jobId,
+  storagePath: 'user-1/' + jobId + '.png',
+  mimeType: 'image/png',
+  config: { qualityTier: 'quick', scale: 2, additionalOptions: { smartAnalysis: false } },
+};
+function request(body: unknown = payload, headers: Record<string, string> = {}) {
   return new NextRequest('http://localhost/api/upscale', {
     method: 'POST',
     headers: {
       'X-User-Id': 'user-1',
-      'content-type': 'application/json',
-      ...(tailJobId ? { 'X-Upscale-Job-Id': tailJobId } : {}),
+      'X-Upscale-Protocol': '2',
+      'Content-Type': 'application/json',
+      ...headers,
     },
-    body: JSON.stringify({}),
+    body: JSON.stringify(body),
   });
 }
-
-const profile = {
-  subscription_status: null,
-  subscription_tier: null,
-  subscription_credits_balance: 1,
-  purchased_credits_balance: 0,
-  is_flagged_freeloader: false,
-  region_tier: 'standard',
-  signup_country: 'CA',
-  created_at: '2026-08-01T00:00:00.000Z',
-};
+function accepted(exactCharge = 1, stage = 'queued') {
+  return {
+    jobId,
+    stage,
+    exactCharge,
+    creditsRemaining: 100 - exactCharge,
+    statusUrl: '/api/upscale/jobs?jobId=' + jobId,
+    retryAfterMs: 2000,
+    httpStatus: 202,
+  };
+}
 
 describe('POST /api/upscale failure recording', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.rateLimit.mockResolvedValue({ success: true, remaining: 4, reset: Date.now() + 60_000 });
-    mocks.setupPending.mockReturnValue(false);
-    mocks.refundReservation.mockResolvedValue(true);
-    mocks.recordDeliverableOutput.mockResolvedValue(true);
-    mocks.resolveUpscaleInput.mockResolvedValue({
-      imageReference: 'https://storage.example/signed-input?token=abc',
-      validationImageData: 'iVBORw0KGgoAAAANSUhEUg==',
+    mocks.getReplay.mockResolvedValue(null);
+    mocks.admit.mockImplementation(async (input: IUpscaleAdmissionInput) =>
+      accepted(input.exactCharge)
+    );
+    mocks.rate.mockResolvedValue({ success: true, remaining: 4, reset: Date.now() + 60_000 });
+    mocks.availability.mockResolvedValue({ available: true, status: 'closed', retryAt: null });
+    mocks.track.mockResolvedValue(true);
+    mocks.fetch.mockResolvedValue(new Response('{}'));
+    vi.stubGlobal('fetch', mocks.fetch);
+    mocks.input.mockResolvedValue({
+      imageReference: 'https://storage.example/signed-input?token=private',
+      validationImageData: 'iVBORw0KGgoAAAANSUhEUgAAAGQAAABQ',
       sizeBytes: 1024,
       mimeType: 'image/png',
     });
-    mocks.removeUpscaleInput.mockResolvedValue(undefined);
-    mocks.batchRelease.mockResolvedValue(true);
-    mocks.providerAvailability.mockResolvedValue({
-      available: true,
-      status: 'closed',
-      retryAt: null,
-    });
-    mocks.acquireProviderPermit.mockResolvedValue(true);
-    mocks.analyze.mockResolvedValue({
-      recommendedModel: 'real-esrgan',
-      issues: [],
-      enhancementPrompt: undefined,
-    });
-    mocks.createProcessor.mockReturnValue({
-      providerName: 'Replicate',
-      processImage: mocks.processImage,
-    });
-    mocks.createProcessorForModel.mockImplementation((modelId: string) => ({
-      providerName: modelId === 'nano-banana' ? 'Replicate' : 'Gemini',
-      processImage: mocks.processImage,
-    }));
-    mocks.getModelsByTier.mockReturnValue([]);
-    mocks.decodeImageDimensions.mockReturnValue(null);
-    mocks.modelIdToTier.mockReturnValue('quick');
-    mocks.recordProviderFailure.mockResolvedValue(true);
-    mocks.recordProviderSuccess.mockResolvedValue(true);
-    mocks.track.mockResolvedValue(true);
-    mocks.batchCheck.mockResolvedValue({ allowed: true, current: 1, limit: 5 });
-    mocks.getModelForTier.mockReturnValue('real-esrgan');
-    mocks.getModel.mockReturnValue({
-      isEnabled: true,
-      supportedScales: [2, 4, 8],
-      capabilities: ['upscale'],
-      displayName: 'Real-ESRGAN',
-      creditMultiplier: 1,
-    });
-    mocks.calculateCredits.mockReturnValue({
-      finalCredits: 1,
-      effectiveResolution: undefined,
-      providerCostUsd: 0,
-      pricingModel: 'test',
-    });
-    mocks.resolveResolution.mockReturnValue(undefined);
-    mocks.parseUpscale.mockReturnValue({
-      storagePath: 'user-1/11111111-1111-4111-8111-111111111111.png',
-      jobId: '11111111-1111-4111-8111-111111111111',
-      mimeType: 'image/png',
-      config: {
-        qualityTier: 'quick',
-        scale: 2,
-        additionalOptions: { smartAnalysis: false },
-      },
-      resolvedModel: 'real-esrgan',
-    });
-    mocks.processImage.mockResolvedValue({
-      imageUrl: 'https://replicate.delivery/result.png',
-      mimeType: 'image/png',
-      expiresAt: 1795737600000,
-      creditsRemaining: 4,
-    });
-    mocks.ensureProfile.mockReturnValue(profile);
-    mocks.from.mockImplementation((table: string) => {
-      if (table === 'processing_jobs') return { insert: mocks.insert };
-      return {
-        select: () => ({
-          eq: () => ({
-            maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
-            single: async () => ({ data: profile, error: null }),
+    mocks.from.mockImplementation(() => ({
+      select: () => ({
+        eq: () => ({
+          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
+          single: async () => ({
+            data: {
+              subscription_status: 'active',
+              subscription_tier: 'pro',
+              subscription_credits_balance: 100,
+              purchased_credits_balance: 0,
+              is_flagged_freeloader: false,
+            },
+            error: null,
           }),
         }),
-      };
-    });
-    mocks.insert.mockResolvedValue({ error: null });
+      }),
+    }));
   });
+  afterEach(() => vi.unstubAllGlobals());
 
-  it('dispatches Auto Nano Banana and charges its configured credits', async () => {
-    const jobId = '66666666-6666-4666-8666-666666666666';
-    const storagePath = `user-1/${jobId}.png`;
-    const imageReference = 'https://storage.example/signed-input?token=abc';
-
-    mocks.parseUpscale.mockReturnValue({
-      storagePath,
-      jobId,
-      mimeType: 'image/png',
-      config: {
-        qualityTier: 'auto',
-        scale: 2,
-        additionalOptions: {
-          // Auto performs analysis itself; switching from an explicit tier can
-          // leave this UI flag true, but it must not add a second analysis credit.
-          smartAnalysis: true,
-          enhance: false,
-          enhanceFaces: false,
-          preserveText: false,
-        },
-      },
-      resolvedModel: 'auto',
-    });
-    mocks.getModelsByTier.mockReturnValue([
-      { id: 'real-esrgan', creditMultiplier: 1, supportedScales: [2, 4] },
-      { id: 'nano-banana', creditMultiplier: 2, supportedScales: [] },
-    ]);
-    mocks.getModel.mockReturnValue({
-      isEnabled: true,
-      supportedScales: [],
-      capabilities: ['text-preservation', 'enhance'],
-      displayName: 'Text Preserve',
-      creditMultiplier: 2,
-    });
-    mocks.ensureProfile.mockReturnValue({
-      ...profile,
-      subscription_credits_balance: 2,
-    });
-    mocks.decodeImageDimensions.mockReturnValue({ width: 100, height: 80 });
-    mocks.calculateCredits.mockReturnValue({
-      finalCredits: 2,
-      scaleMultiplier: 1,
-      resolutionMultiplier: 1,
-      effectiveResolution: undefined,
-      providerCostUsd: 0.039,
-      pricingModel: 'flat',
-    });
-    mocks.analyze.mockResolvedValue({
-      recommendedModel: 'nano-banana',
-      issues: [{ type: 'text', severity: 'high' }],
-      enhancementPrompt: 'Preserve text and logos.',
-    });
-    let deductedCredits: number | undefined;
-    mocks.processImage.mockImplementation(
-      async (
-        _userId: string,
-        _input: unknown,
-        options: {
-          creditCost: number;
-          onCreditsDeducted?: (deduction: Record<string, unknown>) => void;
-        }
-      ) => {
-        deductedCredits = options.creditCost;
-        options.onCreditsDeducted?.({
-          amount: options.creditCost,
-          subscriptionAmount: options.creditCost,
-          purchasedAmount: 0,
-          jobId,
-        });
-        return {
-          imageUrl: 'https://replicate.delivery/nano-banana.png',
-          mimeType: 'image/png',
-          expiresAt: 1795737600000,
-          creditsRemaining: 4,
-        };
-      }
+  it('reserves the Auto maximum and saves eligible models without running analysis during admission', async () => {
+    const response = await POST(
+      request({
+        ...payload,
+        config: { qualityTier: 'auto', scale: 2, additionalOptions: { smartAnalysis: true } },
+      })
     );
 
-    vi.useFakeTimers();
-    try {
-      const responsePromise = POST(request());
-      await vi.advanceTimersByTimeAsync(5000);
-      const response = await responsePromise;
-
-      expect(response.status).toBe(200);
-      await expect(response.json()).resolves.toMatchObject({
-        dimensions: {
-          input: { width: 100, height: 80 },
-          output: { width: 100, height: 80 },
-          actualScale: 1,
-        },
-      });
-      expect(mocks.analyze).toHaveBeenCalledWith(
-        imageReference,
-        'image/jpeg',
-        ['real-esrgan', 'nano-banana'],
-        true
-      );
-      expect(mocks.createProcessorForModel).toHaveBeenCalledWith('nano-banana');
-      expect(mocks.createProcessorForModel).not.toHaveBeenCalledWith('real-esrgan');
-      expect(mocks.createProcessorForModel.mock.results[0]?.value).toMatchObject({
-        providerName: 'Replicate',
-      });
-      expect(mocks.calculateCredits).toHaveBeenCalledWith(
-        expect.objectContaining({
-          modelId: 'nano-banana',
-          qualityTier: 'quick',
-          scale: 2,
-        })
-      );
-      expect(mocks.processImage).toHaveBeenCalledWith(
-        'user-1',
-        expect.objectContaining({ imageData: imageReference }),
-        expect.objectContaining({ reservationJobId: jobId, creditCost: 2 })
-      );
-      expect(deductedCredits).toBe(2);
-    } finally {
-      vi.useRealTimers();
-    }
+    expect(response.status).toBe(202);
+    expect((await response.json()).processing.creditsUsed).toBe(25);
+    expect(mocks.admit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        jobId,
+        exactCharge: 25,
+        selectionMode: 'auto',
+        resolvedProvider: 'deferred',
+        requestConfig: expect.objectContaining({
+          executionPlan: expect.objectContaining({
+            deferredAnalysis: true,
+            reservedMaximumCredits: 25,
+            allowedModelIds: expect.arrayContaining(['nano-banana', 'real-esrgan']),
+          }),
+        }),
+      })
+    );
+    expect(mocks.fetch.mock.calls.map(([url]) => url)).toEqual(['https://executor.example/wake']);
   });
 
-  it.each([
-    {
-      scale: 4 as const,
-      jobId: '44444444-4444-4444-8444-444444444444',
-      compatibleModelId: 'clarity-upscaler',
-      candidates: [
-        { id: 'real-esrgan', creditMultiplier: 1, supportedScales: [2] },
-        { id: 'nano-banana', creditMultiplier: 2, supportedScales: [] },
-        { id: 'clarity-upscaler', creditMultiplier: 4, supportedScales: [2, 4] },
-      ],
-    },
-    {
-      scale: 8 as const,
-      jobId: '88888888-8888-4888-8888-888888888888',
-      compatibleModelId: 'clarity-pro-upscaler',
-      candidates: [
-        { id: 'real-esrgan', creditMultiplier: 1, supportedScales: [2, 4] },
-        { id: 'nano-banana', creditMultiplier: 2, supportedScales: [] },
-        { id: 'clarity-pro-upscaler', creditMultiplier: 7, supportedScales: [2, 4, 8] },
-      ],
-    },
-  ])(
-    'filters Auto recommendations to models that support $scale x and uses a compatible fallback',
-    async ({ scale, jobId, compatibleModelId, candidates }) => {
-      const storagePath = `user-1/${jobId}.png`;
-      const imageReference = 'https://storage.example/signed-input?token=abc';
+  it.each([4, 8])('persists only compatible Auto candidates for a %sx request', async scale => {
+    const response = await POST(
+      request({
+        ...payload,
+        config: { qualityTier: 'auto', scale, additionalOptions: {} },
+      })
+    );
 
-      mocks.parseUpscale.mockReturnValue({
-        storagePath,
-        jobId,
-        mimeType: 'image/png',
-        config: {
-          qualityTier: 'auto',
-          scale,
-          additionalOptions: { smartAnalysis: false },
-        },
-        resolvedModel: 'auto',
-      });
-      mocks.getModelsByTier.mockReturnValue(candidates);
-      mocks.getModel.mockReturnValue({
-        isEnabled: true,
-        supportedScales: [2, 4, 8],
-        capabilities: ['upscale'],
-        displayName: compatibleModelId,
-        creditMultiplier: 1,
-      });
-      mocks.analyze.mockResolvedValue({
-        // Deliberately return an incompatible model. The route must use the
-        // compatible candidate retained by the scale filter instead.
-        recommendedModel: 'real-esrgan',
-        issues: [],
-        enhancementPrompt: undefined,
-      });
-      mocks.processImage.mockImplementation(async (_userId, _input, options) => {
-        options?.onCreditsDeducted?.({
-          amount: 1,
-          subscriptionAmount: 1,
-          purchasedAmount: 0,
-          jobId,
-        });
-        return {
-          imageUrl: 'https://replicate.delivery/result.png',
-          mimeType: 'image/png',
-          expiresAt: 1795737600000,
-          creditsRemaining: 4,
-        };
-      });
-
-      vi.useFakeTimers();
-      try {
-        const responsePromise = POST(request());
-        await vi.advanceTimersByTimeAsync(5000);
-        const response = await responsePromise;
-        expect(response.status).toBe(200);
-        expect(mocks.analyze).toHaveBeenCalledWith(
-          imageReference,
-          'image/jpeg',
-          [compatibleModelId],
-          true
-        );
-        expect(mocks.createProcessorForModel).toHaveBeenCalledWith(compatibleModelId);
-        expect(mocks.processImage).toHaveBeenCalledWith(
-          'user-1',
-          expect.objectContaining({ imageData: imageReference }),
-          expect.objectContaining({ reservationJobId: jobId })
-        );
-      } finally {
-        vi.useRealTimers();
-      }
+    expect(response.status).toBe(202);
+    const admission = mocks.admit.mock.calls[0][0];
+    const candidates: string[] = admission.requestConfig.executionPlan.allowedModelIds;
+    expect(candidates.length).toBeGreaterThan(0);
+    expect(candidates).not.toContain('nano-banana');
+    expect(candidates).toContain(admission.resolvedModelId);
+    for (const id of candidates) {
+      expect(ModelRegistry.getInstance().getModel(id)?.supportedScales).toContain(scale);
     }
-  );
+    expect(admission).toMatchObject({ scale, exactCharge: 25, resolvedProvider: 'deferred' });
+  });
 
-  it('rejects a Tail correlation header that does not match the validated reservation id', async () => {
-    mocks.parseUpscale.mockReturnValue({
-      storagePath: 'user-1/11111111-1111-4111-8111-111111111111.png',
-      mimeType: 'image/jpeg',
-      jobId: '11111111-1111-4111-8111-111111111111',
-      config: {
-        qualityTier: 'quick',
-        scale: 2,
-        additionalOptions: { smartAnalysis: false },
-      },
-      resolvedModel: 'real-esrgan',
-    });
-
-    const response = await POST(request('22222222-2222-4222-8222-222222222222'));
+  it('rejects a Tail correlation mismatch before any reservation or account lookup', async () => {
+    const response = await POST(
+      request(payload, {
+        'X-Upscale-Job-Id': '22222222-2222-4222-8222-222222222222',
+      })
+    );
 
     expect(response.status).toBe(400);
-    expect(mocks.processImage).not.toHaveBeenCalled();
-    expect(mocks.batchRelease).toHaveBeenCalled();
+    expect(mocks.getReplay).not.toHaveBeenCalled();
+    expect(mocks.from).not.toHaveBeenCalled();
+    expect(mocks.admit).not.toHaveBeenCalled();
   });
 
-  it('completes the durable reservation only after a usable output URL exists', async () => {
-    mocks.processImage.mockImplementation(
-      async (
-        _userId: string,
-        _input: unknown,
-        options: { onCreditsDeducted?: (deduction: Record<string, unknown>) => void }
-      ) => {
-        options.onCreditsDeducted?.({
-          amount: 1,
-          subscriptionAmount: 1,
-          purchasedAmount: 0,
-          jobId: '11111111-1111-4111-8111-111111111111',
-        });
-        return {
-          imageUrl: 'https://output.test/result.png',
-          mimeType: 'image/png',
-          expiresAt: 1795737600000,
-          creditsRemaining: 4,
-        };
-      }
+  it('acknowledges the reservation while output is still pending', async () => {
+    const response = await POST(request());
+    const body = await response.json();
+
+    expect(response.status).toBe(202);
+    expect(body).toMatchObject({ accepted: true, jobId, status: 'queued' });
+    expect(body.processing).toEqual({
+      reservationJobId: jobId,
+      creditsUsed: 1,
+      creditsRemaining: 99,
+    });
+    expect(JSON.stringify(body)).not.toMatch(/imageUrl|imageData|deliveryToken|signed-input/);
+    expect(mocks.from.mock.calls.map(([table]) => table)).toEqual([
+      'free_credit_grants',
+      'profiles',
+    ]);
+    expect(mocks.removeInput).not.toHaveBeenCalled();
+  });
+
+  it('rejects inline image bytes before creating or refunding a reservation', async () => {
+    const response = await POST(
+      request({
+        ...payload,
+        imageData: 'data:image/png;base64,iVBORw0KGgo=',
+      })
     );
+
+    expect(response.status).toBe(400);
+    expect((await response.json()).error.code).toBe('VALIDATION_ERROR');
+    expect(mocks.from).not.toHaveBeenCalled();
+    expect(mocks.admit).not.toHaveBeenCalled();
+    expect(mocks.removeInput).not.toHaveBeenCalled();
+  });
+
+  it('fails closed on unverifiable input before admission', async () => {
+    mocks.input.mockResolvedValue({
+      validationImageData: Buffer.from('not a supported image').toString('base64'),
+      sizeBytes: 1024,
+      mimeType: 'image/png',
+    });
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(400);
+    expect(mocks.admit).not.toHaveBeenCalled();
+    expect(mocks.removeInput).not.toHaveBeenCalled();
+  });
+
+  it('keeps a lost admission response recoverable without inserting a failed job or deleting input', async () => {
+    mocks.admit.mockRejectedValueOnce(new Error('database connection lost after commit'));
+    const response = await POST(request());
+
+    expect(response.status).toBe(503);
+    expect(await response.json()).toMatchObject({
+      error: { code: 'INTERNAL_ERROR', details: { jobId, retryable: true } },
+    });
+    expect(mocks.removeInput).not.toHaveBeenCalled();
+    expect(mocks.from.mock.calls.map(([table]) => table)).toEqual([
+      'free_credit_grants',
+      'profiles',
+    ]);
+    expect(mocks.track).not.toHaveBeenCalled();
+
+    mocks.getReplay.mockResolvedValueOnce(accepted(1, 'processing'));
+    const recovered = await POST(request());
+    expect(recovered.status).toBe(202);
+    expect(await recovered.json()).toMatchObject({ jobId, status: 'processing' });
+    expect(mocks.admit).toHaveBeenCalledOnce();
+  });
+
+  it('preserves a confirmed admission when the advisory executor wake fails', async () => {
+    mocks.fetch.mockRejectedValue(new Error('wake transport unavailable'));
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(202);
+    expect(await response.json()).toMatchObject({ jobId, status: 'queued' });
+    expect(mocks.admit).toHaveBeenCalledOnce();
+    expect(mocks.removeInput).not.toHaveBeenCalled();
+  });
+
+  it('returns a safe retryable error if storage lookup fails before admission', async () => {
+    mocks.input.mockRejectedValue(new Error('https://storage.example/input?token=private-secret'));
+
+    const response = await POST(request());
+    const body = await response.json();
+
+    expect(response.status).toBe(503);
+    expect(body.error.details).toEqual({ jobId, retryable: true });
+    expect(JSON.stringify(body)).not.toMatch(/storage.example|private-secret/);
+    expect(mocks.admit).not.toHaveBeenCalled();
+    expect(mocks.removeInput).not.toHaveBeenCalled();
+  });
+
+  it('preserves a typed ledger rejection without replacing its original job identity', async () => {
+    mocks.admit.mockRejectedValue(
+      new UpscaleJobError(
+        'INVALID_REQUEST',
+        'This job ID is already associated with different request settings.',
+        409,
+        { jobId }
+      )
+    );
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(409);
+    expect(await response.json()).toMatchObject({
+      error: { code: 'INVALID_REQUEST', details: { jobId } },
+    });
+    expect(mocks.admit).toHaveBeenCalledOnce();
+    expect(mocks.removeInput).not.toHaveBeenCalled();
+  });
+
+  it('replays a terminal job without creating another reservation', async () => {
+    mocks.getReplay.mockResolvedValue({
+      ...accepted(),
+      stage: 'failed',
+      retryAfterMs: 0,
+      httpStatus: 200,
+      creditsRemaining: 100,
+    });
 
     const response = await POST(request());
 
     expect(response.status).toBe(200);
-    const responseBody = await response.json();
-    expect(responseBody).toMatchObject({
-      processing: {
-        reservationJobId: '11111111-1111-4111-8111-111111111111',
-        deliveryToken: expect.any(String),
-      },
-    });
-    expect(responseBody).not.toHaveProperty('imageUrl');
-    expect(responseBody).not.toHaveProperty('imageData');
-    expect(mocks.recordDeliverableOutput).toHaveBeenCalledWith(
-      'user-1',
-      '11111111-1111-4111-8111-111111111111',
-      {
-        imageUrl: 'https://output.test/result.png',
-        mimeType: 'image/png',
-        expiresAt: 1795737600000,
-        deliveryTokenHash: expect.stringMatching(/^[a-f0-9]{64}$/),
-      }
-    );
-    expect(mocks.refundReservation).not.toHaveBeenCalled();
-  });
-
-  it('rejects inline image data, refunds the reservation, and records the failure', async () => {
-    mocks.processImage.mockImplementation(
-      async (
-        _userId: string,
-        _input: unknown,
-        options: { onCreditsDeducted?: (deduction: Record<string, unknown>) => void }
-      ) => {
-        options.onCreditsDeducted?.({
-          amount: 1,
-          subscriptionAmount: 1,
-          purchasedAmount: 0,
-          jobId: '11111111-1111-4111-8111-111111111111',
-        });
-        return {
-          imageData: 'data:image/png;base64,iVBORw0KGgo=',
-          mimeType: 'image/png',
-          creditsRemaining: 4,
-        };
-      }
-    );
-    const response = await POST(request());
-
-    expect(response.status).toBe(503);
-    await expect(response.json()).resolves.toMatchObject({
-      error: { code: 'AI_UNAVAILABLE' },
-    });
-    expect(mocks.recordDeliverableOutput).not.toHaveBeenCalled();
-    expect(mocks.refundReservation).toHaveBeenCalledWith(
-      'user-1',
-      expect.objectContaining({ jobId: '11111111-1111-4111-8111-111111111111', amount: 1 }),
-      expect.stringContaining('inline_provider_output_rejected')
-    );
-    expect(mocks.insert).toHaveBeenCalledWith(
-      expect.objectContaining({ error_message: 'inline_provider_output_rejected' })
-    );
-  });
-
-  it('fails closed when a processor returns an inline result without a URL', async () => {
-    mocks.processImage.mockImplementation(
-      async (
-        _userId: string,
-        _input: unknown,
-        options: { onCreditsDeducted?: (deduction: Record<string, unknown>) => void }
-      ) => {
-        options.onCreditsDeducted?.({
-          amount: 1,
-          subscriptionAmount: 1,
-          purchasedAmount: 0,
-          jobId: '33333333-3333-4333-8333-333333333333',
-        });
-        return {
-          imageData: 'data:image/png;base64,iVBORw0KGgo=',
-          mimeType: 'image/png',
-          creditsRemaining: 4,
-        };
-      }
-    );
-    const response = await POST(request());
-
-    expect(response.status).toBe(503);
-    expect(mocks.recordDeliverableOutput).not.toHaveBeenCalled();
-    expect(mocks.refundReservation).toHaveBeenCalledWith(
-      'user-1',
-      expect.objectContaining({ jobId: '33333333-3333-4333-8333-333333333333', amount: 1 }),
-      expect.stringContaining('inline_provider_output_rejected')
-    );
-  });
-
-  it('refunds when recording the provider URL deliverable fails', async () => {
-    mocks.processImage.mockImplementation(
-      async (
-        _userId: string,
-        _input: unknown,
-        options: { onCreditsDeducted?: (deduction: Record<string, unknown>) => void }
-      ) => {
-        options.onCreditsDeducted?.({
-          amount: 1,
-          subscriptionAmount: 1,
-          purchasedAmount: 0,
-          jobId: '44444444-4444-4444-8444-444444444444',
-        });
-        return {
-          imageUrl: 'https://replicate.delivery/result.png',
-          mimeType: 'image/png',
-          expiresAt: 1795737600000,
-          creditsRemaining: 4,
-        };
-      }
-    );
-    mocks.recordDeliverableOutput.mockResolvedValue(false);
-
-    const response = await POST(request());
-
-    expect(response.status).toBe(503);
-    expect(mocks.removeUpscaleInput).toHaveBeenCalledWith(
-      'user-1/11111111-1111-4111-8111-111111111111.png'
-    );
-    expect(mocks.refundReservation).toHaveBeenCalledWith(
-      'user-1',
-      expect.objectContaining({ jobId: '44444444-4444-4444-8444-444444444444', amount: 1 }),
-      expect.stringContaining('durable_result_not_deliverable')
-    );
-  });
-
-  it('refunds when recording the provider URL deliverable throws', async () => {
-    mocks.processImage.mockImplementation(
-      async (
-        _userId: string,
-        _input: unknown,
-        options: { onCreditsDeducted?: (deduction: Record<string, unknown>) => void }
-      ) => {
-        options.onCreditsDeducted?.({
-          amount: 1,
-          subscriptionAmount: 1,
-          purchasedAmount: 0,
-          jobId: '55555555-5555-4555-8555-555555555555',
-        });
-        return {
-          imageUrl: 'https://replicate.delivery/result.png',
-          mimeType: 'image/png',
-          expiresAt: 1795737600000,
-          creditsRemaining: 4,
-        };
-      }
-    );
-    mocks.recordDeliverableOutput.mockRejectedValue(new Error('record failed'));
-
-    const response = await POST(request());
-
-    expect(response.status).toBe(503);
-    expect(mocks.removeUpscaleInput).toHaveBeenCalledWith(
-      'user-1/11111111-1111-4111-8111-111111111111.png'
-    );
-    expect(mocks.refundReservation).toHaveBeenCalledWith(
-      'user-1',
-      expect.objectContaining({ jobId: '55555555-5555-4555-8555-555555555555', amount: 1 }),
-      expect.stringContaining('durable_result_not_deliverable')
-    );
-  });
-
-  it('refunds and fails when a provider result has no HTTPS URL', async () => {
-    mocks.processImage.mockImplementation(
-      async (
-        _userId: string,
-        _input: unknown,
-        options: { onCreditsDeducted?: (deduction: Record<string, unknown>) => void }
-      ) => {
-        options.onCreditsDeducted?.({
-          amount: 1,
-          subscriptionAmount: 1,
-          purchasedAmount: 0,
-          jobId: '22222222-2222-4222-8222-222222222222',
-        });
-        return {
-          imageData: 'data:image/png;base64,result',
-          mimeType: 'image/png',
-          creditsRemaining: 4,
-        };
-      }
-    );
-    mocks.recordDeliverableOutput.mockResolvedValue(false);
-
-    const response = await POST(request());
-
-    expect(response.status).toBe(503);
-    expect(mocks.recordDeliverableOutput).not.toHaveBeenCalled();
-    expect(mocks.refundReservation).toHaveBeenCalledWith(
-      'user-1',
-      expect.objectContaining({ jobId: '22222222-2222-4222-8222-222222222222', amount: 1 }),
-      expect.stringContaining('inline_provider_output_rejected')
-    );
-  });
-
-  it('should insert a failed processing_jobs row when upscale fails', async () => {
-    mocks.processImage.mockImplementation(
-      async (
-        _userId: string,
-        _input: unknown,
-        options: { onCreditsDeducted?: (deduction: Record<string, unknown>) => void }
-      ) => {
-        options.onCreditsDeducted?.({
-          amount: 1,
-          subscriptionAmount: 1,
-          purchasedAmount: 0,
-          jobId: 'job-timeout',
-        });
-        throw new mocks.ReplicateError('provider timeout', 'TIMEOUT', 503);
-      }
-    );
-
-    const response = await POST(request());
-
-    expect(response.status).toBe(503);
-    expect(mocks.insert).toHaveBeenCalledWith(
-      expect.objectContaining({
-        user_id: 'user-1',
-        status: 'failed',
-        error_message: 'replicate_timeout',
-        credits_charged: 0,
-      })
-    );
-  });
-
-  it('should still return the original error when row insert throws', async () => {
-    mocks.processImage.mockRejectedValue(
-      new mocks.ReplicateError('provider timeout', 'TIMEOUT', 503)
-    );
-    mocks.insert.mockRejectedValue(new Error('database unavailable'));
-
-    const response = await POST(request());
-
-    expect(response.status).toBe(503);
-    await expect(response.json()).resolves.toMatchObject({
-      error: { code: 'AI_UNAVAILABLE' },
-    });
+    expect(await response.json()).toMatchObject({ jobId, status: 'failed' });
+    expect(mocks.admit).not.toHaveBeenCalled();
+    expect(mocks.from).not.toHaveBeenCalled();
+    expect(mocks.input).not.toHaveBeenCalled();
   });
 });

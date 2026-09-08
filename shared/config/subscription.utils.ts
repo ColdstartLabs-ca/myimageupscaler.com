@@ -683,6 +683,8 @@ export function calculateBatchCost(imageCount: number, costPerImage: number): nu
  * as the billing path. Dynamic models such as Clarity Pro require per-image
  * dimensions; without them, the resolver falls back to the model minimum.
  */
+export const AUTO_UPSCALE_MAX_RESERVATION_CREDITS = 25;
+
 export function calculateBatchProviderAwareCreditCost(params: {
   config: Pick<
     IUpscaleConfig,
@@ -695,7 +697,7 @@ export function calculateBatchProviderAwareCreditCost(params: {
   const perItemCredits = params.items.map(item => {
     if (qualityTier === 'auto') {
       // Auto mode uses variable cost — use the upper bound to avoid understating.
-      return 25;
+      return AUTO_UPSCALE_MAX_RESERVATION_CREDITS;
     }
 
     const modelId = QUALITY_TIER_CONFIG[qualityTier].modelId;

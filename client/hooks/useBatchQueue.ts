@@ -8,10 +8,14 @@ import { useToastStore } from '@client/store/toastStore';
 import { useUserData, useUserStore } from '@client/store/userStore';
 import {
   BatchLimitError,
+  DurableUpscaleTerminalError,
+  type IDurableUpscaleJobStatus,
   FreeLimitExceededError,
   processImage,
   ProviderUnavailableError,
   reportUpscaleEdgeFailure,
+  listDurableUpscaleJobs,
+  resumeDurableUpscale,
   UpscaleEdgeError,
 } from '@client/utils/api-client';
 import {
@@ -27,7 +31,7 @@ import { TIMEOUTS } from '@shared/config/timeouts.config';
 import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
 import { serializeError } from '@shared/utils/errors';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { analytics } from '@client/analytics';
 import { loadImageDimensions } from '@client/utils/file-validation';
 import { normalizeCoreEventProperties } from '@server/analytics/core-event-contract';
@@ -40,6 +44,92 @@ interface IBatchProgress {
 type IRetryableBatchItem = IBatchItem & {
   retryable?: boolean;
 };
+
+interface IPersistedDurableJob {
+  itemId: string;
+  jobId: string;
+  fileName: string;
+  mimeType: string;
+  savedAt: number;
+}
+
+const DURABLE_JOB_STORAGE_PREFIX = 'myimageupscaler:durable-jobs:';
+const MAX_PERSISTED_DURABLE_JOBS = 50;
+const RECOVERED_PREVIEW_URL =
+  'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+
+function revokeItemUrls(item: IBatchItem): void {
+  for (const url of new Set([item.previewUrl, item.processedUrl])) {
+    if (url?.startsWith('blob:')) URL.revokeObjectURL(url);
+  }
+}
+
+function invalidateUserCredits(): void {
+  const store = useUserStore.getState() as unknown as { invalidate?: () => void };
+  store.invalidate?.();
+}
+
+function durableJobStorageKey(userId: string): string {
+  return `${DURABLE_JOB_STORAGE_PREFIX}${userId}`;
+}
+
+function readPersistedDurableJobs(userId: string): IPersistedDurableJob[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = window.localStorage.getItem(durableJobStorageKey(userId));
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (item): item is IPersistedDurableJob =>
+        item &&
+        typeof item === 'object' &&
+        typeof item.itemId === 'string' &&
+        typeof item.jobId === 'string' &&
+        typeof item.fileName === 'string' &&
+        typeof item.mimeType === 'string' &&
+        typeof item.savedAt === 'number'
+    );
+  } catch {
+    return [];
+  }
+}
+
+function writePersistedDurableJob(userId: string, item: IPersistedDurableJob): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const current = readPersistedDurableJobs(userId).filter(job => job.jobId !== item.jobId);
+    window.localStorage.setItem(
+      durableJobStorageKey(userId),
+      JSON.stringify([item, ...current].slice(0, MAX_PERSISTED_DURABLE_JOBS))
+    );
+  } catch {
+    // Storage is an optimization for reload recovery; the server remains authoritative.
+  }
+}
+
+function removePersistedDurableJob(userId: string, jobId: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const remaining = readPersistedDurableJobs(userId).filter(job => job.jobId !== jobId);
+    if (remaining.length > 0) {
+      window.localStorage.setItem(durableJobStorageKey(userId), JSON.stringify(remaining));
+    } else {
+      window.localStorage.removeItem(durableJobStorageKey(userId));
+    }
+  } catch {
+    // Ignore unavailable browser storage.
+  }
+}
+
+function removeAllPersistedDurableJobs(userId: string | undefined): void {
+  if (!userId || typeof window === 'undefined') return;
+  try {
+    window.localStorage.removeItem(durableJobStorageKey(userId));
+  } catch {
+    // Ignore unavailable browser storage.
+  }
+}
 
 interface IUseBatchQueueReturn {
   queue: IRetryableBatchItem[];
@@ -95,13 +185,237 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     ? IMAGE_VALIDATION.MAX_SIZE_PAID
     : IMAGE_VALIDATION.MAX_SIZE_FREE;
 
-  // Cleanup object URLs on unmount
-  useEffect(() => {
-    return () => {
-      queue.forEach(item => URL.revokeObjectURL(item.previewUrl));
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const queueRef = useRef(queue);
+  queueRef.current = queue;
+  const accountRef = useRef(profile?.id);
+  accountRef.current = profile?.id;
+  const previousAccountRef = useRef(profile?.id);
+  const admissionsRef = useRef(new Map<string, { controller: AbortController; jobId?: string }>());
+  const resumesRef = useRef(new Map<string, AbortController>());
+  const batchRunningRef = useRef(false);
+  const refreshRecoveryRef = useRef<(() => void) | null>(null);
+  const refundedJobsRef = useRef(new Set<string>());
+
+  const updateItemStatus = useCallback((id: string, updates: Partial<IRetryableBatchItem>) => {
+    setQueue(prev => prev.map(item => (item.id === id ? { ...item, ...updates } : item)));
   }, []);
+
+  const refreshRefund = useCallback((job: { jobId: string; refunded?: boolean }) => {
+    if (job.refunded && !refundedJobsRef.current.has(job.jobId)) {
+      refundedJobsRef.current.add(job.jobId);
+      invalidateUserCredits();
+    }
+  }, []);
+
+  // Job IDs and display metadata survive reload; source bytes and capabilities do not.
+  // The owner-scoped server listing determines which executions can be resumed.
+  useEffect(() => {
+    const userId = profile?.id;
+    if (previousAccountRef.current && previousAccountRef.current !== userId) {
+      queueRef.current.forEach(revokeItemUrls);
+      setQueue([]);
+      setActiveId(null);
+      setIsProcessingBatch(false);
+      setBatchProgress(null);
+      setBatchLimitExceeded(null);
+      setProviderUnavailable(null);
+      batchRunningRef.current = false;
+    }
+    previousAccountRef.current = userId;
+    if (!userId) return;
+    let cancelled = false;
+    let listing = false;
+    let retryTimer: ReturnType<typeof setTimeout> | undefined;
+    let retryDelay = 2000;
+    const listController = new AbortController();
+    const current = () => !cancelled && accountRef.current === userId;
+    const available = () => navigator.onLine !== false && document.visibilityState !== 'hidden';
+    const schedule = () => {
+      if (!current() || retryTimer) return;
+      retryTimer = setTimeout(() => {
+        retryTimer = undefined;
+        void recover();
+      }, retryDelay);
+      retryDelay = Math.min(10_000, retryDelay * 2);
+    };
+    const fail = (jobId: string, error: DurableUpscaleTerminalError) => {
+      refreshRefund(error);
+      setQueue(previous =>
+        previous.map(item =>
+          item.jobId === jobId
+            ? {
+                ...item,
+                status: ProcessingStatus.ERROR,
+                durableStatus: error.status,
+                retryable: error.retryable && item.file.size > 0,
+                refunded: error.refunded,
+                reconnecting: false,
+                error: t('workspace.errors.unknownError'),
+                stage: undefined,
+              }
+            : item
+        )
+      );
+    };
+    const resume = async (job: IDurableUpscaleJobStatus) => {
+      if (
+        resumesRef.current.has(job.jobId) ||
+        [...admissionsRef.current.values()].some(entry => entry.jobId === job.jobId) ||
+        queueRef.current.some(item => item.jobId === job.jobId && item.processedUrl)
+      )
+        return;
+      const controller = new AbortController();
+      resumesRef.current.set(job.jobId, controller);
+      const update = (patch: Partial<IRetryableBatchItem>) => {
+        if (!current() || controller.signal.aborted) return;
+        setQueue(previous =>
+          previous.map(item => (item.jobId === job.jobId ? { ...item, ...patch } : item))
+        );
+      };
+      try {
+        const result = await resumeDurableUpscale(
+          job.jobId,
+          (progress, stage) => update({ progress, stage }),
+          {
+            signal: controller.signal,
+            onConnectionChange: reconnecting => update({ reconnecting }),
+            onJobStatus: status => {
+              if (!current() || controller.signal.aborted) return;
+              update({ durableStatus: status.status ?? status.stage, refunded: status.refunded });
+              refreshRefund(status);
+            },
+          }
+        );
+        if (!current() || controller.signal.aborted) {
+          if (result.imageUrl?.startsWith('blob:')) URL.revokeObjectURL(result.imageUrl);
+          return;
+        }
+        setQueue(previous =>
+          previous.map(item =>
+            item.jobId === job.jobId
+              ? {
+                  ...item,
+                  status: ProcessingStatus.COMPLETED,
+                  durableStatus: 'completed',
+                  processedUrl: result.imageUrl || null,
+                  previewUrl:
+                    item.file.size > 0 ? item.previewUrl : result.imageUrl || item.previewUrl,
+                  progress: 100,
+                  stage: undefined,
+                  error: undefined,
+                  reconnecting: false,
+                }
+              : item
+          )
+        );
+        invalidateUserCredits();
+      } catch (error) {
+        if (!current() || controller.signal.aborted) return;
+        if (error instanceof DurableUpscaleTerminalError) fail(job.jobId, error);
+        else {
+          update({ status: ProcessingStatus.PROCESSING, reconnecting: true, error: undefined });
+          schedule();
+        }
+      } finally {
+        if (resumesRef.current.get(job.jobId) === controller) resumesRef.current.delete(job.jobId);
+      }
+    };
+    async function recover() {
+      if (!current() || listing || !available()) return;
+      listing = true;
+      try {
+        const response = await listDurableUpscaleJobs({ signal: listController.signal });
+        if (!current()) return;
+        const persisted = new Map(readPersistedDurableJobs(userId!).map(job => [job.jobId, job]));
+        const serverIds = new Set(response.jobs.map(job => job.jobId));
+        const awaitingCommit = [...persisted.values()].some(
+          job => !serverIds.has(job.jobId) && Date.now() - job.savedAt < 24 * 60 * 60 * 1000
+        );
+        if (awaitingCommit) schedule();
+        else retryDelay = 2000;
+        const jobs = response.jobs.filter(
+          job => !(job.status === 'completed' && job.outputAvailable === false)
+        );
+        jobs.sort((left, right) => {
+          const time = (job: IDurableUpscaleJobStatus) =>
+            persisted.get(job.jobId)?.savedAt ?? (Date.parse(job.timestamps?.createdAt ?? '') || 0);
+          return time(left) - time(right);
+        });
+        const recoveredItems = jobs.map(job => {
+          const metadata = persisted.get(job.jobId);
+          const terminal =
+            job.status === 'failed' || job.status === 'expired' || job.status === 'refunded';
+          return {
+            id: metadata?.itemId || `durable-${job.jobId}`,
+            jobId: job.jobId,
+            durableStatus: job.status ?? job.stage,
+            file: new File([], metadata?.fileName || `${job.jobId}.png`, {
+              type: metadata?.mimeType || job.outputMimeType || 'image/png',
+            }),
+            previewUrl: RECOVERED_PREVIEW_URL,
+            processedUrl: null,
+            status: terminal ? ProcessingStatus.ERROR : ProcessingStatus.PROCESSING,
+            progress: job.status === 'ready' || job.status === 'completed' ? 90 : 10,
+            stage: terminal ? undefined : ProcessingStage.ENHANCING,
+            retryable: false,
+            refunded: job.refunded,
+            ...(terminal ? { error: t('workspace.errors.unknownError') } : {}),
+          } satisfies IRetryableBatchItem;
+        });
+        setQueue(previous => {
+          const known = new Set(previous.map(item => item.jobId));
+          return [...previous, ...recoveredItems.filter(item => !known.has(item.jobId))];
+        });
+        setActiveId(id => id ?? recoveredItems[0]?.id ?? null);
+        for (const job of jobs) {
+          if (job.status === 'failed' || job.status === 'expired' || job.status === 'refunded') {
+            fail(job.jobId, new DurableUpscaleTerminalError(job));
+          } else void resume(job);
+        }
+      } catch {
+        if (current()) schedule();
+      } finally {
+        listing = false;
+      }
+    }
+    const refresh = () => {
+      if (retryTimer) clearTimeout(retryTimer);
+      retryTimer = undefined;
+      void recover();
+    };
+    const storage = (event: StorageEvent) => {
+      if (event.key === durableJobStorageKey(userId)) refresh();
+    };
+    refreshRecoveryRef.current = refresh;
+    window.addEventListener('focus', refresh);
+    window.addEventListener('online', refresh);
+    window.addEventListener('storage', storage);
+    document.addEventListener('visibilitychange', refresh);
+    void recover();
+    return () => {
+      cancelled = true;
+      listController.abort();
+      if (retryTimer) clearTimeout(retryTimer);
+      window.removeEventListener('focus', refresh);
+      window.removeEventListener('online', refresh);
+      window.removeEventListener('storage', storage);
+      document.removeEventListener('visibilitychange', refresh);
+      admissionsRef.current.forEach(entry => entry.controller.abort());
+      admissionsRef.current.clear();
+      resumesRef.current.forEach(controller => controller.abort());
+      resumesRef.current.clear();
+      refreshRecoveryRef.current = null;
+    };
+    // Translation changes do not restart authenticated work.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.id, refreshRefund]);
+
+  useEffect(
+    () => () => {
+      queueRef.current.forEach(revokeItemUrls);
+    },
+    []
+  );
 
   const activeItem = queue.find(item => item.id === activeId) || null;
   const completedCount = queue.filter(i => i.status === ProcessingStatus.COMPLETED).length;
@@ -215,7 +529,12 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     (id: string) => {
       const itemToRemove = queue.find(i => i.id === id);
       if (itemToRemove) {
-        URL.revokeObjectURL(itemToRemove.previewUrl);
+        revokeItemUrls(itemToRemove);
+        admissionsRef.current.get(id)?.controller.abort();
+        if (itemToRemove.jobId) resumesRef.current.get(itemToRemove.jobId)?.abort();
+        if (profile?.id && itemToRemove.jobId) {
+          removePersistedDurableJob(profile.id, itemToRemove.jobId);
+        }
       }
 
       setQueue(prev => {
@@ -226,19 +545,18 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         return updated;
       });
     },
-    [queue, activeId]
+    [queue, activeId, profile?.id]
   );
 
-  const updateItemStatus = useCallback((id: string, updates: Partial<IRetryableBatchItem>) => {
-    setQueue(prev => prev.map(item => (item.id === id ? { ...item, ...updates } : item)));
-  }, []);
-
   const clearQueue = useCallback(() => {
-    queue.forEach(item => URL.revokeObjectURL(item.previewUrl));
+    queue.forEach(revokeItemUrls);
+    admissionsRef.current.forEach(entry => entry.controller.abort());
+    resumesRef.current.forEach(controller => controller.abort());
+    removeAllPersistedDurableJobs(profile?.id);
     setQueue([]);
     setActiveId(null);
     setIsProcessingBatch(false);
-  }, [queue]);
+  }, [queue, profile?.id]);
 
   const clearBatchLimitError = useCallback(() => {
     setBatchLimitExceeded(null);
@@ -267,13 +585,42 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
   }, []);
 
   const processSingleItem = async (item: IRetryableBatchItem, config: IUpscaleConfig) => {
+    const latest = queueRef.current.find(candidate => candidate.id === item.id) ?? item;
+    if (
+      admissionsRef.current.has(item.id) ||
+      latest.status === ProcessingStatus.PROCESSING ||
+      latest.status === ProcessingStatus.COMPLETED ||
+      latest.retryable === false ||
+      latest.file.size === 0
+    )
+      return;
+    const userId = accountRef.current;
+    const controller = new AbortController();
+    const durableJobId = config.qualityTier === 'bg-removal' ? undefined : crypto.randomUUID();
+    admissionsRef.current.set(item.id, { controller, jobId: durableJobId });
+    let accepted = false;
+    const current = () => !controller.signal.aborted && accountRef.current === userId;
     updateItemStatus(item.id, {
       status: ProcessingStatus.PROCESSING,
       progress: 0,
       stage: ProcessingStage.PREPARING,
       error: undefined,
       retryable: undefined,
+      durableStatus: undefined,
+      reconnecting: false,
+      refunded: false,
+      ...(durableJobId ? { jobId: durableJobId } : {}),
     });
+
+    if (durableJobId && profile?.id) {
+      writePersistedDurableJob(profile.id, {
+        itemId: item.id,
+        jobId: durableJobId,
+        fileName: item.file.name,
+        mimeType: item.file.type || 'image/jpeg',
+        savedAt: Date.now(),
+      });
+    }
 
     let fileToProcess = item.file;
 
@@ -284,6 +631,10 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         config.scale,
         uploadByteLimit
       );
+      if (!current()) {
+        admissionsRef.current.delete(item.id);
+        return;
+      }
       fileToProcess = prepared.file;
 
       if (prepared.resized) {
@@ -313,6 +664,11 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
       // server remain the final enforcement point.
     }
 
+    if (!current()) {
+      admissionsRef.current.delete(item.id);
+      return;
+    }
+
     // Track upscale started event
     let inputWidth: number | undefined;
     let inputHeight: number | undefined;
@@ -322,6 +678,11 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
       inputHeight = dimensions.height;
     } catch {
       // Dimensions not available, continue without them
+    }
+
+    if (!current()) {
+      admissionsRef.current.delete(item.id);
+      return;
     }
 
     analytics.track('image_upscale_started', {
@@ -336,12 +697,51 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     let errorType: string | undefined;
 
     try {
-      const result = await processImage(fileToProcess, config, (p, stage) => {
-        updateItemStatus(item.id, {
-          progress: p,
-          stage: stage || ProcessingStage.ENHANCING,
-        });
-      });
+      const result = await processImage(
+        fileToProcess,
+        config,
+        (p, stage) => {
+          if (!current()) return;
+          updateItemStatus(item.id, {
+            progress: p,
+            stage: stage || ProcessingStage.ENHANCING,
+          });
+        },
+        {
+          jobId: durableJobId,
+          signal: controller.signal,
+          onConnectionChange: reconnecting => {
+            if (current()) updateItemStatus(item.id, { reconnecting });
+          },
+          onJobStatus: job => {
+            if (!current()) return;
+            updateItemStatus(item.id, {
+              durableStatus: job.status ?? job.stage,
+              refunded: job.refunded,
+            });
+            refreshRefund(job);
+          },
+          onJobAccepted: acceptedJobId => {
+            if (!current()) return;
+            accepted = true;
+            invalidateUserCredits();
+            updateItemStatus(item.id, { jobId: acceptedJobId });
+            if (profile?.id) {
+              writePersistedDurableJob(profile.id, {
+                itemId: item.id,
+                jobId: acceptedJobId,
+                fileName: fileToProcess.name,
+                mimeType: fileToProcess.type || 'image/jpeg',
+                savedAt: Date.now(),
+              });
+            }
+          },
+        }
+      );
+      if (!current()) {
+        if (result.imageUrl?.startsWith('blob:')) URL.revokeObjectURL(result.imageUrl);
+        return;
+      }
       setProviderUnavailable(null);
 
       // Prefer imageUrl (direct URL, edge-optimized) over imageData (base64)
@@ -350,12 +750,19 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         status: ProcessingStatus.COMPLETED,
         processedUrl: result.imageUrl || result.imageData || '',
         progress: 100,
+        durableStatus: result.durable ? 'completed' : undefined,
+        reconnecting: false,
         stage: undefined, // Clear stage on completion
       });
 
       // Update credits when processing used credits (creditsUsed > 0)
-      if (result.creditsUsed > 0) {
+      if (result.durable) invalidateUserCredits();
+      else if (result.creditsUsed > 0) {
         useUserStore.getState().updateCreditsFromProcessing(result.creditsRemaining);
+      }
+
+      if (result.durable !== true && profile?.id && result.jobId) {
+        removePersistedDurableJob(profile.id, result.jobId);
       }
 
       // The source exceeded the selected model's size limit, so a tiled model ran
@@ -372,6 +779,30 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
 
       success = true;
     } catch (error: unknown) {
+      if (!current()) return;
+      if (error instanceof DurableUpscaleTerminalError) {
+        refreshRefund(error);
+        updateItemStatus(item.id, {
+          status: ProcessingStatus.ERROR,
+          durableStatus: error.status,
+          refunded: error.refunded,
+          retryable: error.retryable,
+          reconnecting: false,
+          error: t('workspace.errors.unknownError'),
+          stage: undefined,
+        });
+        return;
+      }
+      if (accepted) {
+        updateItemStatus(item.id, {
+          status: ProcessingStatus.PROCESSING,
+          reconnecting: true,
+          error: undefined,
+        });
+        return;
+      }
+      if (durableJobId && userId) removePersistedDurableJob(userId, durableJobId);
+      if (durableJobId && userId) invalidateUserCredits();
       const errorMessage = serializeError(error);
 
       // Determine error type for analytics
@@ -455,6 +886,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         void reportUpscaleEdgeFailure(error, {
           qualityTier: config.qualityTier,
           scale: config.scale,
+          jobId: durableJobId,
         });
         updateItemStatus(item.id, {
           status: ProcessingStatus.ERROR,
@@ -560,92 +992,106 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         duration: TIMEOUTS.TOAST_LONG_AUTO_CLOSE_DELAY,
       });
     } finally {
-      const durationMs = Date.now() - startTime;
+      if (admissionsRef.current.get(item.id)?.controller === controller)
+        admissionsRef.current.delete(item.id);
+      if (accepted && current()) refreshRecoveryRef.current?.();
+      if (current()) {
+        const durationMs = Date.now() - startTime;
 
-      // Calculate resolutions
-      const inputResolution =
-        inputWidth && inputHeight ? `${inputWidth}x${inputHeight}` : undefined;
-      const outputResolution =
-        inputWidth && inputHeight
-          ? `${inputWidth * config.scale}x${inputHeight * config.scale}`
-          : undefined;
+        // Calculate resolutions
+        const inputResolution =
+          inputWidth && inputHeight ? `${inputWidth}x${inputHeight}` : undefined;
+        const outputResolution =
+          inputWidth && inputHeight
+            ? `${inputWidth * config.scale}x${inputHeight * config.scale}`
+            : undefined;
 
-      // The server owns terminal telemetry for API-backed processing. Browser
-      // background removal is the only client-owned terminal path.
-      if (config.qualityTier === 'bg-removal') {
-        if (success) {
-          analytics.track('upscale_completed', {
-            durationMs,
-            modelUsed: config.qualityTier,
-            inputResolution,
-            outputResolution,
-            success: true,
-          });
-        } else {
-          analytics.track('processing_failed', {
-            ...normalizeCoreEventProperties('processing_failed', {
-              errorType,
-              reason: errorType,
-              provider: 'unknown',
-              model: 'unknown',
-              qualityTier: config.qualityTier,
-              retryable: errorType === 'timeout' || errorType === 'provider_unavailable',
+        // The server owns terminal telemetry for API-backed processing. Browser
+        // background removal is the only client-owned terminal path.
+        if (config.qualityTier === 'bg-removal') {
+          if (success) {
+            analytics.track('upscale_completed', {
               durationMs,
-              requestId: 'unknown',
-            }),
-          });
+              modelUsed: config.qualityTier,
+              inputResolution,
+              outputResolution,
+              success: true,
+            });
+          } else {
+            analytics.track('processing_failed', {
+              ...normalizeCoreEventProperties('processing_failed', {
+                errorType,
+                reason: errorType,
+                provider: 'unknown',
+                model: 'unknown',
+                qualityTier: config.qualityTier,
+                retryable: errorType === 'timeout' || errorType === 'provider_unavailable',
+                durationMs,
+                requestId: 'unknown',
+              }),
+            });
+          }
         }
-      }
 
-      // Last-resort state invariant: every settled request must leave the queue
-      // in a terminal state, even if a future catch branch returns early.
-      setQueue(prev =>
-        prev.map(queueItem =>
-          queueItem.id === item.id && queueItem.status === ProcessingStatus.PROCESSING
-            ? {
-                ...queueItem,
-                status: ProcessingStatus.ERROR,
-                error: queueItem.error || 'Failed to process image. Please try again.',
-                stage: undefined,
-              }
-            : queueItem
-        )
-      );
+        // Last-resort state invariant: every settled request must leave the queue
+        // in a terminal state, even if a future catch branch returns early.
+        setQueue(prev =>
+          prev.map(queueItem =>
+            !accepted &&
+            queueItem.id === item.id &&
+            queueItem.status === ProcessingStatus.PROCESSING
+              ? {
+                  ...queueItem,
+                  status: ProcessingStatus.ERROR,
+                  error: queueItem.error || 'Failed to process image. Please try again.',
+                  stage: undefined,
+                }
+              : queueItem
+          )
+        );
+      }
     }
   };
 
   const processBatch = async (config: IUpscaleConfig) => {
+    if (
+      batchRunningRef.current ||
+      queueRef.current.some(item => item.status === ProcessingStatus.PROCESSING)
+    )
+      return;
+    const userId = accountRef.current;
+    batchRunningRef.current = true;
     setIsProcessingBatch(true);
-
-    const itemsToProcess = queue.filter(
-      item => item.status === ProcessingStatus.IDLE || item.status === ProcessingStatus.ERROR
+    const itemsToProcess = queueRef.current.filter(
+      item =>
+        (item.status === ProcessingStatus.IDLE || item.status === ProcessingStatus.ERROR) &&
+        item.retryable !== false &&
+        item.file.size > 0
     );
-
-    const total = itemsToProcess.length;
-
-    // Process sequentially with delay to avoid Replicate rate limits
-    // Replicate limits: 6 req/min without payment method, stricter when low balance
-    for (let i = 0; i < itemsToProcess.length; i++) {
-      const item = itemsToProcess[i];
-      setBatchProgress({ current: i + 1, total });
-      await processSingleItem(item, config);
-
-      // Add delay between requests to avoid rate limits
-      // Skip delay after the last item or for client-side processing (no API rate limits)
-      if (config.qualityTier !== 'bg-removal' && i < itemsToProcess.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, TIMEOUTS.BATCH_REQUEST_DELAY));
+    try {
+      for (let i = 0; i < itemsToProcess.length; i++) {
+        if (accountRef.current !== userId || !batchRunningRef.current) break;
+        setBatchProgress({ current: i + 1, total: itemsToProcess.length });
+        await processSingleItem(itemsToProcess[i], config);
+        if (config.qualityTier !== 'bg-removal' && i < itemsToProcess.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, TIMEOUTS.BATCH_REQUEST_DELAY));
+        }
+      }
+    } finally {
+      if (accountRef.current === userId) {
+        batchRunningRef.current = false;
+        setBatchProgress(null);
+        setIsProcessingBatch(false);
       }
     }
-
-    setBatchProgress(null);
-    setIsProcessingBatch(false);
   };
 
   return {
     queue,
     activeId,
     activeItem,
-    isProcessingBatch,
+    isProcessingBatch:
+      isProcessingBatch || queue.some(item => item.status === ProcessingStatus.PROCESSING),
     batchProgress,
     completedCount,
     batchLimit,

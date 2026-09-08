@@ -4,6 +4,8 @@ import { createClient } from '@shared/utils/supabase/client';
 import { analytics } from '@client/analytics';
 import { normalizeCoreEventProperties } from '@server/analytics/core-event-contract';
 
+type FetchRequestInit = NonNullable<Parameters<typeof fetch>[1]>;
+
 /**
  * Error class for batch limit violations
  */
@@ -89,6 +91,12 @@ interface IApiErrorResponse {
 }
 
 interface IProcessImageApiResponse {
+  accepted?: boolean;
+  jobId?: string;
+  status?: string;
+  exactCharge?: number | null;
+  creditsRemaining?: number;
+  creditsUsed?: number;
   expiresAt?: number;
   mimeType?: string;
   processing?: {
@@ -99,6 +107,48 @@ interface IProcessImageApiResponse {
     reservationJobId?: string;
     deliveryToken?: string;
   };
+  job?: {
+    jobId?: string;
+    status?: string;
+    deliveryToken?: string;
+    creditsRemaining?: number;
+    creditsUsed?: number;
+    modelDisplayName?: string;
+    dimensionPreservingFallback?: boolean;
+  };
+  delivery?: {
+    reservationJobId?: string;
+    deliveryToken?: string;
+  };
+}
+
+export interface IDurableUpscaleJobStatus {
+  jobId: string;
+  stage?: string;
+  status?: string;
+  requestedQualityTier?: string | null;
+  resolvedQualityTier?: string | null;
+  modelId?: string | null;
+  scale?: number | null;
+  exactCharge?: number | null;
+  retryable?: boolean;
+  refunded?: boolean;
+  outputAvailable?: boolean;
+  outputMimeType?: string | null;
+  outputSizeBytes?: number | null;
+  outputExpiresAt?: string | null;
+  deliveryToken?: string;
+  failureReason?: string | null;
+  timestamps?: {
+    createdAt?: string | null;
+    updatedAt?: string | null;
+  };
+}
+
+export interface IDurableUpscaleJobListResponse {
+  success: boolean;
+  jobs: IDurableUpscaleJobStatus[];
+  nextCursor: string | null;
 }
 
 const DELIVERED_IMAGE_LOAD_TIMEOUT_MS = 15_000;
@@ -106,6 +156,304 @@ const UPLOAD_MAX_ATTEMPTS = 3;
 const UPLOAD_RETRY_DELAY_MS = 100;
 
 class OutputCapabilityError extends Error {}
+
+/** Only an authoritative job state can make a durable execution fail locally. */
+export class DurableUpscaleTerminalError extends Error {
+  readonly jobId: string;
+  readonly status: string;
+  readonly refunded: boolean;
+  readonly retryable: boolean;
+
+  constructor(job: IDurableUpscaleJobStatus) {
+    super('Image processing did not complete successfully');
+    this.name = 'DurableUpscaleTerminalError';
+    this.jobId = job.jobId;
+    this.status = job.status ?? job.stage ?? 'failed';
+    this.refunded = job.refunded === true;
+    this.retryable = job.retryable === true;
+  }
+}
+
+export class DurableUpscaleAccessError extends Error {
+  constructor(
+    readonly jobId: string,
+    readonly status: number
+  ) {
+    super(
+      status === 404
+        ? 'Durable upscale job was not found'
+        : 'Authentication required to resume upscale job'
+    );
+    this.name = 'DurableUpscaleAccessError';
+  }
+}
+
+const DURABLE_POLL_INTERVAL_MS = 2_000;
+const DURABLE_POLL_MAX_INTERVAL_MS = 10_000;
+const DURABLE_REQUEST_TIMEOUT_MS = 15_000;
+const DURABLE_POLL_JITTER_RATIO = 0.2;
+const DURABLE_ADMISSION_RECOVERY_DELAYS_MS = [2_000, 5_000, 10_000] as const;
+
+type DurableRequestOptions = Pick<
+  IProcessImageOptions,
+  'signal' | 'onConnectionChange' | 'onJobStatus'
+>;
+
+function isDurableClientAvailable(): boolean {
+  const online = typeof navigator === 'undefined' || navigator.onLine !== false;
+  const visible = typeof document === 'undefined' || document.visibilityState !== 'hidden';
+  return online && visible;
+}
+
+/** Timers pause in hidden/offline tabs; focus/reconnect performs an immediate lookup. */
+function waitForDurablePoll(
+  delayMs: number,
+  options: DurableRequestOptions = {},
+  useJitter = true
+): Promise<void> {
+  const { signal } = options;
+  signal?.throwIfAborted();
+  const jitter = useJitter ? 1 + (Math.random() * 2 - 1) * DURABLE_POLL_JITTER_RATIO : 1;
+  const interval = Math.min(
+    DURABLE_POLL_MAX_INTERVAL_MS,
+    Math.max(0, Math.round(delayMs * jitter))
+  );
+
+  return new Promise((resolve, reject) => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const browser = typeof window !== 'undefined' && typeof document !== 'undefined';
+    const cleanup = () => {
+      if (timer !== undefined) clearTimeout(timer);
+      signal?.removeEventListener('abort', abort);
+      if (!browser) return;
+      window.removeEventListener('online', changed);
+      window.removeEventListener('offline', changed);
+      window.removeEventListener('focus', changed);
+      document.removeEventListener('visibilitychange', changed);
+    };
+    const finish = () => {
+      cleanup();
+      resolve();
+    };
+    const abort = () => {
+      cleanup();
+      reject(signal?.reason ?? new DOMException('Aborted', 'AbortError'));
+    };
+    const changed = () => {
+      if (isDurableClientAvailable()) finish();
+      else {
+        if (timer !== undefined) clearTimeout(timer);
+        timer = undefined;
+        options.onConnectionChange?.(true);
+      }
+    };
+    signal?.addEventListener('abort', abort, { once: true });
+    if (browser) {
+      window.addEventListener('online', changed);
+      window.addEventListener('offline', changed);
+      window.addEventListener('focus', changed);
+      document.addEventListener('visibilitychange', changed);
+    }
+    if (!isDurableClientAvailable()) options.onConnectionChange?.(true);
+    else if (interval === 0) finish();
+    else timer = setTimeout(finish, interval);
+  });
+}
+
+function durableRequestSignal(signal?: AbortSignal): AbortSignal {
+  const timeout = AbortSignal.timeout(DURABLE_REQUEST_TIMEOUT_MS);
+  return signal ? AbortSignal.any([signal, timeout]) : timeout;
+}
+
+function isLostUpscaleResponse(error: unknown): boolean {
+  return (
+    error instanceof UpscaleEdgeError ||
+    error instanceof TypeError ||
+    (error instanceof Error &&
+      (error.name === 'AbortError' ||
+        error.name === 'TimeoutError' ||
+        /network|fetch|timeout|temporarily unavailable/i.test(error.message)))
+  );
+}
+
+/** A failed lookup is unknown; only a real 404 permits another same-ID POST. */
+async function findDurableJobAfterLostResponse(
+  jobId: string,
+  headers: Record<string, string>,
+  options: DurableRequestOptions
+): Promise<Response | null> {
+  for (;;) {
+    await waitForDurablePoll(0, options);
+    try {
+      const response = await fetch(`/api/upscale/jobs?jobId=${encodeURIComponent(jobId)}`, {
+        method: 'GET',
+        headers,
+        cache: 'no-store',
+        signal: durableRequestSignal(options.signal),
+      });
+      if (response.status === 404) return null;
+      if (response.status === 401 || response.status === 403)
+        throw new DurableUpscaleAccessError(jobId, response.status);
+      if (response.ok) {
+        const data = await parseJsonResponse<IProcessImageApiResponse>(response);
+        const found = data.job ?? data;
+        if (found.jobId === jobId && typeof found.status === 'string') {
+          return Response.json({ ...data, accepted: true, jobId }, { status: 202 });
+        }
+      }
+    } catch (error) {
+      options.signal?.throwIfAborted();
+      if (error instanceof DurableUpscaleAccessError) throw error;
+    }
+    options.onConnectionChange?.(true);
+    await waitForDurablePoll(DURABLE_POLL_INTERVAL_MS, options);
+  }
+}
+
+/** Reuse the immutable request and UUID throughout an ambiguous admission. */
+async function submitUpscaleWithRecovery(
+  jobId: string,
+  request: FetchRequestInit & { headers: Record<string, string> },
+  metadata: Pick<IUpscaleConfig, 'qualityTier' | 'scale'>,
+  options: DurableRequestOptions = {}
+): Promise<Response> {
+  let retry = 0;
+  let failureObserved = false;
+  const observeFailure = (error: Pick<UpscaleEdgeError, 'status' | 'rayId'>) => {
+    if (failureObserved || error.status < 500) return;
+    failureObserved = true;
+    void reportUpscaleEdgeFailure(error, { ...metadata, jobId });
+  };
+  for (;;) {
+    await waitForDurablePoll(0, options);
+    let providerOutage: Response | undefined;
+    try {
+      const response = await fetch('/api/upscale', {
+        ...request,
+        signal: durableRequestSignal(options.signal),
+      });
+      // Validate the body too: an interrupted JSON response can have valid headers.
+      const body = await parseJsonResponse<IProcessImageApiResponse & IApiErrorResponse>(
+        response.clone()
+      );
+      if (response.status < 500) return response;
+      if (response.status === 503 && getApiErrorDetails(body.error)?.code === 'AI_UNAVAILABLE') {
+        providerOutage = response;
+      } else {
+        observeFailure({ status: response.status, rayId: response.headers.get('cf-ray') });
+      }
+    } catch (error) {
+      options.signal?.throwIfAborted();
+      if (!isLostUpscaleResponse(error)) throw error;
+      if (error instanceof UpscaleEdgeError) observeFailure(error);
+    }
+    options.onConnectionChange?.(true);
+    const recovered = await findDurableJobAfterLostResponse(jobId, request.headers, options);
+    if (recovered) return recovered;
+    if (providerOutage) return providerOutage;
+    const delay =
+      DURABLE_ADMISSION_RECOVERY_DELAYS_MS[
+        Math.min(retry++, DURABLE_ADMISSION_RECOVERY_DELAYS_MS.length - 1)
+      ];
+    await waitForDurablePoll(delay, options, false);
+  }
+}
+
+async function waitForDurableUpscale(
+  jobId: string,
+  headers: Record<string, string>,
+  onProgress: ProgressCallback,
+  initialAccounting: { creditsRemaining?: number; creditsUsed?: number } = {},
+  options: DurableRequestOptions = {},
+  initialDelayMs = 0
+): Promise<IProcessImageResult & { jobId: string; imageUrl: string }> {
+  let delayMs = initialDelayMs;
+  let firstPoll = true;
+  for (;;) {
+    await waitForDurablePoll(delayMs, options, !firstPoll);
+    firstPoll = false;
+    try {
+      const response = await fetch(`/api/upscale/jobs?jobId=${encodeURIComponent(jobId)}`, {
+        method: 'GET',
+        headers,
+        cache: 'no-store',
+        signal: durableRequestSignal(options.signal),
+      });
+      if (response.status === 401 || response.status === 403 || response.status === 404) {
+        throw new DurableUpscaleAccessError(jobId, response.status);
+      }
+      if (response.ok) {
+        const data = await parseJsonResponse<IProcessImageApiResponse>(response);
+        const job = (data.job ?? data) as IDurableUpscaleJobStatus & {
+          creditsRemaining?: number;
+          creditsUsed?: number;
+          modelDisplayName?: string;
+          dimensionPreservingFallback?: boolean;
+        };
+        if (job.jobId !== jobId || typeof (job.status ?? job.stage) !== 'string')
+          throw new Error('Invalid job status response');
+        const status = job.status ?? job.stage;
+        options.onConnectionChange?.(false);
+        options.onJobStatus?.(job);
+        if (status === 'failed' || status === 'expired' || status === 'refunded') {
+          throw new DurableUpscaleTerminalError(job);
+        }
+        const deliveryToken =
+          job.deliveryToken ?? data.delivery?.deliveryToken ?? data.processing?.deliveryToken;
+        if ((status === 'ready' || status === 'completed') && deliveryToken) {
+          onProgress(95, ProcessingStage.FINALIZING);
+          const imageUrl = await fetchRetryableOutputBlobUrl(
+            { reservationJobId: jobId, deliveryToken },
+            headers,
+            options.signal
+          );
+          options.signal?.throwIfAborted();
+          onProgress(100, ProcessingStage.FINALIZING);
+          return {
+            jobId,
+            imageUrl,
+            durable: true,
+            creditsRemaining:
+              job.creditsRemaining ??
+              data.creditsRemaining ??
+              data.processing?.creditsRemaining ??
+              initialAccounting.creditsRemaining ??
+              0,
+            creditsUsed:
+              job.creditsUsed ??
+              job.exactCharge ??
+              data.creditsUsed ??
+              data.processing?.creditsUsed ??
+              initialAccounting.creditsUsed ??
+              0,
+            modelDisplayName: job.modelDisplayName ?? data.processing?.modelDisplayName,
+            dimensionPreservingFallback:
+              job.dimensionPreservingFallback ?? data.processing?.dimensionPreservingFallback,
+          };
+        }
+        onProgress(55, ProcessingStage.ENHANCING);
+      } else {
+        options.onConnectionChange?.(true);
+        const retryAfter = Number(response.headers.get('retry-after'));
+        if (retryAfter > 0) delayMs = Math.min(DURABLE_POLL_MAX_INTERVAL_MS, retryAfter * 1000);
+      }
+    } catch (error) {
+      options.signal?.throwIfAborted();
+      if (
+        error instanceof DurableUpscaleTerminalError ||
+        error instanceof DurableUpscaleAccessError
+      )
+        throw error;
+      // Includes stale output capabilities and interrupted downloads. The next
+      // owner status request refreshes capability and checks for a real refund.
+      options.onConnectionChange?.(true);
+    }
+    delayMs = Math.min(
+      DURABLE_POLL_MAX_INTERVAL_MS,
+      Math.max(DURABLE_POLL_INTERVAL_MS, Math.round(delayMs * 1.25))
+    );
+  }
+}
 
 async function verifyDeliveredImageIsUsable(imageUrl: string): Promise<void> {
   if (typeof Image === 'undefined') {
@@ -138,16 +486,19 @@ async function verifyDeliveredImageIsUsable(imageUrl: string): Promise<void> {
 
 async function fetchRetryableOutputBlobUrl(
   capability: { reservationJobId: string; deliveryToken: string },
-  headers: Record<string, string>
+  headers: Record<string, string>,
+  signal?: AbortSignal
 ): Promise<string> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= 3; attempt += 1) {
     try {
       const response = await fetch('/api/upscale/output', {
         method: 'POST',
-        headers,
+        headers: { ...headers, 'Content-Type': 'application/json' },
         body: JSON.stringify(capability),
-        signal: AbortSignal.timeout(TIMEOUTS.REPLICATE_TIMEOUT),
+        signal: signal
+          ? AbortSignal.any([signal, AbortSignal.timeout(TIMEOUTS.REPLICATE_TIMEOUT)])
+          : AbortSignal.timeout(TIMEOUTS.REPLICATE_TIMEOUT),
       });
 
       if (!response.ok) {
@@ -173,6 +524,7 @@ async function fetchRetryableOutputBlobUrl(
       }
       return imageUrl;
     } catch (error) {
+      signal?.throwIfAborted();
       if (error instanceof OutputCapabilityError) {
         throw error;
       }
@@ -217,17 +569,29 @@ function isCommittedUploadConflict(error: unknown): boolean {
 async function uploadToSignedUrlWithRetry(
   storagePath: string,
   uploadToken: string,
-  file: File
+  file: File,
+  signal?: AbortSignal
 ): Promise<void> {
   const bucket = createClient().storage.from('upscale-inputs');
   let lastError: unknown;
 
   for (let attempt = 1; attempt <= UPLOAD_MAX_ATTEMPTS; attempt += 1) {
+    signal?.throwIfAborted();
     try {
-      const { error } = await bucket.uploadToSignedUrl(storagePath, uploadToken, file, {
+      const upload = bucket.uploadToSignedUrl(storagePath, uploadToken, file, {
         contentType: file.type || 'image/jpeg',
         upsert: false,
       });
+      // This SDK version cannot cancel the storage PUT. Stop the caller
+      // immediately; any already-started immutable upload remains with its owner.
+      const { error } = signal
+        ? await new Promise<Awaited<typeof upload>>((resolve, reject) => {
+            const abort = () => reject(signal.reason);
+            signal.addEventListener('abort', abort, { once: true });
+            upload.then(resolve, reject).finally(() => signal.removeEventListener('abort', abort));
+          })
+        : await upload;
+      signal?.throwIfAborted();
       if (!error) return;
       // With an immutable grant, a response-loss after the storage commit is
       // reported as a conflict. The server validates the stored object before
@@ -235,6 +599,7 @@ async function uploadToSignedUrlWithRetry(
       if (isCommittedUploadConflict(error)) return;
       lastError = error;
     } catch (error) {
+      signal?.throwIfAborted();
       lastError = error;
     }
 
@@ -285,7 +650,7 @@ export async function parseJsonResponse<T>(response: Response): Promise<T> {
  */
 export async function reportUpscaleEdgeFailure(
   error: Pick<UpscaleEdgeError, 'status' | 'rayId'>,
-  metadata: Pick<IUpscaleConfig, 'qualityTier' | 'scale'>
+  metadata: Pick<IUpscaleConfig, 'qualityTier' | 'scale'> & { jobId?: string }
 ): Promise<void> {
   try {
     const accessToken = await getAccessToken();
@@ -302,6 +667,7 @@ export async function reportUpscaleEdgeFailure(
         rayId: error.rayId,
         qualityTier: metadata.qualityTier,
         scale: metadata.scale,
+        jobId: metadata.jobId,
       }),
       signal: AbortSignal.timeout(2000),
     });
@@ -376,6 +742,9 @@ export interface IAnalyzeImageResult {
 }
 
 export interface IProcessImageResult {
+  /** Durable job identity; present for both a new admission and a replay. */
+  jobId?: string;
+  durable?: boolean;
   imageData?: string; // Base64 data URL (legacy, from Gemini)
   imageUrl?: string; // Direct URL to image (from Replicate - use in <img> tag)
   creditsRemaining: number;
@@ -384,6 +753,16 @@ export interface IProcessImageResult {
   modelDisplayName?: string;
   /** The source exceeded the selected model's size limit, so a tiled model ran instead */
   dimensionPreservingFallback?: boolean;
+}
+
+export interface IProcessImageOptions {
+  signal?: AbortSignal;
+  onConnectionChange?: (reconnecting: boolean) => void;
+  onJobStatus?: (job: IDurableUpscaleJobStatus) => void;
+  /** Reuse this UUID when retrying admission after a lost response. */
+  jobId?: string;
+  /** Called as soon as the server confirms a durable admission/replay. */
+  onJobAccepted?: (jobId: string) => void;
 }
 
 /**
@@ -444,12 +823,13 @@ export const analyzeImage = async (
 };
 
 // Update callback type
-type ProgressCallback = (progress: number, stage?: ProcessingStage) => void;
+export type ProgressCallback = (progress: number, stage?: ProcessingStage) => void;
 
 export const processImage = async (
   file: File,
   config: IUpscaleConfig,
-  onProgress: ProgressCallback
+  onProgress: ProgressCallback,
+  options: IProcessImageOptions = {}
 ): Promise<IProcessImageResult> => {
   try {
     // Client-side processing for bg-removal
@@ -508,13 +888,14 @@ export const processImage = async (
         imageData: undefined,
         creditsRemaining: deductData.creditsRemaining,
         creditsUsed: deductData.creditsUsed,
+        durable: false,
       };
     }
 
     // Stage 1: Preparing. Upload bytes directly to private temporary storage so
     // the Cloudflare Worker never buffers a base64 JSON payload in its 128MB heap.
     onProgress(10, ProcessingStage.PREPARING);
-    const jobId = crypto.randomUUID();
+    const jobId = options.jobId ?? crypto.randomUUID();
 
     let enhancementPrompt: string | undefined;
     let resolvedModel: string;
@@ -561,6 +942,7 @@ export const processImage = async (
     const uploadGrantResponse = await fetch('/api/upscale/upload', {
       method: 'POST',
       headers,
+      signal: durableRequestSignal(options.signal),
       body: JSON.stringify({
         filename: file.name,
         mimeType: file.type || 'image/jpeg',
@@ -576,27 +958,38 @@ export const processImage = async (
       storagePath: string;
       uploadToken: string;
     }>(uploadGrantResponse);
-    await uploadToSignedUrlWithRetry(uploadGrant.storagePath, uploadGrant.uploadToken, file);
+    options.signal?.throwIfAborted();
+    await uploadToSignedUrlWithRetry(
+      uploadGrant.storagePath,
+      uploadGrant.uploadToken,
+      file,
+      options.signal
+    );
 
-    const response = await fetch('/api/upscale', {
-      method: 'POST',
-      headers: {
-        ...headers,
-        // Tail Workers receive request headers even when the producer is killed
-        // before it can run catch/finally refund logic.
-        'X-Upscale-Job-Id': jobId,
+    const response = await submitUpscaleWithRecovery(
+      jobId,
+      {
+        method: 'POST',
+        headers: {
+          ...headers,
+          // Tail Workers receive request headers even when the producer is killed
+          // before it can run catch/finally refund logic.
+          'X-Upscale-Job-Id': jobId,
+          'X-Upscale-Protocol': '2',
+        },
+        body: JSON.stringify({
+          storagePath: uploadGrant.storagePath,
+          jobId,
+          mimeType: file.type || 'image/jpeg',
+          // Pass enhancement prompt if available
+          enhancementPrompt,
+          config,
+          resolvedModel, // Pass the resolved model for server processing
+        }),
       },
-      body: JSON.stringify({
-        storagePath: uploadGrant.storagePath,
-        jobId,
-        mimeType: file.type || 'image/jpeg',
-        // Pass enhancement prompt if available
-        enhancementPrompt,
-        config,
-        resolvedModel, // Pass the resolved model for server processing
-      }),
-      signal: AbortSignal.timeout(TIMEOUTS.REPLICATE_TIMEOUT),
-    });
+      config,
+      options
+    );
 
     if (!response.ok) {
       const errorData = await parseJsonResponse<IApiErrorResponse>(response);
@@ -644,6 +1037,35 @@ export const processImage = async (
 
     const data = await parseJsonResponse<IProcessImageApiResponse>(response);
 
+    if (
+      response.status === 202 ||
+      data.accepted === true ||
+      (data.jobId === jobId && typeof data.status === 'string')
+    ) {
+      const durableJobId = data.jobId ?? data.job?.jobId ?? jobId;
+      options.onJobAccepted?.(durableJobId);
+      const durableResult = await waitForDurableUpscale(
+        durableJobId,
+        headers,
+        onProgress,
+        {
+          creditsRemaining: data.processing?.creditsRemaining ?? data.job?.creditsRemaining,
+          creditsUsed: data.processing?.creditsUsed ?? data.job?.creditsUsed,
+        },
+        options,
+        DURABLE_POLL_INTERVAL_MS
+      );
+      return {
+        jobId: durableResult.jobId,
+        durable: true,
+        imageUrl: durableResult.imageUrl,
+        creditsRemaining: durableResult.creditsRemaining,
+        creditsUsed: durableResult.creditsUsed,
+        modelDisplayName: durableResult.modelDisplayName,
+        dimensionPreservingFallback: durableResult.dimensionPreservingFallback,
+      };
+    }
+
     // Validate we got either a legacy inline image or a retryable output capability.
     const outputCapability =
       data.processing?.reservationJobId && data.processing?.deliveryToken
@@ -661,6 +1083,8 @@ export const processImage = async (
     onProgress(100, ProcessingStage.FINALIZING);
 
     return {
+      jobId,
+      durable: false,
       imageUrl,
       creditsRemaining: data.processing?.creditsRemaining ?? 0,
       creditsUsed: data.processing?.creditsUsed ?? 0,
@@ -668,6 +1092,7 @@ export const processImage = async (
       dimensionPreservingFallback: data.processing?.dimensionPreservingFallback,
     };
   } catch (error) {
+    options.signal?.throwIfAborted();
     console.error('AI Processing Error:', error);
 
     // Handle timeout errors specifically
@@ -687,6 +1112,63 @@ export const processImage = async (
     throw error;
   }
 };
+
+/** Read the authenticated user's durable jobs for reload recovery. */
+export async function listDurableUpscaleJobs(
+  options: DurableRequestOptions = {}
+): Promise<IDurableUpscaleJobListResponse> {
+  const accessToken = await getAccessToken();
+  if (!accessToken) throw new Error('Authentication required to list upscale jobs');
+  const jobs = new Map<string, IDurableUpscaleJobStatus>();
+  const cursors = new Set<string>();
+  let cursor: string | null = null;
+  do {
+    await waitForDurablePoll(0, options);
+    const response: Response = await fetch(
+      `/api/upscale/jobs?limit=50${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ''}`,
+      {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${accessToken}` },
+        cache: 'no-store',
+        signal: durableRequestSignal(options.signal),
+      }
+    );
+    if (!response.ok) throw new Error(`Durable job list request failed (${response.status})`);
+    const page: IDurableUpscaleJobListResponse =
+      await parseJsonResponse<IDurableUpscaleJobListResponse>(response);
+    for (const job of page.jobs) jobs.set(job.jobId, job);
+    cursor = page.nextCursor;
+    if (cursor && cursors.has(cursor)) throw new Error('Invalid durable job pagination');
+    if (cursor) cursors.add(cursor);
+  } while (cursor);
+  return { success: true, jobs: [...jobs.values()], nextCursor: null };
+}
+
+/** Resume a durable job without re-uploading or creating a second provider call. */
+export async function resumeDurableUpscale(
+  jobId: string,
+  onProgress: ProgressCallback = () => undefined,
+  options: DurableRequestOptions = {}
+): Promise<IProcessImageResult> {
+  const accessToken = await getAccessToken();
+  if (!accessToken) throw new Error('Authentication required to resume upscale job');
+  const durableResult = await waitForDurableUpscale(
+    jobId,
+    { Authorization: `Bearer ${accessToken}` },
+    onProgress,
+    {},
+    options
+  );
+  return {
+    jobId: durableResult.jobId,
+    durable: true,
+    imageUrl: durableResult.imageUrl,
+    creditsRemaining: durableResult.creditsRemaining,
+    creditsUsed: durableResult.creditsUsed,
+    modelDisplayName: durableResult.modelDisplayName,
+    dimensionPreservingFallback: durableResult.dimensionPreservingFallback,
+  };
+}
 
 export const formatBytes = (bytes: number, decimals = 2): string => {
   if (bytes === 0) return '0 Bytes';

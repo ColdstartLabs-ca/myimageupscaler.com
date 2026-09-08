@@ -110,7 +110,12 @@
       "preparingNext": "Preparing next image...",
       "rateLimitingPause": "Rate limiting pause to ensure reliable processing"
     },
-    "remainingTime": "~{remaining}s remaining"
+    "remainingTime": "~{remaining}s remaining",
+    "recovery": {
+      "reconnecting": "Reconnecting… Your image is still processing.",
+      "refunded": "Processing could not finish. Your credits were refunded.",
+      "sourceRequired": "Add the original image again to start a new attempt."
+    }
   },
   "workspace": {
     "features": {

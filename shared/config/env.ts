@@ -272,6 +272,67 @@ const serverEnvSchema = z.object({
   // ==========================================
   ENABLE_AUTO_MODEL_SELECTION: z.coerce.boolean().default(true),
   ENABLE_PREMIUM_MODELS: z.coerce.boolean().default(true),
+  // Durable upscale execution. Keep disabled until the external executor and
+  // recovery gates are deployed; the server owns cohort selection.
+  UPSCALE_DURABLE_EXECUTION_ENABLED: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform(value => value === 'true'),
+  UPSCALE_DURABLE_COHORT_PERCENT: z.coerce.number().int().min(0).max(100).default(0),
+  UPSCALE_EXECUTOR_BASE_URL: z.string().url().optional(),
+  UPSCALE_EXECUTOR_SHARED_SECRET: z.string().min(16).optional(),
+  UPSCALE_BUILD_ID: z.string().default('local'),
+  UPSCALE_EXECUTOR_MODE: z.enum(['executor', 'dispatcher', 'callbacks']).default('executor'),
+  UPSCALE_EXECUTOR_TASK_QUEUE: z
+    .string()
+    .regex(/^projects\/[^/]+\/locations\/[^/]+\/queues\/[^/]+$/)
+    .optional(),
+  UPSCALE_EXECUTOR_TASK_TARGET_URL: z.string().url().optional(),
+  UPSCALE_EXECUTOR_TASK_SERVICE_ACCOUNT: z.string().email().optional(),
+  UPSCALE_EXECUTOR_HEALTH_SERVICE_ACCOUNT: z.string().email().optional(),
+  UPSCALE_EXECUTOR_TASK_AUDIENCE: z.string().url().optional(),
+  UPSCALE_EXECUTOR_DISPATCH_AUDIENCE: z.string().url().optional(),
+  UPSCALE_EXECUTOR_DISPATCH_SERVICE_ACCOUNT: z.string().email().optional(),
+  UPSCALE_EXECUTOR_WAKE_SECRET: z.string().min(32).optional(),
+  UPSCALE_EXECUTOR_WAKE_PREVIOUS_SECRET: z.string().min(32).optional(),
+  REPLICATE_WEBHOOK_SIGNING_SECRET: z.string().optional(),
+  UPSCALE_EXECUTOR_CALLBACK_BASE_URL: z.string().url().optional(),
+  UPSCALE_EXECUTOR_REQUEST_BODY_BYTES: z.coerce
+    .number()
+    .int()
+    .positive()
+    .max(1024 * 1024)
+    .default(1024 * 1024),
+  UPSCALE_EXECUTOR_CALLBACK_BODY_BYTES: z.coerce
+    .number()
+    .int()
+    .positive()
+    .max(512 * 1024)
+    .default(512 * 1024),
+  UPSCALE_EXECUTOR_WAKE_BODY_BYTES: z.coerce
+    .number()
+    .int()
+    .positive()
+    .max(64 * 1024)
+    .default(64 * 1024),
+  UPSCALE_EXECUTOR_OUTPUT_MAX_BYTES: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(128 * 1024 * 1024),
+  UPSCALE_EXECUTOR_IMAGE_DIGEST: z
+    .string()
+    .regex(/^sha256:[a-f0-9]{64}$/)
+    .optional(),
+  PORT: z.coerce.number().int().min(1).max(65535).default(8080),
+  HOST: z.string().default('0.0.0.0'),
+  UPSCALE_OUTPUT_MAX_BYTES: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(128 * 1024 * 1024),
+  UPSCALE_EXECUTION_DEADLINE_SECONDS: z.coerce.number().int().positive().max(900).default(900),
+  UPSCALE_SUBMISSION_DEADLINE_SECONDS: z.coerce.number().int().positive().max(900).default(900),
 
   // ==========================================
   // EMAIL PROVIDERS
@@ -428,6 +489,39 @@ function loadServerEnv(): IServerEnv {
     // Feature Flags
     ENABLE_AUTO_MODEL_SELECTION: process.env.ENABLE_AUTO_MODEL_SELECTION ?? 'true',
     ENABLE_PREMIUM_MODELS: process.env.ENABLE_PREMIUM_MODELS ?? 'true',
+    UPSCALE_DURABLE_EXECUTION_ENABLED: process.env.UPSCALE_DURABLE_EXECUTION_ENABLED ?? 'false',
+    UPSCALE_DURABLE_COHORT_PERCENT: process.env.UPSCALE_DURABLE_COHORT_PERCENT ?? '0',
+    UPSCALE_EXECUTOR_BASE_URL: process.env.UPSCALE_EXECUTOR_BASE_URL,
+    UPSCALE_EXECUTOR_SHARED_SECRET: process.env.UPSCALE_EXECUTOR_SHARED_SECRET,
+    UPSCALE_BUILD_ID: process.env.UPSCALE_BUILD_ID || process.env.GIT_SHA || 'local',
+    UPSCALE_EXECUTOR_MODE: process.env.UPSCALE_EXECUTOR_MODE || undefined,
+    UPSCALE_EXECUTOR_TASK_QUEUE: process.env.UPSCALE_EXECUTOR_TASK_QUEUE || undefined,
+    UPSCALE_EXECUTOR_TASK_TARGET_URL: process.env.UPSCALE_EXECUTOR_TASK_TARGET_URL || undefined,
+    UPSCALE_EXECUTOR_TASK_SERVICE_ACCOUNT:
+      process.env.UPSCALE_EXECUTOR_TASK_SERVICE_ACCOUNT || undefined,
+    UPSCALE_EXECUTOR_HEALTH_SERVICE_ACCOUNT:
+      process.env.UPSCALE_EXECUTOR_HEALTH_SERVICE_ACCOUNT || undefined,
+    UPSCALE_EXECUTOR_TASK_AUDIENCE: process.env.UPSCALE_EXECUTOR_TASK_AUDIENCE || undefined,
+    UPSCALE_EXECUTOR_DISPATCH_AUDIENCE: process.env.UPSCALE_EXECUTOR_DISPATCH_AUDIENCE || undefined,
+    UPSCALE_EXECUTOR_DISPATCH_SERVICE_ACCOUNT:
+      process.env.UPSCALE_EXECUTOR_DISPATCH_SERVICE_ACCOUNT || undefined,
+    UPSCALE_EXECUTOR_WAKE_SECRET: process.env.UPSCALE_EXECUTOR_WAKE_SECRET || undefined,
+    UPSCALE_EXECUTOR_WAKE_PREVIOUS_SECRET:
+      process.env.UPSCALE_EXECUTOR_WAKE_PREVIOUS_SECRET || undefined,
+    REPLICATE_WEBHOOK_SIGNING_SECRET: process.env.REPLICATE_WEBHOOK_SIGNING_SECRET || undefined,
+    UPSCALE_EXECUTOR_CALLBACK_BASE_URL: process.env.UPSCALE_EXECUTOR_CALLBACK_BASE_URL || undefined,
+    UPSCALE_EXECUTOR_REQUEST_BODY_BYTES:
+      process.env.UPSCALE_EXECUTOR_REQUEST_BODY_BYTES || undefined,
+    UPSCALE_EXECUTOR_CALLBACK_BODY_BYTES:
+      process.env.UPSCALE_EXECUTOR_CALLBACK_BODY_BYTES || undefined,
+    UPSCALE_EXECUTOR_WAKE_BODY_BYTES: process.env.UPSCALE_EXECUTOR_WAKE_BODY_BYTES || undefined,
+    UPSCALE_EXECUTOR_OUTPUT_MAX_BYTES: process.env.UPSCALE_EXECUTOR_OUTPUT_MAX_BYTES || undefined,
+    UPSCALE_EXECUTOR_IMAGE_DIGEST: process.env.UPSCALE_EXECUTOR_IMAGE_DIGEST || undefined,
+    PORT: process.env.PORT || undefined,
+    HOST: process.env.HOST || undefined,
+    UPSCALE_OUTPUT_MAX_BYTES: process.env.UPSCALE_OUTPUT_MAX_BYTES ?? String(128 * 1024 * 1024),
+    UPSCALE_EXECUTION_DEADLINE_SECONDS: process.env.UPSCALE_EXECUTION_DEADLINE_SECONDS ?? '900',
+    UPSCALE_SUBMISSION_DEADLINE_SECONDS: process.env.UPSCALE_SUBMISSION_DEADLINE_SECONDS ?? '900',
 
     // Email Providers
     CLOUDFLARE_EMAIL_API_TOKEN: process.env.CLOUDFLARE_EMAIL_API_TOKEN || '',

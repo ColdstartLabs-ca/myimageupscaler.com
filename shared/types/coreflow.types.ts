@@ -535,6 +535,13 @@ export interface IUpscaleConfig {
 
 export interface IBatchItem {
   id: string;
+  /** Server-owned durable execution identity, when an API job has been admitted. */
+  jobId?: string;
+  durableStatus?: string;
+  reconnecting?: boolean;
+  refunded?: boolean;
+  /** False when the server forbids retry or the original upload is unavailable. */
+  retryable?: boolean;
   file: File;
   previewUrl: string;
   processedUrl: string | null;
@@ -627,6 +634,19 @@ export interface IDimensionsInfo {
 
 export interface IUpscaleResponse {
   success: boolean;
+  /** Present for protocol v2 admission/status responses. */
+  accepted?: boolean;
+  jobId?: string;
+  status?:
+    | 'queued'
+    | 'submitting'
+    | 'submission_unknown'
+    | 'processing'
+    | 'staging'
+    | 'ready'
+    | 'completed'
+    | 'failed'
+    | 'expired';
   expiresAt?: number; // Timestamp when staged output expires
   mimeType: string;
   processing: {

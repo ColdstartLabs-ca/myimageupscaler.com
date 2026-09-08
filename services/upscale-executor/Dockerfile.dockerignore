@@ -1,0 +1,16 @@
+**
+!package.json
+!yarn.lock
+!tsconfig.json
+!shared
+!shared/**
+!server
+!server/**
+!services
+!services/upscale-executor
+!services/upscale-executor/**
+**/*.spec.ts
+**/*.test.ts
+**/node_modules
+**/.env*
+**/.git

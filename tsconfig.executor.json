@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["node"]
+  },
+  "include": ["services/upscale-executor/**/*.ts"],
+  "exclude": ["services/upscale-executor/**/*.spec.ts", "node_modules"]
+}

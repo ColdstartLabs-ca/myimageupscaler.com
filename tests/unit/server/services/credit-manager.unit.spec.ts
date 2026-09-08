@@ -204,4 +204,31 @@ describe('CreditManager durable reservations', () => {
       p_description: 'Credit refund for failed processing',
     });
   });
+
+  it('reports a rejected legacy refund instead of claiming durable credits were returned', async () => {
+    mocks.rpc.mockResolvedValue({ data: [{ success: false, refunded_amount: 0 }], error: null });
+    await expect(
+      new CreditManager().refundCredits('user-1', {
+        amount: 3,
+        jobId: '11111111-1111-4111-8111-111111111111',
+        subscriptionAmount: 2,
+        purchasedAmount: 1,
+      })
+    ).resolves.toBe(false);
+  });
+
+  it('accepts an idempotent successful refund from the database table result', async () => {
+    mocks.rpc.mockResolvedValue({
+      data: [{ success: true, already_refunded: true, refunded_amount: 0 }],
+      error: null,
+    });
+    await expect(
+      new CreditManager().refundCredits('user-1', {
+        amount: 3,
+        jobId: 'gen_123_abc',
+        subscriptionAmount: 2,
+        purchasedAmount: 1,
+      })
+    ).resolves.toBe(true);
+  });
 });

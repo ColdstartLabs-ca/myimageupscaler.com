@@ -5,11 +5,13 @@ const mocks = vi.hoisted(() => ({
   from: vi.fn(),
   insert: vi.fn(),
   trackServerEvent: vi.fn(),
+  lookup: vi.fn(),
+  rpc: vi.fn(),
 }));
 
 vi.mock('@server/analytics', () => ({ trackServerEvent: mocks.trackServerEvent }));
 vi.mock('@server/supabase/supabaseAdmin', () => ({
-  supabaseAdmin: { from: mocks.from },
+  supabaseAdmin: { from: mocks.from, rpc: mocks.rpc },
 }));
 vi.mock('@shared/config/env', () => ({
   serverEnv: { AMPLITUDE_API_KEY: 'test-amplitude-key' },
@@ -34,6 +36,77 @@ describe('POST /api/upscale/failure-observation', () => {
     mocks.from.mockReturnValue({ insert: mocks.insert });
     mocks.insert.mockResolvedValue({ error: null });
     mocks.trackServerEvent.mockResolvedValue(true);
+    mocks.lookup.mockResolvedValue({
+      data: { job_id: '11111111-1111-4111-8111-111111111111', stage: 'processing' },
+      error: null,
+    });
+    mocks.rpc.mockResolvedValue({ data: true, error: null });
+  });
+
+  function durableLookup() {
+    mocks.from.mockReturnValue({
+      insert: mocks.insert,
+      select: () => ({ eq: () => ({ eq: () => ({ maybeSingle: mocks.lookup }) }) }),
+    });
+  }
+  const jobId = '11111111-1111-4111-8111-111111111111';
+
+  it.each(['processing', 'completed', 'failed'])(
+    'keeps the authoritative %s job and projection intact',
+    async stage => {
+      durableLookup();
+      mocks.lookup.mockResolvedValue({ data: { job_id: jobId, stage }, error: null });
+      const response = await POST(request({ jobId, status: 503, rayId: 'ray-lost-response' }));
+      expect(response.status).toBe(202);
+      expect(mocks.insert).not.toHaveBeenCalled();
+      expect(mocks.trackServerEvent).not.toHaveBeenCalled();
+      if (stage === 'processing')
+        expect(mocks.rpc).toHaveBeenCalledWith('request_upscale_recovery', { p_job_id: jobId });
+      else expect(mocks.rpc).not.toHaveBeenCalled();
+    }
+  );
+
+  it('does not reveal or mutate an unowned job', async () => {
+    durableLookup();
+    mocks.lookup.mockResolvedValue({ data: null, error: null });
+    expect((await POST(request({ jobId, status: 503 }))).status).toBe(404);
+    expect(mocks.insert).not.toHaveBeenCalled();
+    expect(mocks.rpc).not.toHaveBeenCalled();
+  });
+
+  it('returns a retryable error when durable state is unavailable', async () => {
+    durableLookup();
+    mocks.lookup.mockResolvedValue({ data: null, error: { message: 'unavailable' } });
+    expect((await POST(request({ jobId, status: 503 }))).status).toBe(503);
+    expect(mocks.insert).not.toHaveBeenCalled();
+    expect(mocks.trackServerEvent).not.toHaveBeenCalled();
+  });
+
+  it('cancels oversized chunked observations before reading the entire body', async () => {
+    const cancel = vi.fn();
+    let chunks = 0;
+    const response = await POST(
+      new NextRequest('http://localhost/api/upscale/failure-observation', {
+        method: 'POST',
+        headers: { 'X-User-Id': 'user-1' },
+        duplex: 'half',
+        body: new ReadableStream(
+          {
+            pull(controller) {
+              chunks++;
+              controller.enqueue(new Uint8Array(2049));
+              if (chunks === 100) controller.close();
+            },
+            cancel,
+          },
+          { highWaterMark: 0 }
+        ),
+      } as RequestInit)
+    );
+    expect(response.status).toBe(413);
+    expect(chunks).toBeLessThan(3);
+    expect(cancel).toHaveBeenCalled();
+    expect(mocks.from).not.toHaveBeenCalled();
   });
 
   it('should write a redacted failed row and server telemetry without browser analytics consent', async () => {

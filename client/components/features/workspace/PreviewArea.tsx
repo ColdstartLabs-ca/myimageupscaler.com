@@ -152,10 +152,18 @@ const ErrorOverlay: React.FC<{
           <AlertTriangle size={24} />
         </div>
         <h3 className="text-lg font-semibold text-white mb-2">{t('previewArea.errors.title')}</h3>
-        <p className="text-muted-foreground mb-4">{item.error}</p>
-        <Button size="sm" onClick={() => onRetry(item)}>
-          {t('previewArea.errors.tryAgain')}
-        </Button>
+        <p className="text-muted-foreground mb-4">
+          {item.refunded ? t('previewArea.recovery.refunded') : item.error}
+        </p>
+        {item.file.size === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            {t('previewArea.recovery.sourceRequired')}
+          </p>
+        ) : item.retryable !== false ? (
+          <Button size="sm" onClick={() => onRetry(item)}>
+            {t('previewArea.errors.tryAgain')}
+          </Button>
+        ) : null}
       </div>
     </div>
   );
@@ -364,10 +372,12 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
 
   const estimatedTotalTime = MODEL_PROCESSING_TIMES[selectedModel] || 30;
   const estimatedRemaining = Math.max(0, estimatedTotalTime - elapsedSeconds);
-  const stageMessage = activeItem.stage
-    ? STAGE_MESSAGES[activeItem.stage]
-    : t('previewArea.statusMessages.processing');
-  const isEnhancing = activeItem.stage === ProcessingStage.ENHANCING;
+  const stageMessage = activeItem.reconnecting
+    ? t('previewArea.recovery.reconnecting')
+    : activeItem.stage
+      ? STAGE_MESSAGES[activeItem.stage]
+      : t('previewArea.statusMessages.processing');
+  const isEnhancing = activeItem.stage === ProcessingStage.ENHANCING && !activeItem.reconnecting;
 
   return (
     <div className="w-full max-w-5xl mx-auto flex flex-col">
@@ -404,7 +414,9 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
               <ProcessingDots />
 
               {/* Stage description */}
-              {activeItem.stage && <StageDescription stage={activeItem.stage} />}
+              {activeItem.stage && !activeItem.reconnecting && (
+                <StageDescription stage={activeItem.stage} />
+              )}
             </div>
           </div>
         )}

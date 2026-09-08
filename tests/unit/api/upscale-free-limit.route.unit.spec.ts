@@ -1,194 +1,80 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
-  batchCheck: vi.fn(),
-  batchRelease: vi.fn(),
-  ensureProfile: vi.fn(),
   from: vi.fn(),
-  InsufficientCreditsError: class InsufficientCreditsError extends Error {
-    availableCredits?: number;
-
-    constructor(message: string, availableCredits?: number) {
-      super(message);
-      this.availableCredits = availableCredits;
-    }
-  },
-  ReplicateError: class ReplicateError extends Error {
-    code: string;
-    providerStatus?: number;
-
-    constructor(message: string, code: string, providerStatus?: number) {
-      super(message);
-      this.name = 'ReplicateError';
-      this.code = code;
-      this.providerStatus = providerStatus;
-    }
-  },
-  refundReservation: vi.fn(),
-  recordDeliverableOutput: vi.fn(),
-  processImage: vi.fn(),
-  providerAvailability: vi.fn(),
-  acquireProviderPermit: vi.fn(),
-  recordProviderFailure: vi.fn(),
-  recordProviderSuccess: vi.fn(),
-  createProcessorForModel: vi.fn(),
-  rateLimit: vi.fn(),
-  setupPending: vi.fn(),
+  getReplay: vi.fn(),
+  admit: vi.fn(),
+  input: vi.fn(),
+  availability: vi.fn(),
+  rate: vi.fn(),
   track: vi.fn(),
-  parseUpscale: vi.fn(),
-  getModel: vi.fn(),
-  getModelForTier: vi.fn(),
-  modelIdToTier: vi.fn(),
-  getModelsByTier: vi.fn(),
-  recommendModel: vi.fn(),
-  analyze: vi.fn(),
-  calculateCredits: vi.fn(),
-  resolveResolution: vi.fn(),
-  decodeImageDimensions: vi.fn(),
-  getScalePreservingFallbackCandidates: vi.fn(),
-  resolveScalePreservingModel: vi.fn(),
-  resolveUpscaleInput: vi.fn(),
-  removeUpscaleInput: vi.fn(),
-}));
-
-vi.mock('@server/analytics', () => ({ trackServerEvent: mocks.track }));
-vi.mock('@server/monitoring/logger', () => ({
-  createLogger: () => ({ error: vi.fn(), flush: vi.fn(), info: vi.fn(), warn: vi.fn() }),
-}));
-vi.mock('@server/rateLimit', () => ({ upscaleRateLimit: { limit: mocks.rateLimit } }));
-vi.mock('@server/services/batch-limit.service', () => ({
-  batchLimitCheck: {
-    checkAndIncrement: mocks.batchCheck,
-    getUsage: () => ({
-      current: 1,
-      limit: 5,
-      resetAt: new Date('2026-07-26T21:00:00.000Z'),
-    }),
-    release: mocks.batchRelease,
-  },
-}));
-vi.mock('@server/services/anti-freeloader.service', () => ({
-  ensureAntiFreeloaderProfile: mocks.ensureProfile,
-}));
-vi.mock('@server/services/image-generation.service', () => ({
-  AIGenerationError: class AIGenerationError extends Error {},
-  InsufficientCreditsError: mocks.InsufficientCreditsError,
-}));
-vi.mock('@server/services/image-processor.factory', () => ({
-  ImageProcessorFactory: {
-    createProcessorForModel: mocks.createProcessorForModel,
-    createProcessor: () => ({ providerName: 'test', processImage: mocks.processImage }),
-  },
-}));
-vi.mock('@server/services/llm-image-analyzer', () => ({
-  LLMImageAnalyzer: class {
-    analyze(...args: unknown[]) {
-      return mocks.analyze(...args);
-    }
-  },
-}));
-vi.mock('@server/services/model-registry', () => ({
-  ModelRegistry: {
-    getInstance: () => ({
-      getMaxInputPixels: () => Number.MAX_SAFE_INTEGER,
-      getModel: mocks.getModel,
-      getModelsByTier: mocks.getModelsByTier,
-      recommendModel: mocks.recommendModel,
-    }),
-  },
-}));
-vi.mock('@server/services/provider-health.service', () => ({
-  providerHealthService: {
-    getAvailability: mocks.providerAvailability,
-    acquireProcessingPermit: mocks.acquireProviderPermit,
-    recordFailure: mocks.recordProviderFailure,
-    recordSuccess: mocks.recordProviderSuccess,
-  },
-}));
-vi.mock('@server/services/upscale-input-storage.service', () => ({
-  resolveUpscaleInput: mocks.resolveUpscaleInput,
-  removeUpscaleInput: mocks.removeUpscaleInput,
-}));
-vi.mock('@server/services/replicate.service', () => ({
-  ReplicateError: mocks.ReplicateError,
-}));
-vi.mock('@server/services/scale-preserving-model', () => ({
-  getScalePreservingFallbackCandidates: mocks.getScalePreservingFallbackCandidates,
-  resolveScalePreservingModel: mocks.resolveScalePreservingModel,
-}));
-vi.mock('@server/services/replicate/utils/credit-manager', () => ({
-  creditManager: {
-    refundReservation: mocks.refundReservation,
-    recordDeliverableOutput: mocks.recordDeliverableOutput,
-  },
 }));
 vi.mock('@server/supabase/supabaseAdmin', () => ({ supabaseAdmin: { from: mocks.from } }));
+vi.mock('@server/services/upscale-job.service', async importOriginal => ({
+  ...(await importOriginal<typeof import('@server/services/upscale-job.service')>()),
+  upscaleJobService: { getReplay: mocks.getReplay, admit: mocks.admit },
+}));
+vi.mock('@server/services/upscale-input-storage.service', () => ({
+  resolveUpscaleInput: mocks.input,
+}));
+vi.mock('@server/services/anti-freeloader.service', () => ({
+  ensureAntiFreeloaderProfile: async (_req: unknown, _userId: unknown, profile: unknown) => profile,
+}));
+vi.mock('@server/services/provider-health.service', () => ({
+  providerHealthService: { getAvailability: mocks.availability },
+}));
+vi.mock('@server/rateLimit', () => ({ upscaleRateLimit: { limit: mocks.rate } }));
+vi.mock('@server/analytics', () => ({ trackServerEvent: mocks.track }));
+vi.mock('@server/monitoring/logger', () => ({
+  createLogger: () => ({ info: vi.fn(), warn: vi.fn(), error: vi.fn(), flush: vi.fn() }),
+}));
 vi.mock('@shared/config/env', () => ({
+  serverEnv: {
+    ENV: 'test',
+    AMPLITUDE_API_KEY: 'test-key',
+    ENABLE_PREMIUM_MODELS: true,
+    UPSCALE_DURABLE_EXECUTION_ENABLED: true,
+    UPSCALE_DURABLE_COHORT_PERCENT: 100,
+    UPSCALE_EXECUTOR_BASE_URL: 'https://executor.example',
+    UPSCALE_EXECUTOR_SHARED_SECRET: 'test-wake-secret',
+    UPSCALE_BUILD_ID: 'test-build',
+    UPSCALE_EXECUTION_DEADLINE_SECONDS: 900,
+    UPSCALE_SUBMISSION_DEADLINE_SECONDS: 900,
+  },
+  clientEnv: {},
   isProduction: () => false,
-  serverEnv: { AMPLITUDE_API_KEY: 'test-key', ENV: 'test' },
-}));
-vi.mock('@shared/config/model-costs.config', () => ({
-  MODEL_COSTS: { PREMIUM_QUALITY_TIERS: [], SMART_ANALYSIS_REQUIRES_PAID: false },
-}));
-vi.mock('@shared/config/subscription.utils', () => ({
-  calculateFinalProviderAwareCredits: mocks.calculateCredits,
-  calculateProviderAwareCredits: mocks.calculateCredits,
-  getModelForTier: mocks.getModelForTier,
-  modelIdToTier: mocks.modelIdToTier,
-  resolveEffectiveResolution: mocks.resolveResolution,
-}));
-vi.mock('@/lib/anti-freeloader/check-freeloader', () => ({
-  isAccountSetupPending: mocks.setupPending,
-  isFreeleaderBlocked: () => false,
-}));
-vi.mock('@shared/validation/upscale.schema', () => ({
-  upscaleSchema: {
-    parse: mocks.parseUpscale,
-  },
-  decodeImageDimensions: mocks.decodeImageDimensions,
-  getBase64PayloadLength: (value: string) =>
-    value.length - (value.startsWith('data:') ? value.indexOf(',') + 1 : 0),
-  getBase64PayloadOffset: (value: string) =>
-    value.startsWith('data:') ? value.indexOf(',') + 1 : 0,
-  validateImageDimensions: () => ({ valid: true }),
-  validateImageSizeForTier: () => ({ valid: true }),
-  // The route enforces the allowlist against the *detected* type, so the double must
-  // report one and expose the allowlist it is checked against.
-  validateMagicBytes: () => ({ valid: true, detectedMimeType: 'image/jpeg' }),
-  IMAGE_VALIDATION: {
-    ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/webp', 'image/heic'],
-    MAX_REQUEST_BYTES: 64 * 1024,
-  },
 }));
 
 import { POST } from '@/app/api/upscale/route';
 import { POST as estimateCredits } from '@/app/api/credit-estimate/route';
-import { InsufficientCreditsError } from '@server/services/image-generation.service';
-import { ReplicateError } from '@server/services/replicate.service';
+import { UpscaleJobError, type IUpscaleAdmissionInput } from '@server/services/upscale-job.service';
 
-function request(): NextRequest {
-  return new NextRequest('http://localhost/api/upscale', {
+const jobId = '11111111-1111-4111-8111-111111111111';
+const payload = {
+  jobId,
+  storagePath: 'user-1/' + jobId + '.png',
+  mimeType: 'image/png',
+  config: { qualityTier: 'quick', scale: 2, additionalOptions: {} },
+};
+function request(body: unknown = payload, path = '/api/upscale') {
+  return new NextRequest('http://localhost' + path, {
     method: 'POST',
-    headers: { 'X-User-Id': 'user-1', 'content-type': 'application/json' },
-    body: JSON.stringify({}),
-  });
-}
-
-function requestWithBody(path: string, body: unknown): NextRequest {
-  return new NextRequest(`http://localhost${path}`, {
-    method: 'POST',
-    headers: { 'X-User-Id': 'user-1', 'content-type': 'application/json' },
+    headers: {
+      'X-User-Id': 'user-1',
+      'X-Upscale-Protocol': '2',
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify(body),
   });
 }
-
 function profile(overrides: Record<string, unknown> = {}) {
   return {
     subscription_status: null,
     subscription_tier: null,
     subscription_credits_balance: 0,
     purchased_credits_balance: 0,
+    credits_balance: 0,
     is_flagged_freeloader: false,
     region_tier: 'standard',
     signup_country: 'CA',
@@ -196,770 +82,330 @@ function profile(overrides: Record<string, unknown> = {}) {
     ...overrides,
   };
 }
+let currentProfile = profile();
+let grantDecision: { user_id: string } | null;
+
+function storedInput(width = 100, height = 80) {
+  const prefix = Buffer.from('89504e470d0a1a0a0000000d494844520000006400000050', 'hex');
+  prefix.writeUInt32BE(width, 16);
+  prefix.writeUInt32BE(height, 20);
+  return {
+    imageReference: 'https://storage.example/signed-input?token=private',
+    validationImageData: prefix.toString('base64'),
+    sizeBytes: 1024,
+    mimeType: 'image/png',
+  };
+}
 
 describe('POST /api/upscale free limit errors', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.rateLimit.mockResolvedValue({ success: true, remaining: 4, reset: Date.now() + 60_000 });
-    mocks.setupPending.mockReturnValue(false);
-    mocks.refundReservation.mockResolvedValue(true);
-    mocks.recordDeliverableOutput.mockResolvedValue(true);
-    mocks.providerAvailability.mockResolvedValue({
-      available: true,
-      status: 'closed',
-      retryAt: null,
-    });
-    mocks.acquireProviderPermit.mockResolvedValue(true);
-    mocks.recordProviderFailure.mockResolvedValue(true);
-    mocks.recordProviderSuccess.mockResolvedValue(true);
-    mocks.createProcessorForModel.mockReturnValue({
-      providerName: 'test',
-      processImage: mocks.processImage,
-    });
-    mocks.decodeImageDimensions.mockReturnValue(null);
-    mocks.getScalePreservingFallbackCandidates.mockImplementation(isPaidUser =>
-      isPaidUser
-        ? ['clarity-upscaler', 'real-esrgan-large']
-        : ['real-esrgan-large', 'clarity-upscaler']
-    );
-    mocks.resolveScalePreservingModel.mockReturnValue({
-      usedFallback: false,
-      modelId: 'real-esrgan',
-    });
-    mocks.batchCheck.mockResolvedValue({
-      allowed: true,
-      current: 0,
-      limit: 5,
-      resetAt: new Date(Date.now() + 60_000),
-    });
-    mocks.batchRelease.mockResolvedValue(true);
+    currentProfile = profile();
+    grantDecision = { user_id: 'user-1' };
+    mocks.getReplay.mockResolvedValue(null);
+    mocks.rate.mockResolvedValue({ success: true, remaining: 4, reset: Date.now() + 60_000 });
+    mocks.availability.mockResolvedValue({ available: true, status: 'closed', retryAt: null });
+    mocks.track.mockResolvedValue(true);
+    mocks.input.mockResolvedValue(storedInput());
     mocks.from.mockImplementation(() => ({
       select: () => ({
         eq: () => ({
-          single: async () => ({ data: profile(), error: null }),
-          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
+          maybeSingle: async () => ({ data: grantDecision, error: null }),
+          single: async () => ({ data: currentProfile, error: null }),
         }),
       }),
     }));
-    mocks.ensureProfile.mockImplementation((_req, _userId, rawProfile) => rawProfile);
-    mocks.getModelForTier.mockReturnValue('real-esrgan');
-    mocks.modelIdToTier.mockReturnValue('quick');
-    mocks.getModelsByTier.mockReturnValue([]);
-    mocks.recommendModel.mockReturnValue({ recommendedModel: 'real-esrgan' });
-    mocks.analyze.mockResolvedValue({
-      recommendedModel: 'real-esrgan',
-      issues: [],
-      enhancementPrompt: undefined,
-    });
-    mocks.calculateCredits.mockReturnValue({
-      finalCredits: 1,
-      credits: 1,
-      effectiveResolution: undefined,
-      pricingModel: 'flat',
-      providerCostUsd: 0.002,
-    });
-    mocks.resolveResolution.mockReturnValue(undefined);
-    mocks.resolveUpscaleInput.mockResolvedValue({
-      imageReference: 'https://storage.example/signed-input?token=abc',
-      validationImageData: 'iVBORw0KGgoAAAANSUhEUg==',
-      sizeBytes: 1024,
-      mimeType: 'image/jpeg',
-    });
-    mocks.removeUpscaleInput.mockResolvedValue(undefined);
-    mocks.getModel.mockReturnValue({
-      isEnabled: true,
-      minTier: 'free',
-      supportedScales: [2],
-      tierRestriction: null,
-    });
-    mocks.parseUpscale.mockReturnValue({
-      storagePath: 'user-1/11111111-1111-4111-8111-111111111111.jpg',
-      jobId: '11111111-1111-4111-8111-111111111111',
-      mimeType: 'image/jpeg',
-      config: {
-        qualityTier: 'quick',
-        scale: 2,
-        additionalOptions: { smartAnalysis: false, enhance: true },
-      },
-    });
+    mocks.admit.mockImplementation(async (input: IUpscaleAdmissionInput) => ({
+      jobId: input.jobId,
+      stage: 'queued',
+      exactCharge: input.exactCharge,
+      creditsRemaining:
+        Number(currentProfile.subscription_credits_balance) +
+        Number(currentProfile.purchased_credits_balance) -
+        input.exactCharge,
+      statusUrl: '/api/upscale/jobs?jobId=' + input.jobId,
+      retryAfterMs: 2000,
+      httpStatus: 202,
+    }));
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('{}')));
   });
+  afterEach(() => vi.unstubAllGlobals());
 
   it.each([
     {
       label: 'paid',
-      profileOverrides: { purchased_credits_balance: 50 },
-      expectedPaidClassification: true,
-      expectedModelId: 'clarity-upscaler',
+      balances: { purchased_credits_balance: 50 },
+      modelId: 'clarity-upscaler',
+      batchLimit: 40,
     },
     {
       label: 'free',
-      profileOverrides: { subscription_credits_balance: 1 },
-      expectedPaidClassification: false,
-      expectedModelId: 'real-esrgan-large',
+      balances: { subscription_credits_balance: 1 },
+      modelId: 'real-esrgan-large',
+      batchLimit: 5,
     },
   ])(
-    'routes an oversized Quick 2x $label customer through the correct fallback order',
-    async ({ profileOverrides, expectedPaidClassification, expectedModelId }) => {
-      const customerProfile = profile(profileOverrides);
-      mocks.from.mockImplementation(() => ({
-        select: () => ({
-          eq: () => ({
-            single: async () => ({ data: customerProfile, error: null }),
-            maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
-          }),
-        }),
-      }));
-      mocks.decodeImageDimensions.mockReturnValue({ width: 1800, height: 1800 });
-      mocks.resolveScalePreservingModel.mockReturnValue({
-        usedFallback: true,
-        modelId: 'real-esrgan-large',
-      });
-      mocks.processImage.mockImplementation(async (_userId, _input, options) => {
-        options?.onCreditsDeducted?.({
-          amount: 1,
-          newBalance: expectedPaidClassification ? 49 : 0,
-          jobId: '33333333-3333-4333-8333-333333333333',
-          subscriptionAmount: 0,
-          purchasedAmount: expectedPaidClassification ? 1 : 0,
-        });
-        return {
-          imageUrl: 'https://output.test/result.png',
-          mimeType: 'image/png',
-          creditsRemaining: expectedPaidClassification ? 49 : 0,
-        };
-      });
+    'saves the oversized Quick 2x $label fallback at the original Quick charge',
+    async ({ balances, modelId, batchLimit }) => {
+      currentProfile = profile(balances);
+      mocks.input.mockResolvedValue(storedInput(1800, 1800));
 
       const response = await POST(request());
 
-      expect(response.status).toBe(200);
-      expect(mocks.getScalePreservingFallbackCandidates).toHaveBeenCalledWith(
-        expectedPaidClassification
+      expect(response.status).toBe(202);
+      expect(mocks.admit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          resolvedModelId: modelId,
+          billingModelId: 'real-esrgan',
+          exactCharge: 1,
+          inputWidth: 1800,
+          inputHeight: 1800,
+          scale: 2,
+          batchLimit,
+        })
       );
-      expect(mocks.createProcessorForModel).toHaveBeenCalledWith(expectedModelId);
     }
   );
 
-  it('charges the same 25 credits priced for an ultra 4K override', async () => {
-    const paidProfile = profile({
-      subscription_status: 'active',
-      subscription_tier: 'pro',
-      subscription_credits_balance: 100,
-    });
-    mocks.from.mockImplementation(() => ({
-      select: () => ({
-        eq: () => ({
-          single: async () => ({ data: paidProfile, error: null }),
-          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
-        }),
-      }),
-    }));
-    mocks.parseUpscale.mockReturnValue({
-      storagePath: 'user-1/11111111-1111-4111-8111-111111111111.jpg',
-      jobId: '11111111-1111-4111-8111-111111111111',
-      mimeType: 'image/jpeg',
-      config: {
-        qualityTier: 'ultra',
-        scale: 2,
-        additionalOptions: { smartAnalysis: false, enhance: true },
-        nanoBananaProConfig: { resolution: '4K' },
-      },
-    });
-    mocks.getModelForTier.mockReturnValue('nano-banana-pro');
-    mocks.getModel.mockReturnValue({
-      isEnabled: true,
-      minTier: 'pro',
-      supportedScales: [2, 4, 8],
-      tierRestriction: 'pro',
-      capabilities: ['upscale'],
-      displayName: 'Upscale Ultra',
-    });
-    mocks.resolveResolution.mockReturnValue('4K');
-    mocks.calculateCredits.mockReturnValue({
-      finalCredits: 25,
-      credits: 25,
-      effectiveResolution: '4K',
-      pricingModel: 'per-resolution',
-      providerCostUsd: 0.3,
-    });
-    mocks.processImage.mockImplementation(async (_userId, _input, options) => {
-      options?.onCreditsDeducted?.({
-        amount: 25,
-        newBalance: 75,
-        jobId: '11111111-1111-4111-8111-111111111111',
-        subscriptionAmount: 25,
-        purchasedAmount: 0,
+  it.each([
+    { smartAnalysis: false, credits: 25 },
+    { smartAnalysis: true, credits: 26 },
+  ])(
+    'quotes and reserves $credits credits for the same Ultra 4K request',
+    async ({ smartAnalysis, credits }) => {
+      currentProfile = profile({
+        subscription_status: 'active',
+        subscription_tier: 'pro',
+        subscription_credits_balance: 100,
+        credits_balance: 100,
       });
-      return {
-        imageUrl: 'https://output.test/result.png',
-        mimeType: 'image/png',
-        creditsRemaining: 75,
+      const body = {
+        ...payload,
+        config: {
+          qualityTier: 'ultra',
+          scale: 2,
+          additionalOptions: { smartAnalysis },
+          nanoBananaProConfig: { resolution: '4K' },
+        },
       };
+
+      const estimateResponse = await estimateCredits(request(body, '/api/credit-estimate'));
+      const response = await POST(request(body));
+      const estimate = await estimateResponse.json();
+      const accepted = await response.json();
+
+      expect(estimateResponse.status).toBe(200);
+      expect(response.status).toBe(202);
+      expect(estimate.breakdown.totalCredits).toBe(credits);
+      expect(accepted.processing.creditsUsed).toBe(credits);
+      expect(mocks.admit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          billingModelId: 'nano-banana-pro',
+          exactCharge: credits,
+          batchLimit: 200,
+          requestConfig: expect.objectContaining({
+            nanoBananaProConfig: expect.objectContaining({ resolution: '4K' }),
+            executionPlan: expect.objectContaining({
+              deferredAnalysis: smartAnalysis,
+              reservedMaximumCredits: credits,
+            }),
+          }),
+        })
+      );
+    }
+  );
+
+  it('keeps the explicit Nano Banana quote while advertising and reserving the Auto maximum', async () => {
+    currentProfile = profile({
+      subscription_status: 'active',
+      subscription_tier: 'hobby',
+      subscription_credits_balance: 100,
+      credits_balance: 100,
     });
+    const explicitResponse = await estimateCredits(
+      request(
+        {
+          config: { mode: 'both', scale: 2, selectedModel: 'nano-banana' },
+        },
+        '/api/credit-estimate'
+      )
+    );
+    const autoConfig = {
+      qualityTier: 'auto',
+      scale: 2,
+      additionalOptions: { smartAnalysis: true },
+    };
+    const autoResponse = await estimateCredits(
+      request(
+        {
+          config: autoConfig,
+          analysisHint: { contentType: 'document' },
+        },
+        '/api/credit-estimate'
+      )
+    );
+    const response = await POST(request({ ...payload, config: autoConfig }));
 
-    const response = await POST(request());
-    const body = await response.json();
-
-    expect(response.status).toBe(200);
-    expect(body.processing.creditsUsed).toBe(25);
-    expect(mocks.processImage).toHaveBeenCalledWith(
-      'user-1',
-      expect.anything(),
+    expect(explicitResponse.status).toBe(200);
+    expect((await explicitResponse.json()).breakdown.totalCredits).toBe(2);
+    expect(autoResponse.status).toBe(200);
+    expect((await autoResponse.json()).breakdown).toMatchObject({
+      totalCredits: 25,
+      reservationMaximum: 25,
+      finalChargePending: true,
+    });
+    expect(response.status).toBe(202);
+    expect((await response.json()).processing.creditsUsed).toBe(25);
+    expect(mocks.admit).toHaveBeenCalledWith(
       expect.objectContaining({
-        creditCost: 25,
-        costAttribution: expect.objectContaining({
-          effectiveResolution: '4K',
-          creditsCharged: 25,
-        }),
+        exactCharge: 25,
+        selectionMode: 'auto',
+        resolvedProvider: 'deferred',
       })
     );
   });
 
-  it('keeps explicit and Auto-selected Nano Banana estimates aligned with deduction', async () => {
-    const nanoModel = {
-      id: 'nano-banana',
-      isEnabled: true,
-      supportedScales: [],
-      capabilities: ['text-preservation', 'enhance'],
-      displayName: 'Text Preserve',
-      creditMultiplier: 2,
-    };
-    const explicitPayload = {
-      imageData: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJ',
-      mimeType: 'image/png',
-      config: {
-        mode: 'both',
-        scale: 2,
-        selectedModel: 'nano-banana',
-      },
-    };
-    const autoPayload = {
-      ...explicitPayload,
-      config: { ...explicitPayload.config, selectedModel: 'auto' },
-      analysisHint: { contentType: 'document' },
-    };
-    const paidProfile = profile({
-      subscription_status: 'active',
-      subscription_tier: 'hobby',
-      subscription_credits_balance: 10,
-    });
-
-    mocks.from.mockImplementation(() => ({
-      select: () => ({
-        eq: () => ({
-          single: async () => ({ data: paidProfile, error: null }),
-          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
-        }),
-      }),
-    }));
-    mocks.ensureProfile.mockReturnValue(paidProfile);
-    mocks.getModel.mockReturnValue(nanoModel);
-    mocks.getModelsByTier.mockReturnValue([nanoModel]);
-    mocks.recommendModel.mockReturnValue({ recommendedModel: 'nano-banana' });
-    mocks.calculateCredits.mockReturnValue({
-      finalCredits: 2,
-      credits: 2,
-      effectiveResolution: undefined,
-      pricingModel: 'flat',
-      providerCostUsd: 0.039,
-    });
-
-    const explicitEstimate = await estimateCredits(
-      requestWithBody('/api/credit-estimate', explicitPayload)
-    );
-    const autoEstimate = await estimateCredits(requestWithBody('/api/credit-estimate', autoPayload));
-
-    const jobId = '77777777-7777-4777-8777-777777777777';
-    mocks.parseUpscale.mockReturnValue({
-      storagePath: `user-1/${jobId}.png`,
-      jobId,
-      mimeType: 'image/png',
-      config: {
-        qualityTier: 'auto',
-        scale: 2,
-        additionalOptions: { smartAnalysis: false },
-      },
-    });
-    mocks.analyze.mockResolvedValue({
-      recommendedModel: 'nano-banana',
-      issues: [],
-      enhancementPrompt: undefined,
-    });
-    mocks.processImage.mockImplementation(async (_userId, _input, options) => {
-      options?.onCreditsDeducted?.({
-        amount: options.creditCost,
-        subscriptionAmount: options.creditCost,
-        purchasedAmount: 0,
-        jobId,
-      });
-      return {
-        imageUrl: 'https://output.test/nano.png',
-        mimeType: 'image/png',
-        creditsRemaining: 8,
-      };
-    });
-
-    vi.useFakeTimers();
-    try {
-      const upscalePromise = POST(request());
-      await vi.advanceTimersByTimeAsync(5000);
-      const upscaleResponse = await upscalePromise;
-      const explicitEstimateBody = await explicitEstimate.json();
-      const autoEstimateBody = await autoEstimate.json();
-      const upscaleBody = await upscaleResponse.json();
-
-      expect(explicitEstimateBody.breakdown.totalCredits).toBe(2);
-      expect(autoEstimateBody.breakdown.totalCredits).toBe(2);
-      expect(upscaleResponse.status).toBe(200);
-      expect(upscaleBody.processing.creditsUsed).toBe(2);
-      expect(mocks.calculateCredits).toHaveBeenLastCalledWith(
-        expect.objectContaining({ modelId: 'nano-banana', qualityTier: 'quick', scale: 2 })
-      );
-    } finally {
-      vi.useRealTimers();
-    }
-  }, 15_000);
-
-  it('quotes and charges identically for the same smart-analysis 4K payload', async () => {
-    const payload = {
-      storagePath: 'user-1/22222222-2222-4222-8222-222222222222.jpg',
-      jobId: '22222222-2222-4222-8222-222222222222',
-      mimeType: 'image/jpeg',
-      config: {
-        qualityTier: 'ultra',
-        scale: 2,
-        additionalOptions: { smartAnalysis: true, enhance: true },
-        nanoBananaProConfig: { resolution: '4K' },
-      },
-    };
-    const paidProfile = profile({
-      subscription_status: 'active',
-      subscription_tier: 'pro',
-      subscription_credits_balance: 100,
-      credits_balance: 100,
-    });
-    mocks.from.mockImplementation(() => ({
-      select: () => ({
-        eq: () => ({
-          single: async () => ({ data: paidProfile, error: null }),
-          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
-        }),
-      }),
-    }));
-    mocks.parseUpscale.mockReturnValue(payload);
-    mocks.getModelForTier.mockReturnValue('nano-banana-pro');
-    mocks.modelIdToTier.mockReturnValue('ultra');
-    mocks.getModel.mockReturnValue({
-      isEnabled: true,
-      minTier: 'pro',
-      supportedScales: [2, 4, 8],
-      tierRestriction: 'pro',
-      capabilities: ['upscale'],
-      displayName: 'Upscale Ultra',
-      processingTimeMs: 30_000,
-    });
-    mocks.resolveResolution.mockReturnValue('4K');
-    mocks.calculateCredits.mockReturnValue({
-      finalCredits: 26,
-      credits: 26,
-      effectiveResolution: '4K',
-      pricingModel: 'per-resolution',
-      providerCostUsd: 0.3,
-    });
-    mocks.processImage.mockImplementation(async (_userId, _input, options) => {
-      options?.onCreditsDeducted?.({
-        amount: 26,
-        newBalance: 74,
-        jobId: '22222222-2222-4222-8222-222222222222',
-        subscriptionAmount: 26,
-        purchasedAmount: 0,
-      });
-      return {
-        imageUrl: 'https://output.test/result.png',
-        mimeType: 'image/png',
-        creditsRemaining: 74,
-      };
-    });
-
-    const estimateResponse = await estimateCredits(
-      requestWithBody('/api/credit-estimate', payload)
-    );
-    const estimate = await estimateResponse.json();
-    const estimatePricingInput = mocks.calculateCredits.mock.calls.at(-1)?.[0];
-
-    const upscaleResponse = await POST(requestWithBody('/api/upscale', payload));
-    const upscale = await upscaleResponse.json();
-    const upscalePricingInput = mocks.calculateCredits.mock.calls.at(-1)?.[0];
-
-    expect(estimateResponse.status).toBe(200);
-    expect(upscaleResponse.status).toBe(200);
-    expect(estimate.breakdown.totalCredits).toBe(26);
-    expect(upscale.processing.creditsUsed).toBe(26);
-    expect(upscalePricingInput).toEqual(estimatePricingInput);
-  }, 15_000);
-
-  it('should reject scale 8 for seedream', async () => {
-    const paidProfile = profile({
+  it('rejects scale 8 for Seedream before reserving credits', async () => {
+    currentProfile = profile({
       subscription_status: 'active',
       subscription_tier: 'hobby',
       subscription_credits_balance: 100,
     });
-    mocks.from.mockImplementation(() => ({
-      select: () => ({
-        eq: () => ({
-          single: async () => ({ data: paidProfile, error: null }),
-          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
-        }),
-      }),
-    }));
-    mocks.parseUpscale.mockReturnValue({
-      storagePath: 'user-1/33333333-3333-4333-8333-333333333333.jpg',
-      jobId: '33333333-3333-4333-8333-333333333333',
-      mimeType: 'image/jpeg',
-      config: {
-        qualityTier: 'seedream-edit',
-        scale: 8,
-        additionalOptions: { smartAnalysis: false, enhance: true },
-      },
-    });
-    mocks.getModelForTier.mockReturnValue('seedream');
-    mocks.getModel.mockReturnValue({
-      isEnabled: true,
-      minTier: 'hobby',
-      supportedScales: [],
-      tierRestriction: 'hobby',
-    });
 
-    const response = await POST(request());
+    const response = await POST(
+      request({
+        ...payload,
+        config: { qualityTier: 'seedream-edit', scale: 8, additionalOptions: {} },
+      })
+    );
 
     expect(response.status).toBe(400);
-    await expect(response.json()).resolves.toMatchObject({
-      error: { code: 'VALIDATION_ERROR' },
-    });
-    expect(mocks.processImage).not.toHaveBeenCalled();
+    expect((await response.json()).error.code).toBe('VALIDATION_ERROR');
+    expect(mocks.admit).not.toHaveBeenCalled();
   });
 
-  it('returns account setup pending for a provisional zero profile', async () => {
-    mocks.setupPending.mockReturnValue(true);
+  it('returns account setup pending for a provisional zero profile before consuming limits', async () => {
+    grantDecision = null;
 
     const response = await POST(request());
 
     expect(response.status).toBe(409);
-    await expect(response.json()).resolves.toMatchObject({
-      error: { code: 'ACCOUNT_SETUP_PENDING' },
-    });
-    expect(mocks.rateLimit).not.toHaveBeenCalled();
-    expect(mocks.batchCheck).not.toHaveBeenCalled();
-    expect(mocks.processImage).not.toHaveBeenCalled();
+    expect((await response.json()).error.code).toBe('ACCOUNT_SETUP_PENDING');
+    expect(mocks.rate).not.toHaveBeenCalled();
+    expect(mocks.admit).not.toHaveBeenCalled();
     expect(mocks.track).not.toHaveBeenCalled();
   });
 
   it('reads the grant decision before the credit profile', async () => {
-    const reads: string[] = [];
-    mocks.from.mockImplementation((table: string) => ({
-      select: () => ({
-        eq: () => ({
-          single: async () => {
-            reads.push(table);
-            return { data: profile(), error: null };
-          },
-          maybeSingle: async () => {
-            reads.push(table);
-            return { data: null, error: null };
-          },
-        }),
-      }),
-    }));
-    mocks.setupPending.mockReturnValue(true);
+    grantDecision = null;
 
     const response = await POST(request());
 
     expect(response.status).toBe(409);
-    expect(reads).toEqual(['free_credit_grants', 'profiles']);
-  });
-
-  it('returns INSUFFICIENT_CREDITS at zero free credits', async () => {
-    const response = await POST(request());
-
-    expect(response.status).toBe(402);
-    await expect(response.json()).resolves.toMatchObject({
-      error: { code: 'INSUFFICIENT_CREDITS', details: { required: 1, available: 0 } },
-    });
-    expect(mocks.track).toHaveBeenCalledWith(
-      'credit_wall_shown',
-      {
-        source: 'server_402',
-        requiredCredits: 1,
-        currentBalance: 0,
-        deficit: 1,
-      },
-      { apiKey: 'test-key', userId: 'user-1' }
-    );
-  });
-
-  it('keeps INSUFFICIENT_CREDITS for a paid user with zero current balance', async () => {
-    const paidZeroProfile = profile({ subscription_status: 'active', subscription_tier: 'hobby' });
-    mocks.from.mockImplementation(() => ({
-      select: () => ({
-        eq: () => ({
-          single: async () => ({ data: paidZeroProfile, error: null }),
-          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
-        }),
-      }),
-    }));
-
-    const response = await POST(request());
-
-    expect(response.status).toBe(402);
-    await expect(response.json()).resolves.toMatchObject({
-      error: { code: 'INSUFFICIENT_CREDITS', details: { required: 1, available: 0 } },
-    });
-  });
-
-  it('keeps INSUFFICIENT_CREDITS for a former paid plan with zero current balance', async () => {
-    const formerPaidProfile = profile({
-      subscription_status: 'canceled',
-      subscription_tier: 'hobby',
-    });
-    mocks.from.mockImplementation(() => ({
-      select: () => ({
-        eq: () => ({
-          single: async () => ({ data: formerPaidProfile, error: null }),
-          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
-        }),
-      }),
-    }));
-
-    const response = await POST(request());
-
-    await expect(response.json()).resolves.toMatchObject({
-      error: { code: 'INSUFFICIENT_CREDITS' },
-    });
-  });
-
-  it('uses a zero balance reported by the atomic deduction after a stale precheck', async () => {
-    const oneCreditProfile = profile({ subscription_credits_balance: 1 });
-    mocks.from.mockImplementation(() => ({
-      select: () => ({
-        eq: () => ({
-          single: async () => ({ data: oneCreditProfile, error: null }),
-          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
-        }),
-      }),
-    }));
-    mocks.processImage.mockRejectedValue(
-      new InsufficientCreditsError('Insufficient credits. Required: 1, Available: 0', 0)
-    );
-
-    const response = await POST(request());
-
-    expect(response.status).toBe(402);
-    await expect(response.json()).resolves.toMatchObject({
-      error: { code: 'INSUFFICIENT_CREDITS', details: { required: 1, available: 0 } },
-    });
-    expect(mocks.track).toHaveBeenCalledWith(
-      'credit_wall_shown',
-      {
-        source: 'server_402',
-        requiredCredits: 1,
-        currentBalance: 0,
-        deficit: 1,
-      },
-      { apiKey: 'test-key', userId: 'user-1' }
-    );
-  });
-
-  it('returns a vendor-neutral response for a provider 402', async () => {
-    const oneCreditProfile = profile({ subscription_credits_balance: 1 });
-    mocks.from.mockImplementation(() => ({
-      select: () => ({
-        eq: () => ({
-          single: async () => ({ data: oneCreditProfile, error: null }),
-          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
-        }),
-      }),
-    }));
-    mocks.processImage.mockImplementation(
-      async (
-        _userId: string,
-        _input: unknown,
-        options: { onCreditsDeducted?: (deduction: Record<string, unknown>) => void }
-      ) => {
-        options.onCreditsDeducted?.({
-          amount: 1,
-          subscriptionAmount: 1,
-          purchasedAmount: 0,
-          jobId: 'job-402',
-        });
-        throw new ReplicateError(
-          'Request to https://api.replicate.com failed with 402. Buy credits at https://replicate.com/account/billing.',
-          'PROVIDER_UNAVAILABLE',
-          402
-        );
-      }
-    );
-
-    const response = await POST(request());
-    const payload = await response.json();
-
-    expect(response.status).toBe(503);
-    expect(payload).toEqual({
-      success: false,
-      error: {
-        code: 'AI_UNAVAILABLE',
-        message:
-          'Image processing is temporarily unavailable due to a provider issue. Your credits have not been charged. Please try again shortly or contact our support team.',
-      },
-    });
-    expect(JSON.stringify(payload)).not.toMatch(/replicate|https?:\/\/|buy|purchase|billing/i);
-    expect(mocks.batchRelease).toHaveBeenCalledWith('user-1');
-    expect(mocks.recordProviderFailure).toHaveBeenCalledWith('billing');
-
-    const processingFailures = mocks.track.mock.calls.filter(
-      ([eventName]) => eventName === 'processing_failed'
-    );
-    expect(processingFailures).toHaveLength(1);
-    expect(processingFailures[0][1]).toEqual(
-      expect.objectContaining({
-        errorType: 'provider_unavailable',
-        reason: 'provider_unavailable',
-        provider: 'unknown',
-        model: 'real-esrgan',
-        qualityTier: 'quick',
-        retryable: true,
-        requestId: 'unknown',
-      })
-    );
-    expect(JSON.stringify(processingFailures)).not.toContain('api.replicate.com');
+    expect(mocks.from.mock.calls.map(([table]) => table)).toEqual([
+      'free_credit_grants',
+      'profiles',
+    ]);
   });
 
   it.each([
-    ['authentication', 'AUTHENTICATION_FAILED', 403, 'authentication'],
-    ['rate limiting', 'RATE_LIMITED', 429, 'rate_limited'],
+    { label: 'free', overrides: {} },
+    { label: 'paid', overrides: { subscription_status: 'active', subscription_tier: 'hobby' } },
+    {
+      label: 'former paid',
+      overrides: { subscription_status: 'canceled', subscription_tier: 'hobby' },
+    },
   ])(
-    'returns the support-only outage state for provider %s failures',
-    async (_failureName, replicateCode, providerStatus, expectedFailureKind) => {
-      const oneCreditProfile = profile({ subscription_credits_balance: 1 });
-      mocks.from.mockImplementation(() => ({
-        select: () => ({
-          eq: () => ({
-            single: async () => ({ data: oneCreditProfile, error: null }),
-            maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
-          }),
-        }),
-      }));
-      mocks.processImage.mockRejectedValue(
-        new ReplicateError(
-          'Raw Replicate failure: buy credits at https://replicate.com/account/billing.',
-          replicateCode,
-          providerStatus
-        )
-      );
+    'returns INSUFFICIENT_CREDITS for a $label account with zero balance',
+    async ({ overrides }) => {
+      currentProfile = profile(overrides);
 
       const response = await POST(request());
-      const payload = await response.json();
 
-      expect(response.status).toBe(503);
-      expect(payload).toEqual({
-        success: false,
-        error: {
-          code: 'AI_UNAVAILABLE',
-          message:
-            'Image processing is temporarily unavailable due to a provider issue. Your credits have not been charged. Please try again shortly or contact our support team.',
-        },
+      expect(response.status).toBe(402);
+      expect(await response.json()).toMatchObject({
+        error: { code: 'INSUFFICIENT_CREDITS', details: { required: 1, available: 0 } },
       });
-      expect(JSON.stringify(payload)).not.toMatch(/replicate|https?:\/\/|buy|purchase|billing/i);
-      expect(mocks.batchRelease).toHaveBeenCalledWith('user-1');
-      expect(mocks.recordProviderFailure).toHaveBeenCalledWith(expectedFailureKind);
+      expect(mocks.admit).not.toHaveBeenCalled();
+      expect(mocks.track).toHaveBeenCalledWith(
+        'credit_wall_shown',
+        { source: 'server_402', requiredCredits: 1, currentBalance: 0, deficit: 1 },
+        { apiKey: 'test-key', userId: 'user-1' }
+      );
     }
   );
 
-  it('releases the hourly slot when an internal failure happens before credit deduction', async () => {
-    const oneCreditProfile = profile({ subscription_credits_balance: 1 });
-    mocks.from.mockImplementation(() => ({
-      select: () => ({
-        eq: () => ({
-          single: async () => ({ data: oneCreditProfile, error: null }),
-          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
-        }),
-      }),
-    }));
-    mocks.processImage.mockRejectedValue(new Error('Internal processor setup failure'));
-
-    const response = await POST(request());
-    const payload = await response.json();
-
-    expect(response.status).toBe(503);
-    expect(payload).toEqual({
-      success: false,
-      error: {
-        code: 'AI_UNAVAILABLE',
-        message:
-          'Image processing is temporarily unavailable due to a provider issue. Your credits have not been charged. Please try again shortly or contact our support team.',
-      },
-    });
-    expect(JSON.stringify(payload)).not.toMatch(/replicate|https?:\/\/|buy|purchase|billing/i);
-    expect(mocks.refundReservation).not.toHaveBeenCalled();
-    expect(mocks.batchRelease).toHaveBeenCalledWith('user-1');
-  });
-
-  it('keeps the hourly slot for a safety-filter rejection', async () => {
-    const oneCreditProfile = profile({ subscription_credits_balance: 1 });
-    mocks.from.mockImplementation(() => ({
-      select: () => ({
-        eq: () => ({
-          single: async () => ({ data: oneCreditProfile, error: null }),
-          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
-        }),
-      }),
-    }));
-    mocks.processImage.mockImplementation(
-      async (
-        _userId: string,
-        _input: unknown,
-        options: { onCreditsDeducted?: (deduction: Record<string, unknown>) => void }
-      ) => {
-        options.onCreditsDeducted?.({
-          amount: 1,
-          subscriptionAmount: 1,
-          purchasedAmount: 0,
-          jobId: 'job-safety',
-        });
-        throw new ReplicateError('raw provider safety detail', 'SAFETY');
-      }
+  it('preserves the atomic reservation rejection after a stale balance precheck', async () => {
+    currentProfile = profile({ subscription_credits_balance: 1 });
+    mocks.admit.mockRejectedValue(
+      new UpscaleJobError(
+        'INSUFFICIENT_CREDITS',
+        'You do not have enough credits for this image.',
+        402,
+        { required: 1, available: 0 }
+      )
     );
 
     const response = await POST(request());
 
-    expect(response.status).toBe(422);
-    expect(mocks.refundReservation).toHaveBeenCalled();
-    expect(mocks.batchRelease).not.toHaveBeenCalled();
-    expect(mocks.recordProviderFailure).not.toHaveBeenCalled();
+    expect(response.status).toBe(402);
+    expect(await response.json()).toMatchObject({
+      error: { code: 'INSUFFICIENT_CREDITS', details: { required: 1, available: 0 } },
+    });
+    expect(mocks.admit).toHaveBeenCalledOnce();
   });
 
-  it('serves maintenance before consuming quota while the circuit is open', async () => {
-    mocks.providerAvailability.mockResolvedValue({
-      available: false,
-      status: 'open',
-      retryAt: new Date('2026-07-26T20:00:00Z'),
-    });
+  it.each(['billing', 'authentication', 'rate_limited'])(
+    'serves a vendor-neutral %s outage before admission or input lookup',
+    async failureKind => {
+      mocks.availability.mockResolvedValue({
+        available: false,
+        status: 'open',
+        failureKind,
+        retryAt: new Date('2026-07-26T20:00:00Z'),
+        error: 'Buy credits at https://replicate.com/account/billing.',
+      });
+
+      const response = await POST(request());
+      const body = await response.json();
+
+      expect(response.status).toBe(503);
+      expect(body).toMatchObject({
+        success: false,
+        error: {
+          code: 'AI_UNAVAILABLE',
+          details: {
+            providerUnavailable: true,
+            suppressPurchaseCtas: true,
+            retryAt: '2026-07-26T20:00:00.000Z',
+          },
+        },
+      });
+      expect(JSON.stringify(body)).not.toMatch(/replicate|https?:\/\/|billing/i);
+      expect(body.error.message).not.toMatch(/buy|purchase/i);
+      expect(mocks.input).not.toHaveBeenCalled();
+      expect(mocks.admit).not.toHaveBeenCalled();
+      expect(mocks.track).not.toHaveBeenCalled();
+    }
+  );
+
+  it('preserves the hourly quota rejection from atomic admission', async () => {
+    currentProfile = profile({ subscription_credits_balance: 1 });
+    mocks.admit.mockRejectedValue(
+      new UpscaleJobError(
+        'BATCH_LIMIT_EXCEEDED',
+        'Your processing limit has been reached. Please try again later.',
+        429
+      )
+    );
 
     const response = await POST(request());
 
-    expect(response.status).toBe(503);
-    await expect(response.json()).resolves.toEqual({
-      success: false,
-      error: {
-        code: 'AI_UNAVAILABLE',
-        message:
-          'Image processing is temporarily unavailable due to a provider issue. Your credits have not been charged. Please try again shortly or contact our support team.',
-        details: {
-          providerUnavailable: true,
-          suppressPurchaseCtas: true,
-          retryAt: '2026-07-26T20:00:00.000Z',
-        },
-      },
-    });
-    expect(mocks.batchCheck).not.toHaveBeenCalled();
-    expect(mocks.processImage).not.toHaveBeenCalled();
+    expect(response.status).toBe(429);
+    expect((await response.json()).error.code).toBe('BATCH_LIMIT_EXCEEDED');
+    expect(mocks.admit).toHaveBeenCalledWith(
+      expect.objectContaining({ batchLimit: 5, exactCharge: 1 })
+    );
+    expect(mocks.admit).toHaveBeenCalledOnce();
   });
 });

@@ -1,0 +1,33 @@
+name: Durable Upscale Reliability
+on:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '19 8 * * *'
+permissions:
+  contents: read
+concurrency:
+  group: upscale-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  reliability:
+    name: Durable Upscale Reliability
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - run: yarn executor:typecheck
+      - run: yarn test:upscale:contract
+      - run: yarn test:upscale:recovery
+      - run: yarn test:upscale:memory
+      - run: yarn test:upscale:worker
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: upscale-recovery
+          path: test-results/upscale

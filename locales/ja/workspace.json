@@ -96,7 +96,12 @@
       "preparingNext": "次の画像を準備中...",
       "rateLimitingPause": "信頼できる処理のためのレート制限の一時停止"
     },
-    "remainingTime": "残り{remaining}秒"
+    "remainingTime": "残り{remaining}秒",
+    "recovery": {
+      "reconnecting": "再接続中… 画像の処理は続いています。",
+      "refunded": "処理を完了できませんでした。クレジットは返還されました。",
+      "sourceRequired": "もう一度試すには、元の画像を再度追加してください。"
+    }
   },
   "workspace": {
     "features": {

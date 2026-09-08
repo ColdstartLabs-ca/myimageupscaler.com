@@ -26,6 +26,12 @@ const mocks = vi.hoisted(() => ({
   resolveEffectiveResolution: vi.fn(),
   providerAvailability: vi.fn(),
   acquireProviderPermit: vi.fn(),
+  getReplay: vi.fn(),
+}));
+
+vi.mock('@server/services/upscale-job.service', async importOriginal => ({
+  ...(await importOriginal<typeof import('@server/services/upscale-job.service')>()),
+  upscaleJobService: { getReplay: mocks.getReplay },
 }));
 
 vi.mock('@server/analytics', () => ({ trackServerEvent: mocks.track }));
@@ -41,11 +47,8 @@ vi.mock('@server/services/batch-limit.service', () => ({
   },
 }));
 vi.mock('@server/services/anti-freeloader.service', () => ({
-  ensureAntiFreeloaderProfile: async (
-    _request: unknown,
-    _userId: string,
-    profile: unknown
-  ) => profile,
+  ensureAntiFreeloaderProfile: async (_request: unknown, _userId: string, profile: unknown) =>
+    profile,
 }));
 vi.mock('@server/services/image-generation.service', () => ({
   AIGenerationError: class AIGenerationError extends Error {},
@@ -168,6 +171,7 @@ function streamedRequest(chunks: Uint8Array[]): NextRequest {
 describe('POST /api/upscale request body size guard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.getReplay.mockResolvedValue(null);
     mocks.rateLimit.mockResolvedValue({ success: true, remaining: 4, reset: Date.now() + 60_000 });
     mocks.batchCheck.mockResolvedValue({ allowed: true, current: 1, limit: 5 });
     mocks.batchRelease.mockResolvedValue(true);
@@ -245,10 +249,11 @@ describe('POST /api/upscale request body size guard', () => {
     expect(JSON.stringify(body)).toMatch(/too large/i);
   });
 
-  it('releases the batch slot so an oversized retry is not locked out', async () => {
+  it('does not acquire a batch slot before rejecting an oversized body', async () => {
     await POST(request(IMAGE_VALIDATION.MAX_REQUEST_BYTES + 1));
 
-    expect(mocks.batchRelease).toHaveBeenCalled();
+    expect(mocks.batchCheck).not.toHaveBeenCalled();
+    expect(mocks.batchRelease).not.toHaveBeenCalled();
   });
 
   it('rejects inline image data before processing', async () => {
@@ -263,7 +268,8 @@ describe('POST /api/upscale request body size guard', () => {
     expect(res.status).toBe(400);
     expect(mocks.resolveUpscaleInput).not.toHaveBeenCalled();
     expect(mocks.processImage).not.toHaveBeenCalled();
-    expect(mocks.batchRelease).toHaveBeenCalled();
+    expect(mocks.batchCheck).not.toHaveBeenCalled();
+    expect(mocks.batchRelease).not.toHaveBeenCalled();
   });
 
   it('rejects a chunked body above 64 KiB without processing it', async () => {
@@ -274,10 +280,11 @@ describe('POST /api/upscale request body size guard', () => {
 
     expect(res.status).toBe(413);
     expect(mocks.processImage).not.toHaveBeenCalled();
-    expect(mocks.batchRelease).toHaveBeenCalled();
+    expect(mocks.batchCheck).not.toHaveBeenCalled();
+    expect(mocks.batchRelease).not.toHaveBeenCalled();
   });
 
-  it('accepts the current storage metadata payload and reaches input resolution', async () => {
+  it('accepts bounded storage metadata and reaches durable job lookup', async () => {
     const payload = {
       storagePath: 'user-1/11111111-1111-4111-8111-111111111111.png',
       jobId: '11111111-1111-4111-8111-111111111111',
@@ -285,16 +292,22 @@ describe('POST /api/upscale request body size guard', () => {
       resolvedModel: 'real-esrgan',
       config: { qualityTier: 'quick', scale: 2 },
     };
-
-    const res = await POST(requestWithBody(payload));
-
-    expect(res.status).toBe(200);
-    expect(mocks.resolveUpscaleInput).toHaveBeenCalledWith({
-      userId: 'user-1',
-      storagePath: payload.storagePath,
-      claimedMimeType: payload.mimeType,
-      isPaidUser: false,
+    mocks.getReplay.mockResolvedValue({
+      jobId: payload.jobId,
+      stage: 'queued',
+      httpStatus: 202,
+      statusUrl: `/api/upscale/jobs?jobId=${payload.jobId}`,
+      retryAfterMs: 2000,
+      exactCharge: 1,
+      creditsRemaining: 4,
     });
-    expect(mocks.processImage).toHaveBeenCalled();
+
+    const res = await POST(requestWithBody(payload, { 'X-Upscale-Protocol': '2' }));
+
+    expect(res.status).toBe(202);
+    expect((await res.json()).jobId).toBe(payload.jobId);
+    expect(mocks.getReplay).toHaveBeenCalledWith('user-1', payload.jobId, expect.any(String));
+    expect(mocks.resolveUpscaleInput).not.toHaveBeenCalled();
+    expect(mocks.processImage).not.toHaveBeenCalled();
   });
 });

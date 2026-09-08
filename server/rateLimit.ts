@@ -105,6 +105,15 @@ export const rateLimit = {
   limit: createRateLimiter(50, 10 * 1000),
 };
 
+// Fifty active jobs can each poll every two seconds. Recovery has its own
+// bounded bucket, independent of the five-per-minute new-admission limit.
+export const UPSCALE_RECOVERY_RATE_LIMIT = 300;
+const upscaleStatusLimiter = createRateLimiter(UPSCALE_RECOVERY_RATE_LIMIT, 10_000);
+export const upscaleStatusRateLimit = {
+  limit: (identifier: string): Promise<IRateLimitResult> =>
+    upscaleStatusLimiter(`upscale-recovery:${identifier}`),
+};
+
 /**
  * Rate limiter for public/unauthenticated routes
  * 10 requests per 10 seconds (more restrictive)
