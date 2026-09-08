@@ -102,7 +102,7 @@ describe('resolveUpscaleInput', () => {
         claimedMimeType: 'image/png',
         isPaidUser: false,
       })
-    ).rejects.toThrow(/owned by the authenticated user/i);
+    ).rejects.toMatchObject({ code: 'VALIDATION_ERROR', statusCode: 400 });
     expect(mocks.list).not.toHaveBeenCalled();
   });
 
@@ -136,8 +136,75 @@ describe('resolveUpscaleInput', () => {
         claimedMimeType: 'image/png',
         isPaidUser: false,
       })
-    ).rejects.toThrow(/upload limit/i);
+    ).rejects.toMatchObject({ code: 'IMAGE_TOO_LARGE', statusCode: 413 });
     expect(mocks.createSignedUrl).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    { metadata: null, claimedMimeType: 'image/png', code: 'NOT_FOUND', statusCode: 404 },
+    {
+      metadata: { size: 1024, mimetype: 'image/png' },
+      claimedMimeType: 'image/jpeg',
+      code: 'VALIDATION_ERROR',
+      statusCode: 400,
+    },
+  ])(
+    'returns a permanent $statusCode error for missing or invalid input',
+    async ({ metadata, claimedMimeType, code, statusCode }) => {
+      mocks.list.mockResolvedValue({
+        data: metadata ? [{ name: '11111111-1111-4111-8111-111111111111.png', metadata }] : [],
+        error: null,
+      });
+      await expect(
+        resolveUpscaleInput({
+          userId: 'user-1',
+          storagePath: 'user-1/11111111-1111-4111-8111-111111111111.png',
+          claimedMimeType,
+          isPaidUser: false,
+        })
+      ).rejects.toMatchObject({ code, statusCode });
+      expect(mocks.createSignedUrl).not.toHaveBeenCalled();
+    }
+  );
+
+  it.each(['header', 'stream', 'range'])(
+    'cancels the validation body on early %s rejection',
+    async failure => {
+      const cancel = vi.fn();
+      const body = new ReadableStream<Uint8Array>({
+        start(controller) {
+          controller.enqueue(new Uint8Array(65537));
+        },
+        cancel,
+      });
+      vi.mocked(fetch).mockResolvedValue(
+        new Response(body, {
+          status: failure === 'range' ? 200 : 206,
+          headers: failure === 'header' ? { 'content-length': '65537' } : {},
+        })
+      );
+      await expect(
+        resolveUpscaleInput({
+          userId: 'user-1',
+          storagePath: 'user-1/11111111-1111-4111-8111-111111111111.png',
+          claimedMimeType: 'image/png',
+          isPaidUser: false,
+        })
+      ).rejects.toThrow(/bounded validation|prefix is too large/i);
+      expect(cancel).toHaveBeenCalledTimes(1);
+    }
+  );
+
+  it('keeps storage transport failures retryable', async () => {
+    mocks.list.mockResolvedValue({ data: null, error: { message: 'storage unavailable' } });
+    const failure = await resolveUpscaleInput({
+      userId: 'user-1',
+      storagePath: 'user-1/11111111-1111-4111-8111-111111111111.png',
+      claimedMimeType: 'image/png',
+      isPaidUser: false,
+    }).catch(error => error);
+    expect(failure.message).toContain('storage unavailable');
+    expect(failure.statusCode).toBeUndefined();
   });
 });
 

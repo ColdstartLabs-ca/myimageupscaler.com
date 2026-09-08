@@ -89,7 +89,7 @@ export class CreditManager {
     >,
     description = 'Credit refund for failed processing'
   ): Promise<boolean> {
-    const { error } = await supabaseAdmin.rpc('refund_consumed_credits', {
+    const { data, error } = await supabaseAdmin.rpc('refund_consumed_credits', {
       p_user_id: userId,
       p_amount: deduction.amount,
       p_job_id: deduction.jobId,
@@ -103,7 +103,8 @@ export class CreditManager {
       return false;
     }
 
-    return true;
+    const result = Array.isArray(data) ? data[0] : data;
+    return result === true || result?.success === true;
   }
 
   async refundReservation(

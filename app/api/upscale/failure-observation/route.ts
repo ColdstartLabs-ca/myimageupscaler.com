@@ -1,12 +1,18 @@
 import { trackServerEvent } from '@server/analytics';
+import {
+  BoundedJsonBodyTooLargeError,
+  readBoundedJsonBody,
+} from '@server/http/read-bounded-json-body';
 import { normalizeCoreEventProperties } from '@server/analytics/core-event-contract';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
+import { UUID_V4_PATTERN } from '@shared/validation/uuid';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 const edgeFailureObservationSchema = z
   .object({
+    jobId: z.string().regex(UUID_V4_PATTERN).optional(),
     status: z.number().int().min(400).max(599),
     rayId: z
       .string()
@@ -90,21 +96,53 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
   }
 
-  const rawBody = await request.text();
-  if (new TextEncoder().encode(rawBody).byteLength > MAX_BODY_BYTES) {
-    return NextResponse.json({ error: 'Observation payload is too large' }, { status: 413 });
-  }
-
   let body: unknown;
   try {
-    body = JSON.parse(rawBody);
-  } catch {
-    return NextResponse.json({ error: 'Invalid observation payload' }, { status: 400 });
+    body = await readBoundedJsonBody(request, MAX_BODY_BYTES);
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Invalid observation payload' },
+      { status: error instanceof BoundedJsonBodyTooLargeError ? 413 : 400 }
+    );
   }
 
   const parsed = edgeFailureObservationSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: 'Invalid observation payload' }, { status: 400 });
+  }
+
+  if (parsed.data.jobId) {
+    // A transport failure is an observation of an existing execution. Its
+    // ledger owns the terminal state and the job-keyed analytics projection.
+    try {
+      const { data: execution, error } = await supabaseAdmin
+        .from('upscale_executions')
+        .select('job_id,stage')
+        .eq('job_id', parsed.data.jobId)
+        .eq('user_id', userId)
+        .maybeSingle();
+      if (error) throw error;
+      if (!execution)
+        return NextResponse.json(
+          { error: 'Job was not found' },
+          { status: 404, headers: { 'Cache-Control': 'no-store' } }
+        );
+      if (!['completed', 'failed', 'expired'].includes(execution.stage)) {
+        const { error: recoveryError } = await supabaseAdmin.rpc('request_upscale_recovery', {
+          p_job_id: execution.job_id,
+        });
+        if (recoveryError) throw recoveryError;
+      }
+      return NextResponse.json(
+        { success: true, jobId: execution.job_id },
+        { status: 202, headers: { 'Cache-Control': 'no-store' } }
+      );
+    } catch {
+      return NextResponse.json(
+        { success: false, retryable: true },
+        { status: 503, headers: { 'Cache-Control': 'no-store', 'Retry-After': '2' } }
+      );
+    }
   }
 
   const [rowResult, eventResult] = await Promise.allSettled([

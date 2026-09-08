@@ -9,6 +9,7 @@ import { ModelRegistry } from '@server/services/model-registry';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
 import {
+  AUTO_UPSCALE_MAX_RESERVATION_CREDITS,
   calculateFinalProviderAwareCredits,
   getModelForTier,
   modelIdToTier,
@@ -199,8 +200,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const tierModel = validatedInput.config.qualityTier
       ? getModelForTier(validatedInput.config.qualityTier)
       : null;
-    let modelToUse: string =
-      requestedAuto ? 'auto' : (tierModel ?? validatedInput.config.selectedModel);
+    let modelToUse: string = requestedAuto
+      ? 'auto'
+      : (tierModel ?? validatedInput.config.selectedModel);
 
     if (modelToUse === 'auto' || !modelToUse) {
       // Use analysis hint to recommend model
@@ -316,8 +318,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       inputWidth,
       inputHeight,
       smartAnalysis:
-        !requestedAuto &&
-        (validatedInput.config.additionalOptions?.smartAnalysis ?? false),
+        !requestedAuto && (validatedInput.config.additionalOptions?.smartAnalysis ?? false),
       targetResolution: validatedInput.config.targetResolution,
       effectiveResolution: resolveEffectiveResolution(
         modelToUse,
@@ -326,7 +327,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       ),
     });
 
-    const totalCredits = providerAware.finalCredits;
+    const totalCredits = requestedAuto
+      ? AUTO_UPSCALE_MAX_RESERVATION_CREDITS
+      : providerAware.finalCredits;
 
     // Calculate estimated processing time (scale can still affect processing time)
     const scaleTimeMultipliers: Record<2 | 4 | 8, number> = { 2: 1.0, 4: 1.5, 8: 2.0 };
@@ -338,6 +341,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const response = {
       breakdown: {
+        ...(requestedAuto ? { reservationMaximum: totalCredits, finalChargePending: true } : {}),
         tier,
         tierCredits: providerAware.credits,
         scaleMultiplier: providerAware.scaleMultiplier,

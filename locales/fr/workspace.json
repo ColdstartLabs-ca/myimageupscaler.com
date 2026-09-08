@@ -96,7 +96,12 @@
       "preparingNext": "Préparation de l'image suivante...",
       "rateLimitingPause": "Pause de limitation de débit pour assurer un traitement fiable"
     },
-    "remainingTime": "~{remaining}s restantes"
+    "remainingTime": "~{remaining}s restantes",
+    "recovery": {
+      "reconnecting": "Reconnexion… Votre image est toujours en cours de traitement.",
+      "refunded": "Le traitement n’a pas pu aboutir. Vos crédits ont été remboursés.",
+      "sourceRequired": "Ajoutez à nouveau l’image d’origine pour lancer une nouvelle tentative."
+    }
   },
   "workspace": {
     "features": {

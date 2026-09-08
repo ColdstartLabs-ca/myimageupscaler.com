@@ -96,7 +96,12 @@
       "preparingNext": "Nächstes Bild wird vorbereitet...",
       "rateLimitingPause": "Rate Limiting-Pause für zuverlässige Verarbeitung"
     },
-    "remainingTime": "~{remaining}s verbleibend"
+    "remainingTime": "~{remaining}s verbleibend",
+    "recovery": {
+      "reconnecting": "Verbindung wird wiederhergestellt… Dein Bild wird weiter verarbeitet.",
+      "refunded": "Die Verarbeitung konnte nicht abgeschlossen werden. Deine Credits wurden zurückerstattet.",
+      "sourceRequired": "Füge das Originalbild erneut hinzu, um einen neuen Versuch zu starten."
+    }
   },
   "workspace": {
     "features": {

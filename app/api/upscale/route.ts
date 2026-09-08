@@ -1,48 +1,38 @@
-import { randomBytes, createHash } from 'node:crypto';
-import type { IUpscaleResponse, ModelId, QualityTier } from '@/shared/types/coreflow.types';
+import { createHmac } from 'node:crypto';
+import type { ModelId, QualityTier } from '@/shared/types/coreflow.types';
 import {
   BoundedJsonBodyTooLargeError,
   readBoundedJsonBody,
 } from '@server/http/read-bounded-json-body';
 import { trackServerEvent } from '@server/analytics';
-import {
-  normalizeCoreEventProperties,
-} from '@server/analytics/core-event-contract';
 import { createLogger } from '@server/monitoring/logger';
 import { upscaleRateLimit } from '@server/rateLimit';
-import { batchLimitCheck } from '@server/services/batch-limit.service';
 import { ensureAntiFreeloaderProfile } from '@server/services/anti-freeloader.service';
-import {
-  AIGenerationError,
-  InsufficientCreditsError,
-} from '@server/services/image-generation.service';
-import { ImageProcessorFactory } from '@server/services/image-processor.factory';
-import type { ICreditDeduction } from '@server/services/image-processor.interface';
-import { LLMImageAnalyzer } from '@server/services/llm-image-analyzer';
 import {
   getAutoEligibleModels,
   isAutoModelCompatible,
-  resolveAutoModel,
 } from '@server/services/auto-model-selection';
 import { ModelRegistry } from '@server/services/model-registry';
 import type { SubscriptionTier } from '@server/services/model-registry.types';
 import { providerHealthService } from '@server/services/provider-health.service';
-import {
-  removeUpscaleInput,
-  resolveUpscaleInput,
-} from '@server/services/upscale-input-storage.service';
-import { ReplicateError } from '@server/services/replicate.service';
+import { resolveUpscaleInput } from '@server/services/upscale-input-storage.service';
 import {
   getScalePreservingFallbackCandidates,
   resolveScalePreservingModel,
 } from '@server/services/scale-preserving-model';
-import { creditManager } from '@server/services/replicate/utils/credit-manager';
+import {
+  createUpscaleRequestFingerprint,
+  UpscaleJobError,
+  upscaleJobService,
+  type IUpscaleAdmissionResult,
+} from '@server/services/upscale-job.service';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv, isProduction } from '@shared/config/env';
 import { MODEL_COSTS } from '@shared/config/model-costs.config';
 import {
+  AUTO_UPSCALE_MAX_RESERVATION_CREDITS,
   calculateFinalProviderAwareCredits,
-  calculateProviderAwareCredits,
+  getHourlyProcessingLimit,
   getModelForTier,
   modelIdToTier,
   resolveEffectiveResolution,
@@ -59,32 +49,8 @@ import {
 import { NextRequest, NextResponse } from 'next/server';
 import { ZodError } from 'zod';
 
-// Delay between AI analysis and image processing to avoid Replicate rate limits
-// Replicate enforces 1 req/sec for low-credit accounts, with ~30s reset on 429
-const RATE_LIMIT_DELAY_MS = 5000;
 const TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE =
-  'Image processing is temporarily unavailable due to a provider issue. Your credits have not been charged. Please try again shortly or contact our support team.';
-
-function getSafeReplicateClientMessage(code: string): string {
-  switch (code) {
-    case 'SAFETY':
-      return 'Image was rejected by the safety filter. Please try a different image.';
-    case 'IMAGE_TOO_LARGE':
-      return 'Image is too large for processing. Please try a smaller image or lower resolution.';
-    case 'INVALID_INPUT':
-      return 'The image input is invalid. Please upload the image again.';
-    default:
-      return TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE;
-  }
-}
-
-/**
- * Delay helper to avoid Replicate rate limits when using smart analysis
- */
-function delay(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
+  'Image processing is temporarily unavailable. Your credits have not been charged. Please try again shortly.';
 function isPaidSubscriptionStatus(status: string | null | undefined): boolean {
   return status === 'active' || status === 'trialing';
 }
@@ -97,15 +63,76 @@ function normalizePaidTier(tier: string | null | undefined): SubscriptionTier {
   return 'hobby';
 }
 
-function isHttpsProviderOutput(value: unknown): value is string {
-  if (typeof value !== 'string' || !value.trim()) return false;
+function isDurableUpscaleCohort(userId: string): boolean {
+  if (!serverEnv.UPSCALE_DURABLE_EXECUTION_ENABLED) return false;
+  const percent = serverEnv.UPSCALE_DURABLE_COHORT_PERCENT;
+  if (percent <= 0) return false;
+  if (percent >= 100) return true;
 
-  try {
-    const url = new URL(value);
-    return url.protocol === 'https:' && !url.username && !url.password;
-  } catch {
-    return false;
+  let hash = 2166136261;
+  for (const character of userId) {
+    hash ^= character.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
   }
+  return (hash >>> 0) % 100 < percent;
+}
+
+async function wakeDurableExecutor(): Promise<void> {
+  const baseUrl = serverEnv.UPSCALE_EXECUTOR_BASE_URL;
+  const secret = serverEnv.UPSCALE_EXECUTOR_WAKE_SECRET ?? serverEnv.UPSCALE_EXECUTOR_SHARED_SECRET;
+  if (!baseUrl || !secret) return;
+
+  const body = JSON.stringify({ limit: 50 });
+  const timestamp = String(Math.floor(Date.now() / 1000));
+  const signature = createHmac('sha256', secret).update(`${timestamp}.${body}`).digest('hex');
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 1_500);
+  try {
+    await fetch(`${baseUrl.replace(/\/$/, '')}/wake`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Executor-Timestamp': timestamp,
+        'X-Executor-Signature': `sha256=${signature}`,
+      },
+      body,
+      signal: controller.signal,
+    });
+  } catch {
+    // Admission is durable and the scheduler is authoritative; a best-effort
+    // wake must never turn a committed job into a failed request.
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function admissionResponse(admission: IUpscaleAdmissionResult): NextResponse {
+  return NextResponse.json(
+    {
+      success: true,
+      accepted: true,
+      jobId: admission.jobId,
+      status: admission.stage,
+      statusUrl: admission.statusUrl,
+      retryAfterMs: admission.retryAfterMs,
+      processing: {
+        reservationJobId: admission.jobId,
+        creditsUsed: admission.exactCharge,
+        creditsRemaining: admission.creditsRemaining,
+      },
+    },
+    {
+      status: admission.httpStatus,
+      headers: {
+        'Cache-Control': 'no-store',
+        'Referrer-Policy': 'no-referrer',
+        'X-Upscale-Protocol': '2',
+        ...(admission.retryAfterMs > 0
+          ? { 'Retry-After': String(Math.ceil(admission.retryAfterMs / 1000)) }
+          : {}),
+      },
+    }
+  );
 }
 
 async function trackCreditWallShown(
@@ -125,316 +152,83 @@ async function trackCreditWallShown(
   );
 }
 
-/**
- * Directly call LLM analyzer for image analysis
- * Returns AI analysis result with tier and enhancement suggestions
- */
-async function analyzeImageForProcessing(
-  imageReference: string,
-  options: {
-    suggestTier: boolean;
-    userTier: SubscriptionTier;
-    scale: 2 | 4 | 8;
-    mimeType?: string;
-  }
-): Promise<{
-  recommendedModel?: ModelId;
-  recommendedTier?: QualityTier;
-  suggestedEnhancements: {
-    enhanceFaces: boolean;
-    preserveText: boolean;
-    enhance: boolean;
-  };
-  enhancementPrompt?: string;
-}> {
-  try {
-    // Get eligible models based on user's subscription tier
-    const modelRegistry = ModelRegistry.getInstance();
-    let eligibleModels = modelRegistry.getModelsByTier(options.userTier);
-
-    // Keep the analyzer's candidate list compatible with the route's scale
-    // validation. This prevents Auto 8x from recommending a 2x/4x model.
-    eligibleModels = getAutoEligibleModels(eligibleModels, options.scale);
-    const eligibleModelIds = eligibleModels.map(m => m.id as ModelId);
-    const fallbackModelId = eligibleModelIds[0];
-
-    if (eligibleModelIds.length === 0) {
-      // Fallback if no eligible models
-      return {
-        recommendedModel: undefined,
-        recommendedTier: undefined,
-        suggestedEnhancements: {
-          enhanceFaces: false,
-          preserveText: false,
-          enhance: false,
-        },
-      };
-    }
-
-    const mimeType = options.mimeType || 'image/jpeg';
-
-    // Call LLM analyzer directly
-    // When suggestTier is false, the AI only provides enhancement suggestions (no model recommendation)
-    const llmAnalyzer = new LLMImageAnalyzer();
-    const analysisResult = await llmAnalyzer.analyze(
-      imageReference,
-      mimeType,
-      eligibleModelIds,
-      options.suggestTier
-    );
-
-    // Preserve the exact eligible recommendation. Some model IDs intentionally
-    // share a tier, so the tier alone is not sufficient to select the provider.
-    const recommendedModel =
-      options.suggestTier && eligibleModelIds.includes(analysisResult.recommendedModel)
-        ? analysisResult.recommendedModel
-        : options.suggestTier
-          ? fallbackModelId
-          : undefined;
-
-    // Keep the tier as the safe fallback/access classification. The exact model
-    // is selected separately below when the analyzer provided one.
-    const recommendedTier = options.suggestTier
-      ? modelIdToTier(recommendedModel ?? eligibleModelIds[0] ?? 'real-esrgan')
-      : undefined;
-
-    // Determine suggested enhancements from analysis issues
-    const hasFaces = analysisResult.issues.some(i => i.type === 'faces');
-    const hasText = analysisResult.issues.some(i => i.type === 'text' && i.severity !== 'low');
-    const hasDamageOrNoise = analysisResult.issues.some(
-      i => (i.type === 'damage' || i.type === 'noise' || i.type === 'blur') && i.severity !== 'low'
-    );
-
-    return {
-      recommendedModel,
-      recommendedTier,
-      suggestedEnhancements: {
-        enhanceFaces: hasFaces,
-        preserveText: hasText,
-        enhance: hasDamageOrNoise,
-      },
-      enhancementPrompt: analysisResult.enhancementPrompt,
-    };
-  } catch (error) {
-    console.error('[analyzeImageForProcessing] LLM analysis failed:', error);
-    // If analysis fails, return defaults
-    return {
-      suggestedEnhancements: {
-        enhanceFaces: false,
-        preserveText: false,
-        enhance: false,
-      },
-    };
-  }
-}
-
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const logger = createLogger(req, 'upscale-api');
-  const startTime = Date.now();
-  let creditCost = 1; // Default, will be updated after validation
+  let userId: string | undefined;
+  let jobId: string | undefined;
+  let creditCost = 1;
   let effectiveTotalCredits: number | undefined;
   let isPaidUser = false;
-  let userId: string | undefined;
   let requestedQualityTier: QualityTier | undefined;
   let requestedScale: 2 | 4 | 8 | undefined;
   let resolvedTier: QualityTier | undefined;
   let resolvedModelId: ModelId | undefined;
   let inputDimensions: { width: number; height: number } | null = null;
-  let creditDeduction: ICreditDeduction | undefined;
-  let routeRefundAttempted = false;
-  let providerAttemptStarted = false;
-  let batchSlotAcquired = false;
-  let processingProvider: string | undefined;
-  let coreTerminalEventEmitted = false;
-  const requestId = req.headers.get('x-request-id') || req.headers.get('cf-ray') || undefined;
-  let creditsRefunded = false;
-  let temporaryStoragePath: string | undefined;
-  let latestFailure: { failureReason: string } | null = null;
-  let failureRowWriteScheduled = false;
-  const pendingFailureRowWrites: Array<() => Promise<void>> = [];
-
+  let admissionAttempted = false;
   const logFailure = (
-    failureReason: string,
+    reason: string,
     details: Record<string, unknown> = {},
     level: 'warn' | 'error' = 'warn'
-  ): void => {
-    const payload = {
-      failureReason,
+  ) => {
+    logger[level]('Upscale admission rejected', {
+      reason,
+      jobId,
       userId,
       requestedQualityTier,
       requestedScale,
-      resolvedTier,
-      resolvedModelId,
-      inputWidth: inputDimensions?.width,
-      inputHeight: inputDimensions?.height,
-      creditCost,
       ...details,
-    };
-
-    latestFailure ??= { failureReason };
-    if (userId && !failureRowWriteScheduled) {
-      failureRowWriteScheduled = true;
-      pendingFailureRowWrites.push(async () => {
-        const failureUserId = userId;
-        const failure = latestFailure;
-        if (!failureUserId || !failure) return;
-
-        try {
-          const { error } = await supabaseAdmin.from('processing_jobs').insert({
-            user_id: failureUserId,
-            status: 'failed',
-            input_image_path: 'inline://redacted',
-            output_image_path: null,
-            credits_used: creditDeduction?.amount ?? 0,
-            processing_mode: 'standard',
-            error_message: failure.failureReason,
-            settings: {
-              request_id: requestId ?? null,
-              requested_quality_tier: requestedQualityTier ?? null,
-              requested_scale: requestedScale ?? null,
-              resolved_tier: resolvedTier ?? null,
-              resolved_model_id: resolvedModelId ?? null,
-            },
-            model_id: resolvedModelId ?? null,
-            quality_tier: resolvedTier ?? requestedQualityTier ?? null,
-            scale: requestedScale ?? null,
-            credits_charged: creditsRefunded ? 0 : (creditDeduction?.amount ?? 0),
-          });
-
-          if (error) {
-            logger.warn('Failed to record upscale failure row', {
-              failureReason: failure.failureReason,
-              error: error.message,
-            });
-          }
-        } catch (error) {
-          logger.warn('Failed to record upscale failure row', {
-            failureReason: failure.failureReason,
-            error: error instanceof Error ? error.message : String(error),
-          });
-        }
-      });
-    }
-
-    if (level === 'error') {
-      logger.error('Upscale failed', payload);
-      return;
-    }
-
-    logger.warn('Upscale rejected', payload);
+    });
   };
-
-  const trackProcessingFailure = async (properties: Record<string, unknown>): Promise<void> => {
-    if (!userId || coreTerminalEventEmitted) return;
-
-    coreTerminalEventEmitted = true;
-    try {
-      await trackServerEvent(
-        'processing_failed',
-        {
-          telemetrySource: 'server',
-          ...normalizeCoreEventProperties('processing_failed', {
-            provider: processingProvider,
-            model: resolvedModelId,
-            qualityTier: resolvedTier ?? requestedQualityTier,
-            durationMs: Date.now() - startTime,
-            requestId,
-            ...properties,
-          }),
-        },
-        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-      );
-    } catch {
-      logger.warn('Failed to track processing_failed event', {
-        failureReason: 'analytics_delivery_failed',
-      });
-    }
-  };
-
-  const trackImageUpscaled = async (properties: Record<string, unknown>): Promise<void> => {
-    if (!userId || coreTerminalEventEmitted) return;
-
-    coreTerminalEventEmitted = true;
-    try {
-      await trackServerEvent(
-        'image_upscaled',
-        { ...normalizeCoreEventProperties('image_upscaled', properties) },
-        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-      );
-    } catch {
-      logger.warn('Failed to track image_upscaled event', {
-        failureReason: 'analytics_delivery_failed',
-      });
-    }
-  };
-
-  const refundAfterRouteFailure = async (
-    failureReason: string,
-    errorDetails: Record<string, unknown> = {},
-    releaseBatchSlot = true
-  ): Promise<void> => {
-    if (!userId || routeRefundAttempted) {
-      return;
-    }
-
-    routeRefundAttempted = true;
-    const refunded = creditDeduction
-      ? await creditManager.refundReservation(
-          userId,
-          creditDeduction,
-          `Route-level refund after upscale failure: ${failureReason}`
-        )
-      : true;
-    creditsRefunded = refunded;
-    const batchSlotReleased =
-      refunded && releaseBatchSlot && batchSlotAcquired
-        ? await batchLimitCheck.release(userId)
-        : false;
-    if (batchSlotReleased) {
-      batchSlotAcquired = false;
-    }
-
-    logFailure(
-      creditDeduction
-        ? refunded
-          ? 'credits_refunded_after_route_failure'
-          : 'credit_refund_failed_after_route_failure'
-        : batchSlotReleased
-          ? 'batch_slot_released_before_credit_deduction'
-          : 'batch_slot_release_failed_before_credit_deduction',
-      {
-        originalFailureReason: failureReason,
-        ...(creditDeduction
-          ? {
-              jobId: creditDeduction.jobId,
-              amount: creditDeduction.amount,
-              subscriptionAmount: creditDeduction.subscriptionAmount,
-              purchasedAmount: creditDeduction.purchasedAmount,
-            }
-          : {}),
-        batchSlotReleaseRequired: releaseBatchSlot,
-        batchSlotReleased,
-        ...errorDetails,
-      },
-      refunded && (!releaseBatchSlot || !batchSlotAcquired || batchSlotReleased) ? 'warn' : 'error'
-    );
-  };
-
   try {
-    // 1. Extract authenticated user ID from middleware header
     userId = req.headers.get('X-User-Id') || undefined;
-    if (!userId) {
-      logFailure('unauthorized_missing_user_id');
-      const { body, status } = createErrorResponse(
-        ErrorCodes.UNAUTHORIZED,
-        'Authentication required',
-        401
+    if (!userId)
+      return NextResponse.json(
+        createErrorResponse(ErrorCodes.UNAUTHORIZED, 'Authentication required', 401).body,
+        { status: 401 }
       );
-      return NextResponse.json(body, { status });
+
+    // Metadata is bounded before any database or provider-related work.
+    const validatedInput = upscaleSchema.parse(
+      await readBoundedJsonBody(req, IMAGE_VALIDATION.MAX_REQUEST_BYTES)
+    );
+    jobId = validatedInput.jobId;
+    if (req.headers.get('X-Upscale-Protocol') !== '2') {
+      return NextResponse.json(
+        createErrorResponse(
+          'UPDATE_REQUIRED',
+          'Refresh this page to continue processing images.',
+          426
+        ).body,
+        { status: 426 }
+      );
     }
-
-    logger.info('Processing upscale request', { userId });
-
+    const tailJobId = req.headers.get('x-upscale-job-id');
+    if (tailJobId && tailJobId !== jobId) {
+      return NextResponse.json(
+        createErrorResponse(
+          ErrorCodes.VALIDATION_ERROR,
+          'Invalid processing reservation correlation',
+          400
+        ).body,
+        { status: 400 }
+      );
+    }
+    const requestFingerprint = createUpscaleRequestFingerprint(validatedInput);
+    // Replay uses the original immutable plan, even if balance, model settings,
+    // admission limits, or the rollout gate have changed since the first POST.
+    const replay = await upscaleJobService.getReplay(userId, jobId, requestFingerprint);
+    if (replay) return admissionResponse(replay);
+    if (!isDurableUpscaleCohort(userId) || !serverEnv.UPSCALE_EXECUTOR_BASE_URL) {
+      return NextResponse.json(
+        createErrorResponse(
+          ErrorCodes.AI_UNAVAILABLE,
+          TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE,
+          503,
+          { retryable: true, admissionPaused: true, noDebit: true, jobId }
+        ).body,
+        { status: 503, headers: { 'Retry-After': '10', 'Cache-Control': 'no-store' } }
+      );
+    }
     // Read the durable grant decision first. If setup commits concurrently, the
     // following profile read will see either the granted balance or remain pending.
     const { data: grantDecision, error: grantDecisionError } = await supabaseAdmin
@@ -611,69 +405,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json(body, { status });
     }
 
-    // 4. Check batch limit (after rate limit, before processing)
-    // HIGH-8/9 FIX: Use atomic checkAndIncrement to prevent race conditions
-    const batchCheck = await batchLimitCheck.checkAndIncrement(userId, userTier);
-    if (!batchCheck.allowed) {
-      logFailure('batch_limit_exceeded', {
-        tier: userTier,
-        current: batchCheck.current,
-        limit: batchCheck.limit,
-      });
-      const { body, status } = createErrorResponse(
-        ErrorCodes.BATCH_LIMIT_EXCEEDED,
-        `Batch limit exceeded. Your plan allows ${batchCheck.limit} images per hour. ` +
-          `You've processed ${batchCheck.current}. Upgrade for higher limits.`,
-        429,
-        {
-          current: batchCheck.current,
-          limit: batchCheck.limit,
-          resetAt: batchCheck.resetAt.toISOString(),
-          upgradeUrl: '/pricing',
-        }
-      );
-      return NextResponse.json(body, {
-        status,
-        headers: {
-          'X-Batch-Limit': batchCheck.limit.toString(),
-          'X-Batch-Current': batchCheck.current.toString(),
-          'X-Batch-Reset': batchCheck.resetAt.toISOString(),
-        },
-      });
-    }
-    batchSlotAcquired = true;
-
-    // 5. Read only bounded metadata. The reader rejects a declared oversized
-    // body before acquiring a stream and counts actual bytes for streamed bodies.
-    const body = await readBoundedJsonBody(req, IMAGE_VALIDATION.MAX_REQUEST_BYTES);
-    const validatedInput = upscaleSchema.parse(body);
-
-    // The Tail Worker observes this request header after a hard platform failure.
-    // Bind it to the same validated reservation UUID used by credit deduction so
-    // a caller cannot crash one request while refunding a different reservation.
-    const tailReservationJobId = req.headers.get('x-upscale-job-id');
-    if (tailReservationJobId && tailReservationJobId !== validatedInput.jobId) {
-      logFailure('tail_reservation_job_id_mismatch');
-      await refundAfterRouteFailure('tail_reservation_job_id_mismatch');
-      const { body: errorBody, status } = createErrorResponse(
-        ErrorCodes.VALIDATION_ERROR,
-        'Invalid processing reservation correlation',
-        400
-      );
-      return NextResponse.json(errorBody, { status });
-    }
-
+    const configuredBatchLimit = getHourlyProcessingLimit(userTier);
+    const batchLimit = Number.isFinite(configuredBatchLimit) ? configuredBatchLimit : 1_000_000;
     requestedQualityTier = validatedInput.config.qualityTier;
     requestedScale = validatedInput.config.scale;
-
     const storedInput = await resolveUpscaleInput({
       userId,
       storagePath: validatedInput.storagePath,
       claimedMimeType: validatedInput.mimeType,
       isPaidUser,
     });
-    temporaryStoragePath = validatedInput.storagePath;
-    const processingImageReference = storedInput.imageReference;
     const validationImageData = storedInput.validationImageData;
     const inputFileSizeBytes = storedInput.sizeBytes;
 
@@ -731,13 +472,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         return NextResponse.json(errorBody, { status });
       }
     } else {
-      // Could not decode dimensions - proceed with caution
-      logger.warn('Could not decode image dimensions', {
-        failureReason: 'dimensions_unreadable',
-        userId,
-        requestedQualityTier,
-        requestedScale,
-      });
+      throw new UpscaleJobError(
+        ErrorCodes.INVALID_DIMENSIONS,
+        'Image dimensions could not be verified. Please upload a PNG, JPEG, or WebP image.',
+        400
+      );
     }
 
     // 9. Validate premium tier restrictions for free users
@@ -745,11 +484,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const premiumTiers = MODEL_COSTS.PREMIUM_QUALITY_TIERS as readonly QualityTier[];
 
     // Block free users from premium tiers
-    if (
-      !isPaidUser &&
-      config.qualityTier !== 'auto' &&
-      premiumTiers.includes(config.qualityTier)
-    ) {
+    if (!isPaidUser && config.qualityTier !== 'auto' && premiumTiers.includes(config.qualityTier)) {
       logFailure('premium_tier_requires_paid', {
         tier: config.qualityTier,
       });
@@ -777,108 +512,29 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json(errorBody, { status });
     }
 
-    // 10. New 3-branch logic for quality tier processing
-    let resolvedEnhancements = config.additionalOptions;
-    let didRunAIAnalysis = false;
     const modelRegistry = ModelRegistry.getInstance();
-
+    const eligibleModels = getAutoEligibleModels(
+      modelRegistry.getModelsByTier(userTier || 'free'),
+      config.scale
+    );
+    const deferredAnalysis =
+      config.qualityTier === 'auto' || config.additionalOptions.smartAnalysis;
     if (config.qualityTier === 'auto') {
-      // Branch A: Auto tier - Always run AI analysis for tier + enhancements
-      logger.info('Auto tier selected, running AI analysis', { userId });
-      const analysis = await analyzeImageForProcessing(processingImageReference, {
-        suggestTier: true,
-        userTier: userTier || 'free',
-        scale: config.scale,
-        mimeType: effectiveMimeType,
-      });
-      const resolvedAutoModel = resolveAutoModel(
-        modelRegistry.getModelsByTier(userTier || 'free'),
-        config.scale,
-        analysis.recommendedModel
-      );
-      resolvedModelId = resolvedAutoModel?.id as ModelId | undefined;
-      if (!resolvedModelId) {
-        logFailure('auto_model_unavailable', { requestedScale: config.scale });
-        const { body: errorBody, status } = createErrorResponse(
+      const candidate = [...eligibleModels].sort(
+        (a, b) => a.creditMultiplier - b.creditMultiplier
+      )[0];
+      if (!candidate)
+        throw new UpscaleJobError(
           ErrorCodes.MODEL_NOT_SUPPORTED,
-          `No model is available for Auto at ${config.scale}x scaling. Please choose a supported scale.`,
+          'No model is available for this scale.',
           400
         );
-        return NextResponse.json(errorBody, { status });
-      }
+      resolvedModelId = candidate.id as ModelId;
       resolvedTier = modelIdToTier(resolvedModelId);
-      resolvedEnhancements = {
-        ...config.additionalOptions,
-        // For Auto tier, smartAnalysis is always true (inherent to auto mode)
-        smartAnalysis: true,
-        // Apply AI suggestions
-        enhance: analysis.suggestedEnhancements.enhance || config.additionalOptions.enhance,
-        enhanceFaces:
-          analysis.suggestedEnhancements.enhanceFaces || config.additionalOptions.enhanceFaces,
-        preserveText:
-          analysis.suggestedEnhancements.preserveText || config.additionalOptions.preserveText,
-        customInstructions:
-          analysis.enhancementPrompt || config.additionalOptions.customInstructions,
-      };
-      didRunAIAnalysis = true;
-      logger.info('AI analysis completed for Auto tier', {
-        userId,
-        recommendedTier: resolvedTier,
-        resolvedModelId,
-        enhancements: resolvedEnhancements,
-      });
-    } else if (config.additionalOptions.smartAnalysis) {
-      // Branch B: Explicit tier + Smart Analysis - AI suggests enhancements only (NOT model)
-      // User selected their model explicitly, AI only helps with enhancement suggestions
-      logger.info('Explicit tier with Smart Analysis - using user-selected model', {
-        userId,
-        userSelectedTier: config.qualityTier,
-      });
-      const analysis = await analyzeImageForProcessing(processingImageReference, {
-        suggestTier: false, // Important: Don't ask AI for model recommendation
-        userTier: userTier || 'free',
-        scale: config.scale,
-        mimeType: effectiveMimeType,
-      });
-      resolvedTier = config.qualityTier;
-      resolvedModelId = (getModelForTier(resolvedTier) || 'real-esrgan') as ModelId;
-      resolvedEnhancements = {
-        ...config.additionalOptions,
-        // Apply AI suggestions for enhancements only
-        enhance: analysis.suggestedEnhancements.enhance || config.additionalOptions.enhance,
-        enhanceFaces:
-          analysis.suggestedEnhancements.enhanceFaces || config.additionalOptions.enhanceFaces,
-        preserveText:
-          analysis.suggestedEnhancements.preserveText || config.additionalOptions.preserveText,
-        customInstructions:
-          analysis.enhancementPrompt || config.additionalOptions.customInstructions,
-      };
-      didRunAIAnalysis = true;
-      // Log clearly that we're using the user's selected model, not AI's recommendation
-      logger.info('AI enhancement analysis completed - using user-selected model', {
-        userId,
-        userSelectedTier: resolvedTier,
-        modelBeingUsed: resolvedModelId,
-        aiEnhancements: resolvedEnhancements,
-        note: 'Model was selected by user, AI only suggested enhancements',
-      });
     } else {
-      // Branch C: Explicit tier, no Smart Analysis - Use user's exact settings
-      logger.info('Explicit tier without Smart Analysis', {
-        userId,
-        tier: config.qualityTier,
-      });
       resolvedTier = config.qualityTier;
       resolvedModelId = (getModelForTier(resolvedTier) || 'real-esrgan') as ModelId;
-      // Use user's exact settings from additionalOptions
-      logger.info("Using user's exact settings", {
-        userId,
-        tier: resolvedTier,
-        resolvedModelId,
-        enhancements: resolvedEnhancements,
-      });
     }
-
     // Preserve the billing promise from the user's selected tier. If the default
     // Quick model cannot fit a 2x source at its provider GPU limit, route the
     // processing internally to the tiled model without charging a premium-tier cost.
@@ -1052,26 +708,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       targetResolution: config.targetResolution,
       effectiveResolution,
     });
-    const providerCostPricing =
-      resolvedModelId === billingModelId
-        ? providerAware
-        : calculateProviderAwareCredits({
-            modelId: resolvedModelId,
-            qualityTier: resolvedTier,
-            scale: config.scale,
-            inputWidth: inputDimensions?.width,
-            inputHeight: inputDimensions?.height,
-            smartAnalysis: smartAnalysisEnabledForBilling,
-            effectiveResolution: resolveEffectiveResolution(
-              resolvedModelId,
-              config.scale,
-              config.nanoBananaProConfig?.resolution
-            ),
-          });
-
     // The shared provider-aware calculator includes model-specific multipliers
     // for models that do not own a dedicated quality tier.
-    creditCost = providerAware.finalCredits;
+    creditCost =
+      config.qualityTier === 'auto'
+        ? AUTO_UPSCALE_MAX_RESERVATION_CREDITS
+        : providerAware.finalCredits;
 
     effectiveTotalCredits =
       (profile?.subscription_credits_balance ?? 0) + (profile?.purchased_credits_balance ?? 0);
@@ -1090,560 +732,102 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json(body, { status });
     }
 
-    // 11. Process image with resolved model and settings
-    let processor;
-    try {
-      processor = ImageProcessorFactory.createProcessorForModel(resolvedModelId);
-    } catch {
-      // Fallback to legacy processor selection if model-specific fails
-      logger.warn('Model-specific processor failed, using fallback', {
-        failureReason: 'processor_factory_fallback',
-        modelId: resolvedModelId,
-        requestedQualityTier,
-        requestedScale,
-      });
-      processor = ImageProcessorFactory.createProcessor('both');
-    }
-
-    logger.info('Using image processor', {
-      provider: processor.providerName,
-      resolvedTier,
-      resolvedModelId,
-      resolvedEnhancements,
-      creditCost,
-    });
-    processingProvider = processor.providerName;
-
-    // Track upscale started event (before processing begins)
-    await trackServerEvent(
-      'image_upscale_started',
-      {
-        telemetrySource: 'server',
-        inputWidth: inputDimensions?.width,
-        inputHeight: inputDimensions?.height,
-        scaleFactor: config.scale,
-        qualityTier: resolvedTier,
-        modelUsed: resolvedModelId,
-      },
-      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-    );
-
-    // Add delay between AI analysis and image processing to avoid Replicate rate limits
-    // Both the analysis (Qwen VL) and processing (upscale models) use Replicate API
-    if (didRunAIAnalysis) {
-      logger.info('Adding rate limit delay after AI analysis', { delayMs: RATE_LIMIT_DELAY_MS });
-      await delay(RATE_LIMIT_DELAY_MS);
-    }
-
-    // Create legacy-compatible input for the processor
-    // Map new quality tier system to legacy format that processors understand
-    const legacyInputForProcessor = {
-      imageData: processingImageReference,
-      mimeType: effectiveMimeType,
-      originalWidth: inputDimensions?.width,
-      originalHeight: inputDimensions?.height,
+    const requestConfig = {
+      ...config,
       enhancementPrompt: validatedInput.enhancementPrompt,
-      config: {
-        // New quality tier system - required by calculateCreditCost
-        qualityTier: resolvedTier,
-        scale: config.scale,
-        additionalOptions: resolvedEnhancements,
-        nanoBananaProConfig: config.nanoBananaProConfig,
+      requestedQualityTier: config.qualityTier,
+      executionPlan: {
+        deferredAnalysis,
+        userTier: userTier || 'free',
+        isPaidUser,
+        allowedModelIds: eligibleModels.map(model => model.id),
+        reservedMaximumCredits: creditCost,
       },
     };
-
-    // Pass pre-calculated creditCost to ensure consistent billing
-    // Add 2-minute timeout to prevent hung requests
-    const PROCESSING_TIMEOUT_MS = 120000;
-
-    const providerPermitAcquired = await providerHealthService.acquireProcessingPermit();
-    if (!providerPermitAcquired) {
-      const batchSlotReleased = await batchLimitCheck.release(userId);
-      if (batchSlotReleased) {
-        batchSlotAcquired = false;
-      }
-      logFailure('provider_circuit_probe_in_progress', { batchSlotReleased });
-      const { body, status } = createErrorResponse(
-        ErrorCodes.AI_UNAVAILABLE,
-        TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE,
-        503,
-        {
-          providerUnavailable: true,
-          suppressPurchaseCtas: true,
-        }
-      );
-      return NextResponse.json(body, { status });
-    }
-
-    providerAttemptStarted = true;
-    const result = await Promise.race([
-      processor.processImage(userId, legacyInputForProcessor as never, {
-        creditCost,
-        reservationJobId: validatedInput.jobId,
-        workerRayId: req.headers.get('cf-ray') ?? undefined,
-        costAttribution: {
-          modelId: resolvedModelId,
-          qualityTier: resolvedTier,
-          scale: config.scale,
-          effectiveResolution: providerCostPricing.effectiveResolution,
-          providerCostUsd: providerCostPricing.providerCostUsd,
-          creditsCharged: creditCost,
-          pricingModel: providerCostPricing.pricingModel,
-        },
-        onCreditsDeducted: deduction => {
-          creditDeduction = deduction;
-        },
-      }),
-      new Promise<never>((_, reject) =>
-        setTimeout(
-          () => reject(new Error('Image processing timeout - request took longer than 2 minutes')),
-          PROCESSING_TIMEOUT_MS
-        )
-      ),
-    ]);
-    providerAttemptStarted = false;
-
-    const hasInlineProviderOutput = typeof result.imageData === 'string';
-    if (hasInlineProviderOutput || !isHttpsProviderOutput(result.imageUrl)) {
-      logFailure('inline_provider_output_rejected', {
-        hasImageUrl: Boolean(result.imageUrl),
-        hasImageData: hasInlineProviderOutput,
-      });
-      await refundAfterRouteFailure('inline_provider_output_rejected', {
-        hasImageUrl: Boolean(result.imageUrl),
-        hasImageData: hasInlineProviderOutput,
-      });
-      await trackProcessingFailure({
-        errorType: 'inline_provider_output_rejected',
-        reason: 'inline_provider_output_rejected',
-        retryable: true,
-      });
-      const { body, status } = createErrorResponse(
-        ErrorCodes.AI_UNAVAILABLE,
-        TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE,
-        503,
-        { suppressPurchaseCtas: true }
-      );
-      return NextResponse.json(body, { status });
-    }
-
-    await providerHealthService.recordSuccess();
-
-    const deliveryToken = randomBytes(32).toString('base64url');
-    const deliveryTokenHash = createHash('sha256').update(deliveryToken).digest('hex');
-    const deliverableOutput = {
-      imageUrl: result.imageUrl,
-      mimeType: result.mimeType,
-      expiresAt: result.expiresAt,
-    };
-    let recordedDeliverableOutput = false;
-    if (creditDeduction) {
-      try {
-        recordedDeliverableOutput = await creditManager.recordDeliverableOutput(
-          userId,
-          creditDeduction.jobId,
-          {
-            imageUrl: deliverableOutput.imageUrl,
-            mimeType: deliverableOutput.mimeType,
-            expiresAt: deliverableOutput.expiresAt,
-            deliveryTokenHash,
-          }
-        );
-      } catch {
-        recordedDeliverableOutput = false;
-      }
-    }
-    if (!recordedDeliverableOutput) {
-      await refundAfterRouteFailure('durable_result_not_deliverable', {
-        hasImageUrl: Boolean(deliverableOutput.imageUrl),
-        hasImageData: Boolean(result.imageData),
-      });
-      await trackProcessingFailure({
-        errorType: 'durable_result_not_deliverable',
-        reason: 'durable_result_not_deliverable',
-        retryable: true,
-      });
-      const { body, status } = createErrorResponse(
-        ErrorCodes.AI_UNAVAILABLE,
-        TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE,
-        503,
-        { suppressPurchaseCtas: true }
-      );
-      return NextResponse.json(body, { status });
-    }
-
-    const durationMs = Date.now() - startTime;
-
-    // Track upscale completion event (separate from image_upscaled for funnel analysis)
-    await trackServerEvent(
-      'upscale_completed',
-      {
-        telemetrySource: 'server',
-        durationMs,
-        modelUsed: resolvedModelId,
-        inputResolution: inputDimensions
-          ? `${inputDimensions.width}x${inputDimensions.height}`
-          : undefined,
-        outputResolution: inputDimensions
-          ? `${inputDimensions.width * config.scale}x${inputDimensions.height * config.scale}`
-          : undefined,
-        success: true,
-      },
-      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-    );
-
-    // Get the actual model config for display name
-    const modelConfig = modelRegistry.getModel(resolvedModelId);
-    const modelDisplayName = modelConfig?.displayName || resolvedModelId;
-
-    // Calculate output dimensions for dimension reporting
-    // For enhancement-only models (flux-2-pro, qwen-image-edit), dimensions don't change
-    // For true upscaling models, output = input * requested scale
-    const supportsUpscale = modelConfig?.capabilities?.includes('upscale') ?? false;
-    const actualScale = supportsUpscale ? config.scale : 1;
-
-    const dimensions = inputDimensions
-      ? {
-          input: { width: inputDimensions.width, height: inputDimensions.height },
-          output: {
-            width: inputDimensions.width * actualScale,
-            height: inputDimensions.height * actualScale,
-          },
-          actualScale,
-        }
-      : undefined;
-
-    // The canonical success event contains only bounded processing context.
-    await trackImageUpscaled({
-      qualityTier: resolvedTier,
-      scaleFactor: config.scale,
-      inputWidth: dimensions?.input.width,
-      inputHeight: dimensions?.input.height,
-      outputWidth: dimensions?.output.width,
-      outputHeight: dimensions?.output.height,
-      fileType: effectiveMimeType,
-      fileSizeBytes: inputFileSizeBytes,
-      durationMs,
-    });
-
-    logger.info('Upscale completed', {
+    admissionAttempted = true;
+    const admission = await upscaleJobService.admit({
       userId,
-      durationMs,
-      creditsUsed: creditCost,
-      originalTier: config.qualityTier,
-      usedTier: resolvedTier,
-      modelUsed: resolvedModelId,
-      smartAnalysis: config.additionalOptions.smartAnalysis,
+      jobId,
+      requestFingerprint,
+      requestConfig,
+      inputObjectPath: validatedInput.storagePath,
+      inputMimeType: effectiveMimeType,
+      inputSizeBytes: inputFileSizeBytes,
+      inputWidth: inputDimensions?.width ?? null,
+      inputHeight: inputDimensions?.height ?? null,
+      scale: config.scale,
+      selectionMode: config.qualityTier === 'auto' ? 'auto' : 'explicit',
+      requestedQualityTier: config.qualityTier,
+      resolvedQualityTier: resolvedTier,
+      billingModelId,
+      resolvedModelId,
+      resolvedProvider: deferredAnalysis ? 'deferred' : selectedModel.provider,
+      resolvedModelVersion: selectedModel.modelVersion,
+      exactCharge: creditCost,
+      batchLimit,
+      deadlineAt: new Date(Date.now() + serverEnv.UPSCALE_EXECUTION_DEADLINE_SECONDS * 1000),
+      submissionDeadlineAt: new Date(
+        Date.now() + serverEnv.UPSCALE_SUBMISSION_DEADLINE_SECONDS * 1000
+      ),
+      buildId: serverEnv.UPSCALE_BUILD_ID,
     });
-
-    // Return successful response with enhanced information
-
-    const response: IUpscaleResponse = {
-      success: true,
-      expiresAt:
-        typeof deliverableOutput.expiresAt === 'number' ? deliverableOutput.expiresAt : undefined, // Expiry timestamp for staged output
-      mimeType: deliverableOutput.mimeType || 'image/png',
-      processing: {
-        modelUsed: resolvedModelId,
-        modelDisplayName,
-        processingTimeMs: durationMs,
-        creditsUsed: creditCost,
-        creditsRemaining: result.creditsRemaining,
-        reservationJobId: creditDeduction?.jobId,
-        deliveryToken,
-        ...(isInternalScaleFallback ? { dimensionPreservingFallback: true } : {}),
-      },
-      // Include usedTier for Auto tier responses so UI can show what was actually used
-      usedTier: config.qualityTier === 'auto' ? resolvedTier : undefined,
-      analysis: {
-        contentType: undefined, // Would be populated if analyze-image was called first
-        modelRecommendation: config.qualityTier === 'auto' ? undefined : resolvedModelId,
-      },
-      // Include dimension information for verification
-      dimensions,
-    };
-
-    // HIGH-8/9 FIX: increment is no longer needed - checkAndIncrement handles it atomically
-    // Get updated batch usage to include in response headers
-    const batchUsage = await batchLimitCheck.getUsage(userId, userTier);
-
-    // 12. Return successful response with enhanced information and batch headers
-    return NextResponse.json(response, {
-      headers: {
-        'Cache-Control': 'no-store',
-        'Referrer-Policy': 'no-referrer',
-        'X-Batch-Limit': batchUsage.limit.toString(),
-        'X-Batch-Current': batchUsage.current.toString(),
-        'X-Batch-Reset': batchUsage.resetAt.toISOString(),
-      },
+    logger.info('admitted', {
+      jobId,
+      userId,
+      model: resolvedModelId,
+      provider: selectedModel.provider,
+      edgeVersion: serverEnv.UPSCALE_BUILD_ID,
     });
+    // These are advisory. The transaction/outbox owns all post-commit recovery.
+    void wakeDurableExecutor();
+    return admissionResponse(admission);
   } catch (error) {
+    if (error instanceof UpscaleJobError) {
+      return NextResponse.json(
+        createErrorResponse(error.code, error.message, error.statusCode, error.details).body,
+        { status: error.statusCode, headers: { 'Cache-Control': 'no-store' } }
+      );
+    }
     if (error instanceof BoundedJsonBodyTooLargeError) {
-      logFailure('request_body_too_large', {
-        maxBytes: error.maxBytes,
-        actualBytes: error.actualBytes,
-      });
-      await refundAfterRouteFailure('request_body_too_large', {
-        maxBytes: error.maxBytes,
-        actualBytes: error.actualBytes,
-      });
-      const { body, status } = createErrorResponse(
-        ErrorCodes.VALIDATION_ERROR,
-        'This request is too large to process. Please retry with metadata only.',
-        error.statusCode
+      return NextResponse.json(
+        createErrorResponse(
+          ErrorCodes.VALIDATION_ERROR,
+          'This request is too large to process. Please retry with metadata only.',
+          413
+        ).body,
+        { status: 413 }
       );
-      return NextResponse.json(body, { status });
     }
-
-    if (error instanceof SyntaxError) {
-      logFailure('invalid_json_request_body');
-      await refundAfterRouteFailure('invalid_json_request_body');
-      const { body, status } = createErrorResponse(
-        ErrorCodes.VALIDATION_ERROR,
-        'Invalid request data',
-        400
+    if (error instanceof SyntaxError || error instanceof ZodError) {
+      return NextResponse.json(
+        createErrorResponse(ErrorCodes.VALIDATION_ERROR, 'Invalid request data', 400).body,
+        { status: 400 }
       );
-      return NextResponse.json(body, { status });
     }
-
-    // Handle validation errors
-    if (error instanceof ZodError) {
-      logFailure('zod_validation_error', { errors: error.errors });
-      await refundAfterRouteFailure('zod_validation_error');
-      const { body, status } = createErrorResponse(
-        ErrorCodes.VALIDATION_ERROR,
-        'Invalid request data',
-        400,
-        { validationErrors: error.errors }
-      );
-      return NextResponse.json(body, { status });
-    }
-
-    // Handle insufficient credits
-    if (error instanceof InsufficientCreditsError) {
-      logFailure('insufficient_credits', { requiredCredits: creditCost });
-      const availableCredits = error.availableCredits ?? effectiveTotalCredits ?? 1;
-      if (userId) {
-        await trackCreditWallShown(userId, creditCost, availableCredits);
-      }
-      if (providerAttemptStarted) {
-        await trackProcessingFailure({
-          errorType: 'insufficient_credits',
-          reason: 'insufficient_credits',
-          retryable: false,
-        });
-      }
-      const { body, status } = createErrorResponse(
-        ErrorCodes.INSUFFICIENT_CREDITS,
-        `You have insufficient credits. This operation requires ${creditCost} credit${creditCost > 1 ? 's' : ''}.`,
-        402,
-        { required: creditCost, available: availableCredits }
-      );
-      return NextResponse.json(body, { status });
-    }
-
-    // Handle Replicate errors
-    if (error instanceof ReplicateError) {
-      if (
-        providerAttemptStarted &&
-        !['SAFETY', 'INVALID_INPUT', 'IMAGE_TOO_LARGE'].includes(error.code)
-      ) {
-        await providerHealthService.recordFailure(
-          error.providerStatus === 402
-            ? 'billing'
-            : error.code === 'RATE_LIMITED'
-              ? 'rate_limited'
-              : error.code === 'AUTHENTICATION_FAILED'
-                ? 'authentication'
-                : error.code === 'TIMEOUT'
-                  ? 'timeout'
-                  : 'provider_unavailable'
-        );
-      }
-      const isUserAttributableProviderError = [
-        'SAFETY',
-        'IMAGE_TOO_LARGE',
-        'INVALID_INPUT',
-      ].includes(error.code);
-      const statusCode = isUserAttributableProviderError
-        ? error.code === 'INVALID_INPUT'
-          ? 400
-          : 422
-        : 503;
-      const errorCode =
-        error.code === 'IMAGE_TOO_LARGE'
-          ? ErrorCodes.IMAGE_TOO_LARGE
-          : error.code === 'SAFETY'
-            ? ErrorCodes.INVALID_REQUEST
-            : error.code === 'INVALID_INPUT'
-              ? ErrorCodes.VALIDATION_ERROR
-              : ErrorCodes.AI_UNAVAILABLE;
-      logFailure(
-        `replicate_${String(error.code).toLowerCase()}`,
-        {
-          errorType: `replicate_${error.code}`,
-          replicateCode: error.code,
-          ...(error.code === 'AUTHENTICATION_FAILED'
-            ? {
-                action:
-                  'Verify REPLICATE_API_TOKEN and any Cloudflare/Workers egress allowlist in Replicate.',
-              }
-            : {}),
-        },
-        'error'
-      );
-      await refundAfterRouteFailure(
-        `replicate_${String(error.code).toLowerCase()}`,
-        {
-          errorType: `replicate_${error.code}`,
-          replicateCode: error.code,
-        },
-        !['SAFETY', 'INVALID_INPUT', 'IMAGE_TOO_LARGE'].includes(error.code)
-      );
-
-      // Track processing failed event for Replicate errors
-      if (userId) {
-        const durationMs = Date.now() - startTime;
-        await trackServerEvent(
-          'upscale_completed',
-          {
-            telemetrySource: 'server',
-            durationMs,
-            success: false,
-            errorType: `replicate_${error.code}`,
-          },
-          { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-        );
-        await trackProcessingFailure({
-          errorType: `replicate_${error.code}`,
-          reason: `replicate_${error.code}`,
-          retryable: !['SAFETY', 'INVALID_INPUT', 'IMAGE_TOO_LARGE'].includes(error.code),
-        });
-      }
-
-      const { body, status } = createErrorResponse(
-        errorCode,
-        getSafeReplicateClientMessage(error.code),
-        statusCode
-      );
-      return NextResponse.json(body, { status });
-    }
-
-    // Handle AI generation errors
-    if (error instanceof AIGenerationError) {
-      if (providerAttemptStarted && error.finishReason !== 'SAFETY') {
-        await providerHealthService.recordFailure(
-          error.message.toLowerCase().includes('timeout') ? 'timeout' : 'provider_unavailable'
-        );
-      }
-      const statusCode = error.finishReason === 'SAFETY' ? 422 : 503;
-      const errorCode =
-        error.finishReason === 'SAFETY' ? ErrorCodes.INVALID_REQUEST : ErrorCodes.AI_UNAVAILABLE;
-      logFailure(
-        `ai_generation_${String(error.finishReason).toLowerCase()}`,
-        {
-          errorType: `ai_generation_${error.finishReason}`,
-          finishReason: error.finishReason,
-        },
-        'error'
-      );
-      await refundAfterRouteFailure(
-        `ai_generation_${String(error.finishReason).toLowerCase()}`,
-        {
-          errorType: `ai_generation_${error.finishReason}`,
-          finishReason: error.finishReason,
-        },
-        error.finishReason !== 'SAFETY'
-      );
-
-      // Track processing failed event for AI generation errors
-      if (userId) {
-        const durationMs = Date.now() - startTime;
-        await trackServerEvent(
-          'upscale_completed',
-          {
-            telemetrySource: 'server',
-            durationMs,
-            success: false,
-            errorType: `ai_generation_${error.finishReason}`,
-          },
-          { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-        );
-        await trackProcessingFailure({
-          errorType: `ai_generation_${error.finishReason}`,
-          reason: `ai_generation_${error.finishReason}`,
-          retryable: error.finishReason !== 'SAFETY',
-        });
-      }
-
-      const { body, status } = createErrorResponse(
-        errorCode,
-        error.finishReason === 'SAFETY'
-          ? 'Image was rejected by the safety filter. Please try a different image.'
-          : TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE,
-        statusCode,
-        { finishReason: error.finishReason }
-      );
-      return NextResponse.json(body, { status });
-    }
-
-    // Handle unexpected errors
-    const failedDuringProviderAttempt = providerAttemptStarted;
-    if (failedDuringProviderAttempt) {
-      await providerHealthService.recordFailure('internal');
-    }
-    logFailure(
-      'unexpected_internal_error',
-      {
-        errorType: 'unexpected_internal_error',
-      },
-      'error'
-    );
-    await refundAfterRouteFailure('unexpected_internal_error', {
-      errorType: 'unexpected_internal_error',
+    logger.error('Upscale admission unavailable', {
+      jobId,
+      admissionAttempted,
+      exception: error instanceof Error ? error.name : typeof error,
+      frames:
+        error instanceof Error
+          ? error.stack
+              ?.split('\n')
+              .slice(1, 4)
+              .map(frame => frame.trim().replace(/\?.*$/, ''))
+          : undefined,
     });
-
-    if (userId) {
-      const durationMs = Date.now() - startTime;
-      await trackServerEvent(
-        'upscale_completed',
-        {
-          telemetrySource: 'server',
-          durationMs,
-          success: false,
-          errorType: 'unexpected_internal_error',
-        },
-        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-      );
-      await trackProcessingFailure({
-        errorType: 'unexpected_internal_error',
-        reason: 'unexpected_internal_error',
-        retryable: true,
-      });
-    }
-
-    const { body, status } = createErrorResponse(
-      failedDuringProviderAttempt ? ErrorCodes.AI_UNAVAILABLE : ErrorCodes.INTERNAL_ERROR,
-      TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE,
-      failedDuringProviderAttempt ? 503 : 500
+    // A lost database response may follow a committed transaction. Do not
+    // refund or delete the input; the browser recovers this exact job ID.
+    return NextResponse.json(
+      createErrorResponse(
+        ErrorCodes.INTERNAL_ERROR,
+        'Unable to confirm image processing. Reconnecting to your job.',
+        503,
+        { jobId, retryable: true }
+      ).body,
+      { status: 503, headers: { 'Cache-Control': 'no-store', 'Retry-After': '2' } }
     );
-    return NextResponse.json(body, { status });
   } finally {
-    try {
-      await Promise.all(pendingFailureRowWrites.map(write => write()));
-    } catch {
-      // Failure telemetry must never mask the original route response.
-    }
-    if (temporaryStoragePath) {
-      try {
-        await removeUpscaleInput(temporaryStoragePath);
-      } catch (error) {
-        logger.warn('Failed to remove temporary upscale input', {
-          storagePath: temporaryStoragePath,
-          error: error instanceof Error ? error.message : String(error),
-        });
-      }
-    }
     await logger.flush();
   }
 }

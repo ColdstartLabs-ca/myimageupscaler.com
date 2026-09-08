@@ -42,7 +42,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const { jobId, outcome, rayId } = parsed.data;
   const { data: reservation, error: lookupError } = await supabaseAdmin
     .from('processing_credit_reservations')
-    .select('user_id, status, failure_reason')
+    .select('user_id, status, failure_reason, protocol_version')
     .eq('job_id', jobId)
     .maybeSingle();
 
@@ -55,11 +55,33 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ success: false, refunded: false }, { status: 503 });
   }
 
-  if (
-    !reservation ||
-    reservation.status !== 'processing' ||
-    reservation.failure_reason !== workerRayBinding(rayId)
-  ) {
+  if (!reservation || reservation.status !== 'processing') {
+    return NextResponse.json({ success: true, refunded: false });
+  }
+
+  // Protocol v2 owns recovery through the execution ledger and executor. A
+  // Worker tail signal is an observation only; refunding here could race a
+  // queued task or a provider prediction that is still recoverable.
+  if (reservation.protocol_version === 'v2' || reservation.protocol_version === 2) {
+    const { data: recoveryRequested, error } = await supabaseAdmin.rpc('request_upscale_recovery', {
+      p_job_id: jobId,
+    });
+    if (error) {
+      console.error('Tail-observed durable recovery could not be persisted', {
+        jobId,
+        error: error.message,
+      });
+      return NextResponse.json({ success: false, refunded: false }, { status: 503 });
+    }
+    return NextResponse.json({
+      success: true,
+      refunded: false,
+      durableExecution: true,
+      recoveryRequested: recoveryRequested === true,
+    });
+  }
+
+  if (reservation.failure_reason !== workerRayBinding(rayId)) {
     return NextResponse.json({ success: true, refunded: false });
   }
 

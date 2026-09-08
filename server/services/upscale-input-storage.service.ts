@@ -1,6 +1,8 @@
 import { Buffer } from 'node:buffer';
 
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
+import { UpscaleJobError } from '@server/services/upscale-job.service';
+import { ErrorCodes } from '@shared/utils/errors';
 import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
 import { isUuidV4 } from '@shared/validation/uuid';
 
@@ -27,6 +29,7 @@ async function readBoundedValidationPrefix(
   if (contentLengthHeader !== null) {
     const contentLength = Number(contentLengthHeader);
     if (!Number.isSafeInteger(contentLength) || contentLength <= 0 || contentLength > maxBytes) {
+      await response.body?.cancel().catch(() => undefined);
       throw new Error('Temporary image validation prefix is too large');
     }
   }
@@ -55,6 +58,7 @@ async function readBoundedValidationPrefix(
       chunks.push(value);
     }
   } finally {
+    await reader.cancel().catch(() => undefined);
     reader.releaseLock();
   }
 
@@ -98,7 +102,11 @@ export async function resolveUpscaleInput({
 }: IResolveUpscaleInputParams): Promise<IResolvedUpscaleInput> {
   const segments = storagePath.split('/');
   if (segments.length !== 2 || segments[0] !== userId || !isCurrentInputObjectName(segments[1])) {
-    throw new Error('Temporary image must be owned by the authenticated user');
+    throw new UpscaleJobError(
+      ErrorCodes.VALIDATION_ERROR,
+      'Temporary image must be owned by the authenticated user',
+      400
+    );
   }
 
   const objectName = segments[1];
@@ -112,19 +120,32 @@ export async function resolveUpscaleInput({
   const object = objects?.find(candidate => candidate.name === objectName);
   const sizeBytes = Number(object?.metadata?.size);
   const storedMimeType = String(object?.metadata?.mimetype ?? '').toLowerCase();
-  if (!object || !Number.isSafeInteger(sizeBytes) || sizeBytes <= 0) {
-    throw new Error('Temporary image was not found or has invalid metadata');
-  }
+  if (!object)
+    throw new UpscaleJobError(ErrorCodes.NOT_FOUND, 'Temporary image was not found', 404);
+  if (!Number.isSafeInteger(sizeBytes) || sizeBytes <= 0)
+    throw new UpscaleJobError(
+      ErrorCodes.VALIDATION_ERROR,
+      'Temporary image has invalid metadata',
+      400
+    );
 
   const maxBytes = isPaidUser ? IMAGE_VALIDATION.MAX_SIZE_PAID : IMAGE_VALIDATION.MAX_SIZE_FREE;
   if (sizeBytes > maxBytes) {
-    throw new Error('Temporary image exceeds the upload limit for this account');
+    throw new UpscaleJobError(
+      ErrorCodes.IMAGE_TOO_LARGE,
+      'Temporary image exceeds the upload limit for this account',
+      413
+    );
   }
   if (
     !(IMAGE_VALIDATION.ALLOWED_TYPES as readonly string[]).includes(storedMimeType) ||
     storedMimeType !== claimedMimeType.toLowerCase()
   ) {
-    throw new Error('Temporary image MIME type does not match the upload request');
+    throw new UpscaleJobError(
+      ErrorCodes.VALIDATION_ERROR,
+      'Temporary image MIME type does not match the upload request',
+      400
+    );
   }
 
   const { data: signed, error: signedError } = await bucket.createSignedUrl(
@@ -139,6 +160,9 @@ export async function resolveUpscaleInput({
     headers: { Range: `bytes=0-${VALIDATION_PREFIX_LAST_BYTE}` },
   });
   if (prefixResponse.status !== 206) {
+    await prefixResponse.body?.cancel().catch(() => undefined);
+    if (prefixResponse.status === 404)
+      throw new UpscaleJobError(ErrorCodes.NOT_FOUND, 'Temporary image was not found', 404);
     throw new Error('Temporary image storage did not honor the bounded validation request');
   }
   const prefix = await readBoundedValidationPrefix(prefixResponse, VALIDATION_PREFIX_MAX_BYTES);

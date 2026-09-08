@@ -41,10 +41,18 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
   setShowInsufficientModal,
   suppressPurchaseCtas = false,
 }) => {
-  const pendingQueue = queue.filter(i => i.status !== ProcessingStatus.COMPLETED);
+  const processing =
+    isProcessing || queue.some(item => item.status === ProcessingStatus.PROCESSING);
+  const pendingQueue = queue.filter(
+    item =>
+      (item.status === ProcessingStatus.IDLE || item.status === ProcessingStatus.ERROR) &&
+      item.retryable !== false &&
+      item.file.size > 0
+  );
   const hasEnoughCredits = currentBalance >= totalCost;
 
   const handleProcessClick = () => {
+    if (processing || pendingQueue.length === 0) return;
     if (!hasEnoughCredits && pendingQueue.length > 0) {
       if (suppressPurchaseCtas) {
         onUpgrade();
@@ -79,7 +87,7 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
       <button
         data-driver="process-button"
         onClick={handleProcessClick}
-        disabled={isProcessing || queue.every(i => i.status === ProcessingStatus.COMPLETED)}
+        disabled={processing || pendingQueue.length === 0}
         className={`
           w-full relative overflow-hidden rounded-xl py-4 px-4
           font-bold text-white
@@ -87,7 +95,7 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
           flex flex-col items-center justify-center gap-1
           disabled:opacity-50 disabled:cursor-not-allowed
           ${
-            isProcessing || queue.every(i => i.status === ProcessingStatus.COMPLETED)
+            processing || pendingQueue.length === 0
               ? 'bg-white/5 text-text-muted'
               : hasEnoughCredits
                 ? 'gradient-cta shine-effect shine-pulse active:scale-[0.98] shadow-lg shadow-accent/20'
@@ -96,15 +104,15 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
         `}
       >
         <div className="flex items-center justify-center gap-2 relative z-10">
-          {isProcessing ? (
+          {processing ? (
             <Loader2 className="animate-spin" size={18} />
           ) : (
             <Wand2 size={18} className={hasEnoughCredits ? 'text-white' : ''} />
           )}
           <span className="text-sm font-black tracking-tight">
-            {isProcessing && batchProgress
+            {processing && batchProgress
               ? `Processing ${batchProgress.current} / ${batchProgress.total}`
-              : isProcessing
+              : processing
                 ? 'Processing...'
                 : completedCount > 0 && completedCount < queue.length
                   ? `Process Remaining (${queue.length - completedCount})`
@@ -116,7 +124,7 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
 
         {/* Credit Cost Display */}
         {pendingQueue.length > 0 &&
-          !isProcessing &&
+          !processing &&
           queue.some(i => i.status !== ProcessingStatus.COMPLETED) && (
             <div
               className={`text-[10px] uppercase tracking-widest font-black opacity-80 relative z-10 ${!hasEnoughCredits ? 'animate-pulse' : ''}`}
@@ -154,7 +162,7 @@ export const ActionPanel: React.FC<IActionPanelProps> = ({
         variant="ghost"
         className="w-full text-muted-foreground hover:text-error hover:bg-error/20"
         onClick={onClear}
-        disabled={isProcessing}
+        disabled={processing}
         icon={<Trash2 size={16} />}
       >
         Clear Queue

@@ -253,10 +253,7 @@ export const upscaleSchema = z
           enhance: z.boolean().default(false), // Enable enhancement processing
           enhanceFaces: z.boolean().default(false), // Face restoration - user opt-in
           preserveText: z.boolean().default(false), // Text preservation - user opt-in
-          customInstructions: z
-            .string()
-            .max(2000)
-            .optional(), // Custom LLM prompt (opens modal when enabled)
+          customInstructions: z.string().max(2000).optional(), // Custom LLM prompt (opens modal when enabled)
           enhancement: enhancementSettingsSchema.optional(), // Detailed enhancement settings
         })
         .default({
@@ -386,10 +383,7 @@ export function decodeImageDimensions(imageData: string): { width: number; heigh
   // delayed SOF marker cannot bypass dimension and model pixel-limit checks.
   // Align slice to multiple of 4 (base64 requirement) to avoid atob errors
   const maxDimensionPrefixBase64Chars = 4 * Math.ceil((64 * 1024) / 3);
-  const rawSliceLen = Math.min(
-    getBase64PayloadLength(imageData),
-    maxDimensionPrefixBase64Chars
-  );
+  const rawSliceLen = Math.min(getBase64PayloadLength(imageData), maxDimensionPrefixBase64Chars);
   const sliceLen = Math.floor(rawSliceLen / 4) * 4;
   let binaryString: string;
   try {

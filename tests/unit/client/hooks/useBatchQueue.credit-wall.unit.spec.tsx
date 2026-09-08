@@ -53,6 +53,11 @@ vi.mock('@client/store/userStore', () => {
 });
 
 vi.mock('@client/utils/api-client', () => ({
+  DurableUpscaleTerminalError: class extends Error {},
+  UpscaleEdgeError: class extends Error {},
+  listDurableUpscaleJobs: vi.fn(async () => ({ jobs: [], nextCursor: null })),
+  resumeDurableUpscale: vi.fn(),
+  reportUpscaleEdgeFailure: vi.fn(),
   BatchLimitError: mocks.BatchLimitError,
   FreeLimitExceededError: mocks.FreeLimitExceededError,
   ProviderUnavailableError: mocks.ProviderUnavailableError,

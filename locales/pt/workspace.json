@@ -96,7 +96,12 @@
       "preparingNext": "Preparando próxima imagem...",
       "rateLimitingPause": "Pausa de limitação de taxa para garantir processamento confiável"
     },
-    "remainingTime": "~{remaining}s restantes"
+    "remainingTime": "~{remaining}s restantes",
+    "recovery": {
+      "reconnecting": "Reconectando… Sua imagem continua sendo processada.",
+      "refunded": "Não foi possível concluir o processamento. Seus créditos foram reembolsados.",
+      "sourceRequired": "Adicione a imagem original novamente para iniciar uma nova tentativa."
+    }
   },
   "workspace": {
     "features": {

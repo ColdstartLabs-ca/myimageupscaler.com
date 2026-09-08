@@ -522,7 +522,13 @@ const Workspace: React.FC = () => {
     setExploreGalleryOpen(true);
   };
 
-  const getPendingQueue = () => queue.filter(i => i.status !== ProcessingStatus.COMPLETED);
+  const getPendingQueue = () =>
+    queue.filter(
+      item =>
+        (item.status === ProcessingStatus.IDLE || item.status === ProcessingStatus.ERROR) &&
+        item.retryable !== false &&
+        item.file.size > 0
+    );
 
   const getRequiredCreditsForPendingQueue = () =>
     calculateBatchProviderAwareCreditCost({
@@ -532,10 +538,7 @@ const Workspace: React.FC = () => {
 
   const handleProcessBatch = () => {
     const pendingQueue = getPendingQueue();
-    if (pendingQueue.length === 0) {
-      processBatch(config);
-      return;
-    }
+    if (isProcessingBatch || pendingQueue.length === 0) return;
 
     const requiredCredits = getRequiredCreditsForPendingQueue();
     if (requiredCredits > totalCredits) {
@@ -998,7 +1001,7 @@ const Workspace: React.FC = () => {
             <button
               data-driver="mobile-process-button"
               onClick={handleProcessBatch}
-              disabled={isProcessingBatch}
+              disabled={isProcessingBatch || getPendingQueue().length === 0}
               className={cn(
                 'w-full py-3 px-4 rounded-xl font-bold text-white flex items-center justify-center gap-2 transition-all relative overflow-hidden',
                 isProcessingBatch

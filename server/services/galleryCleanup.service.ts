@@ -39,6 +39,15 @@ const CLEANUP_STATE_PATH = '_system/gallery-cleanup-state.png';
 const CLEANUP_STATE_VERSION_KEY = 'cleanup_version';
 const CLEANUP_STATE_CURSOR_KEY = 'cleanup_cursor';
 const CLEANUP_CURSOR_MAX_LENGTH = 4096;
+const ACTIVE_DURABLE_EXECUTION_STAGES = [
+  'queued',
+  'submitting',
+  'submission_unknown',
+  'processing',
+  'staging',
+  'ready',
+] as const;
+const DURABLE_OUTPUT_EXECUTION_STAGES = [...ACTIVE_DURABLE_EXECUTION_STAGES, 'completed'] as const;
 // The input bucket permits image MIME types only, so the opaque cursor lives in
 // metadata on a reserved valid image object rather than in a user-visible path.
 const CLEANUP_STATE_IMAGE = new Uint8Array([
@@ -182,16 +191,104 @@ function getDirectUpscaleInputPath(file: { key: string }): string | null {
   const objectId = extension && objectName ? objectName.slice(0, -extension.length) : undefined;
 
   // Keep cleaning UUID-shaped files admitted before the UUIDv4 contract was enforced.
-  if (
-    segments.length !== 2 ||
-    !segments[0] ||
-    !objectId ||
-    !isUuidShaped(objectId)
-  ) {
+  if (segments.length !== 2 || !segments[0] || !objectId || !isUuidShaped(objectId)) {
     return null;
   }
 
   return file.key;
+}
+
+function isDurableAttemptOutputPath(path: string): boolean {
+  const segments = path.split('/');
+  const filename = segments[3] ?? '';
+  const extension = /\.(?:jpe?g|png|webp|heic)$/i.exec(filename)?.[0];
+  if (!extension) return false;
+  return (
+    segments.length === 4 &&
+    Boolean(segments[0]) &&
+    segments[1] === 'outputs' &&
+    isUuidShaped(segments[2]) &&
+    isUuidShaped(filename.slice(0, -extension.length))
+  );
+}
+
+function isMissingDurableExecutionTableError(error: unknown): boolean {
+  if (!isRecord(error)) return false;
+
+  const code = typeof error.code === 'string' ? error.code : undefined;
+  const message = typeof error.message === 'string' ? error.message : '';
+  return (
+    code === 'PGRST205' ||
+    code === '42P01' ||
+    /(?:relation|table).*upscale_executions.*(?:does not exist|not found)|schema cache/i.test(
+      message
+    )
+  );
+}
+
+function isDurableOutputRetained(row: Record<string, unknown>, now: number): boolean {
+  const outputExpiresAt = Date.parse(String(row.output_expires_at ?? ''));
+  const deliveryLeaseUntil = Date.parse(
+    String(row.delivery_lease_expires_at ?? row.delivery_lease_until ?? '')
+  );
+  return (
+    !Number.isFinite(outputExpiresAt) ||
+    outputExpiresAt > now ||
+    (Number.isFinite(deliveryLeaseUntil) && deliveryLeaseUntil > now)
+  );
+}
+
+async function findProtectedDurableObjectPaths(
+  candidatePaths: string[],
+  now: Date
+): Promise<Set<string>> {
+  if (candidatePaths.length === 0) return new Set();
+
+  const { data: inputRows, error: inputError } = await supabaseAdmin
+    .from('upscale_executions')
+    .select('input_storage_path')
+    .in('stage', [...ACTIVE_DURABLE_EXECUTION_STAGES])
+    .in('input_storage_path', candidatePaths);
+  if (inputError) {
+    if (isMissingDurableExecutionTableError(inputError)) {
+      return new Set(candidatePaths.filter(isDurableAttemptOutputPath));
+    }
+    throw new Error(
+      `Failed to inspect active durable upscale inputs: ${getStorageErrorMessage(inputError)}`
+    );
+  }
+
+  const { data: outputRows, error: outputError } = await supabaseAdmin
+    .from('upscale_executions')
+    .select('output_storage_path, stage, output_expires_at, delivery_lease_expires_at')
+    .in('stage', [...DURABLE_OUTPUT_EXECUTION_STAGES])
+    .in('output_storage_path', candidatePaths);
+  if (outputError) {
+    if (isMissingDurableExecutionTableError(outputError)) return new Set(candidatePaths);
+    throw new Error(
+      `Failed to inspect active durable upscale outputs: ${getStorageErrorMessage(outputError)}`
+    );
+  }
+
+  const protectedPaths = new Set<string>();
+  for (const row of inputRows ?? []) {
+    if (isRecord(row) && typeof row.input_storage_path === 'string') {
+      protectedPaths.add(row.input_storage_path);
+    }
+  }
+  for (const row of outputRows ?? []) {
+    if (!isRecord(row) || typeof row.output_storage_path !== 'string') continue;
+    if (
+      ACTIVE_DURABLE_EXECUTION_STAGES.includes(
+        row.stage as (typeof ACTIVE_DURABLE_EXECUTION_STAGES)[number]
+      ) ||
+      (row.stage === 'completed' && isDurableOutputRetained(row, now.getTime()))
+    ) {
+      protectedPaths.add(row.output_storage_path);
+    }
+  }
+
+  return protectedPaths;
 }
 
 // =============================================================================
@@ -202,8 +299,8 @@ function getDirectUpscaleInputPath(file: { key: string }): string | null {
  * Remove direct-upload input objects that outlived the processing request.
  *
  * The request route deletes successful and handled-failure inputs in `finally`,
- * but a terminated Worker cannot run that cleanup. Only direct UUID-named input
- * files are eligible; nested `outputs/` objects remain available for delivery.
+ * but a terminated Worker cannot run that cleanup. Private attempt outputs are
+ * also eligible once they are unreferenced or no longer retained for delivery.
  */
 export async function cleanupStaleUpscaleInputs(
   now = new Date()
@@ -235,6 +332,23 @@ export async function cleanupStaleUpscaleInputs(
     throw new Error('Failed to list temporary upscale inputs: invalid continuation cursor');
   }
 
+  const stalePaths: string[] = [];
+  for (const file of data.objects) {
+    if (file.metadata == null || !file.created_at) continue;
+
+    const inputPath =
+      getDirectUpscaleInputPath(file) ?? (isDurableAttemptOutputPath(file.key) ? file.key : null);
+    if (!inputPath) continue;
+
+    const createdAt = Date.parse(file.created_at);
+    if (!Number.isFinite(createdAt) || createdAt >= staleBefore) continue;
+
+    stalePaths.push(inputPath);
+  }
+
+  const protectedPaths = await findProtectedDurableObjectPaths(stalePaths, now);
+  const deletablePaths = stalePaths.filter(path => !protectedPaths.has(path));
+
   let deleted = 0;
   let failed = 0;
   let deletionFailed = false;
@@ -255,15 +369,7 @@ export async function cleanupStaleUpscaleInputs(
     return true;
   };
 
-  for (const file of data.objects) {
-    if (file.metadata == null || !file.created_at) continue;
-
-    const inputPath = getDirectUpscaleInputPath(file);
-    if (!inputPath) continue;
-
-    const createdAt = Date.parse(file.created_at);
-    if (!Number.isFinite(createdAt) || createdAt >= staleBefore) continue;
-
+  for (const inputPath of deletablePaths) {
     batch.push(inputPath);
     if (batch.length < BATCH_SIZE) continue;
 
