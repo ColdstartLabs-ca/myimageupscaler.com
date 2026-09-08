@@ -99,11 +99,15 @@ async function openSignInModal(page: PlaywrightPage): Promise<void> {
  */
 async function switchToRegisterView(page: PlaywrightPage): Promise<void> {
   // Click "Don't have an account?" to switch to register view
-  const switchBtn = page.locator([
-    "button:has-text(\"Don't have an account\")",
-    'button:has-text("Create account")',
-    'button:has-text("Sign up")',
-  ].join(', ')).first();
+  const switchBtn = page
+    .locator(
+      [
+        'button:has-text("Don\'t have an account")',
+        'button:has-text("Create account")',
+        'button:has-text("Sign up")',
+      ].join(', ')
+    )
+    .first();
   await switchBtn.waitFor({ state: 'visible', timeout: 8000 });
   await switchBtn.click();
 
@@ -218,9 +222,9 @@ test.describe('Country Paywall — AuthenticationModal login view', () => {
 
     // Wait for geo loading to complete (loading skeleton disappears)
     // The banner text should appear once geo resolves
-    await expect(
-      page.getByText('A subscription is required in your region.')
-    ).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('A subscription is required in your region.')).toBeVisible({
+      timeout: 10000,
+    });
   });
 
   /**
@@ -235,9 +239,9 @@ test.describe('Country Paywall — AuthenticationModal login view', () => {
     await openSignInModal(page);
 
     // Wait for the paywall banner to appear
-    await expect(
-      page.getByText('A subscription is required in your region.')
-    ).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('A subscription is required in your region.')).toBeVisible({
+      timeout: 10000,
+    });
 
     // Verify the View plans link exists and points to /pricing
     const viewPlansLink = page.getByRole('link', { name: /view plans/i }).first();
@@ -258,9 +262,9 @@ test.describe('Country Paywall — AuthenticationModal login view', () => {
     await openSignInModal(page);
 
     // Wait for the paywall banner
-    await expect(
-      page.getByText('A subscription is required in your region.')
-    ).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('A subscription is required in your region.')).toBeVisible({
+      timeout: 10000,
+    });
 
     // Email and password fields must still be accessible (paywall is informational)
     await expect(page.getByPlaceholder(/email/i).first()).toBeVisible({ timeout: 5000 });
@@ -280,9 +284,7 @@ test.describe('Country Paywall — AuthenticationModal login view', () => {
     await expect(page.getByPlaceholder(/email/i).first()).toBeVisible({ timeout: 8000 });
 
     // Paywall banner must NOT appear
-    await expect(
-      page.getByText('A subscription is required in your region.')
-    ).not.toBeVisible();
+    await expect(page.getByText('A subscription is required in your region.')).not.toBeVisible();
   });
 });
 
@@ -300,9 +302,9 @@ test.describe('Country Paywall — AuthenticationModal register view', () => {
     await switchToRegisterView(page);
 
     // The register view should show the paywall banner
-    await expect(
-      page.getByText('A subscription is required in your region.')
-    ).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('A subscription is required in your region.')).toBeVisible({
+      timeout: 10000,
+    });
   });
 
   /**
@@ -315,9 +317,9 @@ test.describe('Country Paywall — AuthenticationModal register view', () => {
     await openSignInModal(page);
     await switchToRegisterView(page);
 
-    await expect(
-      page.getByText('A subscription is required in your region.')
-    ).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('A subscription is required in your region.')).toBeVisible({
+      timeout: 10000,
+    });
 
     const viewPlansLink = page.getByRole('link', { name: /view plans/i }).first();
     await expect(viewPlansLink).toBeVisible({ timeout: 5000 });
@@ -339,15 +341,36 @@ test.describe('Country Paywall — AuthenticationModal register view', () => {
     await page.waitForTimeout(1000); // Let geo settle
 
     // Paywall banner must NOT appear
-    await expect(
-      page.getByText('A subscription is required in your region.')
-    ).not.toBeVisible();
+    await expect(page.getByText('A subscription is required in your region.')).not.toBeVisible();
   });
 });
 
 // ─── Test Suite: GuestUpscaler component via useRegionTier hook ────────────────
 
 test.describe('Country Paywall — GuestUpscaler component (via AI image upscaler page)', () => {
+  test('guest requests cannot reach face restoration processing', async ({ page }) => {
+    await mockGeoStandard(page, 'US');
+    await page.goto('/tools/ai-image-upscaler');
+
+    const result = await page.evaluate(async () => {
+      const response = await fetch('/api/upscale', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          config: {
+            qualityTier: 'quick',
+            scale: 2,
+            additionalOptions: { enhanceFaces: true },
+          },
+        }),
+      });
+      return { status: response.status, body: await response.json() };
+    });
+
+    expect(result.status).toBe(401);
+    expect(result.body.error.code).toBe('UNAUTHORIZED');
+  });
+
   /**
    * AC-3: GuestUpscaler shows "Subscription Required" CTA when isPaywalled=true.
    *
@@ -513,9 +536,7 @@ test.describe('Country Paywall — paid users unaffected', () => {
    * representing a paid user's experience (isPaywalled=false regardless of country
    * when user has an active subscription — the geo check returns non-paywalled).
    */
-  test('auth modal has no paywall banner for standard (non-paywalled) region', async ({
-    page,
-  }) => {
+  test('auth modal has no paywall banner for standard (non-paywalled) region', async ({ page }) => {
     await mockGeoStandard(page, 'IN');
     await page.goto('/');
 
@@ -525,9 +546,7 @@ test.describe('Country Paywall — paid users unaffected', () => {
     await expect(page.getByPlaceholder(/email/i).first()).toBeVisible({ timeout: 8000 });
 
     // No paywall banner for standard region
-    await expect(
-      page.getByText('A subscription is required in your region.')
-    ).not.toBeVisible();
+    await expect(page.getByText('A subscription is required in your region.')).not.toBeVisible();
   });
 
   /**
@@ -541,9 +560,9 @@ test.describe('Country Paywall — paid users unaffected', () => {
     await openSignInModal(page);
 
     // Paywall banner appears (informational)
-    await expect(
-      page.getByText('A subscription is required in your region.')
-    ).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('A subscription is required in your region.')).toBeVisible({
+      timeout: 10000,
+    });
 
     // Login form is still available — users can log in to access their subscription
     await expect(page.getByPlaceholder(/email/i).first()).toBeVisible({ timeout: 5000 });

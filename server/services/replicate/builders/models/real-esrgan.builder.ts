@@ -12,12 +12,12 @@ export class RealEsrganBuilder extends BaseModelInputBuilder<IRealEsrganInput> {
   readonly modelId = 'real-esrgan';
 
   build(context: IModelInputContext): IRealEsrganInput {
-    const { imageDataUrl, scale, enhanceFaces } = context;
+    const { imageDataUrl, scale } = context;
 
     return {
       image: imageDataUrl,
       scale: this.getBinaryScale(scale),
-      face_enhance: enhanceFaces || false,
+      face_enhance: false,
     };
   }
 }

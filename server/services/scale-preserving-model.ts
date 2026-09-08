@@ -16,23 +16,62 @@ interface IScalePreservingModelResult {
   usedFallback: boolean;
 }
 
+export interface IScalePreservingRecoveryEligibilityInput {
+  modelId: string;
+  width?: number;
+  height?: number;
+  scale: number;
+  qualityTier?: string;
+  enhanceFaces?: boolean;
+}
+
 /**
  * Cost-first processing targets for an oversized Quick 2x request.
  */
-export const SCALE_PRESERVING_FALLBACK_CANDIDATES: ModelId[] = [
-  'real-esrgan-large',
-  'clarity-upscaler',
-];
+export const SCALE_PRESERVING_FALLBACK_CANDIDATES: ModelId[] = ['real-esrgan-large'];
 
 /**
- * Paying customers retain the higher-quality Clarity behavior they received
- * before the economical Real-ESRGAN fallback was introduced. Free requests
- * stay on the cost-first path.
+ * Return the cost-first candidates for an oversized Quick request.
+ *
+ * The fallback remains an internal Quick implementation detail for every
+ * account type. Paid face enhancement is selected explicitly and never
+ * becomes an implicit recovery path for ordinary Quick.
  */
-export function getScalePreservingFallbackCandidates(isPaidUser: boolean): ModelId[] {
-  return isPaidUser
-    ? ['clarity-upscaler', 'real-esrgan-large']
-    : SCALE_PRESERVING_FALLBACK_CANDIDATES;
+export function getScalePreservingFallbackCandidates(_isPaidUser: boolean): ModelId[] {
+  return [...SCALE_PRESERVING_FALLBACK_CANDIDATES];
+}
+
+/**
+ * Return whether a failed Quick request may make the single cjwbw recovery
+ * attempt. Recovery is intentionally narrower than direct size routing: it
+ * requires trusted dimensions, the verified 2x envelope, and faces disabled.
+ * An omitted quality tier is accepted for legacy callers whose real-esrgan
+ * service instance is the Quick processor.
+ */
+export function isScalePreservingRecoveryEligible({
+  modelId,
+  width,
+  height,
+  scale,
+  qualityTier,
+  enhanceFaces,
+}: IScalePreservingRecoveryEligibilityInput): boolean {
+  const hasKnownDimensions =
+    Number.isInteger(width) &&
+    Number.isInteger(height) &&
+    (width as number) > 0 &&
+    (height as number) > 0;
+
+  return (
+    modelId === 'real-esrgan' &&
+    (qualityTier === undefined || qualityTier === 'quick') &&
+    enhanceFaces !== true &&
+    scale === 2 &&
+    hasKnownDimensions &&
+    (width as number) <= SCALE_PRESERVING_FALLBACK_MAX_SIDE &&
+    (height as number) <= SCALE_PRESERVING_FALLBACK_MAX_SIDE &&
+    (width as number) * (height as number) <= MODEL_MAX_INPUT_PIXELS['real-esrgan-large']
+  );
 }
 
 /**

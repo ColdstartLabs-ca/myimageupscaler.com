@@ -27,18 +27,12 @@ describe('resolveScalePreservingModel', () => {
     ).toEqual({ modelId: 'real-esrgan-large', usedFallback: true });
   });
 
-  it('prioritizes the higher-quality fallback for customers who have paid', () => {
-    expect(getScalePreservingFallbackCandidates(true)).toEqual([
-      'clarity-upscaler',
-      'real-esrgan-large',
-    ]);
+  it('uses cjwbw as the only fallback for customers who have paid', () => {
+    expect(getScalePreservingFallbackCandidates(true)).toEqual(['real-esrgan-large']);
   });
 
-  it('keeps the economical fallback first for free customers', () => {
-    expect(getScalePreservingFallbackCandidates(false)).toEqual([
-      'real-esrgan-large',
-      'clarity-upscaler',
-    ]);
+  it('uses cjwbw as the only fallback for free customers', () => {
+    expect(getScalePreservingFallbackCandidates(false)).toEqual(['real-esrgan-large']);
   });
 
   it('does not route unverified extreme aspect ratios through the fallback', () => {

@@ -168,7 +168,13 @@ test.describe('PRD: True Image Upscaling - Phase 4: Scale Validation', () => {
 
   test.describe('Face Restore Tier (gfpgan) - Scale Validation', () => {
     test('should reject 8x scale for face-restore tier', async ({ request }) => {
-      const user = await ctx.createUser({ credits: 10 });
+      // Face restoration is paid-only. Use a paid fixture so this test reaches
+      // the model scale validation after the access gate.
+      const user = await ctx.createUser({
+        subscription: 'active',
+        tier: 'hobby',
+        credits: 10,
+      });
       const api = new ApiClient(request).withAuth(user.token);
 
       const response = await postUpscale(api, { scale: 8, qualityTier: 'face-restore' });

@@ -1,7 +1,11 @@
 import { serverEnv } from '@shared/config/env';
 import { CREDIT_COSTS } from '@shared/config/credits.config';
 import { TIMEOUTS } from '@shared/config/timeouts.config';
-import { getCreditsForTierAtScale, modelIdToTier } from '@shared/config/subscription.utils';
+import {
+  getCreditsForTierAtScale,
+  isTierAtLeast,
+  modelIdToTier,
+} from '@shared/config/subscription.utils';
 import {
   MODEL_COSTS as CONFIG_MODEL_COSTS,
   MODEL_MAX_INPUT_PIXELS,
@@ -212,6 +216,7 @@ export class ModelRegistry {
         maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
         supportedScales: [CONFIG_MODEL_COSTS.DEFAULT_SCALE, CONFIG_MODEL_COSTS.MAX_SCALE_STANDARD], // GFPGAN max scale is 4
         isEnabled: true,
+        tierRestriction: 'hobby',
       },
       // Nano Banana (Text/Logo Preservation)
       {
@@ -248,6 +253,7 @@ export class ModelRegistry {
         maxOutputResolution: CONFIG_MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
         supportedScales: [CONFIG_MODEL_COSTS.DEFAULT_SCALE, CONFIG_MODEL_COSTS.MAX_SCALE_STANDARD], // No 8x — costs $0.23+ per run (3 chained diffusion passes on A100)
         isEnabled: serverEnv.ENABLE_PREMIUM_MODELS,
+        tierRestriction: 'hobby',
       },
       // Flux-2-Pro (Premium Face Restoration)
       // Enhancement-only model - no true upscaling (no scale parameter, just enhancement)
@@ -511,16 +517,7 @@ export class ModelRegistry {
    * Get models available for a subscription tier
    */
   getModelsByTier(tier: SubscriptionTier): IModelConfig[] {
-    return this.getEnabledModels().filter(model => {
-      if (!model.tierRestriction) return true;
-
-      // Tier hierarchy: business > pro > hobby > free
-      const tierLevels = { free: 0, hobby: 1, pro: 2, business: 3 };
-      const modelLevel = tierLevels[model.tierRestriction.toLowerCase() as SubscriptionTier];
-      const userLevel = tierLevels[tier.toLowerCase() as SubscriptionTier];
-
-      return userLevel >= modelLevel;
-    });
+    return this.getEnabledModels().filter(model => isTierAtLeast(tier, model.tierRestriction));
   }
 
   /**

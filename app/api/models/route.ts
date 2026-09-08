@@ -5,7 +5,11 @@ import { ErrorCodes, createErrorResponse } from '@shared/utils/errors';
 import { createLogger } from '@server/monitoring/logger';
 import { serverEnv } from '@shared/config/env';
 import type { SubscriptionTier } from '@server/services/model-registry.types';
-import { getCreditsForTier, modelIdToTier } from '@shared/config/subscription.utils';
+import {
+  getCreditsForTier,
+  getEffectiveModelAccessTier,
+  modelIdToTier,
+} from '@shared/config/subscription.utils';
 
 /**
  * GET /api/models
@@ -68,21 +72,11 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         return NextResponse.json(body, { status });
       }
 
-      // Check if user has active subscription
-      const hasActiveSubscription =
-        profile.subscription_status === 'active' || profile.subscription_status === 'trialing';
-
-      // Check if user has purchased credits
-      const hasPurchasedCredits = (profile.purchased_credits_balance ?? 0) > 0;
-
-      // Determine user tier:
-      // - If subscription is active, use subscription tier
-      // - If no subscription but has purchased credits, grant 'hobby' tier for model access
-      if (hasActiveSubscription && profile.subscription_tier) {
-        userTier = profile.subscription_tier as SubscriptionTier;
-      } else if (hasPurchasedCredits) {
-        userTier = 'hobby';
-      }
+      userTier = getEffectiveModelAccessTier({
+        subscriptionStatus: profile.subscription_status,
+        subscriptionTier: profile.subscription_tier,
+        purchasedCreditsBalance: profile.purchased_credits_balance,
+      });
     }
 
     // Get models from registry

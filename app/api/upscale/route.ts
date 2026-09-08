@@ -5,9 +5,7 @@ import {
   readBoundedJsonBody,
 } from '@server/http/read-bounded-json-body';
 import { trackServerEvent } from '@server/analytics';
-import {
-  normalizeCoreEventProperties,
-} from '@server/analytics/core-event-contract';
+import { normalizeCoreEventProperties } from '@server/analytics/core-event-contract';
 import { createLogger } from '@server/monitoring/logger';
 import { upscaleRateLimit } from '@server/rateLimit';
 import { batchLimitCheck } from '@server/services/batch-limit.service';
@@ -40,6 +38,12 @@ import { creditManager } from '@server/services/replicate/utils/credit-manager';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv, isProduction } from '@shared/config/env';
 import { MODEL_COSTS } from '@shared/config/model-costs.config';
+import {
+  FACE_ENHANCEMENT_MODEL_ID,
+  evaluateFaceEnhancementPolicy,
+  getFaceEnhancementEntitlement,
+  validateClarityProDimensions,
+} from '@shared/config/face-enhancement-policy';
 import {
   calculateFinalProviderAwareCredits,
   calculateProviderAwareCredits,
@@ -83,10 +87,6 @@ function getSafeReplicateClientMessage(code: string): string {
  */
 function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-function isPaidSubscriptionStatus(status: string | null | undefined): boolean {
-  return status === 'active' || status === 'trialing';
 }
 
 function normalizePaidTier(tier: string | null | undefined): SubscriptionTier {
@@ -490,15 +490,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         subscriptionTier = subMatch[2];
       }
 
-      const isActiveSub = subscriptionStatus === 'active' || subscriptionStatus === 'trialing';
-
       return {
         subscription_status: subscriptionStatus,
         subscription_tier: subscriptionTier,
-        // Subscription users get credits in subscription_credits_balance;
-        // free mock users get a generous purchased_credits_balance so they can process images.
-        subscription_credits_balance: isActiveSub ? 1000 : 0,
-        purchased_credits_balance: isActiveSub ? 0 : 1000,
+        // Free mock credits are promotional subscription-pool credits. They
+        // remain spendable without masquerading as a paid credit purchase.
+        subscription_credits_balance: 1000,
+        purchased_credits_balance: 0,
         is_flagged_freeloader: false,
         region_tier: null,
         signup_country: null,
@@ -574,23 +572,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const subscriptionStatus = profile?.subscription_status ?? null;
-    const hasActiveSubscription = isPaidSubscriptionStatus(subscriptionStatus);
-    const hasPurchasedCredits = (profile?.purchased_credits_balance ?? 0) > 0;
-    const hasPaidPlanHistory =
-      profile?.subscription_tier !== null &&
-      profile?.subscription_tier !== undefined &&
-      profile.subscription_tier !== 'free';
-
-    // Current or former paid users retain paid model-access classification.
-    isPaidUser = hasActiveSubscription || hasPurchasedCredits || hasPaidPlanHistory;
-
-    // Determine tier: subscription tier takes precedence, otherwise 'hobby' for credit purchasers
-    const userTier = hasActiveSubscription
-      ? normalizePaidTier(profile?.subscription_tier)
-      : hasPurchasedCredits
-        ? 'hobby'
-        : null;
+    const faceEntitlement = getFaceEnhancementEntitlement({
+      subscriptionStatus: profile?.subscription_status,
+      subscriptionTier: profile?.subscription_tier,
+      subscriptionCreditsBalance: profile?.subscription_credits_balance,
+      purchasedCreditsBalance: profile?.purchased_credits_balance,
+    });
+    isPaidUser = faceEntitlement.isPaidUser;
+    const userTier = faceEntitlement.effectiveTier;
 
     const providerAvailability = await providerHealthService.getAvailability();
     if (!providerAvailability.available) {
@@ -665,6 +654,50 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     requestedQualityTier = validatedInput.config.qualityTier;
     requestedScale = validatedInput.config.scale;
+
+    const facePolicy = evaluateFaceEnhancementPolicy({
+      request: {
+        qualityTier: validatedInput.config.qualityTier,
+        enhanceFaces: validatedInput.config.additionalOptions.enhanceFaces,
+      },
+      entitlement: faceEntitlement,
+    });
+    if (facePolicy.faceEnhancementRequested && !facePolicy.isPaidUser) {
+      logFailure('face_enhancement_requires_paid', {
+        accessClass: facePolicy.accessClass,
+        spendableCredits: facePolicy.spendableCredits,
+      });
+      await refundAfterRouteFailure('face_enhancement_requires_paid');
+      const { body: errorBody, status } = createErrorResponse(
+        ErrorCodes.FORBIDDEN,
+        'Face enhancement requires paid access. Please upgrade or choose Quick without face enhancement.',
+        403,
+        { requiresPaidAccess: true, faceEnhancement: true }
+      );
+      return NextResponse.json(errorBody, { status });
+    }
+
+    if (facePolicy.invalidModelSelection || facePolicy.requiresReselection) {
+      const failureReason = facePolicy.invalidModelSelection
+        ? 'invalid_face_model_selection'
+        : 'face_enhancement_reselection_required';
+      logFailure(failureReason, {
+        accessClass: facePolicy.accessClass,
+        requestedQualityTier,
+      });
+      await refundAfterRouteFailure(failureReason);
+      const { body: errorBody, status } = createErrorResponse(
+        ErrorCodes.VALIDATION_ERROR,
+        'Please select Clarity Pro or another paid face tier before processing this image.',
+        400,
+        {
+          requiresReselection: facePolicy.requiresReselection,
+          recommendedQualityTier: 'clarity-pro',
+          faceEnhancement: true,
+        }
+      );
+      return NextResponse.json(errorBody, { status });
+    }
 
     const storedInput = await resolveUpscaleInput({
       userId,
@@ -745,11 +778,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const premiumTiers = MODEL_COSTS.PREMIUM_QUALITY_TIERS as readonly QualityTier[];
 
     // Block free users from premium tiers
-    if (
-      !isPaidUser &&
-      config.qualityTier !== 'auto' &&
-      premiumTiers.includes(config.qualityTier)
-    ) {
+    if (!isPaidUser && config.qualityTier !== 'auto' && premiumTiers.includes(config.qualityTier)) {
       logFailure('premium_tier_requires_paid', {
         tier: config.qualityTier,
       });
@@ -813,8 +842,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         smartAnalysis: true,
         // Apply AI suggestions
         enhance: analysis.suggestedEnhancements.enhance || config.additionalOptions.enhance,
-        enhanceFaces:
-          analysis.suggestedEnhancements.enhanceFaces || config.additionalOptions.enhanceFaces,
+        // Face enhancement is an explicit paid-tier selection. Auto analysis
+        // must never turn a normal Quick request into a differently priced job.
+        enhanceFaces: facePolicy.explicitFaceSelection
+          ? analysis.suggestedEnhancements.enhanceFaces || config.additionalOptions.enhanceFaces
+          : false,
         preserveText:
           analysis.suggestedEnhancements.preserveText || config.additionalOptions.preserveText,
         customInstructions:
@@ -846,8 +878,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         ...config.additionalOptions,
         // Apply AI suggestions for enhancements only
         enhance: analysis.suggestedEnhancements.enhance || config.additionalOptions.enhance,
-        enhanceFaces:
-          analysis.suggestedEnhancements.enhanceFaces || config.additionalOptions.enhanceFaces,
+        enhanceFaces: facePolicy.explicitFaceSelection
+          ? analysis.suggestedEnhancements.enhanceFaces || config.additionalOptions.enhanceFaces
+          : false,
         preserveText:
           analysis.suggestedEnhancements.preserveText || config.additionalOptions.preserveText,
         customInstructions:
@@ -890,8 +923,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         height: inputDimensions.height,
         scale: config.scale,
       });
-      // Preserve the better historical output for customers who have paid;
-      // free requests retain the economical fallback order.
+      // Keep oversized Quick on the economical internal model for every
+      // account type. Paid face enhancement is an explicit selection and is
+      // never an implicit fallback for ordinary Quick.
       const fallbackCandidates = getScalePreservingFallbackCandidates(isPaidUser);
       const availableFallbackId = scaleSafeModel.usedFallback
         ? fallbackCandidates.find(candidateId => modelRegistry.getModel(candidateId)?.isEnabled)
@@ -1033,6 +1067,41 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       }
     }
 
+    if (resolvedModelId === FACE_ENHANCEMENT_MODEL_ID && facePolicy.faceEnhancementRequested) {
+      const clarityDimensions = validateClarityProDimensions({
+        inputWidth: inputDimensions?.width,
+        inputHeight: inputDimensions?.height,
+        scale: config.scale,
+      });
+      if (!clarityDimensions.valid) {
+        const failureReason = clarityDimensions.reason ?? 'clarity_pro_dimensions_invalid';
+        logFailure(failureReason, {
+          modelId: resolvedModelId,
+          inputWidth: inputDimensions?.width,
+          inputHeight: inputDimensions?.height,
+          outputMegapixels: clarityDimensions.outputMegapixels,
+        });
+        await refundAfterRouteFailure(failureReason);
+        const message =
+          clarityDimensions.reason === 'output-cap'
+            ? 'The selected Clarity Pro scale would exceed its 64 MP output limit. Choose a smaller scale or image.'
+            : 'Clarity Pro pricing requires valid input dimensions. Please reselect the face tier or upload the image again.';
+        const { body: errorBody, status } = createErrorResponse(
+          ErrorCodes.VALIDATION_ERROR,
+          message,
+          400,
+          {
+            modelId: resolvedModelId,
+            reason: clarityDimensions.reason,
+            ...(clarityDimensions.outputMegapixels !== undefined
+              ? { outputMegapixels: clarityDimensions.outputMegapixels }
+              : {}),
+          }
+        );
+        return NextResponse.json(errorBody, { status });
+      }
+    }
+
     // Calculate credit cost using provider-aware pricing for new models,
     // falling back to tier-based scale multiplier for legacy models.
     const effectiveResolution = resolveEffectiveResolution(
@@ -1073,8 +1142,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // for models that do not own a dedicated quality tier.
     creditCost = providerAware.finalCredits;
 
-    effectiveTotalCredits =
-      (profile?.subscription_credits_balance ?? 0) + (profile?.purchased_credits_balance ?? 0);
+    effectiveTotalCredits = faceEntitlement.spendableCredits;
     if (effectiveTotalCredits < creditCost) {
       logFailure('insufficient_effective_credits', {
         requiredCredits: creditCost,
@@ -1273,6 +1341,23 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     const durationMs = Date.now() - startTime;
+    const processingMetadata = result as typeof result & {
+      actualModelId?: unknown;
+      actualProviderCostUsd?: unknown;
+      providerAttemptCount?: unknown;
+    };
+    const actualProcessingModelId =
+      typeof processingMetadata.actualModelId === 'string'
+        ? processingMetadata.actualModelId
+        : resolvedModelId;
+    const actualProviderCostUsd =
+      typeof processingMetadata.actualProviderCostUsd === 'number'
+        ? processingMetadata.actualProviderCostUsd
+        : undefined;
+    const providerAttemptCount =
+      typeof processingMetadata.providerAttemptCount === 'number'
+        ? processingMetadata.providerAttemptCount
+        : undefined;
 
     // Track upscale completion event (separate from image_upscaled for funnel analysis)
     await trackServerEvent(
@@ -1280,7 +1365,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       {
         telemetrySource: 'server',
         durationMs,
-        modelUsed: resolvedModelId,
+        modelUsed: actualProcessingModelId,
         inputResolution: inputDimensions
           ? `${inputDimensions.width}x${inputDimensions.height}`
           : undefined,
@@ -1293,8 +1378,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     );
 
     // Get the actual model config for display name
-    const modelConfig = modelRegistry.getModel(resolvedModelId);
-    const modelDisplayName = modelConfig?.displayName || resolvedModelId;
+    const modelConfig = modelRegistry.getModel(actualProcessingModelId);
+    const modelDisplayName = modelConfig?.displayName || actualProcessingModelId;
 
     // Calculate output dimensions for dimension reporting
     // For enhancement-only models (flux-2-pro, qwen-image-edit), dimensions don't change
@@ -1332,7 +1417,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       creditsUsed: creditCost,
       originalTier: config.qualityTier,
       usedTier: resolvedTier,
-      modelUsed: resolvedModelId,
+      modelUsed: actualProcessingModelId,
+      ...(actualProviderCostUsd !== undefined ? { actualProviderCostUsd } : {}),
+      ...(providerAttemptCount !== undefined ? { providerAttemptCount } : {}),
       smartAnalysis: config.additionalOptions.smartAnalysis,
     });
 
@@ -1344,7 +1431,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         typeof deliverableOutput.expiresAt === 'number' ? deliverableOutput.expiresAt : undefined, // Expiry timestamp for staged output
       mimeType: deliverableOutput.mimeType || 'image/png',
       processing: {
-        modelUsed: resolvedModelId,
+        modelUsed: actualProcessingModelId,
         modelDisplayName,
         processingTimeMs: durationMs,
         creditsUsed: creditCost,
@@ -1357,7 +1444,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       usedTier: config.qualityTier === 'auto' ? resolvedTier : undefined,
       analysis: {
         contentType: undefined, // Would be populated if analyze-image was called first
-        modelRecommendation: config.qualityTier === 'auto' ? undefined : resolvedModelId,
+        modelRecommendation: config.qualityTier === 'auto' ? undefined : actualProcessingModelId,
       },
       // Include dimension information for verification
       dimensions,

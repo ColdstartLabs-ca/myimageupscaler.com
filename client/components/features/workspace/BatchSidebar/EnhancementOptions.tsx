@@ -19,6 +19,7 @@ import {
   UserSquare2,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import React, { useCallback, useState } from 'react';
 
 export interface IEnhancementOptionsProps {
@@ -29,6 +30,8 @@ export interface IEnhancementOptionsProps {
   disabled?: boolean;
   isFreeUser?: boolean;
   onUpgradeClick?: () => void;
+  onSelectPaidFaceTier?: () => void;
+  faceEnhancementAvailable?: boolean;
   suppressPurchaseCtas?: boolean;
 }
 
@@ -40,8 +43,11 @@ export const EnhancementOptions: React.FC<IEnhancementOptionsProps> = ({
   disabled = false,
   isFreeUser = false,
   onUpgradeClick,
+  onSelectPaidFaceTier,
+  faceEnhancementAvailable = true,
   suppressPurchaseCtas = false,
 }) => {
+  const t = useTranslations('workspace');
   const [isExpanded, setIsExpanded] = useState(false);
   const [autoResize, setAutoResize] = useState(() => isAutoResizeEnabled());
 
@@ -70,6 +76,27 @@ export const EnhancementOptions: React.FC<IEnhancementOptionsProps> = ({
       },
     });
   };
+
+  const handleFaceEnhancementClick = () => {
+    if (disabled || !faceEnhancementAvailable) return;
+    if (isFreeUser) {
+      // Let the workspace own the purchase intent so it can preserve the queue
+      // and use the face-specific checkout trigger. Keep the generic callback
+      // as a fallback for standalone callers.
+      if (onSelectPaidFaceTier) {
+        onSelectPaidFaceTier();
+      } else {
+        onUpgradeClick?.();
+      }
+      return;
+    }
+    onSelectPaidFaceTier?.();
+  };
+
+  // Face enhancement is a paid Clarity Pro selection. It does not apply to
+  // editing-only tiers or to the separate Face Restore model.
+  const showFaceEnhancementCta = selectedTier === 'quick' && !suppressPurchaseCtas;
+  const showSelectedFaceEnhancement = selectedTier === 'clarity-pro';
 
   return (
     <div className="space-y-3">
@@ -255,21 +282,49 @@ export const EnhancementOptions: React.FC<IEnhancementOptionsProps> = ({
               )}
             </div>
 
-            {/* Enhance Faces */}
-            <div className="flex items-center gap-2 pl-1">
-              <input
-                type="checkbox"
-                id="enhance-faces"
-                checked={options.enhanceFaces}
-                onChange={e => handleToggle('enhanceFaces', e.target.checked)}
-                disabled={disabled}
-                className="h-3.5 w-3.5 rounded border-border text-accent focus:ring-accent disabled:opacity-50"
-              />
-              <label htmlFor="enhance-faces" className="flex items-center gap-2 cursor-pointer">
-                <UserSquare2 className="h-3.5 w-3.5 text-muted-foreground" />
-                <span className="text-sm text-white">Enhance Faces</span>
-              </label>
-            </div>
+            {/* Paid face enhancement selection */}
+            {showFaceEnhancementCta && (
+              <button
+                type="button"
+                onClick={handleFaceEnhancementClick}
+                disabled={disabled || !faceEnhancementAvailable}
+                className="w-full flex items-start gap-2 rounded-lg border border-accent/25 bg-accent/10 p-2 text-left transition-colors hover:border-accent/50 hover:bg-accent/15 disabled:cursor-not-allowed disabled:opacity-50"
+                aria-label="Enhance faces with Clarity Pro"
+              >
+                <UserSquare2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center justify-between gap-2">
+                    <span className="text-sm font-medium text-white">
+                      {t('workspace.faceEnhancement.title')}
+                    </span>
+                    <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider text-accent">
+                      {isFreeUser
+                        ? t('workspace.faceEnhancement.upgradeLabel')
+                        : t('workspace.faceEnhancement.clarityProLabel')}
+                    </span>
+                  </span>
+                  <span className="mt-0.5 block text-xs text-muted-foreground">
+                    {isFreeUser
+                      ? t('workspace.faceEnhancement.upgradeDescription')
+                      : t('workspace.faceEnhancement.selectDescription')}
+                  </span>
+                </span>
+              </button>
+            )}
+
+            {showSelectedFaceEnhancement && (
+              <div className="flex items-start gap-2 rounded-lg border border-accent/25 bg-accent/10 p-2">
+                <UserSquare2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />
+                <div>
+                  <div className="text-sm font-medium text-white">
+                    {t('workspace.faceEnhancement.selectedTitle')}
+                  </div>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {t('workspace.faceEnhancement.selectedDescription')}
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Preserve Text */}
             <div className="flex items-center gap-2 pl-1">

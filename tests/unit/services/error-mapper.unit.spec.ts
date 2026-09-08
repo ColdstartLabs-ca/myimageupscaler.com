@@ -18,18 +18,17 @@ describe('ReplicateErrorMapper', () => {
     mapper = new ReplicateErrorMapper();
   });
 
-  // A CUDA OOM is contention on Replicate's shared GPU, not an oversized
-  // input: the model rejects genuinely large images with its own size guard
-  // before allocating. Production data (Aug 8-17) showed 140 such failures,
-  // all previously told to "try a smaller image".
+  // Generic CUDA/GPU-memory wording is provider-side evidence only. A model
+  // size guard must be explicit before the caller can classify the input as
+  // too large or authorize the bounded alternate-model recovery.
   describe('GPU OOM Error Detection', () => {
-    it('should map a bare "GPU memory" fault to IMAGE_TOO_LARGE', () => {
+    it('should map a bare "GPU memory" fault to PROVIDER_UNAVAILABLE', () => {
       const error = new Error('GPU memory allocation failed');
       const result = mapper.mapError(error);
 
       expect(result).toBeInstanceOf(ReplicateError);
-      expect(result.code).toBe(ReplicateErrorCode.IMAGE_TOO_LARGE);
-      expect(result.message).toContain('too large');
+      expect(result.code).toBe(ReplicateErrorCode.PROVIDER_UNAVAILABLE);
+      expect(result.message).toContain('service was busy');
     });
 
     it('should map "greater than the max size" to IMAGE_TOO_LARGE', () => {

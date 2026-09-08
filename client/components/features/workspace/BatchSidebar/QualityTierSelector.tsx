@@ -26,6 +26,7 @@ export interface IQualityTierSelectorProps {
 
 export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
   tier,
+  scale,
   onChange,
   disabled = false,
   isFreeUser = false,
@@ -101,6 +102,7 @@ export const QualityTierSelector: React.FC<IQualityTierSelectorProps> = ({
         onUpgrade={onUpgrade}
         onUpgradeDirect={onUpgradeDirect}
         suppressPurchaseCtas={suppressPurchaseCtas}
+        selectedScale={scale}
       />
     </div>
   );

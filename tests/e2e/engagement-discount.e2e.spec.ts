@@ -7,7 +7,7 @@
  * 3. Toast display when user meets engagement thresholds
  * 4. Toast interactions (dismiss, claim)
  *
- * Flow: free user meets 2/3 engagement thresholds (upscales + model switch)
+ * Flow: free user meets 2/3 engagement thresholds (upscales + included model switch)
  *       → eligibility API returns eligible
  *       → toast slides in with discount offer
  *
@@ -205,16 +205,16 @@ async function uploadTestImage(page: Page): Promise<void> {
 }
 
 /**
- * Switch the quality tier from the default "Quick" to "Face Restore" (a free tier).
- * "Face Restore" is in FREE_QUALITY_TIERS and different from the 'quick' default,
- * so clicking it triggers trackModelSwitch() via the useEffect in Workspace.tsx.
+ * Switch the quality tier from the default "Quick" to "Background Removal" (an
+ * included tier). It differs from the 'quick' default, so clicking it triggers
+ * trackModelSwitch() via the useEffect in Workspace.tsx.
  *
  * Flow:
  *   1. Click "Quality Tier" button → opens ModelGalleryModal
- *   2. Click "Face Restore" card → onSelect('face-restore') + onClose()
+ *   2. Click "Background Removal" card → onSelect('bg-removal') + onClose()
  *   3. config.qualityTier changes → useEffect → trackModelSwitch()
  */
-async function switchToFaceRestoreModel(page: Page): Promise<void> {
+async function switchToIncludedModel(page: Page): Promise<void> {
   // Wait for the quality tier label in the sidebar
   const qualityTierLabel = page.getByText('Quality Tier');
   await expect(qualityTierLabel).toBeVisible({ timeout: 10000 });
@@ -224,10 +224,10 @@ async function switchToFaceRestoreModel(page: Page): Promise<void> {
   await tierSelectorButton.click();
 
   // Wait for model gallery modal to open
-  await expect(page.getByText('Face Restore').first()).toBeVisible({ timeout: 5000 });
+  await expect(page.getByText('Background Removal').first()).toBeVisible({ timeout: 5000 });
 
-  // Click the Face Restore card — free tier, triggers handleSelect → onSelect + onClose
-  await page.getByText('Face Restore').first().click();
+  // Click the included Background Removal card, which triggers trackModelSwitch().
+  await page.getByText('Background Removal').first().click();
 
   // Brief pause for React state update and useEffect to fire
   await page.waitForTimeout(300);
@@ -262,7 +262,7 @@ async function setupAndShowToast(page: Page): Promise<void> {
 
   await page.goto('/dashboard');
   await uploadTestImage(page);
-  await switchToFaceRestoreModel(page);
+  await switchToIncludedModel(page);
 
   // Toast animates in after 100ms delay → allow up to 10s for full visibility
   await expect(page.getByText(/off your first purchase/i)).toBeVisible({ timeout: 10000 });
@@ -436,7 +436,7 @@ test.describe('Engagement Discount: Toast Display', () => {
 
     await page.goto('/dashboard');
     await uploadTestImage(page);
-    await switchToFaceRestoreModel(page);
+    await switchToIncludedModel(page);
 
     // Allow time for any async eligibility check to complete
     await page.waitForTimeout(2000);
@@ -521,7 +521,7 @@ test.describe('Engagement Discount: Toast Interactions', () => {
 
     await page.goto('/dashboard');
     await uploadTestImage(page);
-    await switchToFaceRestoreModel(page);
+    await switchToIncludedModel(page);
 
     // Wait for the toast to appear (eligibility check completed)
     await expect(page.getByText('off your first purchase')).toBeVisible({ timeout: 10000 });

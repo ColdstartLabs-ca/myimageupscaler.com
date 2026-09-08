@@ -30,7 +30,7 @@ describe('scale-preserving fallback wiring', () => {
     },
   };
 
-  it('registers an input builder for every fallback candidate', () => {
+  it('registers an input builder for the cjwbw fallback', () => {
     for (const candidateId of SCALE_PRESERVING_FALLBACK_CANDIDATES) {
       expect(modelInputBuilderOrchestrator.hasBuilder(candidateId)).toBe(true);
     }

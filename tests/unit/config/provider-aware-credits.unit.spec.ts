@@ -169,6 +169,20 @@ describe('Provider-Aware Credits', () => {
       expect(result.totalCredits).toBe(12);
     });
 
+    it('keeps the batch quote renderable while image dimensions are loading', () => {
+      const result = calculateBatchProviderAwareCreditCost({
+        config: {
+          qualityTier: 'clarity-pro',
+          scale: 4,
+          additionalOptions: {},
+        },
+        items: [{ inputDimensions: undefined }],
+      });
+
+      expect(result.perItemCredits).toEqual([3]);
+      expect(result.totalCredits).toBe(3);
+    });
+
     it('static display helpers expose provider-aware bounds without component special cases', () => {
       expect(getCreditDisplayForTier('clarity-pro')).toBe('3-160 credits');
       expect(getCreditDisplayForTier('clarity-pro', 'CR')).toBe('3-160 CR');

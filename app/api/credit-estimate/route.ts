@@ -9,6 +9,12 @@ import { ModelRegistry } from '@server/services/model-registry';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
 import {
+  FACE_ENHANCEMENT_MODEL_ID,
+  evaluateFaceEnhancementPolicy,
+  getFaceEnhancementEntitlement,
+  validateClarityProDimensions,
+} from '@shared/config/face-enhancement-policy';
+import {
   calculateFinalProviderAwareCredits,
   getModelForTier,
   modelIdToTier,
@@ -36,7 +42,10 @@ function getMockUserProfile(userId: string) {
   return {
     subscription_status: isBusinessUser || isProUser || isHobbyUser ? 'active' : null,
     subscription_tier: userTier !== 'free' ? userTier : null,
-    credits_balance: 100, // Default test credits
+    // Free mock credits are promotional subscription-pool credits. They are
+    // spendable but do not grant paid face/model access.
+    subscription_credits_balance: 100,
+    purchased_credits_balance: 0,
   };
 }
 
@@ -140,11 +149,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const body = await req.json();
     const validatedInput = creditEstimateSchema.parse(body);
 
-    // Get user's subscription tier
+    // Get the same subscription and dual credit pools used by /api/upscale.
     let profile: {
       subscription_status: string | null;
       subscription_tier: string | null;
-      credits_balance: number;
+      subscription_credits_balance: number | null;
+      purchased_credits_balance: number | null;
     } | null;
     let profileError: {
       message: string;
@@ -152,8 +162,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     } | null;
 
     // Handle mock users in test environment
-    if (serverEnv.ENV === 'test' && (userId.startsWith('mock_user_') || userId.length === 36)) {
-      // Mock users have UUIDs in test mode or start with mock_user_
+    if (serverEnv.ENV === 'test' && userId.startsWith('mock_user_')) {
+      // Mock users without a database profile use the same dual-pool shape as
+      // the upscale route. UUID-shaped IDs still use the mocked profile query.
       profile = getMockUserProfile(userId);
       profileError = null;
       logger.info('Using mock user profile for test environment', {
@@ -164,7 +175,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       // Fetch real user profile from database
       const result = await supabaseAdmin
         .from('profiles')
-        .select('subscription_status, subscription_tier, credits_balance')
+        .select(
+          'subscription_status, subscription_tier, subscription_credits_balance, purchased_credits_balance'
+        )
         .eq('id', userId)
         .single();
 
@@ -182,12 +195,55 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json(body, { status });
     }
 
-    // Determine user tier
-    // Active subscriptions without tier default to 'hobby' (lowest paid tier)
-    // to avoid blocking paying users who have missing tier data
-    let userTier: 'free' | 'hobby' | 'pro' | 'business' = 'free';
-    if (profile.subscription_status === 'active') {
-      userTier = (profile.subscription_tier as 'hobby' | 'pro' | 'business') || 'hobby';
+    const faceEntitlement = getFaceEnhancementEntitlement({
+      subscriptionStatus: profile.subscription_status,
+      subscriptionTier: profile.subscription_tier,
+      subscriptionCreditsBalance: profile.subscription_credits_balance,
+      purchasedCreditsBalance: profile.purchased_credits_balance,
+    });
+    const userTier = faceEntitlement.effectiveTier;
+
+    const facePolicy = evaluateFaceEnhancementPolicy({
+      request: {
+        qualityTier: validatedInput.config.qualityTier,
+        selectedModel: validatedInput.config.selectedModel,
+        enhanceFaces:
+          validatedInput.config.enhanceFaces === true ||
+          validatedInput.config.additionalOptions?.enhanceFaces === true,
+      },
+      entitlement: faceEntitlement,
+    });
+    if (facePolicy.faceEnhancementRequested && !facePolicy.isPaidUser) {
+      logger.warn('Face enhancement requires paid access', {
+        userId,
+        accessClass: facePolicy.accessClass,
+      });
+      const { body: errorBody, status } = createErrorResponse(
+        ErrorCodes.FORBIDDEN,
+        'Face enhancement requires paid access. Please upgrade or choose Quick without face enhancement.',
+        403,
+        { requiresPaidAccess: true, faceEnhancement: true }
+      );
+      return NextResponse.json(errorBody, { status });
+    }
+
+    if (facePolicy.invalidModelSelection || facePolicy.requiresReselection) {
+      logger.warn('Face enhancement selection requires reselection', {
+        userId,
+        accessClass: facePolicy.accessClass,
+        invalidModelSelection: facePolicy.invalidModelSelection,
+      });
+      const { body: errorBody, status } = createErrorResponse(
+        ErrorCodes.VALIDATION_ERROR,
+        'Please select Clarity Pro or another paid face tier before requesting a quote.',
+        400,
+        {
+          requiresReselection: facePolicy.requiresReselection,
+          recommendedQualityTier: 'clarity-pro',
+          faceEnhancement: true,
+        }
+      );
+      return NextResponse.json(errorBody, { status });
     }
 
     const modelRegistry = ModelRegistry.getInstance();
@@ -199,8 +255,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const tierModel = validatedInput.config.qualityTier
       ? getModelForTier(validatedInput.config.qualityTier)
       : null;
-    let modelToUse: string =
-      requestedAuto ? 'auto' : (tierModel ?? validatedInput.config.selectedModel);
+    let modelToUse: string = requestedAuto
+      ? 'auto'
+      : (tierModel ?? validatedInput.config.selectedModel);
 
     if (modelToUse === 'auto' || !modelToUse) {
       // Use analysis hint to recommend model
@@ -308,6 +365,40 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const inputWidth = decodedDimensions?.width ?? validatedInput.config.inputWidth;
     const inputHeight = decodedDimensions?.height ?? validatedInput.config.inputHeight;
 
+    if (modelToUse === FACE_ENHANCEMENT_MODEL_ID && facePolicy.faceEnhancementRequested) {
+      const clarityDimensions = validateClarityProDimensions({
+        inputWidth,
+        inputHeight,
+        scale: validatedInput.config.scale,
+      });
+      if (!clarityDimensions.valid) {
+        logger.warn('Clarity Pro estimate dimensions rejected', {
+          userId,
+          reason: clarityDimensions.reason,
+          inputWidth,
+          inputHeight,
+          outputMegapixels: clarityDimensions.outputMegapixels,
+        });
+        const message =
+          clarityDimensions.reason === 'output-cap'
+            ? 'The selected Clarity Pro scale would exceed its 64 MP output limit. Choose a smaller scale or image.'
+            : 'Clarity Pro pricing requires valid input dimensions. Please provide the original image dimensions.';
+        const { body: errorBody, status } = createErrorResponse(
+          ErrorCodes.VALIDATION_ERROR,
+          message,
+          400,
+          {
+            modelId: modelToUse,
+            reason: clarityDimensions.reason,
+            ...(clarityDimensions.outputMegapixels !== undefined
+              ? { outputMegapixels: clarityDimensions.outputMegapixels }
+              : {}),
+          }
+        );
+        return NextResponse.json(errorBody, { status });
+      }
+    }
+
     // Use provider-aware pricing for new models, fallback to legacy tier-based for others
     const providerAware = calculateFinalProviderAwareCredits({
       modelId: modelToUse,
@@ -316,8 +407,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       inputWidth,
       inputHeight,
       smartAnalysis:
-        !requestedAuto &&
-        (validatedInput.config.additionalOptions?.smartAnalysis ?? false),
+        !requestedAuto && (validatedInput.config.additionalOptions?.smartAnalysis ?? false),
       targetResolution: validatedInput.config.targetResolution,
       effectiveResolution: resolveEffectiveResolution(
         modelToUse,
@@ -351,8 +441,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       modelToBe: modelToUse,
       modelDisplayName: model.displayName,
       estimatedProcessingTime: estimatedTime,
-      userCredits: profile.credits_balance || 0,
-      canAfford: (profile.credits_balance || 0) >= totalCredits,
+      userCredits: faceEntitlement.spendableCredits,
+      canAfford: faceEntitlement.spendableCredits >= totalCredits,
     };
 
     logger.info('Credit estimate calculated', {

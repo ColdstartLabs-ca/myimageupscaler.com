@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { isGpuContentionError, isTransientUpstreamError } from '@server/utils/retry';
+import {
+  isAmbiguousProviderFailure,
+  isGenericReplicateRetryableError,
+  isGpuContentionError,
+  isTransientUpstreamError,
+} from '@server/utils/retry';
 import { createReplicateRetryPolicy } from '@server/services/replicate.service';
+import { isScalePreservingRecoveryEligible } from '@server/services/scale-preserving-model';
 import {
   ReplicateErrorCode,
   replicateErrorMapper,
@@ -13,17 +19,19 @@ import {
  * The model's own guard rejects an input that is genuinely too big, before any
  * allocation. Retrying is pointless and the user does need a smaller image.
  *
- * A CUDA OOM is contention on Replicate's shared GPU: the message reports how
- * little of the card was free at that moment. The same request succeeds on a
- * quieter GPU, so it should retry and must not tell the user their image is
- * too large. 140 of 151 Real-ESRGAN failures over Aug 8-17 were this case,
- * every one of them failing without a single retry.
+ * A confirmed CUDA OOM is contention on Replicate's shared GPU: the message
+ * reports how little of the card was free at that moment. Quick recovery moves
+ * to cjwbw instead of replaying NightmareAI. 140 of 151 Real-ESRGAN failures
+ * over Aug 8-17 were this case, every one of them failing without a single
+ * retry.
  */
 const CONTENTION_OOM =
   'CUDA out of memory. Tried to allocate 4.00 GiB. GPU 0 has a total capacity of 14.56 GiB of which 3.47 GiB is free.';
 
 const MODEL_PIXEL_GUARD =
   'Input image of dimensions (1800, 1800, 3) has a total number of pixels 3240000 greater than the max size that fits in GPU memory on this hardware, 2096704. Resize input image and try again.';
+const MODEL_PIXEL_GUARD_SHORT =
+  'CUDA out of memory: image exceeds the maximum size that fits in GPU memory for this model.';
 
 describe('GPU failure classification', () => {
   it('recognises a contention OOM', () => {
@@ -35,7 +43,11 @@ describe('GPU failure classification', () => {
     expect(isTransientUpstreamError(MODEL_PIXEL_GUARD)).toBe(false);
   });
 
-  it('retries a contention OOM once and then gives up', () => {
+  it('does not retry a shorter model size guard with CUDA wording', () => {
+    expect(isGpuContentionError(MODEL_PIXEL_GUARD_SHORT)).toBe(false);
+  });
+
+  it('retains one same-model OOM retry for non-Quick callers', () => {
     const shouldRetry = createReplicateRetryPolicy();
 
     // A contention attempt burns ~16s median of provider time, so a second
@@ -43,6 +55,63 @@ describe('GPU failure classification', () => {
     // user would see a timeout instead of a clear message.
     expect(shouldRetry(CONTENTION_OOM)).toBe(true);
     expect(shouldRetry(CONTENTION_OOM)).toBe(false);
+  });
+
+  it('disables same-model OOM retries for the Quick recovery policy', () => {
+    const shouldRetry = createReplicateRetryPolicy(0);
+
+    expect(shouldRetry(CONTENTION_OOM)).toBe(false);
+    expect(isGenericReplicateRetryableError('502 Bad Gateway')).toBe(true);
+  });
+
+  it('does not call an OOM confirmed when the provider state is ambiguous', () => {
+    const ambiguousOom = `${CONTENTION_OOM} Prediction timed out while waiting for a result.`;
+
+    expect(isAmbiguousProviderFailure(ambiguousOom)).toBe(true);
+    expect(isGpuContentionError(ambiguousOom)).toBe(false);
+  });
+
+  it('limits recovery eligibility to known dimensions in the verified Quick 2x envelope', () => {
+    expect(
+      isScalePreservingRecoveryEligible({
+        modelId: 'real-esrgan',
+        width: 1200,
+        height: 1200,
+        scale: 2,
+        qualityTier: 'quick',
+        enhanceFaces: false,
+      })
+    ).toBe(true);
+    expect(
+      isScalePreservingRecoveryEligible({
+        modelId: 'real-esrgan',
+        width: undefined,
+        height: 1200,
+        scale: 2,
+        qualityTier: 'quick',
+        enhanceFaces: false,
+      })
+    ).toBe(false);
+    expect(
+      isScalePreservingRecoveryEligible({
+        modelId: 'real-esrgan',
+        width: 1200,
+        height: 1200,
+        scale: 4,
+        qualityTier: 'quick',
+        enhanceFaces: false,
+      })
+    ).toBe(false);
+    expect(
+      isScalePreservingRecoveryEligible({
+        modelId: 'real-esrgan',
+        width: 1200,
+        height: 1200,
+        scale: 2,
+        qualityTier: 'quick',
+        enhanceFaces: true,
+      })
+    ).toBe(false);
   });
 
   it('keeps the full retry budget for fast-failing transient errors', () => {
@@ -65,6 +134,15 @@ describe('GPU failure classification', () => {
 
     expect(mapped.code).toBe(ReplicateErrorCode.PROVIDER_UNAVAILABLE);
     expect(mapped.message.toLowerCase()).not.toContain('too large');
+    expect(mapped.message.toLowerCase()).not.toContain('smaller image');
+  });
+
+  it('does not call generic GPU-memory wording proof of an oversized image', () => {
+    const mapped = replicateErrorMapper.mapError(
+      new Error('GPU memory exhausted during inference')
+    );
+
+    expect(mapped.code).toBe(ReplicateErrorCode.PROVIDER_UNAVAILABLE);
     expect(mapped.message.toLowerCase()).not.toContain('smaller image');
   });
 

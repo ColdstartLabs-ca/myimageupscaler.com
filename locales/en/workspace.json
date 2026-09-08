@@ -141,6 +141,19 @@
       "processing": "Processing...",
       "allProcessed": "All Processed",
       "processAll": "Process All ({count})"
+    },
+    "faceEnhancement": {
+      "title": "Enhance Faces",
+      "upgradeLabel": "Upgrade",
+      "clarityProLabel": "Clarity Pro",
+      "upgradeDescription": "Unlock paid face upscaling with Clarity Pro.",
+      "selectDescription": "Select Clarity Pro to upscale faces at the displayed image-based price.",
+      "selectedTitle": "Clarity Pro face upscaling",
+      "selectedDescription": "The cost above uses your queued image dimensions and selected scale.",
+      "reselectionRequired": "Your saved face-enhancement setting needs review. Choose Clarity Pro before processing again.",
+      "unavailableTitle": "Face upscaling unavailable",
+      "unavailableMessage": "Clarity Pro is currently unavailable. Please choose another tier.",
+      "unsupportedScale": "Clarity Pro does not support {scale}x at the moment. Choose a supported scale."
     }
   },
   "enhancementOptions": {

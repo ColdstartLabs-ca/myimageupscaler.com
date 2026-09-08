@@ -82,7 +82,7 @@ export const MODEL_COSTS = {
 
   // Model tier restrictions
   // Note: These are informational constants for UI/reference. Actual enforcement is handled via tierRestriction in MODEL_CONFIG.
-  FREE_MODELS: ['real-esrgan', 'gfpgan', 'nano-banana', 'flux-kontext-fast'], // All models with tierRestriction: null
+  FREE_MODELS: ['real-esrgan', 'nano-banana', 'flux-kontext-fast'], // All models with tierRestriction: null
   HOBBY_MODELS: [
     'real-esrgan',
     'gfpgan',
@@ -149,9 +149,10 @@ export const MODEL_COSTS = {
     'clarity-pro',
     'crisp-upscale',
     'nano-banana-2',
+    'face-restore',
   ] as const,
   // Quality tiers available to free users
-  FREE_QUALITY_TIERS: ['quick', 'face-restore', 'bg-removal'] as const,
+  FREE_QUALITY_TIERS: ['quick', 'bg-removal'] as const,
   // Smart AI Analysis requires paid subscription
   SMART_ANALYSIS_REQUIRES_PAID: true,
 
@@ -216,7 +217,7 @@ export const MODEL_CONFIG = {
     maxInputResolution: MODEL_COSTS.MAX_INPUT_RESOLUTION,
     maxOutputResolution: MODEL_COSTS.MAX_OUTPUT_RESOLUTION,
     supportedScales: [MODEL_COSTS.DEFAULT_SCALE, MODEL_COSTS.MAX_SCALE_STANDARD],
-    tierRestriction: null,
+    tierRestriction: 'hobby',
   },
   'nano-banana': {
     cost: MODEL_COSTS.NANO_BANANA_COST,

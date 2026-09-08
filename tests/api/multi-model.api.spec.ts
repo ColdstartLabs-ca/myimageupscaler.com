@@ -237,7 +237,7 @@ test.describe('API: Multi-Model Architecture', () => {
       expect(data.breakdown.totalCredits).toBe(10);
     });
 
-    test('should cap Clarity Pro output-megapixel estimate at 64MP', async () => {
+    test('should reject Clarity Pro estimates above the 64MP output cap', async () => {
       const user = await ctx.createUser({
         subscription: 'active',
         tier: 'hobby',
@@ -259,13 +259,16 @@ test.describe('API: Multi-Model Architecture', () => {
         },
       });
 
-      response.expectStatus(200);
+      response.expectStatus(400);
+      await response.expectErrorCode('VALIDATION_ERROR');
       const data = await response.json();
 
-      expect(data.modelToBe).toBe('clarity-pro-upscaler');
-      expect(data.breakdown.pricingModel).toBe('output-megapixel');
-      expect(data.breakdown.outputMegapixels).toBe(64);
-      expect(data.breakdown.totalCredits).toBe(160);
+      expect(data.error.message).toContain('64 MP output limit');
+      expect(data.error.details).toMatchObject({
+        modelId: 'clarity-pro-upscaler',
+        reason: 'output-cap',
+        outputMegapixels: 1024,
+      });
     });
 
     test('should estimate Recraft Crisp at its neutral scale and reject scale 4', async () => {

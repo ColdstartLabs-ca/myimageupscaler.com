@@ -14,7 +14,8 @@ export type TInterruptedJobActionReason =
   | 'stale'
   | 'missing_inputs'
   | 'credits_unconfirmed'
-  | 'resume_failed';
+  | 'resume_failed'
+  | 'face_reselection_required';
 
 export interface IInterruptedJob {
   version: typeof INTERRUPTED_JOB_VERSION;
@@ -111,6 +112,10 @@ function isValidConfig(value: unknown): value is IUpscaleConfig {
     typeof options.preserveText === 'boolean' &&
     (options.customInstructions === undefined || typeof options.customInstructions === 'string')
   );
+}
+
+function hasLegacyQuickFaceEnhancement(config: IUpscaleConfig): boolean {
+  return config.qualityTier === 'quick' && config.additionalOptions.enhanceFaces === true;
 }
 
 function isValidJob(value: unknown): value is IInterruptedJob {
@@ -230,6 +235,25 @@ export function inspectInterruptedJob(now = Date.now()): TInterruptedJobInspecti
     };
     writeStoredJob(staleJob);
     return { status: 'needs_action', job: staleJob, reason: 'stale' };
+  }
+
+  // A pre-policy saved job may contain the old Quick face checkbox. Keep it
+  // claimable only after the user explicitly chooses the paid face tier.
+  if (
+    job.actionReason !== 'face_reselection_required' &&
+    hasLegacyQuickFaceEnhancement(job.config)
+  ) {
+    const staleFaceJob: IInterruptedJob = {
+      ...job,
+      status: 'needs_action',
+      actionReason: 'face_reselection_required',
+    };
+    writeStoredJob(staleFaceJob);
+    return {
+      status: 'needs_action',
+      job: staleFaceJob,
+      reason: 'face_reselection_required',
+    };
   }
 
   if (job.status === 'claimed') return { status: 'already_claimed', job };

@@ -78,4 +78,100 @@ describe('processing cost telemetry', () => {
 
     consoleError.mockRestore();
   });
+
+  it('should persist safe per-attempt provider attribution without double charging credits', async () => {
+    await recordProcessingCostTelemetry({
+      userId: 'user-1',
+      jobId: 'prediction-recovery',
+      attribution: {
+        modelId: 'real-esrgan-large',
+        qualityTier: 'quick',
+        scale: 2,
+        providerCostUsd: 0.0064,
+        creditsCharged: 10,
+        pricingModel: 'flat',
+        attempts: [
+          {
+            modelId: 'real-esrgan',
+            modelVersion: 'nightmareai/real-esrgan:test-version',
+            predictionId: 'prediction-primary',
+            status: 'failed',
+            providerCostUsd: 0.0017,
+            failureCode: 'PROVIDER_UNAVAILABLE',
+          },
+          {
+            modelId: 'real-esrgan-large',
+            modelVersion: 'cjwbw/real-esrgan:fallback-test-version',
+            predictionId: 'prediction-recovery',
+            status: 'succeeded',
+            providerCostUsd: 0.0047,
+          },
+        ],
+      },
+    });
+
+    expect(mocks.insert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        model_id: 'real-esrgan-large',
+        provider_cost_usd: 0.0064,
+        credits_charged: 10,
+        settings: {
+          provider_job_id: 'prediction-recovery',
+          pricing_model: 'flat',
+          attempt_count: 2,
+          attempts: [
+            expect.objectContaining({
+              modelId: 'real-esrgan',
+              predictionId: 'prediction-primary',
+              providerCostUsd: 0.0017,
+            }),
+            expect.objectContaining({
+              modelId: 'real-esrgan-large',
+              predictionId: 'prediction-recovery',
+              providerCostUsd: 0.0047,
+            }),
+          ],
+        },
+      })
+    );
+  });
+
+  it('should mark failed provider attempts as refunded while retaining the quoted amount', async () => {
+    await recordProcessingCostTelemetry({
+      userId: 'user-1',
+      jobId: 'prediction-failed',
+      status: 'failed',
+      attribution: {
+        modelId: 'real-esrgan-large',
+        qualityTier: 'quick',
+        scale: 2,
+        providerCostUsd: 0.0064,
+        creditsCharged: 0,
+        quotedCredits: 10,
+        pricingModel: 'flat',
+        attempts: [
+          {
+            modelId: 'real-esrgan',
+            modelVersion: 'nightmareai/real-esrgan:test-version',
+            predictionId: 'prediction-primary',
+            status: 'failed',
+            providerCostUsd: 0.0017,
+            failureCode: 'PROVIDER_UNAVAILABLE',
+          },
+        ],
+      },
+      failureReason: 'replicate_provider_unavailable',
+    });
+
+    expect(mocks.insert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: 'failed',
+        credits_used: 0,
+        credits_charged: 0,
+        error_message: 'replicate_provider_unavailable',
+        settings: expect.objectContaining({ quoted_credits: 10, attempt_count: 1 }),
+        completed_at: null,
+      })
+    );
+  });
 });

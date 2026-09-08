@@ -8,6 +8,7 @@ import {
   type IBatchItem,
   type IUpscaleConfig,
   type QualityTier,
+  type SubscriptionTier,
 } from '../types/coreflow.types';
 import {
   MODEL_RESOLUTION_PROVIDER_COSTS,
@@ -194,6 +195,72 @@ export function getRecommendedPlan(): IPlanConfig | null {
 export function getCreditsForTier(tier: QualityTier): number {
   const config = QUALITY_TIER_CONFIG[tier].credits;
   return config === 'variable' ? 0 : config; // Auto tier cost determined at runtime
+}
+
+// ============================================
+// Model Access Tier Functions
+// ============================================
+
+/**
+ * Subscription tier hierarchy used by model selection and catalog access.
+ */
+export const SUBSCRIPTION_TIER_LEVELS: Record<SubscriptionTier, number> = {
+  free: 0,
+  hobby: 1,
+  pro: 2,
+  business: 3,
+};
+
+function normalizeSubscriptionTier(tier: string | null | undefined): SubscriptionTier | null {
+  const normalizedTier = tier?.toLowerCase();
+  return normalizedTier && normalizedTier in SUBSCRIPTION_TIER_LEVELS
+    ? (normalizedTier as SubscriptionTier)
+    : null;
+}
+
+/**
+ * Check whether a user tier meets a model's minimum tier requirement.
+ * Missing requirements are available to every tier; invalid requirements are
+ * rejected so a malformed model configuration cannot become free.
+ */
+export function isTierAtLeast(
+  userTier: string | null | undefined,
+  requiredTier: string | null | undefined
+): boolean {
+  if (requiredTier === null || requiredTier === undefined) return true;
+
+  const normalizedRequiredTier = normalizeSubscriptionTier(requiredTier);
+  if (!normalizedRequiredTier) return false;
+
+  const normalizedUserTier = normalizeSubscriptionTier(userTier) ?? 'free';
+  return (
+    SUBSCRIPTION_TIER_LEVELS[normalizedUserTier] >= SUBSCRIPTION_TIER_LEVELS[normalizedRequiredTier]
+  );
+}
+
+/**
+ * Resolve the tier used by model catalog access from the profile fields that
+ * the catalog endpoint already supports. Credit-only purchasers receive the
+ * existing hobby-level model access.
+ */
+export function getEffectiveModelAccessTier(profile: {
+  subscriptionStatus?: string | null;
+  subscriptionTier?: string | null;
+  purchasedCreditsBalance?: number | null;
+}): SubscriptionTier {
+  const hasActiveSubscription =
+    profile.subscriptionStatus === 'active' || profile.subscriptionStatus === 'trialing';
+  const subscriptionTier = normalizeSubscriptionTier(profile.subscriptionTier);
+
+  if (hasActiveSubscription && subscriptionTier) {
+    return subscriptionTier;
+  }
+
+  if ((profile.purchasedCreditsBalance ?? 0) > 0) {
+    return 'hobby';
+  }
+
+  return 'free';
 }
 
 /**
@@ -700,6 +767,22 @@ export function calculateBatchProviderAwareCreditCost(params: {
 
     const modelId = QUALITY_TIER_CONFIG[qualityTier].modelId;
     if (modelId) {
+      const needsInputDimensions = modelId === 'clarity-pro-upscaler' || modelId === 'flux-2-pro';
+      const hasInputDimensions =
+        Number.isFinite(item.inputDimensions?.width) &&
+        Number.isFinite(item.inputDimensions?.height) &&
+        (item.inputDimensions?.width ?? 0) > 0 &&
+        (item.inputDimensions?.height ?? 0) > 0;
+
+      // Queue dimensions are populated asynchronously after a file is added.
+      // Keep the controls renderable with a conservative model bound until the
+      // exact per-image quote can be calculated.
+      if (needsInputDimensions && !hasInputDimensions) {
+        return (
+          getCreditsForTierAtScale(qualityTier, scale) + (additionalOptions?.smartAnalysis ? 1 : 0)
+        );
+      }
+
       return calculateFinalProviderAwareCredits({
         modelId,
         qualityTier,

@@ -1,4 +1,8 @@
-import { isRateLimitError } from '@server/utils/retry';
+import {
+  isAmbiguousProviderFailure,
+  isModelSizeRejection,
+  isRateLimitError,
+} from '@server/utils/retry';
 import { serializeError } from '@shared/utils/errors';
 
 /**
@@ -132,8 +136,18 @@ export class ReplicateErrorMapper {
       return new ReplicateError('Image flagged by safety filter.', ReplicateErrorCode.SAFETY);
     }
 
-    // Check for timeout errors
-    if (message.includes('timeout') || message.includes('timed out')) {
+    // A model-side size guard is a deterministic input failure. Check it before
+    // generic CUDA wording so it cannot be mistaken for shared-GPU contention.
+    if (isModelSizeRejection(lowerMessage)) {
+      return new ReplicateError(
+        'Image is too large for processing. Please try a smaller image or lower resolution.',
+        ReplicateErrorCode.IMAGE_TOO_LARGE
+      );
+    }
+
+    // Check for timeout errors. An OOM plus a timeout is an ambiguous provider
+    // state, so it must never authorize a duplicate alternate inference.
+    if (lowerMessage.includes('timeout') || lowerMessage.includes('timed out')) {
       return new ReplicateError(
         'Processing timed out. Please try a smaller image.',
         ReplicateErrorCode.TIMEOUT
@@ -149,34 +163,25 @@ export class ReplicateErrorMapper {
       return new ReplicateError('No output returned from Replicate.', ReplicateErrorCode.NO_OUTPUT);
     }
 
-    // A CUDA OOM means the shared GPU was busy, not that the image was too big:
-    // the model rejects genuinely oversized inputs with its own size guard
-    // before allocating anything. Telling this user to shrink a valid image
-    // sends them to fix something that was never wrong.
-    if (
-      (lowerMessage.includes('out of memory') || lowerMessage.includes('oom')) &&
-      !lowerMessage.includes('greater than the max size')
-    ) {
+    const isCudaOom = lowerMessage.includes('out of memory') || lowerMessage.includes('oom');
+
+    // Only a terminal CUDA OOM without timeout/network/rate-limit signals is
+    // eligible for the caller's bounded alternate-model recovery. The mapper
+    // still reports every OOM as a provider problem so users are not told to
+    // resize an image unless the model explicitly rejected its size.
+    if (isCudaOom && !isAmbiguousProviderFailure(lowerMessage)) {
       return new ReplicateError(
         'The image service was busy. Please try again in a moment.',
         ReplicateErrorCode.PROVIDER_UNAVAILABLE
       );
     }
 
-    // Check for GPU memory errors (image too large for model's hardware)
-    // Safety net if client-side resize fails or server dimension check is bypassed
-    // Note: normalise to lower-case for case-insensitive matching; avoid overly-broad
-    // patterns (e.g. "CUDA error") that match non-OOM hardware faults.
-    if (
-      lowerMessage.includes('gpu memory') ||
-      lowerMessage.includes('greater than the max size') ||
-      lowerMessage.includes('out of memory') ||
-      lowerMessage.includes('oom') ||
-      lowerMessage.includes('cuda out of memory')
-    ) {
+    // Generic GPU-memory wording without an explicit model size guard is also
+    // provider-side evidence only; it is not enough to blame the input.
+    if (lowerMessage.includes('gpu memory')) {
       return new ReplicateError(
-        'Image is too large for processing. Please try a smaller image or lower resolution.',
-        ReplicateErrorCode.IMAGE_TOO_LARGE
+        'The image service was busy. Please try again in a moment.',
+        ReplicateErrorCode.PROVIDER_UNAVAILABLE
       );
     }
 

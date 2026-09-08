@@ -8,7 +8,17 @@
     "securityMessage": "Ceci est une mesure de sécurité pour prévenir les abus. La limite sera réinitialisée dans environ 1 heure. Passez à une version supérieure pour des limites plus élevées.",
     "upgradeButton": "Améliorer le forfait",
     "addPartialButton": "Ajouter {availableSlots} {count, plural, one {image} other {images}}",
-    "cancelButton": "Annuler"
+    "cancelButton": "Annuler",
+    "remainingSlotsMessage": "You have {availableSlots} of {limit} slots remaining in your queue.",
+    "upgradeButtonBatch": "Unlock Batch Processing",
+    "quickBuyButton": "Get 50 Credits - $4.99",
+    "seePlansButton": "See All Plans",
+    "title_value": "Upscale Unlimited Images",
+    "title_outcome": "Your Images Deserve Better Quality",
+    "title_urgency": "Limited Time: 50 Credits for $4.99",
+    "body_value": "Get 50 credits for just $4.99 — batch process, pro AI models, 4K output.",
+    "body_outcome": "See the difference pro AI models make. Sharper details, cleaner edges, up to 4K resolution.",
+    "body_urgency": "Start batch processing now. Pro AI models included."
   },
   "queue": {
     "title": "File de traitement",
@@ -65,7 +75,11 @@
     "autoResizeToastUpload": "L’image a été redimensionnée à {resizedWidth}×{resizedHeight} pour respecter les limites d’envoi avant le traitement.",
     "autoResizeToastUploadBatch": "{count, plural, one {# image a été redimensionnée pour respecter les limites d’envoi avant le traitement.} other {# images ont été redimensionnées pour respecter les limites d’envoi avant le traitement.}}",
     "autoResizeToastProcessing": "L’entrée a été redimensionnée à {resizedWidth}×{resizedHeight} pour respecter les limites de traitement. Le résultat final fera environ {expectedWidth}×{expectedHeight} ({scale}x par rapport à l’entrée redimensionnée).",
-    "dimensionPreservingModelToast": "Votre image était trop grande pour le modèle sélectionné : {model} l’a donc traitée afin de conserver les dimensions d’origine. Le tarif habituel a été appliqué."
+    "dimensionPreservingModelToast": "Votre image était trop grande pour le modèle sélectionné : {model} l’a donc traitée afin de conserver les dimensions d’origine. Le tarif habituel a été appliqué.",
+    "dimensionWarning": "Your image ({width}x{height} = {pixels}) exceeds the maximum ({maxPixels}). Resize to continue.",
+    "autoResizeToggle": "Always auto-resize images for me",
+    "autoResizeToast": "Image automatically resized to fit processing limits",
+    "autoResizeToPixelLimit": "Automatically resize to fit within {maxPixels}MP pixel limit."
   },
   "previewArea": {
     "stages": {
@@ -127,6 +141,19 @@
       "processing": "Traitement...",
       "allProcessed": "Tout traité",
       "processAll": "Tout traiter ({count})"
+    },
+    "faceEnhancement": {
+      "title": "Améliorer les visages",
+      "upgradeLabel": "Mettre à niveau",
+      "clarityProLabel": "Clarity Pro",
+      "upgradeDescription": "Débloquez l’amélioration payante des visages avec Clarity Pro.",
+      "selectDescription": "Sélectionnez Clarity Pro pour agrandir les visages au prix affiché selon l’image.",
+      "selectedTitle": "Amélioration des visages avec Clarity Pro",
+      "selectedDescription": "Le coût indiqué utilise les dimensions de vos images et l’échelle sélectionnée.",
+      "reselectionRequired": "Le réglage enregistré d’amélioration des visages doit être vérifié. Choisissez Clarity Pro avant le traitement.",
+      "unavailableTitle": "Amélioration des visages indisponible",
+      "unavailableMessage": "Clarity Pro est actuellement indisponible. Choisissez un autre niveau.",
+      "unsupportedScale": "Clarity Pro ne prend pas en charge {scale}x pour le moment. Choisissez une échelle compatible."
     }
   },
   "enhancementOptions": {

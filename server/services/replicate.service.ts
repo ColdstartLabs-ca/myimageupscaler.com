@@ -1,7 +1,6 @@
 import {
   isGpuContentionError,
-  isRateLimitError,
-  isTransientUpstreamError,
+  isGenericReplicateRetryableError,
   withRetry,
 } from '@server/utils/retry';
 import { serverEnv } from '@shared/config/env';
@@ -17,14 +16,44 @@ import type {
 import { ModelRegistry } from './model-registry';
 
 // Refactored utilities
-import { buildModelInput, type IModelInput } from './replicate/builders';
+import {
+  buildModelInput,
+  modelInputBuilderOrchestrator,
+  type IModelInput,
+} from './replicate/builders';
 import { creditManager } from './replicate/utils/credit-manager';
 import { getEmailLifecycleService } from '@server/services/email-lifecycle.service';
 import { replicateErrorMapper } from './replicate/utils/error-mapper';
 import { ReplicateError } from './replicate/utils/error-mapper';
 import { parseReplicateResponse } from './replicate/utils/output-parser';
-import { recordProcessingCostTelemetry } from './cost-telemetry.service';
+import {
+  recordProcessingCostTelemetry,
+  type IProcessingAttemptAttribution,
+} from './cost-telemetry.service';
 import { bindReservationToWorkerRay } from './reservation-worker-binding';
+import {
+  getScalePreservingFallbackCandidates,
+  isScalePreservingRecoveryEligible,
+} from './scale-preserving-model';
+
+const QUICK_PROCESSING_DEADLINE_MS = 120_000;
+const QUICK_PRIMARY_MODEL_ID = 'real-esrgan';
+const QUICK_RECOVERY_MODEL_ID = 'real-esrgan-large';
+const QUICK_RECOVERY_ESTIMATED_TIME_MS = 21_000;
+
+type IReplicateProcessImageOptions = IProcessImageOptions & {
+  /** Used by async callers and tests to share the route's absolute deadline. */
+  deadlineAt?: number;
+};
+
+type IReplicateAttempt = IProcessingAttemptAttribution;
+
+type IReplicateCallResult = {
+  imageUrl: string;
+  mimeType: string;
+  expiresAt: number;
+  actualModelId: string;
+};
 
 /**
  * Re-export ReplicateError for backward compatibility
@@ -85,7 +114,7 @@ export function createReplicateRetryPolicy(maxContentionRetries = 1): (message: 
       return contentionRetries <= maxContentionRetries;
     }
 
-    return isRateLimitError(message) || isTransientUpstreamError(message);
+    return isGenericReplicateRetryableError(message);
   };
 }
 
@@ -126,12 +155,16 @@ export class ReplicateService implements IImageProcessor {
   async processImage(
     userId: string,
     input: IUpscaleInput,
-    options?: IProcessImageOptions
+    options?: IReplicateProcessImageOptions
   ): Promise<IImageProcessorResult> {
     const creditCost = options?.creditCost ?? calculateCreditCost(input.config);
 
     // Reject malformed image payloads before any credit-consuming operation.
     this.ensureInputImageDataPresent(input);
+    this.ensureQuickFaceRequestIsReselected(input);
+
+    const deadlineAt = this.getProcessingDeadlineAt(options);
+    const attempts: IReplicateAttempt[] | undefined = options?.costAttribution ? [] : undefined;
 
     // Step 1: Deduct credits atomically using CreditManager
     const deduction = await creditManager.deductCredits(
@@ -145,22 +178,58 @@ export class ReplicateService implements IImageProcessor {
 
     try {
       // Step 2: Call Replicate API
-      const result = await this.callReplicate(input);
+      const result = await this.callReplicate(
+        input,
+        deadlineAt,
+        attempts,
+        options?.costAttribution?.providerCostUsd
+      );
       await this.recordLifecycleActivation(userId);
       if (options?.costAttribution) {
         await recordProcessingCostTelemetry({
           userId,
-          jobId: deduction.jobId,
+          jobId: this.getProviderJobId(attempts, deduction.jobId),
           outputImagePath: result.imageUrl,
-          attribution: options.costAttribution,
+          attribution: {
+            ...options.costAttribution,
+            modelId: result.actualModelId,
+            providerCostUsd: this.getTotalProviderCost(attempts, options.costAttribution),
+            attempts,
+          },
         });
       }
 
+      const { actualModelId, ...providerResult } = result;
       return {
-        ...result,
+        ...providerResult,
         creditsRemaining: deduction.newBalance,
+        ...(options?.costAttribution
+          ? {
+              actualModelId,
+              providerAttemptCount: attempts?.length ?? 0,
+              actualProviderCostUsd: this.getTotalProviderCost(attempts, options.costAttribution),
+            }
+          : {}),
       };
     } catch (error) {
+      if (options?.costAttribution && attempts && attempts.length > 0) {
+        const failure = replicateErrorMapper.mapError(error);
+        await recordProcessingCostTelemetry({
+          userId,
+          jobId: this.getProviderJobId(attempts, deduction.jobId),
+          status: 'failed',
+          failureReason: failure.code,
+          attribution: {
+            ...options.costAttribution,
+            modelId: attempts[attempts.length - 1]?.modelId ?? this.modelId,
+            providerCostUsd: this.getTotalProviderCost(attempts, options.costAttribution),
+            creditsCharged: 0,
+            quotedCredits: options.costAttribution.creditsCharged,
+            attempts,
+          },
+        });
+      }
+
       // Step 3: Refund on failure
       await creditManager.refundReservation(
         userId,
@@ -284,14 +353,42 @@ export class ReplicateService implements IImageProcessor {
     }
   }
 
+  private ensureQuickFaceRequestIsReselected(input: IUpscaleInput): void {
+    if (this.modelId !== QUICK_PRIMARY_MODEL_ID) {
+      return;
+    }
+
+    if (input.config.additionalOptions?.enhanceFaces !== true) {
+      return;
+    }
+
+    throw new ReplicateError(
+      'Quick face enhancement has changed. Select a paid face enhancement tier and resubmit.',
+      'FACE_ENHANCEMENT_RESELECT_REQUIRED'
+    );
+  }
+
+  private getProcessingDeadlineAt(options?: IReplicateProcessImageOptions): number | undefined {
+    if (options?.deadlineAt !== undefined) {
+      return options.deadlineAt;
+    }
+
+    if (this.modelId === QUICK_PRIMARY_MODEL_ID || this.modelId === QUICK_RECOVERY_MODEL_ID) {
+      return Date.now() + QUICK_PROCESSING_DEADLINE_MS;
+    }
+
+    return undefined;
+  }
+
   /**
    * Call the Replicate model (supports multiple models from registry)
    */
-  private async callReplicate(input: IUpscaleInput): Promise<{
-    imageUrl: string;
-    mimeType: string;
-    expiresAt: number;
-  }> {
+  private async callReplicate(
+    input: IUpscaleInput,
+    deadlineAt?: number,
+    attempts?: IReplicateAttempt[],
+    quotedProviderCostUsd?: number
+  ): Promise<IReplicateCallResult> {
     // Prepare image data - ensure it's a data URL
     this.ensureInputImageDataPresent(input);
 
@@ -303,38 +400,199 @@ export class ReplicateService implements IImageProcessor {
 
     // Use the instance's modelId
     const selectedModel = this.modelId;
-    const modelVersion =
-      selectedModel !== 'auto' ? this.getModelVersionForId(selectedModel) : this.modelVersion;
+    const isQuickPrimary = selectedModel === QUICK_PRIMARY_MODEL_ID;
+    const isDirectQuickFallback = selectedModel === QUICK_RECOVERY_MODEL_ID;
+    const recoveryModelId = this.getAvailableRecoveryModel(
+      isScalePreservingRecoveryEligible({
+        modelId: selectedModel,
+        width: input.originalWidth,
+        height: input.originalHeight,
+        scale: input.config.scale,
+        qualityTier: input.config.qualityTier,
+        enhanceFaces: input.config.additionalOptions?.enhanceFaces,
+      })
+    );
 
-    // Prepare Replicate input using the builder system
-    const replicateInput = this.buildModelInput(selectedModel, imageDataUrl, input);
-    this.ensureImageInputPresent(replicateInput);
-
-    const shouldRetryReplicateError = createReplicateRetryPolicy();
+    // Quick OOMs are handled by the alternate model. Direct cjwbw calls also
+    // get one inference only. Other models retain the previous same-model OOM
+    // retry policy.
+    const shouldRetryReplicateError = createReplicateRetryPolicy(
+      isQuickPrimary || isDirectQuickFallback ? 0 : 1
+    );
 
     try {
-      // Run with retry for rate limits and transient provider/output failures.
-      return await withRetry(
-        async () => {
-          const output = await this.replicate.run(modelVersion as `${string}/${string}:${string}`, {
-            input: replicateInput,
-          });
-
-          return parseReplicateResponse(output);
-        },
-        {
-          shouldRetry: err => shouldRetryReplicateError(serializeError(err)),
-          onRetry: (attempt, delayMs, err) => {
-            console.log(
-              `[Replicate] Retrying in ${delayMs}ms (attempt ${attempt}/3): ${serializeError(err)}`
-            );
-          },
-        }
+      return await this.runReplicateModel(
+        selectedModel,
+        imageDataUrl,
+        input,
+        shouldRetryReplicateError,
+        deadlineAt,
+        undefined,
+        attempts,
+        quotedProviderCostUsd
       );
     } catch (error) {
-      // Map errors using error mapper
-      throw replicateErrorMapper.mapError(error);
+      const isEligibleOom =
+        recoveryModelId !== undefined && isGpuContentionError(serializeError(error));
+
+      if (!isEligibleOom) {
+        throw replicateErrorMapper.mapError(error);
+      }
+
+      if (!this.hasRecoveryTime(recoveryModelId, deadlineAt)) {
+        throw new ReplicateError(
+          'Processing timed out before the Quick recovery could start. Please try again.',
+          'TIMEOUT'
+        );
+      }
+
+      try {
+        // The alternate is deliberately invoked with zero retries. It is the
+        // only second inference and receives the original source reference.
+        return await this.runReplicateModel(
+          recoveryModelId,
+          imageDataUrl,
+          input,
+          createReplicateRetryPolicy(0),
+          deadlineAt,
+          0,
+          attempts
+        );
+      } catch (fallbackError) {
+        throw replicateErrorMapper.mapError(fallbackError);
+      }
     }
+  }
+
+  private async runReplicateModel(
+    modelId: string,
+    imageDataUrl: string,
+    input: IUpscaleInput,
+    shouldRetryReplicateError: (message: string) => boolean,
+    deadlineAt?: number,
+    maxRetries?: number,
+    attempts?: IReplicateAttempt[],
+    quotedProviderCostUsd?: number
+  ): Promise<IReplicateCallResult> {
+    const modelVersion =
+      modelId !== 'auto' ? this.getModelVersionForId(modelId) : this.modelVersion;
+    const replicateInput = this.buildModelInput(modelId, imageDataUrl, input);
+    this.ensureImageInputPresent(replicateInput);
+
+    return withRetry(
+      async () => {
+        const attempt: IReplicateAttempt | undefined = attempts
+          ? {
+              modelId,
+              modelVersion,
+              status: 'failed',
+              providerCostUsd: this.getAttemptProviderCost(modelId, quotedProviderCostUsd),
+            }
+          : undefined;
+        if (attempts && attempt) {
+          attempts.push(attempt);
+        }
+
+        try {
+          const runOptions = { input: replicateInput };
+          const output = attempts
+            ? await this.replicate.run(
+                modelVersion as `${string}/${string}:${string}`,
+                runOptions,
+                prediction => {
+                  if (attempt && typeof prediction?.id === 'string') {
+                    attempt.predictionId = prediction.id;
+                  }
+                }
+              )
+            : await this.replicate.run(modelVersion as `${string}/${string}:${string}`, runOptions);
+
+          const parsed = parseReplicateResponse(output);
+          if (attempt) {
+            attempt.status = 'succeeded';
+          }
+          return { ...parsed, actualModelId: modelId };
+        } catch (error) {
+          if (attempt) {
+            attempt.failureCode = replicateErrorMapper.mapError(error).code;
+          }
+          throw error;
+        }
+      },
+      {
+        ...(maxRetries === undefined ? {} : { maxRetries }),
+        ...(deadlineAt === undefined ? {} : { deadlineAt }),
+        shouldRetry: err => shouldRetryReplicateError(serializeError(err)),
+        onRetry: (attempt, delayMs, err) => {
+          console.log(
+            `[Replicate] Retrying in ${delayMs}ms (attempt ${attempt}/3): ${serializeError(err)}`
+          );
+        },
+      }
+    );
+  }
+
+  private getAttemptProviderCost(modelId: string, quotedProviderCostUsd?: number): number {
+    if (quotedProviderCostUsd !== undefined) {
+      return quotedProviderCostUsd;
+    }
+
+    return ModelRegistry.getInstance().getModel(modelId)?.costPerRun ?? 0;
+  }
+
+  private getTotalProviderCost(
+    attempts: readonly IReplicateAttempt[] | undefined,
+    fallbackAttribution: { providerCostUsd: number }
+  ): number {
+    if (!attempts || attempts.length === 0) {
+      return fallbackAttribution.providerCostUsd;
+    }
+
+    return Number(
+      attempts.reduce((total, attempt) => total + attempt.providerCostUsd, 0).toFixed(6)
+    );
+  }
+
+  private getProviderJobId(
+    attempts: readonly IReplicateAttempt[] | undefined,
+    fallbackJobId: string
+  ): string {
+    return (
+      attempts
+        ?.slice()
+        .reverse()
+        .find(attempt => attempt.predictionId)?.predictionId ?? fallbackJobId
+    );
+  }
+
+  private getAvailableRecoveryModel(isEligible: boolean): string | undefined {
+    if (!isEligible) {
+      return undefined;
+    }
+
+    // Keep the alternate set bounded to the single registered cjwbw model.
+    const recoveryModelId = getScalePreservingFallbackCandidates(false)[0];
+    if (recoveryModelId !== QUICK_RECOVERY_MODEL_ID) {
+      return undefined;
+    }
+
+    const model = ModelRegistry.getInstance().getModel(recoveryModelId);
+    if (!model?.isEnabled || !model.modelVersion) {
+      return undefined;
+    }
+
+    return modelInputBuilderOrchestrator.hasBuilder(recoveryModelId) ? recoveryModelId : undefined;
+  }
+
+  private hasRecoveryTime(modelId: string, deadlineAt?: number): boolean {
+    if (deadlineAt === undefined) {
+      return true;
+    }
+
+    const estimatedTime =
+      ModelRegistry.getInstance().getModel(modelId)?.processingTimeMs ??
+      QUICK_RECOVERY_ESTIMATED_TIME_MS;
+    return Date.now() + estimatedTime < deadlineAt;
   }
 }
 

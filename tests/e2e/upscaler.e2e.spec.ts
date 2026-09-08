@@ -1,12 +1,60 @@
 import { test, expect } from '../test-fixtures';
 import { UpscalerPage } from '../pages/UpscalerPage';
 import { getFixturePath, mockUpscaleSuccessResponse, mockUpscaleErrorResponses } from '../fixtures';
+import { getAuthInitScript } from '../helpers/auth-helpers';
 
 /**
  * Helper function to set up comprehensive auth mocks for processing tests
  * NOTE: This does NOT mock the /api/upscale endpoint - tests should do that themselves
  */
-async function setupAuthAndApiMocks(page: import('@playwright/test').Page, credits = 1000) {
+interface IAuthMockOptions {
+  credits?: number;
+  purchasedCredits?: number;
+  subscription?: {
+    status: string;
+    price_id: string;
+    [key: string]: unknown;
+  } | null;
+  subscriptionTier?: string | null;
+}
+
+type AuthMockInput = number | IAuthMockOptions;
+
+async function setupAuthAndApiMocks(
+  page: import('@playwright/test').Page,
+  authInput: AuthMockInput = 1000
+) {
+  const options = typeof authInput === 'number' ? { credits: authInput } : authInput;
+  const credits = options.credits ?? 1000;
+  const purchasedCredits = options.purchasedCredits ?? 0;
+  const subscription = options.subscription ?? null;
+  const subscriptionTier = options.subscriptionTier ?? (subscription ? 'hobby' : null);
+
+  // Seed the same authenticated browser state used by the shared E2E helpers.
+  // The endpoint mocks alone cannot initialize the client-side user store.
+  await page.addInitScript(
+    getAuthInitScript({
+      id: 'test-user-id',
+      email: 'test@example.com',
+      profile: {
+        id: 'test-user-id',
+        email: 'test@example.com',
+        role: 'user',
+        subscription_credits_balance: credits,
+        purchased_credits_balance: purchasedCredits,
+        subscription_status: subscription?.status ?? null,
+        subscription_tier: subscriptionTier,
+      },
+      subscription: subscription
+        ? {
+            id: 'test-subscription-id',
+            user_id: 'test-user-id',
+            ...subscription,
+          }
+        : null,
+    })
+  );
+
   // Mock Supabase auth endpoints and any auth-related calls
   await page.route('**/auth/v1/session', async route => {
     console.log('🔐 AUTH MOCK: Session endpoint called');
@@ -36,7 +84,7 @@ async function setupAuthAndApiMocks(page: import('@playwright/test').Page, credi
   });
 
   // Mock the get_user_data RPC endpoint with credits
-  await page.route('**/rest/v1/rpc/get_user_data', async route => {
+  await page.route('**/rest/v1/rpc/get_user_data**', async route => {
     console.log('🔐 AUTH MOCK: get_user_data RPC called');
     await route.fulfill({
       status: 200,
@@ -47,9 +95,11 @@ async function setupAuthAndApiMocks(page: import('@playwright/test').Page, credi
           email: 'test@example.com',
           role: 'user',
           subscription_credits_balance: credits,
-          purchased_credits_balance: 0,
+          purchased_credits_balance: purchasedCredits,
+          subscription_status: subscription?.status ?? null,
+          subscription_tier: subscriptionTier,
         },
-        subscription: null,
+        subscription,
       }),
     });
   });
@@ -70,6 +120,81 @@ async function setupAuthAndApiMocks(page: import('@playwright/test').Page, credi
   });
 
   // DO NOT mock /api/upscale here - let tests handle that themselves
+}
+
+interface IUpscaleRequestBody {
+  config?: {
+    qualityTier?: string;
+    scale?: number;
+    additionalOptions?: {
+      enhanceFaces?: boolean;
+    };
+  };
+  resolvedModel?: string;
+}
+
+interface IProcessingMockResult {
+  requests: IUpscaleRequestBody[];
+}
+
+const MOCK_RESERVATION_JOB_ID = '11111111-1111-4111-8111-111111111111';
+const MOCK_DELIVERY_TOKEN = 'test-delivery-token-with-at-least-32-characters';
+const MOCK_OUTPUT_PNG = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+  'base64'
+);
+
+async function setupProcessingMocks(
+  page: import('@playwright/test').Page,
+  result: { creditsUsed: number; creditsRemaining: number }
+): Promise<IProcessingMockResult> {
+  const requests: IUpscaleRequestBody[] = [];
+
+  await page.route('**/api/upscale/upload', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        storagePath: 'test-user-id/test-job.jpg',
+        uploadToken: 'test-upload-token',
+      }),
+    });
+  });
+
+  await page.route('**/storage/v1/**', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: '{}',
+    });
+  });
+
+  await page.route('**/api/upscale/output', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'image/png',
+      body: MOCK_OUTPUT_PNG,
+    });
+  });
+
+  await page.route('**/api/upscale', async route => {
+    requests.push(route.request().postDataJSON() as IUpscaleRequestBody);
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        processing: {
+          reservationJobId: MOCK_RESERVATION_JOB_ID,
+          deliveryToken: MOCK_DELIVERY_TOKEN,
+          creditsUsed: result.creditsUsed,
+          creditsRemaining: result.creditsRemaining,
+          modelDisplayName: 'Clarity Pro',
+        },
+      }),
+    });
+  });
+
+  return { requests };
 }
 
 /**
@@ -192,6 +317,110 @@ test.describe('Upscaler E2E Tests', () => {
       console.log(
         `Second file upload attempted. Final queue count: ${finalQueueCount} (limited by free user batch limit)`
       );
+    });
+  });
+
+  test.describe('Paid face enhancement flow', () => {
+    test('should deliver Quick output with faces disabled for a free user', async ({ page }) => {
+      const processing = await setupProcessingMocks(page, {
+        creditsUsed: 1,
+        creditsRemaining: 999,
+      });
+      await setupAuthAndApiMocks(page);
+
+      const upscalerPage = new UpscalerPage(page);
+      await upscalerPage.goto();
+      await upscalerPage.waitForLoad();
+      await upscalerPage.uploadImage(sampleImagePath);
+
+      const requestPromise = page.waitForRequest(request => {
+        return new URL(request.url()).pathname === '/api/upscale' && request.method() === 'POST';
+      });
+      await upscalerPage.clickProcess();
+      await requestPromise;
+
+      await expect(upscalerPage.downloadButton).toBeVisible({ timeout: 15000 });
+      expect(processing.requests).toHaveLength(1);
+      expect(processing.requests[0]?.config?.qualityTier).toBe('quick');
+      expect(processing.requests[0]?.config?.scale).toBe(2);
+      expect(processing.requests[0]?.config?.additionalOptions?.enhanceFaces).toBe(false);
+      expect(processing.requests[0]?.resolvedModel).toBe('real-esrgan');
+    });
+
+    test('should require payment before face restoration', async ({ page }) => {
+      let upscaleApiCalls = 0;
+      await page.route('**/api/upscale', async route => {
+        upscaleApiCalls += 1;
+        await route.fulfill({
+          status: 403,
+          contentType: 'application/json',
+          body: JSON.stringify({ error: 'Face enhancement requires paid access' }),
+        });
+      });
+      await setupAuthAndApiMocks(page);
+
+      const upscalerPage = new UpscalerPage(page);
+      await upscalerPage.goto();
+      await upscalerPage.waitForLoad();
+      await upscalerPage.uploadImage(sampleImagePath);
+
+      await page.getByRole('button', { name: 'Additional Enhancements' }).click();
+      await page.getByRole('button', { name: 'Enhance faces with Clarity Pro' }).click();
+
+      const purchaseModal = page.getByTestId('purchase-modal');
+      await expect(purchaseModal).toBeVisible();
+      await expect(
+        purchaseModal.getByRole('heading', { name: 'Get credits for premium models' })
+      ).toBeVisible();
+      await expect(page.getByTestId('queue-item')).toHaveCount(1);
+      expect(upscaleApiCalls).toBe(0);
+    });
+
+    test('should show and charge the premium estimate for paid face upscaling', async ({
+      page,
+    }) => {
+      const processing = await setupProcessingMocks(page, {
+        creditsUsed: 3,
+        creditsRemaining: 97,
+      });
+      await setupAuthAndApiMocks(page, {
+        credits: 100,
+        subscription: {
+          status: 'active',
+          price_id: 'price_test_hobby',
+        },
+        subscriptionTier: 'hobby',
+      });
+
+      const upscalerPage = new UpscalerPage(page);
+      await upscalerPage.goto();
+      await upscalerPage.waitForLoad();
+      await upscalerPage.uploadImage(sampleImagePath);
+
+      await page.getByRole('button', { name: 'Additional Enhancements' }).click();
+      await page.getByRole('button', { name: 'Enhance faces with Clarity Pro' }).click();
+
+      await expect(page.getByText('Clarity Pro face upscaling', { exact: true })).toBeVisible();
+      await expect(
+        page
+          .locator('button')
+          .filter({ hasText: /Cost:\s*3 credits/ })
+          .first()
+      ).toBeVisible();
+
+      const requestPromise = page.waitForRequest(request => {
+        return new URL(request.url()).pathname === '/api/upscale' && request.method() === 'POST';
+      });
+      await upscalerPage.clickProcess();
+      await requestPromise;
+
+      await expect(upscalerPage.downloadButton).toBeVisible({ timeout: 15000 });
+      expect(processing.requests).toHaveLength(1);
+      expect(processing.requests[0]?.config?.qualityTier).toBe('clarity-pro');
+      expect(processing.requests[0]?.config?.scale).toBe(2);
+      expect(processing.requests[0]?.config?.additionalOptions?.enhanceFaces).toBe(true);
+      expect(processing.requests[0]?.resolvedModel).toBe('clarity-pro-upscaler');
+      await expect(page.getByRole('button', { name: '97 credits' })).toBeVisible();
     });
   });
 

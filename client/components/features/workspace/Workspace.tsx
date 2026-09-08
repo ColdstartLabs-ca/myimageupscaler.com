@@ -7,6 +7,7 @@ import {
   IUpscaleConfig,
   ProcessingStatus,
   QUALITY_TIER_CONFIG,
+  QUALITY_TIER_SCALES,
 } from '@/shared/types/coreflow.types';
 import { CheckoutModal } from '@client/components/stripe/CheckoutModal';
 import { PurchaseModal } from '@client/components/stripe/PurchaseModal';
@@ -137,6 +138,7 @@ const Workspace: React.FC = () => {
     setShowUpgradeModal(true);
   };
   const closeUpgradeModal = () => {
+    pendingFaceSelectionRef.current = false;
     setShowUpgradeModal(false);
     setUpgradeModalOutOfCredits(false);
     setUpgradeModalCreditContext(null);
@@ -205,12 +207,13 @@ const Workspace: React.FC = () => {
     additionalOptions: {
       smartAnalysis: false, // Hidden when qualityTier='auto'
       enhance: true,
-      enhanceFaces: true,
+      enhanceFaces: false,
       preserveText: false,
       customInstructions: undefined,
       enhancement: DEFAULT_ENHANCEMENT_SETTINGS,
     },
   });
+  const pendingFaceSelectionRef = React.useRef(false);
   const uploadMaxPixels = useMemo(
     () => getMaxPixelsForQualityTier(config.qualityTier),
     [config.qualityTier]
@@ -286,7 +289,19 @@ const Workspace: React.FC = () => {
     }
 
     if (interruptedJob.status === 'needs_action') {
-      addInterruptedJobError('Please add the original images again to continue your saved job.');
+      if (interruptedJob.reason === 'face_reselection_required') {
+        setConfig(previous => ({
+          ...previous,
+          qualityTier: 'quick',
+          additionalOptions: {
+            ...previous.additionalOptions,
+            enhanceFaces: false,
+          },
+        }));
+        addInterruptedJobError(t('faceEnhancement.reselectionRequired'));
+      } else {
+        addInterruptedJobError('Please add the original images again to continue your saved job.');
+      }
       return;
     }
 
@@ -530,6 +545,56 @@ const Workspace: React.FC = () => {
       items: getPendingQueue(),
     }).totalCredits;
 
+  const showFaceEnhancementError = (message: string) => {
+    setGlobalErrors(previous => {
+      if (previous.some(error => error.id === 'face-enhancement-selection')) return previous;
+      return [
+        ...previous,
+        {
+          id: 'face-enhancement-selection',
+          title: t('faceEnhancement.unavailableTitle'),
+          message,
+        },
+      ];
+    });
+  };
+
+  const applyPaidFaceTierSelection = () => {
+    if (!QUALITY_TIER_CONFIG['clarity-pro'].modelId) {
+      showFaceEnhancementError(t('faceEnhancement.unavailableMessage'));
+      return;
+    }
+
+    if (!QUALITY_TIER_SCALES['clarity-pro'].includes(config.scale)) {
+      showFaceEnhancementError(t('faceEnhancement.unsupportedScale', { scale: config.scale }));
+      return;
+    }
+
+    setConfig(previous => ({
+      ...previous,
+      qualityTier: 'clarity-pro',
+      additionalOptions: {
+        ...previous.additionalOptions,
+        enhanceFaces: true,
+      },
+    }));
+  };
+
+  const handleSelectPaidFaceTier = () => {
+    if (purchaseCtasSuppressed) {
+      showProviderUnavailable();
+      return;
+    }
+
+    if (isFreeUser) {
+      pendingFaceSelectionRef.current = true;
+      openUpgradeModal(false, 'workspace_face_enhancement');
+      return;
+    }
+
+    applyPaidFaceTierSelection();
+  };
+
   const handleProcessBatch = () => {
     const pendingQueue = getPendingQueue();
     if (pendingQueue.length === 0) {
@@ -561,7 +626,14 @@ const Workspace: React.FC = () => {
   };
 
   const handleUpgradePurchaseComplete = () => {
+    const shouldSelectPaidFaceTier = pendingFaceSelectionRef.current;
+    pendingFaceSelectionRef.current = false;
     closeUpgradeModal();
+
+    if (shouldSelectPaidFaceTier) {
+      applyPaidFaceTierSelection();
+      return;
+    }
 
     void (async () => {
       const inspection = inspectInterruptedJob();
@@ -858,6 +930,7 @@ const Workspace: React.FC = () => {
             onProcess={handleProcessBatch}
             onClear={clearQueue}
             onUpgrade={() => openUpgradeModal(true, 'workspace_batch_sidebar')}
+            onSelectPaidFaceTier={handleSelectPaidFaceTier}
             onUpgradeDirect={handleUpgradeDirect}
             suppressPurchaseCtas={purchaseCtasSuppressed}
           />
@@ -1066,7 +1139,20 @@ const Workspace: React.FC = () => {
         onClose={handleCloseModelGallery}
         currentTier={config.qualityTier}
         isFreeUser={isFreeUser}
-        onSelect={tier => setConfig(prev => ({ ...prev, qualityTier: tier }))}
+        onSelect={tier => {
+          if (tier === 'clarity-pro') {
+            handleSelectPaidFaceTier();
+            return;
+          }
+          setConfig(prev => ({
+            ...prev,
+            qualityTier: tier,
+            additionalOptions: {
+              ...prev.additionalOptions,
+              enhanceFaces: false,
+            },
+          }));
+        }}
         onUpgrade={handleModelGalleryUpgrade}
         onUpgradeDirect={handleUpgradeDirect}
         selectedScale={config.scale}

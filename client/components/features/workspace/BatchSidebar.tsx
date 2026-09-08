@@ -37,6 +37,8 @@ interface IBatchSidebarProps {
   onProcess: () => void;
   onClear: () => void;
   onUpgrade: () => void;
+  onSelectPaidFaceTier?: () => void;
+  faceEnhancementAvailable?: boolean;
   onUpgradeDirect?: (params: IUpgradeDirectParams) => void;
   suppressPurchaseCtas?: boolean;
 }
@@ -51,6 +53,8 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
   onProcess,
   onClear,
   onUpgrade,
+  onSelectPaidFaceTier,
+  faceEnhancementAvailable = true,
   onUpgradeDirect,
   suppressPurchaseCtas = false,
 }) => {
@@ -71,7 +75,30 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
 
   // Handler functions for sub-components
   const handleQualityTierChange = (qualityTier: QualityTier) => {
-    setConfig({ ...config, qualityTier });
+    if (qualityTier === 'clarity-pro') {
+      if (onSelectPaidFaceTier) {
+        onSelectPaidFaceTier();
+      } else {
+        setConfig({
+          ...config,
+          qualityTier,
+          additionalOptions: {
+            ...config.additionalOptions,
+            enhanceFaces: true,
+          },
+        });
+      }
+      return;
+    }
+
+    setConfig({
+      ...config,
+      qualityTier,
+      additionalOptions: {
+        ...config.additionalOptions,
+        enhanceFaces: false,
+      },
+    });
   };
 
   const handleAdditionalOptionsChange = (additionalOptions: IAdditionalOptions) => {
@@ -174,6 +201,8 @@ export const BatchSidebar: React.FC<IBatchSidebarProps> = ({
           disabled={isProcessing}
           isFreeUser={isFreeUser}
           onUpgradeClick={onUpgrade}
+          onSelectPaidFaceTier={onSelectPaidFaceTier}
+          faceEnhancementAvailable={faceEnhancementAvailable}
           suppressPurchaseCtas={suppressPurchaseCtas}
         />
 

@@ -538,6 +538,48 @@ describe('POST /api/upscale failure recording', () => {
     expect(mocks.refundReservation).not.toHaveBeenCalled();
   });
 
+  it('uses the processor-reported model when Quick succeeds through recovery', async () => {
+    mocks.processImage.mockImplementation(
+      async (
+        _userId: string,
+        _input: unknown,
+        options: { onCreditsDeducted?: (deduction: Record<string, unknown>) => void }
+      ) => {
+        options.onCreditsDeducted?.({
+          amount: 1,
+          subscriptionAmount: 1,
+          purchasedAmount: 0,
+          jobId: '66666666-6666-4666-8666-666666666666',
+        });
+        return {
+          imageUrl: 'https://output.test/recovered.png',
+          mimeType: 'image/png',
+          expiresAt: 1795737600000,
+          creditsRemaining: 4,
+          actualModelId: 'real-esrgan-large',
+          providerAttemptCount: 2,
+          actualProviderCostUsd: 0.0064,
+        };
+      }
+    );
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      processing: {
+        modelUsed: 'real-esrgan-large',
+        modelDisplayName: 'Real-ESRGAN',
+        creditsUsed: 1,
+      },
+    });
+    expect(mocks.track).toHaveBeenCalledWith(
+      'upscale_completed',
+      expect.objectContaining({ modelUsed: 'real-esrgan-large' }),
+      expect.anything()
+    );
+  });
+
   it('rejects inline image data, refunds the reservation, and records the failure', async () => {
     mocks.processImage.mockImplementation(
       async (

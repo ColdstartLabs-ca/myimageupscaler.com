@@ -11,6 +11,9 @@ import type { IModelConfig } from '../model-registry.types';
 
 // Mock dependencies - mock must be defined before any imports that use it
 const replicateConstructor = vi.hoisted(() => vi.fn());
+const useProductionRetry = vi.hoisted(() => ({ enabled: false }));
+const recoveryModelEnabled = vi.hoisted(() => ({ enabled: true }));
+const recordProcessingCostTelemetry = vi.hoisted(() => vi.fn());
 
 vi.mock('replicate', () => {
   class MockReplicate {
@@ -29,6 +32,10 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: {
     rpc: vi.fn(),
   },
+}));
+
+vi.mock('../cost-telemetry.service', () => ({
+  recordProcessingCostTelemetry,
 }));
 
 vi.mock('@shared/config/env', () => ({
@@ -56,17 +63,18 @@ vi.mock('@shared/config/env', () => ({
   },
 }));
 
-vi.mock('@server/utils/retry', () => ({
-  withRetry: vi.fn(fn => fn()),
-  isRateLimitError: vi.fn((message: string) => {
-    const lowerMessage = message.toLowerCase();
-    return (
-      lowerMessage.includes('rate limit') ||
-      lowerMessage.includes('429') ||
-      lowerMessage.includes('throttled')
-    );
-  }),
-}));
+vi.mock('@server/utils/retry', async () => {
+  const actual = await vi.importActual<typeof import('@server/utils/retry')>('@server/utils/retry');
+
+  return {
+    ...actual,
+    // Keep unrelated legacy tests fast, while recovery tests explicitly route
+    // through the production implementation below.
+    withRetry: vi.fn((...args: Parameters<typeof actual.withRetry>) =>
+      useProductionRetry.enabled ? actual.withRetry(...args) : args[0]()
+    ),
+  };
+});
 
 vi.mock('../model-registry', () => ({
   ModelRegistry: {
@@ -87,6 +95,22 @@ vi.mock('../model-registry', () => ({
             maxOutputResolution: 4096,
             supportedScales: [2, 4],
             isEnabled: true,
+          },
+          'real-esrgan-large': {
+            id: 'real-esrgan-large',
+            displayName: 'Upscale',
+            provider: 'replicate',
+            modelVersion: 'cjwbw/real-esrgan:fallback-test-version',
+            capabilities: ['upscale'],
+            costPerRun: 0.0047,
+            creditMultiplier: 1,
+            qualityScore: 8.5,
+            processingTimeMs: 21000,
+            maxInputResolution: 2048,
+            maxInputPixels: 4194304,
+            maxOutputResolution: 4096,
+            supportedScales: [2, 4],
+            isEnabled: recoveryModelEnabled.enabled,
           },
           gfpgan: {
             id: 'gfpgan',
@@ -236,6 +260,9 @@ import { withRetry } from '@server/utils/retry';
 import { ModelRegistry } from '../model-registry';
 import { calculateCreditCost } from '../image-generation.service';
 
+const INCIDENT_CUDA_OOM =
+  'CUDA out of memory. Tried to allocate 4.00 GiB. GPU 0 has a total capacity of 14.56 GiB of which 3.47 GiB is free.';
+
 describe('ReplicateService', () => {
   let service: ReplicateService;
   let mockReplicateRun: ReturnType<typeof vi.fn>;
@@ -246,6 +273,7 @@ describe('ReplicateService', () => {
     imageData: 'base64encodedimagedata',
     mimeType: 'image/jpeg',
     config: {
+      qualityTier: 'quick',
       scale: 2,
       mode: 'upscale',
       modelId: 'real-esrgan',
@@ -296,6 +324,9 @@ describe('ReplicateService', () => {
   });
 
   afterEach(() => {
+    useProductionRetry.enabled = false;
+    recoveryModelEnabled.enabled = true;
+    vi.useRealTimers();
     vi.clearAllMocks();
   });
 
@@ -377,7 +408,7 @@ describe('ReplicateService', () => {
         expect(result.scale).toBe(4);
       });
 
-      test('should enable face enhancement when enhanceFaces is true', () => {
+      test('should keep face enhancement disabled for the Quick builder', () => {
         const input = createUpscaleInput({
           config: {
             ...createUpscaleInput().config,
@@ -389,7 +420,7 @@ describe('ReplicateService', () => {
         });
         const result = service.buildModelInputForTest('real-esrgan', baseImageDataUrl, input);
 
-        expect(result.face_enhance).toBe(true);
+        expect(result.face_enhance).toBe(false);
       });
     });
 
@@ -1143,6 +1174,482 @@ describe('ReplicateService', () => {
         p_description: 'Image processing via Replicate (25 credits)',
       });
       expect(calculateCreditCost).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('processImage() - Quick CUDA recovery', () => {
+    const quickCostAttribution = {
+      modelId: 'real-esrgan',
+      qualityTier: 'quick',
+      scale: 2,
+      providerCostUsd: 0.0017,
+      creditsCharged: 10,
+      pricingModel: 'flat',
+    };
+
+    test('should record both provider attempts and unchanged Quick credits when recovery succeeds', async () => {
+      useProductionRetry.enabled = true;
+      const input = createUpscaleInput({
+        imageData: 'data:image/jpeg;base64,original-image-reference',
+        originalWidth: 1200,
+        originalHeight: 1200,
+      });
+      mockReplicateRun
+        .mockImplementationOnce(
+          async (
+            _version: string,
+            _options: unknown,
+            onProgress?: (prediction: { id: string }) => void
+          ) => {
+            onProgress?.({ id: 'prediction-primary' });
+            throw new Error(INCIDENT_CUDA_OOM);
+          }
+        )
+        .mockImplementationOnce(
+          async (
+            _version: string,
+            _options: unknown,
+            onProgress?: (prediction: { id: string }) => void
+          ) => {
+            onProgress?.({ id: 'prediction-recovery' });
+            return 'https://replicate-output.com/recovered.png';
+          }
+        );
+
+      const result = await service.processImage('user-123', input, {
+        creditCost: quickCostAttribution.creditsCharged,
+        costAttribution: quickCostAttribution,
+        deadlineAt: Date.now() + 120000,
+      });
+
+      expect(result).toMatchObject({
+        imageUrl: 'https://replicate-output.com/recovered.png',
+        actualModelId: 'real-esrgan-large',
+        providerAttemptCount: 2,
+        actualProviderCostUsd: 0.0064,
+      });
+      expect(recordProcessingCostTelemetry).toHaveBeenCalledTimes(1);
+      expect(recordProcessingCostTelemetry).toHaveBeenCalledWith({
+        userId: 'user-123',
+        jobId: 'prediction-recovery',
+        outputImagePath: 'https://replicate-output.com/recovered.png',
+        attribution: {
+          ...quickCostAttribution,
+          modelId: 'real-esrgan-large',
+          providerCostUsd: 0.0064,
+          attempts: [
+            {
+              modelId: 'real-esrgan',
+              modelVersion: 'nightmareai/real-esrgan:test-version',
+              predictionId: 'prediction-primary',
+              status: 'failed',
+              providerCostUsd: 0.0017,
+              failureCode: 'PROVIDER_UNAVAILABLE',
+            },
+            {
+              modelId: 'real-esrgan-large',
+              modelVersion: 'cjwbw/real-esrgan:fallback-test-version',
+              predictionId: 'prediction-recovery',
+              status: 'succeeded',
+              providerCostUsd: 0.0047,
+            },
+          ],
+        },
+      });
+      expect(mockSupabaseRpc).toHaveBeenCalledTimes(1);
+      expect(mockSupabaseRpc).toHaveBeenCalledWith(
+        'consume_credits_v3',
+        expect.objectContaining({ p_amount: quickCostAttribution.creditsCharged })
+      );
+    });
+
+    test('should record failed attempts with zero final customer credits before refund', async () => {
+      useProductionRetry.enabled = true;
+      const input = createUpscaleInput({ originalWidth: 1200, originalHeight: 1200 });
+      mockReplicateRun
+        .mockImplementationOnce(
+          async (
+            _version: string,
+            _options: unknown,
+            onProgress?: (prediction: { id: string }) => void
+          ) => {
+            onProgress?.({ id: 'prediction-primary-failed' });
+            throw new Error(INCIDENT_CUDA_OOM);
+          }
+        )
+        .mockImplementationOnce(
+          async (
+            _version: string,
+            _options: unknown,
+            onProgress?: (prediction: { id: string }) => void
+          ) => {
+            onProgress?.({ id: 'prediction-recovery-failed' });
+            throw new Error('cjwbw inference failed');
+          }
+        );
+
+      await expect(
+        service.processImage('user-123', input, {
+          creditCost: quickCostAttribution.creditsCharged,
+          costAttribution: quickCostAttribution,
+          deadlineAt: Date.now() + 120000,
+        })
+      ).rejects.toMatchObject({ code: 'PROCESSING_FAILED' });
+
+      expect(recordProcessingCostTelemetry).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: 'user-123',
+          jobId: 'prediction-recovery-failed',
+          status: 'failed',
+          attribution: expect.objectContaining({
+            modelId: 'real-esrgan-large',
+            providerCostUsd: 0.0064,
+            creditsCharged: 0,
+            quotedCredits: quickCostAttribution.creditsCharged,
+            attempts: expect.arrayContaining([
+              expect.objectContaining({
+                modelId: 'real-esrgan',
+                predictionId: 'prediction-primary-failed',
+                status: 'failed',
+              }),
+              expect.objectContaining({
+                modelId: 'real-esrgan-large',
+                predictionId: 'prediction-recovery-failed',
+                status: 'failed',
+              }),
+            ]),
+          }),
+        })
+      );
+      expect(mockSupabaseRpc).toHaveBeenCalledTimes(2);
+    });
+
+    test('should record one actual primary attempt when Quick succeeds immediately', async () => {
+      useProductionRetry.enabled = true;
+      mockReplicateRun.mockImplementationOnce(
+        async (
+          _version: string,
+          _options: unknown,
+          onProgress?: (prediction: { id: string }) => void
+        ) => {
+          onProgress?.({ id: 'prediction-primary-success' });
+          return 'https://replicate-output.com/primary.png';
+        }
+      );
+
+      await expect(
+        service.processImage(
+          'user-123',
+          createUpscaleInput({ originalWidth: 1200, originalHeight: 1200 }),
+          {
+            creditCost: quickCostAttribution.creditsCharged,
+            costAttribution: quickCostAttribution,
+            deadlineAt: Date.now() + 120000,
+          }
+        )
+      ).resolves.toMatchObject({
+        actualModelId: 'real-esrgan',
+        providerAttemptCount: 1,
+      });
+
+      expect(recordProcessingCostTelemetry).toHaveBeenCalledWith(
+        expect.objectContaining({
+          jobId: 'prediction-primary-success',
+          attribution: expect.objectContaining({
+            modelId: 'real-esrgan',
+            providerCostUsd: 0.0017,
+            creditsCharged: quickCostAttribution.creditsCharged,
+            attempts: [
+              expect.objectContaining({
+                modelId: 'real-esrgan',
+                status: 'succeeded',
+                predictionId: 'prediction-primary-success',
+              }),
+            ],
+          }),
+        })
+      );
+    });
+
+    test('should recover on cjwbw once when eligible Quick fails with CUDA OOM', async () => {
+      useProductionRetry.enabled = true;
+      vi.useFakeTimers();
+
+      try {
+        const input = createUpscaleInput({
+          imageData: 'data:image/jpeg;base64,original-image-reference',
+          originalWidth: 1200,
+          originalHeight: 1200,
+        });
+        mockReplicateRun
+          .mockRejectedValueOnce(new Error(INCIDENT_CUDA_OOM))
+          .mockResolvedValueOnce('https://replicate-output.com/recovered.png');
+
+        const result = await service.processImage('user-123', input, {
+          deadlineAt: Date.now() + 120000,
+        });
+
+        expect(result.imageUrl).toBe('https://replicate-output.com/recovered.png');
+        expect(mockReplicateRun).toHaveBeenCalledTimes(2);
+        expect(mockReplicateRun).toHaveBeenNthCalledWith(
+          1,
+          'nightmareai/real-esrgan:test-version',
+          {
+            input: {
+              image: input.imageData,
+              scale: 2,
+              face_enhance: false,
+            },
+          }
+        );
+        expect(mockReplicateRun).toHaveBeenNthCalledWith(
+          2,
+          'cjwbw/real-esrgan:fallback-test-version',
+          {
+            input: {
+              image: input.imageData,
+              upscale: 2,
+            },
+          }
+        );
+        expect(mockSupabaseRpc).toHaveBeenCalledTimes(1);
+        expect(mockSupabaseRpc).toHaveBeenNthCalledWith(
+          1,
+          'consume_credits_v3',
+          expect.objectContaining({ p_amount: 10 })
+        );
+        expect(mockSupabaseRpc).not.toHaveBeenCalledWith(
+          'refund_processing_credit_reservation',
+          expect.anything()
+        );
+      } finally {
+        useProductionRetry.enabled = false;
+        vi.useRealTimers();
+      }
+    });
+
+    test('should refund once when cjwbw recovery fails without replaying the primary', async () => {
+      useProductionRetry.enabled = true;
+      vi.useFakeTimers();
+
+      try {
+        const input = createUpscaleInput({
+          imageData: 'data:image/jpeg;base64,original-image-reference',
+          originalWidth: 1200,
+          originalHeight: 1200,
+        });
+        mockReplicateRun
+          .mockRejectedValueOnce(new Error(INCIDENT_CUDA_OOM))
+          .mockRejectedValueOnce(new Error('cjwbw inference failed'));
+
+        await expect(
+          service.processImage('user-123', input, { deadlineAt: Date.now() + 120000 })
+        ).rejects.toMatchObject({ code: 'PROCESSING_FAILED' });
+
+        expect(mockReplicateRun).toHaveBeenCalledTimes(2);
+        expect(mockReplicateRun.mock.calls[0][0]).toBe('nightmareai/real-esrgan:test-version');
+        expect(mockReplicateRun.mock.calls[1][0]).toBe('cjwbw/real-esrgan:fallback-test-version');
+        expect(mockSupabaseRpc).toHaveBeenCalledTimes(2);
+        expect(mockSupabaseRpc).toHaveBeenLastCalledWith(
+          'refund_processing_credit_reservation',
+          expect.objectContaining({
+            p_failure_reason: 'Credit refund for failed Replicate processing',
+          })
+        );
+      } finally {
+        useProductionRetry.enabled = false;
+        vi.useRealTimers();
+      }
+    });
+
+    test('should not switch models when the alternate is disabled', async () => {
+      useProductionRetry.enabled = true;
+      recoveryModelEnabled.enabled = false;
+
+      try {
+        const input = createUpscaleInput({ originalWidth: 1200, originalHeight: 1200 });
+        mockReplicateRun.mockRejectedValueOnce(new Error(INCIDENT_CUDA_OOM));
+
+        await expect(
+          service.processImage('user-123', input, { deadlineAt: Date.now() + 120000 })
+        ).rejects.toMatchObject({ code: 'PROVIDER_UNAVAILABLE' });
+
+        expect(mockReplicateRun).toHaveBeenCalledTimes(1);
+        expect(mockSupabaseRpc).toHaveBeenCalledTimes(2);
+        expect(mockSupabaseRpc).toHaveBeenLastCalledWith(
+          'refund_processing_credit_reservation',
+          expect.any(Object)
+        );
+      } finally {
+        useProductionRetry.enabled = false;
+        recoveryModelEnabled.enabled = true;
+      }
+    });
+
+    test.each([
+      ['unknown dimensions', {}],
+      [
+        'unsupported scale',
+        {
+          originalWidth: 1200,
+          originalHeight: 1200,
+          config: { ...createUpscaleInput().config, scale: 4 },
+        },
+      ],
+      ['unverified side length', { originalWidth: 2049, originalHeight: 1000 }],
+    ])('should refund without switching for %s', async (_caseName, overrides) => {
+      useProductionRetry.enabled = true;
+
+      try {
+        const input = createUpscaleInput(overrides);
+        mockReplicateRun.mockRejectedValueOnce(new Error(INCIDENT_CUDA_OOM));
+
+        await expect(
+          service.processImage('user-123', input, { deadlineAt: Date.now() + 120000 })
+        ).rejects.toMatchObject({ code: 'PROVIDER_UNAVAILABLE' });
+
+        expect(mockReplicateRun).toHaveBeenCalledTimes(1);
+        expect(mockReplicateRun.mock.calls[0][0]).toBe('nightmareai/real-esrgan:test-version');
+        expect(mockSupabaseRpc).toHaveBeenCalledTimes(2);
+      } finally {
+        useProductionRetry.enabled = false;
+      }
+    });
+
+    test('should use one inference and refund when direct cjwbw processing OOMs', async () => {
+      useProductionRetry.enabled = true;
+
+      try {
+        const directService = new ReplicateService('real-esrgan-large');
+        const directRun = (
+          directService as unknown as { replicate: { run: ReturnType<typeof vi.fn> } }
+        ).replicate.run;
+        directRun.mockRejectedValueOnce(new Error(INCIDENT_CUDA_OOM));
+
+        await expect(
+          directService.processImage('user-123', createUpscaleInput(), {
+            deadlineAt: Date.now() + 120000,
+          })
+        ).rejects.toMatchObject({ code: 'PROVIDER_UNAVAILABLE' });
+
+        expect(directRun).toHaveBeenCalledTimes(1);
+        expect(directRun).toHaveBeenCalledWith(
+          'cjwbw/real-esrgan:fallback-test-version',
+          expect.objectContaining({ input: expect.objectContaining({ upscale: 2 }) })
+        );
+        expect(mockSupabaseRpc).toHaveBeenCalledTimes(2);
+      } finally {
+        useProductionRetry.enabled = false;
+      }
+    });
+
+    test('should reject a legacy face-enabled Quick request before inference', async () => {
+      const input = createUpscaleInput({
+        config: {
+          ...createUpscaleInput().config,
+          additionalOptions: {
+            ...createUpscaleInput().config.additionalOptions,
+            enhanceFaces: true,
+          },
+        },
+      });
+
+      await expect(service.processImage('user-123', input)).rejects.toMatchObject({
+        code: 'FACE_ENHANCEMENT_RESELECT_REQUIRED',
+      });
+
+      expect(mockReplicateRun).not.toHaveBeenCalled();
+      expect(mockSupabaseRpc).not.toHaveBeenCalled();
+    });
+
+    test('should not recover an ambiguous timeout that mentions CUDA OOM', async () => {
+      useProductionRetry.enabled = true;
+
+      try {
+        const input = createUpscaleInput({ originalWidth: 1200, originalHeight: 1200 });
+        mockReplicateRun.mockRejectedValueOnce(
+          new Error(`${INCIDENT_CUDA_OOM} Prediction timed out while waiting for a result.`)
+        );
+
+        await expect(
+          service.processImage('user-123', input, { deadlineAt: Date.now() + 120000 })
+        ).rejects.toMatchObject({ code: 'TIMEOUT' });
+
+        expect(mockReplicateRun).toHaveBeenCalledTimes(1);
+        expect(mockSupabaseRpc).toHaveBeenCalledTimes(2);
+      } finally {
+        useProductionRetry.enabled = false;
+      }
+    });
+
+    test('should refund without recovery when the shared deadline cannot fit cjwbw', async () => {
+      useProductionRetry.enabled = true;
+
+      try {
+        const input = createUpscaleInput({ originalWidth: 1200, originalHeight: 1200 });
+        mockReplicateRun.mockRejectedValueOnce(new Error(INCIDENT_CUDA_OOM));
+
+        await expect(
+          service.processImage('user-123', input, { deadlineAt: Date.now() + 1000 })
+        ).rejects.toMatchObject({ code: 'TIMEOUT' });
+
+        expect(mockReplicateRun).toHaveBeenCalledTimes(1);
+        expect(mockSupabaseRpc).toHaveBeenCalledTimes(2);
+      } finally {
+        useProductionRetry.enabled = false;
+      }
+    });
+
+    test('should complete a successful primary Quick request with one call', async () => {
+      useProductionRetry.enabled = true;
+
+      try {
+        const input = createUpscaleInput({ originalWidth: 1200, originalHeight: 1200 });
+        mockReplicateRun.mockResolvedValueOnce('https://replicate-output.com/primary.png');
+
+        await expect(
+          service.processImage('user-123', input, { deadlineAt: Date.now() + 120000 })
+        ).resolves.toMatchObject({ imageUrl: 'https://replicate-output.com/primary.png' });
+
+        expect(mockReplicateRun).toHaveBeenCalledTimes(1);
+        expect(mockReplicateRun).toHaveBeenCalledWith(
+          'nightmareai/real-esrgan:test-version',
+          expect.objectContaining({
+            input: expect.objectContaining({ scale: 2, face_enhance: false }),
+          })
+        );
+        expect(mockSupabaseRpc).toHaveBeenCalledTimes(1);
+      } finally {
+        useProductionRetry.enabled = false;
+      }
+    });
+
+    test('should preserve same-model OOM retry behavior for non-Quick models', async () => {
+      useProductionRetry.enabled = true;
+      vi.useFakeTimers();
+
+      try {
+        const gfpganService = new ReplicateService('gfpgan');
+        const gfpganRun = (
+          gfpganService as unknown as { replicate: { run: ReturnType<typeof vi.fn> } }
+        ).replicate.run;
+        gfpganRun
+          .mockRejectedValueOnce(new Error(INCIDENT_CUDA_OOM))
+          .mockResolvedValueOnce('https://replicate-output.com/gfpgan.png');
+
+        const resultPromise = gfpganService.processImage('user-123', createUpscaleInput());
+        await vi.advanceTimersByTimeAsync(5000);
+        await expect(resultPromise).resolves.toMatchObject({
+          imageUrl: 'https://replicate-output.com/gfpgan.png',
+        });
+
+        expect(gfpganRun).toHaveBeenCalledTimes(2);
+        expect(gfpganRun.mock.calls[0][0]).toBe('xinntao/gfpgan:test-version');
+        expect(gfpganRun.mock.calls[1][0]).toBe('xinntao/gfpgan:test-version');
+      } finally {
+        useProductionRetry.enabled = false;
+        vi.useRealTimers();
+      }
     });
   });
 

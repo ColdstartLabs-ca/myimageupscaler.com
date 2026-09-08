@@ -52,12 +52,12 @@ describe('Quality Tier Configuration', () => {
       expect(MODEL_COSTS.FREE_QUALITY_TIERS).toContain('quick');
     });
 
-    it('should include face-restore in FREE_QUALITY_TIERS', () => {
-      expect(MODEL_COSTS.FREE_QUALITY_TIERS).toContain('face-restore');
+    it('should include face-restore in PREMIUM_QUALITY_TIERS', () => {
+      expect(MODEL_COSTS.PREMIUM_QUALITY_TIERS).toContain('face-restore');
     });
 
-    it('should have exactly 3 free quality tiers', () => {
-      expect(MODEL_COSTS.FREE_QUALITY_TIERS).toHaveLength(3);
+    it('should have exactly 2 free quality tiers', () => {
+      expect(MODEL_COSTS.FREE_QUALITY_TIERS).toHaveLength(2);
     });
   });
 

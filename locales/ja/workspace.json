@@ -8,7 +8,17 @@
     "securityMessage": "これは不正利用を防ぐためのセキュリティ対策です。制限は約1時間後にリセットされます。より高い制限についてはプランをアップグレードしてください。",
     "upgradeButton": "プランをアップグレード",
     "addPartialButton": "{availableSlots}枚の画像を追加",
-    "cancelButton": "キャンセル"
+    "cancelButton": "キャンセル",
+    "remainingSlotsMessage": "You have {availableSlots} of {limit} slots remaining in your queue.",
+    "upgradeButtonBatch": "Unlock Batch Processing",
+    "quickBuyButton": "Get 50 Credits - $4.99",
+    "seePlansButton": "See All Plans",
+    "title_value": "Upscale Unlimited Images",
+    "title_outcome": "Your Images Deserve Better Quality",
+    "title_urgency": "Limited Time: 50 Credits for $4.99",
+    "body_value": "Get 50 credits for just $4.99 — batch process, pro AI models, 4K output.",
+    "body_outcome": "See the difference pro AI models make. Sharper details, cleaner edges, up to 4K resolution.",
+    "body_urgency": "Start batch processing now. Pro AI models included."
   },
   "queue": {
     "title": "処理キュー",
@@ -65,7 +75,11 @@
     "autoResizeToastUpload": "処理前のアップロード上限に収めるため、画像を{resizedWidth}×{resizedHeight}にリサイズしました。",
     "autoResizeToastUploadBatch": "{count, plural, one {処理前のアップロード上限に収めるため、#枚の画像をリサイズしました。} other {処理前のアップロード上限に収めるため、#枚の画像をリサイズしました。}}",
     "autoResizeToastProcessing": "処理に収めるため、入力画像を{resizedWidth}×{resizedHeight}にリサイズしました。最終結果は約{expectedWidth}×{expectedHeight}になり、基準はリサイズ後入力の{scale}xです。",
-    "dimensionPreservingModelToast": "画像が選択したモデルには大きすぎたため、元のサイズを保つために{model}で処理しました。料金は通常どおりです。"
+    "dimensionPreservingModelToast": "画像が選択したモデルには大きすぎたため、元のサイズを保つために{model}で処理しました。料金は通常どおりです。",
+    "dimensionWarning": "Your image ({width}x{height} = {pixels}) exceeds the maximum ({maxPixels}). Resize to continue.",
+    "autoResizeToggle": "Always auto-resize images for me",
+    "autoResizeToast": "Image automatically resized to fit processing limits",
+    "autoResizeToPixelLimit": "Automatically resize to fit within {maxPixels}MP pixel limit."
   },
   "previewArea": {
     "stages": {
@@ -127,6 +141,19 @@
       "processing": "処理中...",
       "allProcessed": "すべて処理完了",
       "processAll": "すべて処理({count})"
+    },
+    "faceEnhancement": {
+      "title": "顔を強化",
+      "upgradeLabel": "アップグレード",
+      "clarityProLabel": "Clarity Pro",
+      "upgradeDescription": "Clarity Proで有料の顔アップスケールを利用できます。",
+      "selectDescription": "Clarity Proを選択すると、画像に応じた表示価格で顔をアップスケールできます。",
+      "selectedTitle": "Clarity Proの顔アップスケール",
+      "selectedDescription": "上記の料金はキュー内の画像サイズと選択した倍率に基づいています。",
+      "reselectionRequired": "保存された顔強化設定を確認してください。処理前にClarity Proを選択してください。",
+      "unavailableTitle": "顔アップスケールを利用できません",
+      "unavailableMessage": "現在Clarity Proを利用できません。別のティアを選択してください。",
+      "unsupportedScale": "現在Clarity Proは{scale}xに対応していません。対応する倍率を選択してください。"
     }
   },
   "enhancementOptions": {

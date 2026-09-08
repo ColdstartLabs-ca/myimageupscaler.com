@@ -95,7 +95,10 @@ vi.mock('@client/utils/authRedirectManager', () => ({
 
 // Mock next-intl
 vi.mock('next-intl', () => ({
-  useTranslations: () => (key: string) => key,
+  useTranslations: () => (key: string) =>
+    key === 'faceEnhancement.reselectionRequired'
+      ? 'Your saved face-enhancement setting needs review. Choose Clarity Pro before processing again.'
+      : key,
 }));
 
 vi.mock('next/navigation', () => ({
@@ -143,15 +146,30 @@ vi.mock('../QueueStrip', () => ({
 
 vi.mock('../BatchSidebar', () => ({
   BatchSidebar: ({
+    config,
     onProcess,
+    onSelectPaidFaceTier,
     onUpgradeDirect,
   }: {
+    config?: {
+      qualityTier?: string;
+      scale?: number;
+      additionalOptions?: { enhanceFaces?: boolean };
+    };
     onProcess?: () => void;
+    onSelectPaidFaceTier?: () => void;
     onUpgradeDirect?: (params: { trigger: string; planId: string }) => void;
   }) => (
     <div>
+      <div data-testid="workspace-config">
+        {config?.qualityTier}:{config?.scale}:
+        {String(Boolean(config?.additionalOptions?.enhanceFaces))}
+      </div>
       <button data-testid="batch-sidebar-process" onClick={onProcess}>
         Process
+      </button>
+      <button data-testid="batch-sidebar-face-selection" onClick={onSelectPaidFaceTier}>
+        Enhance faces
       </button>
       <button
         data-testid="batch-sidebar-direct-checkout"
@@ -680,6 +698,59 @@ describe('Workspace Quality Tier Logic', () => {
     expect(screen.queryByTestId('purchase-modal')).not.toBeInTheDocument();
   });
 
+  test('should keep face enhancement off until the user selects a paid face tier', async () => {
+    mockIsFreeUser = false;
+    mockBatchQueueState.queue = [
+      {
+        id: 'item-1',
+        status: ProcessingStatus.IDLE,
+        file: new File(['test'], 'test.png', { type: 'image/png' }),
+      },
+    ];
+    mockBatchQueueState.activeId = 'item-1';
+    mockBatchQueueState.activeItem = mockBatchQueueState.queue[0];
+
+    render(<Workspace />);
+
+    expect(screen.getByTestId('workspace-config')).toHaveTextContent('quick:2:false');
+    fireEvent.click(screen.getByTestId('batch-sidebar-face-selection'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('workspace-config')).toHaveTextContent('clarity-pro:2:true');
+    });
+    expect(mockProcessBatch).not.toHaveBeenCalled();
+  });
+
+  test('should preserve the queued image while a free user completes face-tier purchase', async () => {
+    mockIsFreeUser = true;
+    mockBatchQueueState.queue = [
+      {
+        id: 'item-1',
+        status: ProcessingStatus.IDLE,
+        file: new File(['test'], 'test.png', { type: 'image/png' }),
+      },
+    ];
+    mockBatchQueueState.activeId = 'item-1';
+    mockBatchQueueState.activeItem = mockBatchQueueState.queue[0];
+
+    render(<Workspace />);
+    fireEvent.click(screen.getByTestId('batch-sidebar-face-selection'));
+
+    expect(screen.getByTestId('purchase-modal')).toHaveAttribute(
+      'data-trigger',
+      'workspace_face_enhancement'
+    );
+    expect(screen.getByTestId('workspace-config')).toHaveTextContent('quick:2:false');
+
+    mockFetchUserData.mockResolvedValue(undefined);
+    fireEvent.click(screen.getByRole('button', { name: 'Complete purchase' }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('workspace-config')).toHaveTextContent('clarity-pro:2:true');
+    });
+    expect(mockProcessBatch).not.toHaveBeenCalled();
+  });
+
   test('should resume the interrupted job exactly once after confirmed credit fulfillment', async () => {
     mockTotalCredits = 0;
     mockBatchQueueState.queue = [
@@ -711,7 +782,7 @@ describe('Workspace Quality Tier Logic', () => {
     expect(inspectInterruptedJob()).toEqual({ status: 'missing' });
   });
 
-  test('should resume the interrupted job from post-auth checkout success', async () => {
+  test('should require face-tier reselection for a legacy saved Quick job', async () => {
     mockTotalCredits = 0;
     mockBatchQueueState.queue = [
       {
@@ -743,9 +814,13 @@ describe('Workspace Quality Tier Logic', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Complete checkout' }));
 
     await waitFor(() => {
-      expect(mockProcessBatch).toHaveBeenCalledTimes(1);
+      expect(inspectInterruptedJob()).toMatchObject({
+        status: 'needs_action',
+        reason: 'face_reselection_required',
+      });
     });
-    expect(inspectInterruptedJob()).toEqual({ status: 'missing' });
+    expect(mockProcessBatch).not.toHaveBeenCalled();
+    expect(screen.getByRole('alert')).toHaveTextContent(/choose clarity pro/i);
   });
 
   test('should not resume when the purchase modal is only dismissed repeatedly', () => {

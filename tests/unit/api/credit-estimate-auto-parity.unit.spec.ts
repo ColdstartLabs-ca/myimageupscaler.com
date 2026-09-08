@@ -148,7 +148,11 @@ describe('Auto credit estimate and deduction parity', () => {
       resetAt: new Date(Date.now() + 60_000),
     });
     mocks.batchRelease.mockResolvedValue(true);
-    mocks.providerAvailability.mockResolvedValue({ available: true, status: 'closed', retryAt: null });
+    mocks.providerAvailability.mockResolvedValue({
+      available: true,
+      status: 'closed',
+      retryAt: null,
+    });
     mocks.acquireProviderPermit.mockResolvedValue(true);
     mocks.providerFailure.mockResolvedValue(true);
     mocks.providerSuccess.mockResolvedValue(true);
@@ -351,4 +355,103 @@ describe('Auto credit estimate and deduction parity', () => {
       vi.useRealTimers();
     }
   }, 15_000);
+
+  it('quotes Clarity Pro with the same decoded dimensions the live route charges', async () => {
+    const paidProfile = profile({ subscription_credits_balance: 20 });
+    mocks.from.mockImplementation(() => ({
+      select: () => ({
+        eq: () => ({
+          single: async () => ({ data: paidProfile, error: null }),
+          maybeSingle: async () => ({ data: { user_id: USER_ID }, error: null }),
+        }),
+      }),
+      insert: async () => ({ error: null }),
+    }));
+    mocks.decodeImageDimensions.mockReturnValue({ width: 1000, height: 1000 });
+
+    let deductedCredits: number | undefined;
+    let processedInput: { originalWidth?: number; originalHeight?: number } | undefined;
+    mocks.processImage.mockImplementation(async (_userId, input, options) => {
+      deductedCredits = options.creditCost;
+      processedInput = input as { originalWidth?: number; originalHeight?: number };
+      options.onCreditsDeducted?.({
+        amount: options.creditCost,
+        subscriptionAmount: options.creditCost,
+        purchasedAmount: 0,
+        jobId: JOB_ID,
+      });
+      return {
+        imageUrl: 'https://replicate.delivery/clarity-pro.png',
+        mimeType: 'image/png',
+        expiresAt: 1795737600000,
+        creditsRemaining: paidProfile.subscription_credits_balance - options.creditCost,
+      };
+    });
+
+    const estimateResponse = await estimateCredits(
+      request('/api/credit-estimate', {
+        config: {
+          mode: 'both',
+          scale: 2,
+          qualityTier: 'clarity-pro',
+          selectedModel: 'auto',
+          inputWidth: 1000,
+          inputHeight: 1000,
+          additionalOptions: { smartAnalysis: false },
+        },
+      })
+    );
+    const estimateBody = await estimateResponse.json();
+
+    const upscaleResponse = await upscale(
+      request('/api/upscale', {
+        storagePath: `${USER_ID}/${JOB_ID}.png`,
+        jobId: JOB_ID,
+        mimeType: 'image/png',
+        config: {
+          qualityTier: 'clarity-pro',
+          scale: 2,
+          additionalOptions: {
+            smartAnalysis: false,
+            enhance: true,
+            enhanceFaces: true,
+            preserveText: false,
+          },
+        },
+      })
+    );
+    const upscaleBody = await upscaleResponse.json();
+
+    expect(estimateResponse.status).toBe(200);
+    expect(estimateBody).toMatchObject({
+      modelToBe: 'clarity-pro-upscaler',
+      breakdown: {
+        pricingModel: 'output-megapixel',
+        outputMegapixels: 4,
+        totalCredits: 10,
+      },
+    });
+    expect(upscaleResponse.status).toBe(200);
+    expect(upscaleBody.processing).toMatchObject({
+      modelUsed: 'clarity-pro-upscaler',
+      creditsUsed: estimateBody.breakdown.totalCredits,
+    });
+    expect(upscaleBody.dimensions).toMatchObject({
+      input: { width: 1000, height: 1000 },
+      output: { width: 2000, height: 2000 },
+    });
+    expect(processedInput).toMatchObject({ originalWidth: 1000, originalHeight: 1000 });
+    expect(deductedCredits).toBe(estimateBody.breakdown.totalCredits);
+    expect(mocks.processImage).toHaveBeenCalledWith(
+      USER_ID,
+      expect.anything(),
+      expect.objectContaining({
+        creditCost: estimateBody.breakdown.totalCredits,
+        costAttribution: expect.objectContaining({
+          modelId: 'clarity-pro-upscaler',
+          pricingModel: 'output-megapixel',
+        }),
+      })
+    );
+  });
 });
