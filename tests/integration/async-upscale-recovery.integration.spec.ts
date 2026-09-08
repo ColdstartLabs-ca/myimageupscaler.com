@@ -287,7 +287,7 @@ test('should prevent refund while a delivery lease is active', async () => {
   await reader.cancel('test interrupted');
 });
 
-test('should allow retry after an interrupted stream releases its lease', async () => {
+test('should recover an interrupted download after bounded lease expiry without another charge', async () => {
   runtime.setProviderDelayMs(50);
   const job = await createJob();
   const admission = await runtime.request(job.user, '/api/upscale', job.body);
@@ -311,20 +311,81 @@ test('should allow retry after an interrupted stream releases its lease', async 
   );
   const reader = interrupted.body!.getReader();
   await reader.read();
+  const claimed = await reservation(job.id);
+  expect(claimed.status).toBe('processing');
+  expect(claimed.acknowledged_at).toBeNull();
+  expect(claimed.delivery_lease_expires_at).not.toBeNull();
+  const leaseRemaining = Date.parse(claimed.delivery_lease_expires_at!) - Date.now();
+  expect(leaseRemaining).toBeGreaterThan(0);
+  expect(leaseRemaining).toBeLessThanOrEqual(180_000);
+  const owner = (
+    await runtime.database.pool.query(
+      `SELECT delivery_lease_token, delivery_token_hash, output_url, output_mime_type, output_expires_at
+     FROM processing_credit_reservations WHERE job_id = $1`,
+      [job.id]
+    )
+  ).rows[0];
   try {
     abort.abort();
   } catch {
     // Miniflare can surface the downstream stream's AbortError from abort().
   }
-  await expect
-    .poll(async () => (await reservation(job.id)).delivery_lease_expires_at, { timeout: 2_000 })
-    .toBeNull();
+  // A terminated Worker cannot guarantee its cancel callback runs. Prompt
+  // release is an optimization; the durable expiry must permit recovery.
+  const abandoned = await reservation(job.id);
+  expect(abandoned.status).toBe('processing');
+  expect(abandoned.acknowledged_at).toBeNull();
+  if (abandoned.delivery_lease_expires_at) {
+    // Disposable database clock control only. Do not clear the token/lease:
+    // the production claim RPC must recognize and reclaim the expired owner.
+    await runtime.database.pool.query(
+      `UPDATE processing_credit_reservations
+       SET delivery_lease_expires_at = now() - interval '1 second'
+       WHERE job_id = $1 AND delivery_lease_expires_at = $2::timestamptz`,
+      [job.id, abandoned.delivery_lease_expires_at]
+    );
+  }
 
   const retry = await runtime.request(job.user, '/api/upscale/output', capability);
   expect(retry.status).toBe(200);
-  const retryBody = await retry.arrayBuffer();
-  expect(retryBody.byteLength).toBeGreaterThan(0);
-  expect((await reservation(job.id)).status).toBe('completed');
+  const staleOwner = await runtime.database.pool.query(
+    `SELECT public.release_async_upscale_delivery($1, $2, $3, $4) AS released,
+       public.acknowledge_async_upscale_delivery($1, $2, $3, $4, $5, $6, $7) AS acknowledgement`,
+    [
+      job.user.id,
+      job.id,
+      owner.delivery_token_hash,
+      owner.delivery_lease_token,
+      owner.output_url,
+      owner.output_mime_type,
+      owner.output_expires_at,
+    ]
+  );
+  expect(staleOwner.rows[0]).toEqual({
+    released: false,
+    acknowledgement: { outcome: 'lease_expired' },
+  });
+  const retryBody = Buffer.from(await retry.arrayBuffer());
+  expect([retryBody.readUInt32BE(16), retryBody.readUInt32BE(20)]).toEqual([2048, 2048]);
+  expect(await reservation(job.id)).toMatchObject({
+    status: 'completed',
+    acknowledged_at: expect.any(String),
+  });
+  const ledger = await runtime.database.pool.query(
+    `SELECT type, count(*)::int AS count, sum(amount)::int AS amount
+     FROM credit_transactions WHERE reference_id IN ($1, $2) GROUP BY type`,
+    [job.id, `reservation_refund_${job.id}`]
+  );
+  expect(ledger.rows).toEqual([{ type: 'usage', count: 1, amount: -1 }]);
+  expect(await profileBalances(job.user.id)).toEqual({ subscription: 9, purchased: 5 });
+  expect(
+    runtime.calls.filter(
+      call =>
+        call.host === 'api.replicate.com' &&
+        call.method === 'POST' &&
+        call.path.endsWith('/predictions')
+    )
+  ).toHaveLength(1);
 });
 
 test('should return a typed retryable response when another tab owns the delivery lease', async () => {
