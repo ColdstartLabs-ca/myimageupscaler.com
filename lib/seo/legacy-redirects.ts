@@ -32,6 +32,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
     statusCode: 301,
   },
   {
+    source: '/:locale(en|fr|de|es|it|ja|pt)/article/architecture-visualization-enhancement',
+    destination: '/industry-insights/architecture-visualization-enhancement',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
     source: '/:locale(en|fr|de|es|it|ja|pt)/article/batch-image-processing-guide',
     destination: '/technical-guides/batch-image-processing-guide',
     permanent: true,
@@ -70,6 +76,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
   {
     source: '/:locale(en|fr|de|es|it|ja|pt)/article/damaged-photo-repair',
     destination: '/photo-restoration/damaged-photo-repair',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
+    source: '/:locale(en|fr|de|es|it|ja|pt)/article/desktop-image-optimization',
+    destination: '/device-optimization/desktop-image-optimization',
     permanent: true,
     statusCode: 301,
   },
@@ -164,6 +176,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
     statusCode: 301,
   },
   {
+    source: '/:locale(en|fr|de|es|it|ja|pt)/article/mobile-device-image-optimization',
+    destination: '/device-optimization/mobile-device-image-optimization',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
     source: '/:locale(en|fr|de|es|it|ja|pt)/article/neural-networks-image-processing',
     destination: '/technical-guides/neural-networks-image-processing',
     permanent: true,
@@ -214,6 +232,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
   {
     source: '/:locale(en|fr|de|es|it|ja|pt)/article/print-shops',
     destination: '/personas-expanded/print-shops',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
+    source: '/:locale(en|fr|de|es|it|ja|pt)/article/professional-photo-editing-workflows',
+    destination: '/technical-guides/professional-photo-editing-workflows',
     permanent: true,
     statusCode: 301,
   },
@@ -530,6 +554,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
     statusCode: 301,
   },
   {
+    source: '/:locale(en|fr|de|es|it|ja|pt)/tools/convert/jpg-en-png',
+    destination: '/:locale(en|fr|de|es|it|ja|pt)/tools/convert/jpg-to-png',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
     source: '/:locale(en|fr|de|es|it|ja|pt)/tools/convert/jpg-en-webp',
     destination: '/:locale(en|fr|de|es|it|ja|pt)/tools/convert/jpg-to-webp',
     permanent: true,
@@ -840,6 +870,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
     statusCode: 301,
   },
   {
+    source: '/article/architecture-visualization-enhancement',
+    destination: '/industry-insights/architecture-visualization-enhancement',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
     source: '/article/batch-image-processing-guide',
     destination: '/technical-guides/batch-image-processing-guide',
     permanent: true,
@@ -878,6 +914,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
   {
     source: '/article/damaged-photo-repair',
     destination: '/photo-restoration/damaged-photo-repair',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
+    source: '/article/desktop-image-optimization',
+    destination: '/device-optimization/desktop-image-optimization',
     permanent: true,
     statusCode: 301,
   },
@@ -972,6 +1014,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
     statusCode: 301,
   },
   {
+    source: '/article/mobile-device-image-optimization',
+    destination: '/device-optimization/mobile-device-image-optimization',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
     source: '/article/neural-networks-image-processing',
     destination: '/technical-guides/neural-networks-image-processing',
     permanent: true,
@@ -1022,6 +1070,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
   {
     source: '/article/print-shops',
     destination: '/personas-expanded/print-shops',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
+    source: '/article/professional-photo-editing-workflows',
+    destination: '/technical-guides/professional-photo-editing-workflows',
     permanent: true,
     statusCode: 301,
   },
@@ -1497,6 +1551,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
     permanent: true,
     statusCode: 301,
   },
+  {
+    source: '/pt/tools/resize/redimensionar-imagem-para-linkedin',
+    destination: '/pt/tools/resize/resize-image-for-linkedin',
+    permanent: true,
+    statusCode: 301,
+  },
   { source: '/search', destination: '/', permanent: true, statusCode: 301 },
   { source: '/signup', destination: '/', permanent: true, statusCode: 301 },
   { source: '/technical-guides', destination: '/guides', permanent: true, statusCode: 301 },
@@ -1557,6 +1617,12 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
   {
     source: '/tools/convert/convert-to-webp',
     destination: '/tools/convert/png-to-webp',
+    permanent: true,
+    statusCode: 301,
+  },
+  {
+    source: '/tools/convert/jpg-en-png',
+    destination: '/tools/convert/jpg-to-png',
     permanent: true,
     statusCode: 301,
   },
@@ -1884,6 +1950,7 @@ export const LEGACY_REDIRECTS: ILegacyRedirect[] = [
     permanent: true,
     statusCode: 301,
   },
+  { source: '/use-cases-expanded', destination: '/use-cases', permanent: true, statusCode: 301 },
   {
     source: '/use-cases/anime-illustration-upscaling',
     destination: '/use-cases/anime-image-upscaler',

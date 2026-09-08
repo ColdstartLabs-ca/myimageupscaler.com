@@ -49,7 +49,7 @@ describe('404 coverage resolution artifact', () => {
 
   it('should prove every committed redirect destination ends at 200', () => {
     const artifact = JSON.parse(
-      readFileSync('seo-reports/404-resolution-2026-08-25.json', 'utf8')
+      readFileSync('seo-reports/404-resolution-2026-09-08.json', 'utf8')
     ) as { destinationResolutions: I404Resolution[] };
 
     expect(deadRedirectDestinations(LEGACY_REDIRECTS, artifact.destinationResolutions)).toEqual([]);

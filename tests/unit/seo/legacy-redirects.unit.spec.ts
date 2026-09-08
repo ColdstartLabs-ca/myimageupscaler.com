@@ -7,7 +7,7 @@ import { parseGscCsv } from '@/lib/seo/gsc-verification';
 
 const ROOT = path.resolve(__dirname, '../../..');
 const DATA_PATH = path.join(ROOT, 'docs/PRDs/gsc-recovery-2026-08/data/gsc-404.csv');
-const RESOLUTION_PATH = path.join(ROOT, 'seo-reports/404-resolution-2026-08-25.json');
+const RESOLUTION_PATH = path.join(ROOT, 'seo-reports/404-resolution-2026-09-08.json');
 const LOCALE_PATTERN = ':locale(en|fr|de|es|it|ja|pt)';
 
 const FORMER_MIDDLEWARE_REDIRECTS: Array<[string, string]> = [
@@ -177,5 +177,31 @@ describe('generated legacy redirects', () => {
     for (const [source, destination] of expected) {
       expect(findRedirect(source)?.destination, source).toBe(destination);
     }
+  });
+
+  it('should redirect the newly uncovered September 8 paths to their owning pages', () => {
+    const expected = new Map([
+      [
+        '/article/mobile-device-image-optimization',
+        '/device-optimization/mobile-device-image-optimization',
+      ],
+      ['/article/desktop-image-optimization', '/device-optimization/desktop-image-optimization'],
+      ['/tools/convert/jpg-en-png', '/tools/convert/jpg-to-png'],
+      [
+        '/article/architecture-visualization-enhancement',
+        '/industry-insights/architecture-visualization-enhancement',
+      ],
+      ['/use-cases-expanded', '/use-cases'],
+    ]);
+
+    for (const [source, destination] of expected) {
+      expect(findRedirect(source)?.destination, source).toBe(destination);
+      expect(findRedirect(source)?.statusCode, source).toBe(301);
+    }
+  });
+
+  it('should redirect only the expanded use-case hub, preserving detail routes', () => {
+    expect(findRedirect('/use-cases-expanded')?.destination).toBe('/use-cases');
+    expect(findRedirect('/use-cases-expanded/real-estate-photography')).toBeUndefined();
   });
 });

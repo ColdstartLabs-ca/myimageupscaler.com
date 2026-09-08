@@ -9,6 +9,27 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-09-08
+
+### GSC 404 Coverage Repair
+
+Source: [GSC validation diagnosis](../reports/2026-09-08-gsc-validation-diagnosis.md).
+
+Changes:
+
+- Merged the 13 paths newly present in the September 8 Not found (404) export into the maintained recovery inventory, preserving the existing historical rows.
+- Added the `jpg-en-png` tool alias, generated the three article-owner redirects, and added the exact `/use-cases-expanded` → `/use-cases` hub redirect. Expanded detail routes remain unaffected.
+- Regenerated `lib/seo/legacy-redirects.ts` and added regression coverage for all five confirmed missing mappings and the exact hub-only behavior.
+
+Validation:
+
+- Focused redirect, loop-safety, and destination-eligibility tests pass: 18/18.
+- Fresh production resolution audit checked 316 inventory rows and 285 redirect destinations. All destinations ended at 200; seven new source URLs still returned 404 because this local change is not deployed.
+
+Follow-up:
+
+- Deploy the redirect change, repeat the seven source checks, and only then start GSC validation for the repaired 404 set. The remaining report categories still require their stated evidence checks; no blanket indexing-policy change was made.
+
 ## 2026-09-07
 
 ### Blog Index Parameter Deindex Signal

@@ -54,6 +54,7 @@ const FORMER_MIDDLEWARE_REDIRECTS: Record<string, string> = {
   '/article/family-photo-preservation': '/photo-restoration/family-photo-preservation',
   '/article/upscale-product-photos': '/content/upscale-product-photos',
   '/article/vintage-photo-colorization': '/photo-restoration/vintage-photo-colorization',
+  '/use-cases-expanded': '/use-cases',
   '/industry-insights/real-estate-photo-enhancement': '/use-cases/real-estate-photo-enhancement',
   '/blog/photo-enhancement-upscaling-vs-quality':
     '/blog/ai-image-upscaling-vs-sharpening-explained',
@@ -71,6 +72,7 @@ const TOOL_SLUG_ALIASES: Record<string, string> = {
   'png-en-jpg': 'png-to-jpg',
   'png-en-webp': 'png-to-webp',
   'jpg-en-webp': 'jpg-to-webp',
+  'jpg-en-png': 'jpg-to-png',
   'jpg-in-png': 'jpg-to-png',
   'webp-in-jpg': 'webp-to-jpg',
   'webp-en-jpg': 'webp-to-jpg',
