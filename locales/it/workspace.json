@@ -92,6 +92,7 @@
       "title": "Elaborazione Fallita",
       "tryAgain": "Riprova"
     },
+    "checkStatus": "Controlla stato",
     "statusMessages": {
       "preparing": "Preparazione immagine...",
       "analyzing": "Analisi immagine...",

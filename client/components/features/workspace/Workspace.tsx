@@ -102,6 +102,7 @@ const Workspace: React.FC<IWorkspaceProps> = ({ faceEnhancementAvailable = true 
     clearQueue,
     processBatch,
     processSingleItem,
+    checkAsyncJobStatus,
     clearBatchLimitError,
     clearProviderUnavailable,
     showProviderUnavailable,
@@ -480,18 +481,19 @@ const Workspace: React.FC<IWorkspaceProps> = ({ faceEnhancementAvailable = true 
 
   const handleSaveToGallery = async (item: IBatchItem, dimensions?: IImageDimensions) => {
     if (!item.processedUrl || isSavingToGallery || savingGalleryItemId) return;
+    const filename = item.file?.name || item.fileName || 'recovered-image';
 
     analytics.track('gallery_save_initiated', {
       itemId: item.id,
       modelUsed: config.qualityTier,
       processingMode: 'upscale',
-      filename: item.file.name,
+      filename,
     });
 
     setSavingGalleryItemId(item.id);
     const saved = await saveImageToGallery({
       imageUrl: item.processedUrl,
-      filename: item.file.name,
+      filename,
       width: dimensions?.width,
       height: dimensions?.height,
       modelUsed: config.qualityTier,
@@ -1029,6 +1031,9 @@ const Workspace: React.FC<IWorkspaceProps> = ({ faceEnhancementAvailable = true 
               onDownload={handleDownloadSingle}
               onSaveToGallery={handleSaveToGallery}
               onRetry={(item: IBatchItem) => processSingleItem(item, config)}
+              onCheckStatus={item => {
+                void checkAsyncJobStatus(item);
+              }}
               selectedModel={config.qualityTier}
               batchProgress={batchProgress}
               isProcessingBatch={isProcessingBatch}

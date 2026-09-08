@@ -9,6 +9,7 @@ import { normalizeCoreEventProperties } from '@server/analytics/core-event-contr
 import { createLogger } from '@server/monitoring/logger';
 import { upscaleRateLimit } from '@server/rateLimit';
 import { batchLimitCheck } from '@server/services/batch-limit.service';
+import { AsyncUpscaleError, asyncUpscaleService } from '@server/services/async-upscale.service';
 import { ensureAntiFreeloaderProfile } from '@server/services/anti-freeloader.service';
 import {
   AIGenerationError,
@@ -61,7 +62,7 @@ import {
   validateMagicBytes,
 } from '@shared/validation/upscale.schema';
 import { NextRequest, NextResponse } from 'next/server';
-import { ZodError } from 'zod';
+import { z, ZodError } from 'zod';
 
 // Delay between AI analysis and image processing to avoid Replicate rate limits
 // Replicate enforces 1 req/sec for low-credit accounts, with ~30s reset on 429
@@ -249,6 +250,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const requestId = req.headers.get('x-request-id') || req.headers.get('cf-ray') || undefined;
   let creditsRefunded = false;
   let temporaryStoragePath: string | undefined;
+  let asyncHandoff = false;
   let latestFailure: { failureReason: string } | null = null;
   let failureRowWriteScheduled = false;
   const pendingFailureRowWrites: Array<() => Promise<void>> = [];
@@ -443,6 +445,30 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     logger.info('Processing upscale request', { userId });
 
+    // 5. Read only bounded metadata. The reader rejects a declared oversized
+    // body before acquiring a stream and counts actual bytes for streamed bodies.
+    const body = await readBoundedJsonBody(req, IMAGE_VALIDATION.MAX_REQUEST_BYTES);
+    const validatedInput = upscaleSchema.parse(body);
+
+    // The Tail Worker observes this request header after a hard platform failure.
+    // Bind it to the same validated reservation UUID used by credit deduction so
+    // a caller cannot crash one request while refunding a different reservation.
+    const tailReservationJobId = req.headers.get('x-upscale-job-id');
+    if (tailReservationJobId && tailReservationJobId !== validatedInput.jobId) {
+      logFailure('tail_reservation_job_id_mismatch');
+      const { body: errorBody, status } = createErrorResponse(
+        ErrorCodes.VALIDATION_ERROR,
+        'Invalid processing reservation correlation',
+        400
+      );
+      return NextResponse.json(errorBody, { status });
+    }
+
+    const replay = await asyncUpscaleService.replay({ userId, request: validatedInput });
+    if (replay) {
+      return NextResponse.json(replay.body, { status: replay.status, headers: replay.headers });
+    }
+
     // Read the durable grant decision first. If setup commits concurrently, the
     // following profile read will see either the granted balance or remain pending.
     const { data: grantDecision, error: grantDecisionError } = await supabaseAdmin
@@ -606,58 +632,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         }
       );
       return NextResponse.json(body, { status });
-    }
-
-    // 4. Check batch limit (after rate limit, before processing)
-    // HIGH-8/9 FIX: Use atomic checkAndIncrement to prevent race conditions
-    const batchCheck = await batchLimitCheck.checkAndIncrement(userId, userTier);
-    if (!batchCheck.allowed) {
-      logFailure('batch_limit_exceeded', {
-        tier: userTier,
-        current: batchCheck.current,
-        limit: batchCheck.limit,
-      });
-      const { body, status } = createErrorResponse(
-        ErrorCodes.BATCH_LIMIT_EXCEEDED,
-        `Batch limit exceeded. Your plan allows ${batchCheck.limit} images per hour. ` +
-          `You've processed ${batchCheck.current}. Upgrade for higher limits.`,
-        429,
-        {
-          current: batchCheck.current,
-          limit: batchCheck.limit,
-          resetAt: batchCheck.resetAt.toISOString(),
-          upgradeUrl: '/pricing',
-        }
-      );
-      return NextResponse.json(body, {
-        status,
-        headers: {
-          'X-Batch-Limit': batchCheck.limit.toString(),
-          'X-Batch-Current': batchCheck.current.toString(),
-          'X-Batch-Reset': batchCheck.resetAt.toISOString(),
-        },
-      });
-    }
-    batchSlotAcquired = true;
-
-    // 5. Read only bounded metadata. The reader rejects a declared oversized
-    // body before acquiring a stream and counts actual bytes for streamed bodies.
-    const body = await readBoundedJsonBody(req, IMAGE_VALIDATION.MAX_REQUEST_BYTES);
-    const validatedInput = upscaleSchema.parse(body);
-
-    // The Tail Worker observes this request header after a hard platform failure.
-    // Bind it to the same validated reservation UUID used by credit deduction so
-    // a caller cannot crash one request while refunding a different reservation.
-    const tailReservationJobId = req.headers.get('x-upscale-job-id');
-    if (tailReservationJobId && tailReservationJobId !== validatedInput.jobId) {
-      logFailure('tail_reservation_job_id_mismatch');
-      await refundAfterRouteFailure('tail_reservation_job_id_mismatch');
-      const { body: errorBody, status } = createErrorResponse(
-        ErrorCodes.VALIDATION_ERROR,
-        'Invalid processing reservation correlation',
-        400
-      );
-      return NextResponse.json(errorBody, { status });
     }
 
     requestedQualityTier = validatedInput.config.qualityTier;
@@ -962,7 +936,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Validate model is available for user's subscription tier
     const selectedModel = modelRegistry.getModel(resolvedModelId);
     const isInternalScaleFallback = resolvedModelId !== billingModelId;
-    if (!selectedModel || !selectedModel.isEnabled) {
+    if (!selectedModel || !selectedModel.isEnabled || resolvedTier === 'bg-removal') {
       logFailure(
         'resolved_model_unavailable',
         { modelId: resolvedModelId, requestedQualityTier },
@@ -1176,19 +1150,117 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json(body, { status });
     }
 
+    // Create legacy-compatible input for the processor
+    // Map new quality tier system to legacy format that processors understand
+    const legacyInputForProcessor = {
+      imageData: processingImageReference,
+      mimeType: effectiveMimeType,
+      originalWidth: inputDimensions?.width,
+      originalHeight: inputDimensions?.height,
+      enhancementPrompt: validatedInput.enhancementPrompt,
+      config: {
+        // New quality tier system - required by calculateCreditCost
+        qualityTier: resolvedTier,
+        scale: config.scale,
+        additionalOptions: resolvedEnhancements,
+        nanoBananaProConfig: config.nanoBananaProConfig,
+      },
+    };
+
+    if (selectedModel.provider === 'replicate') {
+      // Admission owns the debit, batch slot and provider permit as one transaction.
+      // The provider may still need the input after this short request has ended.
+      asyncHandoff = true;
+      const actualScale = selectedModel.capabilities.includes('upscale') ? config.scale : 1;
+      const result = await asyncUpscaleService.start({
+        userId,
+        request: validatedInput,
+        processInput: legacyInputForProcessor,
+        modelId: resolvedModelId,
+        resolvedTier,
+        userTier: userTier || 'free',
+        creditCost,
+        resultContext: {
+          modelDisplayName: selectedModel.displayName || resolvedModelId,
+          ...(isInternalScaleFallback ? { dimensionPreservingFallback: true } : {}),
+          usedTier: config.qualityTier === 'auto' ? resolvedTier : undefined,
+          analysis: {
+            contentType: undefined,
+            modelRecommendation: config.qualityTier === 'auto' ? undefined : resolvedModelId,
+          },
+          dimensions: inputDimensions
+            ? {
+                input: inputDimensions,
+                output: {
+                  width: inputDimensions.width * actualScale,
+                  height: inputDimensions.height * actualScale,
+                },
+                actualScale,
+              }
+            : undefined,
+          fileSizeBytes: inputFileSizeBytes,
+          mimeType: effectiveMimeType,
+          isPaidUser,
+        },
+        costAttribution: {
+          modelId: resolvedModelId,
+          qualityTier: resolvedTier,
+          scale: config.scale,
+          effectiveResolution: providerCostPricing.effectiveResolution,
+          providerCostUsd: providerCostPricing.providerCostUsd,
+          creditsCharged: creditCost,
+          pricingModel: providerCostPricing.pricingModel,
+        },
+        workerRayId: req.headers.get('cf-ray') ?? undefined,
+        requestId,
+        startedAt: startTime,
+      });
+      return NextResponse.json(result.body, { status: result.status, headers: result.headers });
+    }
+
+    // 4. Check batch limit (after rate limit, before processing)
+    // HIGH-8/9 FIX: Use atomic checkAndIncrement to prevent race conditions
+    const batchCheck = await batchLimitCheck.checkAndIncrement(userId, userTier);
+    if (!batchCheck.allowed) {
+      logFailure('batch_limit_exceeded', {
+        tier: userTier,
+        current: batchCheck.current,
+        limit: batchCheck.limit,
+      });
+      const { body, status } = createErrorResponse(
+        ErrorCodes.BATCH_LIMIT_EXCEEDED,
+        `Batch limit exceeded. Your plan allows ${batchCheck.limit} images per hour. ` +
+          `You've processed ${batchCheck.current}. Upgrade for higher limits.`,
+        429,
+        {
+          current: batchCheck.current,
+          limit: batchCheck.limit,
+          resetAt: batchCheck.resetAt.toISOString(),
+          upgradeUrl: '/pricing',
+        }
+      );
+      return NextResponse.json(body, {
+        status,
+        headers: {
+          'X-Batch-Limit': batchCheck.limit.toString(),
+          'X-Batch-Current': batchCheck.current.toString(),
+          'X-Batch-Reset': batchCheck.resetAt.toISOString(),
+        },
+      });
+    }
+    batchSlotAcquired = true;
+
     // 11. Process image with resolved model and settings
     let processor;
     try {
       processor = ImageProcessorFactory.createProcessorForModel(resolvedModelId);
     } catch {
-      // Fallback to legacy processor selection if model-specific fails
-      logger.warn('Model-specific processor failed, using fallback', {
-        failureReason: 'processor_factory_fallback',
-        modelId: resolvedModelId,
-        requestedQualityTier,
-        requestedScale,
-      });
-      processor = ImageProcessorFactory.createProcessor('both');
+      await refundAfterRouteFailure('selected_processor_unavailable');
+      throw new AsyncUpscaleError(
+        TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE,
+        ErrorCodes.AI_UNAVAILABLE,
+        503
+      );
     }
 
     logger.info('Using image processor', {
@@ -1220,23 +1292,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       logger.info('Adding rate limit delay after AI analysis', { delayMs: RATE_LIMIT_DELAY_MS });
       await delay(RATE_LIMIT_DELAY_MS);
     }
-
-    // Create legacy-compatible input for the processor
-    // Map new quality tier system to legacy format that processors understand
-    const legacyInputForProcessor = {
-      imageData: processingImageReference,
-      mimeType: effectiveMimeType,
-      originalWidth: inputDimensions?.width,
-      originalHeight: inputDimensions?.height,
-      enhancementPrompt: validatedInput.enhancementPrompt,
-      config: {
-        // New quality tier system - required by calculateCreditCost
-        qualityTier: resolvedTier,
-        scale: config.scale,
-        additionalOptions: resolvedEnhancements,
-        nanoBananaProConfig: config.nanoBananaProConfig,
-      },
-    };
 
     // Pass pre-calculated creditCost to ensure consistent billing
     // Add 2-minute timeout to prevent hung requests
@@ -1496,6 +1551,37 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
+    if (error instanceof AsyncUpscaleError) {
+      const { body, status } = createErrorResponse(
+        error.code,
+        error.message,
+        error.status,
+        error.details
+      );
+      return NextResponse.json(body, {
+        status,
+        headers: {
+          ...error.headers,
+          'Cache-Control': 'no-store',
+          'Referrer-Policy': 'no-referrer',
+          ...(error.retryAfter ? { 'Retry-After': String(error.retryAfter) } : {}),
+        },
+      });
+    }
+    if (asyncHandoff) {
+      // A transport error cannot decide a durable job's financial outcome.
+      logger.warn('Async upscale observation unavailable', { userId, resolvedModelId });
+      const { body, status } = createErrorResponse(
+        ErrorCodes.AI_UNAVAILABLE,
+        'Unable to check processing right now. Please check this job again.',
+        503,
+        { retryable: true }
+      );
+      return NextResponse.json(body, {
+        status,
+        headers: { 'Cache-Control': 'no-store', 'Retry-After': '5' },
+      });
+    }
     if (error instanceof BoundedJsonBodyTooLargeError) {
       logFailure('request_body_too_large', {
         maxBytes: error.maxBytes,
@@ -1752,7 +1838,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     } catch {
       // Failure telemetry must never mask the original route response.
     }
-    if (temporaryStoragePath) {
+    if (temporaryStoragePath && !asyncHandoff) {
       try {
         await removeUpscaleInput(temporaryStoragePath);
       } catch (error) {
@@ -1763,5 +1849,70 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       }
     }
     await logger.flush();
+  }
+}
+
+const jobStatusQuery = z
+  .object({
+    jobId: z
+      .string()
+      .regex(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i),
+  })
+  .strict();
+
+const activeJobsQuery = z
+  .object({
+    active: z.literal('1'),
+  })
+  .strict();
+
+export async function GET(req: NextRequest): Promise<NextResponse> {
+  const headers = { 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' };
+  const userId = req.headers.get('X-User-Id');
+  if (!userId) {
+    const { body, status } = createErrorResponse(
+      ErrorCodes.UNAUTHORIZED,
+      'Authentication required',
+      401
+    );
+    return NextResponse.json(body, { status, headers });
+  }
+  const entries = [...req.nextUrl.searchParams.entries()];
+  const params = Object.fromEntries(entries);
+  const activeQuery = activeJobsQuery.safeParse(params);
+  const jobQuery = jobStatusQuery.safeParse(params);
+  if (entries.length !== 1 || (!activeQuery.success && !jobQuery.success)) {
+    const { body, status } = createErrorResponse(
+      ErrorCodes.VALIDATION_ERROR,
+      'Invalid job status query',
+      400
+    );
+    return NextResponse.json(body, { status, headers });
+  }
+  try {
+    const result = activeQuery.success
+      ? await asyncUpscaleService.listActive(userId, 20)
+      : await asyncUpscaleService.read({ userId, jobId: jobQuery.data!.jobId });
+    return NextResponse.json(result.body, {
+      status: result.status,
+      headers: { ...headers, ...result.headers },
+    });
+  } catch (error) {
+    const known = error instanceof AsyncUpscaleError;
+    const { body, status } = createErrorResponse(
+      known ? error.code : ErrorCodes.AI_UNAVAILABLE,
+      known ? error.message : 'Unable to check processing right now. Please check this job again.',
+      known ? error.status : 503,
+      known ? error.details : { retryable: true }
+    );
+    return NextResponse.json(body, {
+      status,
+      headers: {
+        ...headers,
+        ...(known && !error.retryAfter
+          ? {}
+          : { 'Retry-After': String(known ? error.retryAfter : 5) }),
+      },
+    });
   }
 }

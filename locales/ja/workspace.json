@@ -92,6 +92,7 @@
       "title": "処理に失敗しました",
       "tryAgain": "再試行"
     },
+    "checkStatus": "ステータスを確認",
     "statusMessages": {
       "preparing": "画像を準備中...",
       "analyzing": "画像を分析中...",

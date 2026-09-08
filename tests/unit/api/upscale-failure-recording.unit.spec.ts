@@ -6,6 +6,7 @@ const mocks = vi.hoisted(() => ({
   batchRelease: vi.fn(),
   ensureProfile: vi.fn(),
   from: vi.fn(),
+  rpc: vi.fn(),
   insert: vi.fn(),
   analyze: vi.fn(),
   createProcessor: vi.fn(),
@@ -110,7 +111,9 @@ vi.mock('@server/services/replicate/utils/credit-manager', () => ({
     recordDeliverableOutput: mocks.recordDeliverableOutput,
   },
 }));
-vi.mock('@server/supabase/supabaseAdmin', () => ({ supabaseAdmin: { from: mocks.from } }));
+vi.mock('@server/supabase/supabaseAdmin', () => ({
+  supabaseAdmin: { from: mocks.from, rpc: mocks.rpc },
+}));
 vi.mock('@shared/config/env', () => ({
   isProduction: () => false,
   serverEnv: { AMPLITUDE_API_KEY: 'test-key', ENV: 'test' },
@@ -170,9 +173,12 @@ const profile = {
   created_at: '2026-08-01T00:00:00.000Z',
 };
 
-describe('POST /api/upscale failure recording', () => {
+// Keep direct processor error coverage on the retained synchronous lane;
+// dedicated async contract tests cover provider observations and SQL outcomes.
+describe('POST /api/upscale synchronous failure recording', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.rpc.mockResolvedValue({ data: { outcome: 'new' }, error: null });
     mocks.rateLimit.mockResolvedValue({ success: true, remaining: 4, reset: Date.now() + 60_000 });
     mocks.setupPending.mockReturnValue(false);
     mocks.refundReservation.mockResolvedValue(true);
@@ -213,6 +219,7 @@ describe('POST /api/upscale failure recording', () => {
     mocks.batchCheck.mockResolvedValue({ allowed: true, current: 1, limit: 5 });
     mocks.getModelForTier.mockReturnValue('real-esrgan');
     mocks.getModel.mockReturnValue({
+      provider: 'gemini',
       isEnabled: true,
       supportedScales: [2, 4, 8],
       capabilities: ['upscale'],
@@ -286,6 +293,7 @@ describe('POST /api/upscale failure recording', () => {
       { id: 'nano-banana', creditMultiplier: 2, supportedScales: [] },
     ]);
     mocks.getModel.mockReturnValue({
+      provider: 'gemini',
       isEnabled: true,
       supportedScales: [],
       capabilities: ['text-preservation', 'enhance'],
@@ -339,6 +347,7 @@ describe('POST /api/upscale failure recording', () => {
     vi.useFakeTimers();
     try {
       const responsePromise = POST(request());
+      await vi.waitFor(() => expect(mocks.analyze).toHaveBeenCalled());
       await vi.advanceTimersByTimeAsync(5000);
       const response = await responsePromise;
 
@@ -419,6 +428,7 @@ describe('POST /api/upscale failure recording', () => {
       });
       mocks.getModelsByTier.mockReturnValue(candidates);
       mocks.getModel.mockReturnValue({
+        provider: 'gemini',
         isEnabled: true,
         supportedScales: [2, 4, 8],
         capabilities: ['upscale'],
@@ -450,6 +460,7 @@ describe('POST /api/upscale failure recording', () => {
       vi.useFakeTimers();
       try {
         const responsePromise = POST(request());
+        await vi.waitFor(() => expect(mocks.analyze).toHaveBeenCalled());
         await vi.advanceTimersByTimeAsync(5000);
         const response = await responsePromise;
         expect(response.status).toBe(200);
@@ -488,7 +499,8 @@ describe('POST /api/upscale failure recording', () => {
 
     expect(response.status).toBe(400);
     expect(mocks.processImage).not.toHaveBeenCalled();
-    expect(mocks.batchRelease).toHaveBeenCalled();
+    expect(mocks.batchCheck).not.toHaveBeenCalled();
+    expect(mocks.batchRelease).not.toHaveBeenCalled();
   });
 
   it('completes the durable reservation only after a usable output URL exists', async () => {

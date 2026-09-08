@@ -92,6 +92,7 @@
       "title": "Processing Failed",
       "tryAgain": "Try Again"
     },
+    "checkStatus": "Check status",
     "statusMessages": {
       "preparing": "Preparing image...",
       "analyzing": "Analyzing image...",

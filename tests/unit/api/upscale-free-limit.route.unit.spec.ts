@@ -6,6 +6,7 @@ const mocks = vi.hoisted(() => ({
   batchRelease: vi.fn(),
   ensureProfile: vi.fn(),
   from: vi.fn(),
+  rpc: vi.fn(),
   InsufficientCreditsError: class InsufficientCreditsError extends Error {
     availableCredits?: number;
 
@@ -123,7 +124,9 @@ vi.mock('@server/services/replicate/utils/credit-manager', () => ({
     recordDeliverableOutput: mocks.recordDeliverableOutput,
   },
 }));
-vi.mock('@server/supabase/supabaseAdmin', () => ({ supabaseAdmin: { from: mocks.from } }));
+vi.mock('@server/supabase/supabaseAdmin', () => ({
+  supabaseAdmin: { from: mocks.from, rpc: mocks.rpc },
+}));
 vi.mock('@shared/config/env', () => ({
   isProduction: () => false,
   serverEnv: { AMPLITUDE_API_KEY: 'test-key', ENV: 'test' },
@@ -197,9 +200,12 @@ function profile(overrides: Record<string, unknown> = {}) {
   };
 }
 
-describe('POST /api/upscale free limit errors', () => {
+// These fixtures exercise admission policy and the retained synchronous error
+// lane. The real async handler/service protocol is covered by async-upscale.
+describe('POST /api/upscale free limit errors and synchronous provider regressions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.rpc.mockResolvedValue({ data: { outcome: 'new' }, error: null });
     mocks.rateLimit.mockResolvedValue({ success: true, remaining: 4, reset: Date.now() + 60_000 });
     mocks.setupPending.mockReturnValue(false);
     mocks.refundReservation.mockResolvedValue(true);
@@ -263,6 +269,7 @@ describe('POST /api/upscale free limit errors', () => {
     });
     mocks.removeUpscaleInput.mockResolvedValue(undefined);
     mocks.getModel.mockImplementation((modelId: string) => ({
+      provider: 'gemini',
       isEnabled: true,
       minTier: 'free',
       supportedScales: [2],
@@ -370,6 +377,7 @@ describe('POST /api/upscale free limit errors', () => {
     });
     mocks.getModelForTier.mockReturnValue('nano-banana-pro');
     mocks.getModel.mockReturnValue({
+      provider: 'gemini',
       isEnabled: true,
       minTier: 'pro',
       supportedScales: [2, 4, 8],
@@ -420,6 +428,7 @@ describe('POST /api/upscale free limit errors', () => {
 
   it('keeps explicit and Auto-selected Nano Banana estimates aligned with deduction', async () => {
     const nanoModel = {
+      provider: 'gemini',
       id: 'nano-banana',
       isEnabled: true,
       supportedScales: [],
@@ -507,6 +516,7 @@ describe('POST /api/upscale free limit errors', () => {
     vi.useFakeTimers();
     try {
       const upscalePromise = POST(request());
+      await vi.waitFor(() => expect(mocks.analyze).toHaveBeenCalled());
       await vi.advanceTimersByTimeAsync(5000);
       const upscaleResponse = await upscalePromise;
       const explicitEstimateBody = await explicitEstimate.json();
@@ -555,6 +565,7 @@ describe('POST /api/upscale free limit errors', () => {
     mocks.getModelForTier.mockReturnValue('nano-banana-pro');
     mocks.modelIdToTier.mockReturnValue('ultra');
     mocks.getModel.mockReturnValue({
+      provider: 'gemini',
       isEnabled: true,
       minTier: 'pro',
       supportedScales: [2, 4, 8],
@@ -629,6 +640,7 @@ describe('POST /api/upscale free limit errors', () => {
     });
     mocks.getModelForTier.mockReturnValue('seedream');
     mocks.getModel.mockReturnValue({
+      provider: 'gemini',
       isEnabled: true,
       minTier: 'hobby',
       supportedScales: [],

@@ -110,22 +110,28 @@ export const QueueStrip: React.FC<IQueueStripProps> = ({
             'rounded-xl'
           )}
         >
-          <img
-            src={item.previewUrl}
-            alt={`Thumbnail of queued image`}
-            className={cn(
-              // Mobile: thumbnail fits within container padding, Desktop: full square
-              'w-10 h-10 md:w-full md:h-full object-cover rounded-lg md:rounded-none shrink-0'
-            )}
-            loading="lazy"
-            decoding="async"
-          />
+          {item.previewUrl || item.processedUrl ? (
+            <img
+              src={item.previewUrl || item.processedUrl || undefined}
+              alt={`Thumbnail of queued image`}
+              className={cn(
+                // Mobile: thumbnail fits within container padding, Desktop: full square
+                'w-10 h-10 md:w-full md:h-full object-cover rounded-lg md:rounded-none shrink-0'
+              )}
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <div className="w-10 h-10 md:w-full md:h-full bg-surface-light rounded-lg md:rounded-none shrink-0 flex items-center justify-center">
+              <Loader2 size={16} className="text-accent animate-spin" />
+            </div>
+          )}
 
           {/* Mobile Item Info */}
           <div className="flex-1 md:hidden">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-white truncate max-w-[120px]">
-                {item.file.name}
+                {item.file?.name || item.fileName || 'Recovered image'}
               </span>
               <div className="flex items-center gap-2">
                 {/* Status indicator - mobile */}

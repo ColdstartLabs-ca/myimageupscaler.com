@@ -92,6 +92,7 @@
       "title": "Traitement échoué",
       "tryAgain": "Essayer à nouveau"
     },
+    "checkStatus": "Vérifier le statut",
     "statusMessages": {
       "preparing": "Préparation de l'image...",
       "analyzing": "Analyse de l'image...",

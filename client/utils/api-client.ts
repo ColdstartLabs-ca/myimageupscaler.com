@@ -89,6 +89,11 @@ interface IApiErrorResponse {
 }
 
 interface IProcessImageApiResponse {
+  success?: boolean;
+  jobId?: string;
+  status?: string;
+  retryAfterMs?: number;
+  executionDeadline?: number;
   expiresAt?: number;
   mimeType?: string;
   processing?: {
@@ -101,9 +106,203 @@ interface IProcessImageApiResponse {
   };
 }
 
+export interface IAsyncUpscaleStatus extends IProcessImageApiResponse, IApiErrorResponse {
+  jobId: string;
+  status: 'submitting' | 'processing' | 'ready' | 'completed' | 'refunded';
+  retryAfterMs?: number;
+  executionDeadline?: number;
+}
+
+export class AsyncUpscalePendingError extends Error {
+  constructor(
+    public readonly jobId: string,
+    public readonly reason: 'transient' | 'deadline' = 'transient'
+  ) {
+    super('Image processing is still running. Check the same job again.');
+    this.name = 'AsyncUpscalePendingError';
+  }
+}
+
+export class AsyncUpscaleTerminalError extends Error {
+  constructor(
+    public readonly jobId: string,
+    public readonly status: string,
+    message: string,
+    public readonly refunded: boolean,
+    public readonly retryable: boolean
+  ) {
+    super(message);
+    this.name = 'AsyncUpscaleTerminalError';
+  }
+}
+
+export interface IAsyncUpscaleJobSummary {
+  jobId: string;
+  status: IAsyncUpscaleStatus['status'];
+  createdAt: number;
+  executionDeadline: number;
+  deliveryDeadline?: number;
+  display?: {
+    modelDisplayName?: string;
+    dimensionPreservingFallback?: boolean;
+    mimeType?: string;
+    dimensions?: {
+      input: { width: number; height: number };
+      output: { width: number; height: number };
+      actualScale: number;
+    };
+  };
+  statusUrl: string;
+}
+
+export interface IAsyncUpscaleJobListResponse {
+  success: true;
+  jobs: IAsyncUpscaleJobSummary[];
+}
+
+export interface IProcessImageOptions {
+  signal?: AbortSignal;
+  onConnectionChange?: (reconnecting: boolean) => void;
+  onJobStatus?: (status: IAsyncUpscaleStatus) => void;
+  executionDeadline?: number;
+  /** Reuse this UUID when retrying an admission after a lost response. */
+  jobId?: string;
+  /** Called as soon as the server confirms a durable admission or replay. */
+  onJobAccepted?: (jobId: string) => void;
+}
+
+function statusRetryDelay(response: Response, fallbackMs: number): number {
+  const retryAfter = response.headers.get('Retry-After');
+  if (!retryAfter) return fallbackMs;
+  const seconds = Number(retryAfter);
+  const delay = Number.isFinite(seconds) ? seconds * 1000 : Date.parse(retryAfter) - Date.now();
+  return Number.isFinite(delay) ? Math.max(fallbackMs, delay) : fallbackMs;
+}
+
+function requestSignal(signal: AbortSignal | undefined, timeoutMs: number): AbortSignal {
+  const timeout = AbortSignal.timeout(timeoutMs);
+  return signal ? AbortSignal.any([signal, timeout]) : timeout;
+}
+
+function isClientAvailable(): boolean {
+  const online = typeof navigator === 'undefined' || navigator.onLine !== false;
+  const visible = typeof document === 'undefined' || document.visibilityState !== 'hidden';
+  return online && visible;
+}
+
+function waitForAsyncPoll(delayMs: number, options: IProcessImageOptions): Promise<void> {
+  const signal = options.signal;
+  signal?.throwIfAborted();
+  const browser = typeof window !== 'undefined' && typeof document !== 'undefined';
+
+  return new Promise<void>((resolve, reject) => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let settled = false;
+    const cleanup = () => {
+      if (timer !== undefined) clearTimeout(timer);
+      signal?.removeEventListener('abort', abort);
+      if (browser) {
+        window.removeEventListener('online', connectionChanged);
+        window.removeEventListener('offline', connectionChanged);
+        window.removeEventListener('focus', connectionChanged);
+        document.removeEventListener('visibilitychange', connectionChanged);
+      }
+    };
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      options.onConnectionChange?.(false);
+      resolve();
+    };
+    const abort = () => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      reject(signal?.reason ?? new DOMException('Aborted', 'AbortError'));
+    };
+    const connectionChanged = () => {
+      if (isClientAvailable()) finish();
+      else {
+        if (timer !== undefined) {
+          clearTimeout(timer);
+          timer = undefined;
+        }
+        options.onConnectionChange?.(true);
+      }
+    };
+
+    signal?.addEventListener('abort', abort, { once: true });
+    if (browser) {
+      window.addEventListener('online', connectionChanged);
+      window.addEventListener('offline', connectionChanged);
+      window.addEventListener('focus', connectionChanged);
+      document.addEventListener('visibilitychange', connectionChanged);
+    }
+    if (!isClientAvailable()) {
+      options.onConnectionChange?.(true);
+    } else if (delayMs <= 0) {
+      finish();
+    } else {
+      timer = setTimeout(finish, delayMs);
+    }
+  });
+}
+
+async function pollAsyncUpscale(
+  jobId: string,
+  initial: IAsyncUpscaleStatus,
+  options: IProcessImageOptions = {},
+  initialDelayMs = initial.retryAfterMs ?? 3000
+): Promise<IProcessImageApiResponse> {
+  const startedAt = Date.now();
+  const deadline = Math.min(startedAt + 15 * 60 * 1000, initial.executionDeadline ?? Infinity);
+  let delayMs = Math.max(0, initialDelayMs);
+  while (Date.now() < deadline) {
+    // Visibility and network interruptions pause observation; they never resubmit.
+    await waitForAsyncPoll(Math.min(delayMs, Math.max(0, deadline - Date.now())), options);
+    if (Date.now() >= deadline) break;
+    const accessToken = await getAccessToken();
+    if (!accessToken) throw new AsyncUpscalePendingError(jobId);
+    let response: Response;
+    try {
+      response = await fetch(`/api/upscale?jobId=${encodeURIComponent(jobId)}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        cache: 'no-store',
+        signal: requestSignal(options.signal, 10_000),
+      });
+    } catch {
+      options.signal?.throwIfAborted();
+      options.onConnectionChange?.(true);
+      delayMs = 10_000;
+      continue;
+    }
+    options.onConnectionChange?.(false);
+    const cadence = Date.now() - startedAt >= 30_000 ? 10_000 : 5000;
+    delayMs = statusRetryDelay(response, cadence + Math.floor(Math.random() * 500));
+    if (response.status === 401) throw new AsyncUpscalePendingError(jobId);
+    const state = await parseJsonResponse<IAsyncUpscaleStatus>(response).catch(() => undefined);
+    if (state?.jobId === jobId) options.onJobStatus?.(state);
+    if (state?.jobId === jobId && state.status === 'refunded') {
+      throw new AsyncUpscaleTerminalError(
+        jobId,
+        state.status,
+        getApiErrorMessage(state.error) || 'Image processing failed',
+        true,
+        false
+      );
+    }
+    if (response.status === 429 || response.status >= 500) continue;
+    if (!response.ok || state?.jobId !== jobId) throw new AsyncUpscalePendingError(jobId);
+    if (state.status === 'ready' || state.status === 'completed') return state;
+  }
+  throw new AsyncUpscalePendingError(jobId, 'deadline');
+}
+
 const DELIVERED_IMAGE_LOAD_TIMEOUT_MS = 15_000;
 const UPLOAD_MAX_ATTEMPTS = 3;
 const UPLOAD_RETRY_DELAY_MS = 100;
+const OUTPUT_BUSY_RETRY_DELAY_MS = 1000;
 
 class OutputCapabilityError extends Error {}
 
@@ -138,7 +337,8 @@ async function verifyDeliveredImageIsUsable(imageUrl: string): Promise<void> {
 
 async function fetchRetryableOutputBlobUrl(
   capability: { reservationJobId: string; deliveryToken: string },
-  headers: Record<string, string>
+  headers: Record<string, string>,
+  signal?: AbortSignal
 ): Promise<string> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= 3; attempt += 1) {
@@ -147,7 +347,7 @@ async function fetchRetryableOutputBlobUrl(
         method: 'POST',
         headers,
         body: JSON.stringify(capability),
-        signal: AbortSignal.timeout(TIMEOUTS.REPLICATE_TIMEOUT),
+        signal: requestSignal(signal, TIMEOUTS.REPLICATE_TIMEOUT),
       });
 
       if (!response.ok) {
@@ -158,6 +358,17 @@ async function fetchRetryableOutputBlobUrl(
           throw new OutputCapabilityError(
             getApiErrorMessage(errorData?.error) || 'Unable to retrieve generated output'
           );
+        }
+
+        if (response.status === 503) {
+          const errorData = await parseJsonResponse<IApiErrorResponse>(response).catch(
+            () => undefined
+          );
+          const outputBusy = getApiErrorDetails(errorData?.error)?.details?.outputBusy === true;
+          if (outputBusy && attempt < 3) {
+            const retryAfterMs = statusRetryDelay(response, OUTPUT_BUSY_RETRY_DELAY_MS);
+            await new Promise<void>(resolve => setTimeout(resolve, retryAfterMs));
+          }
         }
         lastError = new Error('Unable to retrieve generated output');
         continue;
@@ -173,6 +384,7 @@ async function fetchRetryableOutputBlobUrl(
       }
       return imageUrl;
     } catch (error) {
+      signal?.throwIfAborted();
       if (error instanceof OutputCapabilityError) {
         throw error;
       }
@@ -376,6 +588,8 @@ export interface IAnalyzeImageResult {
 }
 
 export interface IProcessImageResult {
+  jobId?: string;
+  durable?: boolean;
   imageData?: string; // Base64 data URL (legacy, from Gemini)
   imageUrl?: string; // Direct URL to image (from Replicate - use in <img> tag)
   creditsRemaining: number;
@@ -449,7 +663,8 @@ type ProgressCallback = (progress: number, stage?: ProcessingStage) => void;
 export const processImage = async (
   file: File,
   config: IUpscaleConfig,
-  onProgress: ProgressCallback
+  onProgress: ProgressCallback,
+  options: IProcessImageOptions = {}
 ): Promise<IProcessImageResult> => {
   try {
     // Client-side processing for bg-removal
@@ -514,7 +729,7 @@ export const processImage = async (
     // Stage 1: Preparing. Upload bytes directly to private temporary storage so
     // the Cloudflare Worker never buffers a base64 JSON payload in its 128MB heap.
     onProgress(10, ProcessingStage.PREPARING);
-    const jobId = crypto.randomUUID();
+    const jobId = options.jobId ?? crypto.randomUUID();
 
     let enhancementPrompt: string | undefined;
     let resolvedModel: string;
@@ -567,6 +782,7 @@ export const processImage = async (
         sizeBytes: file.size,
         jobId,
       }),
+      signal: requestSignal(options.signal, 10_000),
     });
     if (!uploadGrantResponse.ok) {
       const errorData = await parseJsonResponse<IApiErrorResponse>(uploadGrantResponse);
@@ -595,12 +811,30 @@ export const processImage = async (
         config,
         resolvedModel, // Pass the resolved model for server processing
       }),
-      signal: AbortSignal.timeout(TIMEOUTS.REPLICATE_TIMEOUT),
+      signal: requestSignal(options.signal, TIMEOUTS.REPLICATE_TIMEOUT),
+    }).catch(() => {
+      // The server may have committed the debit and prediction before the
+      // response disappeared. Recovery must read this job, never resubmit it.
+      throw new AsyncUpscalePendingError(jobId);
     });
 
     if (!response.ok) {
-      const errorData = await parseJsonResponse<IApiErrorResponse>(response);
+      const errorData = await parseJsonResponse<
+        IApiErrorResponse & { jobId?: string; status?: string }
+      >(response).catch(() => {
+        throw new AsyncUpscalePendingError(jobId);
+      });
       const errorDetails = getApiErrorDetails(errorData.error);
+
+      if (errorData.jobId === jobId && errorData.status === 'refunded') {
+        throw new AsyncUpscaleTerminalError(
+          jobId,
+          'refunded',
+          getApiErrorMessage(errorData.error) || 'Processing failed and credits were refunded.',
+          true,
+          false
+        );
+      }
 
       if (errorDetails?.code === 'FREE_LIMIT_EXCEEDED') {
         throw new FreeLimitExceededError({
@@ -639,10 +873,34 @@ export const processImage = async (
       throw new Error(errorMessage || 'Failed to process image');
     }
 
-    // Stage 4: Finalizing
-    onProgress(95, ProcessingStage.FINALIZING);
+    const initial = await parseJsonResponse<IProcessImageApiResponse | IAsyncUpscaleStatus>(
+      response
+    ).catch(() => {
+      throw new AsyncUpscalePendingError(jobId);
+    });
+    const durable =
+      response.status === 202 ||
+      ('status' in initial && 'jobId' in initial && initial.jobId === jobId);
+    if (durable) {
+      const acceptedJobId = (initial as IAsyncUpscaleStatus).jobId ?? jobId;
+      options.onJobAccepted?.(acceptedJobId);
+      if (initial && 'status' in initial) {
+        const status = initial as IAsyncUpscaleStatus;
+        if (status.jobId === acceptedJobId) options.onJobStatus?.(status);
+      }
+    }
+    const data =
+      response.status === 202
+        ? await pollAsyncUpscale(
+            jobId,
+            initial as IAsyncUpscaleStatus,
+            options,
+            initial.retryAfterMs ?? 3000
+          )
+        : initial;
 
-    const data = await parseJsonResponse<IProcessImageApiResponse>(response);
+    // Finalization starts only after a usable output capability is available.
+    onProgress(95, ProcessingStage.FINALIZING);
 
     // Validate we got either a legacy inline image or a retryable output capability.
     const outputCapability =
@@ -656,11 +914,20 @@ export const processImage = async (
       throw new Error('No image data received from server');
     }
 
-    const imageUrl = await fetchRetryableOutputBlobUrl(outputCapability, headers);
+    const imageUrl = await fetchRetryableOutputBlobUrl(
+      outputCapability,
+      headers,
+      options.signal
+    ).catch(error => {
+      if (durable) throw new AsyncUpscalePendingError(jobId);
+      throw error;
+    });
 
     onProgress(100, ProcessingStage.FINALIZING);
 
     return {
+      jobId: durable ? jobId : undefined,
+      durable,
       imageUrl,
       creditsRemaining: data.processing?.creditsRemaining ?? 0,
       creditsUsed: data.processing?.creditsUsed ?? 0,
@@ -687,6 +954,162 @@ export const processImage = async (
     throw error;
   }
 };
+
+async function deliverAsyncUpscaleResult(
+  status: IAsyncUpscaleStatus,
+  headers: Record<string, string>,
+  onProgress: ProgressCallback,
+  options: IProcessImageOptions
+): Promise<IProcessImageResult> {
+  if (status.status === 'refunded') {
+    throw new AsyncUpscaleTerminalError(
+      status.jobId,
+      status.status,
+      getApiErrorMessage(status.error) || 'Image processing failed and credits were refunded.',
+      true,
+      false
+    );
+  }
+  if (status.status !== 'ready' && status.status !== 'completed') {
+    throw new AsyncUpscalePendingError(status.jobId);
+  }
+
+  const outputCapability =
+    status.processing?.reservationJobId && status.processing?.deliveryToken
+      ? {
+          reservationJobId: status.processing.reservationJobId,
+          deliveryToken: status.processing.deliveryToken,
+        }
+      : null;
+  if (!outputCapability) throw new AsyncUpscalePendingError(status.jobId);
+
+  onProgress(95, ProcessingStage.FINALIZING);
+  const imageUrl = await fetchRetryableOutputBlobUrl(
+    outputCapability,
+    headers,
+    options.signal
+  ).catch(() => {
+    throw new AsyncUpscalePendingError(status.jobId);
+  });
+  options.signal?.throwIfAborted();
+  onProgress(100, ProcessingStage.FINALIZING);
+  return {
+    jobId: status.jobId,
+    durable: true,
+    imageUrl,
+    creditsRemaining: status.processing?.creditsRemaining ?? 0,
+    creditsUsed: status.processing?.creditsUsed ?? 0,
+    modelDisplayName: status.processing?.modelDisplayName,
+    dimensionPreservingFallback: status.processing?.dimensionPreservingFallback,
+  };
+}
+
+/** Read the bounded owner-only list used to discover jobs after a reload. */
+export async function listActiveAsyncUpscaleJobs(
+  options: IProcessImageOptions = {}
+): Promise<IAsyncUpscaleJobListResponse> {
+  const accessToken = await getAccessToken();
+  if (!accessToken) throw new Error('Authentication required to list upscale jobs');
+
+  const response = await fetch('/api/upscale?active=1', {
+    method: 'GET',
+    headers: { Authorization: `Bearer ${accessToken}` },
+    cache: 'no-store',
+    signal: requestSignal(options.signal, 10_000),
+  });
+  if (!response.ok) throw new Error(`Active upscale job list failed (${response.status})`);
+  const data = await parseJsonResponse<IAsyncUpscaleJobListResponse>(response);
+  if (data.success !== true || !Array.isArray(data.jobs)) {
+    throw new Error('Invalid active upscale job list response');
+  }
+  return data;
+}
+
+/** Resume a saved job without an upload or a second provider admission. */
+export async function resumeAsyncUpscale(
+  jobId: string,
+  onProgress: ProgressCallback = () => undefined,
+  options: IProcessImageOptions = {}
+): Promise<IProcessImageResult> {
+  const accessToken = await getAccessToken();
+  if (!accessToken) throw new Error('Authentication required to resume upscale job');
+
+  const headers = { Authorization: `Bearer ${accessToken}` };
+  const statusUrl = `/api/upscale?jobId=${encodeURIComponent(jobId)}`;
+  let response: Response;
+  try {
+    response = await fetch(statusUrl, {
+      method: 'GET',
+      headers,
+      cache: 'no-store',
+      signal: requestSignal(options.signal, 10_000),
+    });
+  } catch {
+    options.signal?.throwIfAborted();
+    throw new AsyncUpscalePendingError(jobId);
+  }
+
+  const state = await parseJsonResponse<IAsyncUpscaleStatus>(response).catch(() => undefined);
+  if (state?.jobId && state.jobId !== jobId) throw new AsyncUpscalePendingError(jobId);
+  if (state?.jobId === jobId) {
+    options.onJobStatus?.(state);
+    if (state.status === 'refunded') {
+      throw new AsyncUpscaleTerminalError(
+        jobId,
+        state.status,
+        getApiErrorMessage(state.error) || 'Image processing failed and credits were refunded.',
+        true,
+        false
+      );
+    }
+    if (state.status === 'ready' || state.status === 'completed') {
+      return deliverAsyncUpscaleResult(state, headers, onProgress, options);
+    }
+    const initial: IAsyncUpscaleStatus = {
+      ...state,
+      executionDeadline: state.executionDeadline ?? options.executionDeadline,
+    };
+    const completed = await pollAsyncUpscale(
+      jobId,
+      initial,
+      options,
+      statusRetryDelay(response, state.retryAfterMs ?? 3000)
+    );
+    return deliverAsyncUpscaleResult(
+      completed as IAsyncUpscaleStatus,
+      headers,
+      onProgress,
+      options
+    );
+  }
+
+  if (response.status === 404 || response.status === 410 || response.status === 400) {
+    throw new AsyncUpscaleTerminalError(
+      jobId,
+      'not_found',
+      'This processing job is no longer available.',
+      false,
+      false
+    );
+  }
+  if (response.status === 401) throw new AsyncUpscalePendingError(jobId);
+  if (response.status === 429 || response.status >= 500) {
+    const initial: IAsyncUpscaleStatus = {
+      jobId,
+      status: 'processing',
+      retryAfterMs: statusRetryDelay(response, 3000),
+      executionDeadline: options.executionDeadline,
+    };
+    const completed = await pollAsyncUpscale(jobId, initial, options, initial.retryAfterMs);
+    return deliverAsyncUpscaleResult(
+      completed as IAsyncUpscaleStatus,
+      headers,
+      onProgress,
+      options
+    );
+  }
+  throw new AsyncUpscalePendingError(jobId);
+}
 
 export const formatBytes = (bytes: number, decimals = 2): string => {
   if (bytes === 0) return '0 Bytes';

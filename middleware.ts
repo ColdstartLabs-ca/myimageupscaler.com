@@ -659,7 +659,7 @@ async function handleApiRoute(req: NextRequest, pathname: string): Promise<NextR
   applyCorsHeaders(res, req.headers.get('origin') || undefined);
 
   // Apply user-based rate limiting
-  const rateLimitResponse = await applyUserRateLimit(authResult.user.id, res);
+  const rateLimitResponse = await applyUserRateLimit(authResult.user.id, res, req);
   if (rateLimitResponse) {
     return rateLimitResponse;
   }

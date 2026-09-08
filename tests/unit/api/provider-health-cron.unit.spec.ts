@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 
 const mocks = vi.hoisted(() => ({
+  reconcileDue: vi.fn(),
   claimAlert: vi.fn(),
   releaseAlertClaim: vi.fn(),
   reconcileStaleReservations: vi.fn(),
@@ -10,6 +11,9 @@ const mocks = vi.hoisted(() => ({
   flush: vi.fn(),
 }));
 
+vi.mock('@server/services/async-upscale.service', () => ({
+  asyncUpscaleService: { reconcileDue: mocks.reconcileDue },
+}));
 vi.mock('@server/services/provider-health.service', () => ({
   providerHealthService: {
     claimAlert: mocks.claimAlert,
@@ -52,6 +56,13 @@ function request(secret = 'cron-secret'): NextRequest {
 describe('POST /api/cron/provider-health', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.reconcileDue.mockResolvedValue({
+      processedCount: 0,
+      failedCount: 0,
+      remainingCount: 0,
+      oldestDueAgeMs: null,
+      failedJobIds: [],
+    });
     mocks.send.mockResolvedValue({ success: true });
     mocks.reconcileStaleReservations.mockResolvedValue({ refundedCount: 0, quarantinedCount: 0 });
   });
@@ -91,6 +102,7 @@ describe('POST /api/cron/provider-health', () => {
       expect.objectContaining({ failureRatio: 0.6, billingFailures: 2 })
     );
     expect(mocks.flush).toHaveBeenCalled();
+    expect(mocks.reconcileDue).toHaveBeenCalledWith(20, 2);
     expect(mocks.reconcileStaleReservations).toHaveBeenCalledWith(10 * 60, 100);
   });
 
@@ -102,7 +114,7 @@ describe('POST /api/cron/provider-health', () => {
     expect(mocks.reconcileStaleReservations).not.toHaveBeenCalled();
   });
 
-  it('keeps provider health successful when stale reservation reconciliation fails', async () => {
+  it('surfaces stale reservation reconciliation failure instead of reporting a healthy run', async () => {
     mocks.claimAlert.mockResolvedValue({
       shouldAlert: false,
       severity: null,
@@ -118,8 +130,12 @@ describe('POST /api/cron/provider-health', () => {
 
     const response = await POST(request());
 
-    expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toMatchObject({ success: true, alerted: false });
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toMatchObject({
+      success: false,
+      alerted: false,
+      error: 'Provider reconciliation incomplete',
+    });
     expect(mocks.loggerError).toHaveBeenCalledWith(
       'Stale credit reservation reconciliation failed',
       expect.objectContaining({ error: 'db unavailable' })

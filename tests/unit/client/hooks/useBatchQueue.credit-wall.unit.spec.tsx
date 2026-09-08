@@ -8,6 +8,7 @@ import {
 } from '@/shared/types/coreflow.types';
 
 const mocks = vi.hoisted(() => ({
+  listActiveAsyncUpscaleJobs: vi.fn(),
   processImage: vi.fn(),
   prepareFileForProcessing: vi.fn(),
   showToast: vi.fn(),
@@ -53,10 +54,14 @@ vi.mock('@client/store/userStore', () => {
 });
 
 vi.mock('@client/utils/api-client', () => ({
+  AsyncUpscalePendingError: class AsyncUpscalePendingError extends Error {},
+  AsyncUpscaleTerminalError: class AsyncUpscaleTerminalError extends Error {},
   BatchLimitError: mocks.BatchLimitError,
   FreeLimitExceededError: mocks.FreeLimitExceededError,
   ProviderUnavailableError: mocks.ProviderUnavailableError,
   processImage: mocks.processImage,
+  listActiveAsyncUpscaleJobs: mocks.listActiveAsyncUpscaleJobs,
+  resumeAsyncUpscale: vi.fn(),
 }));
 
 vi.mock('@client/utils/upscale-file-preprocessing', () => ({

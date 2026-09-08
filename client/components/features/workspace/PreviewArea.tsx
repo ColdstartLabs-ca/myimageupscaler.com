@@ -17,6 +17,7 @@ export interface IPreviewAreaProps {
   onDownload: (url: string, filename: string) => void;
   onSaveToGallery?: (item: IBatchItem, dimensions?: IImageDimensions) => void;
   onRetry: (item: IBatchItem) => void;
+  onCheckStatus?: (item: IBatchItem) => void;
   selectedModel?: string;
   batchProgress?: IBatchProgress | null;
   isProcessingBatch?: boolean;
@@ -177,6 +178,7 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
   onDownload,
   onSaveToGallery,
   onRetry,
+  onCheckStatus,
   selectedModel = 'auto',
   batchProgress,
   isProcessingBatch = false,
@@ -258,6 +260,8 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
     );
   }
 
+  const fileName = activeItem.file?.name || activeItem.fileName || 'Recovered image';
+
   // Check if we're waiting for the next batch item (between items during batch processing)
   const isWaitingForNextBatchItem =
     isProcessingBatch &&
@@ -273,7 +277,7 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
         <div className="mb-1 md:mb-4 flex justify-between items-center shrink-0">
           <div className="flex items-center gap-2 md:flex-col md:items-start md:gap-0">
             <h3 className="text-xs md:text-sm font-medium text-white truncate max-w-[180px] md:max-w-none">
-              {activeItem.file.name}
+              {fileName}
             </h3>
             <span className="text-[10px] md:text-xs text-green-400 flex items-center gap-1 shrink-0">
               <Check size={10} className="md:w-3 md:h-3" /> {t('previewArea.completed.title')}
@@ -282,9 +286,9 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
         </div>
         <div className="flex-grow relative min-h-0">
           <ImageComparison
-            beforeUrl={activeItem.previewUrl}
+            beforeUrl={activeItem.previewUrl || activeItem.processedUrl}
             afterUrl={activeItem.processedUrl}
-            onDownload={() => onDownload(activeItem.processedUrl!, activeItem.file.name)}
+            onDownload={() => onDownload(activeItem.processedUrl!, fileName)}
             onSaveToGallery={
               onSaveToGallery && canSaveToGallery
                 ? dimensions => onSaveToGallery(activeItem, dimensions)
@@ -372,13 +376,17 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
   return (
     <div className="w-full max-w-5xl mx-auto flex flex-col">
       <div className="relative w-full h-[50vw] md:h-[65vh] md:min-h-[400px] bg-surface-light rounded-xl border border-border overflow-hidden flex items-center justify-center">
-        <img
-          src={activeItem.previewUrl}
-          alt={`Preview of ${activeItem.file.name}`}
-          className="max-h-full max-w-full object-contain"
-          loading="eager"
-          decoding="async"
-        />
+        {activeItem.previewUrl ? (
+          <img
+            src={activeItem.previewUrl}
+            alt={`Preview of ${fileName}`}
+            className="max-h-full max-w-full object-contain"
+            loading="eager"
+            decoding="async"
+          />
+        ) : (
+          <div className="text-muted-foreground text-sm">{fileName}</div>
+        )}
 
         {/* Processing Overlay */}
         {activeItem.status === ProcessingStatus.PROCESSING && (
@@ -405,6 +413,12 @@ export const PreviewArea: React.FC<IPreviewAreaProps> = ({
 
               {/* Stage description */}
               {activeItem.stage && <StageDescription stage={activeItem.stage} />}
+
+              {activeItem.asyncJobId && activeItem.asyncStatusCheckAvailable && onCheckStatus && (
+                <Button size="sm" onClick={() => onCheckStatus(activeItem)}>
+                  {t('previewArea.checkStatus')}
+                </Button>
+              )}
             </div>
           </div>
         )}

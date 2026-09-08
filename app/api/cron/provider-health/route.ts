@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createLogger } from '@server/monitoring/logger';
 import { getEmailService } from '@server/services/email.service';
+import {
+  asyncUpscaleService,
+  type IAsyncReconciliationResult,
+} from '@server/services/async-upscale.service';
 import { providerHealthService } from '@server/services/provider-health.service';
 import { creditManager } from '@server/services/replicate/utils/credit-manager';
 import { serverEnv } from '@shared/config/env';
@@ -14,10 +18,30 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    let asyncReconciliation: IAsyncReconciliationResult | null = null;
+    let reconciliationIncomplete = false;
     try {
-      const reconciliation = await creditManager.reconcileStaleReservations(10 * 60, 100);
-      logger.info('Stale credit reservation reconciliation completed', reconciliation);
+      asyncReconciliation = await asyncUpscaleService.reconcileDue(20, 2);
+      reconciliationIncomplete = asyncReconciliation.failedCount > 0;
+      logger.info('Async upscale reconciliation completed', {
+        processed: asyncReconciliation.processedCount,
+        failed: asyncReconciliation.failedCount,
+        remaining: asyncReconciliation.remainingCount,
+        oldestDueAgeMs: asyncReconciliation.oldestDueAgeMs,
+      });
     } catch (error) {
+      reconciliationIncomplete = true;
+      logger.error('Async upscale reconciliation failed', {
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+
+    let staleReconciliation: { refundedCount: number; quarantinedCount: number } | null = null;
+    try {
+      staleReconciliation = await creditManager.reconcileStaleReservations(10 * 60, 100);
+      logger.info('Stale credit reservation reconciliation completed', staleReconciliation);
+    } catch (error) {
+      reconciliationIncomplete = true;
       logger.error('Stale credit reservation reconciliation failed', {
         error: error instanceof Error ? error.message : String(error),
       });
@@ -30,7 +54,26 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     if (!snapshot.shouldAlert) {
       logger.info('Provider health threshold not met', { ...snapshot });
-      return NextResponse.json({ success: true, alerted: false, ...snapshot });
+      if (reconciliationIncomplete) {
+        return NextResponse.json(
+          {
+            success: false,
+            alerted: false,
+            error: 'Provider reconciliation incomplete',
+            asyncReconciliation,
+            staleReconciliation,
+            ...snapshot,
+          },
+          { status: 503 }
+        );
+      }
+      return NextResponse.json({
+        success: true,
+        alerted: false,
+        asyncReconciliation,
+        staleReconciliation,
+        ...snapshot,
+      });
     }
 
     logger.error('Provider failure-rate alert', { ...snapshot });
@@ -59,7 +102,26 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       throw error;
     }
 
-    return NextResponse.json({ success: true, alerted: true, ...snapshot });
+    if (reconciliationIncomplete) {
+      return NextResponse.json(
+        {
+          success: false,
+          alerted: true,
+          error: 'Provider reconciliation incomplete',
+          asyncReconciliation,
+          staleReconciliation,
+          ...snapshot,
+        },
+        { status: 503 }
+      );
+    }
+    return NextResponse.json({
+      success: true,
+      alerted: true,
+      asyncReconciliation,
+      staleReconciliation,
+      ...snapshot,
+    });
   } catch (error) {
     logger.error('Provider health cron failed', {
       error: error instanceof Error ? error.message : String(error),

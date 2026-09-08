@@ -28,9 +28,11 @@ vi.mock('@client/analytics', () => ({
 }));
 
 import {
+  listActiveAsyncUpscaleJobs,
   parseJsonResponse,
   processImage,
   reportUpscaleEdgeFailure,
+  resumeAsyncUpscale,
   UpscaleEdgeError,
 } from '@client/utils/api-client';
 
@@ -62,6 +64,7 @@ describe('upscale API response handling', () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
   });
@@ -415,5 +418,504 @@ describe('upscale API response handling', () => {
         { qualityTier: config.qualityTier, scale: config.scale }
       )
     ).resolves.toBeUndefined();
+  });
+
+  describe('async admission polling', () => {
+    const jobId = '11111111-1111-4111-8111-111111111111';
+    const token = 'delivery-token-'.padEnd(43, 'x');
+    const startedAt = Date.parse('2026-09-07T12:00:00.000Z');
+    const statusUrl = `/api/upscale?jobId=${jobId}`;
+
+    beforeEach(() => {
+      vi.useFakeTimers();
+      vi.setSystemTime(startedAt);
+      vi.spyOn(Math, 'random').mockReturnValue(0);
+      vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true);
+      vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('visible');
+      vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      mocks.uploadToSignedUrl.mockResolvedValue({
+        data: { path: 'user-1/job-1.png' },
+        error: null,
+      });
+      vi.stubGlobal('crypto', { randomUUID: () => jobId });
+    });
+
+    function pending(extra: Record<string, unknown> = {}) {
+      return {
+        jobId,
+        status: 'processing',
+        retryAfterMs: 3000,
+        executionDeadline: startedAt + 900000,
+        ...extra,
+      };
+    }
+
+    function ready() {
+      return {
+        jobId,
+        status: 'ready',
+        success: true,
+        mimeType: 'image/png',
+        processing: {
+          reservationJobId: jobId,
+          deliveryToken: token,
+          creditsUsed: 1,
+          creditsRemaining: 4,
+          modelDisplayName: 'Upscale',
+          dimensionPreservingFallback: true,
+        },
+      };
+    }
+
+    async function startFixture(
+      statusResponse: (index: number) => Response | Promise<Response>,
+      initial = pending()
+    ) {
+      let reads = 0;
+      const readTimes: number[] = [];
+      let admittedAt = Date.now();
+      const progress = vi.fn();
+      let completed:
+        | { value?: Awaited<ReturnType<typeof processImage>>; error?: unknown }
+        | undefined;
+      const fetchMock = vi.fn(async (url: string) => {
+        if (url === '/api/upscale/upload') {
+          return Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' });
+        }
+        if (url === '/api/upscale') {
+          admittedAt = Date.now();
+          return Response.json(initial, { status: 202 });
+        }
+        if (url === statusUrl) {
+          readTimes.push(Date.now());
+          return statusResponse(reads++);
+        }
+        if (url === '/api/upscale/output')
+          return new Response(new Blob(['image-bytes']), { status: 200 });
+        throw new Error(`Unexpected URL: ${url}`);
+      });
+      vi.stubGlobal('fetch', fetchMock);
+      const result = processImage(
+        new File(['image-bytes'], 'source.png', { type: 'image/png' }),
+        config,
+        progress
+      ).then(
+        value => {
+          completed = { value };
+          return completed;
+        },
+        error => {
+          completed = { error };
+          return completed;
+        }
+      );
+      await vi.waitFor(
+        () =>
+          expect(fetchMock.mock.calls.filter(([url]) => url === '/api/upscale')).toHaveLength(1),
+        { interval: 1 }
+      );
+      await vi.advanceTimersByTimeAsync(0);
+      return { fetchMock, progress, result, readTimes, admittedAt, completed: () => completed };
+    }
+
+    it('keeps a lost admission response recoverable using its original job ID', async () => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async (url: string) => {
+          if (url === '/api/upscale/upload')
+            return Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' });
+          throw new TypeError('Connection lost after admission');
+        })
+      );
+      await expect(
+        processImage(new File(['image'], 'source.png', { type: 'image/png' }), config, vi.fn())
+      ).rejects.toMatchObject({ name: 'AsyncUpscalePendingError', jobId });
+    });
+
+    it.each([200, 202, 503])(
+      'keeps an unreadable admission response recoverable (HTTP %s)',
+      async status => {
+        vi.stubGlobal(
+          'fetch',
+          vi.fn(async (url: string) => {
+            if (url === '/api/upscale/upload')
+              return Response.json({
+                storagePath: 'user-1/job-1.png',
+                uploadToken: 'signed-token',
+              });
+            return new Response('upstream disconnected', { status });
+          })
+        );
+        await expect(
+          processImage(new File(['image'], 'source.png', { type: 'image/png' }), config, vi.fn())
+        ).rejects.toMatchObject({ name: 'AsyncUpscalePendingError', jobId });
+      }
+    );
+
+    it('treats a refunded billing denial as terminal even when its HTTP status is 503', async () => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async (url: string) => {
+          if (url === '/api/upscale/upload')
+            return Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' });
+          return Response.json(
+            {
+              jobId,
+              status: 'refunded',
+              creditsRefunded: true,
+              error: {
+                code: 'AI_UNAVAILABLE',
+                message: 'Provider billing is unavailable',
+                details: { creditsRefunded: true },
+              },
+            },
+            { status: 503 }
+          );
+        })
+      );
+      await expect(
+        processImage(new File(['image'], 'source.png', { type: 'image/png' }), config, vi.fn())
+      ).rejects.toMatchObject({ name: 'AsyncUpscaleTerminalError', jobId, refunded: true });
+    });
+
+    it('keeps delivery failures recoverable without changing the accepted job', async () => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async (url: string) => {
+          if (url === '/api/upscale/upload')
+            return Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' });
+          if (url === '/api/upscale') return Response.json(ready());
+          throw new TypeError('Output connection lost');
+        })
+      );
+      await expect(
+        processImage(new File(['image'], 'source.png', { type: 'image/png' }), config, vi.fn())
+      ).rejects.toMatchObject({ name: 'AsyncUpscalePendingError', jobId });
+    });
+
+    it('recognizes a ready admission replay as durable instead of permitting a new job', async () => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async (url: string) => {
+          if (url === '/api/upscale/upload')
+            return Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' });
+          if (url === '/api/upscale') return Response.json(ready());
+          if (url === '/api/upscale/output') return new Response(new Blob(['image-bytes']));
+          throw new Error(`Unexpected URL: ${url}`);
+        })
+      );
+      const onJobAccepted = vi.fn();
+      await expect(
+        processImage(new File(['image'], 'source.png', { type: 'image/png' }), config, vi.fn(), {
+          onJobAccepted,
+        })
+      ).resolves.toMatchObject({ durable: true, jobId });
+      expect(onJobAccepted).toHaveBeenCalledWith(jobId);
+    });
+
+    it('waits for GET ready before finalizing or fetching the original output capability', async () => {
+      const fixture = await startFixture(index =>
+        Response.json(index === 0 ? pending() : ready(), { status: index === 0 ? 202 : 200 })
+      );
+      expect(fixture.completed()).toBeUndefined();
+      expect(fixture.progress.mock.calls.some(([percent]) => percent >= 95)).toBe(false);
+      expect(mocks.track).not.toHaveBeenCalled();
+      await vi.advanceTimersByTimeAsync(3000);
+      expect(fixture.readTimes).toHaveLength(1);
+      expect(fixture.completed()).toBeUndefined();
+      expect(fixture.progress.mock.calls.some(([percent]) => percent >= 95)).toBe(false);
+      expect(fixture.fetchMock.mock.calls.some(([url]) => url === '/api/upscale/output')).toBe(
+        false
+      );
+
+      await vi.advanceTimersByTimeAsync(5000);
+      expect(await fixture.result).toMatchObject({
+        value: {
+          imageUrl: 'blob:https://app.test/output-1',
+          creditsUsed: 1,
+          creditsRemaining: 4,
+          dimensionPreservingFallback: true,
+        },
+      });
+      expect(fixture.fetchMock.mock.calls.filter(([url]) => url === '/api/upscale')).toHaveLength(
+        1
+      );
+      expect(fixture.fetchMock).toHaveBeenLastCalledWith(
+        '/api/upscale/output',
+        expect.objectContaining({
+          method: 'POST',
+          body: JSON.stringify({ reservationJobId: jobId, deliveryToken: token }),
+        })
+      );
+      expect(fixture.fetchMock).toHaveBeenCalledWith(
+        statusUrl,
+        expect.objectContaining({
+          headers: { Authorization: 'Bearer token-123' },
+          cache: 'no-store',
+        })
+      );
+    });
+
+    it.each([429, 503])(
+      'respects Retry-After after HTTP %s and continues the same admitted job',
+      async status => {
+        const fixture = await startFixture(index =>
+          index === 0
+            ? Response.json(
+                { error: { code: 'AI_UNAVAILABLE', message: 'Temporary status outage' } },
+                { status, headers: { 'Retry-After': '11' } }
+              )
+            : Response.json(ready())
+        );
+        await vi.advanceTimersByTimeAsync(3000);
+        expect(fixture.readTimes).toHaveLength(1);
+        expect(fixture.completed()).toBeUndefined();
+        await vi.advanceTimersByTimeAsync(fixture.readTimes[0] + 11000 - Date.now() - 1);
+        expect(fixture.readTimes).toHaveLength(1);
+        await vi.advanceTimersByTimeAsync(1);
+        expect((await fixture.result).value?.creditsUsed).toBe(1);
+        expect(fixture.readTimes[1] - fixture.readTimes[0]).toBe(11000);
+        expect(fixture.fetchMock.mock.calls.filter(([url]) => url === '/api/upscale')).toHaveLength(
+          1
+        );
+      }
+    );
+
+    it('respects Retry-After when another tab owns the output delivery lease', async () => {
+      let outputAttempts = 0;
+      let busyAt = 0;
+      const fetchMock = vi.fn(async (url: string) => {
+        if (url === '/api/upscale/upload')
+          return Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' });
+        if (url === '/api/upscale') return Response.json(pending(), { status: 202 });
+        if (url === statusUrl) return Response.json(ready());
+        if (url === '/api/upscale/output') {
+          outputAttempts += 1;
+          if (outputAttempts === 1) {
+            busyAt = Date.now();
+            return Response.json(
+              {
+                error: {
+                  code: 'AI_UNAVAILABLE',
+                  message: 'Generated output is being delivered in another request.',
+                  details: { outputBusy: true, retryable: true },
+                },
+              },
+              { status: 503, headers: { 'Retry-After': '7' } }
+            );
+          }
+          return new Response(new Blob(['image-bytes']), { status: 200 });
+        }
+        throw new Error(`Unexpected URL: ${url}`);
+      });
+      vi.stubGlobal('fetch', fetchMock);
+
+      const result = processImage(
+        new File(['image-bytes'], 'source.png', { type: 'image/png' }),
+        config,
+        vi.fn()
+      );
+      await vi.waitFor(
+        () =>
+          expect(fetchMock.mock.calls.filter(([url]) => url === '/api/upscale')).toHaveLength(1),
+        { interval: 1 }
+      );
+      await vi.advanceTimersByTimeAsync(3000);
+      await vi.waitFor(() => expect(outputAttempts).toBe(1), { interval: 1 });
+      expect(fetchMock.mock.calls.filter(([url]) => url === '/api/upscale')).toHaveLength(1);
+
+      await vi.advanceTimersByTimeAsync(Math.max(0, 7000 - (Date.now() - busyAt) - 1));
+      expect(outputAttempts).toBe(1);
+      await vi.advanceTimersByTimeAsync(1);
+      await expect(result).resolves.toMatchObject({ imageUrl: 'blob:https://app.test/output-1' });
+      expect(outputAttempts).toBe(2);
+      expect(fetchMock.mock.calls.filter(([url]) => url === '/api/upscale')).toHaveLength(1);
+    });
+
+    it('stops on a confirmed refunded HTTP 503 without fetching output or submitting again', async () => {
+      const fixture = await startFixture(() =>
+        Response.json(
+          {
+            jobId,
+            status: 'refunded',
+            creditsRefunded: true,
+            error: {
+              code: 'AI_UNAVAILABLE',
+              message: 'The prediction failed and credits were refunded.',
+            },
+          },
+          { status: 503 }
+        )
+      );
+      await vi.advanceTimersByTimeAsync(3000);
+      const outcome = await fixture.result;
+      expect(outcome.error).toMatchObject({
+        message: 'The prediction failed and credits were refunded.',
+      });
+      await vi.advanceTimersByTimeAsync(30000);
+      expect(fixture.readTimes).toHaveLength(1);
+      expect(fixture.progress.mock.calls.some(([percent]) => percent >= 95)).toBe(false);
+      expect(fixture.fetchMock.mock.calls.some(([url]) => url === '/api/upscale/output')).toBe(
+        false
+      );
+      expect(fixture.fetchMock.mock.calls.filter(([url]) => url === '/api/upscale')).toHaveLength(
+        1
+      );
+    });
+
+    it('retries a lost status response after ten seconds without repeating admission', async () => {
+      const fixture = await startFixture(index => {
+        if (index === 0) throw new TypeError('status connection lost');
+        return Response.json(ready());
+      });
+      await vi.advanceTimersByTimeAsync(3000);
+      expect(fixture.completed()).toBeUndefined();
+      await vi.advanceTimersByTimeAsync(10000);
+      expect((await fixture.result).value?.creditsRemaining).toBe(4);
+      expect(fixture.readTimes[1] - fixture.readTimes[0]).toBe(10000);
+      expect(fixture.fetchMock.mock.calls.filter(([url]) => url === '/api/upscale')).toHaveLength(
+        1
+      );
+    });
+
+    it('rejects a foreign ready response and retains the original job identity', async () => {
+      const fixture = await startFixture(() => Response.json({ ...ready(), jobId: 'foreign-job' }));
+      await vi.advanceTimersByTimeAsync(3000);
+      expect((await fixture.result).error).toMatchObject({
+        name: 'AsyncUpscalePendingError',
+        jobId,
+      });
+      expect(fixture.fetchMock.mock.calls.some(([url]) => url === '/api/upscale/output')).toBe(
+        false
+      );
+    });
+
+    it('uses at most eight status calls for a thirty-second prediction', async () => {
+      const fixture = await startFixture(() =>
+        Date.now() - startedAt >= 30000
+          ? Response.json(ready())
+          : Response.json(pending(), { status: 202 })
+      );
+      await vi.advanceTimersByTimeAsync(35000);
+      expect((await fixture.result).value?.creditsUsed).toBe(1);
+      expect(fixture.readTimes.length).toBeLessThanOrEqual(8);
+      expect(fixture.readTimes[0] - fixture.admittedAt).toBe(3000);
+      expect(fixture.readTimes[1] - fixture.readTimes[0]).toBe(5000);
+      expect(fixture.fetchMock.mock.calls.filter(([url]) => url === '/api/upscale')).toHaveLength(
+        1
+      );
+    });
+
+    it('backs off to ten-second status reads after thirty seconds', async () => {
+      const fixture = await startFixture(() =>
+        Date.now() - startedAt >= 44000
+          ? Response.json(ready())
+          : Response.json(pending(), { status: 202 })
+      );
+      await vi.advanceTimersByTimeAsync(55000);
+      expect((await fixture.result).value?.creditsUsed).toBe(1);
+      const afterThirtySeconds = fixture.readTimes.filter(time => time - startedAt >= 30000);
+      expect(afterThirtySeconds).toHaveLength(3);
+      expect(afterThirtySeconds[1] - afterThirtySeconds[0]).toBe(10000);
+      expect(afterThirtySeconds[2] - afterThirtySeconds[1]).toBe(10000);
+    });
+
+    it('ends polling by the fifteen-minute budget even when Retry-After exceeds the remaining time', async () => {
+      const fixture = await startFixture(() =>
+        Response.json(
+          { error: { message: 'Busy' } },
+          {
+            status: 429,
+            headers: { 'Retry-After': '3600' },
+          }
+        )
+      );
+      await vi.advanceTimersByTimeAsync(900000);
+      expect(fixture.completed()?.error).toMatchObject({
+        name: 'AsyncUpscalePendingError',
+        jobId,
+        reason: 'deadline',
+      });
+      expect(fixture.readTimes).toHaveLength(1);
+      expect(fixture.fetchMock.mock.calls.filter(([url]) => url === '/api/upscale')).toHaveLength(
+        1
+      );
+      expect(fixture.progress.mock.calls.some(([percent]) => percent >= 95)).toBe(false);
+    });
+
+    it('stops at an earlier execution deadline with the same recoverable job ID', async () => {
+      const fixture = await startFixture(
+        () => Response.json(pending(), { status: 202 }),
+        pending({ executionDeadline: startedAt + 10000 })
+      );
+      await vi.advanceTimersByTimeAsync(10000);
+      expect(fixture.completed()?.error).toMatchObject({
+        name: 'AsyncUpscalePendingError',
+        jobId,
+        reason: 'deadline',
+      });
+      expect(fixture.readTimes).toHaveLength(2);
+      expect(fixture.fetchMock.mock.calls.some(([url]) => url === '/api/upscale/output')).toBe(
+        false
+      );
+    });
+
+    it('lists only owner recovery metadata through the bounded active query', async () => {
+      const fetchMock = vi.fn().mockResolvedValue(
+        Response.json({
+          success: true,
+          jobs: [
+            {
+              jobId,
+              status: 'processing',
+              createdAt: startedAt,
+              executionDeadline: startedAt + 900000,
+              display: { fileName: 'source.png', mimeType: 'image/png' },
+            },
+          ],
+        })
+      );
+      vi.stubGlobal('fetch', fetchMock);
+
+      await expect(listActiveAsyncUpscaleJobs()).resolves.toMatchObject({
+        jobs: [expect.objectContaining({ jobId, status: 'processing' })],
+      });
+      expect(fetchMock).toHaveBeenCalledWith(
+        '/api/upscale?active=1',
+        expect.objectContaining({ method: 'GET', cache: 'no-store' })
+      );
+    });
+
+    it('resumes a ready job with one status read and the original output capability', async () => {
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce(
+          Response.json({
+            success: true,
+            jobId,
+            status: 'ready',
+            mimeType: 'image/png',
+            processing: {
+              reservationJobId: jobId,
+              deliveryToken: token,
+              creditsUsed: 1,
+              creditsRemaining: 4,
+            },
+          })
+        )
+        .mockResolvedValueOnce(new Response(new Blob(['image-bytes']), { status: 200 }));
+      vi.stubGlobal('fetch', fetchMock);
+
+      await expect(resumeAsyncUpscale(jobId)).resolves.toMatchObject({
+        jobId,
+        durable: true,
+        imageUrl: 'blob:https://app.test/output-1',
+      });
+      expect(fetchMock.mock.calls.filter(([url]) => url === '/api/upscale')).toHaveLength(0);
+      expect(fetchMock.mock.calls[0][0]).toBe(statusUrl);
+      expect(fetchMock.mock.calls[1][1]?.body).toBe(
+        JSON.stringify({ reservationJobId: jobId, deliveryToken: token })
+      );
+    });
   });
 });

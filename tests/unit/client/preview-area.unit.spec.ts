@@ -4,6 +4,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { createElement } from 'react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 // Mock the next-intl useTranslations hook
 vi.mock('next-intl', () => ({
@@ -22,6 +24,7 @@ vi.mock('next-intl', () => ({
       'previewArea.completed.title': 'Processing complete',
       'previewArea.errors.title': 'Processing Error',
       'previewArea.errors.tryAgain': 'Try Again',
+      'previewArea.checkStatus': 'Check status',
       'previewArea.batch.preparingNext': 'Preparing next image...',
       'previewArea.batch.rateLimitingPause': 'Brief pause between images',
       'previewArea.batch.imageXofYcomplete': 'Image {current} of {total} complete',
@@ -40,7 +43,8 @@ vi.mock('lucide-react', () => ({
 
 // Mock Button component
 vi.mock('@client/components/ui/Button', () => ({
-  Button: () => null,
+  Button: ({ children, onClick }: { children: unknown; onClick: () => void }) =>
+    createElement('button', { onClick }, children),
 }));
 
 // Mock ImageComparison component
@@ -96,5 +100,35 @@ describe('PreviewArea', () => {
       expect(PreviewArea).toBeDefined();
       expect(typeof PreviewArea).toBe('function');
     });
+  });
+
+  it('offers same-job reconciliation when durable polling has stalled', async () => {
+    const { PreviewArea } = await import('@/client/components/features/workspace/PreviewArea');
+    const item = {
+      id: 'job-1',
+      file: null,
+      fileName: 'source.png',
+      asyncJobId: 'job-1',
+      asyncStatusCheckAvailable: true,
+      previewUrl: '',
+      processedUrl: null,
+      status: 'PROCESSING',
+      progress: 50,
+      stage: 'enhancing',
+      error: 'The status check timed out.',
+    } as const;
+    const onCheckStatus = vi.fn();
+
+    render(
+      createElement(PreviewArea, {
+        activeItem: item,
+        onDownload: vi.fn(),
+        onRetry: vi.fn(),
+        onCheckStatus,
+      })
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Check status' }));
+    expect(onCheckStatus).toHaveBeenCalledWith(item);
   });
 });

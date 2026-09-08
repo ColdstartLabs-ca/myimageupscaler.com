@@ -76,15 +76,20 @@ describe('CreditManager durable reservations', () => {
   });
 
   it('retrieves staged output using only the hashed capability', async () => {
-    mocks.rpc.mockResolvedValue({
-      data: [
-        {
-          output_url: 'https://replicate.delivery/output.png',
-          output_mime_type: 'image/png',
-          output_expires_at: '2026-08-27T00:00:00.000Z',
-        },
-      ],
-      error: null,
+    mocks.rpc.mockImplementation(async (name: string) => {
+      if (name === 'claim_async_upscale_delivery') {
+        return { data: { outcome: 'legacy' }, error: null };
+      }
+      return {
+        data: [
+          {
+            output_url: 'https://replicate.delivery/output.png',
+            output_mime_type: 'image/png',
+            output_expires_at: '2026-08-27T00:00:00.000Z',
+          },
+        ],
+        error: null,
+      };
     });
     const manager = new CreditManager();
 
@@ -100,7 +105,7 @@ describe('CreditManager durable reservations', () => {
       expiresAt: '2026-08-27T00:00:00.000Z',
     });
 
-    expect(mocks.rpc).toHaveBeenCalledWith('retrieve_processing_credit_reservation_output', {
+    expect(mocks.rpc).toHaveBeenNthCalledWith(2, 'retrieve_processing_credit_reservation_output', {
       p_user_id: 'user-1',
       p_job_id: '11111111-1111-4111-8111-111111111111',
       p_delivery_token_hash: '930bbdc51b6aed5c2a5678fd6e28dee7a05e8a4b643cfc0b4427c3efb86c0d94',

@@ -7,11 +7,16 @@ import {
 import { useToastStore } from '@client/store/toastStore';
 import { useUserData, useUserStore } from '@client/store/userStore';
 import {
+  AsyncUpscalePendingError,
+  AsyncUpscaleTerminalError,
   BatchLimitError,
   FreeLimitExceededError,
+  IAsyncUpscaleStatus,
+  listActiveAsyncUpscaleJobs,
   processImage,
   ProviderUnavailableError,
   reportUpscaleEdgeFailure,
+  resumeAsyncUpscale,
   UpscaleEdgeError,
 } from '@client/utils/api-client';
 import {
@@ -27,7 +32,7 @@ import { TIMEOUTS } from '@shared/config/timeouts.config';
 import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
 import { serializeError } from '@shared/utils/errors';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { analytics } from '@client/analytics';
 import { loadImageDimensions } from '@client/utils/file-validation';
 import { normalizeCoreEventProperties } from '@server/analytics/core-event-contract';
@@ -64,9 +69,108 @@ interface IUseBatchQueueReturn {
   clearQueue: () => void;
   processBatch: (config: IUpscaleConfig) => Promise<void>;
   processSingleItem: (item: IRetryableBatchItem, config: IUpscaleConfig) => Promise<void>;
+  checkAsyncJobStatus: (item: IRetryableBatchItem | null | undefined) => Promise<void>;
   clearBatchLimitError: () => void;
   clearProviderUnavailable: () => void;
   showProviderUnavailable: () => void;
+}
+
+interface IStoredAsyncUpscaleJob {
+  jobId: string;
+  fileName: string;
+  createdAt: number;
+}
+
+const ASYNC_UPSCALE_STORAGE_PREFIX = 'myimageupscaler:async-upscale-jobs:';
+const FALLBACK_RECOVERED_FILE_NAME = 'Recovered image';
+const ASYNC_RECOVERY_MAX_RETRIES = 2;
+const ASYNC_RECOVERY_RETRY_DELAY_MS = 1000;
+
+function asyncUpscaleStorageKey(userId: string): string {
+  return `${ASYNC_UPSCALE_STORAGE_PREFIX}${userId}`;
+}
+
+function readStoredAsyncUpscaleJobs(userId: string): IStoredAsyncUpscaleJob[] {
+  try {
+    const value: unknown = JSON.parse(localStorage.getItem(asyncUpscaleStorageKey(userId)) || '[]');
+    if (!Array.isArray(value)) return [];
+    return value.filter(
+      (entry): entry is IStoredAsyncUpscaleJob =>
+        !!entry &&
+        typeof entry === 'object' &&
+        typeof entry.jobId === 'string' &&
+        typeof entry.fileName === 'string' &&
+        typeof entry.createdAt === 'number'
+    );
+  } catch {
+    return [];
+  }
+}
+
+function writeStoredAsyncUpscaleJobs(userId: string, jobs: IStoredAsyncUpscaleJob[]): void {
+  try {
+    if (jobs.length === 0) localStorage.removeItem(asyncUpscaleStorageKey(userId));
+    else localStorage.setItem(asyncUpscaleStorageKey(userId), JSON.stringify(jobs.slice(-20)));
+  } catch {
+    // Recovery is best-effort when browser storage is disabled or full.
+  }
+}
+
+function rememberAsyncUpscaleJob(userId: string | undefined, job: IStoredAsyncUpscaleJob): void {
+  if (!userId) return;
+  const jobs = readStoredAsyncUpscaleJobs(userId).filter(entry => entry.jobId !== job.jobId);
+  writeStoredAsyncUpscaleJobs(userId, [...jobs, job]);
+}
+
+function forgetAsyncUpscaleJob(userId: string | undefined, jobId: string): void {
+  if (!userId) return;
+  writeStoredAsyncUpscaleJobs(
+    userId,
+    readStoredAsyncUpscaleJobs(userId).filter(entry => entry.jobId !== jobId)
+  );
+}
+
+function waitForAsyncRecoveryRetry(signal: AbortSignal, delayMs: number): Promise<boolean> {
+  return new Promise(resolve => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let settled = false;
+
+    const finish = (shouldRetry: boolean) => {
+      if (settled) return;
+      settled = true;
+      if (timer) clearTimeout(timer);
+      signal.removeEventListener('abort', onAbort);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('online', onConnectionRestored);
+        window.removeEventListener('focus', onConnectionRestored);
+      }
+      resolve(shouldRetry);
+    };
+    const onAbort = () => finish(false);
+    const onConnectionRestored = () => finish(true);
+
+    signal.addEventListener('abort', onAbort, { once: true });
+    if (typeof window !== 'undefined') {
+      window.addEventListener('online', onConnectionRestored, { once: true });
+      window.addEventListener('focus', onConnectionRestored, { once: true });
+    }
+    timer = setTimeout(() => finish(true), delayMs);
+  });
+}
+
+async function retryAsyncRecoveryRead<T>(read: () => Promise<T>, signal: AbortSignal): Promise<T> {
+  for (let attempt = 0; ; attempt += 1) {
+    try {
+      return await read();
+    } catch (error) {
+      if (signal.aborted || attempt >= ASYNC_RECOVERY_MAX_RETRIES) throw error;
+      const shouldRetry = await waitForAsyncRecoveryRetry(
+        signal,
+        ASYNC_RECOVERY_RETRY_DELAY_MS * (attempt + 1)
+      );
+      if (!shouldRetry) throw error;
+    }
+  }
 }
 
 export const useBatchQueue = (): IUseBatchQueueReturn => {
@@ -85,6 +189,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     suppressPurchaseCtas: boolean;
     isModalOpen: boolean;
   } | null>(null);
+  const recoveryControllers = useRef(new Map<string, AbortController>());
   const showToast = useToastStore(state => state.showToast);
   const t = useTranslations('workspace');
 
@@ -233,6 +338,206 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     setQueue(prev => prev.map(item => (item.id === id ? { ...item, ...updates } : item)));
   }, []);
 
+  const resumeRecoveredItem = useCallback(
+    async (
+      itemId: string,
+      jobId: string,
+      fileName: string,
+      userId: string,
+      executionDeadline?: number
+    ): Promise<void> => {
+      recoveryControllers.current.get(jobId)?.abort();
+      const controller = new AbortController();
+      recoveryControllers.current.set(jobId, controller);
+      updateItemStatus(itemId, {
+        status: ProcessingStatus.PROCESSING,
+        progress: 50,
+        stage: ProcessingStage.ENHANCING,
+        error: undefined,
+        asyncJobId: jobId,
+        fileName,
+        asyncStatusCheckAvailable: false,
+      });
+
+      let retryAttempt = 0;
+      try {
+        while (!controller.signal.aborted) {
+          try {
+            const result = await resumeAsyncUpscale(
+              jobId,
+              (progress, stage) =>
+                updateItemStatus(itemId, {
+                  progress,
+                  stage: stage || ProcessingStage.ENHANCING,
+                }),
+              {
+                signal: controller.signal,
+                executionDeadline,
+                onJobStatus: (status: IAsyncUpscaleStatus) => {
+                  updateItemStatus(itemId, {
+                    status: ProcessingStatus.PROCESSING,
+                    progress: status.status === 'submitting' ? 30 : 65,
+                    stage: ProcessingStage.ENHANCING,
+                    error: undefined,
+                    asyncStatusCheckAvailable: false,
+                  });
+                },
+              }
+            );
+            updateItemStatus(itemId, {
+              status: ProcessingStatus.COMPLETED,
+              processedUrl: result.imageUrl || result.imageData || '',
+              progress: 100,
+              stage: undefined,
+              error: undefined,
+              asyncStatusCheckAvailable: false,
+            });
+            if (result.creditsUsed > 0) {
+              useUserStore.getState().updateCreditsFromProcessing(result.creditsRemaining);
+            }
+            forgetAsyncUpscaleJob(userId, jobId);
+            return;
+          } catch (error) {
+            if (isAsyncUpscalePendingError(error)) {
+              updateItemStatus(itemId, {
+                status: ProcessingStatus.PROCESSING,
+                progress: 50,
+                stage: ProcessingStage.ENHANCING,
+                error: error.message,
+                asyncStatusCheckAvailable: true,
+              });
+              if (error.reason === 'deadline' || retryAttempt >= ASYNC_RECOVERY_MAX_RETRIES) {
+                return;
+              }
+              retryAttempt += 1;
+              if (
+                !(await waitForAsyncRecoveryRetry(
+                  controller.signal,
+                  ASYNC_RECOVERY_RETRY_DELAY_MS * retryAttempt
+                ))
+              ) {
+                return;
+              }
+              continue;
+            }
+
+            if (isAsyncUpscaleTerminalError(error)) {
+              forgetAsyncUpscaleJob(userId, jobId);
+              updateItemStatus(itemId, {
+                status: ProcessingStatus.ERROR,
+                error: error.message,
+                retryable: error.retryable,
+                stage: undefined,
+                asyncJobId: undefined,
+                asyncStatusCheckAvailable: false,
+              });
+              return;
+            }
+
+            if (!controller.signal.aborted) {
+              updateItemStatus(itemId, {
+                status: ProcessingStatus.PROCESSING,
+                stage: ProcessingStage.ENHANCING,
+                error: error instanceof Error ? error.message : 'Connection lost. Checking again…',
+                asyncStatusCheckAvailable: true,
+              });
+            }
+            return;
+          }
+        }
+      } finally {
+        if (recoveryControllers.current.get(jobId) === controller) {
+          recoveryControllers.current.delete(jobId);
+        }
+      }
+    },
+    [updateItemStatus]
+  );
+
+  const checkAsyncJobStatus = useCallback(
+    async (item: IRetryableBatchItem | null | undefined): Promise<void> => {
+      if (!item?.asyncJobId || !profile?.id) return;
+      await resumeRecoveredItem(
+        item.id,
+        item.asyncJobId,
+        item.fileName || item.file?.name || FALLBACK_RECOVERED_FILE_NAME,
+        profile.id
+      );
+    },
+    [profile?.id, resumeRecoveredItem]
+  );
+
+  // Discover owner-scoped durable jobs after login, then resume them without
+  // inventing an input File or issuing another admission request.
+  useEffect(() => {
+    const userId = profile?.id;
+    if (!userId || typeof listActiveAsyncUpscaleJobs !== 'function') return;
+
+    let cancelled = false;
+    const controller = new AbortController();
+    const restore = async (): Promise<void> => {
+      try {
+        const response = await retryAsyncRecoveryRead(
+          () => listActiveAsyncUpscaleJobs({ signal: controller.signal }),
+          controller.signal
+        );
+        if (cancelled) return;
+        const stored = readStoredAsyncUpscaleJobs(userId);
+        const storedById = new Map(stored.map(entry => [entry.jobId, entry]));
+        const jobs = response.jobs.filter(job =>
+          ['submitting', 'processing', 'ready', 'completed'].includes(job.status)
+        );
+        jobs.forEach(job => {
+          const fileName = storedById.get(job.jobId)?.fileName || FALLBACK_RECOVERED_FILE_NAME;
+          rememberAsyncUpscaleJob(userId, {
+            jobId: job.jobId,
+            fileName,
+            createdAt: storedById.get(job.jobId)?.createdAt || job.createdAt,
+          });
+        });
+        setQueue(prev => {
+          // Discovery is a bounded snapshot, not proof an existing job ended.
+          const retained = prev;
+          const existingIds = new Set(retained.map(item => item.asyncJobId));
+          const recovered = jobs
+            .filter(job => !existingIds.has(job.jobId))
+            .map(job => ({
+              id: job.jobId,
+              file: null,
+              fileName: storedById.get(job.jobId)?.fileName || FALLBACK_RECOVERED_FILE_NAME,
+              asyncJobId: job.jobId,
+              previewUrl: '',
+              processedUrl: null,
+              status: ProcessingStatus.PROCESSING,
+              progress: job.status === 'completed' || job.status === 'ready' ? 90 : 50,
+              stage: ProcessingStage.ENHANCING,
+            }));
+          return [...retained, ...recovered];
+        });
+        if (jobs[0]) setActiveId(current => current ?? jobs[0].jobId);
+        await Promise.all(
+          jobs.map(job =>
+            resumeRecoveredItem(
+              job.jobId,
+              job.jobId,
+              storedById.get(job.jobId)?.fileName || FALLBACK_RECOVERED_FILE_NAME,
+              userId,
+              job.executionDeadline
+            )
+          )
+        );
+      } catch {
+        // A temporary list failure must not erase locally persisted job IDs.
+      }
+    };
+    void restore();
+    return () => {
+      cancelled = true;
+      controller.abort();
+      recoveryControllers.current.forEach(jobController => jobController.abort());
+    };
+  }, [profile?.id, resumeRecoveredItem]);
+
   const clearQueue = useCallback(() => {
     queue.forEach(item => URL.revokeObjectURL(item.previewUrl));
     setQueue([]);
@@ -267,12 +572,25 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
   }, []);
 
   const processSingleItem = async (item: IRetryableBatchItem, config: IUpscaleConfig) => {
+    if (!item.file) {
+      if (item.asyncJobId && profile?.id) {
+        await resumeRecoveredItem(
+          item.id,
+          item.asyncJobId,
+          item.fileName || FALLBACK_RECOVERED_FILE_NAME,
+          profile.id
+        );
+      }
+      return;
+    }
+
     updateItemStatus(item.id, {
       status: ProcessingStatus.PROCESSING,
       progress: 0,
       stage: ProcessingStage.PREPARING,
       error: undefined,
       retryable: undefined,
+      asyncStatusCheckAvailable: false,
     });
 
     let fileToProcess = item.file;
@@ -331,17 +649,51 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
       modelUsed: config.qualityTier,
     });
 
+    const startsNewAttempt = item.status === ProcessingStatus.ERROR && item.retryable === false;
+    const jobId = startsNewAttempt ? crypto.randomUUID() : (item.asyncJobId ?? crypto.randomUUID());
+    rememberAsyncUpscaleJob(profile?.id, {
+      jobId,
+      fileName: fileToProcess.name,
+      createdAt: Date.now(),
+    });
+    updateItemStatus(item.id, { asyncJobId: jobId, fileName: fileToProcess.name });
+    let jobAccepted = Boolean(item.asyncJobId && !startsNewAttempt);
+    let preserveProcessingState = false;
+
     const startTime = Date.now();
     let success = false;
     let errorType: string | undefined;
 
     try {
-      const result = await processImage(fileToProcess, config, (p, stage) => {
-        updateItemStatus(item.id, {
-          progress: p,
-          stage: stage || ProcessingStage.ENHANCING,
-        });
-      });
+      const result = await processImage(
+        fileToProcess,
+        config,
+        (p, stage) => {
+          updateItemStatus(item.id, {
+            progress: p,
+            stage: stage || ProcessingStage.ENHANCING,
+          });
+        },
+        {
+          jobId,
+          onJobAccepted: acceptedJobId => {
+            jobAccepted = true;
+            rememberAsyncUpscaleJob(profile?.id, {
+              jobId: acceptedJobId,
+              fileName: fileToProcess.name,
+              createdAt: Date.now(),
+            });
+            updateItemStatus(item.id, { asyncJobId: acceptedJobId });
+          },
+          onJobStatus: (status: IAsyncUpscaleStatus) => {
+            updateItemStatus(item.id, {
+              status: ProcessingStatus.PROCESSING,
+              progress: status.status === 'submitting' ? 30 : 65,
+              stage: ProcessingStage.ENHANCING,
+            });
+          },
+        }
+      );
       setProviderUnavailable(null);
 
       // Prefer imageUrl (direct URL, edge-optimized) over imageData (base64)
@@ -351,7 +703,10 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         processedUrl: result.imageUrl || result.imageData || '',
         progress: 100,
         stage: undefined, // Clear stage on completion
+        asyncJobId: undefined,
+        asyncStatusCheckAvailable: false,
       });
+      forgetAsyncUpscaleJob(profile?.id, result.jobId || jobId);
 
       // Update credits when processing used credits (creditsUsed > 0)
       if (result.creditsUsed > 0) {
@@ -373,6 +728,44 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
       success = true;
     } catch (error: unknown) {
       const errorMessage = serializeError(error);
+
+      if (isAsyncUpscalePendingError(error)) {
+        preserveProcessingState = true;
+        rememberAsyncUpscaleJob(profile?.id, {
+          jobId,
+          fileName: fileToProcess.name,
+          createdAt: Date.now(),
+        });
+        updateItemStatus(item.id, {
+          status: ProcessingStatus.PROCESSING,
+          error: error.message,
+          stage: ProcessingStage.ENHANCING,
+          asyncJobId: jobId,
+          asyncStatusCheckAvailable: true,
+        });
+        return;
+      }
+
+      if (isAsyncUpscaleTerminalError(error)) {
+        forgetAsyncUpscaleJob(profile?.id, error.jobId);
+        updateItemStatus(item.id, {
+          status: ProcessingStatus.ERROR,
+          error: error.message,
+          retryable: error.retryable,
+          stage: undefined,
+          asyncJobId: undefined,
+          asyncStatusCheckAvailable: false,
+        });
+        return;
+      }
+
+      if (jobAccepted) {
+        rememberAsyncUpscaleJob(profile?.id, {
+          jobId,
+          fileName: fileToProcess.name,
+          createdAt: Date.now(),
+        });
+      }
 
       // Determine error type for analytics
       if (error instanceof FreeLimitExceededError) {
@@ -601,7 +994,9 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
       // in a terminal state, even if a future catch branch returns early.
       setQueue(prev =>
         prev.map(queueItem =>
-          queueItem.id === item.id && queueItem.status === ProcessingStatus.PROCESSING
+          queueItem.id === item.id &&
+          queueItem.status === ProcessingStatus.PROCESSING &&
+          !preserveProcessingState
             ? {
                 ...queueItem,
                 status: ProcessingStatus.ERROR,
@@ -618,7 +1013,9 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     setIsProcessingBatch(true);
 
     const itemsToProcess = queue.filter(
-      item => item.status === ProcessingStatus.IDLE || item.status === ProcessingStatus.ERROR
+      item =>
+        item.status === ProcessingStatus.IDLE ||
+        (item.status === ProcessingStatus.ERROR && item.retryable !== false)
     );
 
     const total = itemsToProcess.length;
@@ -658,6 +1055,7 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
     clearQueue,
     processBatch,
     processSingleItem,
+    checkAsyncJobStatus,
     clearBatchLimitError,
     clearProviderUnavailable,
     showProviderUnavailable,
@@ -669,6 +1067,26 @@ const isUpscaleEdgeError = (error: unknown): error is UpscaleEdgeError => {
     return typeof UpscaleEdgeError === 'function' && error instanceof UpscaleEdgeError;
   } catch {
     // A partial module mock may not provide optional error exports.
+    return false;
+  }
+};
+
+const isAsyncUpscalePendingError = (error: unknown): error is AsyncUpscalePendingError => {
+  try {
+    return (
+      typeof AsyncUpscalePendingError === 'function' && error instanceof AsyncUpscalePendingError
+    );
+  } catch {
+    return false;
+  }
+};
+
+const isAsyncUpscaleTerminalError = (error: unknown): error is AsyncUpscaleTerminalError => {
+  try {
+    return (
+      typeof AsyncUpscaleTerminalError === 'function' && error instanceof AsyncUpscaleTerminalError
+    );
+  } catch {
     return false;
   }
 };

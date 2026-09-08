@@ -92,6 +92,7 @@
       "title": "Verarbeitung fehlgeschlagen",
       "tryAgain": "Erneut versuchen"
     },
+    "checkStatus": "Status prüfen",
     "statusMessages": {
       "preparing": "Bild wird vorbereitet...",
       "analyzing": "Bild wird analysiert...",

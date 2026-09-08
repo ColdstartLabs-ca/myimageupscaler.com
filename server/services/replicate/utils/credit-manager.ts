@@ -17,6 +17,15 @@ export interface IDeliverableReservationOutput {
   imageUrl: string;
   mimeType: string;
   expiresAt: string | null;
+  /** Server-only lease identity; never serialize this to the browser. */
+  leaseToken?: string;
+}
+
+export class AsyncDeliveryBusyError extends Error {
+  constructor(public readonly retryAfter: number) {
+    super('Generated output is being delivered in another request. Please retry shortly.');
+    this.name = 'AsyncDeliveryBusyError';
+  }
 }
 
 /**
@@ -161,6 +170,42 @@ export class CreditManager {
     deliveryToken: string
   ): Promise<IDeliverableReservationOutput | null> {
     const deliveryTokenHash = createHash('sha256').update(deliveryToken).digest('hex');
+    const { data: asyncData, error: asyncError } = await supabaseAdmin.rpc(
+      'claim_async_upscale_delivery',
+      {
+        p_user_id: userId,
+        p_job_id: jobId,
+        p_delivery_token_hash: deliveryTokenHash,
+      }
+    );
+    if (asyncError) {
+      throw new Error(`Failed to claim async output delivery: ${asyncError.message}`);
+    }
+    const asyncResult = (Array.isArray(asyncData) ? asyncData[0] : asyncData) as {
+      outcome?: string;
+      retry_at?: string;
+      output_url?: string;
+      output_mime_type?: string;
+      output_expires_at?: string | null;
+      lease_token?: string;
+    } | null;
+    if (asyncResult?.outcome === 'busy') {
+      const retryAt = asyncResult.retry_at ? Date.parse(asyncResult.retry_at) : NaN;
+      throw new AsyncDeliveryBusyError(
+        Number.isFinite(retryAt) ? Math.max(1, Math.ceil((retryAt - Date.now()) / 1000)) : 5
+      );
+    }
+    if (asyncResult?.outcome !== 'legacy') {
+      if (asyncResult?.outcome !== 'available') return null;
+      if (!asyncResult.output_url || !asyncResult.lease_token) return null;
+      return {
+        imageUrl: asyncResult.output_url,
+        mimeType: asyncResult.output_mime_type ?? 'image/png',
+        expiresAt: asyncResult.output_expires_at ?? null,
+        leaseToken: asyncResult.lease_token,
+      };
+    }
+
     const { data, error } = await supabaseAdmin.rpc(
       'retrieve_processing_credit_reservation_output',
       {
@@ -187,6 +232,7 @@ export class CreditManager {
       mimeType?: string;
       expiresAt?: string | number | null;
       deliveryToken: string;
+      leaseToken?: string;
     }
   ): Promise<boolean> {
     const expiresAt =
@@ -194,6 +240,21 @@ export class CreditManager {
         ? new Date(output.expiresAt).toISOString()
         : (output.expiresAt ?? null);
     const deliveryTokenHash = createHash('sha256').update(output.deliveryToken).digest('hex');
+    if (output.leaseToken) {
+      const { data, error } = await supabaseAdmin.rpc('acknowledge_async_upscale_delivery', {
+        p_user_id: userId,
+        p_job_id: jobId,
+        p_delivery_token_hash: deliveryTokenHash,
+        p_lease_token: output.leaseToken,
+        p_output_url: output.imageUrl,
+        p_output_mime_type: output.mimeType ?? 'image/png',
+        p_output_expires_at: expiresAt,
+      });
+      if (error) throw new Error(`Failed to acknowledge async output: ${error.message}`);
+      const result = (Array.isArray(data) ? data[0] : data) as { outcome?: string } | null;
+      return result?.outcome === 'acknowledged' || result?.outcome === 'already_acknowledged';
+    }
+
     const { data, error } = await supabaseAdmin.rpc('acknowledge_processing_credit_reservation', {
       p_user_id: userId,
       p_job_id: jobId,
@@ -203,6 +264,27 @@ export class CreditManager {
       p_delivery_token_hash: deliveryTokenHash,
     });
     if (error) throw new Error(`Failed to acknowledge credit reservation: ${error.message}`);
+    return data === true;
+  }
+
+  async releaseDeliverableOutput(
+    userId: string,
+    jobId: string,
+    deliveryToken: string,
+    leaseToken?: string
+  ): Promise<boolean> {
+    if (!leaseToken) return true;
+    const deliveryTokenHash = createHash('sha256').update(deliveryToken).digest('hex');
+    const { data, error } = await supabaseAdmin.rpc('release_async_upscale_delivery', {
+      p_user_id: userId,
+      p_job_id: jobId,
+      p_delivery_token_hash: deliveryTokenHash,
+      p_lease_token: leaseToken,
+    });
+    if (error) {
+      console.error('Failed to release async output delivery lease:', error);
+      return false;
+    }
     return data === true;
   }
 

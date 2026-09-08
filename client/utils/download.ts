@@ -160,7 +160,11 @@ export const downloadBatch = async (queue: IBatchItem[], mode: string): Promise<
   // If only one item, just download it normally
   if (completedItems.length === 1) {
     const item = completedItems[0];
-    await downloadSingle(item.processedUrl, item.file.name, mode);
+    await downloadSingle(
+      item.processedUrl,
+      item.file?.name || item.fileName || 'recovered-image',
+      mode
+    );
     return;
   }
 
@@ -170,12 +174,13 @@ export const downloadBatch = async (queue: IBatchItem[], mode: string): Promise<
   // Add files to zip
   const promises = completedItems.map(async item => {
     if (item.processedUrl && folder) {
+      const sourceName = item.file?.name || item.fileName || 'recovered-image';
       try {
         const blob = await fetchImageBlob(item.processedUrl);
-        const filename = `${clientEnv.DOWNLOAD_PREFIX}_${mode}_${item.file.name.split('.')[0]}.png`;
+        const filename = `${clientEnv.DOWNLOAD_PREFIX}_${mode}_${sourceName.split('.')[0]}.png`;
         folder.file(filename, blob);
       } catch (error) {
-        console.error(`Failed to add ${item.file.name} to zip:`, error);
+        console.error(`Failed to add ${sourceName} to zip:`, error);
 
         // Track download error for individual file in batch
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -183,7 +188,7 @@ export const downloadBatch = async (queue: IBatchItem[], mode: string): Promise<
           errorType: 'download_failed',
           errorMessage: errorMessage.substring(0, 500),
           context: {
-            filename: item.file.name,
+            filename: sourceName,
             isBatch: true,
           },
         });

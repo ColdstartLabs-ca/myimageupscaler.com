@@ -36,6 +36,8 @@
     "test:integration": "playwright test --project=integration",
     "test:api:dev": "playwright test --project=api --ui",
     "test:preview": "playwright test --project=workers-preview",
+    "test:upscale:async:runtime": "tsx tests/helpers/async-upscale-runtime.ts --run",
+    "test:upscale:release": "playwright test --config=tests/release/playwright.config.ts",
     "test:all": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
@@ -217,6 +219,7 @@
     "typescript-eslint": "^8.3.0",
     "vercel": "^50.1.0",
     "vitest": "^4.0.13",
+    "workerd": "1.20260908.1",
     "wrangler": "^4.50.0",
     "xml2js": "^0.6.2"
   },

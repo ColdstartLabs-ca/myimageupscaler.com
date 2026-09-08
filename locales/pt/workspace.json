@@ -92,6 +92,7 @@
       "title": "Processamento Falhou",
       "tryAgain": "Tentar Novamente"
     },
+    "checkStatus": "Verificar status",
     "statusMessages": {
       "preparing": "Preparando imagem...",
       "analyzing": "Analisando imagem...",

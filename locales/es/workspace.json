@@ -92,6 +92,7 @@
       "title": "Procesamiento fallido",
       "tryAgain": "Intentar de nuevo"
     },
+    "checkStatus": "Comprobar estado",
     "statusMessages": {
       "preparing": "Preparando imagen...",
       "analyzing": "Analizando imagen...",

@@ -15,6 +15,7 @@ const mocks = vi.hoisted(() => ({
   batchCheck: vi.fn(),
   batchRelease: vi.fn(),
   from: vi.fn(),
+  rpc: vi.fn(),
   setupPending: vi.fn(),
   track: vi.fn(),
   parseUpscale: vi.fn(),
@@ -41,11 +42,8 @@ vi.mock('@server/services/batch-limit.service', () => ({
   },
 }));
 vi.mock('@server/services/anti-freeloader.service', () => ({
-  ensureAntiFreeloaderProfile: async (
-    _request: unknown,
-    _userId: string,
-    profile: unknown
-  ) => profile,
+  ensureAntiFreeloaderProfile: async (_request: unknown, _userId: string, profile: unknown) =>
+    profile,
 }));
 vi.mock('@server/services/image-generation.service', () => ({
   AIGenerationError: class AIGenerationError extends Error {},
@@ -62,7 +60,12 @@ vi.mock('@server/services/model-registry', () => ({
   ModelRegistry: {
     getInstance: () => ({
       getMaxInputPixels: () => Number.MAX_SAFE_INTEGER,
-      getModel: () => ({ isEnabled: true, supportedScales: [2, 4], capabilities: ['upscale'] }),
+      getModel: () => ({
+        provider: 'gemini',
+        isEnabled: true,
+        supportedScales: [2, 4],
+        capabilities: ['upscale'],
+      }),
       getModelsByTier: () => [],
     }),
   },
@@ -92,7 +95,9 @@ vi.mock('@server/services/upscale-input-storage.service', () => ({
   resolveUpscaleInput: mocks.resolveUpscaleInput,
   removeUpscaleInput: vi.fn(),
 }));
-vi.mock('@server/supabase/supabaseAdmin', () => ({ supabaseAdmin: { from: mocks.from } }));
+vi.mock('@server/supabase/supabaseAdmin', () => ({
+  supabaseAdmin: { from: mocks.from, rpc: mocks.rpc },
+}));
 vi.mock('@shared/config/env', () => ({
   isProduction: () => false,
   serverEnv: { AMPLITUDE_API_KEY: 'test-key', ENV: 'test' },
@@ -168,6 +173,7 @@ function streamedRequest(chunks: Uint8Array[]): NextRequest {
 describe('POST /api/upscale request body size guard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.rpc.mockResolvedValue({ data: { outcome: 'new' }, error: null });
     mocks.rateLimit.mockResolvedValue({ success: true, remaining: 4, reset: Date.now() + 60_000 });
     mocks.batchCheck.mockResolvedValue({ allowed: true, current: 1, limit: 5 });
     mocks.batchRelease.mockResolvedValue(true);
@@ -245,10 +251,12 @@ describe('POST /api/upscale request body size guard', () => {
     expect(JSON.stringify(body)).toMatch(/too large/i);
   });
 
-  it('releases the batch slot so an oversized retry is not locked out', async () => {
+  it('rejects an oversized request before consuming a batch slot', async () => {
     await POST(request(IMAGE_VALIDATION.MAX_REQUEST_BYTES + 1));
 
-    expect(mocks.batchRelease).toHaveBeenCalled();
+    expect(mocks.batchCheck).not.toHaveBeenCalled();
+    expect(mocks.batchRelease).not.toHaveBeenCalled();
+    expect(mocks.rpc).not.toHaveBeenCalled();
   });
 
   it('rejects inline image data before processing', async () => {
@@ -263,7 +271,8 @@ describe('POST /api/upscale request body size guard', () => {
     expect(res.status).toBe(400);
     expect(mocks.resolveUpscaleInput).not.toHaveBeenCalled();
     expect(mocks.processImage).not.toHaveBeenCalled();
-    expect(mocks.batchRelease).toHaveBeenCalled();
+    expect(mocks.batchCheck).not.toHaveBeenCalled();
+    expect(mocks.batchRelease).not.toHaveBeenCalled();
   });
 
   it('rejects a chunked body above 64 KiB without processing it', async () => {
@@ -274,7 +283,8 @@ describe('POST /api/upscale request body size guard', () => {
 
     expect(res.status).toBe(413);
     expect(mocks.processImage).not.toHaveBeenCalled();
-    expect(mocks.batchRelease).toHaveBeenCalled();
+    expect(mocks.batchCheck).not.toHaveBeenCalled();
+    expect(mocks.batchRelease).not.toHaveBeenCalled();
   });
 
   it('accepts the current storage metadata payload and reaches input resolution', async () => {

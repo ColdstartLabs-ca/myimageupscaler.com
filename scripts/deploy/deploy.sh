@@ -54,6 +54,18 @@ START_TIME=$(date +%s)
 # fetched after this check and are ignored by Git.
 assert_clean_worktree
 
+# This isolated built-Worker/database/browser check is a release safety gate,
+# not part of the optional broad suite. Run before loading production secrets
+# or applying migrations; --skip-tests never bypasses it.
+echo -e "${CYAN}▸ Running mandatory upscale release check...${NC}"
+cd "$PROJECT_ROOT"
+if ! yarn test:upscale:release; then
+    echo -e "${RED}✗ Upscale release check failed. Deployment blocked.${NC}"
+    exit 1
+fi
+echo -e "${GREEN}✓ Upscale release check passed${NC}"
+echo ""
+
 # Fetch production secrets from GCloud Secret Manager
 source "$SCRIPT_DIR/steps/00-fetch-secrets.sh" && step_fetch_secrets
 
@@ -100,7 +112,7 @@ if [ "$SKIP_TESTS" = "false" ]; then
     echo -e "${GREEN}✓ All tests passed${NC}"
     echo ""
 else
-    echo -e "${YELLOW}▸ Skipping tests (--skip-tests flag)${NC}"
+    echo -e "${YELLOW}▸ Skipping broad test suite; mandatory release checks still run (--skip-tests)${NC}"
     echo ""
 fi
 

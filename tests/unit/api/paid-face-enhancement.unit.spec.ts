@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   decodeImageDimensions: vi.fn(),
   ensureProfile: vi.fn(),
   from: vi.fn(),
+  rpc: vi.fn(),
   getMaxInputPixels: vi.fn(),
   getModel: vi.fn(),
   getModelsByTier: vi.fn(),
@@ -101,7 +102,9 @@ vi.mock('@server/services/upscale-input-storage.service', () => ({
   removeUpscaleInput: mocks.removeUpscaleInput,
   resolveUpscaleInput: mocks.resolveUpscaleInput,
 }));
-vi.mock('@server/supabase/supabaseAdmin', () => ({ supabaseAdmin: { from: mocks.from } }));
+vi.mock('@server/supabase/supabaseAdmin', () => ({
+  supabaseAdmin: { from: mocks.from, rpc: mocks.rpc },
+}));
 vi.mock('@shared/config/env', async importOriginal => {
   const actual = await importOriginal<typeof import('@shared/config/env')>();
   return {
@@ -269,6 +272,7 @@ async function json(response: Response): Promise<Record<string, any>> {
 describe('Phase 3 paid face enhancement policy', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.rpc.mockResolvedValue({ data: { outcome: 'new' }, error: null });
 
     currentProfile = profile();
     models = {
@@ -424,7 +428,8 @@ describe('Phase 3 paid face enhancement policy', () => {
     expect(mocks.processImage).not.toHaveBeenCalled();
     expect(mocks.acquireProviderPermit).not.toHaveBeenCalled();
     expect(mocks.refundReservation).not.toHaveBeenCalled();
-    expect(mocks.batchRelease).toHaveBeenCalledWith(USER_ID);
+    expect(mocks.batchCheck).not.toHaveBeenCalled();
+    expect(mocks.batchRelease).not.toHaveBeenCalled();
   });
 
   it('rejects a forged direct Clarity model flag for a free user before quoting', async () => {
@@ -470,7 +475,8 @@ describe('Phase 3 paid face enhancement policy', () => {
     expect(mocks.resolveUpscaleInput).not.toHaveBeenCalled();
     expect(mocks.analyze).not.toHaveBeenCalled();
     expect(mocks.processImage).not.toHaveBeenCalled();
-    expect(mocks.batchRelease).toHaveBeenCalledWith(USER_ID);
+    expect(mocks.batchCheck).not.toHaveBeenCalled();
+    expect(mocks.batchRelease).not.toHaveBeenCalled();
   });
 
   it('rejects a paid request that forges a face model against Quick', async () => {

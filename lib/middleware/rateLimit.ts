@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { rateLimit, publicRateLimit } from '@server/rateLimit';
+import { rateLimit, publicRateLimit, upscaleStatusRateLimit } from '@server/rateLimit';
 import { serverEnv } from '@shared/config/env';
 
 /**
@@ -7,6 +7,7 @@ import { serverEnv } from '@shared/config/env';
  */
 const PUBLIC_RATE_LIMIT = 10;
 const USER_RATE_LIMIT = 50;
+const UPSCALE_STATUS_RATE_LIMIT = 120;
 
 /**
  * Get the client IP address from the request, prioritizing Cloudflare headers
@@ -126,23 +127,27 @@ export async function applyPublicRateLimit(
  */
 export async function applyUserRateLimit(
   userId: string,
-  res: NextResponse
+  res: NextResponse,
+  req?: NextRequest
 ): Promise<NextResponse | null> {
+  const isUpscaleStatusRead = req?.method === 'GET' && req.nextUrl.pathname === '/api/upscale';
+  const limit = isUpscaleStatusRead ? UPSCALE_STATUS_RATE_LIMIT : USER_RATE_LIMIT;
+  const limiter = isUpscaleStatusRead ? upscaleStatusRateLimit : rateLimit;
   let success, remaining, reset;
 
   // Skip rate limiting in test environment but still add headers
   if (isTestEnvironment()) {
     success = true;
-    remaining = USER_RATE_LIMIT;
-    reset = Date.now() + 10000; // 10 seconds from now
+    remaining = limit;
+    reset = Date.now() + (isUpscaleStatusRead ? 60_000 : 10_000);
   } else {
-    const result = await rateLimit.limit(userId);
+    const result = await limiter.limit(userId);
     success = result.success;
     remaining = result.remaining;
     reset = result.reset;
   }
 
-  const rateLimitHeaders = createRateLimitHeaders(USER_RATE_LIMIT, remaining, reset);
+  const rateLimitHeaders = createRateLimitHeaders(limit, remaining, reset);
 
   if (!success) {
     return NextResponse.json(

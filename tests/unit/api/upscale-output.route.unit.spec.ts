@@ -4,12 +4,19 @@ import { NextRequest } from 'next/server';
 const mocks = vi.hoisted(() => ({
   retrieveDeliverableOutput: vi.fn(),
   acknowledgeReceipt: vi.fn(),
+  releaseDeliverableOutput: vi.fn(),
+  waitUntil: vi.fn(),
+}));
+
+vi.mock('@opennextjs/cloudflare', () => ({
+  getCloudflareContext: () => ({ ctx: { waitUntil: mocks.waitUntil } }),
 }));
 
 vi.mock('@server/services/replicate/utils/credit-manager', () => ({
   creditManager: {
     retrieveDeliverableOutput: mocks.retrieveDeliverableOutput,
     acknowledgeReceipt: mocks.acknowledgeReceipt,
+    releaseDeliverableOutput: mocks.releaseDeliverableOutput,
   },
 }));
 vi.mock('@shared/config/env', () => ({
@@ -298,6 +305,27 @@ describe('POST /api/upscale/output', () => {
     expect(mocks.acknowledgeReceipt).not.toHaveBeenCalled();
   });
 
+  it('rejects a clean but truncated stream without completing the charge', async () => {
+    mocks.retrieveDeliverableOutput.mockResolvedValue({
+      imageUrl: 'https://replicate.delivery/private-output.png',
+      mimeType: 'image/png',
+      expiresAt: null,
+    });
+    mocks.acknowledgeReceipt.mockResolvedValue(true);
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response('short', {
+          headers: { 'content-type': 'image/png', 'content-length': '100' },
+        })
+      )
+    );
+    const response = await POST(outputRequest(capability));
+    await expect(response.blob()).rejects.toThrow(/incomplete/i);
+    expect(mocks.acknowledgeReceipt).not.toHaveBeenCalled();
+    expect(mocks.releaseDeliverableOutput).toHaveBeenCalled();
+  });
+
   it('pulls only one upstream chunk per downstream demand and cancellation skips acknowledgement', async () => {
     mocks.retrieveDeliverableOutput.mockResolvedValue({
       imageUrl: 'https://replicate.delivery/private-output.png',
@@ -334,6 +362,45 @@ describe('POST /api/upscale/output', () => {
 
     expect(cancel).toHaveBeenCalledWith('user navigated away');
     expect(mocks.acknowledgeReceipt).not.toHaveBeenCalled();
+    expect(mocks.waitUntil).toHaveBeenCalledWith(expect.any(Promise));
+    await expect(mocks.waitUntil.mock.calls[0][0]).resolves.toBeUndefined();
+  });
+
+  it('does not acknowledge partial bytes when the delivery timeout closes the upstream stream', async () => {
+    vi.useFakeTimers();
+    try {
+      mocks.retrieveDeliverableOutput.mockResolvedValue({
+        imageUrl: 'https://replicate.delivery/private-output.png',
+        mimeType: 'image/png',
+        expiresAt: null,
+      });
+      mocks.acknowledgeReceipt.mockResolvedValue(true);
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(
+          async (_url: string, init: RequestInit) =>
+            new Response(
+              new ReadableStream({
+                start(controller) {
+                  controller.enqueue(new TextEncoder().encode('partial'));
+                  init.signal!.addEventListener('abort', () => controller.close(), { once: true });
+                },
+              }),
+              { headers: { 'content-type': 'image/png' } }
+            )
+        )
+      );
+      const response = await POST(outputRequest(capability));
+      const result = response.blob().then(
+        () => null,
+        error => error as Error
+      );
+      await vi.advanceTimersByTimeAsync(120_000);
+      expect(await result).toMatchObject({ message: expect.stringMatching(/aborted/i) });
+      expect(mocks.acknowledgeReceipt).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('does not acknowledge when the request abort turns a pending upstream read into EOF', async () => {

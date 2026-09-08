@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 
 const mocks = vi.hoisted(() => ({
@@ -9,6 +9,8 @@ const mocks = vi.hoisted(() => ({
   decodeImageDimensions: vi.fn(),
   ensureProfile: vi.fn(),
   from: vi.fn(),
+  rpc: vi.fn(),
+  fetch: vi.fn(),
   processImage: vi.fn(),
   providerAvailability: vi.fn(),
   providerFailure: vi.fn(),
@@ -72,7 +74,8 @@ vi.mock('@server/services/replicate/utils/credit-manager', () => ({
     recordDeliverableOutput: mocks.recordDeliverableOutput,
   },
 }));
-vi.mock('@server/services/scale-preserving-model', () => ({
+vi.mock('@server/services/scale-preserving-model', async importOriginal => ({
+  ...(await importOriginal<typeof import('@server/services/scale-preserving-model')>()),
   getScalePreservingFallbackCandidates: () => [],
   resolveScalePreservingModel: mocks.resolveScalePreservingModel,
 }));
@@ -80,7 +83,22 @@ vi.mock('@server/services/upscale-input-storage.service', () => ({
   removeUpscaleInput: mocks.removeUpscaleInput,
   resolveUpscaleInput: mocks.resolveUpscaleInput,
 }));
-vi.mock('@server/supabase/supabaseAdmin', () => ({ supabaseAdmin: { from: mocks.from } }));
+vi.mock('@server/supabase/supabaseAdmin', () => ({
+  supabaseAdmin: { from: mocks.from, rpc: mocks.rpc },
+}));
+vi.mock('@shared/config/env', () => ({
+  isProduction: () => false,
+  serverEnv: {
+    ENV: 'test',
+    REPLICATE_API_TOKEN: 'provider-fixture-token',
+    ENABLE_PREMIUM_MODELS: true,
+    MODEL_FOR_GENERAL_UPSCALE: 'real-esrgan',
+    MODEL_FOR_TEXT_LOGOS: 'nano-banana',
+  },
+  clientEnv: {},
+}));
+vi.unmock('dayjs');
+vi.unmock('dayjs/plugin/utc');
 vi.mock('@/lib/anti-freeloader/check-freeloader', () => ({
   isAccountSetupPending: mocks.setupPending,
   isFreeleaderBlocked: () => false,
@@ -140,6 +158,57 @@ function profile(
 describe('Auto credit estimate and deduction parity', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    let reservation: Record<string, unknown> | undefined;
+    const state = () => ({
+      outcome: 'found',
+      reservation,
+      balance: { subscription: 3, purchased: 0, total: 3 },
+    });
+    mocks.rpc.mockImplementation(async (name, args) => {
+      if (name === 'read_async_upscale_job') {
+        return { data: reservation ? state() : { outcome: 'new' }, error: null };
+      }
+      if (name === 'admit_async_upscale_job') {
+        reservation = {
+          job_id: args.p_job_id,
+          user_id: args.p_user_id,
+          amount: args.p_amount,
+          status: 'processing',
+          provider_phase: 'submitting',
+          attempt_id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+          attempt_started_at: new Date().toISOString(),
+          execution_deadline_at: new Date(Date.now() + 900000).toISOString(),
+          resolved_model: args.p_resolved_model,
+          quality_tier: args.p_quality_tier,
+          result_context: args.p_result_context,
+          async_delivery_token: args.p_delivery_token,
+        };
+        return { data: { ...state(), outcome: 'admitted' }, error: null };
+      }
+      if (name === 'record_async_upscale_prediction' && reservation) {
+        reservation.provider_phase = 'processing';
+        reservation.provider_prediction_id = args.p_prediction_id;
+        return { data: true, error: null };
+      }
+      if (name === 'claim_async_upscale_observation') {
+        return {
+          data: {
+            ...state(),
+            claimed: true,
+            observation_token: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+          },
+          error: null,
+        };
+      }
+      if (name === 'apply_async_upscale_observation') {
+        return { data: { ...state(), transitioned: false }, error: null };
+      }
+      throw new Error(`Unexpected RPC in pricing parity test: ${name}`);
+    });
+    mocks.fetch.mockImplementation(async () =>
+      Response.json({ id: 'fixture-prediction', status: 'starting' })
+    );
+    vi.stubGlobal('fetch', mocks.fetch);
     mocks.rateLimit.mockResolvedValue({ success: true, remaining: 4, reset: Date.now() + 60_000 });
     mocks.batchCheck.mockResolvedValue({
       allowed: true,
@@ -185,6 +254,10 @@ describe('Auto credit estimate and deduction parity', () => {
       providerName: 'Replicate',
       processImage: mocks.processImage,
     });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it('quotes a document Auto request at the same Nano Banana cost the live route deducts', async () => {
@@ -233,22 +306,6 @@ describe('Auto credit estimate and deduction parity', () => {
       issues: [{ type: 'text', severity: 'high' }],
       enhancementPrompt: 'Preserve text and logos.',
     });
-    let deductedCredits: number | undefined;
-    mocks.processImage.mockImplementation(async (_userId, _input, options) => {
-      deductedCredits = options.creditCost;
-      options.onCreditsDeducted?.({
-        amount: options.creditCost,
-        subscriptionAmount: options.creditCost,
-        purchasedAmount: 0,
-        jobId: JOB_ID,
-      });
-      return {
-        imageUrl: 'https://replicate.delivery/nano-banana.png',
-        mimeType: 'image/png',
-        expiresAt: 1795737600000,
-        creditsRemaining: 3,
-      };
-    });
 
     vi.useFakeTimers();
     try {
@@ -274,9 +331,18 @@ describe('Auto credit estimate and deduction parity', () => {
       expect(estimateBody.breakdown.totalCredits).toBe(2);
       expect(legacyAutoEstimate.status).toBe(200);
       expect(legacyEstimateBody.breakdown.totalCredits).toBe(2);
-      expect(upscaleResponse.status).toBe(200);
-      expect(upscaleBody.processing.creditsUsed).toBe(2);
-      expect(deductedCredits).toBe(estimateBody.breakdown.totalCredits);
+      expect(upscaleResponse.status).toBe(202);
+      expect(upscaleBody).toMatchObject({ jobId: JOB_ID, status: 'processing' });
+      const admission = mocks.rpc.mock.calls.find(
+        ([name]) => name === 'admit_async_upscale_job'
+      )?.[1];
+      expect(admission).toMatchObject({
+        p_resolved_model: 'nano-banana',
+        p_quality_tier: 'quick',
+        p_amount: estimateBody.breakdown.totalCredits,
+      });
+      expect(mocks.processImage).not.toHaveBeenCalled();
+      expect(mocks.fetch).toHaveBeenCalledOnce();
       expect(mocks.analyze).toHaveBeenCalledWith(
         'https://storage.example/signed-input?token=abc',
         'image/png',
@@ -310,20 +376,6 @@ describe('Auto credit estimate and deduction parity', () => {
       issues: [],
       enhancementPrompt: undefined,
     });
-    mocks.processImage.mockImplementation(async (_userId, _input, options) => {
-      options.onCreditsDeducted?.({
-        amount: options.creditCost,
-        subscriptionAmount: options.creditCost,
-        purchasedAmount: 0,
-        jobId: JOB_ID,
-      });
-      return {
-        imageUrl: 'https://replicate.delivery/real-esrgan.png',
-        mimeType: 'image/png',
-        expiresAt: 1795737600000,
-        creditsRemaining: 0,
-      };
-    });
 
     vi.useFakeTimers();
     try {
@@ -343,8 +395,13 @@ describe('Auto credit estimate and deduction parity', () => {
       const response = await responsePromise;
       const body = await response.json();
 
-      expect(response.status).toBe(200);
-      expect(body.processing.creditsUsed).toBe(1);
+      expect(response.status).toBe(202);
+      expect(body).toMatchObject({ jobId: JOB_ID, status: 'processing' });
+      const admission = mocks.rpc.mock.calls.find(
+        ([name]) => name === 'admit_async_upscale_job'
+      )?.[1];
+      expect(admission).toMatchObject({ p_resolved_model: 'real-esrgan', p_amount: 1 });
+      expect(mocks.processImage).not.toHaveBeenCalled();
       expect(mocks.analyze).toHaveBeenCalledWith(
         'https://storage.example/signed-input?token=abc',
         'image/png',
@@ -368,24 +425,9 @@ describe('Auto credit estimate and deduction parity', () => {
       insert: async () => ({ error: null }),
     }));
     mocks.decodeImageDimensions.mockReturnValue({ width: 1000, height: 1000 });
-
-    let deductedCredits: number | undefined;
-    let processedInput: { originalWidth?: number; originalHeight?: number } | undefined;
-    mocks.processImage.mockImplementation(async (_userId, input, options) => {
-      deductedCredits = options.creditCost;
-      processedInput = input as { originalWidth?: number; originalHeight?: number };
-      options.onCreditsDeducted?.({
-        amount: options.creditCost,
-        subscriptionAmount: options.creditCost,
-        purchasedAmount: 0,
-        jobId: JOB_ID,
-      });
-      return {
-        imageUrl: 'https://replicate.delivery/clarity-pro.png',
-        mimeType: 'image/png',
-        expiresAt: 1795737600000,
-        creditsRemaining: paidProfile.subscription_credits_balance - options.creditCost,
-      };
+    mocks.resolveScalePreservingModel.mockReturnValue({
+      modelId: 'clarity-pro-upscaler',
+      usedFallback: false,
     });
 
     const estimateResponse = await estimateCredits(
@@ -397,7 +439,7 @@ describe('Auto credit estimate and deduction parity', () => {
           selectedModel: 'auto',
           inputWidth: 1000,
           inputHeight: 1000,
-          additionalOptions: { smartAnalysis: false },
+          additionalOptions: { smartAnalysis: false, enhanceFaces: true },
         },
       })
     );
@@ -422,7 +464,7 @@ describe('Auto credit estimate and deduction parity', () => {
     );
     const upscaleBody = await upscaleResponse.json();
 
-    expect(estimateResponse.status).toBe(200);
+    expect(estimateResponse.status, JSON.stringify(estimateBody)).toBe(200);
     expect(estimateBody).toMatchObject({
       modelToBe: 'clarity-pro-upscaler',
       breakdown: {
@@ -431,27 +473,27 @@ describe('Auto credit estimate and deduction parity', () => {
         totalCredits: 10,
       },
     });
-    expect(upscaleResponse.status).toBe(200);
-    expect(upscaleBody.processing).toMatchObject({
-      modelUsed: 'clarity-pro-upscaler',
-      creditsUsed: estimateBody.breakdown.totalCredits,
-    });
-    expect(upscaleBody.dimensions).toMatchObject({
-      input: { width: 1000, height: 1000 },
-      output: { width: 2000, height: 2000 },
-    });
-    expect(processedInput).toMatchObject({ originalWidth: 1000, originalHeight: 1000 });
-    expect(deductedCredits).toBe(estimateBody.breakdown.totalCredits);
-    expect(mocks.processImage).toHaveBeenCalledWith(
-      USER_ID,
-      expect.anything(),
-      expect.objectContaining({
-        creditCost: estimateBody.breakdown.totalCredits,
-        costAttribution: expect.objectContaining({
+    expect(upscaleResponse.status, JSON.stringify(upscaleBody)).toBe(202);
+    const admission = mocks.rpc.mock.calls.find(
+      ([name]) => name === 'admit_async_upscale_job'
+    )?.[1];
+    expect(admission).toMatchObject({
+      p_resolved_model: 'clarity-pro-upscaler',
+      p_amount: estimateBody.breakdown.totalCredits,
+      p_result_context: {
+        response: {
+          dimensions: {
+            input: { width: 1000, height: 1000 },
+            output: { width: 2000, height: 2000 },
+          },
+        },
+        costAttribution: {
           modelId: 'clarity-pro-upscaler',
           pricingModel: 'output-megapixel',
-        }),
-      })
-    );
+          creditsCharged: estimateBody.breakdown.totalCredits,
+        },
+      },
+    });
+    expect(mocks.processImage).not.toHaveBeenCalled();
   });
 });

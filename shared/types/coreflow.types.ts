@@ -535,7 +535,12 @@ export interface IUpscaleConfig {
 
 export interface IBatchItem {
   id: string;
-  file: File;
+  /** Original bytes, absent after a durable job is restored from the server. */
+  file: File | null;
+  /** Best-effort display name retained for jobs restored after a reload. */
+  fileName?: string;
+  /** Server-owned durable job identity, when this item can be resumed. */
+  asyncJobId?: string;
   previewUrl: string;
   processedUrl: string | null;
   status: ProcessingStatus;
@@ -546,6 +551,8 @@ export interface IBatchItem {
   };
   stage?: ProcessingStage; // NEW
   error?: string;
+  /** True when the durable job needs an explicit authoritative status check. */
+  asyncStatusCheckAvailable?: boolean;
 }
 
 export interface IProcessedImage {

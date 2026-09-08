@@ -23,28 +23,6 @@ interface IRateLimitEntry {
   timestamps: number[];
 }
 
-// In-memory storage for rate limit tracking
-const rateLimitStore = new Map<string, IRateLimitEntry>();
-
-// Cleanup old entries every 5 minutes to prevent memory leaks
-setInterval(
-  () => {
-    const now = Date.now();
-    const fiveMinutesAgo = now - 5 * 60 * 1000;
-
-    for (const [key, entry] of rateLimitStore.entries()) {
-      // Remove timestamps older than 5 minutes
-      entry.timestamps = entry.timestamps.filter(t => t > fiveMinutesAgo);
-
-      // Remove entry if no recent timestamps
-      if (entry.timestamps.length === 0) {
-        rateLimitStore.delete(key);
-      }
-    }
-  },
-  5 * 60 * 1000
-); // Every 5 minutes
-
 interface IRateLimitResult {
   success: boolean;
   remaining: number;
@@ -60,6 +38,24 @@ interface IRateLimitResult {
  * @returns Rate limit result with success status, remaining count, and reset time
  */
 function createRateLimiter(limit: number, windowMs: number) {
+  // Each policy owns its timestamp store. Sharing timestamps across policies
+  // lets one policy consume or prune another policy's budget.
+  const rateLimitStore = new Map<string, IRateLimitEntry>();
+
+  // Cleanup old entries every 5 minutes to prevent memory leaks.
+  setInterval(
+    () => {
+      const now = Date.now();
+      const fiveMinutesAgo = now - 5 * 60 * 1000;
+
+      for (const [key, entry] of rateLimitStore.entries()) {
+        entry.timestamps = entry.timestamps.filter(t => t > fiveMinutesAgo);
+        if (entry.timestamps.length === 0) rateLimitStore.delete(key);
+      }
+    },
+    5 * 60 * 1000
+  );
+
   return async (identifier: string): Promise<IRateLimitResult> => {
     const now = Date.now();
     const windowStart = now - windowMs;
@@ -97,12 +93,16 @@ function createRateLimiter(limit: number, windowMs: number) {
   };
 }
 
+const authenticatedRateLimiter = createRateLimiter(50, 10 * 1000);
+const upscaleRateLimiter = createRateLimiter(5, 60 * 1000);
+const upscaleStatusRateLimiter = createRateLimiter(120, 60 * 1000);
+
 /**
  * Rate limiter for authenticated users
  * 50 requests per 10 seconds
  */
 export const rateLimit = {
-  limit: createRateLimiter(50, 10 * 1000),
+  limit: authenticatedRateLimiter,
 };
 
 /**
@@ -129,6 +129,24 @@ export const upscaleRateLimit = {
       };
     }
     // Apply rate limiting in production/staging
-    return createRateLimiter(5, 60 * 1000)(identifier);
+    return upscaleRateLimiter(identifier);
+  },
+};
+
+/**
+ * Rate limiter for authenticated status reads.
+ * Status polling must have its own budget so it cannot be blocked by a new
+ * admission request using the general authenticated bucket.
+ */
+export const upscaleStatusRateLimit = {
+  limit: async (identifier: string): Promise<IRateLimitResult> => {
+    if (isTestEnvironment()) {
+      return {
+        success: true,
+        remaining: 120,
+        reset: Date.now() + 60 * 1000,
+      };
+    }
+    return upscaleStatusRateLimiter(identifier);
   },
 };
