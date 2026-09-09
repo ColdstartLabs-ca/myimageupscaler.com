@@ -231,6 +231,66 @@ describe('useBatchQueue async recovery', () => {
     expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
   });
 
+  it('does not reintroduce a received result on the next dashboard refresh', async () => {
+    const jobId = 'completed-job';
+    mocks.listActiveAsyncUpscaleJobs.mockResolvedValue({
+      success: true,
+      jobs: [{ jobId, status: 'processing', createdAt: Date.now() }],
+    });
+    mocks.resumeAsyncUpscale.mockResolvedValue({
+      jobId,
+      imageUrl: 'blob:output',
+      creditsUsed: 1,
+      creditsRemaining: 4,
+    });
+    const first = renderHook(() => useBatchQueue());
+    await waitFor(() => expect(first.result.current.completedCount).toBe(1));
+    expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+    first.unmount();
+    mocks.resumeAsyncUpscale.mockClear();
+    mocks.listActiveAsyncUpscaleJobs.mockResolvedValue({
+      success: true,
+      jobs: [{ jobId, status: 'completed', createdAt: Date.now() }],
+    });
+
+    const refreshed = renderHook(() => useBatchQueue());
+    await act(async () => {});
+
+    expect(refreshed.result.current.queue).toEqual([]);
+    expect(refreshed.result.current.activeId).toBeNull();
+    expect(mocks.resumeAsyncUpscale).not.toHaveBeenCalled();
+    expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+  });
+
+  it.each(['ready', 'completed'])(
+    'recovers a %s job whose result was never received by this browser',
+    async status => {
+      const jobId = 'interrupted-download';
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify([{ jobId, fileName: 'source.png', createdAt: Date.now() }])
+      );
+      mocks.listActiveAsyncUpscaleJobs.mockResolvedValue({
+        success: true,
+        jobs: [{ jobId, status, createdAt: Date.now() }],
+      });
+      mocks.resumeAsyncUpscale.mockResolvedValue({
+        jobId,
+        imageUrl: 'blob:output',
+        creditsUsed: 1,
+        creditsRemaining: 4,
+      });
+
+      const { result } = renderHook(() => useBatchQueue());
+      await waitFor(() => expect(result.current.completedCount).toBe(1));
+
+      expect(result.current.queue[0].fileName).toBe('source.png');
+      expect(mocks.resumeAsyncUpscale).toHaveBeenCalledOnce();
+      expect(mocks.processImage).not.toHaveBeenCalled();
+      expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+    }
+  );
+
   it('retries a recovered job after its first status read loses the connection', async () => {
     const jobId = '33333333-3333-4333-8333-333333333333';
     mocks.listActiveAsyncUpscaleJobs.mockResolvedValue({

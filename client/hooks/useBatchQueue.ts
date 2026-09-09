@@ -484,8 +484,12 @@ export const useBatchQueue = (): IUseBatchQueueReturn => {
         if (cancelled) return;
         const stored = readStoredAsyncUpscaleJobs(userId);
         const storedById = new Map(stored.map(entry => [entry.jobId, entry]));
-        const jobs = response.jobs.filter(job =>
-          ['submitting', 'processing', 'ready', 'completed'].includes(job.status)
+        // Completed jobs remain discoverable while their download is available.
+        // Restore them only if this browser is still waiting to receive the result.
+        const jobs = response.jobs.filter(
+          job =>
+            ['submitting', 'processing', 'ready'].includes(job.status) ||
+            (job.status === 'completed' && storedById.has(job.jobId))
         );
         jobs.forEach(job => {
           const fileName = storedById.get(job.jobId)?.fileName || FALLBACK_RECOVERED_FILE_NAME;
