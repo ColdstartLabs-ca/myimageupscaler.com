@@ -473,10 +473,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         return NextResponse.json(replay.body, { status: replay.status, headers: replay.headers });
       }
     } catch (error) {
-      // Preserve validation precedence when the idempotency lookup is temporarily
-      // unavailable. A malformed or oversized image should still receive its
-      // actionable 4xx response; valid requests return this error after preflight.
-      if (error instanceof AsyncUpscaleError) replayError = error;
+      // An authoritative replay verdict (404 unknown job, 409 changed settings)
+      // is about a job this request does not own. Return it before touching the
+      // input so preflight can never delete another job's source.
+      // A temporarily unavailable lookup is deferred instead: a malformed or
+      // oversized image should still receive its actionable 4xx response.
+      if (error instanceof AsyncUpscaleError && error.status >= 500) replayError = error;
       else throw error;
     }
 
@@ -778,10 +780,45 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json(errorBody, { status });
     }
 
+    // Resolve the deferred replay verdict and provider health once. Deterministic
+    // request, image and directly resolvable tier validation runs first so callers
+    // receive actionable 4xx responses during an outage, but this gate must run
+    // before any billable LLM analysis and before credit deduction.
+    let processingAvailabilityResolved = false;
+    const ensureProcessingAvailable = async (): Promise<NextResponse | null> => {
+      if (processingAvailabilityResolved) return null;
+      processingAvailabilityResolved = true;
+      if (replayError) throw replayError;
+      const providerAvailability = await providerHealthService.getAvailability();
+      if (providerAvailability.available) return null;
+      logFailure('provider_circuit_open', {
+        circuitStatus: providerAvailability.status,
+        retryAt: providerAvailability.retryAt?.toISOString(),
+      });
+      const { body: errorBody, status } = createErrorResponse(
+        ErrorCodes.AI_UNAVAILABLE,
+        TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE,
+        503,
+        {
+          providerUnavailable: true,
+          suppressPurchaseCtas: true,
+          retryAt: providerAvailability.retryAt?.toISOString(),
+        }
+      );
+      return NextResponse.json(errorBody, { status });
+    };
+
     // 10. New 3-branch logic for quality tier processing
     let resolvedEnhancements = config.additionalOptions;
     let didRunAIAnalysis = false;
     const modelRegistry = ModelRegistry.getInstance();
+
+    // Analysis calls an external LLM. Never pay for it when the request is
+    // already destined for a replay error or an open provider circuit.
+    if (config.qualityTier === 'auto' || config.additionalOptions.smartAnalysis) {
+      const unavailableBeforeAnalysis = await ensureProcessingAvailable();
+      if (unavailableBeforeAnalysis) return unavailableBeforeAnalysis;
+    }
 
     if (config.qualityTier === 'auto') {
       // Branch A: Auto tier - Always run AI analysis for tier + enhancements
@@ -1074,32 +1111,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       }
     }
 
-    if (replayError) {
-      temporaryStoragePath = undefined;
-      throw replayError;
-    }
-
-    // Check provider health only after deterministic request, image, model, scale,
-    // and pixel-limit validation. Callers should receive actionable 4xx responses
-    // for invalid input even while the AI provider circuit is unavailable.
-    const providerAvailability = await providerHealthService.getAvailability();
-    if (!providerAvailability.available) {
-      logFailure('provider_circuit_open', {
-        circuitStatus: providerAvailability.status,
-        retryAt: providerAvailability.retryAt?.toISOString(),
-      });
-      const { body, status } = createErrorResponse(
-        ErrorCodes.AI_UNAVAILABLE,
-        TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE,
-        503,
-        {
-          providerUnavailable: true,
-          suppressPurchaseCtas: true,
-          retryAt: providerAvailability.retryAt?.toISOString(),
-        }
-      );
-      return NextResponse.json(body, { status });
-    }
+    const processingUnavailable = await ensureProcessingAvailable();
+    if (processingUnavailable) return processingUnavailable;
 
     // Calculate credit cost using provider-aware pricing for new models,
     // falling back to tier-based scale multiplier for legacy models.
@@ -1854,7 +1867,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     } catch {
       // Failure telemetry must never mask the original route response.
     }
-    if (temporaryStoragePath && !asyncHandoff) {
+    // A deferred replay error leaves job ownership unknown: the input may belong
+    // to an already-admitted job, so no exit may delete it.
+    if (temporaryStoragePath && !asyncHandoff && !replayError) {
       try {
         await removeUpscaleInput(temporaryStoragePath);
       } catch (error) {

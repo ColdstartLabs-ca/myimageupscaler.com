@@ -825,6 +825,84 @@ describe('authenticated async upscale contract', () => {
     expect(reservationDebits).toBe(1);
   });
 
+  it('keeps the active job input when a conflicting retry fails later validation', async () => {
+    mocks.resolveInput.mockResolvedValue({
+      imageReference: INPUT_URL,
+      validationImageData: pngHeader(2048, 2048),
+      sizeBytes: 4096,
+      mimeType: 'image/png',
+    });
+    expect((await route.POST(request())).status).toBe(202);
+    mocks.resolveInput.mockClear();
+
+    const response = await route.POST(
+      request(payload({ config: { qualityTier: 'quick', scale: 4 } }))
+    );
+
+    expect(response.status).toBe(409);
+    expect(mocks.resolveInput, 'a conflicting retry must not resolve the input again').not
+      .toHaveBeenCalled();
+    expect(mocks.removeInput, 'the active job keeps its input').not.toHaveBeenCalled();
+    expect(mocks.fetch).toHaveBeenCalledTimes(1);
+    expect(reservationDebits).toBe(1);
+  });
+
+  it('keeps the input when a transient replay lookup precedes a validation rejection', async () => {
+    mocks.resolveInput.mockResolvedValue({
+      imageReference: INPUT_URL,
+      validationImageData: pngHeader(2048, 2048),
+      sizeBytes: 4096,
+      mimeType: 'image/png',
+    });
+    mocks.rpc.mockImplementationOnce(async () => ({ data: null, error: { message: 'timeout' } }));
+
+    const response = await route.POST(
+      request(payload({ config: { qualityTier: 'quick', scale: 4 } }))
+    );
+
+    expect(response.status, 'oversized input keeps its actionable response').toBe(422);
+    expect(mocks.removeInput, 'job ownership is unknown after a transient lookup failure').not
+      .toHaveBeenCalled();
+  });
+
+  it('rejects an open provider circuit before running billable analysis', async () => {
+    mocks.providerAvailability.mockResolvedValue({
+      available: false,
+      status: 'open',
+      retryAt: null,
+    });
+
+    const auto = await route.POST(request(payload({ config: { qualityTier: 'auto', scale: 2 } })));
+    expect(auto.status).toBe(503);
+    expect(await auto.json()).toMatchObject({ error: { code: 'AI_UNAVAILABLE' } });
+
+    const smart = await route.POST(
+      request(
+        payload({
+          config: { qualityTier: 'quick', scale: 2, additionalOptions: { smartAnalysis: true } },
+        })
+      )
+    );
+    expect(smart.status).toBe(503);
+
+    expect(mocks.analyze, 'an open circuit must not incur analyzer cost').not.toHaveBeenCalled();
+    expect(mocks.fetch).not.toHaveBeenCalled();
+    expect(reservationDebits).toBe(0);
+  });
+
+  it('rethrows a transient replay error before running billable analysis', async () => {
+    mocks.rpc.mockImplementationOnce(async () => ({ data: null, error: { message: 'timeout' } }));
+
+    const response = await route.POST(
+      request(payload({ config: { qualityTier: 'auto', scale: 2 } }))
+    );
+
+    expect(response.status).toBe(503);
+    expect(mocks.analyze, 'an unresolved replay must not incur analyzer cost').not
+      .toHaveBeenCalled();
+    expect(mocks.removeInput).not.toHaveBeenCalled();
+  });
+
   it('canonicalizes accepted defaults and keeps signed input URLs out of the replay identity', async () => {
     await route.POST(request());
     const firstFingerprint = reservation?.request_fingerprint;
