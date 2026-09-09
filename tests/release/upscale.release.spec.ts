@@ -56,7 +56,8 @@ async function prepareBrowser(page: Page, user: { id: string; accessToken: strin
 }
 
 for (const width of [1280, 390]) {
-  test(`recovers and downloads one charged job after reload at ${width}px`, async ({ page }) => {
+  test(`recovers a pending job but leaves received results cleared after reload at ${width}px`, async ({ page }) => {
+    runtime.setProviderDelayMs(15_000);
     await page.setViewportSize({ width, height: 844 });
     const user = await runtime.createUser({
       tier: 'pro',
@@ -82,9 +83,14 @@ for (const width of [1280, 390]) {
     await prepareBrowser(page, user);
     await page.goto(`${runtime.browserOrigin}/workspace`);
     await expect(page.getByTestId('queue-item')).toHaveCount(1);
-    await expect(page.locator('[data-driver="download-button"]')).toBeVisible();
+    await expect(page.locator('[data-driver="download-button"]')).toBeHidden();
+    const storageKey = `myimageupscaler:async-upscale-jobs:${user.id}`;
+    await expect
+      .poll(() => page.evaluate(key => localStorage.getItem(key), storageKey))
+      .toContain(jobId);
     await page.reload();
     await expect(page.getByTestId('queue-item')).toHaveCount(1);
+    await expect(page.locator('[data-driver="download-button"]')).toBeVisible();
     const downloadEvent = page.waitForEvent('download');
     await page.locator('[data-driver="download-button"]').click();
     const download = await downloadEvent;
@@ -114,12 +120,26 @@ for (const width of [1280, 390]) {
       acknowledged_at: expect.any(String),
     });
     expect(Number.isFinite(Date.parse(reservation.rows[0].acknowledged_at))).toBe(true);
+    expect(await page.evaluate(key => localStorage.getItem(key), storageKey)).toBeNull();
+
+    const discoveryEvent = page.waitForResponse(
+      response => new URL(response.url()).searchParams.get('active') === '1'
+    );
+    await page.reload();
+    const discovery = await discoveryEvent;
+    expect(discovery.status()).toBe(200);
+    expect((await discovery.json()).jobs).toEqual(
+      expect.arrayContaining([expect.objectContaining({ jobId, status: 'completed' })])
+    );
+    await expect(page.getByTestId('queue-item')).toHaveCount(0);
+    await expect(page.locator('[data-driver="download-button"]')).toBeHidden();
   });
 }
 
 test('uploads through the workspace and delivers an image charged exactly once', async ({
   page,
 }) => {
+  runtime.setProviderDelayMs(50);
   const user = await runtime.createUser({
     tier: 'pro',
     subscriptionCredits: 10,
