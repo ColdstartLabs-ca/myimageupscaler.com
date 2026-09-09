@@ -1,8 +1,8 @@
 'use client';
 
-import { analytics } from '@client/analytics';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useModalStore } from '@client/store/modalStore';
+import { loadAnalytics } from '@client/utils/loadAnalytics';
 import { getFreeCreditsForTier } from '@/lib/anti-freeloader/region-classifier';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { ArrowRight, Sparkles } from 'lucide-react';
@@ -24,11 +24,15 @@ export function SectionSignupCTA({
   const hasTrialEnabled = getSubscriptionConfig().plans.some(plan => plan.trial.enabled);
 
   const handleClick = () => {
-    analytics.track('section_signup_cta_clicked', {
-      location,
-      destination: 'register_modal',
-      copyVariant: hasTrialEnabled ? 'fix_images_free' : 'upscale_first_image',
-    });
+    void loadAnalytics()
+      .then(analytics =>
+        analytics.track('section_signup_cta_clicked', {
+          location,
+          destination: 'register_modal',
+          copyVariant: hasTrialEnabled ? 'fix_images_free' : 'upscale_first_image',
+        })
+      )
+      .catch(() => {});
     openAuthModal('register');
   };
 

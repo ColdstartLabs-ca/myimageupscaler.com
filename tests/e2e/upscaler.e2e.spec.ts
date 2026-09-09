@@ -150,24 +150,7 @@ async function setupProcessingMocks(
 ): Promise<IProcessingMockResult> {
   const requests: IUpscaleRequestBody[] = [];
 
-  await page.route('**/api/upscale/upload', async route => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        storagePath: 'test-user-id/test-job.jpg',
-        uploadToken: 'test-upload-token',
-      }),
-    });
-  });
-
-  await page.route('**/storage/v1/**', async route => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: '{}',
-    });
-  });
+  await setupUploadMocks(page);
 
   await page.route('**/api/upscale/output', async route => {
     await route.fulfill({
@@ -195,6 +178,27 @@ async function setupProcessingMocks(
   });
 
   return { requests };
+}
+
+async function setupUploadMocks(page: import('@playwright/test').Page): Promise<void> {
+  await page.route('**/api/upscale/upload', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        storagePath: 'test-user-id/test-job.jpg',
+        uploadToken: 'test-upload-token',
+      }),
+    });
+  });
+
+  await page.route('**/storage/v1/**', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: '{}',
+    });
+  });
 }
 
 /**
@@ -596,11 +600,22 @@ test.describe('Upscaler E2E Tests', () => {
     });
 
     test('Request timeout shows appropriate message', async ({ page }) => {
-      // Set up API mock to simulate timeout
-      await page.route('**/api/upscale', async _route => {
-        console.log('🔥 API MOCK: Simulating timeout by not responding');
-        // Don't respond at all to simulate a real timeout
-        // This will test the frontend's timeout handling
+      // Upload and storage still need to succeed so this reaches the processing
+      // request. Return a gateway timeout to exercise the terminal UI state without
+      // waiting for the production five-minute request deadline.
+      await setupUploadMocks(page);
+      await page.route('**/api/upscale', async route => {
+        console.log('🔥 API MOCK: Returning processing timeout');
+        await route.fulfill({
+          status: 504,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            error: {
+              code: 'TIMEOUT',
+              message: 'Request timeout: The image processing request timed out. Please try again.',
+            },
+          }),
+        });
       });
 
       // Set up auth mocks
@@ -627,37 +642,13 @@ test.describe('Upscaler E2E Tests', () => {
       await upscalerPage.clickProcess();
       console.log('✓ Clicked process button for timeout test');
 
-      // Wait for either timeout handling or button to become responsive again
-      // The key test is that the app doesn't hang and shows some response
-      await Promise.race([
-        // Wait for button to become enabled again (timeout recovery)
-        upscalerPage.processButton.waitFor({ state: 'enabled', timeout: 10000 }),
-        // Wait for error message to appear
-        page.waitForSelector('.bg-red-50.border-red-200, .text-red-600', { timeout: 10000 }),
-        // Wait for download button (quick completion)
-        page.waitForSelector('button:has-text("Download")', { timeout: 10000 }),
-      ]).catch(() => {
-        // If none appear, continue with test - this is still a valid outcome
-        console.log('No timeout indicators found, checking app responsiveness');
+      await expect(page.getByRole('heading', { name: 'Processing Failed' })).toBeVisible({
+        timeout: 10000,
       });
-
-      // After timeout, the app should either:
-      // 1. Show an error message, OR
-      // 2. Re-enable the process button, OR
-      // 3. Show that processing has completed/fail
-
-      const isButtonVisible = await upscalerPage.processButton.isVisible();
-      const isButtonEnabled = await upscalerPage.processButton.isEnabled();
-
-      console.log(
-        `After timeout - Button visible: ${isButtonVisible}, enabled: ${isButtonEnabled}`
-      );
-
-      // The test passes if the app responds in some way after the timeout
-      // rather than hanging indefinitely
-      const appResponded = isButtonVisible && isButtonEnabled;
-
-      expect(appResponded).toBe(true);
+      await expect(page.getByText(/Request timeout:.*timed out/i).first()).toBeVisible({
+        timeout: 10000,
+      });
+      await expect(upscalerPage.processButton).toBeEnabled({ timeout: 10000 });
     });
   });
 

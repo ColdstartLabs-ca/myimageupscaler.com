@@ -53,7 +53,6 @@ test.describe('GPU OOM Prevention: Authenticated Route', () => {
       { dataUrl: oversizedImage, mimeType: 'image/png' },
       UPSCALE_CONFIG
     );
-
     response.expectStatus(422);
     const body = await response.json();
     expect(body.error.code).toBe('IMAGE_TOO_LARGE');

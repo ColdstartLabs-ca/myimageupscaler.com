@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import imageLoader from '@client/utils/image-loader';
+import imageLoader, { getCdnImageUrl } from '@client/utils/image-loader';
 
 const ROOT = path.resolve(process.cwd());
 const configSource = fs.readFileSync(path.join(ROOT, 'next.config.js'), 'utf8');
@@ -25,6 +25,12 @@ describe('custom image optimization', () => {
     const result = imageLoader({ src: '/before-after/hero/x.webp', width: 390, quality: 70 });
 
     expect(result).toBe('/cdn-cgi/image/width=390,quality=70,format=auto/before-after/hero/x.webp');
+  });
+
+  it('should build the transformed URL used by the responsive navbar logo', () => {
+    expect(getCdnImageUrl('/logo/horizontal-logo-compact.png', 100)).toBe(
+      '/cdn-cgi/image/width=100,quality=75,format=auto/logo/horizontal-logo-compact.png'
+    );
   });
 
   it('should route the acceptance blog hero through Supabase image transforms', () => {

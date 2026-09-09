@@ -4,7 +4,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useCheckoutAnalytics } from '@client/hooks/useCheckoutAnalytics';
-import { useCheckoutSession, stripePromise } from '@client/hooks/useCheckoutSession';
+import { useCheckoutSession } from '@client/hooks/useCheckoutSession';
 import { useCheckoutRescueOffer } from '@client/hooks/useCheckoutRescueOffer';
 import { useModalBehavior } from '@client/hooks/useModalBehavior';
 import { isCheckoutRescueOfferEligiblePrice } from '@shared/config/checkout-rescue-offer';
@@ -131,6 +131,7 @@ export function CheckoutModal({
     rescueOfferAppliedRef,
     engagementDiscountAppliedRef,
     retry,
+    stripePromise,
     stripeOptions,
   } = useCheckoutSession({
     priceId,

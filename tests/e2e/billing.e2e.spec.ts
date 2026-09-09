@@ -2,6 +2,15 @@ import { test, expect } from '../test-fixtures';
 import { PricingPage } from '../pages/PricingPage';
 import { TestContext } from '../helpers';
 
+const AUTH_CHECKOUT_TOAST = 'Please sign in or create an account to complete your purchase';
+
+function authCheckoutFeedback(page: Parameters<typeof test>[1]['page'], modalId: string) {
+  return page
+    .locator(`#${modalId}[role="dialog"]`)
+    .or(page.getByText(AUTH_CHECKOUT_TOAST, { exact: true }))
+    .first();
+}
+
 /**
  * Billing E2E Tests
  *
@@ -48,28 +57,10 @@ test.describe('Billing E2E Tests', () => {
       // Click Get Started button (first one)
       await getStartedButtons.first().click();
 
-      // Wait for modal to appear with a reasonable timeout
-      // The modal uses id="authenticationModal" and has role="dialog"
-      const authModal = page.locator('#authenticationModal[role="dialog"]');
-
-      // Wait for either the modal or a toast notification to appear
-      // Use Promise.race to wait for either condition
-      const modalPromise = authModal
-        .isVisible({ timeout: 5000 })
-        .then(visible => ({ type: 'modal', visible }))
-        .catch(() => ({ type: 'modal', visible: false }));
-
-      const toast = page.locator('[role="alert"], [data-sonner-toast], .toast');
-      const toastPromise = toast
-        .filter({ hasText: /account|create|register/i })
-        .isVisible({ timeout: 5000 })
-        .then(visible => ({ type: 'toast', visible }))
-        .catch(() => ({ type: 'toast', visible: false }));
-
-      const [modalResult, toastResult] = await Promise.all([modalPromise, toastPromise]);
-
-      // At least one of these should be visible
-      expect(modalResult.visible || toastResult.visible).toBe(true);
+      // The auth modal is dynamically imported; the toast is the immediate fallback.
+      await expect(authCheckoutFeedback(page, 'authenticationModal')).toBeVisible({
+        timeout: 5000,
+      });
 
       // Should still be on pricing page
       expect(page.url()).toContain('/pricing');
@@ -392,27 +383,10 @@ test.describe('Billing E2E Tests', () => {
       // The page should still be functional
       await expect(pricingPage.pageTitle).toBeVisible();
 
-      // Check for auth modal or toast notification
-      // Wait for either the modal or a toast notification to appear
-      // The auth required modal has ID 'authRequiredModal' (not 'authenticationModal')
-      const authModal = page.locator('#authRequiredModal[role="dialog"]');
-
-      const modalPromise = authModal
-        .isVisible({ timeout: 5000 })
-        .then(visible => ({ type: 'modal', visible }))
-        .catch(() => ({ type: 'modal', visible: false }));
-
-      const toast = page.locator('[role="alert"], [data-sonner-toast], .toast');
-      const toastPromise = toast
-        .filter({ hasText: /account|create|register|sign in/i })
-        .isVisible({ timeout: 5000 })
-        .then(visible => ({ type: 'toast', visible }))
-        .catch(() => ({ type: 'toast', visible: false }));
-
-      const [modalResult, toastResult] = await Promise.all([modalPromise, toastPromise]);
-
-      // At least one of these should be visible for unauthenticated users
-      expect(modalResult.visible || toastResult.visible).toBe(true);
+      // The auth-required modal is dynamically imported; the toast is the immediate fallback.
+      await expect(authCheckoutFeedback(page, 'authRequiredModal')).toBeVisible({
+        timeout: 5000,
+      });
 
       // Screenshot after action
       await pricingPage.screenshot('pro-get-started-click');

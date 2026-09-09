@@ -251,6 +251,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   let creditsRefunded = false;
   let temporaryStoragePath: string | undefined;
   let asyncHandoff = false;
+  let replayError: AsyncUpscaleError | undefined;
   let latestFailure: { failureReason: string } | null = null;
   let failureRowWriteScheduled = false;
   const pendingFailureRowWrites: Array<() => Promise<void>> = [];
@@ -449,6 +450,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // body before acquiring a stream and counts actual bytes for streamed bodies.
     const body = await readBoundedJsonBody(req, IMAGE_VALIDATION.MAX_REQUEST_BYTES);
     const validatedInput = upscaleSchema.parse(body);
+    requestedQualityTier = validatedInput.config.qualityTier;
+    requestedScale = validatedInput.config.scale;
 
     // The Tail Worker observes this request header after a hard platform failure.
     // Bind it to the same validated reservation UUID used by credit deduction so
@@ -464,9 +467,17 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json(errorBody, { status });
     }
 
-    const replay = await asyncUpscaleService.replay({ userId, request: validatedInput });
-    if (replay) {
-      return NextResponse.json(replay.body, { status: replay.status, headers: replay.headers });
+    try {
+      const replay = await asyncUpscaleService.replay({ userId, request: validatedInput });
+      if (replay) {
+        return NextResponse.json(replay.body, { status: replay.status, headers: replay.headers });
+      }
+    } catch (error) {
+      // Preserve validation precedence when the idempotency lookup is temporarily
+      // unavailable. A malformed or oversized image should still receive its
+      // actionable 4xx response; valid requests return this error after preflight.
+      if (error instanceof AsyncUpscaleError) replayError = error;
+      else throw error;
     }
 
     // Read the durable grant decision first. If setup commits concurrently, the
@@ -614,28 +625,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     });
     isPaidUser = faceEntitlement.isPaidUser;
     const userTier = faceEntitlement.effectiveTier;
-
-    const providerAvailability = await providerHealthService.getAvailability();
-    if (!providerAvailability.available) {
-      logFailure('provider_circuit_open', {
-        circuitStatus: providerAvailability.status,
-        retryAt: providerAvailability.retryAt?.toISOString(),
-      });
-      const { body, status } = createErrorResponse(
-        ErrorCodes.AI_UNAVAILABLE,
-        TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE,
-        503,
-        {
-          providerUnavailable: true,
-          suppressPurchaseCtas: true,
-          retryAt: providerAvailability.retryAt?.toISOString(),
-        }
-      );
-      return NextResponse.json(body, { status });
-    }
-
-    requestedQualityTier = validatedInput.config.qualityTier;
-    requestedScale = validatedInput.config.scale;
 
     const facePolicy = evaluateFaceEnhancementPolicy({
       request: {
@@ -1083,6 +1072,33 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         );
         return NextResponse.json(errorBody, { status });
       }
+    }
+
+    if (replayError) {
+      temporaryStoragePath = undefined;
+      throw replayError;
+    }
+
+    // Check provider health only after deterministic request, image, model, scale,
+    // and pixel-limit validation. Callers should receive actionable 4xx responses
+    // for invalid input even while the AI provider circuit is unavailable.
+    const providerAvailability = await providerHealthService.getAvailability();
+    if (!providerAvailability.available) {
+      logFailure('provider_circuit_open', {
+        circuitStatus: providerAvailability.status,
+        retryAt: providerAvailability.retryAt?.toISOString(),
+      });
+      const { body, status } = createErrorResponse(
+        ErrorCodes.AI_UNAVAILABLE,
+        TEMPORARY_PROCESSING_UNAVAILABLE_MESSAGE,
+        503,
+        {
+          providerUnavailable: true,
+          suppressPurchaseCtas: true,
+          retryAt: providerAvailability.retryAt?.toISOString(),
+        }
+      );
+      return NextResponse.json(body, { status });
     }
 
     // Calculate credit cost using provider-aware pricing for new models,

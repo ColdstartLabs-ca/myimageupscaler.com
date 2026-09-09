@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback, type MutableRefObject } from 'react';
 import { useTranslations } from 'next-intl';
-import { loadStripe, type StripeEmbeddedCheckoutOptions } from '@stripe/stripe-js';
+import type { Stripe, StripeEmbeddedCheckoutOptions } from '@stripe/stripe-js';
 import { clientEnv } from '@shared/config/env';
 import { StripeService, clearCheckoutSessionCache } from '@client/services/stripeService';
 import { analytics } from '@client/analytics';
@@ -23,10 +23,16 @@ import type { TCheckoutStep, TCheckoutErrorType } from '@server/analytics/types'
 // ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
-// Stripe initialisation (module-level, created once)
+// Stripe initialisation is memoized but starts only when this checkout hook mounts.
 // ---------------------------------------------------------------------------
 
-const getStripePromise = () => {
+let cachedStripePromise: Promise<Stripe | null> | null = null;
+
+function getStripePromise(): Promise<Stripe | null> | null {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
   const publishableKey = clientEnv.STRIPE_PUBLISHABLE_KEY;
 
   if (!publishableKey) {
@@ -41,10 +47,14 @@ const getStripePromise = () => {
     return null;
   }
 
-  return loadStripe(publishableKey);
-};
+  if (!cachedStripePromise) {
+    cachedStripePromise = import('@stripe/stripe-js').then(({ loadStripe }) =>
+      loadStripe(publishableKey)
+    );
+  }
 
-export const stripePromise = getStripePromise();
+  return cachedStripePromise;
+}
 
 // ---------------------------------------------------------------------------
 // Types
@@ -72,6 +82,7 @@ interface IUseCheckoutSessionReturn {
   rescueOfferAppliedRef: MutableRefObject<boolean>;
   engagementDiscountAppliedRef: MutableRefObject<boolean>;
   retry: () => void;
+  stripePromise: PromiseLike<Stripe | null> | Stripe | null;
   stripeOptions: StripeEmbeddedCheckoutOptions;
 }
 
@@ -107,6 +118,7 @@ export function useCheckoutSession({
   const [errorCode, setErrorCode] = useState<string | null>(null);
   const [retryKey, setRetryKey] = useState(0);
   const [applyingRescueOffer, setApplyingRescueOffer] = useState(false);
+  const [stripePromise] = useState(() => getStripePromise());
 
   const rescueOfferAppliedRef = useRef(false);
   const engagementDiscountAppliedRef = useRef(false);
@@ -486,6 +498,7 @@ export function useCheckoutSession({
     rescueOfferAppliedRef,
     engagementDiscountAppliedRef,
     retry,
+    stripePromise,
     stripeOptions,
   };
 }

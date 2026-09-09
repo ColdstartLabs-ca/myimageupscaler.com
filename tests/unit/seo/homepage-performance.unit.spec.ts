@@ -14,33 +14,46 @@ const ROOT = join(process.cwd());
 
 describe('Homepage Performance — Phase 1', () => {
   describe('Image preloads', () => {
-    // The logo is the LCP element on all pages — it appears in the sticky navbar above the fold.
-    // On mobile (375px), the hero slider sits directly under the headline so it stays above the fold.
-    // The navbar logo may still compete for LCP; we preload it with media queries matching the
-    // xs: 475px breakpoint in tailwind.config.js so each device downloads only what it renders.
-
-    it('should preload the compact logo for mobile viewports (<475px)', () => {
+    it('should not preload raw logo URLs from the global layout', () => {
       const layoutPath = join(ROOT, 'app/[locale]/layout.tsx');
       const source = readFileSync(layoutPath, 'utf-8');
 
-      expect(source).toContain('horizontal-logo-compact.png');
+      expect(source).not.toMatch(/rel="preload"[\s\S]*?horizontal-logo-compact\.png/);
+      expect(source).not.toMatch(/rel="preload"[\s\S]*?horizontal-logo-full\.png/);
+    });
+
+    it('should select one transformed navbar logo through a responsive picture', () => {
+      const navPath = join(ROOT, 'client/components/navigation/NavBar.tsx');
+      const source = readFileSync(navPath, 'utf-8');
+
+      expect(source).toContain('<picture>');
+      expect(source).toContain('<source');
       expect(source).toContain('max-width: 474px');
+      expect(source).toContain('getCdnImageUrl');
+      expect(source).not.toContain("import Image from 'next/image'");
+      expect(source).not.toMatch(/horizontal-logo-(compact|full)\.png[\s\S]*?priority/);
     });
 
-    it('should preload the full logo for desktop viewports (>=475px)', () => {
-      const layoutPath = join(ROOT, 'app/[locale]/layout.tsx');
-      const source = readFileSync(layoutPath, 'utf-8');
+    it('should transform the navbar logo URLs at their displayed widths', () => {
+      const loaderPath = join(ROOT, 'client/utils/image-loader.ts');
+      const source = readFileSync(loaderPath, 'utf-8');
 
-      expect(source).toContain('horizontal-logo-full.png');
-      expect(source).toContain('min-width: 475px');
+      expect(source).toContain('export function getCdnImageUrl');
+      expect(source).toContain('width=${width}');
+      expect(source).toContain('format=auto');
     });
 
-    it('should have fetchPriority="high" on both logo preload links', () => {
-      const layoutPath = join(ROOT, 'app/[locale]/layout.tsx');
-      const source = readFileSync(layoutPath, 'utf-8');
+    it('should keep the logo breakpoint at the xs: 475px boundary', () => {
+      const navPath = join(ROOT, 'client/components/navigation/NavBar.tsx');
+      const navSource = readFileSync(navPath, 'utf-8');
 
-      const preloadMatches = source.match(/rel="preload"[\s\S]*?fetchPriority="high"/g) ?? [];
-      expect(preloadMatches.length).toBeGreaterThanOrEqual(2);
+      expect(navSource).toContain('max-width: 474px');
+      expect(navSource).toContain('horizontal-logo-compact.png');
+      expect(navSource).toContain('horizontal-logo-full.png');
+
+      const layoutPath = join(ROOT, 'app/[locale]/layout.tsx');
+      const layoutSource = readFileSync(layoutPath, 'utf-8');
+      expect(layoutSource).not.toMatch(/rel="preload"[\s\S]*?horizontal-logo-(compact|full)\.png/);
     });
 
     it('should NOT preload bird images in global layout (they are below the fold on mobile and compete with LCP)', () => {
@@ -120,19 +133,16 @@ describe('Homepage Performance — Phase 1', () => {
   });
 
   describe('CSS animation', () => {
-    it('should define heroFadeIn keyframes in index.css', () => {
+    it('should not animate the critical hero ancestor before first paint', () => {
       const cssPath = join(ROOT, 'client/styles/index.css');
-      const source = readFileSync(cssPath, 'utf-8');
-
-      expect(source).toContain('@keyframes heroFadeIn');
-      expect(source).toContain('.animate-hero-fade-in');
-    });
-
-    it('HeroSection should apply animate-hero-fade-in CSS class', () => {
       const heroPath = join(ROOT, 'client/components/landing/HeroSection.tsx');
-      const source = readFileSync(heroPath, 'utf-8');
+      const source = readFileSync(cssPath, 'utf-8');
+      const heroSource = readFileSync(heroPath, 'utf-8');
 
-      expect(source).toContain('animate-hero-fade-in');
+      expect(source).not.toContain('@keyframes heroFadeIn');
+      expect(source).not.toContain('.animate-hero-fade-in');
+      expect(heroSource).toContain('hero-section');
+      expect(heroSource).not.toContain('animate-hero-fade-in');
     });
 
     it('HeroSection should place the slider between headline and details on mobile only', () => {
@@ -309,10 +319,66 @@ describe('Homepage Performance — CWV remediation', () => {
     const sliderSource = readFileSync(sliderPath, 'utf-8');
 
     expect(heroSliderSource).toContain('renderAfterImage={false}');
-    expect(heroSliderSource).toContain('imagePriority={false}');
+    expect(heroSliderSource).toContain('imagePriority={true}');
     expect(sliderSource).toContain('renderAfterImage?: boolean');
     expect(sliderSource).toContain('imagePriority?: boolean');
     expect(sliderSource).toMatch(/\{renderAfterImage && \(\s*<Image/);
+  });
+});
+
+describe('Homepage Performance — Mobile LCP fix plan', () => {
+  it('uses the CDN image loader for the server-rendered responsive after image', () => {
+    const heroPath = join(ROOT, 'client/components/landing/HeroSection.tsx');
+    const source = readFileSync(heroPath, 'utf-8');
+
+    expect(source).toContain("import Image from 'next/image'");
+    expect(source).toMatch(/<Image[\s\S]*src=\{HERO_COMPARISON_IMAGES\.after\}/);
+    expect(source).toMatch(/<Image[\s\S]*fill[\s\S]*priority/);
+    expect(source).toContain('sizes="(max-width: 1023px) 100vw, 50vw"');
+    expect(source).not.toMatch(/<img[\s\S]*src=\{HERO_COMPARISON_IMAGES\.after\}/);
+  });
+
+  it('renders below-fold lazy components behind visibility gates', () => {
+    const homePath = join(ROOT, 'client/components/pages/HomePageClient.tsx');
+    const source = readFileSync(homePath, 'utf-8');
+
+    expect(source).toContain('DeferredSection');
+    expect(source).toContain('<Features />');
+    expect(source).toContain('<HowItWorks />');
+    expect(source).toContain('<FAQ');
+    expect(source).toContain('<Pricing />');
+  });
+
+  it('conditionally mounts auth modals after the first modal intent', () => {
+    const providersPath = join(ROOT, 'client/components/ClientProviders.tsx');
+    const source = readFileSync(providersPath, 'utf-8');
+
+    expect(source).toContain('useModalStore');
+    expect(source).toContain('modalId');
+    expect(source).toContain('hasOpenedAuthModal');
+    expect(source).toContain('hasOpenedAuthRequiredModal');
+    expect(source).toMatch(
+      /hasOpenedAuthModal\s*\|\|\s*modalId\s*===\s*'authenticationModal'.*<AuthenticationModal \/>/s
+    );
+    expect(source).toMatch(
+      /hasOpenedAuthRequiredModal\s*\|\|\s*modalId\s*===\s*'authRequiredModal'.*<AuthRequiredModal \/>/s
+    );
+  });
+
+  it('does not initialize Stripe at checkout hook module evaluation', () => {
+    const hookPath = join(ROOT, 'client/hooks/useCheckoutSession.ts');
+    const source = readFileSync(hookPath, 'utf-8');
+
+    expect(source).toContain("import('@stripe/stripe-js')");
+    expect(source).not.toContain('export const stripePromise = getStripePromise()');
+  });
+
+  it('loads analytics through a deferred client module', () => {
+    const analyticsPath = join(ROOT, 'client/components/analytics/AnalyticsProvider.tsx');
+    const source = readFileSync(analyticsPath, 'utf-8');
+
+    expect(source).toContain('loadAnalytics');
+    expect(source).not.toContain("import { analytics } from '@client/analytics'");
   });
 });
 
@@ -423,16 +489,18 @@ describe('Homepage Performance — Post-Audit Fixes', () => {
   });
 
   describe('LCP anchor — server-rendered hero image', () => {
-    it('should have a server-rendered img tag with the hero after image in HeroSection', () => {
+    it('should have a server-rendered priority image with the hero after image in HeroSection', () => {
       const heroPath = join(ROOT, 'client/components/landing/HeroSection.tsx');
       const heroAssetsPath = join(ROOT, 'client/components/landing/heroAssets.ts');
       const source = readFileSync(heroPath, 'utf-8');
       const heroAssetsSource = readFileSync(heroAssetsPath, 'utf-8');
 
-      // Native <img> (not Next.js Image) must be in server HTML for LCP
-      expect(source).toContain('<img');
+      // next/image must remain server-renderable and emit an eager image for LCP.
+      expect(source).toContain("import Image from 'next/image'");
+      expect(source).toContain('<Image');
       expect(source).toContain('src={HERO_COMPARISON_IMAGES.after}');
-      expect(source).toContain('fetchPriority="high"');
+      expect(source).toContain('priority');
+      expect(source).toContain('sizes="(max-width: 1023px) 100vw, 50vw"');
       expect(heroAssetsSource).toMatch(/after:\s*['"]\/before-after\/hero\/.+\.webp['"]/);
     });
 

@@ -3,15 +3,18 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 describe('blog LCP connection hints', () => {
-  it('preconnects to the blog image origin before image preloads', () => {
+  it('preconnects to the origins used by blog hero images', () => {
     const layout = readFileSync(resolve('app/[locale]/layout.tsx'), 'utf8');
-    const storagePreconnect = layout.indexOf(
+
+    expect(layout).toContain(
       '<link rel="preconnect" href="https://xqysaylskffsfwunczbd.supabase.co"'
     );
-    const firstImagePreload = layout.indexOf('rel="preload"');
+    expect(layout).toContain('<link rel="preconnect" href="https://images.unsplash.com"');
+  });
 
-    expect(storagePreconnect).toBeGreaterThanOrEqual(0);
-    expect(firstImagePreload).toBeGreaterThanOrEqual(0);
-    expect(storagePreconnect).toBeLessThan(firstImagePreload);
+  it('does not add a global image preload that bypasses responsive selection', () => {
+    const layout = readFileSync(resolve('app/[locale]/layout.tsx'), 'utf8');
+
+    expect(layout).not.toMatch(/<link[^>]+rel="preload"[^>]+as="image"/);
   });
 });

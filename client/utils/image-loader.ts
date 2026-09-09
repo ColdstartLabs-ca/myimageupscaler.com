@@ -16,6 +16,29 @@ function isSupabasePublicObject(url: URL): boolean {
 }
 
 /**
+ * Build a same-origin image URL transformed by Cloudflare Image Resizing.
+ * Keeping this helper separate lets native responsive images use the same
+ * edge transformation as next/image without adding request-time work.
+ */
+export function getCdnImageUrl(src: string, width: number, quality = 75): string {
+  let url: URL;
+  try {
+    url = new URL(src, SITE_ORIGIN);
+  } catch {
+    return src;
+  }
+
+  const isRelativePath = src.startsWith('/') && !src.startsWith('//');
+  const isSameOrigin = SITE_HOSTNAMES.has(url.hostname);
+
+  if (!isRelativePath && !isSameOrigin) {
+    return src;
+  }
+
+  return `/cdn-cgi/image/width=${width},quality=${quality},format=auto${url.pathname}${url.search}`;
+}
+
+/**
  * Keep image transformation at the CDN edge instead of spending Cloudflare Worker CPU.
  * Unsplash owns its own resizing API; same-origin assets use Cloudflare Image Resizing.
  */
@@ -53,7 +76,7 @@ export default function imageLoader({ src, width, quality }: ImageLoaderProps): 
   }
 
   if (src.startsWith('/') || SITE_HOSTNAMES.has(url.hostname)) {
-    return `/cdn-cgi/image/width=${width},quality=${requestedQuality},format=auto${url.pathname}${url.search}`;
+    return getCdnImageUrl(src, width, requestedQuality);
   }
 
   return src;

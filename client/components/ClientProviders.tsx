@@ -1,11 +1,12 @@
 'use client';
 
-import { type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { AnalyticsProvider } from '@client/components/analytics/AnalyticsProvider';
 import { AuthErrorHandler } from '@client/components/auth/AuthErrorHandler';
 import { Toast } from '@client/components/common/Toast';
 import { BaselimeProvider } from '@client/components/monitoring/BaselimeProvider';
 import dynamic from 'next/dynamic';
+import { useModalStore } from '@client/store/modalStore';
 
 // Auth modals are heavy (react-hook-form, zod, supabase client, social login).
 // Lazy-load them since they only render when the user clicks login/signup.
@@ -26,12 +27,25 @@ const PwaInstallBanner = dynamic(
 );
 
 export function ClientProviders({ children }: { children: ReactNode }): ReactNode {
+  const { modalId } = useModalStore();
+  const [hasOpenedAuthModal, setHasOpenedAuthModal] = useState(false);
+  const [hasOpenedAuthRequiredModal, setHasOpenedAuthRequiredModal] = useState(false);
+
+  useEffect(() => {
+    if (modalId === 'authenticationModal') {
+      setHasOpenedAuthModal(true);
+    }
+    if (modalId === 'authRequiredModal') {
+      setHasOpenedAuthRequiredModal(true);
+    }
+  }, [modalId]);
+
   return (
     <AnalyticsProvider>
       <BaselimeProvider>
         <AuthErrorHandler />
-        <AuthenticationModal />
-        <AuthRequiredModal />
+        {(hasOpenedAuthModal || modalId === 'authenticationModal') && <AuthenticationModal />}
+        {(hasOpenedAuthRequiredModal || modalId === 'authRequiredModal') && <AuthRequiredModal />}
         <Toast vertical="top" />
         <PwaInstallBanner />
         {children}

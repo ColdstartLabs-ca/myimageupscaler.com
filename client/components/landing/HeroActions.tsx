@@ -1,7 +1,7 @@
 'use client';
 
-import { analytics } from '@client/analytics';
 import { useModalStore } from '@client/store/modalStore';
+import { loadAnalytics } from '@client/utils/loadAnalytics';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -18,20 +18,28 @@ export function HeroActions({ className, compact = false }: IHeroActionsProps = 
   const config = getSubscriptionConfig();
   const hasTrialEnabled = config.plans.some(plan => plan.trial.enabled);
   const handlePrimaryClick = () => {
-    analytics.track('hero_upload_cta_clicked', {
-      location: 'homepage_hero',
-      destination: 'register_modal',
-      copyVariant: hasTrialEnabled ? 'fix_images_free' : 'upscale_first_image',
-    });
+    void loadAnalytics()
+      .then(analytics =>
+        analytics.track('hero_upload_cta_clicked', {
+          location: 'homepage_hero',
+          destination: 'register_modal',
+          copyVariant: hasTrialEnabled ? 'fix_images_free' : 'upscale_first_image',
+        })
+      )
+      .catch(() => {});
     openAuthModal('register');
   };
 
   const handleSignInClick = () => {
-    analytics.track('hero_upload_cta_clicked', {
-      location: 'homepage_hero',
-      destination: 'login_modal',
-      copyVariant: 'sign_in',
-    });
+    void loadAnalytics()
+      .then(analytics =>
+        analytics.track('hero_upload_cta_clicked', {
+          location: 'homepage_hero',
+          destination: 'login_modal',
+          copyVariant: 'sign_in',
+        })
+      )
+      .catch(() => {});
     openAuthModal('login');
   };
 

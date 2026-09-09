@@ -158,7 +158,6 @@ vi.mock('@client/hooks/useCheckoutRescueOffer', () => ({
 // Mock useCheckoutSession to capture the onComplete callback so tests can
 // trigger checkout completion without a real Stripe embed.
 vi.mock('@client/hooks/useCheckoutSession', () => ({
-  stripePromise: Promise.resolve({}),
   useCheckoutSession: (params: { onComplete: () => void }) => {
     capturedOnComplete.current = params.onComplete;
     return {
@@ -171,6 +170,7 @@ vi.mock('@client/hooks/useCheckoutSession', () => ({
       rescueOfferAppliedRef: { current: false },
       engagementDiscountAppliedRef: { current: false },
       retry: vi.fn(),
+      stripePromise: Promise.resolve({}),
       stripeOptions: {
         clientSecret: 'cs_test_secret',
         onComplete: params.onComplete,

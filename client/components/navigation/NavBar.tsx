@@ -7,12 +7,12 @@ import { useModalStore } from '@client/store/modalStore';
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useUserData, useUserStore } from '@client/store/userStore';
 import { cn } from '@client/utils/cn';
+import { getCdnImageUrl } from '@client/utils/image-loader';
 import { getFreeCreditsForTier } from '@/lib/anti-freeloader/region-classifier';
 import { clientEnv } from '@shared/config/env';
 import { ChevronDown, Menu, X, Zap } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
-import Image from 'next/image';
 import { useRef, useState } from 'react';
 
 const PurchaseModal = dynamic(
@@ -76,24 +76,22 @@ export const NavBar = (): JSX.Element => {
             href={isAuthenticated ? localizedPath('/dashboard') : localizedPath('/')}
             className="flex items-center cursor-pointer hover:opacity-90 transition-all active:scale-95 flex-shrink-0"
           >
-            {/* Compact logo for mobile */}
-            <Image
-              src="/logo/horizontal-logo-compact.png"
-              alt={clientEnv.APP_NAME}
-              width={100}
-              height={40}
-              priority
-              className="xs:hidden h-8 w-auto drop-shadow-[0_2px_8px_rgba(59,130,246,0.3)]"
-            />
-            {/* Full logo for desktop */}
-            <Image
-              src="/logo/horizontal-logo-full.png"
-              alt={clientEnv.APP_NAME}
-              width={200}
-              height={40}
-              priority
-              className="hidden xs:block h-10 w-auto drop-shadow-[0_2px_8px_rgba(59,130,246,0.3)]"
-            />
+            <picture>
+              <source
+                media="(max-width: 474px)"
+                srcSet={getCdnImageUrl('/logo/horizontal-logo-compact.png', 100)}
+              />
+              <img
+                src={getCdnImageUrl('/logo/horizontal-logo-full.png', 200)}
+                alt={clientEnv.APP_NAME}
+                width={200}
+                height={40}
+                fetchPriority="high"
+                loading="eager"
+                decoding="async"
+                className="h-8 w-auto drop-shadow-[0_2px_8px_rgba(59,130,246,0.3)] xs:h-10"
+              />
+            </picture>
           </a>
 
           <nav className="hidden lg:flex items-center gap-4 xl:gap-6 ml-6 xl:ml-10">

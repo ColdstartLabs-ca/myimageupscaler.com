@@ -18,7 +18,7 @@ export const HeroBeforeAfter: React.FC = () => {
       className="h-full w-full rounded-xl"
       aspectRatio={null}
       renderAfterImage={false}
-      imagePriority={false}
+      imagePriority={true}
     />
   );
 };

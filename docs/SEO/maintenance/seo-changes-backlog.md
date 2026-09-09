@@ -30,6 +30,27 @@ Follow-up:
 
 - Deploy the redirect change, repeat the seven source checks, and only then start GSC validation for the repaired 404 set. The remaining report categories still require their stated evidence checks; no blanket indexing-policy change was made.
 
+### Mobile LCP loading remediation
+
+Source: [Mobile LCP fix plan](../reports/2026-09-08-mobile-lcp-fix-plan.md).
+
+Changes:
+
+- Made the homepage hero after image and visible before overlay eager, responsive, and CDN-transformed; retained the aspect-ratio geometry and comparison interaction.
+- Replaced duplicate priority navbar logos and unmatched raw layout preloads with one breakpoint-aware transformed `<picture>` across `/` and locale homepages.
+- Deferred below-fold interactive landing sections, auth modal bundles, Stripe initialization, and client analytics module loading until visibility, intent, or effects require them; removed the critical hero fade-in.
+
+Validation:
+
+- Focused unit coverage passed: homepage/image contracts, deferred rendering, region pricing, checkout session, checkout modal, and auth setup.
+- Focused Chromium coverage passed at 375px, 412px, and desktop widths, including actual logo requests and no Stripe request before intent.
+- `yarn verify` passed; cache configuration was left unchanged pending regional TTFB evidence.
+
+Follow-up:
+
+- Deploy through the normal review flow, rerun three mobile Lighthouse samples, and inspect any LCP sample above 4s alongside CLS and TBT.
+- Obtain representative URLs from the GSC CWV group and monitor mobile field p75 LCP through a complete 28-day window; review the existing request-indexing backlog after deployment.
+
 ## 2026-09-07
 
 ### Blog Index Parameter Deindex Signal

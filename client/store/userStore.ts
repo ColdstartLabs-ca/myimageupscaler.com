@@ -6,8 +6,8 @@ import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { create } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
 import { handlePostAuthRedirect } from './auth/postAuthRedirect';
-import { analytics } from '@client/analytics';
 import { completeAccountSetup } from '@client/utils/account-setup';
+import { loadAnalytics } from '@client/utils/loadAnalytics';
 
 // Cache keys
 const USER_CACHE_KEY = `${clientEnv.CACHE_USER_KEY_PREFIX}_user_cache`;
@@ -169,12 +169,14 @@ export const useUserStore = create<IUserState>((set, get) => ({
             saveUserCache(updatedUser);
 
             // Identify user in analytics with latest profile data (non-blocking)
-            analytics
-              .identify({
-                userId: updatedUser.id,
-                email: updatedUser.email || undefined,
-                subscriptionTier: data?.profile?.subscription_tier ?? undefined,
-              })
+            void loadAnalytics()
+              .then(analytics =>
+                analytics.identify({
+                  userId: updatedUser.id,
+                  email: updatedUser.email || undefined,
+                  subscriptionTier: data?.profile?.subscription_tier ?? undefined,
+                })
+              )
               .catch(() => {});
           }
           return; // Success, exit retry loop
@@ -353,7 +355,9 @@ if (typeof window !== 'undefined') {
 
     if (event === 'SIGNED_OUT' || !session) {
       // Clear user identity in analytics on sign out
-      analytics.reset();
+      void loadAnalytics()
+        .then(analytics => analytics.reset())
+        .catch(() => {});
       store.reset();
       // Redirect to home page after sign out (skip in test mode to avoid flaky tests)
       if (typeof window !== 'undefined' && event === 'SIGNED_OUT' && clientEnv.ENV !== 'test') {
@@ -388,12 +392,14 @@ if (typeof window !== 'undefined') {
       // Identify user in analytics for all auth methods (email, OAuth, etc.)
       // For new logins or when user data changes
       if (!isSameUser || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        analytics
-          .identify({
-            userId: session.user.id,
-            email: session.user.email || undefined,
-            subscriptionTier: basicUser.profile?.subscription_tier || undefined,
-          })
+        void loadAnalytics()
+          .then(analytics =>
+            analytics.identify({
+              userId: session.user.id,
+              email: session.user.email || undefined,
+              subscriptionTier: basicUser.profile?.subscription_tier || undefined,
+            })
+          )
           .catch(() => {
             // Silently fail - don't block UI for analytics errors
           });

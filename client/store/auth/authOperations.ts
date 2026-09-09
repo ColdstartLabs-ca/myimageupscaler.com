@@ -1,6 +1,6 @@
 import { AuthProvider } from '@/shared/types/authProviders.types';
 import { loadingStore } from '@client/store/loadingStore';
-import { analytics } from '@client/analytics';
+import { loadAnalytics } from '@client/utils/loadAnalytics';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { clearAuthCache, loadAuthCache, saveAuthCache } from './authCache';
 import type { IAuthState, IAuthUser, ISignUpResult } from './types';
@@ -37,12 +37,16 @@ export function createSignInWithEmail(
       await completeAccountSetup(data.session.access_token);
 
       // Track login event
-      analytics.track('login', { method: 'email' });
+      void loadAnalytics()
+        .then(analytics => analytics.track('login', { method: 'email' }))
+        .catch(() => {});
 
       if (data.user) {
         // Identify user in analytics after successful login (non-blocking)
-        analytics
-          .identify({ userId: data.user.id, email: data.user.email || undefined })
+        void loadAnalytics()
+          .then(analytics =>
+            analytics.identify({ userId: data.user!.id, email: data.user!.email || undefined })
+          )
           .catch(() => {});
         const user: IAuthUser = {
           email: data.user.email || '',
@@ -65,7 +69,9 @@ export function createSignUpWithEmail(
   return async (email: string, password: string) => {
     return await withLoading(async () => {
       // Track signup started
-      analytics.track('signup_started', { method: 'email' });
+      void loadAnalytics()
+        .then(analytics => analytics.track('signup_started', { method: 'email' }))
+        .catch(() => {});
 
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -85,7 +91,9 @@ export function createSignUpWithEmail(
       const emailConfirmationRequired = data.user && !data.session;
 
       // Track signup completed (user created, even if email confirmation pending)
-      analytics.track('signup_completed', { method: 'email' });
+      void loadAnalytics()
+        .then(analytics => analytics.track('signup_completed', { method: 'email' }))
+        .catch(() => {});
 
       // Immediate-session signup is complete only after the server records a terminal setup decision.
       if (data.session?.access_token) {

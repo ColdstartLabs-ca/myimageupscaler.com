@@ -6,6 +6,7 @@ import { HERO_COMPARISON_IMAGES } from '@client/components/landing/heroAssets';
 import { getFreeCreditsForTier, getRegionTier } from '@/lib/anti-freeloader/region-classifier';
 import { Check } from 'lucide-react';
 import { headers } from 'next/headers';
+import Image from 'next/image';
 import { getTranslations } from 'next-intl/server';
 
 /**
@@ -29,11 +30,13 @@ export async function HeroSection(): Promise<JSX.Element> {
         Server renders a static "after" image so the LCP element is in the initial HTML.
         The client-side interactive slider overlays this image after hydration.
       */}
-      <div className="aspect-[3/2] overflow-hidden rounded-2xl lg:aspect-[4/3]">
-        <img
+      <div className="relative aspect-[3/2] overflow-hidden rounded-2xl lg:aspect-[4/3]">
+        <Image
           src={HERO_COMPARISON_IMAGES.after}
           alt="AI-enhanced mountain photo after upscaling"
-          fetchPriority="high"
+          fill
+          sizes="(max-width: 1023px) 100vw, 50vw"
+          priority
           decoding="async"
           className="h-full w-full object-cover"
         />
@@ -45,7 +48,7 @@ export async function HeroSection(): Promise<JSX.Element> {
   );
 
   return (
-    <section className="relative animate-hero-fade-in pb-8 pt-6 lg:pb-16 lg:pt-12">
+    <section className="hero-section relative pb-8 pt-6 lg:pb-16 lg:pt-12">
       <div className="relative z-10 mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-8">
         {/* AI Search Badge - shown for ChatGPT/Perplexity/Claude/SGE referrals */}
         <ReferralBadge />

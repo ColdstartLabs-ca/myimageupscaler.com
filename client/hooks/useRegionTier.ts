@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import type { RegionTier } from '@/lib/anti-freeloader/region-classifier';
-import { analytics } from '@client/analytics';
+import { loadAnalytics } from '@client/utils/loadAnalytics';
 import {
   PRICING_GEO_SESSION_KEY,
   parsePricingGeoSession,
@@ -58,17 +58,20 @@ function maybeIdentifyPricingRegion(
   geo: IPricingGeoSession,
   hasIdentifiedRef: { current: boolean }
 ): void {
-  if (
-    !hasIdentifiedRef.current &&
-    !hasIdentifiedPricingRegion &&
-    geo.pricingRegion &&
-    analytics.isEnabled()
-  ) {
-    hasIdentifiedRef.current = true;
-    hasIdentifiedPricingRegion = true;
-    analytics.track('$identify', {
-      $setOnce: { pricing_region: geo.pricingRegion },
-    });
+  if (!hasIdentifiedRef.current && !hasIdentifiedPricingRegion && geo.pricingRegion) {
+    void loadAnalytics()
+      .then(analytics => {
+        if (hasIdentifiedRef.current || hasIdentifiedPricingRegion || !analytics.isEnabled()) {
+          return;
+        }
+
+        hasIdentifiedRef.current = true;
+        hasIdentifiedPricingRegion = true;
+        analytics.track('$identify', {
+          $setOnce: { pricing_region: geo.pricingRegion },
+        });
+      })
+      .catch(() => {});
   }
 }
 
