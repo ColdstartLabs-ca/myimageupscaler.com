@@ -3,7 +3,7 @@ import { HeroActions } from '@client/components/landing/HeroActions';
 import { HeroBeforeAfter } from '@client/components/landing/HeroBeforeAfter';
 import { HeroTrustBar } from '@client/components/landing/HeroTrustBar';
 import { HERO_COMPARISON_IMAGES } from '@client/components/landing/heroAssets';
-import { getFreeCreditsForTier, getRegionTier } from '@/lib/anti-freeloader/region-classifier';
+import { welcomeCreditCopy, welcomeCreditsFor } from '@shared/config/product-capabilities';
 import { Check } from 'lucide-react';
 import { headers } from 'next/headers';
 import Image from 'next/image';
@@ -16,12 +16,13 @@ export async function HeroSection(): Promise<JSX.Element> {
   const t = await getTranslations('homepage');
   const headersList = await headers();
   const country = headersList.get('CF-IPCountry') ?? headersList.get('cf-ipcountry') ?? '';
-  const freeCredits = getFreeCreditsForTier(getRegionTier(country));
+  const freeCredits = welcomeCreditsFor(country);
+  const creditOffer = welcomeCreditCopy(freeCredits);
 
   const heroTrustItems = [
-    { label: 'Free to start', icon: <Check size={18} /> },
+    { label: creditOffer, icon: <Check size={18} /> },
     { label: 'No watermarks', icon: <Check size={18} /> },
-    { label: 'Instant results', icon: <Check size={18} /> },
+    { label: 'Account required', icon: <Check size={18} /> },
   ];
 
   const heroSlider = (
@@ -81,7 +82,7 @@ export async function HeroSection(): Promise<JSX.Element> {
 
               <p className="mt-3 flex items-center gap-2 text-xs text-text-muted-aa lg:mt-4 lg:text-sm">
                 <Check size={15} className="shrink-0 text-accent lg:h-[17px] lg:w-[17px]" />
-                {t('ctaSubtext', { freeCredits })}
+                {t('ctaSubtext', { creditOffer })}
               </p>
 
               <p className="mt-4 max-w-xl text-sm font-light leading-relaxed text-text-secondary sm:text-xl lg:mt-7 lg:text-lg">
