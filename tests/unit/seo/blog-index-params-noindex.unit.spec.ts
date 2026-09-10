@@ -35,7 +35,7 @@ describe('blog index search and pagination robots', () => {
 
   it('keeps ordinary pagination discoverable', () => {
     expect(pageSource).toContain('page=${currentPage - 1}');
-    expect(pageSource).toContain('page=${page}');
+    expect(pageSource).toContain('page=${item}');
     expect(pageSource).toContain('page=${currentPage + 1}');
   });
 });
