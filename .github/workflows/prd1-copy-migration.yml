@@ -25,10 +25,11 @@ jobs:
           node-version: 20
           cache: yarn
       - run: yarn install --frozen-lockfile
-      - name: Migrate owned static product copy to tier-safe wording
+      - name: Migrate owned product claims
         shell: python
         run: |
           from pathlib import Path
+          import json
           import re
 
           credit = re.compile(r'\b(?:3|5|10)\s+(?:free\s+)?credits\b', re.I)
@@ -37,71 +38,64 @@ jobs:
           without_account = re.compile(r'\bwithout\s+(?:an\s+)?account\b', re.I)
           without_signup = re.compile(r'\bwithout\s+signing\s+up\b', re.I)
 
-          def safe_credit_copy(text: str) -> str:
+          def safe_credit_copy(text):
               return credit.sub('welcome credits where available', text)
 
-          def safe_account_copy(text: str) -> str:
+          def safe_account_copy(text):
               text = safe_credit_copy(text)
               text = no_signup.sub('account required', text)
               text = no_account.sub('account required', text)
               text = without_account.sub('after creating an account', text)
-              text = without_signup.sub('after creating an account', text)
-              return text
+              return without_signup.sub('after creating an account', text)
 
-          def mutate_page_blocks(path: str, slugs: set[str], transform) -> None:
+          def mutate_page_blocks(path, slugs, transform):
               p = Path(path)
               text = p.read_text()
               marker = re.compile(r'(?m)^    \{\n      "slug": "([^"]+)"')
               matches = list(marker.finditer(text))
               if not matches:
-                  raise RuntimeError(f'no pSEO page blocks found in {path}')
-              pieces = []
-              cursor = 0
+                  raise RuntimeError(f'no page blocks in {path}')
+              out, cursor = [], 0
               for index, match in enumerate(matches):
                   start = match.start()
                   end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
-                  pieces.append(text[cursor:start])
+                  out.append(text[cursor:start])
                   block = text[start:end]
-                  if match.group(1) in slugs:
-                      block = transform(block)
-                  pieces.append(block)
+                  out.append(transform(block) if match.group(1) in slugs else block)
                   cursor = end
-              p.write_text(''.join(pieces))
+              p.write_text(''.join(out))
 
           free_slugs = {
               'free-image-upscaler', 'free-photo-enhancer', 'free-image-enhancer',
               'free-ai-photo-enhancer', 'free-ai-upscaler',
           }
-          account_tool_slugs = {'ai-image-upscaler', 'ai-photo-enhancer', 'photo-quality-enhancer'}
-
+          tool_slugs = {'ai-image-upscaler', 'ai-photo-enhancer', 'photo-quality-enhancer'}
           for path in ('app/seo/data/free.json', 'locales/en/free.json'):
               mutate_page_blocks(path, free_slugs, safe_account_copy)
           for path in ('app/seo/data/tools.json', 'locales/en/tools.json'):
-              mutate_page_blocks(path, account_tool_slugs, safe_account_copy)
+              mutate_page_blocks(path, tool_slugs, safe_account_copy)
 
-          # Scale pages are all acquisition surfaces for the account-backed upscaler.
-          for path in ('app/seo/data/scale.json', 'locales/en/scale.json'):
+          for path in ('app/seo/data/scale.json', 'locales/en/scale.json',
+                       'locales/en/blog.json', 'locales/en/help.json', 'locales/en/tools-ui.json'):
               p = Path(path)
               if p.exists():
                   p.write_text(safe_credit_copy(p.read_text()))
 
-          # Product-owned locale copy (not competitor facts).
-          for path in ('locales/en/blog.json', 'locales/en/help.json', 'locales/en/tools-ui.json'):
-              p = Path(path)
-              if p.exists():
-                  p.write_text(safe_credit_copy(p.read_text()))
+          def rewrite_owned_product(value, owned=False):
+              if isinstance(value, list):
+                  return [rewrite_owned_product(v, owned) for v in value]
+              if not isinstance(value, dict):
+                  return safe_account_copy(value) if owned and isinstance(value, str) else value
+              now_owned = owned or value.get('name') == 'MyImageUpscaler'
+              return {k: rewrite_owned_product(v, now_owned) for k, v in value.items()}
 
-          # This exact pricing phrase belongs to MyImageUpscaler rows in the comparison mirrors.
           for path in ('app/seo/data/comparison.json', 'locales/en/comparison.json', 'locales/en/compare.json'):
               p = Path(path)
-              if p.exists():
-                  text = p.read_text().replace(
-                      '5 free credits | paid credits and plans',
-                      'welcome credits vary by region | paid credits and plans',
-                  )
-                  p.write_text(text)
+              if not p.exists():
+                  continue
+              data = json.loads(p.read_text())
+              p.write_text(json.dumps(rewrite_owned_product(data), indent=2, ensure_ascii=False) + '\n')
 
-          # Flagship tool formats follow the shipped upload validator; soften unsupported absolutes.
           for path in ('app/seo/data/tools.json', 'locales/en/tools.json'):
               p = Path(path)
               text = p.read_text()
@@ -111,7 +105,10 @@ jobs:
                   1,
               )
               text = text.replace('Upload JPEG, PNG, or WebP.', 'Upload JPEG, PNG, WebP, or HEIC.')
-              text = text.replace('Supports JPEG, PNG, WebP up to 64MB.', 'Supports JPEG, PNG, WebP, and HEIC; the app validates the current size limit.')
+              text = text.replace(
+                  'Supports JPEG, PNG, WebP up to 64MB.',
+                  'Supports JPEG, PNG, WebP, and HEIC; the app validates the current size limit.',
+              )
               replacements = {
                   'even small text remains perfectly readable': 'small text can remain more readable',
                   'must remain perfectly legible': 'should remain readable',
@@ -122,21 +119,8 @@ jobs:
               }
               for old, new in replacements.items():
                   text = text.replace(old, new)
-              text = re.sub(
-                  r'The technology behind this upscaler has been trained specifically.*?must remain perfectly legible after enlargement\.',
-                  'Results vary by source image and model, so important text, logos, and fine details should be inspected at the intended output size.',
-                  text,
-                  flags=re.S,
-              )
-              text = re.sub(
-                  r'The neural network architecture powering our upscaler uses.*?whether you\'re upscaling smartphone photos, scanned documents, AI-generated artwork, or product photography from any source\.',
-                  'MyImageUpscaler supports multiple processing models and scale factors. The app reports job progress and output dimensions so you can inspect the generated result before using it.',
-                  text,
-                  flags=re.S,
-              )
               p.write_text(text)
 
-          # Correct stale owned blog claims without rewriting third-party product facts.
           for p in Path('content/blog').glob('*.mdx'):
               lines = p.read_text().splitlines(keepends=True)
               for i, line in enumerate(lines):
@@ -147,13 +131,16 @@ jobs:
           for path in ('.claude/skills/blog-writing/SKILL.md', '.agents/skills/blog-writing/SKILL.md'):
               p = Path(path)
               if p.exists():
-                  text = p.read_text().replace(
+                  p.write_text(p.read_text().replace(
                       '[Try myimageupscaler.com free](/pricing) — 10 credits, no credit card required.',
                       '[Try MyImageUpscaler](/pricing) — welcome credits vary by region.',
-                  )
-                  p.write_text(text)
+                  ))
+      - name: Format migrated files
+        run: yarn prettier --write app/seo/data locales/en
       - name: Product capability contract
         run: yarn vitest run tests/unit/seo/capability-claims.unit.spec.ts tests/unit/seo/free-credit-policy-copy.unit.spec.ts
+      - name: Repository verify
+        run: yarn verify
       - name: Commit migrated copy
         if: success()
         run: |
