@@ -1,0 +1,106 @@
+name: PRD 2 Implementation Migration
+
+on:
+  pull_request:
+    types: [synchronize]
+    branches: [master]
+    paths:
+      - '.github/workflows/prd2-implementation-migration.yml'
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  implement:
+    if: github.head_ref == 'seo-recovery-prd-02-funnel-url-hygiene'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - name: Wire existing attribution into funnel events and clean internal search links
+        shell: python
+        run: |
+          from pathlib import Path
+
+          # Browser analytics: reuse existing entry_page and first-touch state.
+          p = Path('client/analytics/analyticsClient.ts')
+          text = p.read_text()
+          old_import = "import { getBrowserReferralSource } from './referralSource';"
+          new_import = old_import + "\nimport { buildOrganicFunnelDimensions } from './funnel-attribution';"
+          if old_import not in text:
+              raise RuntimeError('analytics import anchor missing')
+          text = text.replace(old_import, new_import, 1)
+
+          old_build = """function buildTrackedEventProperties(\n  properties?: Record<string, unknown>\n): Record<string, unknown> {\n  return {\n    ...properties,\n    ...getEventAttributionProperties(),\n    session_id: getSessionId(),\n    timestamp: Date.now(),\n  };\n}"""
+          new_build = """function buildTrackedEventProperties(\n  properties?: Record<string, unknown>\n): Record<string, unknown> {\n  return {\n    ...properties,\n    ...getEventAttributionProperties(properties),\n    session_id: getSessionId(),\n    timestamp: Date.now(),\n  };\n}"""
+          if old_build not in text:
+              raise RuntimeError('tracked event property anchor missing')
+          text = text.replace(old_build, new_build, 1)
+
+          old_attr = """function getEventAttributionProperties(): Record<string, unknown> {\n  if (typeof window === 'undefined') return {};\n\n  const firstTouchUtm = getStoredFirstTouchUtm() || getFirstTouchUtmFromCookie();\n\n  return {\n    entry_page: getEntryPage() || window.location.pathname,\n    referral_source: getReferralSource() || undefined,\n    first_touch_utm_source: firstTouchUtm?.utmSource,\n    first_touch_utm_medium: firstTouchUtm?.utmMedium,\n    first_touch_utm_campaign: firstTouchUtm?.utmCampaign,\n    first_touch_utm_term: firstTouchUtm?.utmTerm,\n    first_touch_utm_content: firstTouchUtm?.utmContent,\n    first_touch_landing_page: firstTouchUtm?.landingPage,\n  };\n}"""
+          new_attr = """function getEventAttributionProperties(\n  eventProperties: Record<string, unknown> = {}\n): Record<string, unknown> {\n  if (typeof window === 'undefined') return {};\n\n  const firstTouchUtm = getStoredFirstTouchUtm() || getFirstTouchUtmFromCookie();\n  const entryPage = getEntryPage() || window.location.pathname;\n  const funnelDimensions = buildOrganicFunnelDimensions({\n    entryPage,\n    firstTouchLandingPage: firstTouchUtm?.landingPage,\n    userAgent: window.navigator.userAgent,\n    mode: eventProperties.mode ?? eventProperties.operationMode ?? eventProperties.model,\n  });\n\n  return {\n    ...funnelDimensions,\n    entry_page: entryPage,\n    referral_source: getReferralSource() || undefined,\n    first_touch_utm_source: firstTouchUtm?.utmSource,\n    first_touch_utm_medium: firstTouchUtm?.utmMedium,\n    first_touch_utm_campaign: firstTouchUtm?.utmCampaign,\n    first_touch_utm_term: firstTouchUtm?.utmTerm,\n    first_touch_utm_content: firstTouchUtm?.utmContent,\n    first_touch_landing_page: firstTouchUtm?.landingPage,\n  };\n}"""
+          if old_attr not in text:
+              raise RuntimeError('event attribution anchor missing')
+          p.write_text(text.replace(old_attr, new_attr, 1))
+
+          # Server route enriches country from Cloudflare without trusting client identity.
+          p = Path('app/api/analytics/event/route.ts')
+          text = p.read_text()
+          anchor = """    delete properties.userId;\n    delete properties.user_id;\n"""
+          insert = anchor + """\n    const requestDimensions = {\n      country: req.headers.get('cf-ipcountry')?.trim().toUpperCase() || undefined,\n    };\n    if (!properties.country && requestDimensions.country) {\n      properties.country = requestDimensions.country;\n    }\n"""
+          if anchor not in text:
+              raise RuntimeError('analytics route identity anchor missing')
+          p.write_text(text.replace(anchor, insert, 1))
+
+          # Offline report registration.
+          p = Path('package.json')
+          text = p.read_text()
+          anchor = '    "seo:ctr:report": "tsx scripts/seo/ctr-report.ts",\n'
+          addition = anchor + '    "seo:funnel:report": "tsx scripts/seo/organic-funnel-report.ts",\n'
+          if anchor not in text:
+              raise RuntimeError('package script anchor missing')
+          p.write_text(text.replace(anchor, addition, 1))
+
+          # Blog discovery links go to retained, indexable editorial destinations instead of ?q= URLs.
+          p = Path('app/[locale]/blog/page.tsx')
+          text = p.read_text()
+          old_intents = """const INTENT_PATHS = [\n  {\n    label: 'Fix blurry photos',\n    description: 'Sharpen soft, low-resolution, or compressed images.',\n    query: 'blurry photos',\n  },\n  {\n    label: 'Prepare for print',\n    description: 'Choose DPI, pixels, and upscale settings for clean prints.',\n    query: 'print dpi',\n  },\n  {\n    label: 'Compare AI tools',\n    description: 'Find the best upscaler for free, paid, and pro workflows.',\n    query: 'best ai upscaler',\n  },\n  {\n    label: 'E-commerce images',\n    description: 'Improve product photos for listings and conversion.',\n    query: 'e-commerce',\n  },\n] as const;"""
+          new_intents = """const INTENT_PATHS = [\n  {\n    label: 'Fix blurry photos',\n    description: 'Sharpen soft, low-resolution, or compressed images.',\n    href: '/blog/fix-blurry-photos-ai-methods-guide',\n  },\n  {\n    label: 'Prepare for print',\n    description: 'Choose DPI, pixels, and upscale settings for clean prints.',\n    href: '/blog/upscale-image-for-print-300-dpi-guide',\n  },\n  {\n    label: 'Compare AI tools',\n    description: 'Find the best upscaler for free, paid, and pro workflows.',\n    href: '/blog/best-free-ai-image-upscaler-2026-tested-compared',\n  },\n  {\n    label: 'E-commerce images',\n    description: 'Improve product photos for listings and conversion.',\n    href: '/blog/ai-image-enhancement-ecommerce-guide',\n  },\n] as const;"""
+          if old_intents not in text:
+              raise RuntimeError('blog intent block anchor missing')
+          text = text.replace(old_intents, new_intents, 1)
+
+          old_topics = """const TOPIC_FILTERS = [\n  'AI enhancement',\n  'image upscaling',\n  'print DPI',\n  'photo restoration',\n  'e-commerce',\n  'anime',\n] as const;"""
+          new_topics = """const TOPIC_FILTERS = [\n  { label: 'AI enhancement', href: '/blog/best-free-ai-photo-enhancer-online' },\n  { label: 'image upscaling', href: '/blog/how-to-upscale-images-without-losing-quality' },\n  { label: 'print DPI', href: '/blog/upscale-image-for-print-300-dpi-guide' },\n  { label: 'photo restoration', href: '/blog/fix-blurry-photos-ai-methods-guide' },\n  { label: 'e-commerce', href: '/blog/ai-image-enhancement-ecommerce-guide' },\n  { label: 'anime', href: '/blog/anime-upscaling-4k-art-guide' },\n] as const;"""
+          if old_topics not in text:
+              raise RuntimeError('blog topic block anchor missing')
+          text = text.replace(old_topics, new_topics, 1)
+          text = text.replace('href={`/blog?q=${encodeURIComponent(path.query)}`}', 'href={path.href}')
+          old_topic_link = """{TOPIC_FILTERS.map(topic => (\n              <Link\n                key={topic}\n                href={`/blog?q=${encodeURIComponent(topic)}`}\n                className=\"rounded-full border border-border bg-surface/70 px-3 py-1.5 text-sm text-text-secondary transition-all hover:border-accent/50 hover:text-accent\"\n              >\n                {topic}\n              </Link>\n            ))}"""
+          new_topic_link = """{TOPIC_FILTERS.map(topic => (\n              <Link\n                key={topic.label}\n                href={topic.href}\n                className=\"rounded-full border border-border bg-surface/70 px-3 py-1.5 text-sm text-text-secondary transition-all hover:border-accent/50 hover:text-accent\"\n              >\n                {topic.label}\n              </Link>\n            ))}"""
+          if old_topic_link not in text:
+              raise RuntimeError('blog topic link anchor missing')
+          p.write_text(text.replace(old_topic_link, new_topic_link, 1))
+      - name: Format touched files
+        run: yarn prettier --write client/analytics/analyticsClient.ts client/analytics/funnel-attribution.ts app/api/analytics/event/route.ts app/'[locale]'/blog/page.tsx scripts/seo/organic-funnel-report.ts tests/unit/seo/organic-funnel-attribution.unit.spec.ts tests/unit/seo/blog-index-params-noindex.unit.spec.ts package.json
+      - name: PRD 2 contracts
+        run: yarn vitest run tests/unit/seo/organic-funnel-attribution.unit.spec.ts tests/unit/seo/gif-intent-consolidation.unit.spec.ts tests/unit/seo/blog-index-params-noindex.unit.spec.ts tests/unit/seo/gsc-brand-split.unit.spec.ts
+      - name: Repository verify
+        run: yarn verify
+      - name: Commit implementation
+        if: success()
+        run: |
+          rm .github/workflows/prd2-implementation-migration.yml
+          git config user.name 'chatgpt-codex-connector[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add client/analytics app/api/analytics/event/route.ts app/'[locale]'/blog/page.tsx scripts/seo package.json tests/unit/seo .github/workflows/prd2-implementation-migration.yml
+          git commit -m 'feat(seo): wire organic funnel attribution and URL hygiene'
+          git push origin HEAD:${{ github.head_ref }}
