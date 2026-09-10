@@ -48,7 +48,7 @@ export function welcomeCreditsForTier(tier: RegionTier): number {
 }
 
 export function welcomeCreditsFor(countryCode: string | null | undefined): number {
-  return welcomeCreditsForTier(getRegionTier(countryCode));
+  return welcomeCreditsForTier(getRegionTier(countryCode ?? ''));
 }
 
 export function welcomeCreditCopy(credits: number | null | undefined): string {
