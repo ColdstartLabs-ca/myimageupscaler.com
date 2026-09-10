@@ -7,7 +7,7 @@
       "url": "/blog/best-free-ai-image-upscaler-2026-tested-compared",
       "label": "/blog/best-free-ai-image-upscaler-2026-tested-compared",
       "rung": 3,
-      "lastEdit": "2026-08-17",
+      "lastEdit": "2026-09-10",
       "history": [
         {
           "date": "2026-05-24",
@@ -87,6 +87,13 @@
             "impDelta": -2,
             "measuredThrough": "2026-08-30"
           }
+        },
+        {
+          "date": "2026-09-10",
+          "rung": 3,
+          "field": "rollback",
+          "note": "Reverted failed 2026-08-17 meta/H1/proof module; retained truthful 5-credit copy",
+          "outcome": null
         }
       ],
       "stopRule": null
@@ -95,7 +102,7 @@
       "url": "/blog/fixing-pixelated-photos",
       "label": "/blog/fixing-pixelated-photos",
       "rung": 3,
-      "lastEdit": "2026-08-10",
+      "lastEdit": "2026-09-10",
       "history": [
         {
           "date": "2026-06-07",
@@ -149,6 +156,13 @@
             "impDelta": -25,
             "measuredThrough": "2026-08-23"
           }
+        },
+        {
+          "date": "2026-09-10",
+          "rung": 3,
+          "field": "rollback",
+          "note": "Reverted failed 2026-08-10 meta/opening/proof module; retained truthful 5-credit copy",
+          "outcome": null
         }
       ],
       "stopRule": {
@@ -340,7 +354,7 @@
       "url": "/blog/photo-restoration-program",
       "label": "/blog/photo-restoration-program",
       "rung": 3,
-      "lastEdit": "2026-07-22",
+      "lastEdit": "2026-09-10",
       "history": [
         {
           "date": "2026-07-22",
@@ -355,6 +369,13 @@
             "impDelta": -46,
             "measuredThrough": "2026-08-04"
           }
+        },
+        {
+          "date": "2026-09-10",
+          "rung": 3,
+          "field": "rollback",
+          "note": "Removed failed 2026-07-22 comparison expansion; retained truthful metadata and 5-credit copy",
+          "outcome": null
         }
       ],
       "stopRule": null

@@ -9,6 +9,31 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-09-10
+
+### Three Kings Regression Rollbacks
+
+Evidence:
+
+- Final GSC evidence through 2026-09-06 kept the 2026-08-17 best-free, 2026-08-10 pixelated-photo, and 2026-07-22 restoration body passes classified as `REGRESSION`.
+- Exact pre-change metadata remained recoverable from the committed test diffs. The failed modules and changed H1/opening had unique anchors in the production records, allowing bounded reversals without restoring stale credit claims or inventing an entire prior body.
+
+Changes:
+
+- `/blog/best-free-ai-image-upscaler-2026-tested-compared`: restored the prior description/SEO description and H1, and removed only `What Our 2026 Test Actually Found`.
+- `/blog/fixing-pixelated-photos`: restored the prior description/SEO description and opening, and removed only `What Actually Works on Pixelated Photos`.
+- `/blog/photo-restoration-program`: removed only the failed `Best Photo Restoration Programs Compared` expansion. Retained truthful 2026 metadata and current five-credit wording on all three pages.
+- Recorded all three production repairs as ledger reverts with cooling-off windows through 2026-09-24, and reopened their existing request-indexing rows.
+
+Validation:
+
+- Fresh production backup created before writes: `backup_2026-09-10_09-25-31`; `yarn db:backups` listed the schema/data pair and `gzip -t` passed for both archives.
+- Supabase writes used exact `updated_at` concurrency guards and returned one exact readback row per slug. Focused rollback coverage verifies the transformations fail closed when expected anchors are absent.
+
+Follow-up:
+
+- Request indexing for the three repaired URLs after public rendered HTML exposes the reverted copy. Do not judge or edit them again before the 2026-09-24 cooling-off window closes and final GSC data is available.
+
 ## 2026-09-08
 
 ### GSC 404 Coverage Repair

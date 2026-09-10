@@ -24,10 +24,8 @@ const RECOVERY_PAGES = {
     slug: 'photo-restoration-program',
     title: 'Best Photo Restoration Programs in 2026',
     seoTitle: 'Best Photo Restoration Programs 2026: 4 Options Compared',
-    comparisonColumns: ['restoration tasks', 'limits', 'pricing model', 'privacy', 'best use case'],
-    restorationTasks: ['face restoration', 'scratch repair', 'colorization', 'general enhancement'],
     welcomeCreditCopy: 'five welcome credits when you sign up',
-    comparisonBasis: 'published features and policies, not a hands-on test',
+    failedComparisonRemoved: true,
   },
 } as const;
 
@@ -82,27 +80,14 @@ describe('GSC opportunity recovery contract', () => {
     expect(page.welcomeCreditCopy).not.toContain('one-time');
   });
 
-  it('defines a useful restoration comparison without unsupported testing claims', () => {
+  it('retains truthful restoration metadata after rolling back the failed body comparison', () => {
     const page = RECOVERY_PAGES.restorationComparison;
 
     expect(page.title).toContain('2026');
     expect(page.seoTitle).not.toContain('Tested');
-    expect(page.comparisonColumns).toEqual([
-      'restoration tasks',
-      'limits',
-      'pricing model',
-      'privacy',
-      'best use case',
-    ]);
-    expect(page.restorationTasks).toEqual([
-      'face restoration',
-      'scratch repair',
-      'colorization',
-      'general enhancement',
-    ]);
+    expect(page.failedComparisonRemoved).toBe(true);
     expect(page.welcomeCreditCopy).toBe('five welcome credits when you sign up');
     expect(page.welcomeCreditCopy).not.toContain('one-time');
-    expect(page.comparisonBasis).toContain('not a hands-on test');
   });
 
   it('assigns every important query cluster to one unique existing primary page', () => {
@@ -121,6 +106,6 @@ describe('GSC opportunity recovery contract', () => {
     expect(backlog).toContain(
       '- [x] `https://myimageupscaler.com/blog/poster-size-dimensions-pixels` — indexing requested 2026-09-04'
     );
-    expect(backlog).toContain('- [x] `https://myimageupscaler.com/blog/photo-restoration-program`');
+    expect(backlog).toContain('- [ ] `https://myimageupscaler.com/blog/photo-restoration-program`');
   });
 });

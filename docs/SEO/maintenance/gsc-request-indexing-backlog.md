@@ -105,17 +105,17 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 
 - [x] `https://myimageupscaler.com/`
 
-- [x] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared` — refreshed again 2026-08-17 with a proof-led meta/H1/body support pass after the 2026-07-20 title test matured but the exact 2026 best-free-upscaler cluster still had 2,295 impressions / 0 clicks / avg position 6.51 in the latest GSC-backed audit; indexing requested 2026-08-25, confirmed "added to a priority crawl queue".
+- [ ] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared` — 2026-09-10 regression rollback restored the prior meta/H1 and removed the failed proof module; request indexing after live HTML exposes the repair.
 - [x] `https://myimageupscaler.com/blog/best-free-ai-photo-enhancer-online`
 
 - [x] `https://myimageupscaler.com/blog/fix-blurry-photos-ai-methods-guide`
 - [x] `https://myimageupscaler.com/blog/fix-pixelated-image`
-- [x] `https://myimageupscaler.com/blog/fixing-pixelated-photos` — refreshed again 2026-08-10 with a proof-led meta/body support pass after the 2026-07-27 title test still produced 0 clicks on 32,210 impressions for `how to fix pixelated photos` in the latest complete 14-day GSC window; indexing requested 2026-08-25, confirmed "added to a priority crawl queue".
+- [ ] `https://myimageupscaler.com/blog/fixing-pixelated-photos` — 2026-09-10 regression rollback restored the prior meta/opening and removed the failed proof module; request indexing after live HTML exposes the repair.
 - [x] `https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark`
 - [x] `https://myimageupscaler.com/blog/how-to-upscale-midjourney-images-for-print`
 - [x] `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails`
 - [x] `https://myimageupscaler.com/blog/image-upscaler-8x`
-- [x] `https://myimageupscaler.com/blog/photo-restoration-program` — refreshed 2026-07-22 with a current comparison table and policy-aligned credit copy.
+- [ ] `https://myimageupscaler.com/blog/photo-restoration-program` — 2026-09-10 regression rollback removed the failed comparison expansion while retaining truthful metadata and credit copy; request indexing after live HTML exposes the repair.
 
 ## Completed
 

@@ -1,5 +1,17 @@
 # Blog Changelog
 
+## 2026-09-10
+
+### SEO: Three Kings regression rollbacks
+
+**Affected:** best-free-ai-image-upscaler-2026-tested-compared, fixing-pixelated-photos, photo-restoration-program
+**Why:** Final GSC evidence kept all three proof-led body experiments classified as regressions. Exact anchors allowed bounded reversal without guessing full prior bodies or restoring stale credit claims.
+**Changes:**
+
+- `best-free-ai-image-upscaler-2026-tested-compared` — restored the prior meta description and H1; removed the failed proof module.
+- `fixing-pixelated-photos` — restored the prior meta description and opening; removed the failed proof module.
+- `photo-restoration-program` — removed only the failed comparison expansion; retained truthful metadata and five-credit copy.
+
 ## 2026-09-07
 
 ### SEO: Blog index parameter noindex signal
