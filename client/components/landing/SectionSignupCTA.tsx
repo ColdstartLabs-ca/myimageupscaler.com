@@ -3,7 +3,10 @@
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useModalStore } from '@client/store/modalStore';
 import { loadAnalytics } from '@client/utils/loadAnalytics';
-import { getFreeCreditsForTier } from '@/lib/anti-freeloader/region-classifier';
+import {
+  welcomeCreditCopy,
+  welcomeCreditsForTier,
+} from '@shared/config/product-capabilities';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -20,7 +23,8 @@ export function SectionSignupCTA({
   const { openAuthModal } = useModalStore();
   const t = useTranslations('homepage');
   const { tier } = useRegionTier();
-  const freeCredits = getFreeCreditsForTier(tier ?? 'standard');
+  const freeCredits = tier ? welcomeCreditsForTier(tier) : null;
+  const creditOffer = welcomeCreditCopy(freeCredits);
   const hasTrialEnabled = getSubscriptionConfig().plans.some(plan => plan.trial.enabled);
 
   const handleClick = () => {
@@ -47,7 +51,7 @@ export function SectionSignupCTA({
         {hasTrialEnabled ? t('ctaFixImages') : t('ctaUpscaleFirst')}
         <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
       </button>
-      <p className="text-sm text-text-muted">{t('ctaSubtext', { freeCredits })}</p>
+      <p className="text-sm text-text-muted">{t('ctaSubtext', { creditOffer })}</p>
     </div>
   );
 }
