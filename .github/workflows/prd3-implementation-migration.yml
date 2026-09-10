@@ -1,0 +1,83 @@
+name: PRD 3 Implementation Migration
+
+on:
+  pull_request:
+    types: [synchronize]
+    branches: [master]
+    paths:
+      - '.github/workflows/prd3-implementation-migration.yml'
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  implement:
+    if: github.head_ref == 'seo-recovery-prd-03-page-recovery'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - name: Wire the print-readiness CTA marker
+        shell: python
+        run: |
+          from pathlib import Path
+
+          p = Path('client/components/blog/BlogCTA.tsx')
+          text = p.read_text()
+
+          anchor = "import { getPageIntent } from '@lib/seo/page-intent';"
+          replacement = anchor + "\nimport { PrintReadinessChecker } from './PrintReadinessChecker';"
+          if anchor not in text:
+              raise RuntimeError('BlogCTA import anchor missing')
+          text = text.replace(anchor, replacement, 1)
+
+          text = text.replace(
+              "export type BlogCTAType = 'try' | 'demo' | 'pricing' | 'tool';",
+              "export type BlogCTAType = 'try' | 'demo' | 'pricing' | 'tool' | 'print-readiness';",
+              1,
+          )
+          text = text.replace(
+              "  tool: '/?signup=1',\n};",
+              "  tool: '/?signup=1',\n  'print-readiness': '/blog/poster-size-dimensions-pixels',\n};",
+              1,
+          )
+
+          hook = "  const t = useTranslations('blog.cta');\n"
+          branch = hook + "\n  if (type === 'print-readiness') {\n    return <PrintReadinessChecker />;\n  }\n"
+          if hook not in text:
+              raise RuntimeError('BlogCTA hook anchor missing')
+          text = text.replace(hook, branch, 1)
+
+          text = text.replace(
+              ' * Markers: [!CTA_TRY], [!CTA_DEMO], [!CTA_PRICING], [!CTA_TOOL:slug]',
+              ' * Markers: [!CTA_TRY], [!CTA_DEMO], [!CTA_PRICING], [!CTA_TOOL:slug], [!CTA_PRINT_READINESS]',
+              1,
+          )
+          marker_anchor = "  if (trimmed.match(/^\\[!CTA_PRICING\\]$/)) return { type: 'pricing' };\n"
+          marker = marker_anchor + "  if (trimmed.match(/^\\[!CTA_PRINT_READINESS\\]$/)) return { type: 'print-readiness' };\n"
+          if marker_anchor not in text:
+              raise RuntimeError('CTA marker anchor missing')
+          p.write_text(text.replace(marker_anchor, marker, 1))
+      - name: Format touched files
+        run: yarn prettier --write client/components/blog/BlogCTA.tsx client/components/blog/PrintReadinessChecker.tsx client/utils/print-readiness.ts tests/unit/seo/page-recovery-contract.unit.spec.ts seo-reports/homepage-change-log-2026-09.md seo-reports/comparison-ctr-diagnosis-2026-09.md
+      - name: Page recovery contracts
+        run: yarn vitest run tests/unit/seo/page-recovery-contract.unit.spec.ts tests/unit/seo/homepage-performance.unit.spec.ts tests/unit/seo/pseo-hero-lcp.unit.spec.ts tests/unit/seo/topaz-free-trial-snippet.unit.spec.ts
+      - name: Repository verify
+        run: yarn verify
+      - name: Commit implementation
+        if: success()
+        run: |
+          rm .github/workflows/prd3-implementation-migration.yml
+          git config user.name 'chatgpt-codex-connector[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add client/components/blog/BlogCTA.tsx client/components/blog/PrintReadinessChecker.tsx client/utils/print-readiness.ts tests/unit/seo/page-recovery-contract.unit.spec.ts seo-reports .github/workflows/prd3-implementation-migration.yml
+          git commit -m 'feat(seo): add print readiness recovery tool'
+          git push origin HEAD:${{ github.head_ref }}
