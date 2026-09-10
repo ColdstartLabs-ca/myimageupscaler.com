@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { getAllFreeTools } from '@/lib/seo/data-loader';
 import { generateCategoryMetadata } from '@/lib/seo/metadata-factory';
-import { CREDIT_COSTS } from '@shared/config/credits.config';
 
 export const metadata = generateCategoryMetadata('free');
 
@@ -11,11 +10,11 @@ export default async function FreeHubPage() {
   return (
     <div className="container mx-auto px-4 py-12 bg-base min-h-screen">
       <h1 className="text-4xl font-bold mb-6 text-text-primary">
-        Free AI Image Upscaler — Start with {CREDIT_COSTS.DEFAULT_FREE_CREDITS} Free Credits
+        Free AI Image Upscaler — Welcome Credits Where Available
       </h1>
       <p className="text-xl text-text-secondary mb-12">
-        Upscale, enhance, and transform images free. Get {CREDIT_COSTS.DEFAULT_FREE_CREDITS} credits
-        when you sign up — no credit card required.
+        Upscale, enhance, and transform images online. Sign up to see the welcome credit grant
+        available in your region.
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {freeTools.map(tool => (
