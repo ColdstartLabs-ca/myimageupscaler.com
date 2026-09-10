@@ -1,7 +1,11 @@
-import { getFreeCreditsForTier, getRegionTier, type RegionTier } from '@/lib/anti-freeloader/region-classifier';
+import {
+  getFreeCreditsForTier,
+  getRegionTier,
+  type RegionTier,
+} from '@/lib/anti-freeloader/region-classifier';
+import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
 import { CREDIT_COSTS, MODEL_CREDIT_COSTS } from './credits.config';
 import { MODEL_COSTS } from './model-costs.config';
-import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
 import { SUBSCRIPTION_CONFIG } from './subscription.config';
 
 const FORMAT_LABEL_BY_MIME = {
