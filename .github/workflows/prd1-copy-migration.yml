@@ -1,0 +1,152 @@
+name: PRD 1 Copy Migration
+
+on:
+  pull_request:
+    types: [synchronize]
+    branches: [master]
+    paths:
+      - '.github/workflows/prd1-copy-migration.yml'
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  migrate:
+    if: github.head_ref == 'seo-recovery-prd-01-product-truth'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - name: Migrate static product copy to tier-safe wording
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          credit = re.compile(r'\b(?:3|5|10)\s+(?:free\s+)?credits\b', re.I)
+          no_signup = re.compile(r'\bno\s+sign[ -]?up(?:\s+(?:needed|required))?\b', re.I)
+          no_account = re.compile(r'\bno\s+account(?:\s+(?:needed|required))?\b', re.I)
+          without_account = re.compile(r'\bwithout\s+(?:an\s+)?account\b', re.I)
+          without_signup = re.compile(r'\bwithout\s+signing\s+up\b', re.I)
+
+          def safe_account_copy(text: str) -> str:
+              text = credit.sub('welcome credits where available', text)
+              text = no_signup.sub('account required', text)
+              text = no_account.sub('account required', text)
+              text = without_account.sub('after creating an account', text)
+              text = without_signup.sub('after creating an account', text)
+              return text
+
+          def mutate_page_blocks(path: str, slugs: set[str]) -> None:
+              p = Path(path)
+              if not p.exists():
+                  return
+              text = p.read_text()
+              marker = re.compile(r'(?m)^    \{\n      "slug": "([^"]+)"')
+              matches = list(marker.finditer(text))
+              if not matches:
+                  raise RuntimeError(f'no pSEO page blocks found in {path}')
+              pieces: list[str] = []
+              cursor = 0
+              for index, match in enumerate(matches):
+                  start = match.start()
+                  end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
+                  pieces.append(text[cursor:start])
+                  block = text[start:end]
+                  if match.group(1) in slugs:
+                      block = safe_account_copy(block)
+                  pieces.append(block)
+                  cursor = end
+              p.write_text(''.join(pieces))
+
+          free_slugs = {
+              'free-image-upscaler',
+              'free-photo-enhancer',
+              'free-image-enhancer',
+              'free-ai-photo-enhancer',
+              'free-ai-upscaler',
+          }
+          account_tool_slugs = {
+              'ai-image-upscaler',
+              'ai-photo-enhancer',
+              'photo-quality-enhancer',
+          }
+
+          for path in ('app/seo/data/free.json', 'locales/en/free.json'):
+              mutate_page_blocks(path, free_slugs)
+          for path in ('app/seo/data/tools.json', 'locales/en/tools.json'):
+              mutate_page_blocks(path, account_tool_slugs)
+
+          # The flagship tool's format claim follows the shipped upload validator.
+          for path in ('app/seo/data/tools.json', 'locales/en/tools.json'):
+              p = Path(path)
+              text = p.read_text()
+              text = text.replace(
+                  '"supportedFormats": ["JPEG", "PNG", "WebP"]',
+                  '"supportedFormats": ["JPEG", "PNG", "WebP", "HEIC"]',
+                  1,
+              )
+              text = text.replace('Upload JPEG, PNG, or WebP.', 'Upload JPEG, PNG, WebP, or HEIC.')
+              text = text.replace('Supports JPEG, PNG, WebP up to 64MB.', 'Supports JPEG, PNG, WebP, and HEIC; the app validates the current size limit.')
+              text = text.replace(
+                  'our neural network actually generates new pixel information based on millions of high-resolution training images',
+                  'the selected AI model reconstructs plausible detail instead of relying only on interpolation',
+              )
+              text = re.sub(
+                  r'The technology behind this upscaler has been trained specifically.*?must remain perfectly legible after enlargement\.',
+                  'Results vary by source image and model, so important text, logos, and fine details should be inspected at the intended output size.',
+                  text,
+                  flags=re.S,
+              )
+              text = re.sub(
+                  r'The neural network architecture powering our upscaler uses.*?whether you\'re upscaling smartphone photos, scanned documents, AI-generated artwork, or product photography from any source\.',
+                  'MyImageUpscaler supports multiple processing models and scale factors. The app reports job progress and output dimensions so you can inspect the generated result before using it.',
+                  text,
+                  flags=re.S,
+              )
+              text = text.replace('even small text remains perfectly readable', 'small text can remain more readable')
+              text = text.replace('must remain perfectly legible', 'should remain readable')
+              text = text.replace('without artifacts or halos', 'while reducing artifacts and halos')
+              text = text.replace('Neural network trained on millions of image pairs', 'AI-assisted detail reconstruction')
+              text = text.replace('based on patterns learned from millions of images', 'using model-assisted detail reconstruction')
+              p.write_text(text)
+
+          # Correct stale owned blog claims without rewriting third-party product facts.
+          for p in Path('content/blog').glob('*.mdx'):
+              lines = p.read_text().splitlines(keepends=True)
+              changed = False
+              for i, line in enumerate(lines):
+                  if 'myimageupscaler' in line.lower() and credit.search(line):
+                      lines[i] = credit.sub('welcome credits where available', line)
+                      changed = True
+              if changed:
+                  p.write_text(''.join(lines))
+
+          for path in ('.claude/skills/blog-writing/SKILL.md', '.agents/skills/blog-writing/SKILL.md'):
+              p = Path(path)
+              if p.exists():
+                  text = p.read_text()
+                  text = text.replace(
+                      '[Try myimageupscaler.com free](/pricing) — 10 credits, no credit card required.',
+                      '[Try MyImageUpscaler](/pricing) — welcome credits vary by region.',
+                  )
+                  p.write_text(text)
+      - name: Product capability contract
+        run: yarn vitest run tests/unit/seo/capability-claims.unit.spec.ts tests/unit/seo/free-credit-policy-copy.unit.spec.ts
+      - name: Commit migrated copy
+        if: success()
+        run: |
+          rm .github/workflows/prd1-copy-migration.yml
+          git config user.name 'chatgpt-codex-connector[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app/seo/data/free.json app/seo/data/tools.json locales/en/free.json locales/en/tools.json content/blog .claude/skills/blog-writing/SKILL.md .agents/skills/blog-writing/SKILL.md .github/workflows/prd1-copy-migration.yml
+          git commit -m 'fix(seo): migrate owned capability claims'
+          git push origin HEAD:${{ github.head_ref }}
