@@ -1,0 +1,33 @@
+name: PRD 2 Funnel and URL Hygiene Validation
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'client/analytics/**'
+      - 'app/api/analytics/**'
+      - 'app/[locale]/blog/**'
+      - 'lib/seo/**'
+      - 'scripts/seo/**'
+      - 'tests/unit/seo/**'
+      - 'package.json'
+      - 'docs/SEO/maintenance/**'
+      - '.github/workflows/prd2-funnel-url-validation.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  funnel-url-hygiene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - name: Funnel attribution contract
+        run: yarn vitest run tests/unit/seo/organic-funnel-attribution.unit.spec.ts tests/unit/seo/gif-intent-consolidation.unit.spec.ts tests/unit/seo/blog-index-params-noindex.unit.spec.ts tests/unit/seo/gsc-brand-split.unit.spec.ts
+      - name: Repository verify
+        run: yarn verify
