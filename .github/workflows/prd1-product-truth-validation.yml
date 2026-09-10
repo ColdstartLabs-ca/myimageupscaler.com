@@ -1,0 +1,32 @@
+name: PRD 1 Product Truth Validation
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'shared/**'
+      - 'client/**'
+      - 'app/**'
+      - 'locales/en/**'
+      - 'content/**'
+      - 'tests/unit/seo/**'
+      - 'docs/SEO/maintenance/**'
+      - '.github/workflows/prd1-product-truth-validation.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  product-truth:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - name: Product capability contract
+        run: yarn vitest run tests/unit/seo/capability-claims.unit.spec.ts tests/unit/seo/free-credit-policy-copy.unit.spec.ts
+      - name: Repository verify
+        run: yarn verify
