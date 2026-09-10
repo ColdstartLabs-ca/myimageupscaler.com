@@ -25,7 +25,7 @@ jobs:
           node-version: 20
           cache: yarn
       - run: yarn install --frozen-lockfile
-      - name: Migrate static product copy to tier-safe wording
+      - name: Migrate owned static product copy to tier-safe wording
         shell: python
         run: |
           from pathlib import Path
@@ -37,24 +37,25 @@ jobs:
           without_account = re.compile(r'\bwithout\s+(?:an\s+)?account\b', re.I)
           without_signup = re.compile(r'\bwithout\s+signing\s+up\b', re.I)
 
+          def safe_credit_copy(text: str) -> str:
+              return credit.sub('welcome credits where available', text)
+
           def safe_account_copy(text: str) -> str:
-              text = credit.sub('welcome credits where available', text)
+              text = safe_credit_copy(text)
               text = no_signup.sub('account required', text)
               text = no_account.sub('account required', text)
               text = without_account.sub('after creating an account', text)
               text = without_signup.sub('after creating an account', text)
               return text
 
-          def mutate_page_blocks(path: str, slugs: set[str]) -> None:
+          def mutate_page_blocks(path: str, slugs: set[str], transform) -> None:
               p = Path(path)
-              if not p.exists():
-                  return
               text = p.read_text()
               marker = re.compile(r'(?m)^    \{\n      "slug": "([^"]+)"')
               matches = list(marker.finditer(text))
               if not matches:
                   raise RuntimeError(f'no pSEO page blocks found in {path}')
-              pieces: list[str] = []
+              pieces = []
               cursor = 0
               for index, match in enumerate(matches):
                   start = match.start()
@@ -62,30 +63,45 @@ jobs:
                   pieces.append(text[cursor:start])
                   block = text[start:end]
                   if match.group(1) in slugs:
-                      block = safe_account_copy(block)
+                      block = transform(block)
                   pieces.append(block)
                   cursor = end
               p.write_text(''.join(pieces))
 
           free_slugs = {
-              'free-image-upscaler',
-              'free-photo-enhancer',
-              'free-image-enhancer',
-              'free-ai-photo-enhancer',
-              'free-ai-upscaler',
+              'free-image-upscaler', 'free-photo-enhancer', 'free-image-enhancer',
+              'free-ai-photo-enhancer', 'free-ai-upscaler',
           }
-          account_tool_slugs = {
-              'ai-image-upscaler',
-              'ai-photo-enhancer',
-              'photo-quality-enhancer',
-          }
+          account_tool_slugs = {'ai-image-upscaler', 'ai-photo-enhancer', 'photo-quality-enhancer'}
 
           for path in ('app/seo/data/free.json', 'locales/en/free.json'):
-              mutate_page_blocks(path, free_slugs)
+              mutate_page_blocks(path, free_slugs, safe_account_copy)
           for path in ('app/seo/data/tools.json', 'locales/en/tools.json'):
-              mutate_page_blocks(path, account_tool_slugs)
+              mutate_page_blocks(path, account_tool_slugs, safe_account_copy)
 
-          # The flagship tool's format claim follows the shipped upload validator.
+          # Scale pages are all acquisition surfaces for the account-backed upscaler.
+          for path in ('app/seo/data/scale.json', 'locales/en/scale.json'):
+              p = Path(path)
+              if p.exists():
+                  p.write_text(safe_credit_copy(p.read_text()))
+
+          # Product-owned locale copy (not competitor facts).
+          for path in ('locales/en/blog.json', 'locales/en/help.json', 'locales/en/tools-ui.json'):
+              p = Path(path)
+              if p.exists():
+                  p.write_text(safe_credit_copy(p.read_text()))
+
+          # This exact pricing phrase belongs to MyImageUpscaler rows in the comparison mirrors.
+          for path in ('app/seo/data/comparison.json', 'locales/en/comparison.json', 'locales/en/compare.json'):
+              p = Path(path)
+              if p.exists():
+                  text = p.read_text().replace(
+                      '5 free credits | paid credits and plans',
+                      'welcome credits vary by region | paid credits and plans',
+                  )
+                  p.write_text(text)
+
+          # Flagship tool formats follow the shipped upload validator; soften unsupported absolutes.
           for path in ('app/seo/data/tools.json', 'locales/en/tools.json'):
               p = Path(path)
               text = p.read_text()
@@ -96,10 +112,16 @@ jobs:
               )
               text = text.replace('Upload JPEG, PNG, or WebP.', 'Upload JPEG, PNG, WebP, or HEIC.')
               text = text.replace('Supports JPEG, PNG, WebP up to 64MB.', 'Supports JPEG, PNG, WebP, and HEIC; the app validates the current size limit.')
-              text = text.replace(
-                  'our neural network actually generates new pixel information based on millions of high-resolution training images',
-                  'the selected AI model reconstructs plausible detail instead of relying only on interpolation',
-              )
+              replacements = {
+                  'even small text remains perfectly readable': 'small text can remain more readable',
+                  'must remain perfectly legible': 'should remain readable',
+                  'without artifacts or halos': 'while reducing artifacts and halos',
+                  'Neural network trained on millions of image pairs': 'AI-assisted detail reconstruction',
+                  'based on patterns learned from millions of images': 'using model-assisted detail reconstruction',
+                  'our neural network actually generates new pixel information based on millions of high-resolution training images': 'the selected AI model reconstructs plausible detail instead of relying only on interpolation',
+              }
+              for old, new in replacements.items():
+                  text = text.replace(old, new)
               text = re.sub(
                   r'The technology behind this upscaler has been trained specifically.*?must remain perfectly legible after enlargement\.',
                   'Results vary by source image and model, so important text, logos, and fine details should be inspected at the intended output size.',
@@ -112,29 +134,20 @@ jobs:
                   text,
                   flags=re.S,
               )
-              text = text.replace('even small text remains perfectly readable', 'small text can remain more readable')
-              text = text.replace('must remain perfectly legible', 'should remain readable')
-              text = text.replace('without artifacts or halos', 'while reducing artifacts and halos')
-              text = text.replace('Neural network trained on millions of image pairs', 'AI-assisted detail reconstruction')
-              text = text.replace('based on patterns learned from millions of images', 'using model-assisted detail reconstruction')
               p.write_text(text)
 
           # Correct stale owned blog claims without rewriting third-party product facts.
           for p in Path('content/blog').glob('*.mdx'):
               lines = p.read_text().splitlines(keepends=True)
-              changed = False
               for i, line in enumerate(lines):
                   if 'myimageupscaler' in line.lower() and credit.search(line):
-                      lines[i] = credit.sub('welcome credits where available', line)
-                      changed = True
-              if changed:
-                  p.write_text(''.join(lines))
+                      lines[i] = safe_credit_copy(line)
+              p.write_text(''.join(lines))
 
           for path in ('.claude/skills/blog-writing/SKILL.md', '.agents/skills/blog-writing/SKILL.md'):
               p = Path(path)
               if p.exists():
-                  text = p.read_text()
-                  text = text.replace(
+                  text = p.read_text().replace(
                       '[Try myimageupscaler.com free](/pricing) — 10 credits, no credit card required.',
                       '[Try MyImageUpscaler](/pricing) — welcome credits vary by region.',
                   )
@@ -147,6 +160,6 @@ jobs:
           rm .github/workflows/prd1-copy-migration.yml
           git config user.name 'chatgpt-codex-connector[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add app/seo/data/free.json app/seo/data/tools.json locales/en/free.json locales/en/tools.json content/blog .claude/skills/blog-writing/SKILL.md .agents/skills/blog-writing/SKILL.md .github/workflows/prd1-copy-migration.yml
+          git add app/seo/data locales/en content/blog .claude/skills/blog-writing/SKILL.md .agents/skills/blog-writing/SKILL.md .github/workflows/prd1-copy-migration.yml
           git commit -m 'fix(seo): migrate owned capability claims'
           git push origin HEAD:${{ github.head_ref }}
