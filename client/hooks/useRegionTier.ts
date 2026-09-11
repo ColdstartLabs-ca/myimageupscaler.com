@@ -110,7 +110,18 @@ async function fetchGeo(): Promise<IPricingGeoSession | null> {
     return pendingGeoRequest;
   }
 
-  pendingGeoRequest = fetch('/api/geo', { cache: 'no-store' })
+  // Server render and test environments may not provide a usable fetch. Callers
+  // treat a null result as "region unknown" and fall back to the standard tier.
+  if (typeof fetch !== 'function') {
+    return null;
+  }
+
+  const request = fetch('/api/geo', { cache: 'no-store' });
+  if (!request || typeof request.then !== 'function') {
+    return null;
+  }
+
+  pendingGeoRequest = request
     .then(async response => {
       if (!response.ok) {
         throw new Error(`Geo request failed with status ${response.status}`);

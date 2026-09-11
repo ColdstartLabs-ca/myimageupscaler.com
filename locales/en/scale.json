@@ -1213,9 +1213,9 @@
       "slug": "upscale-16x",
       "title": "Upscale 16X",
       "metaTitle": "16X AI Image Upscaler | Extreme 16x Resolution Enhancement",
-      "metaDescription": "Upscale images by 16x with AI. Extreme resolution enhancement for specialized applications. 256x pixel increase. Maximum quality. Try free.",
-      "h1": "16X AI Upscaler - Extreme Resolution Enhancement",
-      "intro": "Achieve extreme resolution enhancement with our 16X AI upscaler. Multiply your image dimensions by 16 while adding remarkable detail. For specialized applications requiring maximum possible upscaling.",
+      "metaDescription": "Reach a 16X enlargement with two 4x passes in the signed-in workspace. Inspect the first pass, then upscale again. 256x total pixels.",
+      "h1": "16X AI Upscaler - Two-Pass Extreme Enlargement",
+      "intro": "Create a 16X enlargement with two passes in the authenticated workspace: upscale 4x, inspect and download the result, then upscale that file 4x again. Stop after the first pass if artifacts appear.",
       "primaryKeyword": "upscale 16x",
       "secondaryKeywords": [
         "16x image upscaler",
@@ -1252,21 +1252,21 @@
         },
         {
           "title": "Maximum Detail",
-          "description": "Advanced AI generates unprecedented detail even at extreme magnification.",
+          "description": "Each 4x pass reconstructs detail; inspect the intermediate result before running the second pass.",
           "metric": "Ultra enhancement"
         }
       ],
       "technicalSpecs": {
-        "scaleFactor": "16x both width and height",
+        "scaleFactor": "16x both width and height (two 4x passes)",
         "pixelIncrease": "256x total pixels",
         "processingTime": "2-5 minutes",
-        "qualityEnhancement": "State-of-the-art AI detail generation",
+        "qualityEnhancement": "Two 4x passes with inspection between them",
         "supportedFormats": "JPEG, PNG, WebP"
       },
       "faq": [
         {
           "question": "What does 16X upscaling mean?",
-          "answer": "16X upscaling multiplies both the width and height of your image by 16, resulting in 256 times more total pixels. For example, a 250x250 image becomes 4000x4000 pixels."
+          "answer": "16X upscaling multiplies both the width and height of your image by 16, resulting in 256 times more total pixels. For example, a 250x250 image becomes 4000x4000 pixels. It is produced by two 4x passes rather than one request; inspect and download the first result, then upscale that file again."
         },
         {
           "question": "When should I use 16X upscaling?",
@@ -1282,7 +1282,7 @@
         },
         {
           "question": "Will 16X upscaling reduce quality?",
-          "answer": "Our AI is optimized for extreme upscaling, but results depend on source quality. For best results with 16X, start with the highest quality source image available."
+          "answer": "Results depend on source quality and compound across the two passes. Inspect the 4x result before the second pass and stop there if artifacts appear."
         }
       ],
       "relatedScale": ["upscale-8x", "ai-upscaler-4x"],
