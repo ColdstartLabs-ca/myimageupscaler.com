@@ -911,7 +911,7 @@
       "faq": [
         {
           "question": "¿Puedo escalar GIFs animados?",
-          "answer": "¡Sí! Nuestra IA procesa cada frame individualmente preservando la secuencia de animación y tiempos, resultando en GIFs animados de mayor calidad."
+          "answer": "Actualmente no en nuestro espacio de trabajo de IA. Usa un editor de GIF o vídeo que trabaje por fotogramas para archivos animados. Para un GIF estático, exporta el fotograma deseado como PNG y escala esa imagen."
         },
         {
           "question": "¿El escalado corregirá el banding de color de GIF?",

@@ -911,7 +911,7 @@
       "faq": [
         {
           "question": "Posso ampliar GIFs animados?",
-          "answer": "Sim! Nossa IA processa cada quadro individualmente preservando a sequência de animação e timing, resultando em GIFs animados de maior qualidade."
+          "answer": "Atualmente não no nosso espaço de trabalho de IA. Use um editor de GIF ou vídeo que trabalhe por quadros para ficheiros animados. Para um GIF estático, exporte o quadro desejado como PNG e faça o upscale dessa imagem."
         },
         {
           "question": "A ampliação corrigirá o banding de cores do GIF?",

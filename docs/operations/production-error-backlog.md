@@ -290,3 +290,20 @@ available. Do not treat the pre-fix rates above as a post-deploy measurement.
 - **Assessment:** 23 failures in 3h out of 3335 requests (0.69%), with zero in the last 15m and healthy endpoints.
 - **Next action:** Investigate affected inputs and worker memory limits, then add targeted mitigation and monitoring.
 - **Status:** Open
+
+### 2026-09-10 — Worker secret allowlist gap — 11 server variables never reached production
+
+- **Signature:** `POST/GET /api/blog/posts*` → `500 INTERNAL_ERROR "Server configuration error"` (from `lib/middleware/blogApiAuth.ts:52`); the other ten fail silently.
+- **Evidence:** `no key → 401`, `any key → 500`, `/api/health → 200` — the auth layer works, then `serverEnv.BLOG_API_KEY` is empty. `gcloud secrets versions access latest --secret=myimageupscaler-api-prod` shows `BLOG_API_KEY` present and non-empty, while `wrangler secret list --name myimageupscaler` returned only 16 secrets and `wrangler.json` declares zero `vars`.
+- **Root cause:** Server-side `process.env` is a **runtime** lookup on the Worker — Next.js inlines only `NEXT_PUBLIC_*` at build time. `scripts/deploy/steps/05-secrets.sh` uploads from an explicit allowlist, and 11 runtime-consumed variables were missing from it, so each resolved to its zod default (`''`) in production. Only `BLOG_API_KEY` surfaced as an error; the rest degrade with no log line.
+- **Blast radius (all confirmed present in the prod secret, absent from the Worker):**
+  - `BLOG_API_KEY` — entire blog admin API dead (`500` on every authenticated route). This is what blocked the SEO Recovery PRD 3 editorial work.
+  - `GA4_API_SECRET` — `trackGA4ServerEvent` returns early at `analyticsService.ts:340`, so **every server-side GA4 conversion was dropped, including Stripe purchases**. PRD 2's funnel could not have worked in production.
+  - `AMPLITUDE_SECRET_KEY` — cohort and dashboard queries
+  - `INDEXNOW_KEY` — `/api/seo/indexnow`
+  - `GSC_PRIVATE_KEY`, `GSC_SERVICE_ACCOUNT_EMAIL`, `GSC_SITE_URL` — `/api/cron/refresh-3kings-sitemap`
+  - `OUTRANK_WEBHOOK_SECRET`, `OPENROUTER_API_KEY`, `CLOUDFLARE_API_TOKEN`, `STRIPE_ENGAGEMENT_DISCOUNT_COUPON_ID`
+- **Why it stayed hidden:** `AMPLITUDE_API_KEY` was saved by its `NEXT_PUBLIC_` fallback (added deliberately — see `tests/unit/config/amplitude-env-fallback.unit.spec.ts`), and `serverEnv.ENV` falls back to `NODE_ENV`, so the obvious canaries kept working.
+- **Fix:** all 11 added to the allowlist in `scripts/deploy/steps/05-secrets.sh`, guarded by `tests/unit/deploy/worker-secret-allowlist.unit.spec.ts`, which also asserts the deploy-only R2 S3 credentials are never uploaded to the Worker. Observed red (11 failures) before the fix, green after.
+- **Next action:** **Deploy.** The secrets upload on the next `yarn deploy`; nothing takes effect until then. After deploying, confirm `GET /api/blog/posts` returns 200 and that server-side GA4 purchase events appear, then re-check PRD 2's funnel numbers — any GA4 conversion data from before this deploy is missing its server-side half.
+- **Status:** Fixed in repo, pending deploy

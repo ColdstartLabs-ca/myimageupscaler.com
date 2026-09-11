@@ -908,7 +908,7 @@
       "faq": [
         {
           "question": "Kann ich animierte GIFs skalieren?",
-          "answer": "Ja! Unsere KI verarbeitet jeden Frame individuell unter Beibehaltung der Animationssequenz und des Timings, was zu höherwertigen animierten GIFs führt."
+          "answer": "Derzeit nicht in unserem KI-Arbeitsbereich. Verwenden Sie für animierte Dateien einen frame-fähigen GIF- oder Video-Editor. Exportieren Sie bei einem statischen GIF das gewünschte Einzelbild als PNG und skalieren Sie dieses Bild hoch."
         },
         {
           "question": "Behebt Upscaling GIF-Farb-Banding?",

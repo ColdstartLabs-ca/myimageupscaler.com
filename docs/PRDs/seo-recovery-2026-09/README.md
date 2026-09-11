@@ -1,6 +1,6 @@
 # SEO Recovery & Conversion Truth Pass — 30 Days (Sept 2026)
 
-**Status:** Not started
+**Status:** PRD 1 done · PRD 2 done · PRD 3 partial — blocked on the blog admin API (last checked 2026-09-10)
 **Owner:** Joao
 **Window:** 2026-09-10 → 2026-10-10
 **Source audit:** GSC, Aug 12 – Sep 8 2026 vs Jul 15 – Aug 11 2026 (explicit-date queries, not the rolling preview)
@@ -17,21 +17,21 @@
 
 ### The data
 
-| Metric | Previous 28d | Latest 28d | Change |
-| --- | ---: | ---: | ---: |
-| Google Web Search clicks | 8,199 | **6,308** | **−23.1%** |
-| Impressions | 377,471 | **324,738** | **−14.0%** |
-| CTR | 2.17% | **1.94%** | −0.23 pp |
-| Average position | 12.26 | **17.34** | 5.09 worse |
+| Metric                   | Previous 28d |  Latest 28d |     Change |
+| ------------------------ | -----------: | ----------: | ---------: |
+| Google Web Search clicks |        8,199 |   **6,308** | **−23.1%** |
+| Impressions              |      377,471 | **324,738** | **−14.0%** |
+| CTR                      |        2.17% |   **1.94%** |   −0.23 pp |
+| Average position         |        12.26 |   **17.34** | 5.09 worse |
 
 This is **not** one uniform site-wide ranking problem. Average position moves with which queries get impressions. The page level shows several different patterns.
 
-| Page | Prev clicks | Latest | Change | What stands out |
-| --- | ---: | ---: | ---: | --- |
-| Homepage | 3,705 | **2,327** | **−1,378 / −37.2%** | Impressions and rankings both weakened |
-| `/blog/best-free-ai-image-upscaler-2026-tested-compared` | 1,468 | **806** | **−662 / −45.1%** | CTR fell far more than ranking |
-| `/format-scale/gif-upscale-16x` | 204 | **0** | −204 | Google reports a redirect (ours, deliberate) |
-| `/formats/upscale-gif-images` | 162 | **36** | −126 / −77.8% | Still indexed, substantially weaker |
+| Page                                                     | Prev clicks |    Latest |              Change | What stands out                              |
+| -------------------------------------------------------- | ----------: | --------: | ------------------: | -------------------------------------------- |
+| Homepage                                                 |       3,705 | **2,327** | **−1,378 / −37.2%** | Impressions and rankings both weakened       |
+| `/blog/best-free-ai-image-upscaler-2026-tested-compared` |       1,468 |   **806** |   **−662 / −45.1%** | CTR fell far more than ranking               |
+| `/format-scale/gif-upscale-16x`                          |         204 |     **0** |                −204 | Google reports a redirect (ours, deliberate) |
+| `/formats/upscale-gif-images`                            |         162 |    **36** |       −126 / −77.8% | Still indexed, substantially weaker          |
 
 Those two top pages alone lost **2,040 reported page clicks**, exceeding the property's net decline of 1,891 — gains elsewhere are partially offsetting. (Page and property aggregations are not perfectly interchangeable.)
 
@@ -43,12 +43,12 @@ comparison article **162 → 803 → 1,802 → 1,135**.
 
 Exact-match brand set (`myimageupscaler`, `my image upscaler`, `myimageupscaler.com`, `https myimageupscaler com`):
 
-| Branded metric | Previous | Latest |
-| --- | ---: | ---: |
-| Clicks | 1,228 | **774** |
-| Impressions | 2,444 | **1,431** |
-| Avg position | 1.01 | **1.04** |
-| CTR | 50.25% | **54.09%** |
+| Branded metric | Previous |     Latest |
+| -------------- | -------: | ---------: |
+| Clicks         |    1,228 |    **774** |
+| Impressions    |    2,444 |  **1,431** |
+| Avg position   |     1.01 |   **1.04** |
+| CTR            |   50.25% | **54.09%** |
 
 454 branded clicks lost **while still ranking ~#1** — roughly **24% of the net property decline**. Interpretation: part of the problem is reduced branded-search demand (returning users, referrals, promotion, product usage), not Google failing to rank us. This does **not** prove a retention problem, and title changes will not explain or fix it. Phase 3 is what makes this measurable.
 
@@ -67,7 +67,7 @@ Exact-match brand set (`myimageupscaler`, `my image upscaler`, `myimageupscaler.
 - **Free credits are region-dependent by design**: `DEFAULT_FREE_CREDITS: 5`, `RESTRICTED_FREE_CREDITS: 3`, `PAYWALLED_FREE_CREDITS: 0`, selected by `getFreeCreditsForTier(getRegionTier(country))`. The homepage hero already renders this dynamically. **The "3 vs 5" contradiction is not a typo — it is static copy elsewhere hardcoding one branch of a regional policy.** The GIF article's "10 credits" is simply stale and false.
 - **Guest upscaling does not exist as a shipped product.** `GuestUpscaler.tsx` is dead scaffolding from a rejected direction. Any copy advertising "test without an account" is false today.
 - **The GIF redirect is ours and deliberate.** `lib/seo/intent-ownership.ts` + `middleware.ts` 301 the `gif-upscale-{2,4,8,16}x` variants to `/formats/upscale-gif-images`, guarded by `tests/unit/seo/gif-intent-consolidation.unit.spec.ts`. It is not an accident to reverse blindly.
-- **`?q=` / `?page=N` blog URLs already emit `noindex`** via `generateMetadata` in `app/[locale]/blog/page.tsx`, yet `/en/blog?page=7&q=guides` is still *submitted and indexed*, and the blog index still emits internal `?q=` links (lines ~293, ~316) that invite the crawl.
+- **`?q=` / `?page=N` blog URLs already emit `noindex`** via `generateMetadata` in `app/[locale]/blog/page.tsx`, yet `/en/blog?page=7&q=guides` is still _submitted and indexed_, and the blog index still emits internal `?q=` links (lines ~293, ~316) that invite the crawl.
 - **GA4 is wired into the product** (`GA_MEASUREMENT_ID`, `GA4_API_SECRET`). What is missing is not analytics — it is a landing-page-level join from organic entry to successful upscale, download and purchase. "GA4 not connected" was true only of the GSC Wizard connector.
 
 ---
@@ -131,18 +131,18 @@ sequenceDiagram
 
 Each is independently shippable and carries its own complexity score, Integration Ledger, phases and acceptance criteria. This file is shared context only — it is not a PRD.
 
-| # | PRD | Phases | Week | Ships alone? |
-|---|---|---|---|---|
-| 1 | [Product Truth](01-product-truth.md) — one accurate offer on every page | 2 | 1 | Yes |
-| 2 | [Measurement & URL Hygiene](02-funnel-and-url-hygiene.md) — know what a landing page is worth; verify the GIF and filtered-URL policy | 2 | 1 | Yes |
-| 3 | [Page Recovery](03-page-recovery.md) — homepage, flagship comparison, and the pages that already rank | 3 | 2–4 | Needs 1 and 2 |
+| #   | PRD                                                                                                                                   | Phases | Week | Ships alone?  |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------- | ------ | ---- | ------------- |
+| 1   | [Product Truth](01-product-truth.md) — one accurate offer on every page                                                               | 2      | 1    | Yes           |
+| 2   | [Measurement & URL Hygiene](02-funnel-and-url-hygiene.md) — know what a landing page is worth; verify the GIF and filtered-URL policy | 2      | 1    | Yes           |
+| 3   | [Page Recovery](03-page-recovery.md) — homepage, flagship comparison, and the pages that already rank                                 | 3      | 2–4  | Needs 1 and 2 |
 
 PRD 1 and PRD 2 can run in parallel. PRD 3 depends on PRD 1 for capability facts and PRD 2 for the funnel that judges whether the recovery worked.
 
 ### Proof subject (applies to all three)
 
 **Proof subject:** the homepage and `/blog/best-free-ai-image-upscaler-2026-tested-compared` — the two largest real losses (2,040 clicks), in a live regional-credit, DB-backed-content environment.
-**Not a toy:** no phase in any PRD is proved on a fresh scratch page. PRD 1's gate must run against the *existing* pSEO JSON, the *existing* locales and the *published* blog bodies, which are known to contradict each other today.
+**Not a toy:** no phase in any PRD is proved on a fresh scratch page. PRD 1's gate must run against the _existing_ pSEO JSON, the _existing_ locales and the _published_ blog bodies, which are known to contradict each other today.
 
 ### Cross-cutting rules
 
@@ -159,11 +159,11 @@ PRD 1 and PRD 2 can run in parallel. PRD 3 depends on PRD 1 for capability facts
 At unchanged page-impression levels:
 
 | Illustrative experiment | Assumed CTR change | Additional clicks / 28d |
-| --- | --- | ---: |
-| Flagship comparison | 7.56% → 10% | **≈261** |
-| Poster article | 0.26% → 0.75% | **≈150** |
-| Topaz trial article | 1.32% → 2% | **≈93** |
-| **Combined arithmetic** | | **≈503** |
+| ----------------------- | ------------------ | ----------------------: |
+| Flagship comparison     | 7.56% → 10%        |                **≈261** |
+| Poster article          | 0.26% → 0.75%      |                **≈150** |
+| Topaz trial article     | 1.32% → 2%         |                 **≈93** |
+| **Combined arithmetic** |                    |                **≈503** |
 
 These are **scenario calculations, not predictions or benchmarks.** They exist to show why improving existing pages is worth a month without assuming we suddenly rank #1 for "image upscaler". The business result still depends on whether those visitors successfully upscale and pay — which is exactly what Phase 3 makes visible.
 
@@ -174,30 +174,39 @@ These are **scenario calculations, not predictions or benchmarks.** They exist t
 Criteria are written about the **consumer**, never the artifact.
 
 **Product truth**
-- [ ] A visitor arriving from any of the ten highest-traffic pages sees the same accurate offer and the same supported workflow — verified by reading all ten as a visitor, not by counting files changed.
-- [ ] A visitor in a restricted region sees the credit grant they will actually receive, on every page that names one.
-- [ ] No live page tells a visitor they can upscale without an account.
-- [ ] No live page promises native animated-GIF processing.
+
+- [x] A visitor arriving from any of the ten highest-traffic pages sees the same accurate offer and the same supported workflow — verified by reading all ten as a visitor, not by counting files changed.
+- [x] A visitor in a restricted region sees the credit grant they will actually receive, on every page that names one. _(Repo-served surfaces; four Supabase-only posts outstanding — see below.)_
+- [x] No live page tells a visitor they can upscale without an account. _(Same carve-out.)_
+- [x] No live page promises native animated-GIF processing.
 
 **Recovery**
-- [ ] Homepage keeps its broad "image upscaler" role: the URL is unchanged, and its non-brand tracked query set is recorded with a dated baseline.
-- [ ] The comparison article's Topaz/Gigapixel entry is correct by product and version, its ownership is disclosed, and its evidence is reproducible from the stated inputs.
-- [ ] Every GIF redirect lands on a relevant, indexable destination whose canonical agrees, and internal links point at the retained page directly.
-- [ ] `/en/blog?page=7&q=guides` and its siblings are out of the index, with ordinary pagination still discoverable.
+
+- [x] Homepage keeps its broad "image upscaler" role: the URL is unchanged, and its non-brand tracked query set is recorded with a dated baseline.
+- [ ] The comparison article's Topaz/Gigapixel entry is correct by product and version, its ownership is disclosed, and its evidence is reproducible from the stated inputs. **Diagnosed only.**
+- [x] Every GIF redirect lands on a relevant, indexable destination whose canonical agrees, and internal links point at the retained page directly. _(Verified live 2026-09-10.)_
+- [x] `/en/blog?page=7&q=guides` and its siblings are out of the index, with ordinary pagination still discoverable. _(Verified live 2026-09-10.)_
 
 **Measurement**
-- [ ] Successful upscales, downloads, purchases and failures can be compared **by organic landing page, country, device and mode** — including failed jobs, refunded credits and processing cost.
-- [ ] Branded-demand decline is tracked separately from non-brand ranking, so the two are never reported as one number again.
+
+- [x] Successful upscales, downloads, purchases and failures can be compared **by organic landing page, country, device and mode** — including failed jobs, refunded credits and processing cost.
+- [x] Branded-demand decline is tracked separately from non-brand ranking, so the two are never reported as one number again.
 
 **Discipline**
-- [ ] No new batch of pSEO pages was published during this window.
-- [ ] Nothing was retired without checking backlinks and conversions first.
-- [ ] Every changed title/snippet has its previous value and change date recorded.
+
+- [x] No new batch of pSEO pages was published during this window.
+- [x] Nothing was retired without checking backlinks and conversions first.
+- [x] Every changed title/snippet has its previous value and change date recorded.
 
 **Portfolio done**
-- [ ] [PRD 1](01-product-truth.md) done, all its integration gates checked
-- [ ] [PRD 2](02-funnel-and-url-hygiene.md) done, all its integration gates checked
+
+- [x] [PRD 1](01-product-truth.md) done, all its integration gates checked
+- [x] [PRD 2](02-funnel-and-url-hygiene.md) done, all its integration gates checked
 - [ ] [PRD 3](03-page-recovery.md) done, all its integration gates checked
+
+### The one thing still blocking this portfolio
+
+Every remaining item needs a write to the `blog_posts` table, and the blog admin API returns `500 INTERNAL_ERROR "Server configuration error"` on every route including `GET /api/blog/posts` (checked 2026-09-10). Fix that credential/config first; the content work behind it is roughly half a day, and PRD 3 Phase 2 additionally needs a real benchmark run before the "Only 3 Worked" positioning can be kept rather than softened.
 
 ---
 

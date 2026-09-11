@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
@@ -53,6 +53,16 @@ const accountBackedToolSlugs = new Set([
   'ai-photo-enhancer',
   'photo-quality-enhancer',
 ]);
+
+/** The "can I upscale animated GIFs?" FAQ entry, in every language we publish. */
+const animatedGifQuestion = /animated|animierte|animad|animé|アニメ/i;
+
+/**
+ * An affirmative opener on that answer. The shipped answer redirects to a
+ * frame-aware editor, so a locale opening with "yes" has drifted back to the
+ * false promise the source data already retired.
+ */
+const animatedGifPromise = /^\s*¡?\s*(?:yes|ja|s[ií]|sim|oui|はい)\s*[!,.！]/i;
 
 /**
  * Pages whose copy describes a browser-side tool and therefore may honestly say
@@ -329,6 +339,35 @@ describe('product capability claims', () => {
         violations,
         report('published blog bodies contradicting the product', violations)
       ).toEqual([]);
+    });
+
+    it('never promises animated GIF processing, in any locale', () => {
+      expect(PRODUCT_CAPABILITIES.animatedGifSupported).toBe(false);
+
+      const gifFiles = [
+        'app/seo/data/formats.json',
+        ...readdirSync('locales').map(locale => path.join('locales', locale, 'formats.json')),
+      ].filter(existsSync);
+
+      const offenders = gifFiles.flatMap(file => {
+        const { pages } = readJson(file) as { pages?: IPageRecord[] };
+        return (pages ?? [])
+          .filter(page => page.slug === 'upscale-gif-images')
+          .flatMap((page, pageIndex) =>
+            ((page.faq as { question?: string; answer?: string }[] | undefined) ?? [])
+              .map((entry, faqIndex) => ({ entry, faqIndex, pageIndex }))
+              .filter(({ entry }) => animatedGifQuestion.test(entry.question ?? ''))
+              .filter(({ entry }) => animatedGifPromise.test(entry.answer ?? ''))
+              .map(({ entry, faqIndex, pageIndex: index }) => ({
+                source: file,
+                path: `$.pages[${index}].faq[${faqIndex}].answer`,
+                text: entry.answer ?? '',
+                slug: 'upscale-gif-images',
+              }))
+          );
+      });
+
+      expect(offenders, report('locales promising animated GIF processing', offenders)).toEqual([]);
     });
 
     it('still reads competitor credit facts as theirs, not ours', () => {

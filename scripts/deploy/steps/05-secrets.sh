@@ -33,19 +33,35 @@ step_secrets() {
     }
 
     # Secrets from .env.api
+    #
+    # Server-side `process.env` is a RUNTIME lookup on the Worker: Next.js only inlines
+    # NEXT_PUBLIC_* at build time, so anything server-only that is missing here resolves
+    # to its zod default ('') in production and fails SILENTLY.
+    # Guarded by tests/unit/deploy/worker-secret-allowlist.unit.spec.ts.
     local secrets=(
         SUPABASE_SERVICE_ROLE_KEY
         STRIPE_SECRET_KEY
         STRIPE_WEBHOOK_SECRET
+        STRIPE_ENGAGEMENT_DISCOUNT_COUPON_ID
         GEMINI_API_KEY
+        OPENROUTER_API_KEY
         REPLICATE_API_TOKEN
         BASELIME_API_KEY
         CLOUDFLARE_ACCOUNT_ID
+        CLOUDFLARE_API_TOKEN
         CLOUDFLARE_EMAIL_API_TOKEN
         EMAIL_FROM_ADDRESS
         PROVIDER_ALERT_EMAIL
         BREVO_API_KEY
         CRON_SECRET
+        BLOG_API_KEY
+        GA4_API_SECRET
+        AMPLITUDE_SECRET_KEY
+        INDEXNOW_KEY
+        GSC_PRIVATE_KEY
+        GSC_SERVICE_ACCOUNT_EMAIL
+        GSC_SITE_URL
+        OUTRANK_WEBHOOK_SECRET
     )
 
     for secret in "${secrets[@]}"; do

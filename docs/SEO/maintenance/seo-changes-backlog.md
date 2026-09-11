@@ -2696,3 +2696,18 @@ Follow-up — **blocked on production content, not on code**:
 
 - Four Supabase-only posts still carry claims that contradict the shipped policy and cannot be reached from the repo: `best-free-ai-image-upscaler-2026-tested-compared` (no-account upscaling, fixed 5/10-credit grants, unsupported AVIF/TIFF/BMP uploads, stale 30-day Gigapixel trial, undisclosed ownership, unsupported "Only 3 Worked" framing), `poster-size-dimensions-pixels` and `photo-restoration-program` (both pin "five welcome credits" via `gsc-opportunity-recovery.unit.spec.ts`), and `topaz-labs-free-trial` (pins "five welcome credits after signup" via `topaz-free-trial-snippet.unit.spec.ts`).
 - The blog admin API is currently returning `500 INTERNAL_ERROR "Server configuration error"` on every route including `GET /api/blog/posts`, so none of these could be read or corrected in this pass. Fix the API credential/config first, then apply the corrections and add one indexing row per changed URL.
+
+### Animated-GIF promise retired from every locale
+
+Source: [PRD 1 — Product Truth](../../PRDs/seo-recovery-2026-09/01-product-truth.md), acceptance criterion "no live page promises native animated-GIF processing"
+
+Changes:
+
+- `locales/{de,en,es,ja,pt}/formats.json` answered "Can I upscale animated GIFs?" with **"Yes! Our AI processes each frame individually while preserving the animation sequence and timing"** — flatly false, and the exact opposite of `app/seo/data/formats.json`, which already said "Not currently in our AI workspace." All five now mirror the honest source answer in their own language.
+- Scope note: for `en` the loader returns the source data (`loadLocalizedPSEOData` short-circuits on `locale === 'en'`), so the English copy was a stale divergent mirror rather than a rendering page. The de/es/ja/pt files do render for their locales when `formats` is localized, so those were live.
+- `capability-claims.unit.spec.ts` now gates it: the animated-GIF FAQ answer must not open with an affirmative in any published language, checked across `app/seo/data/formats.json` and every `locales/*/formats.json`.
+
+Validation:
+
+- Negative control observed failing after seeding `"¡Sí! Procesamos cada fotograma."` into `locales/es/formats.json`, then green after restore. The first attempt at this gate passed with the seeded violation because the regex did not allow a leading `¡`; the regex was corrected and the control re-run.
+- `yarn vitest run tests/unit` (5008 passed, 6 skipped) and `yarn verify` green.

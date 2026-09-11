@@ -911,7 +911,7 @@
       "faq": [
         {
           "question": "Can I upscale animated GIFs?",
-          "answer": "Yes! Our AI processes each frame individually while preserving the animation sequence and timing, resulting in higher-quality animated GIFs."
+          "answer": "Not currently in our AI workspace. Use a frame-aware GIF or video editor for animated files. For a static GIF, export the desired frame as PNG and upscale that image."
         },
         {
           "question": "Will upscaling fix GIF color banding?",
