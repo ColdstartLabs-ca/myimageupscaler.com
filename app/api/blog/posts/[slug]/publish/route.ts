@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
+import { revalidateBlogPaths } from '@lib/blog/revalidate-blog-paths';
 import { verifyBlogApiAuth, blogApiErrorResponse } from '@lib/middleware/blogApiAuth';
 import { publishBlogPost, getBlogPostBySlug } from '@server/services/blog.service';
 import { type ISingleResponse } from '@shared/validation/blog.schema';
@@ -38,8 +38,7 @@ export async function POST(
     if (existingPost.status === 'published') {
       logger.info('Blog post already published', { slug, id: existingPost.id });
       try {
-        revalidatePath('/blog');
-        revalidatePath(`/blog/${slug}`);
+        revalidateBlogPaths(slug);
         logger.info('Revalidated blog paths', { slug });
       } catch (revalidateError) {
         logger.warn('Failed to revalidate paths', { error: revalidateError });
@@ -63,8 +62,7 @@ export async function POST(
 
     // Trigger on-demand revalidation for instant visibility
     try {
-      revalidatePath('/blog');
-      revalidatePath(`/blog/${slug}`);
+      revalidateBlogPaths(slug);
       logger.info('Revalidated blog paths', { slug });
     } catch (revalidateError) {
       // Log but don't fail the request if revalidation fails

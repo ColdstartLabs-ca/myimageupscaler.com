@@ -7,7 +7,9 @@ const TOPAZ_FREE_TRIAL_SNIPPET = {
   title: 'Topaz Labs Free Trial 2026: Current Terms and Limits',
   seoDescription:
     'Need a Topaz free-trial alternative? Topaz Photo has no current trial, but MyImageUpscaler lets you upscale and enhance images in your browser.',
-  bodySupport: 'browser-based alternative with five welcome credits after signup',
+  // Tier-safe: the welcome grant is regional (5/3/0), so the published body must not
+  // name one tier's number. See tests/unit/seo/capability-claims.unit.spec.ts.
+  bodySupport: 'browser-based alternative with welcome credits after signup',
 } as const;
 
 describe('Topaz free-trial snippet recovery contract', () => {

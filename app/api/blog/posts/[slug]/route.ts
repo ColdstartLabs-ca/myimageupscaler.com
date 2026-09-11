@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
+import { revalidateBlogPaths } from '@lib/blog/revalidate-blog-paths';
 import { verifyBlogApiAuth, blogApiErrorResponse } from '@lib/middleware/blogApiAuth';
 import { getBlogPostBySlug, updateBlogPost, deleteBlogPost } from '@server/services/blog.service';
 import {
@@ -87,8 +87,7 @@ export async function PATCH(
     logger.info('Blog post updated successfully', { slug, id: post.id });
 
     try {
-      revalidatePath('/blog');
-      revalidatePath(`/blog/${slug}`);
+      revalidateBlogPaths(slug);
       logger.info('Revalidated blog paths', { slug });
     } catch (revalidateError) {
       logger.warn('Failed to revalidate blog paths', { slug, error: revalidateError });

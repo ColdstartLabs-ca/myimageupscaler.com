@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
+import { revalidateBlogPaths } from '@lib/blog/revalidate-blog-paths';
 import { verifyBlogApiAuth, blogApiErrorResponse } from '@lib/middleware/blogApiAuth';
 import { unpublishBlogPost, getBlogPostBySlug } from '@server/services/blog.service';
 import { type ISingleResponse } from '@shared/validation/blog.schema';
@@ -51,8 +51,7 @@ export async function POST(
 
     // Trigger on-demand revalidation to remove from public listings
     try {
-      revalidatePath('/blog');
-      revalidatePath(`/blog/${slug}`);
+      revalidateBlogPaths(slug);
       logger.info('Revalidated blog paths', { slug });
     } catch (revalidateError) {
       // Log but don't fail the request if revalidation fails

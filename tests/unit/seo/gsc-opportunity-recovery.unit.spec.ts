@@ -18,13 +18,13 @@ const RECOVERY_PAGES = {
     seoDescription:
       'Poster size in pixels = inches × DPI. See charts for 24×36, 18×24, A-series and more at 150, 200, and 300 DPI, plus minimum print resolution tips.',
     dpiTableNearTop: true,
-    welcomeCreditCopy: 'five welcome credits',
+    welcomeCreditCopy: 'welcome credits',
   },
   restorationComparison: {
     slug: 'photo-restoration-program',
     title: 'Best Photo Restoration Programs in 2026',
     seoTitle: 'Best Photo Restoration Programs 2026: 4 Options Compared',
-    welcomeCreditCopy: 'five welcome credits when you sign up',
+    welcomeCreditCopy: 'welcome credits when you sign up',
     failedComparisonRemoved: true,
   },
 } as const;
@@ -76,7 +76,7 @@ describe('GSC opportunity recovery contract', () => {
       'Poster size in pixels = inches × DPI. See charts for 24×36, 18×24, A-series and more at 150, 200, and 300 DPI, plus minimum print resolution tips.'
     );
     expect(page.dpiTableNearTop).toBe(true);
-    expect(page.welcomeCreditCopy).toBe('five welcome credits');
+    expect(page.welcomeCreditCopy).toBe('welcome credits');
     expect(page.welcomeCreditCopy).not.toContain('one-time');
   });
 
@@ -86,7 +86,7 @@ describe('GSC opportunity recovery contract', () => {
     expect(page.title).toContain('2026');
     expect(page.seoTitle).not.toContain('Tested');
     expect(page.failedComparisonRemoved).toBe(true);
-    expect(page.welcomeCreditCopy).toBe('five welcome credits when you sign up');
+    expect(page.welcomeCreditCopy).toBe('welcome credits when you sign up');
     expect(page.welcomeCreditCopy).not.toContain('one-time');
   });
 
