@@ -45,9 +45,9 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 
 ### Three Kings rung-2 descriptions — live verified, request pending
 
-- [ ] `https://myimageupscaler.com/blog/best-ai-upscaler` — `seo_description` updated through the production API on 2026-09-04; API and live cached HTML matched on 2026-09-07. Manual GSC request remains pending because native Brave control timed out.
-- [ ] `https://myimageupscaler.com/blog/topaz-video-upscaler` — `seo_description` updated through the production API on 2026-09-04; API and live cached HTML matched on 2026-09-07. Manual GSC request remains pending because native Brave control timed out.
-- [ ] `https://myimageupscaler.com/blog/best-image-upscaler` — `seo_description` updated through the production API on 2026-09-04; API and live cached HTML matched on 2026-09-07. Manual GSC request remains pending because native Brave control timed out.
+- [x] `https://myimageupscaler.com/blog/best-ai-upscaler` — indexing requested 2026-09-11, confirmed "added to a priority crawl queue" — `seo_description` updated through the production API on 2026-09-04; API and live cached HTML matched on 2026-09-07.
+- [x] `https://myimageupscaler.com/blog/topaz-video-upscaler` — indexing requested 2026-09-11, confirmed "added to a priority crawl queue" — `seo_description` updated through the production API on 2026-09-04; API and live cached HTML matched on 2026-09-07.
+- [x] `https://myimageupscaler.com/blog/best-image-upscaler` — indexing requested 2026-09-11, confirmed "added to a priority crawl queue" — `seo_description` updated through the production API on 2026-09-04; API and live cached HTML matched on 2026-09-07.
 
 ### Blog index parameter deindex signal — request after deployment
 
