@@ -117,6 +117,7 @@
     "validate:seo:schema": "tsx scripts/validate-schema.ts",
     "seo:blog:indexation": "tsx scripts/seo/blog-indexation-report.ts",
     "seo:ctr:report": "tsx scripts/seo/ctr-report.ts",
+    "seo:funnel:report": "tsx scripts/seo/organic-funnel-report.ts",
     "db:backup": "chmod +x ./scripts/db-backup.sh && ./scripts/db-backup.sh export",
     "db:export": "chmod +x ./scripts/db-backup.sh && ./scripts/db-backup.sh export",
     "db:import": "chmod +x ./scripts/db-backup.sh && ./scripts/db-backup.sh import",

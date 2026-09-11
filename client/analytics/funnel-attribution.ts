@@ -42,7 +42,8 @@ export function buildOrganicFunnelDimensions({
   mode,
 }: IOrganicFunnelDimensionInput): IOrganicFunnelDimensions {
   return {
-    landing_page: normalizeLandingPage(firstTouchLandingPage) ?? normalizeLandingPage(entryPage) ?? '/',
+    landing_page:
+      normalizeLandingPage(firstTouchLandingPage) ?? normalizeLandingPage(entryPage) ?? '/',
     device: detectDevice(userAgent),
     mode: normalizeMode(mode),
   };
