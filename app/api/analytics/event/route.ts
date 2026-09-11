@@ -368,11 +368,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         });
       });
 
+    // 5.5. Enrich with the edge-resolved country. The browser cannot be trusted
+    // for this dimension and the funnel report joins on it.
+    const country = req.headers.get('cf-ipcountry') || undefined;
+
     // 6. Track the event
     const success = await trackServerEvent(
       eventName,
       {
         ...properties,
+        country: country && country !== 'XX' ? country.toUpperCase() : undefined,
         sessionId,
         source: 'api',
       },

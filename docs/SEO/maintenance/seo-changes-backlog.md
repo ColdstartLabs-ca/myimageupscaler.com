@@ -2610,3 +2610,26 @@ Follow-up:
 
 - Non-gated surfaces (`alternatives.json`, `comparisons-expanded.json`, `content.json`) still hardcode "5 free credits" and need the same pass.
 - Request indexing for `/`, `/free/*` and `/tools/ai-image-upscaler` after deploy.
+
+### Organic Funnel Attribution & Blog URL Hygiene
+
+Source: [PRD 2 — Funnel Measurement & URL Hygiene](../../PRDs/seo-recovery-2026-09/02-funnel-and-url-hygiene.md)
+
+Changes:
+
+- Added `client/analytics/funnel-attribution.ts` deriving `landing_page`, `device` and `mode` from the existing first-touch store. No second attribution cookie was introduced; `miu_first_touch_utm` remains the only one.
+- Wired those dimensions into every tracked event through `analyticsClient.buildTrackedEventProperties`.
+- `app/api/analytics/event/route.ts` now stamps `country` from the edge-resolved `cf-ipcountry` header instead of trusting the browser.
+- Added the offline `yarn seo:funnel:report` script (`scripts/seo/organic-funnel-report.ts`) that joins GA4 funnel rows with GSC landing pages and splits branded from non-brand demand. No report work runs on the request path.
+- Replaced the blog index's intent-path and topic-filter links to noindex `/blog?q=` URLs with the client-side `BlogQueryLink` control. Ordinary `page=` pagination stays crawlable.
+
+Validation:
+
+- `tests/unit/seo/organic-funnel-attribution.unit.spec.ts` and the extended `blog-index-params-noindex.unit.spec.ts` observed red before implementation, green after.
+- `yarn vitest run tests/unit` (4997 passed) and `yarn verify` green.
+
+Follow-up:
+
+- Confirm the new dimensions land in GA4/Amplitude after deploy before trusting the first report run.
+- Run `yarn seo:funnel:report` for the last 28 days and commit the artifact under `seo-reports/`.
+||||||| bc3dd5ab

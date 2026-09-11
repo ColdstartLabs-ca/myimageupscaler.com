@@ -35,6 +35,7 @@ import { multiplexer } from '@shared/analytics/analyticsMultiplexer';
 import { AmplitudeProvider } from '@shared/analytics/providers/amplitude-provider';
 import { GA4Provider } from '@shared/analytics/providers/ga4-provider';
 import { getBrowserReferralSource } from './referralSource';
+import { buildOrganicFunnelDimensions } from '@client/analytics/funnel-attribution';
 
 // =============================================================================
 // Constants
@@ -245,7 +246,7 @@ function buildTrackedEventProperties(
 ): Record<string, unknown> {
   return {
     ...properties,
-    ...getEventAttributionProperties(),
+    ...getEventAttributionProperties(properties),
     session_id: getSessionId(),
     timestamp: Date.now(),
   };
@@ -310,14 +311,25 @@ export function buildMonetizationSurfaceEvent(
   };
 }
 
-function getEventAttributionProperties(): Record<string, unknown> {
+function getEventAttributionProperties(
+  properties?: Record<string, unknown>
+): Record<string, unknown> {
   if (typeof window === 'undefined') return {};
 
   const firstTouchUtm = getStoredFirstTouchUtm() || getFirstTouchUtmFromCookie();
+  const entryPage = getEntryPage() || window.location.pathname;
 
   return {
-    entry_page: getEntryPage() || window.location.pathname,
+    entry_page: entryPage,
     referral_source: getReferralSource() || undefined,
+    // Organic funnel dimensions are derived from the existing first-touch
+    // store; PRD 2 explicitly forbids a second attribution cookie.
+    ...buildOrganicFunnelDimensions({
+      entryPage,
+      firstTouchLandingPage: firstTouchUtm?.landingPage,
+      userAgent: typeof navigator === 'undefined' ? null : navigator.userAgent,
+      mode: properties?.mode ?? properties?.upscaleMode,
+    }),
     first_touch_utm_source: firstTouchUtm?.utmSource,
     first_touch_utm_medium: firstTouchUtm?.utmMedium,
     first_touch_utm_campaign: firstTouchUtm?.utmCampaign,
