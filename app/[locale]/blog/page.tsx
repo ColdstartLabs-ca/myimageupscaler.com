@@ -16,6 +16,7 @@ import {
 import { clientEnv } from '@shared/config/env';
 import { AmbientBackground } from '@client/components/landing/AmbientBackground';
 import { BlogSearch } from '@client/components/blog/BlogSearch';
+import { BlogQueryLink } from '@client/components/blog/BlogQueryLink';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Locale } from '@/i18n/config';
 import { getOpenGraphMetadata, getCanonicalUrl } from '@lib/seo/hreflang-generator';
@@ -288,10 +289,10 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
               <BlogSearch />
               <div className="mt-5 grid gap-3">
                 {INTENT_PATHS.map(path => (
-                  <Link
+                  <BlogQueryLink
                     key={path.label}
-                    href={`/blog?q=${encodeURIComponent(path.query)}`}
-                    className="group rounded-xl border border-border bg-main/40 p-4 transition-all hover:border-accent/50 hover:bg-accent/10"
+                    query={path.query}
+                    className="group w-full rounded-xl border border-border bg-main/40 p-4 text-left transition-all hover:border-accent/50 hover:bg-accent/10"
                   >
                     <div className="flex items-center justify-between gap-3">
                       <h3 className="font-semibold text-primary transition-colors group-hover:text-accent">
@@ -302,7 +303,7 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
                     <p className="mt-1 text-sm leading-relaxed text-text-secondary">
                       {path.description}
                     </p>
-                  </Link>
+                  </BlogQueryLink>
                 ))}
               </div>
             </div>
@@ -311,13 +312,13 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <span className="text-sm font-semibold text-text-secondary">Popular topics</span>
             {TOPIC_FILTERS.map(topic => (
-              <Link
+              <BlogQueryLink
                 key={topic}
-                href={`/blog?q=${encodeURIComponent(topic)}`}
+                query={topic}
                 className="rounded-full border border-border bg-surface/70 px-3 py-1.5 text-sm text-text-secondary transition-all hover:border-accent/50 hover:text-accent"
               >
                 {topic}
-              </Link>
+              </BlogQueryLink>
             ))}
           </div>
         </div>

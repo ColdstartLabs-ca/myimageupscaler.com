@@ -27,4 +27,15 @@ describe('blog index search and pagination robots', () => {
     expect(pageSource).toContain("const canonicalUrl = getCanonicalUrl('/blog', locale);");
     expect(pageSource).toMatch(/alternates:\s*{[\s\S]*canonical:\s*canonicalUrl,[\s\S]*}/);
   });
+
+  it('does not emit internal links to noindex search-result URLs', () => {
+    expect(pageSource).not.toContain('href={`/blog?q=${encodeURIComponent(path.query)}`}');
+    expect(pageSource).not.toContain('href={`/blog?q=${encodeURIComponent(topic)}`}');
+  });
+
+  it('keeps ordinary pagination discoverable', () => {
+    expect(pageSource).toContain('page=${currentPage - 1}');
+    expect(pageSource).toContain('page=${item}');
+    expect(pageSource).toContain('page=${currentPage + 1}');
+  });
 });
