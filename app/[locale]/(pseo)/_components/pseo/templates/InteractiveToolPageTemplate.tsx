@@ -24,7 +24,6 @@ import { FormatConverter } from '@/app/(pseo)/_components/tools/FormatConverter'
 import { BulkImageCompressor } from '@/app/(pseo)/_components/tools/BulkImageCompressor';
 import { BulkImageResizer } from '@/app/(pseo)/_components/tools/BulkImageResizer';
 import { BackgroundRemover } from '@/app/(pseo)/_components/tools/BackgroundRemover';
-import { GuestUpscaler } from '@/app/(pseo)/_components/tools/GuestUpscaler';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
@@ -34,7 +33,6 @@ const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   BulkImageCompressor,
   BulkImageResizer,
   BackgroundRemover,
-  GuestUpscaler,
 };
 
 /**

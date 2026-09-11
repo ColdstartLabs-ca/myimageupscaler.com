@@ -5,9 +5,9 @@
       "slug": "ai-image-upscaler",
       "title": "AI Image Upscaler",
       "metaTitle": "Free AI Image Upscaler - Enlarge Images to 8x",
-      "metaDescription": "Upscale images up to 8x with AI. Create an account for 5 credits, process without watermarks, and preserve text and details.",
+      "metaDescription": "Upscale images up to 8x with AI. Create an account for welcome credits, process without watermarks, and preserve text and details.",
       "h1": "Free AI Image Upscaler - Enlarge Images Up to 8x Online",
-      "intro": "Use this AI image upscaler to enlarge photos up to 8x online without watermarks. Create an account for 5 credits. The AI preserves sharpness and adds realistic detail instead of just stretching pixels.",
+      "intro": "Use this AI image upscaler to enlarge photos up to 8x online without watermarks. Create an account for welcome credits. The AI preserves sharpness and adds realistic detail instead of just stretching pixels.",
       "primaryKeyword": "ai image upscaler",
       "secondaryKeywords": [
         "image upscaler",
@@ -41,7 +41,7 @@
         },
         {
           "title": "Multiple Formats",
-          "description": "Upload JPEG, PNG, or WebP. Download in any format with quality settings."
+          "description": "Upload JPEG, PNG, WebP, or HEIC. Download in any format with quality settings."
         },
         {
           "title": "Fast Processing",
@@ -50,7 +50,7 @@
       ],
       "technicalSpecs": {
         "maxInputSize": "64MB (5MB on free tier)",
-        "supportedFormats": ["JPEG", "PNG", "WebP"],
+        "supportedFormats": ["JPEG", "PNG", "WebP", "HEIC"],
         "maxUpscale": "8x",
         "processingTime": "30-60 seconds typical",
         "outputFormats": ["JPEG", "PNG", "WebP"],
@@ -82,7 +82,7 @@
         {
           "title": "Real Detail Generation",
           "description": "AI adds plausible detail rather than just interpolating pixels. Edges stay sharp, textures look natural.",
-          "metric": "Neural network trained on millions of image pairs"
+          "metric": "AI-assisted detail reconstruction"
         },
         {
           "title": "Preserves What Matters",
@@ -99,7 +99,7 @@
         {
           "step": 1,
           "title": "Upload Your Image",
-          "description": "Drag and drop or click to browse. Supports JPEG, PNG, WebP up to 64MB."
+          "description": "Drag and drop or click to browse. Supports JPEG, PNG, WebP, and HEIC."
         },
         {
           "step": 2,
@@ -115,7 +115,7 @@
       "commonQuestions": [
         {
           "question": "How is this different from Photoshop's Image Size?",
-          "answer": "Photoshop's bicubic scaling just interpolates between pixels, creating blur. Our AI actually generates new detail based on patterns learned from millions of images. The result is sharper edges and more realistic textures."
+          "answer": "Photoshop's bicubic scaling just interpolates between pixels, creating blur. The AI reconstructs plausible detail rather than averaging neighbouring pixels. The result is sharper edges and more realistic textures."
         },
         {
           "question": "What's the maximum I can upscale?",
@@ -127,7 +127,7 @@
         },
         {
           "question": "How many images can I upscale for free?",
-          "answer": "New accounts receive 5 free credits with no watermarks. Purchase credits or a paid plan to continue after they are used."
+          "answer": "New accounts receive welcome credits with no watermarks. Purchase credits or a paid plan to continue after they are used."
         },
         {
           "question": "Are my images stored on your servers?",
@@ -137,11 +137,11 @@
       "faq": [
         {
           "question": "Is the AI image upscaler free?",
-          "answer": "Yes. New accounts receive 5 free credits with no watermarks. Free credits do not renew; purchase credits or a paid plan to continue."
+          "answer": "Yes. New accounts receive welcome credits with no watermarks. Welcome credits do not renew; purchase credits or a paid plan to continue."
         },
         {
           "question": "What formats are supported?",
-          "answer": "Upload JPEG, PNG, or WebP. Download in any of these formats. Max file size is 64MB (5MB on free tier)."
+          "answer": "Upload JPEG, PNG, WebP, or HEIC. Download in any of these formats. Max file size is 64MB (5MB on free tier)."
         },
         {
           "question": "How long does upscaling take?",
@@ -214,7 +214,7 @@
       ],
       "technicalSpecs": {
         "maxInputSize": "64MB (5MB on free tier)",
-        "supportedFormats": ["JPEG", "PNG", "WebP"],
+        "supportedFormats": ["JPEG", "PNG", "WebP", "HEIC"],
         "processingTime": "20-45 seconds typical",
         "outputFormats": ["JPEG", "PNG", "WebP"],
         "preservesExif": "Optional - keep or strip metadata"
@@ -300,7 +300,7 @@
       "faq": [
         {
           "question": "Is the photo enhancer free?",
-          "answer": "Yes. New accounts receive 5 free credits with no watermarks. Purchase credits or a paid plan to continue after they are used."
+          "answer": "Yes. New accounts receive welcome credits with no watermarks. Purchase credits or a paid plan to continue after they are used."
         },
         {
           "question": "What types of photos work best?",

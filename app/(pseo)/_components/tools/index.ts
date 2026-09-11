@@ -7,7 +7,6 @@ export { InteractiveTool } from './InteractiveTool';
 export { BackgroundRemover } from './BackgroundRemover';
 export { BackgroundChanger } from './BackgroundChanger';
 export { HeicConverter } from './HeicConverter';
-export { GuestUpscaler } from './GuestUpscaler';
 export { ImageToText } from './ImageToText';
 export { PdfToImageConverter } from './PdfToImageConverter';
 export { ImageToPdfConverter } from './ImageToPdfConverter';

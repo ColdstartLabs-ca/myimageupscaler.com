@@ -2584,6 +2584,33 @@ Follow-up:
 
 - Deploy preview with interception enabled and complete the cold, stale-hit, route-class, on-demand revalidation, and five-minute soak checks before production rollout.
 
+## 2026-09-10
+
+### Product Truth: one accurate offer on every page
+
+Source: [PRD 1 — Product Truth](../../PRDs/seo-recovery-2026-09/01-product-truth.md)
+
+Changes:
+
+- Added `shared/config/product-capabilities.ts` as the single derived source for welcome credits, guest access, direct-upload formats, max scale, batch limits and credit costs. No number is retyped; all values come from `credits.config.ts`, `region-classifier.ts`, `model-costs.config.ts` and `upscale.schema.ts`.
+- Wired `HeroSection`, `SectionSignupCTA`, `app/(pseo)/free/page.tsx` and the pSEO `CTASection` to that source instead of hardcoded literals.
+- Replaced every hardcoded "5 / 3 / 10 free credits" claim in `app/seo/data/{free,tools,comparison,scale}.json`, `locales/en/*` and the published blog bodies with tier-safe "welcome credits" wording, since the grant is 5 / 3 / 0 by region.
+- Corrected the account-backed pages that implied guest upscaling ("No sign up"); the browser-side background remover keeps its accurate no-account copy.
+- Added HEIC to the tool page's direct-upload format list to match `IMAGE_VALIDATION.ALLOWED_TYPES`, and softened unverifiable absolutes (perfect text preservation, training-set size, artifact-free).
+- Deleted the rejected `GuestUpscaler` scaffolding and its orphaned spec.
+- Kept "Free" in the homepage meta title: the free tier is real, and `cannibalization` / `hreflang-data-aware` guard that token as a click driver.
+
+Validation:
+
+- New gate `tests/unit/seo/capability-claims.unit.spec.ts` fails with file + JSON path + claimed value; observed red against the real pSEO JSON before the copy pass.
+- Superseded credit assertions in `tools-metadata` and `commercial-landing-funnel` folded onto the tier-safe wording so one fact has one gate.
+- `yarn vitest run tests/unit` (4991 passed) and `yarn verify` green.
+
+Follow-up:
+
+- Non-gated surfaces (`alternatives.json`, `comparisons-expanded.json`, `content.json`) still hardcode "5 free credits" and need the same pass.
+- Request indexing for `/`, `/free/*` and `/tools/ai-image-upscaler` after deploy.
+
 ### Organic Funnel Attribution & Blog URL Hygiene
 
 Source: [PRD 2 — Funnel Measurement & URL Hygiene](../../PRDs/seo-recovery-2026-09/02-funnel-and-url-hygiene.md)
@@ -2605,3 +2632,4 @@ Follow-up:
 
 - Confirm the new dimensions land in GA4/Amplitude after deploy before trusting the first report run.
 - Run `yarn seo:funnel:report` for the last 28 days and commit the artifact under `seo-reports/`.
+||||||| bc3dd5ab
