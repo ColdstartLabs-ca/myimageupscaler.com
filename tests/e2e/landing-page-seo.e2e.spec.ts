@@ -5,7 +5,9 @@ import { test, expect } from '../test-fixtures';
  *
  * Tests the actual SEO metadata from the landing page:
  * - Meta title from locales/en/common.json meta.homepage.title
- * - Meta description contains enhance/upscale/ai/free keywords
+ * - Meta description contains enhance/upscale/ai keywords (no "free" claim: see
+ *   SEO Recovery PRD 1 "Product Truth" - the product has no free tier, only a
+ *   region-dependent welcome credit grant)
  * - H1: "AI Image Upscaler & Photo Enhancer" (heroTitle + heroTitleHighlight)
  * - H2 subheadline exists
  */
@@ -35,8 +37,8 @@ test.describe('Landing Page SEO', () => {
       // Verify contains "ai"
       expect(metaDescription?.toLowerCase()).toContain('ai');
 
-      // Verify contains "free"
-      expect(metaDescription?.toLowerCase()).toContain('free');
+      // Must NOT promise a free tier - product truth constraint
+      expect(metaDescription?.toLowerCase()).not.toMatch(/\bfree\b/);
     });
 
     test('Verify canonical URL is set correctly', async ({ page }) => {

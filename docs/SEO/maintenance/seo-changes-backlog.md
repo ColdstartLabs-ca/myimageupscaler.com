@@ -2653,3 +2653,16 @@ Follow-up:
 
 - The poster article (`/blog/poster-size-dimensions-pixels`) lives in Supabase. Insert the `[!CTA_PRINT_READINESS]` marker via `PATCH /api/blog/posts/poster-size-dimensions-pixels` after deploy; the component ships unreferenced until then.
 - Re-measure poster CTR and activation 14 days after the marker lands.
+
+### Landing-page meta e2e aligned with Product Truth
+
+Source: follow-up to [PRD 1 — Product Truth](../../PRDs/seo-recovery-2026-09/01-product-truth.md)
+
+Changes:
+
+- `tests/e2e/landing-page-seo.e2e.spec.ts` still asserted the homepage meta description contained "free". PRD 1 removed that claim (there is no free tier, only a region-dependent welcome credit grant), so the test failed against correct copy.
+- Replaced the stale positive assertion with a negative one: the description must NOT contain "free". The test now guards the product-truth constraint instead of fighting it.
+
+Validation:
+
+- `yarn playwright test tests/e2e/landing-page-seo.e2e.spec.ts --project=chromium` — 20 passed.
