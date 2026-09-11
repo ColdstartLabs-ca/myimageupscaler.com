@@ -2583,3 +2583,24 @@ Validation:
 Follow-up:
 
 - Deploy preview with interception enabled and complete the cold, stale-hit, route-class, on-demand revalidation, and five-minute soak checks before production rollout.
+
+### Page Recovery: 16x honesty and the print-readiness checker
+
+Source: [PRD 3 — Page Recovery](../../PRDs/seo-recovery-2026-09/03-page-recovery.md)
+
+Changes:
+
+- Aligned `locales/en/scale.json` `upscale-16x` with the shipped workflow: two 4x passes with an inspection step between them, instead of implying a single 16x request. Source data already described it honestly; the locale copy did not.
+- Added `client/utils/print-readiness.ts` and the `PrintReadinessChecker` component. All PPI/scale math runs in the browser — no image bytes and no CPU reach the Worker.
+- Wired the checker into `BlogCTA` behind the `[!CTA_PRINT_READINESS]` marker and registered the `print_readiness_checked` analytics event.
+- Recorded dated recovery baselines under `seo-reports/homepage-change-log-2026-09.md` and `seo-reports/comparison-ctr-diagnosis-2026-09.md` before changing the pages they describe.
+
+Validation:
+
+- `tests/unit/seo/page-recovery-contract.unit.spec.ts` observed red before implementation, green after.
+- `yarn vitest run tests/unit` (4994 passed) and `yarn verify` green.
+
+Follow-up:
+
+- The poster article (`/blog/poster-size-dimensions-pixels`) lives in Supabase. Insert the `[!CTA_PRINT_READINESS]` marker via `PATCH /api/blog/posts/poster-size-dimensions-pixels` after deploy; the component ships unreferenced until then.
+- Re-measure poster CTR and activation 14 days after the marker lands.

@@ -60,8 +60,8 @@ export function PrintReadinessChecker(): ReactElement {
           </p>
           <h3 className="mt-1 text-xl font-bold text-primary">Will these pixels print sharply?</h3>
           <p className="mt-1 text-sm leading-6 text-muted-foreground">
-            Enter the image dimensions and intended print size. The calculation happens entirely
-            in your browser; no image upload is required.
+            Enter the image dimensions and intended print size. The calculation happens entirely in
+            your browser; no image upload is required.
           </p>
         </div>
       </div>

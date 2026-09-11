@@ -97,6 +97,8 @@ const ALLOWED_EVENTS = [
   'pseo_scroll_depth',
   'pseo_faq_expanded',
   'pseo_internal_link_clicked',
+  // Print-readiness checker (browser-side math, event only)
+  'print_readiness_checked',
   // Homepage activation events
   'hero_upload_cta_clicked',
   // Checkout funnel events (Phase 1 - Checkout Friction Investigation)

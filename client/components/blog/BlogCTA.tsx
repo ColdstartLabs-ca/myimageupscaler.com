@@ -9,6 +9,7 @@
  * - demo: Before/after demo CTA with visual appeal
  * - pricing: Focused on value proposition and pricing
  * - tool: Tool-specific CTA with feature highlights
+ * - printReadiness: Browser-side print-readiness checker (poster/print articles)
  */
 
 import { ArrowRight, Zap, Check } from 'lucide-react';
@@ -17,8 +18,9 @@ import Link from 'next/link';
 import { ReactElement } from 'react';
 import { useTranslations } from 'next-intl';
 import { getPageIntent } from '@lib/seo/page-intent';
+import { PrintReadinessChecker } from '@client/components/blog/PrintReadinessChecker';
 
-export type BlogCTAType = 'try' | 'demo' | 'pricing' | 'tool';
+export type BlogCTAType = 'try' | 'demo' | 'pricing' | 'tool' | 'printReadiness';
 
 interface IBlogCTAProps {
   type: BlogCTAType;
@@ -45,6 +47,7 @@ const CTA_HREF: Record<BlogCTAType, string> = {
   demo: '/?signup=1',
   pricing: '/pricing',
   tool: '/?signup=1',
+  printReadiness: '/?signup=1',
 };
 
 export function BlogCTA({
@@ -63,6 +66,12 @@ export function BlogCTA({
 
   const displayTitle = title || t(`${type}.title`);
   const displayDescription = description || t(`${type}.description`);
+  // Print-readiness is an interactive tool, not a banner. All of its math runs
+  // in the browser so no image bytes or CPU reach the Worker.
+  if (type === 'printReadiness') {
+    return <PrintReadinessChecker />;
+  }
+
   const href = customHref || (toolSlug ? `/tools/${toolSlug}` : CTA_HREF[type]);
   const buttonText = buttonLabel || (toolName ? `Try ${toolName} Free` : t(`${type}.button`));
 
@@ -312,7 +321,7 @@ function FullCTA({
 
 /**
  * Parses CTA markers from markdown content and returns the CTA type.
- * Markers: [!CTA_TRY], [!CTA_DEMO], [!CTA_PRICING], [!CTA_TOOL:slug]
+ * Markers: [!CTA_TRY], [!CTA_DEMO], [!CTA_PRICING], [!CTA_TOOL:slug], [!CTA_PRINT_READINESS]
  */
 export function parseCTAMarker(text: string): { type: BlogCTAType; toolSlug?: string } | null {
   const trimmed = text.trim();
@@ -320,6 +329,7 @@ export function parseCTAMarker(text: string): { type: BlogCTAType; toolSlug?: st
   if (trimmed.match(/^\[!CTA_TRY\]$/)) return { type: 'try' };
   if (trimmed.match(/^\[!CTA_DEMO\]$/)) return { type: 'demo' };
   if (trimmed.match(/^\[!CTA_PRICING\]$/)) return { type: 'pricing' };
+  if (trimmed.match(/^\[!CTA_PRINT_READINESS\]$/)) return { type: 'printReadiness' };
 
   const toolMatch = trimmed.match(/^\[!CTA_TOOL(?::([^\]]+))?\]$/);
   if (toolMatch) return { type: 'tool', toolSlug: toolMatch[1] };
