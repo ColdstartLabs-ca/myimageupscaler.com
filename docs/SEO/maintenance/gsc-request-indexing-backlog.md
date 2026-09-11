@@ -51,7 +51,7 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 
 ### Blog index parameter deindex signal — request after deployment
 
-- [ ] `https://myimageupscaler.com/blog` — reopened 2026-09-07 for the blog index parameter deindex signal. **Verification done 2026-09-10 post-deploy:** `/blog?page=2&q=4k` returns `200` with `noindex, follow` and canonical `https://myimageupscaler.com/blog`; `/blog` itself is `index, follow`. Only the manual GSC recrawl request for the clean blog index is still outstanding.
+- [x] `https://myimageupscaler.com/blog` — indexing requested 2026-09-11, confirmed "added to a priority crawl queue" — reopened 2026-09-07 for the blog index parameter deindex signal. **Verification done 2026-09-10 post-deploy:** `/blog?page=2&q=4k` returns `200` with `noindex, follow` and canonical `https://myimageupscaler.com/blog`; `/blog` itself is `index, follow`.
 
 ### Dashboard noindex cleanup — request after deployment
 
@@ -87,10 +87,10 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 - [x] `https://myimageupscaler.com/blog/damaged-old-photographs` — indexing requested 2026-08-25, confirmed "added to a priority crawl queue"
 - [x] `https://myimageupscaler.com/blog/turn-image-into-illustration` — indexing requested 2026-08-25, confirmed "added to a priority crawl queue"
 - [x] `https://myimageupscaler.com/blog/what-is-8k-image-resolution` — indexing requested 2026-08-25, confirmed "added to a priority crawl queue"
-- [ ] `https://myimageupscaler.com/blog/photo-restoration-near-me`
+- [x] `https://myimageupscaler.com/blog/photo-restoration-near-me` — indexing requested 2026-09-11, confirmed "added to a priority crawl queue"
 - [x] `https://myimageupscaler.com/blog/noise-reduction-in-images` — indexing requested 2026-08-28, confirmed "added to a priority crawl queue"
 - [x] `https://myimageupscaler.com/blog/ai-image-extender` — indexing requested 2026-08-28, confirmed "added to a priority crawl queue"
-- [ ] `https://myimageupscaler.com/blog/how-to-enhance-a-picture-in-photoshop`
+- [x] `https://myimageupscaler.com/blog/how-to-enhance-a-picture-in-photoshop` — indexing requested 2026-09-11, confirmed "added to a priority crawl queue"
 - [ ] `https://myimageupscaler.com/blog/what-is-denoising`
 - [ ] `https://myimageupscaler.com/blog/image-out-of-focus`
 - [ ] `https://myimageupscaler.com/blog/enhance-picture-quality-ai`
