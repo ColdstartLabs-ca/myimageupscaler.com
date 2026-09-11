@@ -2711,3 +2711,28 @@ Validation:
 
 - Negative control observed failing after seeding `"¡Sí! Procesamos cada fotograma."` into `locales/es/formats.json`, then green after restore. The first attempt at this gate passed with the seeded violation because the regex did not allow a leading `¡`; the regex was corrected and the control re-run.
 - `yarn vitest run tests/unit` (5008 passed, 6 skipped) and `yarn verify` green.
+
+### Post-deploy verification — 2026-09-10
+
+The Worker secret allowlist fix and the product-truth copy pass are live. Verified against production:
+
+| Check                                                                                         | Result                                                                                                        |
+| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `GET /api/blog/posts` (with key)                                                              | `200` — was `500 INTERNAL_ERROR`                                                                              |
+| `GET /api/blog/posts` (no key)                                                                | `401` — auth still enforced                                                                                   |
+| Worker secrets                                                                                | 16 → **27**; all 11 previously-missing vars present                                                           |
+| R2 deploy-only S3 credentials                                                                 | correctly **absent** from the Worker                                                                          |
+| `/`, `/tools/ai-image-upscaler`, `/scale/upscale-16x`, `/blog`, `/formats/upscale-gif-images` | all `200`                                                                                                     |
+| `format-scale/gif-upscale-16x`                                                                | still `301` → `/formats/upscale-gif-images`                                                                   |
+| `/blog?page=2&q=4k`                                                                           | `200`, `noindex, follow`, canonical `/blog`                                                                   |
+| Animated-GIF FAQ answer (en)                                                                  | honest answer live, including in FAQ schema                                                                   |
+| Animated-GIF FAQ answer (es)                                                                  | old "Nuestra IA procesa cada frame" claim gone                                                                |
+| `no signup` on account-backed pages                                                           | gone; remaining hits are the browser-side `image-resizer` / `bulk-image-compressor` links, which are truthful |
+| Tier-safe credit copy                                                                         | `"freeCredits":"Welcome credits"` live                                                                        |
+
+**Consequence for measurement:** `GA4_API_SECRET` only reached the Worker with this deploy, so `trackGA4ServerEvent` was a no-op until 2026-09-10. Server-side GA4 conversions — including Stripe purchases — are absent from all earlier data. Start the funnel baseline from this deploy; do not compare against prior GA4 conversion figures.
+
+Follow-up:
+
+- Request indexing for the 58 changed pSEO URLs (grouped in the [GSC request indexing backlog](./gsc-request-indexing-backlog.md); 9 prioritised).
+- Now unblocked: the four Supabase-only posts listed under PRD 1's "Outstanding" section, and PRD 3 Phase 2 — the blog admin API works again.

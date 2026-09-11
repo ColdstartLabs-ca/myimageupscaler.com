@@ -305,5 +305,5 @@ available. Do not treat the pre-fix rates above as a post-deploy measurement.
   - `OUTRANK_WEBHOOK_SECRET`, `OPENROUTER_API_KEY`, `CLOUDFLARE_API_TOKEN`, `STRIPE_ENGAGEMENT_DISCOUNT_COUPON_ID`
 - **Why it stayed hidden:** `AMPLITUDE_API_KEY` was saved by its `NEXT_PUBLIC_` fallback (added deliberately — see `tests/unit/config/amplitude-env-fallback.unit.spec.ts`), and `serverEnv.ENV` falls back to `NODE_ENV`, so the obvious canaries kept working.
 - **Fix:** all 11 added to the allowlist in `scripts/deploy/steps/05-secrets.sh`, guarded by `tests/unit/deploy/worker-secret-allowlist.unit.spec.ts`, which also asserts the deploy-only R2 S3 credentials are never uploaded to the Worker. Observed red (11 failures) before the fix, green after.
-- **Next action:** **Deploy.** The secrets upload on the next `yarn deploy`; nothing takes effect until then. After deploying, confirm `GET /api/blog/posts` returns 200 and that server-side GA4 purchase events appear, then re-check PRD 2's funnel numbers — any GA4 conversion data from before this deploy is missing its server-side half.
-- **Status:** Fixed in repo, pending deploy
+- **Next action:** Done — deployed 2026-09-10. Verified: Worker secrets 16 → 27 with all 11 present, R2 deploy-only credentials still absent, `GET /api/blog/posts` returns `200` with a key and `401` without. Remaining: confirm server-side GA4 conversions appear in GA4 now that `GA4_API_SECRET` reaches the Worker, and treat all pre-2026-09-10 GA4 conversion data as missing its server-side half.
+- **Status:** Resolved (deployed 2026-09-10)

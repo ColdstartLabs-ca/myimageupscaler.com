@@ -51,7 +51,7 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 
 ### Blog index parameter deindex signal — request after deployment
 
-- [ ] `https://myimageupscaler.com/blog` — reopened 2026-09-07 for the blog index parameter deindex signal; after deploy, verify parameter URLs such as `/blog?page=2&q=4k` emit `noindex, follow` with canonical `/blog`, then request recrawl for the clean blog index.
+- [ ] `https://myimageupscaler.com/blog` — reopened 2026-09-07 for the blog index parameter deindex signal. **Verification done 2026-09-10 post-deploy:** `/blog?page=2&q=4k` returns `200` with `noindex, follow` and canonical `https://myimageupscaler.com/blog`; `/blog` itself is `index, follow`. Only the manual GSC recrawl request for the clean blog index is still outstanding.
 
 ### Dashboard noindex cleanup — request after deployment
 
@@ -149,3 +149,76 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 - [x] `https://myimageupscaler.com/blog/video-upscaling-software`
 - [x] `https://myimageupscaler.com/scale/upscale-16x`
 - [x] `https://myimageupscaler.com/tools/ai-image-upscaler`
+
+## Product-truth copy pass — deployed 2026-09-10
+
+58 pSEO pages had their `metaTitle`/`metaDescription` changed by the product-truth pass: the false `no signup` claim was removed from account-backed upscaling pages, and hardcoded regional credit grants were made tier-safe. These are SERP-visible snippet changes, so they only matter once Google recrawls. Grouped rather than listed as 58 separate rows — GSC's manual URL Inspection quota makes one-by-one requests impractical.
+
+Request these first (named in the source audit or highest traffic):
+
+- [ ] `https://myimageupscaler.com/formats/upscale-avif-images`
+- [ ] `https://myimageupscaler.com/formats/upscale-heic-images`
+- [ ] `https://myimageupscaler.com/formats/upscale-raw-images`
+- [ ] `https://myimageupscaler.com/formats/upscale-svg-images`
+- [ ] `https://myimageupscaler.com/scale/pixel-boost-upscaler`
+- [ ] `https://myimageupscaler.com/scale/ultra-hd-upscaler`
+- [ ] `https://myimageupscaler.com/scale/upscale-8x`
+- [ ] `https://myimageupscaler.com/scale/upscale-to-4k`
+- [ ] `https://myimageupscaler.com/scale/upscale-to-hd`
+
+Then the remaining 49 as quota allows — or simply let the sitemap `lastmod` carry them:
+
+<details>
+<summary>Remaining changed URLs</summary>
+
+- [ ] `https://myimageupscaler.com/camera-raw/upscale-nef-images`
+- [ ] `https://myimageupscaler.com/device-use/desktop-ecommerce-upscaler`
+- [ ] `https://myimageupscaler.com/device-use/desktop-graphic-design-upscaler`
+- [ ] `https://myimageupscaler.com/device-use/desktop-photo-editing-upscaler`
+- [ ] `https://myimageupscaler.com/device-use/desktop-presentations-upscaler`
+- [ ] `https://myimageupscaler.com/device-use/desktop-professional-printing-upscaler`
+- [ ] `https://myimageupscaler.com/device-use/desktop-video-thumbnails-upscaler`
+- [ ] `https://myimageupscaler.com/device-use/mobile-content-creation-upscaler`
+- [ ] `https://myimageupscaler.com/device-use/mobile-ecommerce-upscaler`
+- [ ] `https://myimageupscaler.com/device-use/mobile-messaging-upscaler`
+- [ ] `https://myimageupscaler.com/device-use/tablet-content-creation-upscaler`
+- [ ] `https://myimageupscaler.com/device-use/tablet-digital-art-upscaler`
+- [ ] `https://myimageupscaler.com/device-use/tablet-ecommerce-upscaler`
+- [ ] `https://myimageupscaler.com/device-use/tablet-photo-editing-upscaler`
+- [ ] `https://myimageupscaler.com/device-use/tablet-social-media-upscaler`
+- [ ] `https://myimageupscaler.com/format-scale/avif-upscale-16x`
+- [ ] `https://myimageupscaler.com/format-scale/avif-upscale-2x`
+- [ ] `https://myimageupscaler.com/format-scale/avif-upscale-4x`
+- [ ] `https://myimageupscaler.com/format-scale/avif-upscale-8x`
+- [ ] `https://myimageupscaler.com/format-scale/bmp-upscale-16x`
+- [ ] `https://myimageupscaler.com/format-scale/bmp-upscale-8x`
+- [ ] `https://myimageupscaler.com/format-scale/gif-upscale-16x`
+- [ ] `https://myimageupscaler.com/format-scale/gif-upscale-2x`
+- [ ] `https://myimageupscaler.com/format-scale/gif-upscale-8x`
+- [ ] `https://myimageupscaler.com/format-scale/heic-upscale-16x`
+- [ ] `https://myimageupscaler.com/format-scale/heic-upscale-2x`
+- [ ] `https://myimageupscaler.com/format-scale/heic-upscale-8x`
+- [ ] `https://myimageupscaler.com/format-scale/jpeg-upscale-16x`
+- [ ] `https://myimageupscaler.com/format-scale/jpeg-upscale-8x`
+- [ ] `https://myimageupscaler.com/format-scale/png-upscale-4x`
+- [ ] `https://myimageupscaler.com/format-scale/png-upscale-8x`
+- [ ] `https://myimageupscaler.com/format-scale/raw-upscale-2x`
+- [ ] `https://myimageupscaler.com/format-scale/webp-upscale-16x`
+- [ ] `https://myimageupscaler.com/industry-insights/travel-tourism-enhancement`
+- [ ] `https://myimageupscaler.com/interactive-tools/photo-quality-enhancer`
+- [ ] `https://myimageupscaler.com/platform-format/canva-upscaler-avif`
+- [ ] `https://myimageupscaler.com/platform-format/canva-upscaler-bmp`
+- [ ] `https://myimageupscaler.com/platform-format/canva-upscaler-heic`
+- [ ] `https://myimageupscaler.com/platform-format/canva-upscaler-jpg`
+- [ ] `https://myimageupscaler.com/platform-format/canva-upscaler-raw`
+- [ ] `https://myimageupscaler.com/platform-format/canva-upscaler-tiff`
+- [ ] `https://myimageupscaler.com/platform-format/canva-upscaler-webp`
+- [ ] `https://myimageupscaler.com/platform-format/midjourney-upscaler-webp`
+- [ ] `https://myimageupscaler.com/platform-format/photoshop-upscaler-png`
+- [ ] `https://myimageupscaler.com/platform-format/photoshop-upscaler-webp`
+- [ ] `https://myimageupscaler.com/platform-format/stable-diffusion-upscaler-png`
+- [ ] `https://myimageupscaler.com/platforms/canva-upscaler`
+- [ ] `https://myimageupscaler.com/use-cases/cartoon-image-upscaler`
+- [ ] `https://myimageupscaler.com/use-cases/portrait-photo-upscaler`
+
+</details>
