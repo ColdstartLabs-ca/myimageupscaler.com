@@ -2736,3 +2736,54 @@ Follow-up:
 
 - Request indexing for the 58 changed pSEO URLs (grouped in the [GSC request indexing backlog](./gsc-request-indexing-backlog.md); 9 prioritised).
 - Now unblocked: the four Supabase-only posts listed under PRD 1's "Outstanding" section, and PRD 3 Phase 2 — the blog admin API works again.
+
+### Four Supabase-only posts corrected — 2026-09-10
+
+Source: [PRD 1 — Product Truth](../../PRDs/seo-recovery-2026-09/01-product-truth.md) outstanding list, and [PRD 3 — Page Recovery](../../PRDs/seo-recovery-2026-09/03-page-recovery.md) Phases 2–3. Unblocked by the Worker secret fix that brought the blog admin API back from `500`.
+
+Fresh verified backup taken first: `backups/backup_2026-09-10_19-51-59.{schema,data}.sql.gz`, both pass `gzip -t`, blog rows confirmed present.
+
+**`best-free-ai-image-upscaler-2026-tested-compared`** (806 clicks/28d) — URL preserved. The audit understated this one: _"no signup"_ was the article's entire positioning for our own product, repeated in the intro, the feature list, the comparison table, the 3-step how-to, the conclusion, four FAQ answers and the meta description.
+
+| Claim          | Was                                                  | Now                                                                    |
+| -------------- | ---------------------------------------------------- | ---------------------------------------------------------------------- |
+| Account        | "No signup required"                                 | required, stated plainly; the no-signup FAQ now answers "Not ours"     |
+| Upload formats | JPEG, PNG, WebP, **AVIF, TIFF, BMP**                 | JPEG, PNG, WebP, HEIC                                                  |
+| Max scale      | 4x                                                   | 8x per pass (it was *under*stated)                                     |
+| Batch          | "Batch processing available"                         | 1 on free; paid-plan feature                                           |
+| Cost           | "completely free… always free"                       | credit-based, 1 credit per upscale                                     |
+| Credits        | "5 welcome credits" / "10 credits"                   | tier-safe, region-dependent                                            |
+| Topaz entry    | "30-day trial"                                       | no current trial, aligned with `topaz-free-trial-snippet.unit.spec.ts` |
+| Title          | "Only 3 Worked" (previous title, changed 2026-09-10) | "Best Free AI Image Upscalers 2026: Limits Compared"                   |
+
+Ownership is now disclosed at the top, and the page states where we lose: _"Upscayl or Bigjpg are the better fit and ours is not."_ The unreproducible 12-tool quality benchmark was **not** recreated — the page is reframed as a survey of published tiers and limits, with the evidence boundary stated explicitly, per the PRD's "reproducible evidence or it goes".
+
+**`poster-size-dimensions-pixels`** — tier-safe credits, and the `[!CTA_PRINT_READINESS]` marker inserted, giving the print-readiness checker its first live entry point.
+**`topaz-labs-free-trial`**, **`photo-restoration-program`** — tier-safe credits.
+
+Contract specs updated to match, so no spec still pins one region's grant: `topaz-free-trial-snippet` and `gsc-opportunity-recovery`.
+
+Follow-up:
+
+- These four are correct in the database but the rendered pages were still serving old HTML; see the revalidation fix below. A deploy flushes them.
+- Request indexing for the four URLs once the live HTML reflects the change.
+
+### Blog edits never invalidated the rendered page
+
+Found while verifying the four corrections above: all four `PATCH`es returned `200` with a fresh `updated_at`, and the live HTML kept serving the previous copy on an `x-nextjs-cache: HIT`.
+
+Blog posts render from `app/[locale]/blog/[slug]/page.tsx` — `force-static`, 24h `revalidate`, and there is **no** non-locale `app/blog` route. The three write endpoints called `revalidatePath('/blog/${slug}')` and `revalidatePath('/blog')`, neither of which matches a real route, so both were silent no-ops. This has been true for every blog edit since the locale refactor, and explains the backlog entries that record having to wait and re-check whether "API and live cached HTML matched".
+
+Fixed with `lib/blog/revalidate-blog-paths.ts`, which spells out the locale segment for every `SUPPORTED_LOCALES` entry; patch/publish/unpublish all route through it. Guarded by `tests/unit/blog/blog-revalidation-paths.unit.spec.ts`, observed red on all three endpoints first.
+
+Note: `CLOUDFLARE_API_TOKEN` in the production secret returns `Authentication error` on a targeted `purge_cache` call, so a per-URL purge was not available as a workaround. Worth rotating that token with purge scope.
+
+### Review of `b960b7b3` (PRD 3) — three defects fixed
+
+- **Missing-translation errors on every render.** `BlogCTA` computed `t('printReadiness.title')` and `t('printReadiness.description')` _before_ the `printReadiness` early return, and `blog.cta.printReadiness` does not exist. Confirmed by render probe: two `IntlError: MISSING_MESSAGE` per render. The page did not crash, but the noise would have started the moment the poster marker went live. Fixed by returning before the lookups.
+- **Crop requirement specified but never implemented.** PRD 3 Phase 3 required "effective PPI + crop requirement"; `IPrintReadinessResult` had no crop field and the UI never mentioned one. A 4:3 camera frame onto a 24×36 poster was told to upscale 3.6× with no hint that filling the page trims **50% off the width** — and 24×36 is precisely what that article is about. Added `cropRequired` / `croppedFraction` / `cropAxis` and surfaced them.
+- **Self-contradicting verdict.** `ready` compared the raw PPI while the UI displayed the rounded one, so a 299.9975 result could read "About 300 PPI" beside a not-ready warning. Both now use the displayed figure.
+
+Checked and found **correct**, contrary to first impression: `effectivePpi = min(horizontalPpi, verticalPpi)` is algebraically identical to crop-to-fill scaling, which is the right default for posters. The analytics event is properly registered in both `ALLOWED_EVENTS` and `IAnalyticsEventName`, and the `useRegionTier` fetch guard is sound.
+
+Noted, not fixed: the commit message claims it removes "the unused AI PR review workflow and the PRD scaffolding workflows", but the commit touches zero `.github` files.

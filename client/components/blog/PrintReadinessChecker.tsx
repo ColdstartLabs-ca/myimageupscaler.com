@@ -129,6 +129,14 @@ export function PrintReadinessChecker(): ReactElement {
                 ? `This meets your ${input.targetPpi} PPI target without enlargement.`
                 : `To reach ${input.targetPpi} PPI, you need about ${result.requiredScale}× the current pixel dimensions.`}
             </p>
+            {result.cropRequired && (
+              <p className="mt-1 text-sm text-muted-foreground">
+                Your image and print shapes differ, so filling the page trims about{' '}
+                <strong>{Math.round(result.croppedFraction * 100)}%</strong> off the{' '}
+                {result.cropAxis}. Crop deliberately before upscaling, or choose a print size closer
+                to your image&rsquo;s proportions.
+              </p>
+            )}
           </div>
         </div>
       </div>

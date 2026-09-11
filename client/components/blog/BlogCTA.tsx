@@ -64,13 +64,18 @@ export function BlogCTA({
   const t = useTranslations('blog.cta');
   const trustIndicators = t.raw('trustIndicators') as string[];
 
-  const displayTitle = title || t(`${type}.title`);
-  const displayDescription = description || t(`${type}.description`);
   // Print-readiness is an interactive tool, not a banner. All of its math runs
   // in the browser so no image bytes or CPU reach the Worker.
+  //
+  // This has to return before the t() lookups below: there is no
+  // blog.cta.printReadiness namespace, so resolving them would log a
+  // MISSING_MESSAGE error on every render for values this branch never uses.
   if (type === 'printReadiness') {
     return <PrintReadinessChecker />;
   }
+
+  const displayTitle = title || t(`${type}.title`);
+  const displayDescription = description || t(`${type}.description`);
 
   const href = customHref || (toolSlug ? `/tools/${toolSlug}` : CTA_HREF[type]);
   const buttonText = buttonLabel || (toolName ? `Try ${toolName} Free` : t(`${type}.button`));
