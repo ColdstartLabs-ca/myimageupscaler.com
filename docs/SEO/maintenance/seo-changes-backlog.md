@@ -2666,3 +2666,33 @@ Changes:
 Validation:
 
 - `yarn playwright test tests/e2e/landing-page-seo.e2e.spec.ts --project=chromium` — 20 passed.
+
+### Capability-claims gate widened to every pSEO surface and published blog body
+
+Source: [PRD 1 — Product Truth](../../PRDs/seo-recovery-2026-09/01-product-truth.md) (closing the follow-up left open by the first pass)
+
+Changes:
+
+- `capability-claims.unit.spec.ts` now sweeps **every** `app/seo/data/*.json` and `locales/en/*.json` document plus the published bodies in `content/blog-data.json`, replacing the earlier five-file slice. It reports the offending file, page slug, JSON path and claimed value.
+- Account-backed vs browser-side is **derived**, not listed: a page is browser-side when it declares a `toolComponent` (the component runs in the visitor's browser). `free-background-remover` is the single documented exception and carries its reason inline.
+- Competitor facts stay theirs. Competitor names are derived from `competitorName` and `products[1..].name` in our own comparison data; `products[i>0]` subtrees and `competitor*` keys are skipped outright. Credit counts are scoped per comma-clause (so "…while VanceAI only provides 3 credits per month" survives) and guest-access claims per line (so the "| waifu2x | Free, no account needed |" table row survives).
+- The claim regex now catches spelled-out grants (`three|five|ten`) — the same twin constant in word form.
+
+Copy corrected (all previously live):
+
+- **58 false guest-access claims** removed from account-backed upscaling pages across `scale`, `formats`, `format-scale`, `device-use`, `platform-format`, `camera-raw`, `use-cases`, `platforms`, `industry-insights` and `interactive-tools`. Most were `no signup` inside `metaDescription` — i.e. the live SERP snippet — on pages where upscaling requires an account. The clause was dropped rather than reworded, which also shortens every affected description.
+- **216 hardcoded regional grants** made tier-safe in `competitor-comparisons`, `alternatives`, `comparisons-expanded`, `content`, `guides`, `interactive-tools` and `locales/en/terms.json`, using the established "welcome credits" vocabulary from the first pass.
+- **11 false "10 free credits" claims** corrected in published blog bodies (`content/blog-data.json`), the stale figure the source audit flagged.
+- Two `interactive-tools` benefit metrics read `5 credits` while their own description said "no credits, no limits"; both now read `Free forever`.
+- `free.json` / `locales/en/free.json` had a `Five Free Credits` feature title on the browser background remover whose description said "No credits, no limits" — now `No Credits Needed`.
+- `page-metadata.unit.spec.ts` asserted the false claim (`avif metaDescription mentions free and no signup`). It now asserts the tier-safe wording and explicitly forbids `no signup`.
+
+Validation:
+
+- Negative controls observed failing before restore, three separately: a seeded credit claim in `alternatives.json`, a seeded guest claim in `platform-format.json`, and a seeded combined claim in a `content/blog-data.json` body. Each failure named file, slug, path and value.
+- `yarn vitest run tests/unit` (5007 passed, 6 skipped) and `yarn verify` green.
+
+Follow-up — **blocked on production content, not on code**:
+
+- Four Supabase-only posts still carry claims that contradict the shipped policy and cannot be reached from the repo: `best-free-ai-image-upscaler-2026-tested-compared` (no-account upscaling, fixed 5/10-credit grants, unsupported AVIF/TIFF/BMP uploads, stale 30-day Gigapixel trial, undisclosed ownership, unsupported "Only 3 Worked" framing), `poster-size-dimensions-pixels` and `photo-restoration-program` (both pin "five welcome credits" via `gsc-opportunity-recovery.unit.spec.ts`), and `topaz-labs-free-trial` (pins "five welcome credits after signup" via `topaz-free-trial-snippet.unit.spec.ts`).
+- The blog admin API is currently returning `500 INTERNAL_ERROR "Server configuration error"` on every route including `GET /api/blog/posts`, so none of these could be read or corrected in this pass. Fix the API credential/config first, then apply the corrections and add one indexing row per changed URL.

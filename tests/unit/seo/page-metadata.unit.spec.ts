@@ -112,9 +112,11 @@ describe('Phase 4: upscale-avif-images metadata', () => {
     expect(page.metaTitle.length).toBeLessThanOrEqual(70);
   });
 
-  it('avif metaDescription mentions free and no signup', () => {
+  it('avif metaDescription mentions free entry without promising guest upscaling', () => {
     expect(page.metaDescription).toMatch(/free/i);
-    expect(page.metaDescription).toMatch(/no signup/i);
+    expect(page.metaDescription).toMatch(/welcome credits/i);
+    // Upscaling requires an account; see capability-claims.unit.spec.ts.
+    expect(page.metaDescription).not.toMatch(/no signup/i);
   });
 
   it('avif metaDescription ≤ 160 chars', () => {
