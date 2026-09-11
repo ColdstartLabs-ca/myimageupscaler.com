@@ -16,7 +16,7 @@ describe('high-traffic commercial landing funnels', () => {
     const copy = JSON.stringify(page).toLowerCase();
 
     expect(copy).not.toContain('no signup');
-    expect(copy).toContain('5 free credits');
+    expect(copy).toContain('welcome credits');
     expect(page.ctaUrl).toBe('/?signup=1');
   });
 

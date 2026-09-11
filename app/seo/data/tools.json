@@ -5,9 +5,9 @@
       "slug": "ai-image-upscaler",
       "title": "AI Image Upscaler",
       "metaTitle": "Free AI Image Upscaler \u2014 Enlarge Images Online up to 8x",
-      "metaDescription": "Upscale images up to 8x with AI. Create a free account with 5 free credits, upload a JPEG, PNG, or WebP, and download without a watermark.",
+      "metaDescription": "Upscale images up to 8x with AI. Create a free account with welcome credits, upload a JPEG, PNG, WebP, or HEIC file, and download without a watermark.",
       "h1": "Free AI Image Upscaler - Enlarge Images Up to 8x Online",
-      "intro": "Use this AI image upscaler to enlarge photos up to 8x online without watermarks. Create a free account with 5 free credits, then upload a JPEG, PNG, or WebP in the workspace. The AI preserves sharpness and adds realistic detail instead of just stretching pixels.",
+      "intro": "Use this AI image upscaler to enlarge photos up to 8x online without watermarks. Create a free account with welcome credits, then upload a JPEG, PNG, WebP, or HEIC file in the workspace. The AI preserves sharpness and adds realistic detail instead of just stretching pixels.",
       "primaryKeyword": "ai image upscaler",
       "secondaryKeywords": [
         "image upscaler",
@@ -22,7 +22,7 @@
       "category": "tools",
       "toolName": "AI Image Upscaler",
       "description": "Transform low-resolution images into high-quality visuals. Unlike traditional resizing that creates blur, our AI reconstructs detail as it upscales.",
-      "uniqueIntro": "Every digital image consists of pixels, and when you enlarge an image traditionally, those pixels simply get bigger\u2014creating blocky, blurry results. Our AI Image Upscaler takes a completely different approach. Instead of interpolating between existing pixels, our neural network actually generates new pixel information based on millions of high-resolution training images. This means sharp edges stay sharp, fine textures maintain their detail, and even small text remains perfectly readable after enlargement. The technology behind this upscaler has been trained specifically to recognize and preserve the elements that matter most\u2014faces, text, logos, and intricate patterns\u2014giving you professional results that look like they were captured at a higher resolution from the start. Traditional upscaling methods like bicubic interpolation simply average neighboring pixels to create new ones, resulting in inevitable softness and loss of detail. Our AI model, trained on over 10 million high-resolution image pairs, understands the underlying structure of images at multiple scales and can predict missing high-frequency details with remarkable accuracy. This is particularly crucial for e-commerce product photography where customers need to see fine product details, for print media where resolution directly correlates with output quality, and for technical documentation where text and diagrams must remain perfectly legible after enlargement.",
+      "uniqueIntro": "Every digital image consists of pixels, and when you enlarge an image traditionally, those pixels simply get bigger\u2014creating blocky, blurry results. Our AI Image Upscaler takes a completely different approach. Instead of interpolating between existing pixels, the selected AI model reconstructs plausible detail instead of averaging neighbouring pixels. This means sharp edges stay sharp, fine textures maintain their detail, and small text usually stays readable after enlargement. The technology behind this upscaler has been trained specifically to recognize and preserve the elements that matter most\u2014faces, text, logos, and intricate patterns\u2014giving you professional results that look like they were captured at a higher resolution from the start. Traditional upscaling methods like bicubic interpolation simply average neighboring pixels to create new ones, resulting in inevitable softness and loss of detail. The AI models used here understand the underlying structure of images at multiple scales and can predict missing high-frequency details with remarkable accuracy. This is particularly crucial for e-commerce product photography where customers need to see fine product details, for print media where resolution directly correlates with output quality, and for technical documentation where text and diagrams need to stay readable after enlargement.",
       "expandedDescription": "The neural network architecture powering our upscaler uses a combination of convolutional layers and attention mechanisms that work together to identify image content types and apply appropriate enhancement strategies. For natural images, the model focuses on reconstructing plausible textures such as skin pores, fabric weaves, and surface materials while avoiding the artificial plastic look that plagues many AI upscalers. For images containing text or graphics, specialized processing paths activate to maintain edge sharpness and character legibility\u2014something most general-purpose upscalers fail at. The system processes images in tiles, allowing it to handle very large upscales (up to 8x) without consuming excessive memory, while also enabling parallel processing that significantly reduces wait times. Each upscaled image undergoes multiple quality checks: edge preservation analysis ensures fine details aren't oversharpened into artifacts, color consistency validation prevents hue shifts during upscaling, and a final output verification confirms that the target resolution was actually achieved with proportional detail. This multi-stage approach ensures consistent, professional results whether you're upscaling smartphone photos, scanned documents, AI-generated artwork, or product photography from any source.",
       "pageSpecificDetails": "Consider the practical applications across different industries: E-commerce sellers routinely face marketplace image requirements\u2014Amazon demands at least 1600px on the longest side for product images, Etsy recommends 2000px for featured listings, and Shopify performs best with images above 2048px. Our AI upscaler transforms typical 600-800px supplier photos into 2400-3200px assets that meet all platform standards while enhancing product details that help convert browsers to buyers. Graphic designers working with client-provided assets often receive logos or graphics at unusable resolutions\u2014our tool enlarges these 4-8x while maintaining the crisp vector-like quality required for professional web design. Photographers printing images for exhibitions or gallery displays typically need 300 DPI at output size, meaning a 16x20 inch print requires 4800x6000 pixels\u2014far beyond what most cameras capture. Our upscaler bridges this gap by generating plausible high-frequency detail while respecting the original photographic style. Medical and technical imaging applications require even more stringent standards where text labels, measurement scales, and fine anatomical or structural details must remain clear after significant enlargement. Each of these scenarios benefits from specialized processing that general upscaling tools simply cannot provide.",
       "features": [
@@ -44,7 +44,7 @@
         },
         {
           "title": "Multiple Formats",
-          "description": "Upload JPEG, PNG, or WebP. Download in any format with quality settings."
+          "description": "Upload JPEG, PNG, WebP, or HEIC. Download in any format with quality settings."
         },
         {
           "title": "Fast Processing",
@@ -53,7 +53,7 @@
       ],
       "technicalSpecs": {
         "maxInputSize": "64MB (5MB on free tier)",
-        "supportedFormats": ["JPEG", "PNG", "WebP"],
+        "supportedFormats": ["JPEG", "PNG", "WebP", "HEIC"],
         "maxUpscale": "8x",
         "processingTime": "30-60 seconds typical",
         "outputFormats": ["JPEG", "PNG", "WebP"],
@@ -85,7 +85,7 @@
         {
           "title": "Real Detail Generation",
           "description": "AI adds plausible detail rather than just interpolating pixels. Edges stay sharp, textures look natural.",
-          "metric": "Neural network trained on millions of image pairs"
+          "metric": "AI-assisted detail reconstruction"
         },
         {
           "title": "Preserves What Matters",
@@ -102,7 +102,7 @@
         {
           "step": 1,
           "title": "Upload Your Image",
-          "description": "Drag and drop or click to browse. Supports JPEG, PNG, WebP up to 64MB."
+          "description": "Drag and drop or click to browse. Supports JPEG, PNG, WebP, and HEIC."
         },
         {
           "step": 2,
@@ -118,7 +118,7 @@
       "commonQuestions": [
         {
           "question": "How is this different from Photoshop's Image Size?",
-          "answer": "Photoshop's bicubic scaling just interpolates between pixels, creating blur. Our AI actually generates new detail based on patterns learned from millions of images. The result is sharper edges and more realistic textures."
+          "answer": "Photoshop's bicubic scaling just interpolates between pixels, creating blur. The AI reconstructs plausible detail rather than averaging neighbouring pixels. The result is sharper edges and more realistic textures."
         },
         {
           "question": "What's the maximum I can upscale?",
@@ -130,7 +130,7 @@
         },
         {
           "question": "How many images can I upscale for free?",
-          "answer": "New accounts receive 5 free credits with no watermarks. Purchase credits or a paid plan to continue after they are used."
+          "answer": "New accounts receive welcome credits with no watermarks. Purchase credits or a paid plan to continue after they are used."
         },
         {
           "question": "Are my images stored on your servers?",
@@ -140,11 +140,11 @@
       "faq": [
         {
           "question": "Is the AI image upscaler free?",
-          "answer": "Yes. New accounts receive 5 free credits with no watermarks. Free credits do not renew; purchase credits or a paid plan to continue."
+          "answer": "Yes. New accounts receive welcome credits with no watermarks. Welcome credits do not renew; purchase credits or a paid plan to continue."
         },
         {
           "question": "What formats are supported?",
-          "answer": "Upload JPEG, PNG, or WebP. Download in any of these formats. Max file size is 64MB (5MB on free tier)."
+          "answer": "Upload JPEG, PNG, WebP, or HEIC. Download in any of these formats. Max file size is 64MB (5MB on free tier)."
         },
         {
           "question": "How long does upscaling take?",
@@ -190,7 +190,7 @@
           "description": "How machine learning models can reconstruct high-resolution images from low-resolution inputs."
         }
       ],
-      "ctaText": "Get 5 Free Credits",
+      "ctaText": "Get Welcome Credits",
       "ctaUrl": "/?signup=1",
       "beforeAfterImages": {
         "before": "/before-after/girl-before.webp",
@@ -203,7 +203,7 @@
       "slug": "ai-photo-enhancer",
       "title": "AI Photo Enhancer",
       "metaTitle": "Free AI Image Quality Enhancer \u2014 Fix Blur Online",
-      "metaDescription": "Free AI image quality enhancer. Fix blur, reduce noise, restore old photos, and enhance image quality online. No sign up. Instant HD results.",
+      "metaDescription": "Free AI image quality enhancer. Fix blur, reduce noise, restore old photos, and enhance image quality online. Free account, instant HD results.",
       "h1": "AI Image Quality Enhancer \u2014 Fix Blur & Enhance Photos Free",
       "intro": "Improve photo quality without changing dimensions. Fix blur, enhance colors, reduce noise, and restore old or damaged photos. Transform your lackluster photos into stunning visuals with our intelligent enhancement system.",
       "primaryKeyword": "ai image quality enhancer free",
@@ -256,7 +256,7 @@
       ],
       "technicalSpecs": {
         "maxInputSize": "64MB (5MB on free tier)",
-        "supportedFormats": ["JPEG", "PNG", "WebP"],
+        "supportedFormats": ["JPEG", "PNG", "WebP", "HEIC"],
         "processingTime": "20-45 seconds typical",
         "outputFormats": ["JPEG", "PNG", "WebP"],
         "preservesExif": "Optional - keep or strip metadata"
@@ -342,7 +342,7 @@
       "faq": [
         {
           "question": "Is the photo enhancer free?",
-          "answer": "Yes. New accounts receive 5 free credits with no watermarks. Purchase credits or a paid plan to continue after they are used."
+          "answer": "Yes. New accounts receive welcome credits with no watermarks. Purchase credits or a paid plan to continue after they are used."
         },
         {
           "question": "What types of photos work best?",
@@ -971,7 +971,7 @@
       ],
       "technicalSpecs": {
         "maxInputSize": "64MB (5MB on free tier)",
-        "supportedFormats": ["JPEG", "PNG", "WebP"],
+        "supportedFormats": ["JPEG", "PNG", "WebP", "HEIC"],
         "processingTime": "30-90 seconds depending on complexity",
         "outputFormats": ["JPEG", "PNG", "WebP"],
         "analysisFactors": "Content type, quality level, detail density, noise level"

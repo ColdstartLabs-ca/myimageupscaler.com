@@ -7,9 +7,14 @@
 
 import { analytics } from '@client/analytics/analyticsClient';
 import { AmbientBackground } from '@client/components/landing/AmbientBackground';
+import { useRegionTier } from '@client/hooks/useRegionTier';
+import {
+  PRODUCT_CAPABILITIES,
+  welcomeCreditCopy,
+  welcomeCreditsForTier,
+} from '@shared/config/product-capabilities';
 import { motion } from 'framer-motion';
 import { ReactElement } from 'react';
-import { CREDIT_COSTS } from '@shared/config/credits.config';
 
 interface ICTASectionProps {
   title: string;
@@ -41,6 +46,13 @@ export function CTASection({
   pageType,
   slug,
 }: ICTASectionProps): ReactElement {
+  const { tier } = useRegionTier();
+  const welcomeCredits = tier ? welcomeCreditsForTier(tier) : null;
+  const creditOffer = welcomeCreditCopy(welcomeCredits);
+  const accountCopy = PRODUCT_CAPABILITIES.guestAccess
+    ? 'No account required'
+    : 'Account required to upscale';
+
   function handleCTAClick(): void {
     if (pageType && slug) {
       analytics.track('pseo_cta_clicked', {
@@ -75,7 +87,7 @@ export function CTASection({
         >
           {title}
           <br />
-          <span className="gradient-text-primary">Try it free today</span>
+          <span className="gradient-text-primary">Start upscaling today</span>
         </motion.h2>
         <motion.p
           className="text-xl text-text-secondary mb-10 max-w-2xl mx-auto font-light"
@@ -127,7 +139,7 @@ export function CTASection({
                 clipRule="evenodd"
               />
             </svg>
-            <span>{CREDIT_COSTS.DEFAULT_FREE_CREDITS} free credits</span>
+            <span>{creditOffer}</span>
           </div>
           <div className="flex items-center gap-2">
             <svg className="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
@@ -137,7 +149,7 @@ export function CTASection({
                 clipRule="evenodd"
               />
             </svg>
-            <span>Quick signup</span>
+            <span>{accountCopy}</span>
           </div>
           <div className="flex items-center gap-2">
             <svg className="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
@@ -147,7 +159,7 @@ export function CTASection({
                 clipRule="evenodd"
               />
             </svg>
-            <span>Instant results</span>
+            <span>No watermarks</span>
           </div>
         </motion.div>
       </div>
