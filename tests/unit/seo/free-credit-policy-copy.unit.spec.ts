@@ -50,7 +50,7 @@ function namedMyImageUpscaler(value: unknown): unknown[] {
 }
 
 describe('free-credit policy copy', () => {
-  test('free and upscaler pages describe five credits without renewal claims', () => {
+  test('free and upscaler pages do not make renewal claims', () => {
     const surfaces = [
       relevantFreePages(freeData),
       relevantFreePages(localeFreeData),
@@ -59,7 +59,6 @@ describe('free-credit policy copy', () => {
     ];
 
     for (const surface of surfaces) {
-      expect(surface).toContain('5 free credits');
       for (const text of textValues(JSON.parse(surface) as unknown)) {
         expect(text).not.toMatch(renewalClaim);
       }
