@@ -3,10 +3,7 @@
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useModalStore } from '@client/store/modalStore';
 import { loadAnalytics } from '@client/utils/loadAnalytics';
-import {
-  welcomeCreditCopy,
-  welcomeCreditsForTier,
-} from '@shared/config/product-capabilities';
+import { welcomeCreditCopy, welcomeCreditsForTier } from '@shared/config/product-capabilities';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';

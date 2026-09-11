@@ -1221,7 +1221,7 @@
       "metaTitle": "16X AI Image Upscaler Workflow | Two-Pass Enhancement",
       "metaDescription": "Create a 16x enlargement with two AI upscaling passes. Start with 4x, inspect the result, then run a second 4x pass only when the source supports it.",
       "h1": "16X AI Upscaler - Extreme Resolution Enhancement",
-      "intro": "Create a 16X enlargement with two passes in the authenticated workspace: upscale 4x, inspect and download the result, then upscale that file 4x again. Start with 5 free credits and stop after the first pass if artifacts appear.",
+      "intro": "Create a 16X enlargement with two passes in the authenticated workspace: upscale 4x, inspect and download the result, then upscale that file 4x again. Start with welcome credits and stop after the first pass if artifacts appear.",
       "primaryKeyword": "upscale 16x",
       "secondaryKeywords": [
         "16x image upscaler",
@@ -1293,7 +1293,7 @@
       ],
       "relatedScale": ["upscale-8x", "ai-upscaler-4x"],
       "relatedTools": ["ai-image-upscaler"],
-      "ctaText": "Start With 5 Free Credits",
+      "ctaText": "Start With Welcome Credits",
       "ctaUrl": "/?signup=1"
     }
   ],
