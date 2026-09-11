@@ -91,8 +91,8 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 - [x] `https://myimageupscaler.com/blog/noise-reduction-in-images` — indexing requested 2026-08-28, confirmed "added to a priority crawl queue"
 - [x] `https://myimageupscaler.com/blog/ai-image-extender` — indexing requested 2026-08-28, confirmed "added to a priority crawl queue"
 - [x] `https://myimageupscaler.com/blog/how-to-enhance-a-picture-in-photoshop` — indexing requested 2026-09-11, confirmed "added to a priority crawl queue"
-- [ ] `https://myimageupscaler.com/blog/what-is-denoising`
-- [ ] `https://myimageupscaler.com/blog/image-out-of-focus`
+- [x] `https://myimageupscaler.com/blog/what-is-denoising` — indexing requested 2026-09-11, confirmed "added to a priority crawl queue"
+- [x] `https://myimageupscaler.com/blog/image-out-of-focus` — indexing requested 2026-09-11, confirmed "added to a priority crawl queue"
 - [ ] `https://myimageupscaler.com/blog/enhance-picture-quality-ai`
 - [ ] `https://myimageupscaler.com/blog/how-to-preserve-old-photographs`
 - [ ] `https://myimageupscaler.com/blog/heic-iphone-photo-upscaling-guide`
