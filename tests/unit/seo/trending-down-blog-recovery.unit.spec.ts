@@ -22,7 +22,7 @@ const RECOVERY_METADATA = [
     targetTerms: ['youtube', 'thumbnail', 'blurry', 'low quality'],
     title: 'Why Your YouTube Thumbnail Looks Blurry or Low Quality',
     description:
-      'Find out why your YouTube thumbnail looks blurry or low quality, then fix resolution, compression, text, and export settings with this 2026 checklist.',
+      'Fix blurry YouTube thumbnails and low quality uploads with the right size, export, and compression settings. Check 1280×720 and 2560×1440 before uploading.',
   },
   {
     slug: 'fixing-pixelated-photos',

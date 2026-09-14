@@ -279,8 +279,8 @@
     {
       "url": "/blog/how-to-upscale-youtube-thumbnails",
       "label": "/blog/how-to-upscale-youtube-thumbnails",
-      "rung": 1,
-      "lastEdit": "2026-07-14",
+      "rung": 2,
+      "lastEdit": "2026-09-14",
       "history": [
         {
           "date": "2026-07-14",
@@ -294,6 +294,14 @@
             "posDelta": 0.2,
             "measuredThrough": "2026-07-27"
           }
+        },
+        {
+          "date": "2026-09-14",
+          "rung": 2,
+          "field": "seo_description",
+          "note": "Rung 2: replaced the cause-led meta with an action-led 1280×720/2560×1440 size, export, and compression checklist for blurry and low quality YouTube thumbnail intent.",
+          "outcome": null,
+          "previousValue": "Find out why your YouTube thumbnail looks blurry or low quality, then fix resolution, compression, text, and export settings with this 2026 checklist."
         }
       ],
       "stopRule": null

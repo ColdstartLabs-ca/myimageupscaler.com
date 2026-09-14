@@ -113,7 +113,7 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 - [ ] `https://myimageupscaler.com/blog/fixing-pixelated-photos` — 2026-09-10 regression rollback restored the prior meta/opening and removed the failed proof module; request indexing after live HTML exposes the repair.
 - [x] `https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark`
 - [x] `https://myimageupscaler.com/blog/how-to-upscale-midjourney-images-for-print`
-- [x] `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails`
+- [ ] `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails` — Three Kings rung-2 `seo_description` updated 2026-09-14; API readback passed, but live HTML still served the prior cached description. Request indexing only after live HTML matches and GSC visibly confirms the request.
 - [x] `https://myimageupscaler.com/blog/image-upscaler-8x`
 - [ ] `https://myimageupscaler.com/blog/photo-restoration-program` — 2026-09-10 regression rollback removed the failed comparison expansion while retaining truthful metadata and credit copy; request indexing after live HTML exposes the repair.
 

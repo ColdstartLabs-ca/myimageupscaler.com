@@ -1,5 +1,15 @@
 # Blog Changelog
 
+## 2026-09-14
+
+### SEO: YouTube thumbnail rung-2 description test
+
+**Affected:** how-to-upscale-youtube-thumbnails
+**Why:** Final GSC data through 2026-09-10 closed the prior title window with the page at position 6.9 and 0.53% CTR, leaving a qualified snippet gap. Search results emphasized direct fixes and concrete thumbnail dimensions.
+**Changes:**
+
+- `how-to-upscale-youtube-thumbnails` — changed only `seo_description` to an action-led 1280×720/2560×1440 size, export, and compression checklist; title, H1, body, slug, and canonical stayed unchanged.
+
 ## 2026-09-10
 
 ### SEO: Three Kings regression rollbacks

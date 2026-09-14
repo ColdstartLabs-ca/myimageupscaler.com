@@ -9,6 +9,33 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-09-14
+
+### Three Kings YouTube Thumbnail Rung-2 Test
+
+Evidence:
+
+- Final GSC data through 2026-09-10 closed the prior window and classified `/blog/how-to-upscale-youtube-thumbnails` as the only `EDIT_NOW` row: 17 clicks / 3,229 impressions / position 6.9 in the latest 14 days versus 20 clicks / position 7.4 prior.
+- The page remains in the 5–15 striking-distance band with CTR below the rank-band threshold. Current SERP evidence favors direct fix language and concrete thumbnail dimensions.
+
+Changes:
+
+- Changed only the production `seo_description` to an action-led 1280×720/2560×1440 size, export, and compression checklist. Title, H1, body, slug, canonical, and indexability were unchanged.
+- Recorded rung 2 with the exact prior description in `three-kings-ledger.json`; the 14-day window closes 2026-09-28.
+- Reopened the existing request-indexing row in place. The live page still served the prior cached description immediately after the API write, so request indexing remains blocked until public HTML matches.
+
+Validation:
+
+- Fresh backup pair `backup_2026-09-14_09-11-42` was completed, listed, and verified with `gzip -t` before the write.
+- Production PATCH returned 200; authenticated API readback matched the new description exactly. Live HTML returned 200 with a self-canonical but still exposed the previous cached description.
+- Focused metadata coverage and full `yarn verify` were run in this job.
+- Commit: `5c3b2280` (`fix(seo): run youtube thumbnail snippet test`).
+
+Follow-up:
+
+- Deployment state: production blog DB content is live immediately; repo/backlog/test changes are committed locally, not pushed/deployed.
+- Recheck live HTML, then request indexing manually only after GSC visibly confirms it. Judge the rung no earlier than 2026-09-28 plus three complete holdback days (2026-10-02 under the correlator's final-data cutoff).
+
 ## 2026-09-10
 
 ### Three Kings Regression Rollbacks
