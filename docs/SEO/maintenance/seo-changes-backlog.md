@@ -29,7 +29,7 @@ Validation:
 - Fresh backup pair `backup_2026-09-14_09-11-42` was completed, listed, and verified with `gzip -t` before the write.
 - Production PATCH returned 200; authenticated API readback matched the new description exactly. Live HTML returned 200 with a self-canonical but still exposed the previous cached description.
 - Focused metadata coverage and full `yarn verify` were run in this job.
-- Commit: `5c3b2280` (`fix(seo): run youtube thumbnail snippet test`).
+- Commit: `14422850` (`fix(seo): run youtube thumbnail snippet test`).
 
 Follow-up:
 
