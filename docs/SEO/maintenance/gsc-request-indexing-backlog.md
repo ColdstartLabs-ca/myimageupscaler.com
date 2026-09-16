@@ -105,7 +105,7 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 
 - [x] `https://myimageupscaler.com/`
 
-- [ ] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared` — 2026-09-10 regression rollback restored the prior meta/H1 and removed the failed proof module; request indexing after live HTML exposes the repair.
+- [ ] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared` — 2026-09-16 fact correction is now live in public HTML (cache HIT, corrected heading + four vendor facts); eligible for a manual GSC request. **Not yet requested.**
 - [x] `https://myimageupscaler.com/blog/best-free-ai-photo-enhancer-online`
 
 - [x] `https://myimageupscaler.com/blog/fix-blurry-photos-ai-methods-guide`
@@ -113,7 +113,7 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 - [ ] `https://myimageupscaler.com/blog/fixing-pixelated-photos` — 2026-09-10 regression rollback restored the prior meta/opening and removed the failed proof module; request indexing after live HTML exposes the repair.
 - [x] `https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark`
 - [x] `https://myimageupscaler.com/blog/how-to-upscale-midjourney-images-for-print`
-- [ ] `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails` — Three Kings rung-2 `seo_description` updated 2026-09-14; API readback passed, but live HTML still served the prior cached description. Request indexing only after live HTML matches and GSC visibly confirms the request.
+- [ ] `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails` — Three Kings rung-2 `seo_description` updated 2026-09-14; live HTML now serves the updated description (rung-2 copy) after the 2026-09-16 deploy, so it is eligible for a manual GSC request. **Not yet requested.**
 - [x] `https://myimageupscaler.com/blog/image-upscaler-8x`
 - [ ] `https://myimageupscaler.com/blog/photo-restoration-program` — 2026-09-10 regression rollback removed the failed comparison expansion while retaining truthful metadata and credit copy; request indexing after live HTML exposes the repair.
 
