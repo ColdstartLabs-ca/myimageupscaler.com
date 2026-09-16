@@ -43,6 +43,29 @@ interface IAmplitudeSegmentationResponse {
   error?: string;
 }
 
+/**
+ * Typed Amplitude failure. `unknownEvent` marks the 400 "Invalid chart definition"
+ * response, which the API returns for an event/chart it cannot resolve — it cannot be
+ * distinguished from a fabricated event name, so callers must surface it as UNKNOWN
+ * rather than asserting the event was never ingested. Every other status (401, 429,
+ * 5xx, transport, schema) is a hard failure and must not be swallowed.
+ */
+export class AmplitudeDashboardApiError extends Error {
+  readonly status: number;
+  readonly unknownEvent: boolean;
+
+  constructor(status: number, unknownEvent: boolean) {
+    super(
+      unknownEvent
+        ? 'Amplitude has no chart for this event (HTTP 400 Invalid chart definition); ingestion is UNKNOWN, not proven zero.'
+        : `Amplitude dashboard query failed (HTTP ${status}).`
+    );
+    this.name = 'AmplitudeDashboardApiError';
+    this.status = status;
+    this.unknownEvent = unknownEvent;
+  }
+}
+
 function formatAmplitudeDate(input: Date | string): string {
   if (input instanceof Date) {
     const year = input.getUTCFullYear();
@@ -116,24 +139,35 @@ export async function getAmplitudeEventTotals(
   });
 
   if (!response.ok) {
-    const body = await response.text().catch(() => '<unreadable>');
-    throw new Error(
-      `Amplitude dashboard query failed (${response.status}): ${body || '<empty body>'}`
+    const body = await response.text().catch(() => '');
+    throw new AmplitudeDashboardApiError(
+      response.status,
+      response.status === 400 && /invalid chart definition/i.test(body)
     );
   }
 
   const payload = (await response.json()) as IAmplitudeSegmentationResponse;
   if (payload.error) {
-    throw new Error(`Amplitude dashboard query returned an error: ${payload.error}`);
+    throw new AmplitudeDashboardApiError(
+      response.status,
+      /invalid chart definition/i.test(payload.error)
+    );
   }
 
   const xValues = payload.data?.xValues ?? [];
   const dailyTotals = (payload.data?.series?.[0] ?? []).map(value => Number(value) || 0);
   const collapsedValue = payload.data?.seriesCollapsed?.[0]?.[0]?.value;
-  const total =
-    typeof collapsedValue === 'number'
-      ? collapsedValue
-      : dailyTotals.reduce((sum, value) => sum + value, 0);
+
+  let total: number;
+  if (typeof collapsedValue === 'number' && Number.isFinite(collapsedValue)) {
+    total = collapsedValue;
+  } else if (metric === 'uniques') {
+    throw new Error(
+      `Amplitude returned no whole-interval distinct count (seriesCollapsed) for "${params.eventType}"; refusing to sum overlapping daily uniques.`
+    );
+  } else {
+    total = dailyTotals.reduce((sum, value) => sum + value, 0);
+  }
 
   return {
     eventType: params.eventType,

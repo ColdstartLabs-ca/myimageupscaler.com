@@ -3,7 +3,7 @@ import { HeroActions } from '@client/components/landing/HeroActions';
 import { HeroBeforeAfter } from '@client/components/landing/HeroBeforeAfter';
 import { HeroTrustBar } from '@client/components/landing/HeroTrustBar';
 import { HERO_COMPARISON_IMAGES } from '@client/components/landing/heroAssets';
-import { welcomeCreditCopy, welcomeCreditsFor } from '@shared/config/product-capabilities';
+import { welcomeCreditOfferKey, welcomeCreditsFor } from '@shared/config/product-capabilities';
 import { Check } from 'lucide-react';
 import { headers } from 'next/headers';
 import Image from 'next/image';
@@ -17,7 +17,7 @@ export async function HeroSection(): Promise<JSX.Element> {
   const headersList = await headers();
   const country = headersList.get('CF-IPCountry') ?? headersList.get('cf-ipcountry') ?? '';
   const freeCredits = welcomeCreditsFor(country);
-  const creditOffer = welcomeCreditCopy(freeCredits);
+  const creditOffer = t(welcomeCreditOfferKey(freeCredits), { credits: freeCredits ?? 0 });
 
   const heroTrustItems = [
     { label: creditOffer, icon: <Check size={18} /> },

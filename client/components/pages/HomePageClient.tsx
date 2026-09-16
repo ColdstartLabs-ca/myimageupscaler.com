@@ -9,6 +9,7 @@ import { PopularToolsSection } from '@client/components/landing/PopularToolsSect
 import { LandingSection } from '@client/components/landing/LandingSection';
 import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
 import { getFreeCreditsForTier } from '@/lib/anti-freeloader/region-classifier';
+import { welcomeCreditOfferKey } from '@shared/config/product-capabilities';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -197,6 +198,7 @@ export function HomePageClient(): JSX.Element {
   const t = useTranslations('homepage');
   const { tier } = useRegionTier();
   const freeCredits = getFreeCreditsForTier(tier ?? 'standard');
+  const creditOffer = t(welcomeCreditOfferKey(freeCredits), { credits: freeCredits });
 
   // Check if any plan has trial enabled
   const config = getSubscriptionConfig();
@@ -335,7 +337,7 @@ export function HomePageClient(): JSX.Element {
             {t('ctaComparePlans')}
           </a>
         </div>
-        <p className="mt-8 text-sm text-text-muted">{t('finalCtaSubtext', { freeCredits })}</p>
+        <p className="mt-8 text-sm text-text-muted">{t('finalCtaSubtext', { creditOffer })}</p>
       </LandingSection>
 
       {/* Locale links — crawlable equity distribution */}

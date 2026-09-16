@@ -104,7 +104,10 @@
       "uptimeLabel": "Uptime",
       "securityLine1": "Your images are",
       "securityLine2": "safe and secure"
-    }
+    },
+    "creditOfferUnknown": "Welcome credits vary by region",
+    "creditOfferNone": "Plans available in your region",
+    "creditOfferCount": "{credits} welcome credits"
   },
   "footer": {
     "description": "AI-powered image upscaling and enhancement for professionals and creators. Precision-engineered for {year}.",

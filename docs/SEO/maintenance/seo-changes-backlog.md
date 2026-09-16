@@ -9,6 +9,56 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-09-16
+
+### Homepage credit-offer locale contract fixed (raw message key was rendering)
+
+PRD: [PRD-revenue-growth-2026-09](../../PRDs/revenue-growth-2026-09.md). Code changed; not yet deployed.
+
+Changes:
+
+- Fixed a caller/template mismatch that made the homepage render raw message keys to users and crawlers: English showed the literal `homepage.finalCtaSubtext` and German showed `homepage.ctaSubtext` twice. `HomePageClient.tsx:338` passed `freeCredits` while `locales/en/common.json` expected `{creditOffer}`, and the de/es/fr/it/ja/pt templates expected `{freeCredits}` while `HeroSection.tsx` and `SectionSignupCTA.tsx` passed `creditOffer`.
+- All seven locales now consume `{creditOffer}` in `ctaSubtext` / `finalCtaSubtext` (and `pricingCtaSubtext` where present), and each gained three `creditOffer*` strings for the regional eligibility cases. New `welcomeCreditOfferKey()` in `shared/config/product-capabilities.ts` maps credits → message key using the existing `welcomeCreditCopy` semantics (null → vary-by-region, ≤0 → "Plans available in your region", otherwise the count). Zero-credit regions never advertise "0 free credits".
+- Deliberate deviation from the PRD's literal instruction: the offer wording is localized rather than injected from the English-only `welcomeCreditCopy`, which would have put "5 welcome credits" inside six non-English sentences.
+
+Validation:
+
+- `tests/unit/i18n/homepage-credit-offer.unit.spec.ts` (new): test-first red on the real mismatch (7 failed), green after the fix (8 passed). Renders every locale × eligibility case through next-intl's `createTranslator` and asserts the expected wording, no raw `homepage.` key, no unsubstituted placeholder, and no stray numeral in the no-free-offer case. `yarn verify` clean.
+- No sitemap, canonical, hreflang, schema, robots, or route surface changed — this is rendered on-page copy on `/` and the localized homepages.
+
+Follow-up:
+
+- AC-2 (João): deploy, then confirm an unauthenticated public render in each supported locale shows the regional offer wording and no raw key.
+
+### Read-only paid-funnel scorecard added (no SEO surface changed)
+
+- Added `yarn diag:paid-funnel` (`scripts/diagnostics/paid-funnel-scorecard.ts`) — read-only Amplitude + Stripe + Supabase weekly reconciliation, replacing five throwaway probes. Relevant to SEO only as the shared paid-event definition that traffic work consumes: **the paid stage is `purchase_confirmed`** (server-side, from the Stripe webhook), reconciled at 96.2% capture on recorded event **totals** against Stripe (50 events vs 52 succeeded charges, Aug 17 – Sep 15). Full numbers in the PRD.
+- Hardened the same scorecard: unknown-event 400s are surfaced as UNKNOWN (never as a "NEVER ingested" assertion), auth/429/5xx/network/schema failures now fail loudly instead of printing a misleading success; uniques use whole-interval Amplitude `seriesCollapsed` counts (daily-unique sums refused); checkout-bound clickers come from one OR-filtered query; Stripe amounts are grouped by currency with `Intl` zero-decimal handling; CLI dates/flags are validated before any external call; recovery paging has a frozen window, stable `(timestamp, id)` ordering and an explicit truncation error at the 50k ceiling. Covered by `tests/unit/diagnostics/paid-funnel-scorecard.unit.spec.ts` and `tests/unit/server/analytics/dashboardApi.unit.spec.ts`.
+
+### Flagship fact correction prepared (not published) + mobile origin/cache diagnosis
+
+PRD: [PRD-traffic-recovery-2026-09](../../PRDs/traffic-recovery-2026-09.md). No production content or code changed today.
+
+Changes:
+
+- Prepared a local, reviewable correction for `/blog/best-free-ai-image-upscaler-2026-tested-compared`: four contradicted vendor figures (Let's Enhance, Bigjpg, Pixelcut, Img.Upscaler) corrected to vendor-stated policy, and the body heading "…Tested in 2026" → "…Compared in 2026" to match the page's own no-benchmark disclosure. Title, `seo_title`, H1, slug, description, tags unchanged. Package: [review note](../reviews/2026-09-16-flagship-fact-correction.md), [corrected body](../reviews/2026-09-16-flagship-corrected-content.md), [diff](../reviews/2026-09-16-flagship-correction.diff). Served source is the production DB record, so the `yarn db:backup` → `yarn db:backups` → `gzip -t` gate runs before any write; publication is João's owner action.
+- Ran the bounded mobile origin/HTML-cache diagnosis: [record](../reports/2026-09-16-mobile-origin-cache-diagnosis.md). Variance reproduces (14 cookie-free mobile requests to `/`: 148 ms–1,986 ms, median 633 ms, 57% over the 400 ms target) but the **cause is NOT established** — the samples cannot separate per-request Worker work from routing, contention, or the OpenNext path. Finding: no `cf-cache-status` and no `Age` on HTML, but that absence alone proves neither cause nor applicability. The authoritative active config is `wrangler.json` with `wrangler deploy` (`main: .open-next/worker.js`); `wrangler.toml`'s `pages_build_output_dir` is stale. Cloudflare's Workers Cache docs say Workers Cache runs before the Worker executes, is distinct from zone Cache Rules, and respects `Vary`, so a dashboard Cache Rule is not promised to cache this response and the `Vary: rsc, next-router-state-tree, …` headers are a _hypothesis_ to test, not a proven cause (`x-nextjs-cache: HIT` is the OpenNext R2 cache). No fix or candidate is approved: the same URL serves `text/html` and `text/x-component`, cache lookup precedes application guards, and auth cookies/geo/Next-router variants are not promised safe without a test, so neither "drop `Vary` on documents" nor an RSC-only rule is proven to preserve variant isolation. Next gate is agent-side confirmation of the active caching mechanism plus a causal isolation test in a representative preview (`wrangler.preview.json`) **before any production rollout**; AC-6 owner deploy comes later. Traffic AC-4 is therefore PARTIAL (variance reproduced, cause open), not met.
+- Opened the pinned-cohort review record: [pinned-cohort-review-2026-09](./pinned-cohort-review-2026-09.md). 2026-09-16 entry = KEEP (provisional) on a three-day sample; binding measurement is 2026-09-21 (Sep 11–17 vs Sep 4–10), final 2026-10-16.
+
+### Evidence correction: unverified distinct-user counts (no SEO surface changed)
+
+- The 2026-09-16 paid-funnel probes reported Amplitude `uniques` as the **sum of daily uniques**, which is not a whole-interval distinct-user count. Those specific unique counts and every ratio derived from them are marked **UNVERIFIED / remeasurement pending** in [PRD-revenue-growth-2026-09](../../PRDs/revenue-growth-2026-09.md); recorded event **totals** are kept as historical. No production rerun was performed, and no metric was silently refreshed.
+- Also corrected in the PRD: `plan_selected`'s ingestion status is **UNKNOWN** (Amplitude's 400 "Invalid chart definition" is indistinguishable from a fabricated name), not a proven never-ingested defect; revenue AC-4 stays **open** (aggregate abandonment segmentation is not the five individual journey reviews the stop path names) and AC-8 stays **partial** (processing cost still UNVERIFIED).
+
+Validation:
+
+- Read-only: GSC export not re-pulled (no completed window since Sep 13); flagship baseline fetched via `GET /api/blog/posts/<slug>`; cache probe used `curl` only. No sitemap, metadata, schema, canonical, hreflang, or route surface changed, so no new unit test is warranted yet.
+
+Follow-up:
+
+- AC-2 publication + unauthenticated public readback (João). Cache path: agent topology identification + causal experiment + variant-isolation proof before any fix; AC-6 owner deploy only after that, then AC-5 three production mobile runs, then the ~Oct 6 field review (AC-7).
+- Revenue AC-4 (five abandoned-journey reviews or a reproduced cause) and AC-8 (processing cost) remain open/partial; unverified daily-user sums await remeasurement with the corrected scorecard.
+
 ## 2026-09-14
 
 ### Three Kings YouTube Thumbnail Rung-2 Test

@@ -56,3 +56,15 @@ export function welcomeCreditCopy(credits: number | null | undefined): string {
   if (credits <= 0) return 'Plans available in your region';
   return `${credits} welcome credits`;
 }
+
+/**
+ * Localized counterpart of {@link welcomeCreditCopy}: the `homepage` message key
+ * for the regional eligibility case. Callers render it with `{ credits }`.
+ */
+export function welcomeCreditOfferKey(
+  credits: number | null | undefined
+): 'creditOfferUnknown' | 'creditOfferNone' | 'creditOfferCount' {
+  if (credits === null || credits === undefined) return 'creditOfferUnknown';
+  if (credits <= 0) return 'creditOfferNone';
+  return 'creditOfferCount';
+}

@@ -3,7 +3,7 @@
 import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useModalStore } from '@client/store/modalStore';
 import { loadAnalytics } from '@client/utils/loadAnalytics';
-import { welcomeCreditCopy, welcomeCreditsForTier } from '@shared/config/product-capabilities';
+import { welcomeCreditOfferKey, welcomeCreditsForTier } from '@shared/config/product-capabilities';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -21,7 +21,7 @@ export function SectionSignupCTA({
   const t = useTranslations('homepage');
   const { tier } = useRegionTier();
   const freeCredits = tier ? welcomeCreditsForTier(tier) : null;
-  const creditOffer = welcomeCreditCopy(freeCredits);
+  const creditOffer = t(welcomeCreditOfferKey(freeCredits), { credits: freeCredits ?? 0 });
   const hasTrialEnabled = getSubscriptionConfig().plans.some(plan => plan.trial.enabled);
 
   const handleClick = () => {

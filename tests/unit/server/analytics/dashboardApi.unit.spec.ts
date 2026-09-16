@@ -135,6 +135,92 @@ describe('Amplitude dashboard API helper', () => {
     });
   });
 
+  test('marks an unknown-event 400 as unknownEvent, not a hard failure', async () => {
+    vi.doMock('@shared/config/env', () => ({
+      serverEnv: {
+        AMPLITUDE_API_KEY: 'dashboard-api-key',
+        AMPLITUDE_SECRET_KEY: 'dashboard-secret-key',
+      },
+    }));
+
+    mockFetch.mockResolvedValue({
+      ok: false,
+      status: 400,
+      text: async () => '{"error":"Invalid chart definition"}',
+    } as Response);
+
+    const { getAmplitudeEventTotals, AmplitudeDashboardApiError } =
+      await import('@server/analytics/dashboardApi');
+
+    const error = await getAmplitudeEventTotals({
+      eventType: 'plan_selected',
+      startDate: '20260409',
+      endDate: '20260409',
+    }).catch(caught => caught);
+
+    expect(error).toBeInstanceOf(AmplitudeDashboardApiError);
+    expect(error.unknownEvent).toBe(true);
+    expect(error.status).toBe(400);
+  });
+
+  test('fails loudly (not unknownEvent) on a 429 rate limit', async () => {
+    vi.doMock('@shared/config/env', () => ({
+      serverEnv: {
+        AMPLITUDE_API_KEY: 'dashboard-api-key',
+        AMPLITUDE_SECRET_KEY: 'dashboard-secret-key',
+      },
+    }));
+
+    mockFetch.mockResolvedValue({
+      ok: false,
+      status: 429,
+      text: async () => 'Too Many Requests',
+    } as Response);
+
+    const { getAmplitudeEventTotals, AmplitudeDashboardApiError } =
+      await import('@server/analytics/dashboardApi');
+
+    const error = await getAmplitudeEventTotals({
+      eventType: 'purchase_confirmed',
+      startDate: '20260409',
+      endDate: '20260409',
+    }).catch(caught => caught);
+
+    expect(error).toBeInstanceOf(AmplitudeDashboardApiError);
+    expect(error.unknownEvent).toBe(false);
+    expect(error.status).toBe(429);
+  });
+
+  test('refuses to sum overlapping daily uniques when seriesCollapsed is missing', async () => {
+    vi.doMock('@shared/config/env', () => ({
+      serverEnv: {
+        AMPLITUDE_API_KEY: 'dashboard-api-key',
+        AMPLITUDE_SECRET_KEY: 'dashboard-secret-key',
+      },
+    }));
+
+    mockFetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        data: {
+          series: [[4, 5]],
+          xValues: ['2026-04-09', '2026-04-10'],
+        },
+      }),
+    } as Response);
+
+    const { getAmplitudeEventTotals } = await import('@server/analytics/dashboardApi');
+
+    await expect(
+      getAmplitudeEventTotals({
+        eventType: 'checkout_opened',
+        startDate: '20260409',
+        endDate: '20260410',
+        metric: 'uniques',
+      })
+    ).rejects.toThrow(/refusing to sum overlapping daily uniques/);
+  });
+
   test('throws a clear error when the dashboard secret key is missing', async () => {
     vi.doMock('@shared/config/env', () => ({
       serverEnv: {

@@ -1,0 +1,85 @@
+--- flagship-current.md	2026-09-16 12:40:53.200623194 -0700
++++ flagship-corrected.md	2026-09-16 12:41:24.393765927 -0700
+@@ -30,7 +30,7 @@
+ 
+ ![Side-by-side comparison of pixelated low-resolution image versus AI-enhanced high-resolution image](https://xqysaylskffsfwunczbd.supabase.co/storage/v1/object/public/blog-images/2026/02/1770945723634-blog-inline-before-after.webp)
+ 
+-## The 12 Best Free AI Image Upscalers Tested in 2026
++## The 12 Best Free AI Image Upscalers Compared in 2026
+ 
+ ### 1. MyImageUpscaler (ours)
+ 
+@@ -58,11 +58,11 @@
+ 
+ ### 2. Let's Enhance
+ 
+-**Free tier**: 5 credits/month  
++**Free tier**: 10 credits on signup, one time  
+ **Max upscale**: 4x  
+ **Speed**: 10–30 seconds
+ 
+-Good output quality. The free tier is genuinely limited at 5 images per month, which is restrictive if you have a batch to process. Requires account creation.
++Good output quality. The free allowance is a one-time 10 credits granted at signup, not a monthly refill, and free-tier exports are watermarked. Requires account creation.
+ 
+ ### 3. Upscayl (Desktop App)
+ 
+@@ -82,11 +82,11 @@
+ 
+ ### 5. Bigjpg
+ 
+-**Free tier**: Up to 10 images/day  
+-**Max upscale**: 16x (free: 2x only)  
++**Free tier**: 20 pictures/month  
++**Max upscale**: 16x on paid tiers; free up to 4x  
+ **Speed**: Slow (queue-based)
+ 
+-Bigjpg has the highest upscale factor at paid tiers, but the free experience is frustrating: 2x only, slow queue times, and an outdated interface.
++Bigjpg has the highest upscale factor at paid tiers. The free tier is capped at 20 pictures a month and up to 4x, with slow queue times and an outdated interface.
+ 
+ ### 6. Waifu2x
+ 
+@@ -122,11 +122,11 @@
+ 
+ ### 10. Pixelcut Upscaler
+ 
+-**Free tier**: Limited free tier with watermarks  
++**Free tier**: 3 free downloads/day, watermark-free  
+ **Max upscale**: 4x  
+ **Speed**: Fast
+ 
+-Pixelcut is primarily a mobile app with a web companion. The upscaling is decent for quick social media use, but the free tier applies watermarks — a dealbreaker for professional work.
++Pixelcut is primarily a mobile app with a web companion. The upscaling is decent for quick social media use, but the free tier is capped at 3 downloads a day.
+ 
+ ### 11. PicWish
+ 
+@@ -138,7 +138,7 @@
+ 
+ ### 12. Img.Upscaler
+ 
+-**Free tier**: 5 images/day  
++**Free tier**: 50 credits/month  
+ **Max upscale**: 4x  
+ **Speed**: Slow
+ 
+@@ -149,9 +149,9 @@
+ | Feature | MyImageUpscaler (ours) | Let's Enhance | Upscayl | Bigjpg |
+ |---|---|---|---|---|
+ | Signup required | **Yes** | Yes | No | No |
+-| Free tier | Welcome credits on signup (amount varies by region); 1 credit per upscale | 5/month | Unlimited | 10/day (2x only) |
+-| Watermark | None | None | None | None |
+-| Max output | Up to 8x per pass | 4x | 4x | 2x free, higher on paid |
++| Free tier | Welcome credits on signup (amount varies by region); 1 credit per upscale | 10 credits on signup (one time) | Unlimited | 20/month (up to 4x) |
++| Watermark | None | Yes on free tier | None | None |
++| Max output | Up to 8x per pass | 4x | 4x | Up to 4x free, higher on paid |
+ | Upload formats | JPEG, PNG, WebP, HEIC | Varies | Varies | Varies |
+ | Batch processing | 1 at a time on free; more on paid plans | No on free tier | Yes | No |
+ | Browser-based | Yes | Yes | No | Yes |
+@@ -223,7 +223,7 @@
+ 
+ ### Which free AI image upscaler has no watermark?
+ 
+-MyImageUpscaler, Upscayl, Let's Enhance and Bigjpg all export without watermarks on the tiers described above. Among the browser-based ones, MyImageUpscaler avoids a desktop install — but it does require an account, which Bigjpg does not.
++MyImageUpscaler, Upscayl and Bigjpg all export without watermarks on the tiers described above; Let's Enhance watermarks its free-tier exports. Among the browser-based ones, MyImageUpscaler avoids a desktop install — but it does require an account, which Bigjpg does not.
+ 
+ ### Can I use a free AI image upscaler online?
+ 
