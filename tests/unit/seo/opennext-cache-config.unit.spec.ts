@@ -44,13 +44,20 @@ describe('OpenNext incremental cache configuration', () => {
     expect(resolveQueueOverride(cloudflareConfig.default?.override?.queue)).toBe(doQueue);
   });
 
-  it('should require the durable queue whether interception is enabled or disabled', () => {
+  it('should serve cached ISR/SSG HTML before the server bundle by enabling interception', () => {
+    // Shipped change: interception is back on now that the durable queue exists.
+    // If this flips back to false, prerendered pages fall through to the Next server.
+    expect(cloudflareConfig.dangerous?.enableCacheInterception).toBe(true);
+  });
+
+  it('should never enable interception without the durable queue configured', () => {
+    // Paired invariant from the 2026-08-31 outage: interception + dummy queue = 500s.
     const interceptionEnabled = cloudflareConfig.dangerous?.enableCacheInterception === true;
     const queueConfigured =
       resolveQueueOverride(cloudflareConfig.default?.override?.queue) === doQueue;
 
-    expect(!interceptionEnabled || queueConfigured).toBe(true);
-    expect(interceptionEnabled || queueConfigured).toBe(true);
+    expect(interceptionEnabled).toBe(true);
+    expect(queueConfigured).toBe(true);
   });
 
   it('should propagate the durable queue to the middleware bundle', () => {

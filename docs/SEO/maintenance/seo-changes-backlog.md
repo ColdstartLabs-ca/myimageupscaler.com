@@ -11,9 +11,29 @@ Maintenance rules:
 
 ## 2026-09-16
 
+### OpenNext cache interception re-enabled (ISR/SSG HTML served before the server bundle)
+
+PRD: [PRD-traffic-recovery-2026-09](../../PRDs/traffic-recovery-2026-09.md) (Phase 2 / E5) + [revalidation-queue PRD](../../PRDs/done/opennext-revalidation-queue.md). Code changed; preview validation in progress; not deployed.
+
+Changes:
+
+- `open-next.config.ts`: `enableCacheInterception: false` → `true`. The documented precondition — a real revalidation queue — is now in place (`queue: doQueue`, DO binding + SQLite migration in both wrangler configs, enforced by tests). With interception off, every prerendered request (`/` → internal `/en`, `/blog/*`, pSEO) falls through to the full Next server bundle even on a cache HIT (`x-nextjs-cache: HIT`). With it on, the routing handler serves the cached HTML/RSC straight from the R2/regional incremental cache before the server bundle loads (`x-opennext-cache: HIT`).
+- New `tests/unit/seo/opennext-cache-interception.unit.spec.ts` exercises the real installed `@opennextjs/aws` `cacheInterceptor` against a mocked cache/queue: HTML vs RSC content-type isolation and `Vary`, server-action and preview-cookie bypass, cold-miss passthrough, and STALE → `queue.send` (the 2026-08-31 outage path).
+- `tests/unit/seo/opennext-cache-config.unit.spec.ts` now asserts interception is enabled **and** the durable queue is configured (paired invariant), replacing the tautological assertion.
+- `vitest.config.ts`: inline `@opennextjs/aws` so its extensionless adapter imports resolve in tests.
+
+Validation:
+
+- Focused runs green: `opennext-cache-config` (12), `opennext-cache-interception` (7), `check-html-cache` (10). Red verified by flipping the flag back to `false` (2 failures). No sitemap, canonical, hreflang, schema, robots, or route surface changed.
+
+Follow-up:
+
+- PREVIEW GATE **PASSED** on `myimageupscaler-cache-preview` `v00b58dae` / buildId `2EC0kLBVQ5C96yr32yFuk`: cold-miss/HIT, genuine STALE → queue → fresh HIT within 5 s, HTML/RSC isolation, API 401-uncached, unique-R2-buildId namespace isolation, secrets removed, and a 174/174 zero-5xx soak (`/tmp/traffic-preview-report-current`). Production timings remain unproven. Rollback is config-only (`false` + redeploy). Authorized production rollout stays pending until the in-flight CI deploy run `35153609328` completes and a fresh release gate runs on the cache commit.
+- Flagship fact correction (`/blog/best-free-ai-image-upscaler-2026-tested-compared`): **published to the production DB record** at `2026-09-16T21:27:52Z` (stored body hash matches the prepared payload; title/slug/meta/H1/tags unchanged) after the `yarn db:backup` → `yarn db:backups` → `gzip -t` gate on `backups/backup_2026-09-16_14-21-15.{schema,data}.sql.gz`. Public canonical HTML still serves the pre-correction OpenNext-cached body (no `cachePurge` binding), refreshing on the in-flight deploy (CI run `35153609328`); then unauthenticated readback and request indexing. Prepared copy: [corrected body](../reviews/2026-09-16-flagship-corrected-content.md), [diff](../reviews/2026-09-16-flagship-correction.diff).
+
 ### Homepage credit-offer locale contract fixed (raw message key was rendering)
 
-PRD: [PRD-revenue-growth-2026-09](../../PRDs/revenue-growth-2026-09.md). Code changed; not yet deployed.
+PRD: [PRD-revenue-growth-2026-09](../../PRDs/revenue-growth-2026-09.md). Code changed; committed at `0fff2b59`, release-gated 19/19, pushed to `origin/master`; CI deploy run `35153609328` queued.
 
 Changes:
 
@@ -28,36 +48,38 @@ Validation:
 
 Follow-up:
 
-- AC-2 (João): deploy, then confirm an unauthenticated public render in each supported locale shows the regional offer wording and no raw key.
+- AC-2: rollout in flight (fast-forward pushed to `origin/master` at `0fff2b59`, CI run `35153609328` queued). After deploy, confirm an unauthenticated public render in each supported locale shows the regional offer wording and 0 raw keys.
 
 ### Read-only paid-funnel scorecard added (no SEO surface changed)
 
 - Added `yarn diag:paid-funnel` (`scripts/diagnostics/paid-funnel-scorecard.ts`) — read-only Amplitude + Stripe + Supabase weekly reconciliation, replacing five throwaway probes. Relevant to SEO only as the shared paid-event definition that traffic work consumes: **the paid stage is `purchase_confirmed`** (server-side, from the Stripe webhook), reconciled at 96.2% capture on recorded event **totals** against Stripe (50 events vs 52 succeeded charges, Aug 17 – Sep 15). Full numbers in the PRD.
 - Hardened the same scorecard: unknown-event 400s are surfaced as UNKNOWN (never as a "NEVER ingested" assertion), auth/429/5xx/network/schema failures now fail loudly instead of printing a misleading success; uniques use whole-interval Amplitude `seriesCollapsed` counts (daily-unique sums refused); checkout-bound clickers come from one OR-filtered query; Stripe amounts are grouped by currency with `Intl` zero-decimal handling; CLI dates/flags are validated before any external call; recovery paging has a frozen window, stable `(timestamp, id)` ordering and an explicit truncation error at the 50k ceiling. Covered by `tests/unit/diagnostics/paid-funnel-scorecard.unit.spec.ts` and `tests/unit/server/analytics/dashboardApi.unit.spec.ts`.
 
-### Flagship fact correction prepared (not published) + mobile origin/cache diagnosis
+### Flagship fact correction published + homepage release/deploy + mobile origin/cache diagnosis
 
-PRD: [PRD-traffic-recovery-2026-09](../../PRDs/traffic-recovery-2026-09.md). No production content or code changed today.
+PRD: [PRD-traffic-recovery-2026-09](../../PRDs/traffic-recovery-2026-09.md) / [PRD-revenue-growth-2026-09](../../PRDs/revenue-growth-2026-09.md). Production DB content changed (flagship correction); repo code committed and pushed; no production deploy completed in this review.
 
 Changes:
 
-- Prepared a local, reviewable correction for `/blog/best-free-ai-image-upscaler-2026-tested-compared`: four contradicted vendor figures (Let's Enhance, Bigjpg, Pixelcut, Img.Upscaler) corrected to vendor-stated policy, and the body heading "…Tested in 2026" → "…Compared in 2026" to match the page's own no-benchmark disclosure. Title, `seo_title`, H1, slug, description, tags unchanged. Package: [review note](../reviews/2026-09-16-flagship-fact-correction.md), [corrected body](../reviews/2026-09-16-flagship-corrected-content.md), [diff](../reviews/2026-09-16-flagship-correction.diff). Served source is the production DB record, so the `yarn db:backup` → `yarn db:backups` → `gzip -t` gate runs before any write; publication is João's owner action.
-- Ran the bounded mobile origin/HTML-cache diagnosis: [record](../reports/2026-09-16-mobile-origin-cache-diagnosis.md). Variance reproduces (14 cookie-free mobile requests to `/`: 148 ms–1,986 ms, median 633 ms, 57% over the 400 ms target) but the **cause is NOT established** — the samples cannot separate per-request Worker work from routing, contention, or the OpenNext path. Finding: no `cf-cache-status` and no `Age` on HTML, but that absence alone proves neither cause nor applicability. The authoritative active config is `wrangler.json` with `wrangler deploy` (`main: .open-next/worker.js`); `wrangler.toml`'s `pages_build_output_dir` is stale. Cloudflare's Workers Cache docs say Workers Cache runs before the Worker executes, is distinct from zone Cache Rules, and respects `Vary`, so a dashboard Cache Rule is not promised to cache this response and the `Vary: rsc, next-router-state-tree, …` headers are a _hypothesis_ to test, not a proven cause (`x-nextjs-cache: HIT` is the OpenNext R2 cache). No fix or candidate is approved: the same URL serves `text/html` and `text/x-component`, cache lookup precedes application guards, and auth cookies/geo/Next-router variants are not promised safe without a test, so neither "drop `Vary` on documents" nor an RSC-only rule is proven to preserve variant isolation. Next gate is agent-side confirmation of the active caching mechanism plus a causal isolation test in a representative preview (`wrangler.preview.json`) **before any production rollout**; AC-6 owner deploy comes later. Traffic AC-4 is therefore PARTIAL (variance reproduced, cause open), not met.
+- **Published** the prepared correction for `/blog/best-free-ai-image-upscaler-2026-tested-compared` to the production DB record under the explicit owner GO at `2026-09-16T21:27:52Z`: four contradicted vendor figures (Let's Enhance, Bigjpg, Pixelcut, Img.Upscaler) corrected to vendor-stated policy, and the body heading "…Tested in 2026" → "…Compared in 2026" to match the page's own no-benchmark disclosure. Title, `seo_title`, H1, slug, description, tags unchanged; stored body SHA256 matches the prepared payload. Fresh backups `backups/backup_2026-09-16_14-21-15.{schema,data}.sql.gz` were listed and `gzip -t`-verified before the write. Package: [review note](../reviews/2026-09-16-flagship-fact-correction.md), [corrected body](../reviews/2026-09-16-flagship-corrected-content.md), [diff](../reviews/2026-09-16-flagship-correction.diff). Public HTML is still stale pending deploy.
+- Committed and pushed the homepage credit-offer locale fix plus the OpenNext interception change: `yarn test:upscale:release` PASS 19/19 (6.7m, no retries) and `yarn verify` clean at `0fff2b59`; fast-forward pushed `c3ce6f93..0fff2b59` to `origin/master`; CI deploy run `35153609328` queued `2026-09-16T21:39:47Z`. The full 467-test browser suite was stopped, not passed; the untracked release-candidate identity/build log was deleted by a generic Playwright `test-results/` reset, while the gate console log survives at `/tmp/homepage-release-log.8Fq8dr`.
+- Ran the bounded mobile origin/HTML-cache diagnosis: [record](../reports/2026-09-16-mobile-origin-cache-diagnosis.md). Variance reproduces (14 cookie-free mobile requests to `/`: 148 ms–1,986 ms, median 633 ms, 57% over the 400 ms target) but the **cause is NOT established** — the samples cannot separate per-request Worker work from routing, contention, or the OpenNext path. Finding: no `cf-cache-status` and no `Age` on HTML, but that absence alone proves neither cause nor applicability. The authoritative active config is `wrangler.json` with `wrangler deploy` (`main: .open-next/worker.js`); `wrangler.toml`'s `pages_build_output_dir` is stale. Cloudflare's Workers Cache docs say Workers Cache runs before the Worker executes, is distinct from zone Cache Rules, and respects `Vary`, so a dashboard Cache Rule is not promised to cache this response and the `Vary: rsc, next-router-state-tree, …` headers are a _hypothesis_ to test, not a proven cause (`x-nextjs-cache: HIT` is the OpenNext R2 cache). No fix or candidate is approved: the same URL serves `text/html` and `text/x-component`, cache lookup precedes application guards, and auth cookies/geo/Next-router variants are not promised safe without a test, so neither "drop `Vary` on documents" nor an RSC-only rule is proven to preserve variant isolation. The mechanism is now confirmed as OpenNext cache interception (E5) and representative-preview causal isolation **PASSED**: cold-miss/HIT, genuine STALE → queue → fresh HIT within 5 s, HTML/RSC isolation, API 401-uncached, unique-R2-buildId namespace isolation, secrets removed, and a 174/174 zero-5xx soak on preview `v00b58dae` / buildId `2EC0kLBVQ5C96yr32yFuk` (`/tmp/traffic-preview-report-current`); production timings remain unproven, so the rollout is authorized but not yet justified as a measured production win. Traffic AC-4 stays PARTIAL (variance reproduced, TTFB cause open), not met.
 - Opened the pinned-cohort review record: [pinned-cohort-review-2026-09](./pinned-cohort-review-2026-09.md). 2026-09-16 entry = KEEP (provisional) on a three-day sample; binding measurement is 2026-09-21 (Sep 11–17 vs Sep 4–10), final 2026-10-16.
 
 ### Evidence correction: unverified distinct-user counts (no SEO surface changed)
 
 - The 2026-09-16 paid-funnel probes reported Amplitude `uniques` as the **sum of daily uniques**, which is not a whole-interval distinct-user count. Those specific unique counts and every ratio derived from them are marked **UNVERIFIED / remeasurement pending** in [PRD-revenue-growth-2026-09](../../PRDs/revenue-growth-2026-09.md); recorded event **totals** are kept as historical. No production rerun was performed, and no metric was silently refreshed.
-- Also corrected in the PRD: `plan_selected`'s ingestion status is **UNKNOWN** (Amplitude's 400 "Invalid chart definition" is indistinguishable from a fabricated name), not a proven never-ingested defect; revenue AC-4 stays **open** (aggregate abandonment segmentation is not the five individual journey reviews the stop path names) and AC-8 stays **partial** (processing cost still UNVERIFIED).
+- Also corrected in the PRD: `plan_selected`'s ingestion status is **UNKNOWN** (Amplitude's 400 "Invalid chart definition" is indistinguishable from a fabricated name), not a proven never-ingested defect; revenue AC-4 is now **met** (five anonymized individual abandoned journeys reviewed read-only show early dismissal and no checkout defect, backing the stop decision) and AC-8 stays **partial** (processing cost still UNVERIFIED).
 
 Validation:
 
-- Read-only: GSC export not re-pulled (no completed window since Sep 13); flagship baseline fetched via `GET /api/blog/posts/<slug>`; cache probe used `curl` only. No sitemap, metadata, schema, canonical, hreflang, or route surface changed, so no new unit test is warranted yet.
+- Read-only except the authorized flagship DB content PATCH: GSC export not re-pulled (no completed window since Sep 13); flagship baseline/readback via `GET /api/blog/posts/<slug>`; cache probe used `curl` only. No sitemap, metadata, schema, canonical, hreflang, or route surface changed, so no new unit test is warranted.
 
 Follow-up:
 
-- AC-2 publication + unauthenticated public readback (João). Cache path: agent topology identification + causal experiment + variant-isolation proof before any fix; AC-6 owner deploy only after that, then AC-5 three production mobile runs, then the ~Oct 6 field review (AC-7).
-- Revenue AC-4 (five abandoned-journey reviews or a reproduced cause) and AC-8 (processing cost) remain open/partial; unverified daily-user sums await remeasurement with the corrected scorecard.
+- Flagship AC-2: after the in-flight deploy refreshes the public HTML, run the unauthenticated corrected-copy readback and request indexing. Revenue AC-2: after deploy, verify 0 raw keys / region wording in `/` and the six locales plus the consented checkout journey.
+- Cache path: preview gate PASSED (`v00b58dae`); run a fresh release gate on the cache commit, then the authorized deploy (pending the in-flight CI run); then traffic AC-5 three production mobile runs and the ~Oct 6 field review (AC-7).
+- Revenue AC-4 now met; AC-8 (processing cost) remains partial/UNVERIFIED; unverified daily-user sums await remeasurement with the corrected scorecard.
 
 ## 2026-09-14
 

@@ -18,6 +18,13 @@ export default defineConfig({
       '__tests__/**/*.{test,spec}.{ts,tsx}',
     ],
     exclude: ['node_modules', '.worktrees', 'tests/integration', 'tests/api', 'tests/e2e'], // Playwright tests are in tests/api, tests/e2e, tests/integration
+    // The AWS adapter build uses extensionless relative imports; Vite must process
+    // it so the cache-interception isolation test can import the real interceptor.
+    server: {
+      deps: {
+        inline: ['@opennextjs/aws'],
+      },
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

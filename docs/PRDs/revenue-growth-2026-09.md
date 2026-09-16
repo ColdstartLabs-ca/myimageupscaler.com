@@ -1,9 +1,9 @@
 # PRD-revenue-growth-2026-09 — Upgrade-funnel truth and repeat-use revenue (Sep 16–Oct 16, 2026)
 
-**Status:** IN PROGRESS
+**Status:** IN PROGRESS (Phase 1 locale fix committed at `0fff2b59`, release-gated 19/19, fast-forward pushed to `origin/master`, CI deploy run `35153609328` queued; AC-4 five-journey stop review complete and evidence-backed; AC-2/AC-6/AC-7 open; AC-8 partial)
 **Flag:** POST-DEPLOY-EVALUATION-REQUIRED — authorized production rollout and public/consented journey verification (AC-2)
 **Complexity:** 2 → LOW; risk override: none (breakdown: 7 locale templates + ≤3 callers = ≤10 planned non-test implementation files +2; no new module, schema, API, or billing boundary. Reassess to HIGH only if the funnel trace verifies an actual security, cache, or money-logic risk)
-**Owner:** Revenue/Growth dev agent; João owns founder outreach and any production rollout
+**Owner:** Revenue/Growth dev agent; João owns founder outreach and the production rollout (authorized by explicit 2026-09-16 GO)
 **Depends on:** None.
 **Coordination:** One-writer sequencing only with [PRD-traffic-recovery-2026-09](./traffic-recovery-2026-09.md) on `client/components/pages/HomePageClient.tsx`; neither PRD blocks the other.
 **Baseline:** [30-day search-traffic action plan](../SEO/reports/2026-09-16-search-traffic-action-plan.md)
@@ -21,16 +21,16 @@ The business outcome is paying and repeat-use customers; a modest SEO rebound ca
 ## Solution
 
 1. **Fix the locale contract (day 1, ~1–2h).** Align caller and template across en/de/es/fr/it/ja/pt for each supported locale across the regional eligibility cases, using the existing `welcomeCreditCopy` semantics. The zero-credit case must show truthful no-free-offer wording ("Plans available in your region"), not literally advertise 0 free credits. Then assert the rendered homepage shows the expected offer wording and no raw `homepage.finalCtaSubtext` / `homepage.ctaSubtext` key, and that each `*Subtext` caller supplies its template's variables; assert the numeric value only where a credit count is appropriate.
-2. **Follow the money before changing copy.** Trace the real ordered stages through `client/components/stripe/PurchaseModal.tsx` → `CheckoutModal.tsx` / `client/store/checkoutStore.ts` → `app/api/checkout/route.ts` → `app/api/webhooks/stripe/handlers/payment.handler.ts` (and `subscription.handler.ts`), with `server/analytics/coreKpiDefinitions.ts` as the existing definition source. `app/api/analytics/event/route.ts` is the client event sink, not the definition or source of all payments. Segment by trigger, device, sign-in state, plan; keep unknown windows/cohorts explicit. If no defect is found, review five abandoned journeys or consented feedback, then choose one test or stop.
+2. **Follow the money before changing copy.** Trace the real ordered stages through `client/components/stripe/PurchaseModal.tsx` → `CheckoutModal.tsx` / `client/store/checkoutStore.ts` → `app/api/checkout/route.ts` → `app/api/webhooks/stripe/handlers/payment.handler.ts` (and `subscription.handler.ts`), with `server/analytics/coreKpiDefinitions.ts` as the existing definition source. `app/api/analytics/event/route.ts` is the client event sink, not the definition or source of all payments. Segment by trigger, device, sign-in state, plan; keep unknown windows/cohorts explicit. No defect was reproduced in the ordered stages, and five individual abandoned journeys were reviewed (read-only, anonymized) and showed early dismissal (closed within 1–3 s with no CTA click) with zero checkout errors — so the documented stop decision stands and no arbitrary paid-funnel redesign ships.
 3. **Founder-led repeat-use test.** Start Sep 23–29, or earlier once proof and cost are ready. One existing paid batch workflow: 20 warm, permissioned prospects, stop after 20 contacts or the available demos. Report actual responses against learning thresholds, not a promised 5 demos / ≥2 paying accounts. Existing product and pricing; no feature build, ad spend, or discount; check variable compute cost first. Any checkout change is functionally tested in Stripe test mode only; revenue validation relies on lawful actual sales, never QA/test transactions.
 4. **Weekly scorecard and day-14 decision.** One fixed definition each for paid customers/captured payments, click-to-purchase, qualified organic clicks, 7-day repeat usage, and actual processing cost per paid job/credit. At day 14, with no paid-segment signal and volume that cannot plausibly close the gap, reserve time for a separate near-term income source instead of escalating SEO or spend. A second 20-prospect expansion may begin Oct 7–16 once ≥2 real paying accounts exist and delivery/unit cost is acceptable, rather than waiting for Oct 16; the day-30 final review remains.
 
 ## Acceptance Criteria
 
 - [x] AC-1 [local; actor: agent]: For each supported locale across the regional eligibility cases, the rendered homepage shows the expected offer wording per the existing `welcomeCreditCopy` semantics (including truthful no-free-offer wording for the zero-credit case) and no raw `homepage.finalCtaSubtext` / `homepage.ctaSubtext` key; the numeric value is asserted only where a credit count is appropriate. One locale-contract test is red on the caller/template mismatch and green after the fix, covering every `*Subtext` caller and template variable — Evidence: `tests/unit/i18n/homepage-credit-offer.unit.spec.ts` (new). Red run 2026-09-16 12:42 — `en.homepage.finalCtaSubtext needs {creditOffer}: expected [ 'freeCredits' ] to include 'creditOffer'` plus the de/es/fr/it/ja/pt `{freeCredits}` mismatch, 7 failed / 1 passed. Green after fix: 8/8 passed. `yarn verify` clean (tsc, lint, i18n:icu COMPLETE, schema, indexation gate, cache config) in 38.46s.
-- [ ] AC-2 [owner; actor: João]: The locale fix and any justified AC-4 funnel fix are deployed through the authorized rollout; an unauthenticated public render in the supported locales shows the expected offer wording per region and no raw key, and a consented journey through the real client → modal → checkout path opens correctly with no fabricated paid transaction (any checkout change is functionally tested in Stripe test mode only) — Evidence: pending.
+- [~] AC-2 [shared; actor: João, agent]: The locale fix and any justified AC-4 funnel fix are deployed through the authorized rollout; an unauthenticated public render in the supported locales shows the expected offer wording per region and no raw key, and a consented journey through the real client → modal → checkout path opens correctly with no fabricated paid transaction (any checkout change is functionally tested in Stripe test mode only). No funnel fix ships (AC-4 stop). **Shipped so far:** the locale fix is committed at `0fff2b59`, passed the release gate 19/19, and was fast-forward pushed to `origin/master` under the explicit owner GO; CI deploy run `35153609328` is queued. **Remaining implementation:** wait for the deploy, then confirm the unauthenticated public render has 0 raw keys in `/` and the six locales and shows region-appropriate wording, and run the consented checkout journey — Evidence: rollout in flight; public readback pending.
 - [x] AC-3 [local; actor: agent]: One paid-stage definition is recorded and reconciled against the traced client → modal → checkout → webhook purchase events (not `app/api/analytics/event/route.ts` alone), with unknown windows/cohorts preserved and an owner named — Evidence: definition and reconciliation in **Paid-stage definition** and **Funnel trace** below. Owner: Billing (per `server/analytics/coreKpiDefinitions.ts`). Reproduce with `yarn diag:paid-funnel --start 20260817 --end 20260915`.
-- [~] AC-4 [local; actor: agent]: Exactly one evidence-backed funnel fix exists, or a documented stop decision follows five abandoned journeys/consented feedback; no arbitrary copy change ships — Evidence: a **STOP decision on shipping** is recorded in **AC-4 stop decision** below (no product-code funnel change). **Evidence gap remains open:** the stop was reached from aggregate abandonment segmentation (1,149 events), which is not the five individual abandoned journeys this AC names, so AC-4 is PARTIAL until either five journey reviews support a stop decision or an evidence-backed funnel fix is implemented and verified. One telemetry item is an **UNKNOWN ingestion status**, not a proven never-ingested defect: `plan_selected` returns the same 400 "Invalid chart definition" Amplitude gives a fabricated event name, so only totals are asserted.
+- [x] AC-4 [local; actor: agent]: Exactly one evidence-backed funnel fix exists, or a documented stop decision follows five abandoned journeys/consented feedback; no arbitrary copy change ships — Evidence: a **STOP decision on shipping** is recorded in **AC-4 stop decision** below (no product-code funnel change), now backed by five individual abandoned journeys reviewed read-only via the Amplitude Export API (anonymized, Sep 14 2026). All five opened `purchase_modal` and dismissed via `close_button`/`backdrop` within 1–3 s with no `purchase_cta_clicked`; 4/5 defaulted to the credits tab, 1/5 was `outOfCredits`; zero `checkout_error`/`checkout_abandoned`. That is early dismissal, not a broken paid path, so the stop decision is evidence-backed and no paid-funnel redesign ships. Separate telemetry caveat retained: `plan_selected` is an **UNKNOWN ingestion status**, not a proven never-ingested defect (`400 "Invalid chart definition"` is indistinguishable from a fabricated event name), so only totals are asserted.
 - [x] AC-5 [local; actor: agent]: Job health and recovery delivery are evidenced separately from read-only sources — (a) job health: `yarn diag:upscale-health --start YYYYMMDD --end YYYYMMDD` (read-only current production Amplitude; no offline input), with optional `yarn analytics:processing:monitor --mode test --input <anonymized-attempts.json>` (offline checker validation only); (b) recovery delivery: a bounded read-only aggregate over the observed `revenue_recovery_intents` / `email_lifecycle_queue` schema, since no existing read-only command audits it. A fixture alone cannot establish production job or recovery health. No emails, lifecycle jobs, or `--mode live`; credentials read-only via the gcloud-secrets skill, required only, never printed — Evidence: **Job health** and **Recovery delivery** below. Credentials fetched read-only from `myimageupscaler-api-prod` / `myimageupscaler-client-prod` via the project service account; no value printed, no secret version created, no production row written. `--mode live` never used; the offline `analytics:processing:monitor` validation was skipped (no anonymized attempts fixture on hand) and is optional per this AC.
 - [ ] AC-6 [owner; actor: João]: The founder-led test is STARTED Sep 23–29 (or earlier once proof/cost is ready) and stopped after 20 contacts or the available demos; actual responses and learning thresholds are reported with no guaranteed 5 demos / 2 paid — Evidence: pending.
 - [ ] AC-7 [owner; actor: João]: The required household take-home target is recorded — **CAD 3,000/month, supplied 2026-09-16** — and João retains the weekly payer/repeat/cash review through Oct 16, the day-14 income-gap decision (continue or refocus), and the day-30 final review, each recorded with the exposure count. Captured gross cash is not treated as take-home, and no tax or actual-profit assumption is invented — Evidence: target recorded 2026-09-16; weekly, day-14, and day-30 reviews still pending.
@@ -40,8 +40,8 @@ The business outcome is paying and repeat-use customers; a modest SEO rebound ca
 
 | Capability             | Reachable consumer/trigger                                                                                                                                                                                                                         | Replaces / disposition                                                 | Evidence                               |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | -------------------------------------- |
-| Homepage offer text    | Home render of `/` and localized routes via `HomePageClient.tsx:338`, `HeroSection.tsx:85`, `SectionSignupCTA.tsx:51` → `locales/*/common.json` `finalCtaSubtext` / `ctaSubtext`                                                                   | Raw-key render replaced by localized region-appropriate credit wording | AC-1 done; AC-2 owner                  |
-| Paid funnel definition | Client `PurchaseModal.tsx` → `CheckoutModal.tsx` → `app/api/checkout/route.ts` → `app/api/webhooks/stripe/handlers/payment.handler.ts`; definition source `server/analytics/coreKpiDefinitions.ts`; client sink `app/api/analytics/event/route.ts` | Telemetry unchanged — stop decision recorded, no fix shipped           | AC-3 done; AC-4 partial (evidence gap) |
+| Homepage offer text    | Home render of `/` and localized routes via `HomePageClient.tsx:338`, `HeroSection.tsx:85`, `SectionSignupCTA.tsx:51` → `locales/*/common.json` `finalCtaSubtext` / `ctaSubtext`                                                                   | Raw-key render replaced by localized region-appropriate credit wording | AC-1 done; AC-2 rollout in flight      |
+| Paid funnel definition | Client `PurchaseModal.tsx` → `CheckoutModal.tsx` → `app/api/checkout/route.ts` → `app/api/webhooks/stripe/handlers/payment.handler.ts`; definition source `server/analytics/coreKpiDefinitions.ts`; client sink `app/api/analytics/event/route.ts` | Telemetry unchanged — stop decision recorded, no fix shipped           | AC-3 done; AC-4 met (5-journey stop)   |
 | Job health             | `server/services/upscale-completion-health.service.ts` via `scripts/diagnostics/upscale-completion-rate.ts` (read-only Amplitude) and `scripts/monitor-processing-failure-rate.ts` (offline `--mode test`)                                         | Reused read-only; Sep 1–8 incident found, recovered Sep 9              | AC-5a done                             |
 | Recovery delivery      | No existing read-only aggregate command; audit `revenue_recovery_intents` / `email_lifecycle_queue` with a bounded read-only query (`server/services/revenue-recovery.service.ts` writes them)                                                     | Audited via new read-only `yarn diag:paid-funnel`; no emails sent      | AC-5b done                             |
 | Founder-led test       | No runtime code; João outreach and tracking assets                                                                                                                                                                                                 | None                                                                   | AC-6                                   |
@@ -50,7 +50,7 @@ The business outcome is paying and repeat-use customers; a modest SEO rebound ca
 
 #### Phase 1: Locale-contract offer fix
 
-**Status:** DONE (AC-1); AC-2 awaiting owner rollout
+**Status:** DONE (AC-1); AC-2 partial — locale fix committed at `0fff2b59`, release-gated 19/19, pushed to `origin/master`, CI deploy run `35153609328` queued; public readback pending
 **ACs:** AC-1, AC-2
 **Files:** `client/components/pages/HomePageClient.tsx`, `locales/en/common.json`, `locales/{de,es,fr,it,ja,pt}/common.json` (`ctaSubtext` L16 / `finalCtaSubtext` L39); one focused locale test (not counted).
 **Implementation:** make every template consume `{creditOffer}` and every caller pass `creditOffer` through `welcomeCreditCopy`, so each locale renders its regional eligibility case (including truthful no-free-offer wording at zero); assert no raw key renders and each template variable is supplied, asserting the numeric value only where appropriate. One file writer at a time — coordinate the homepage caller with traffic.
@@ -63,14 +63,16 @@ The business outcome is paying and repeat-use customers; a modest SEO rebound ca
 
 **Deviation from the planned implementation, deliberate:** the plan said pass `creditOffer` through `welcomeCreditCopy`. `welcomeCreditCopy` returns hardcoded English, so doing that literally would have rendered "5 welcome credits • Keine Kreditkarte erforderlich • …" on the German homepage — trading a raw key for an English fragment inside six localized pages. The offer wording is therefore localized per locale while keeping the exact `welcomeCreditCopy` semantics (null → vary-by-region, ≤0 → plans-available, otherwise the count). Zero-credit regions render "Plans available in your region" and never the numeral 0, asserted by the test.
 
+**Shipping progress 2026-09-16:** the fix is committed at `0fff2b59`, passed the local release gate (`yarn test:upscale:release` 19/19, 6.7m, no retries; homepage locale 8/8) and `yarn verify`, and was fast-forward pushed to `origin/master` (`c3ce6f93..0fff2b59`) under the explicit owner GO; CI deploy run `35153609328` is queued. The full 467-test browser suite was stopped, not passed. AC-2's public readback remains after the deploy. Caveat: the gate is local and its provider/Auth/Storage transport is simulated, not production proof; the untracked release-candidate identity/build log in `test-results/async-upscale-runtime/` was later deleted by a generic Playwright `test-results/` reset (the gate console log survives at `/tmp/homepage-release-log.8Fq8dr`, `GATE_EXIT=0`, `19 passed`, `Done in 402.43s`; the report holds the actual digests `sourceSha256 ddd6647e…`, `bundleSha256 9b7d9fc8…`).
+
 #### Phase 2: Funnel truth, job health, and repeat-use
 
-**Status:** PARTIAL — AC-3 and AC-5 done; AC-4 and AC-8 partial (evidence gaps vs their AC text); AC-6 and AC-7 await João
+**Status:** PARTIAL — AC-3, AC-4, AC-5 done; AC-8 partial (processing cost UNVERIFIED); AC-6 and AC-7 open
 **ACs:** AC-3, AC-4, AC-5, AC-6, AC-7, AC-8
 **Files:** none until a defect is verified; then only the specific telemetry/flow file the trace names (`app/api/analytics/event/route.ts` is the client sink, not the definition source). Read-only checkers only. No product code for the outreach test; tracking/proof assets only.
 **Implementation:** write one paid-stage definition and reconcile it against the traced event sources; make at most one evidence-backed fix; RUN the read-only health checkers; run the founder test to its stop rule; gather cost inputs and the weekly/day-14 decision. Never rebuild emails or checkout.
 **Verification:** E3 — reconciliation output against the traced stages, plus `yarn test:unit <actual planned path>` (marked planned if new) through the real entry point where a fix is made, with `yarn verify` once for the actual code change (AC-3, AC-4). E4 — job-health output from `yarn diag:upscale-health --start YYYYMMDD --end YYYYMMDD` (read-only current production; required), plus optional validation of the offline monitor `yarn analytics:processing:monitor --mode test --input <anonymized-attempts.json>`, plus a separate bounded read-only recovery-delivery aggregate over `revenue_recovery_intents`/`email_lifecycle_queue` (AC-5); a fixture alone cannot establish production job or recovery health and `--mode live` (which emails) is never used. E5 — recorded prospect responses and exposure count, cost inputs (or pending/UNVERIFIED, never a pass), and the weekly/day-14 review (AC-6, AC-7, AC-8). No real emails or jobs triggered.
-**Checkpoint:** 2026-09-16 — AC-3 and AC-5 verified; AC-4 and AC-8 recorded PARTIAL with their evidence gaps open (see **Phase 2 findings** above). AC-4's stop decision on shipping stands, but the five-journey stop decision or verified-fix requirement is unmet.
+**Checkpoint:** 2026-09-16 — AC-3 and AC-5 verified; AC-4 now met (five-journey stop review recorded; no funnel fix ships); AC-8 recorded PARTIAL with its evidence gap open (see **Phase 2 findings** above). AC-6/AC-7 open.
 One file added beyond the "read-only checkers only" allowance: `scripts/diagnostics/paid-funnel-scorecard.ts`
 (+ `yarn diag:paid-funnel`, + `tests/unit/diagnostics/paid-funnel-scorecard.unit.spec.ts`). It replaces the
 five throwaway probes used during the trace with a single read-only command, so the weekly scorecard in
@@ -146,23 +148,26 @@ all clicks understates checkout intent. That figure came from the pre-correction
 and is pending remeasurement; the scorecard now reports one OR-filtered checkout-bound count instead
 of summing per-destination users.
 
-### AC-4 stop decision — no funnel fix shipped (evidence gap open)
+### AC-4 stop decision — no funnel fix shipped
 
-Reviewed **1,149 `purchase_modal_abandoned` events** segmented by exit method, active tab,
-out-of-credits state, and checkout step. This is **aggregate segmentation, not the five individual
-abandoned-journey reviews** the AC's stop path names, so the AC-4 evidence requirement stays open
-even though the shipping decision below stands.
+**Five individual abandoned journeys were reviewed** (read-only Amplitude Export API, anonymized, Sep 14
+2026, stages/timestamps only): 5/5 opened `purchase_modal` and dismissed via `close_button`/`backdrop`
+within 1–3 s with no `purchase_cta_clicked`; 4/5 defaulted to the credits tab/small pack; 1/5 was
+`outOfCredits` (`requiredCredits=1`, balance 0) and bounced three times. Zero `checkout_error`/
+`checkout_abandoned` in the sample, and the ordered `PurchaseModal` → `CheckoutModal` → `checkoutStore` →
+`app/api/checkout/route.ts` → Stripe webhook path reproduced no dead-end or unsupported branch (the
+`model_gate` → `upgrade_plan_modal` fallback lands on the normal credits modal by design). This is fast
+early dismissal, not a broken paid path. The aggregate segmentation below is retained as
+corroborating context only, with its unverified unique counts unchanged.
 
 - exit method: 683 `close_button`, 79 `backdrop` (reported uniques, unverified) — deliberate dismissal, not mis-click
 - active tab at abandonment: 710 `credits`, 56 `subscribe` (unverified)
 - 487 abandoned while `outOfCredits: true` (unverified)
 - `checkout_abandoned` step: 24, all `plan_selection`; `checkout_error` only 3 (unverified)
 
-The historical aggregates suggest a possible upstream issue: **877 reported modal openers, 233 click anything
-(26.6%, unverified)**. Closing it means changing modal copy or offer presentation — exactly the
-"arbitrary copy change" this AC forbids without evidence that a specific change converts. The
-abandonment data shows _where_ users leave, not _why_. **Decision: ship no funnel change.** The open
-evidence gap: complete five individual abandoned-journey reviews for the stop decision, or implement and verify an evidence-backed funnel fix.
+The aggregates show _where_ users leave, not _why_ (877 reported modal openers, 233 click anything,
+26.6% unverified). **Decision: ship no funnel change and no arbitrary copy or default-tab change** — the
+five journey reviews above close the AC-4 evidence requirement.
 
 Two findings handed to João rather than acted on:
 
@@ -258,11 +263,12 @@ Until then no margin, spend-scale, or price-cut claim may be made.
 
 ### Still owner-blocked or open
 
-- **AC-2** — production rollout of the Phase 1 locale fix, then the unauthenticated public render
-  check and the consented checkout journey. Nothing here can be verified in production until João
-  deploys.
-- **AC-4 (partial)** — the five individual abandoned-journey reviews or an implemented and verified funnel fix are still
-  outstanding; only aggregate abandonment segmentation exists. No funnel change ships either way.
+- **AC-2** — rollout in flight: the locale fix is committed at `0fff2b59`, pushed to `origin/master`,
+  and CI deploy run `35153609328` is queued. Remaining implementation is post-deploy readback only:
+  confirm 0 raw keys and region-appropriate wording in the unauthenticated public render for `/` and
+  the six locales, then run the consented checkout journey.
+- **AC-4** — met: five individual abandoned-journey reviews (read-only, anonymized) show early dismissal
+  and no checkout defect, so the stop decision is evidence-backed and no funnel change ships.
 - **AC-6** — the founder-led 20-prospect test (starts Sep 23–29).
 - **AC-7** — the household take-home target is recorded (CAD 3,000/month, 2026-09-16); the weekly
   review, the day-14 income-gap decision, and the day-30 final review are still pending and need
