@@ -11,6 +11,12 @@ Maintenance rules:
 
 ## 2026-09-16
 
+### Published articles submitted for recrawling
+
+IndexNow accepted the [flagship comparison](https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared) and [YouTube thumbnail guide](https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails) on 2026-09-16 at 22:00 UTC (HTTP 200; two unique URLs). This confirms submission acceptance, not indexing or Google recovery. Manual GSC requests remain open.
+
+Original release/production console output and the failed-run trace are archived in `backups/prd-shipping-e364d0aa-logs.tar.gz` (gzip integrity verified). A separate local test run reset the structured post-deploy outputs; the measured results remain recorded in the traffic PRD and original console output.
+
 ### OpenNext cache interception re-enabled (ISR/SSG HTML served before the server bundle)
 
 PRD: [PRD-traffic-recovery-2026-09](../../PRDs/traffic-recovery-2026-09.md) (Phase 2 / E5) + [revalidation-queue PRD](../../PRDs/done/opennext-revalidation-queue.md). Deployed at `e364d0aa` and RETAINED in production.
