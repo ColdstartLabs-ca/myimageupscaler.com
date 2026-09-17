@@ -152,6 +152,38 @@ describe('three-kings-manager classify gates', () => {
 });
 
 describe('three-kings-manager edit outcomes', () => {
+  it('waits for 14 complete post-edit GSC days before judging', () => {
+    const entry = { history: [{ date: '2026-08-31', rung: 1, field: 'seo_title', outcome: null }] };
+    const rows = mkRows([
+      ...Array.from(
+        { length: 14 },
+        (_, i) =>
+          [`2026-08-${String(17 + i).padStart(2, '0')}`, 10, 1000, 8] as [
+            string,
+            number,
+            number,
+            number,
+          ]
+      ),
+      ...Array.from(
+        { length: 14 },
+        (_, i) =>
+          [`2026-09-${String(1 + i).padStart(2, '0')}`, 12, 1000, 8] as [
+            string,
+            number,
+            number,
+            number,
+          ]
+      ),
+    ]);
+
+    expect(tkm.judgeEdits(entry, rows, '2026-09-13').judged).toBe(0);
+    expect(entry.history[0].outcome).toBeNull();
+
+    expect(tkm.judgeEdits(entry, rows, '2026-09-14').judged).toBe(1);
+    expect(entry.history[0].outcome).toMatchObject({ measuredThrough: '2026-09-14' });
+  });
+
   it('judges WIN when post clicks/d reach 1.2x pre', () => {
     const entry = { history: [{ date: '2026-08-01', rung: 1, field: 'seo_title', outcome: null }] };
     const rows = mkRows([

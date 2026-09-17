@@ -105,7 +105,9 @@ function judgeEdits(entry, rows, dataEnd) {
   const wd = entry.windowDays || WINDOW_DAYS;
   for (const h of entry.history) {
     if (h.outcome) continue;
-    const postEnd = shift(h.date, wd - 1);
+    // The edit date itself is not a complete post-edit GSC day. Measure the
+    // following 14 calendar days and do not judge until all are final.
+    const postEnd = shift(h.date, wd);
     if (dataEnd < postEnd) continue; // window not complete in this export
     const pre = windowStats(rows, shift(h.date, -1), wd);
     const post = windowStats(rows, postEnd, wd);
