@@ -6,14 +6,14 @@ const TOPAZ_FREE_TRIAL_SNIPPET = {
   slug: 'topaz-labs-free-trial',
   title: 'Topaz Labs Free Trial 2026: Current Terms and Limits',
   seoDescription:
-    'Need a Topaz free-trial alternative? Topaz Photo has no current trial, but MyImageUpscaler lets you upscale and enhance images in your browser.',
+    'Topaz Labs has no free trial for current Topaz Photo in 2026; you buy first and have a 2-day refund window. Compare legacy, web, and desktop terms.',
   // Tier-safe: the welcome grant is regional (5/3/0), so the published body must not
   // name one tier's number. See tests/unit/seo/capability-claims.unit.spec.ts.
   bodySupport: 'browser-based alternative with welcome credits after signup',
 } as const;
 
 describe('Topaz free-trial snippet recovery contract', () => {
-  it('uses a truthful alternative-led SEO description without reverting the Topaz facts', () => {
+  it('uses a truthful answer-led SEO description without reverting the Topaz facts', () => {
     const result = createBlogPostSchema.safeParse({
       slug: TOPAZ_FREE_TRIAL_SNIPPET.slug,
       title: TOPAZ_FREE_TRIAL_SNIPPET.title,
@@ -27,16 +27,11 @@ describe('Topaz free-trial snippet recovery contract', () => {
     });
 
     expect(result.success).toBe(true);
-    expect(TOPAZ_FREE_TRIAL_SNIPPET.seoDescription).toHaveLength(143);
-    expect(TOPAZ_FREE_TRIAL_SNIPPET.seoDescription).toMatch(
-      /^Need a Topaz free-trial alternative\?/
-    );
-    expect(TOPAZ_FREE_TRIAL_SNIPPET.seoDescription).toContain('Topaz Photo has no current trial');
+    expect(TOPAZ_FREE_TRIAL_SNIPPET.seoDescription).toHaveLength(147);
+    expect(TOPAZ_FREE_TRIAL_SNIPPET.seoDescription).toMatch(/^Topaz Labs has no free trial/);
+    expect(TOPAZ_FREE_TRIAL_SNIPPET.seoDescription).toContain('2-day refund window');
     expect(TOPAZ_FREE_TRIAL_SNIPPET.seoDescription).toContain(
-      'MyImageUpscaler lets you upscale and enhance images in your browser'
-    );
-    expect(TOPAZ_FREE_TRIAL_SNIPPET.seoDescription).not.toMatch(
-      /^Topaz Photo has no current free trial\./
+      'Compare legacy, web, and desktop terms'
     );
   });
 
@@ -48,7 +43,7 @@ describe('Topaz free-trial snippet recovery contract', () => {
 
     expect(rows).toHaveLength(1);
     expect(rows[0]).toContain('[ ]');
-    expect(rows[0]).toContain('2026-08-31');
-    expect(rows[0]).toContain('Topaz free-trial snippet recovery');
+    expect(rows[0]).toContain('2026-09-21');
+    expect(rows[0]).toContain('Three Kings rung-2');
   });
 });

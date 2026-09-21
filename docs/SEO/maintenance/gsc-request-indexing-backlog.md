@@ -39,7 +39,7 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 
 ### Three Kings refresh — live verified, ready to request
 
-- [x] `https://myimageupscaler.com/blog/poster-size-dimensions-pixels` — indexing requested 2026-09-04, confirmed "added to a priority crawl queue" — 2026-09-03 Three Kings refresh; production HTML verified after deploy.
+- [ ] `https://myimageupscaler.com/blog/poster-size-dimensions-pixels` — 2026-09-21 Three Kings rung-3 proof-led body pass; API readback matches the direct answer and effective-PPI evidence module. Public HTML still serves the prior cached body, so request indexing only after live HTML matches.
 - [x] `https://myimageupscaler.com/alternatives/vs-adobe-express` — indexing requested 2026-09-04, confirmed "added to a priority crawl queue" — 2026-09-03 Three Kings refresh; production HTML and sitemap `lastmod` verified after deploy.
 - [x] `https://myimageupscaler.com/blog/photoshop-upscale-image` — indexing requested 2026-09-04, confirmed "added to a priority crawl queue" — 2026-09-03 Three Kings refresh; production HTML verified after deploy.
 
@@ -144,7 +144,7 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 - [x] `https://myimageupscaler.com/blog/mejorar-calidad-imagen-ia-gratis`
 - [x] `https://myimageupscaler.com/blog/pixelcut-ai-photo-editor`
 - [x] `https://myimageupscaler.com/blog/topaz-denoise-ai`
-- [ ] `https://myimageupscaler.com/blog/topaz-labs-free-trial` — Topaz free-trial snippet recovery updated 2026-08-31; API and live cached HTML matched on 2026-09-07. Manual GSC request remains pending because native Brave control timed out.
+- [ ] `https://myimageupscaler.com/blog/topaz-labs-free-trial` — 2026-09-21 Three Kings rung-2 `seo_description` now answers the current no-trial/2-day-refund policy directly. API readback matches; public HTML still serves the prior cached description, so request indexing only after live HTML matches.
 
 - [x] `https://myimageupscaler.com/blog/video-upscaling-software`
 - [x] `https://myimageupscaler.com/scale/upscale-16x`

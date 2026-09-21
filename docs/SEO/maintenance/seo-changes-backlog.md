@@ -9,6 +9,31 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-09-21
+
+### Three Kings Topaz rung-2 and poster rung-3 tests
+
+Evidence:
+
+- Refreshed final GSC evidence through 2026-09-17. The manager judged `/blog/topaz-labs-free-trial` rung 1 a WIN (6.43→8.14 clicks/day, position 7.8→7.3) and `/blog/poster-size-dimensions-pixels` rung 2 FLAT (3.57→3.14 clicks/day, position 6.4→6.1), leaving both eligible under the position and CTR gates.
+- The latest 28-day query/page data kept Topaz at position 7.3 with 1.55% CTR and the poster page at position 6.1 with 0.26% CTR; `poster size in pixels` itself had 857 impressions, zero clicks, and position 4.9.
+
+Changes:
+
+- `/blog/topaz-labs-free-trial`: changed only `seo_description` to answer the current no-trial policy and two-day refund window directly while retaining the legacy/web/desktop comparison promise.
+- `/blog/poster-size-dimensions-pixels`: completed rung 3 with a tighter 24×36 direct answer, PPI-correct labels, and an above-fold effective-PPI proof module; corrected the prior claim that a 4000×3000 image provides 300 DPI at 11×14.
+- Recorded both edits with exact prior values in `three-kings-ledger.json`; both 14-day windows close 2026-10-05. Reopened/updated the existing indexing rows in place without duplicates.
+
+Validation:
+
+- Fresh verified backup before each production write: `backups/backup_2026-09-21_09-12-47.{schema,data}.sql.gz` and `backups/backup_2026-09-21_09-14-59.{schema,data}.sql.gz`; both pairs were listed by `yarn db:backups` and passed `gzip -t`.
+- Both production PATCH requests succeeded and authenticated API readback matched the exact new values. Public HTML still served the prior cached description/body immediately afterward, so no GSC request is claimed.
+- Focused SEO contracts and full `yarn verify` run in this job.
+
+Follow-up:
+
+- Recheck public HTML, then process the existing GSC request-indexing rows only after the new copy is visible. Earliest outcome review is 2026-10-08, when final GSC data can include 14 complete post-edit days plus the three-day holdback.
+
 ## 2026-09-16
 
 ### Published articles submitted for recrawling

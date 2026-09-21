@@ -10,6 +10,12 @@ const REPORT_REFRESH = {
       "A poster's size in pixels depends on two things: print size and DPI (pixels = inches × DPI). A 24×36 poster is 7,200 × 10,800 px at 300 DPI, or 3,600 × 5,400 px at 150. Below are charts for every common poster size at 150, 200, and 300 DPI, plus when to upscale before printing. Try free now.",
     seoDescription:
       'Poster size in pixels = inches × DPI. See charts for 24×36, 18×24, A-series and more at 150, 200, and 300 DPI, plus minimum print resolution tips.',
+    bodyPass: {
+      directAnswer:
+        'For a 24x36 poster, use **7200 x 10800 pixels at 300 PPI** for close viewing, **4800 x 7200 pixels at 200 PPI**, or **3600 x 5400 pixels at 150 PPI** for posters viewed several feet away.',
+      evidence:
+        'A 4000 x 3000 landscape image printed at 36 x 24 inches provides about **111 PPI** on its limiting side—not 300 PPI just because the file metadata says 300 DPI.',
+    },
   },
   photoshop: {
     slug: 'photoshop-upscale-image',
@@ -52,6 +58,8 @@ describe('2026-09-03 Three Kings refresh contract', () => {
     expect(REPORT_REFRESH.poster.description).toMatch(/^A poster's size in pixels/);
     expect(REPORT_REFRESH.poster.title).toHaveLength(55);
     expect(REPORT_REFRESH.poster.seoDescription.length).toBeLessThanOrEqual(160);
+    expect(REPORT_REFRESH.poster.bodyPass.directAnswer).toContain('7200 x 10800 pixels at 300 PPI');
+    expect(REPORT_REFRESH.poster.bodyPass.evidence).toContain('about **111 PPI**');
     expect(REPORT_REFRESH.photoshop.description).toMatch(/^To upscale an image in Photoshop,/);
   });
 
@@ -84,8 +92,13 @@ describe('2026-09-03 Three Kings refresh contract', () => {
         backlog.match(new RegExp('- \\[([ x])\\] `' + escapedUrl + '`[^\\n]*', 'g')) ?? [];
 
       expect(rows, url).toHaveLength(1);
-      expect(rows[0], url).toContain('[x]');
-      expect(rows[0], url).toContain('2026-09-03 Three Kings refresh');
+      if (url.endsWith('/blog/poster-size-dimensions-pixels')) {
+        expect(rows[0], url).toContain('[ ]');
+        expect(rows[0], url).toContain('2026-09-21 Three Kings rung-3');
+      } else {
+        expect(rows[0], url).toContain('[x]');
+        expect(rows[0], url).toContain('2026-09-03 Three Kings refresh');
+      }
     }
   });
 });

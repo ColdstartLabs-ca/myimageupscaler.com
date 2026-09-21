@@ -1,5 +1,16 @@
 # Blog Changelog
 
+## 2026-09-21
+
+### SEO: Three Kings Topaz rung-2 and poster rung-3 tests
+
+**Affected:** topaz-labs-free-trial, poster-size-dimensions-pixels
+**Why:** Final GSC data through 2026-09-17 closed both prior windows. Topaz's rung 1 was a WIN but remained below the rank-band CTR threshold at position 7.3; the poster refresh was FLAT at position 6.1 with a persistent zero-click head query and an above-fold proof gap around effective PPI.
+**Changes:**
+
+- `topaz-labs-free-trial` — changed only `seo_description` to answer the current no-trial policy, two-day refund window, and legacy/web/desktop term differences directly.
+- `poster-size-dimensions-pixels` — tightened the above-fold 24×36 answer, standardized pixel-density guidance as PPI, corrected the 4000×3000 print example, and added an effective-PPI calculation showing that DPI metadata alone does not create pixels.
+
 ## 2026-09-14
 
 ### SEO: YouTube thumbnail rung-2 description test
