@@ -1,5 +1,17 @@
 # Blog Changelog
 
+## 2026-09-24
+
+### SEO: Three Kings rung-3 tests and description rollback
+
+**Affected:** best-ai-upscaler, topaz-video-upscaler, best-image-upscaler
+**Why:** Final GSC data through 2026-09-20 judged the 2026-09-04 best-ai and Topaz description rungs as wins and eligible for rung 3. The best-image description rung was a LOSS with impressions up and position improved, ruling out a demand-collapse excuse for the click decline.
+**Changes:**
+
+- `best-ai-upscaler` — added an above-fold evidence module covering the four image jobs, fidelity/artifact/workflow checks, and a preserve-versus-invent decision rule.
+- `topaz-video-upscaler` — added an above-fold direct answer and evidence table distinguishing Topaz Video, the Pro tier, and legacy Video Enhance AI terminology.
+- `best-image-upscaler` — restored the exact pre-rung-2 `seo_description`; title, body, slug, and canonical were unchanged.
+
 ## 2026-09-21
 
 ### SEO: Three Kings Topaz rung-2 and poster rung-3 tests

@@ -9,6 +9,32 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-09-24
+
+### Three Kings rung-3 tests and best-image rollback
+
+Evidence:
+
+- Refreshed final GSC evidence through 2026-09-20. `/blog/best-ai-upscaler` rung 2 was a WIN (0.79→1.00 clicks/day; position 17.3→8.2) and `/blog/topaz-video-upscaler` rung 2 was a WIN (0.14→0.36 clicks/day; position 11.0→9.2), making both eligible for rung 3.
+- `/blog/best-image-upscaler` rung 2 was a LOSS (2.36→1.71 clicks/day) while impressions rose 24% and position improved 11.6→8.7, so the regression did not meet the demand-shift exception.
+
+Changes:
+
+- `/blog/best-ai-upscaler`: added an above-fold evidence module defining the four image jobs, fidelity/artifact/workflow checks, and a preserve-versus-invent decision rule.
+- `/blog/topaz-video-upscaler`: added an above-fold direct answer and evidence table for Topaz Video vs Pro and legacy Video Enhance AI naming, aligned to the zero-click `vs pro` query cluster.
+- `/blog/best-image-upscaler`: restored the exact recorded pre-rung-2 `seo_description`; no title, H1/body, slug, canonical, or indexability change.
+- Recorded both rung-3 edits and the rollback in `three-kings-ledger.json`; all three cooling/measurement windows close 2026-10-08. Reopened the existing indexing rows in place without duplicates.
+
+Validation:
+
+- Fresh verified backup before each production write: `backups/backup_2026-09-24_09-12-58.{schema,data}.sql.gz`, `backups/backup_2026-09-24_09-14-55.{schema,data}.sql.gz`, and `backups/backup_2026-09-24_09-16-00.{schema,data}.sql.gz`; every pair was listed by `yarn db:backups` and passed `gzip -t`.
+- All three production PATCH requests succeeded and authenticated API readback matched the exact target values/hashes. Public HTML already serves the restored best-image description; the two rung-3 bodies remain on prior cached HTML, so no GSC request is claimed for this run.
+- Focused Three Kings contracts and full `yarn verify` run in this job.
+
+Follow-up:
+
+- Recheck public HTML for the two rung-3 pages, then process the existing GSC request-indexing rows only after the new copy is visible. Earliest outcome review is 2026-10-12, when final GSC data can include 14 complete post-edit days plus the holdback.
+
 ## 2026-09-21
 
 ### Three Kings Topaz rung-2 and poster rung-3 tests

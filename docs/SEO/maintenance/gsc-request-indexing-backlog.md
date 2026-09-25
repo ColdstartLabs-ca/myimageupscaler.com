@@ -43,11 +43,11 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 - [x] `https://myimageupscaler.com/alternatives/vs-adobe-express` — indexing requested 2026-09-04, confirmed "added to a priority crawl queue" — 2026-09-03 Three Kings refresh; production HTML and sitemap `lastmod` verified after deploy.
 - [x] `https://myimageupscaler.com/blog/photoshop-upscale-image` — indexing requested 2026-09-04, confirmed "added to a priority crawl queue" — 2026-09-03 Three Kings refresh; production HTML verified after deploy.
 
-### Three Kings rung-2 descriptions — live verified, request pending
+### Three Kings ladder actions — request after current live HTML is verified
 
-- [x] `https://myimageupscaler.com/blog/best-ai-upscaler` — indexing requested 2026-09-11, confirmed "added to a priority crawl queue" — `seo_description` updated through the production API on 2026-09-04; API and live cached HTML matched on 2026-09-07.
-- [x] `https://myimageupscaler.com/blog/topaz-video-upscaler` — indexing requested 2026-09-11, confirmed "added to a priority crawl queue" — `seo_description` updated through the production API on 2026-09-04; API and live cached HTML matched on 2026-09-07.
-- [x] `https://myimageupscaler.com/blog/best-image-upscaler` — indexing requested 2026-09-11, confirmed "added to a priority crawl queue" — `seo_description` updated through the production API on 2026-09-04; API and live cached HTML matched on 2026-09-07.
+- [ ] `https://myimageupscaler.com/blog/best-ai-upscaler` — 2026-09-24 Three Kings rung-3 proof-led body pass added an above-fold 12-tool evidence rubric. API readback matches; public HTML still serves the prior cached body, so request indexing only after live HTML matches.
+- [ ] `https://myimageupscaler.com/blog/topaz-video-upscaler` — 2026-09-24 Three Kings rung-3 proof-led body pass added a direct Topaz Video vs Pro/legacy-name answer for the zero-click query cluster. API readback matches; public HTML still serves the prior cached body, so request indexing only after live HTML matches.
+- [ ] `https://myimageupscaler.com/blog/best-image-upscaler` — 2026-09-24 regression rollback restored the exact pre-rung-2 `seo_description`. API and public HTML readback match; eligible for a new manual GSC request. **Not yet requested.**
 
 ### Blog index parameter deindex signal — request after deployment
 
