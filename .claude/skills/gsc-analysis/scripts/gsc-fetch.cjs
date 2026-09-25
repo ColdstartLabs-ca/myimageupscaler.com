@@ -479,6 +479,96 @@ function buildBrandSplit(currentRows, previousRows, site, currentTotal, previous
   };
 }
 
+// 7-day buckets counted back from endDate, so the latest week is always complete.
+function buildWeeklyBreakdown({ dailyTrend, dateQueryRows, datePageRows, endDate, site }) {
+  const brandPatterns = buildBrandPatterns(site);
+  const weekStart = date => {
+    let start = shiftDateString(endDate, -6);
+    while (date < start) start = shiftDateString(start, -7);
+    return start;
+  };
+  const weeks = new Map();
+  const bucket = date => {
+    const startDate = weekStart(date);
+    if (!weeks.has(startDate)) {
+      weeks.set(startDate, {
+        startDate,
+        endDate: shiftDateString(startDate, 6),
+        clicks: 0,
+        impressions: 0,
+        branded: { clicks: 0, impressions: 0 },
+        nonBranded: { clicks: 0, impressions: 0 },
+        unclassified: { clicks: 0, impressions: 0 },
+      });
+    }
+    return weeks.get(startDate);
+  };
+
+  for (const row of dailyTrend) {
+    const week = bucket(row.date);
+    week.clicks += row.clicks;
+    week.impressions += row.impressions;
+  }
+  for (const row of dateQueryRows) {
+    const branded = isBrandedQuery(row.query, brandPatterns) || isDomainLikeQuery(row.query);
+    const segment = bucket(row.date)[branded ? 'branded' : 'nonBranded'];
+    segment.clicks += row.clicks;
+    segment.impressions += row.impressions;
+  }
+  for (const week of weeks.values()) {
+    week.unclassified.clicks = Math.max(
+      0,
+      week.clicks - week.branded.clicks - week.nonBranded.clicks
+    );
+    week.unclassified.impressions = Math.max(
+      0,
+      week.impressions - week.branded.impressions - week.nonBranded.impressions
+    );
+  }
+
+  const latestStart = shiftDateString(endDate, -6);
+  const priorStart = shiftDateString(latestStart, -7);
+  const latestWeekMovers = (rows, keyField) => {
+    const byKey = new Map();
+    for (const row of rows) {
+      const week = weekStart(row.date);
+      if (week !== latestStart && week !== priorStart) continue;
+      const entry = byKey.get(row[keyField]) || {
+        [keyField]: row[keyField],
+        clicks: 0,
+        previousClicks: 0,
+        impressions: 0,
+        previousImpressions: 0,
+      };
+      const isLatest = week === latestStart;
+      entry[isLatest ? 'clicks' : 'previousClicks'] += row.clicks;
+      entry[isLatest ? 'impressions' : 'previousImpressions'] += row.impressions;
+      byKey.set(row[keyField], entry);
+    }
+    const movers = [...byKey.values()].map(entry => ({
+      ...entry,
+      clickDelta: entry.clicks - entry.previousClicks,
+      impressionDelta: entry.impressions - entry.previousImpressions,
+    }));
+    return {
+      winners: movers
+        .filter(m => m.clickDelta > 0)
+        .sort((a, b) => b.clickDelta - a.clickDelta)
+        .slice(0, 25),
+      losers: movers
+        .filter(m => m.clickDelta < 0)
+        .sort((a, b) => a.clickDelta - b.clickDelta)
+        .slice(0, 25),
+    };
+  };
+
+  return {
+    weeks: [...weeks.values()].sort((a, b) => a.startDate.localeCompare(b.startDate)),
+    latestWeekPageMovers: latestWeekMovers(datePageRows, 'page'),
+    latestWeekQueryMovers: latestWeekMovers(dateQueryRows, 'query'),
+  };
+}
+
 function quarantinePhantomQueries(queries, rawSummary, dimensionEvidence = {}) {
   const quarantinedQueries = queries
     .filter(
@@ -1034,6 +1124,8 @@ async function fetchTypeDataset({ accessToken, siteUrl, type, ranges, rowLimit, 
     previousQueryRows,
     previousPageRows,
     searchAppearance,
+    dateQueryRows,
+    datePageRows,
   ] = await Promise.all([
     queryAllSearchAnalyticsRows({
       accessToken,
@@ -1167,6 +1259,27 @@ async function fetchTypeDataset({ accessToken, siteUrl, type, ranges, rowLimit, 
       rowLimit,
       appearanceLimit,
     }),
+    ...[
+      ['date', 'query'],
+      ['date', 'page'],
+    ].map(dimensions =>
+      FULL_DETAIL_TYPES.has(type)
+        ? queryAllSearchAnalyticsRows({
+            accessToken,
+            siteUrl,
+            requestBody: {
+              startDate: ranges.current.startDate,
+              endDate: ranges.current.endDate,
+              dimensions,
+              type,
+              dataState: 'final',
+            },
+            rowLimit,
+            optional: true,
+            label: `${type} ${dimensions.join('+')}`,
+          })
+        : Promise.resolve([])
+    ),
   ]);
 
   const dailyTrend = dailyRows
@@ -1226,6 +1339,13 @@ async function fetchTypeDataset({ accessToken, siteUrl, type, ranges, rowLimit, 
   const cannibalization = buildCannibalization(queries);
   const queryMovers = buildMovers(queries, previousQueries, 'query');
   const pageMovers = buildMovers(pages, previousPages, 'page');
+  const weeklyBreakdown = buildWeeklyBreakdown({
+    dailyTrend,
+    dateQueryRows: dateQueryRows.map(row => normalizeMetricRow(row, ['date', 'query'])),
+    datePageRows: datePageRows.map(row => normalizeMetricRow(row, ['date', 'page'])),
+    endDate: ranges.current.endDate,
+    site: siteUrl,
+  });
 
   return {
     type,
@@ -1246,6 +1366,7 @@ async function fetchTypeDataset({ accessToken, siteUrl, type, ranges, rowLimit, 
     cannibalization,
     queryMovers,
     pageMovers,
+    weeklyBreakdown,
     searchAppearance,
   };
 }
@@ -1551,6 +1672,7 @@ async function main() {
     searchTypes,
     growthOverview,
     dailyTrend: primaryDataset?.dailyTrend || [],
+    weeklyBreakdown: primaryDataset?.weeklyBreakdown || null,
     devices: primaryDataset?.devices || [],
     deviceBreakdown: primaryDataset?.devices || [],
     countries: primaryDataset?.countries || [],
@@ -1598,5 +1720,6 @@ module.exports = {
   buildBrandPatterns,
   buildBrandSplit,
   buildStableCohortPosition,
+  buildWeeklyBreakdown,
   quarantinePhantomQueries,
 };

@@ -69,6 +69,7 @@ Logs go to stderr. JSON goes to stdout unless `--output` is set.
       "ctrOpportunities": [],
       "contentOpportunities": [],
       "cannibalization": [],
+      "weeklyBreakdown": { "weeks": [], "latestWeekPageMovers": {}, "latestWeekQueryMovers": {} },
       "searchAppearance": []
     }
   },
@@ -109,7 +110,10 @@ Focus on:
 2. `summary` and `comparison` for the retained raw totals, including `ctrExQuarantine` and
    `positionExQuarantine` alongside the raw figures.
 3. `searchTypeSummary` to see whether growth is coming from web or image search.
-4. `growthOverview.quickWins`, content creation, CTR, cannibalization, and indexing blockers.
+4. `weeklyBreakdown` when investigating a drop: 7-day buckets ending on the range end, each with
+   branded / nonBranded / unclassified clicks, plus the last-week-vs-prior-week page and query
+   movers. Use it to date the drop and name the segment that moved before blaming rankings.
+5. `growthOverview.quickWins`, content creation, CTR, cannibalization, and indexing blockers.
 
 Queries with more than 5,000 impressions and CTR below 0.05% are named in
 `quarantinedQueries`, remain flagged in the raw query array, and are excluded only from the clean
