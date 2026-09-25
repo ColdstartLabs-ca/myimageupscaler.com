@@ -54,6 +54,12 @@ describe('free-offer conversion copy', () => {
     expect(source).toContain('No credit card required');
   });
 
+  it('pSEO CTASection leads with "No credit card required", not "Account required"', () => {
+    const source = readFileSync('app/(pseo)/_components/pseo/sections/CTASection.tsx', 'utf8');
+    expect(source).toContain('No credit card required');
+    expect(source).not.toMatch(/Account required/);
+  });
+
   it('never reintroduces "welcome credits" wording in owned English or SEO copy', () => {
     const files = [
       ...readdirSync('locales/en')

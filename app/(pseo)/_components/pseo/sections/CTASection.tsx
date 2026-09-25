@@ -51,7 +51,7 @@ export function CTASection({
   const creditOffer = welcomeCreditCopy(welcomeCredits);
   const accountCopy = PRODUCT_CAPABILITIES.guestAccess
     ? 'No account required'
-    : 'Account required to upscale';
+    : 'No credit card required';
 
   function handleCTAClick(): void {
     if (pageType && slug) {
