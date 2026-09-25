@@ -92,8 +92,9 @@
           "date": "2026-09-10",
           "rung": 3,
           "field": "rollback",
-          "note": "Reverted failed 2026-08-17 meta/H1/proof module; retained truthful 5-credit copy",
-          "outcome": null
+          "note": "Reverted failed 2026-08-17 meta/H1/proof module AND (Product Truth, PRD 3) changed title/seo_title to \"Best Free AI Image Upscalers 2026: Limits Compared\", repositioned body from no-signup/free to account-required, disclosed ownership; 2026-09-16 corrected four vendor figures and \"Tested\"->\"Compared\" heading. Early read (gsc-analysis weeklyBreakdown, wk to 2026-09-22): 130->59 clicks/wk at stable position, impressions -17%.",
+          "outcome": null,
+          "previousValue": "Best Free AI Image Upscaler 2026: Only 3 Worked"
         }
       ],
       "stopRule": null

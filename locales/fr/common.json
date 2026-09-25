@@ -11,6 +11,7 @@
     "heroDescriptionMiddle": "—pas l'aspect plastique et trop lissé. Le seul améliorateur de qualité d'image qui",
     "heroDescriptionTextSharp": "garde le texte net",
     "ctaFixImages": "Corriger mes images gratuitement",
+    "ctaFixImagesFree": "Corriger mes images gratuitement",
     "ctaUpscaleFirst": "Agrandir ma première image",
     "ctaSignIn": "Se connecter",
     "ctaSubtext": "{creditOffer} • Aucune carte de crédit requise • Résultats en moins de 30 secondes",
@@ -38,9 +39,9 @@
     "ctaComparePlans": "Comparer les plans",
     "finalCtaSubtext": "{creditOffer} • Aucune carte de crédit • Voyez les résultats avant de payer",
     "toastLoginRequired": "Veuillez vous connecter pour accéder au tableau de bord",
-    "creditOfferUnknown": "Les crédits de bienvenue varient selon la région",
+    "creditOfferUnknown": "Crédits gratuits à l'inscription",
     "creditOfferNone": "Forfaits disponibles dans votre région",
-    "creditOfferCount": "{credits} crédits de bienvenue"
+    "creditOfferCount": "{credits} crédits gratuits"
   },
   "nav": {
     "tools": "Outils",

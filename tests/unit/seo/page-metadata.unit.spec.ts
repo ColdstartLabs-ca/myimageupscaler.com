@@ -114,7 +114,7 @@ describe('Phase 4: upscale-avif-images metadata', () => {
 
   it('avif metaDescription mentions free entry without promising guest upscaling', () => {
     expect(page.metaDescription).toMatch(/free/i);
-    expect(page.metaDescription).toMatch(/welcome credits/i);
+    expect(page.metaDescription).toMatch(/free credits/i);
     // Upscaling requires an account; see capability-claims.unit.spec.ts.
     expect(page.metaDescription).not.toMatch(/no signup/i);
   });

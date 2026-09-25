@@ -11,6 +11,7 @@
     "heroDescriptionMiddle": "—não o visual plástico e excessivamente suavizado. O único melhorador de qualidade de imagem que",
     "heroDescriptionTextSharp": "mantém texto nítido",
     "ctaFixImages": "Corrigir Minhas Imagens Grátis",
+    "ctaFixImagesFree": "Corrigir Minhas Imagens Grátis",
     "ctaUpscaleFirst": "Ampliar Minha Primeira Imagem",
     "ctaSignIn": "Entrar",
     "ctaSubtext": "{creditOffer} • Sem cartão de crédito • Resultados em menos de 30 segundos",
@@ -38,9 +39,9 @@
     "ctaComparePlans": "Comparar Planos",
     "finalCtaSubtext": "{creditOffer} • Sem cartão de crédito • Veja os resultados antes de pagar",
     "toastLoginRequired": "Por favor, entre para acessar o painel",
-    "creditOfferUnknown": "Os créditos de boas-vindas variam conforme a região",
+    "creditOfferUnknown": "Créditos grátis ao se cadastrar",
     "creditOfferNone": "Planos disponíveis na sua região",
-    "creditOfferCount": "{credits} créditos de boas-vindas"
+    "creditOfferCount": "{credits} créditos grátis"
   },
   "footer": {
     "description": "Ampliação e aprimoramento de imagens com IA para profissionais e criadores. Precisão projetada para {year}.",

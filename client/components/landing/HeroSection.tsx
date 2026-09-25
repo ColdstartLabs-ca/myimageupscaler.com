@@ -20,9 +20,9 @@ export async function HeroSection(): Promise<JSX.Element> {
   const creditOffer = t(welcomeCreditOfferKey(freeCredits), { credits: freeCredits ?? 0 });
 
   const heroTrustItems = [
-    { label: creditOffer, icon: <Check size={18} /> },
+    { label: freeCredits > 0 ? 'Free to start' : creditOffer, icon: <Check size={18} /> },
     { label: 'No watermarks', icon: <Check size={18} /> },
-    { label: 'Account required', icon: <Check size={18} /> },
+    { label: 'No credit card required', icon: <Check size={18} /> },
   ];
 
   const heroSlider = (

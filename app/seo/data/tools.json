@@ -5,9 +5,9 @@
       "slug": "ai-image-upscaler",
       "title": "AI Image Upscaler",
       "metaTitle": "Free AI Image Upscaler \u2014 Enlarge Images Online up to 8x",
-      "metaDescription": "Upscale images up to 8x with AI. Create a free account with welcome credits, upload a JPEG, PNG, WebP, or HEIC file, and download without a watermark.",
+      "metaDescription": "Upscale images up to 8x with AI. Create a free account with free credits, upload a JPEG, PNG, WebP, or HEIC file, and download without a watermark.",
       "h1": "Free AI Image Upscaler - Enlarge Images Up to 8x Online",
-      "intro": "Use this AI image upscaler to enlarge photos up to 8x online without watermarks. Create a free account with welcome credits, then upload a JPEG, PNG, WebP, or HEIC file in the workspace. The AI preserves sharpness and adds realistic detail instead of just stretching pixels.",
+      "intro": "Use this AI image upscaler to enlarge photos up to 8x online without watermarks. Create a free account with free credits, then upload a JPEG, PNG, WebP, or HEIC file in the workspace. The AI preserves sharpness and adds realistic detail instead of just stretching pixels.",
       "primaryKeyword": "ai image upscaler",
       "secondaryKeywords": [
         "image upscaler",
@@ -130,7 +130,7 @@
         },
         {
           "question": "How many images can I upscale for free?",
-          "answer": "New accounts receive welcome credits with no watermarks. Purchase credits or a paid plan to continue after they are used."
+          "answer": "New accounts receive free credits with no watermarks. Purchase credits or a paid plan to continue after they are used."
         },
         {
           "question": "Are my images stored on your servers?",
@@ -140,7 +140,7 @@
       "faq": [
         {
           "question": "Is the AI image upscaler free?",
-          "answer": "Yes. New accounts receive welcome credits with no watermarks. Welcome credits do not renew; purchase credits or a paid plan to continue."
+          "answer": "Yes. New accounts receive free credits with no watermarks. Free credits do not renew; purchase credits or a paid plan to continue."
         },
         {
           "question": "What formats are supported?",
@@ -190,7 +190,7 @@
           "description": "How machine learning models can reconstruct high-resolution images from low-resolution inputs."
         }
       ],
-      "ctaText": "Get Welcome Credits",
+      "ctaText": "Get Free Credits",
       "ctaUrl": "/?signup=1",
       "beforeAfterImages": {
         "before": "/before-after/girl-before.webp",
@@ -342,7 +342,7 @@
       "faq": [
         {
           "question": "Is the photo enhancer free?",
-          "answer": "Yes. New accounts receive welcome credits with no watermarks. Purchase credits or a paid plan to continue after they are used."
+          "answer": "Yes. New accounts receive free credits with no watermarks. Purchase credits or a paid plan to continue after they are used."
         },
         {
           "question": "What types of photos work best?",

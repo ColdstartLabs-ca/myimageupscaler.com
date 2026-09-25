@@ -11,9 +11,10 @@
     "heroDescriptionMiddle": "—without relying on simple pixel stretching. Built to",
     "heroDescriptionTextSharp": "help keep text readable",
     "ctaFixImages": "Fix My Images",
+    "ctaFixImagesFree": "Fix My Images Free",
     "ctaUpscaleFirst": "Upscale My First Image",
     "ctaSignIn": "Sign In",
-    "ctaSubtext": "{creditOffer} • No watermark",
+    "ctaSubtext": "{creditOffer} • No watermark • No credit card required",
     "faqTitle": "Frequently Asked Questions",
     "faqSubtitle": "Everything you need to know about AI image upscaling",
     "faq1Question": "How do I upscale an image without losing quality?",
@@ -21,7 +22,7 @@
     "faq2Question": "What should I look for in an AI image upscaler?",
     "faq2Answer": "Look for output quality on your own images, supported formats and scale factors, clear processing limits, and pricing that matches your workload. MyImageUpscaler is web-based and lets registered users process supported images without installing desktop software.",
     "faq3Question": "How can I try MyImageUpscaler?",
-    "faq3Answer": "Create an account to see the welcome credit grant available in your region, then upload a supported image and choose an available processing mode. Credit cost depends on the selected processing option.",
+    "faq3Answer": "Create an account to see the free credit grant available in your region, then upload a supported image and choose an available processing mode. Credit cost depends on the selected processing option.",
     "faq4Question": "Is AI upscaling better than traditional upscaling?",
     "faq4Answer": "AI upscaling can reconstruct details that interpolation-based resizing cannot, but results vary by image and model. Compare the output at the size you plan to use and keep the original file available for reference.",
     "faqItems": [
@@ -35,7 +36,7 @@
       },
       {
         "question": "How can I try MyImageUpscaler?",
-        "answer": "Create an account to see the welcome credit grant available in your region, then upload a supported image and choose an available processing mode. Credit cost depends on the selected processing option."
+        "answer": "Create an account to see the free credit grant available in your region, then upload a supported image and choose an available processing mode. Credit cost depends on the selected processing option."
       },
       {
         "question": "Is AI upscaling better than traditional upscaling?",
@@ -79,8 +80,8 @@
     "pricingCtaTitle": "Enhance photos online with usage-based credits.",
     "pricingCtaDescription": "Process supported images online and choose the plan or credit pack that fits your workload.",
     "ctaSeeWhatItCosts": "See What It Costs",
-    "ctaTryFreeCredits": "Try {freeCredits} Welcome Credits",
-    "ctaGetFreeCredits": "Get {freeCredits} Welcome Credits",
+    "ctaTryFreeCredits": "Try {freeCredits} Free Credits",
+    "ctaGetFreeCredits": "Get {freeCredits} Free Credits",
     "pricingCtaSubtext": "{creditOffer} • No watermark",
     "finalCtaTitle": "AI photo upscaler.",
     "finalCtaTitleHighlight": "Increase resolution online.",
@@ -105,9 +106,9 @@
       "securityLine1": "Your images are",
       "securityLine2": "safe and secure"
     },
-    "creditOfferUnknown": "Welcome credits vary by region",
+    "creditOfferUnknown": "Free credits on signup",
     "creditOfferNone": "Plans available in your region",
-    "creditOfferCount": "{credits} welcome credits"
+    "creditOfferCount": "{credits} free credits"
   },
   "footer": {
     "description": "AI-powered image upscaling and enhancement for professionals and creators. Precision-engineered for {year}.",
@@ -147,7 +148,7 @@
     "signIn": "Sign In",
     "getStarted": "Get Started",
     "getStartedFree": "Get Started",
-    "freeCredits": "{freeCredits} Welcome Credits",
+    "freeCredits": "{freeCredits} Free Credits",
     "billing": "Billing",
     "settings": "Settings",
     "history": "History",
@@ -169,7 +170,7 @@
   "meta": {
     "homepage": {
       "title": "AI Image Upscaler — Free Photo Enhancer Online | MyImageUpscaler",
-      "description": "Enhance, upscale, and restore supported JPEG, PNG, WebP, and HEIC images with AI. Create an account to see the welcome credit grant available in your region."
+      "description": "Enhance, upscale, and restore supported JPEG, PNG, WebP, and HEIC images with AI. Create an account to see the free credit grant available in your region."
     }
   },
   "common": {

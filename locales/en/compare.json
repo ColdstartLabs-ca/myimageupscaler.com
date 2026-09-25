@@ -21,7 +21,7 @@
         {
           "name": "MyImageUpscaler",
           "type": "Web-based",
-          "pricing": "Welcome credits | paid credits and plans",
+          "pricing": "Free credits | paid credits and plans",
           "rating": 4.5,
           "tagline": "Best for quick, everyday upscaling",
           "description": "Web-based upscaler with no installation required. Good balance of quality and convenience for most users.",
@@ -37,7 +37,7 @@
             "textPreservation": "Good",
             "processingSpeed": "30-60 seconds",
             "watermark": "Never",
-            "freeTier": "Welcome credits (region-based)"
+            "freeTier": "Free credits (region-based)"
           },
           "pros": [
             "No software installation needed",
@@ -108,7 +108,7 @@
             "textPreservation": "Basic",
             "processingSpeed": "45-90 seconds",
             "watermark": "On free tier",
-            "freeTier": "Welcome credits (region-based)"
+            "freeTier": "Free credits (region-based)"
           },
           "pros": [
             "Good for product photos",
@@ -271,7 +271,7 @@
       "faq": [
         {
           "question": "What's the best free AI upscaler?",
-          "answer": "For quality without watermarks, MyImageUpscaler gives new accounts welcome credits. For unlimited low-resolution upscaling, Upscale.media is more generous. Let's Enhance adds watermarks to free outputs."
+          "answer": "For quality without watermarks, MyImageUpscaler gives new accounts free credits. For unlimited low-resolution upscaling, Upscale.media is more generous. Let's Enhance adds watermarks to free outputs."
         },
         {
           "question": "Is Topaz worth $99?",
@@ -299,7 +299,7 @@
         {
           "name": "MyImageUpscaler",
           "type": "Web-based",
-          "pricing": "Welcome credits | paid credits and plans",
+          "pricing": "Free credits | paid credits and plans",
           "features": {
             "maxUpscale": "8x",
             "batchProcessing": "Up to 50",

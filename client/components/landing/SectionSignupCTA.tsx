@@ -45,7 +45,9 @@ export function SectionSignupCTA({
         className="group inline-flex items-center gap-2 px-8 py-4 text-white font-semibold rounded-xl transition-all duration-200 gradient-cta shine-effect hover:scale-[1.02] active:scale-[0.98]"
       >
         <Sparkles size={20} className="group-hover:rotate-12 transition-transform" />
-        {hasTrialEnabled ? t('ctaFixImages') : t('ctaUpscaleFirst')}
+        {hasTrialEnabled
+          ? t(freeCredits && freeCredits > 0 ? 'ctaFixImagesFree' : 'ctaFixImages')
+          : t('ctaUpscaleFirst')}
         <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
       </button>
       <p className="text-sm text-text-muted">{t('ctaSubtext', { creditOffer })}</p>

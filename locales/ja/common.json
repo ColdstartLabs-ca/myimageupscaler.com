@@ -11,6 +11,7 @@
     "heroDescriptionMiddle": "—プラスチックのような過度に滑らかな見た目ではありません。テキストを",
     "heroDescriptionTextSharp": "くっきり保つ",
     "ctaFixImages": "画像を無料で修正",
+    "ctaFixImagesFree": "画像を無料で修正",
     "ctaUpscaleFirst": "最初の画像をアップスケール",
     "ctaSignIn": "サインイン",
     "ctaSubtext": "{creditOffer} • クレジットカード不要 • 30秒以内で結果",
@@ -38,9 +39,9 @@
     "ctaComparePlans": "プランを比較",
     "finalCtaSubtext": "{creditOffer} • クレジットカード不要 • 支払う前に結果を確認",
     "toastLoginRequired": "ダッシュボードにアクセスするにはサインインしてください",
-    "creditOfferUnknown": "ウェルカムクレジットは地域によって異なります",
+    "creditOfferUnknown": "登録で無料クレジット",
     "creditOfferNone": "お住まいの地域でご利用可能なプラン",
-    "creditOfferCount": "{credits}回のウェルカムクレジット"
+    "creditOfferCount": "{credits}回の無料クレジット"
   },
   "footer": {
     "description": "プロフェッショナルとクリエイター向けのAI搭載画像アップスケーリングと向上ツール。{year}年に向けて精密に設計されています。",

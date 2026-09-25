@@ -1,7 +1,9 @@
 'use client';
 
+import { useRegionTier } from '@client/hooks/useRegionTier';
 import { useModalStore } from '@client/store/modalStore';
 import { loadAnalytics } from '@client/utils/loadAnalytics';
+import { welcomeCreditsForTier } from '@shared/config/product-capabilities';
 import { getSubscriptionConfig } from '@shared/config/subscription.config';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -14,6 +16,8 @@ interface IHeroActionsProps {
 export function HeroActions({ className, compact = false }: IHeroActionsProps = {}): JSX.Element {
   const { openAuthModal } = useModalStore();
   const t = useTranslations('homepage');
+  const { tier } = useRegionTier();
+  const freeCredits = tier ? welcomeCreditsForTier(tier) : null;
 
   const config = getSubscriptionConfig();
   const hasTrialEnabled = config.plans.some(plan => plan.trial.enabled);
@@ -56,7 +60,9 @@ export function HeroActions({ className, compact = false }: IHeroActionsProps = 
         className={`group inline-flex items-center justify-center gap-2 font-semibold text-white rounded-xl transition-all duration-200 gradient-cta shine-effect hover:scale-[1.02] active:scale-[0.98] ${buttonSize}`}
       >
         <Sparkles size={compact ? 18 : 20} className="group-hover:rotate-12 transition-transform" />
-        {hasTrialEnabled ? t('ctaFixImages') : t('ctaUpscaleFirst')}
+        {hasTrialEnabled
+          ? t(freeCredits && freeCredits > 0 ? 'ctaFixImagesFree' : 'ctaFixImages')
+          : t('ctaUpscaleFirst')}
         <ArrowRight
           size={compact ? 16 : 18}
           className="group-hover:translate-x-1 transition-transform"

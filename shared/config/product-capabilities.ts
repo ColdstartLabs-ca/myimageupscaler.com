@@ -52,9 +52,9 @@ export function welcomeCreditsFor(countryCode: string | null | undefined): numbe
 }
 
 export function welcomeCreditCopy(credits: number | null | undefined): string {
-  if (credits === null || credits === undefined) return 'Welcome credits vary by region';
+  if (credits === null || credits === undefined) return 'Free credits on signup';
   if (credits <= 0) return 'Plans available in your region';
-  return `${credits} welcome credits`;
+  return `${credits} free credits`;
 }
 
 /**

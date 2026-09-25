@@ -9,6 +9,25 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-09-25
+
+### Restore free-offer conversion copy (partial revert of 2026-09-10 Product Truth)
+
+Why: prod signups fell from ~101/day (Sep 4–11) to ~61/day (Sep 12–22) the day after the Product Truth deploy stripped "free" framing; GSC branded clicks fell 184 → 43/wk at position 1.0 (fewer returning users searching the brand), while non-brand clicks rose. Ranking did not drop.
+
+Changes:
+
+- `welcomeCreditCopy` / `creditOfferCount` (all 7 locales) back to "N free credits"; hero badges "Free to start" + "No credit card required" (replaces "Account required"; signup collects no card — `RegisterForm.tsx`); CTA "Fix My Images Free" (`ctaFixImagesFree`, all locales) when the regional grant > 0; `ctaSubtext` regains "No credit card required"; `/free` hub H1/intro; "welcome credits" → "free credits" across the pSEO data, English locales and `content/blog-data.json` touched by d4781071.
+- Kept the accuracy fixes: no hardcoded regional numbers, no "no signup"/guest claims, no animated-GIF or unsupported-format claims. Paywalled tier (0 credits, ~26% of signups) still gets "Plans available in your region" wherever the tier is known client-side; the `force-static` homepage hero renders the default tier for everyone, as it did before Sep 10.
+- Guards: `tests/unit/seo/free-offer-conversion-copy.unit.spec.ts` (free framing) and `tests/unit/seo/protected-pages.unit.spec.ts` (homepage "Image Upscaler"/"Free"/brand, `/tools/ai-image-upscaler` "Free"/"8x", `/scale/upscale-16x`, `/scale/2k-upscaler`); rule added to `CLAUDE.md`.
+- Three Kings ledger: flagship 2026-09-10 row now records the Product Truth title change with `previousValue` "Best Free AI Image Upscaler 2026: Only 3 Worked".
+
+Follow-up:
+
+- 7-day readback ~Oct 3: prod signups/day and GSC branded clicks vs the Sep 12–22 baseline (61/day, 43 branded clicks/wk).
+- Flagship verdict ~Sep 28 (week to Sep 22: 130 → 59 clicks at stable position). Do not restore "Only 3 Worked" verbatim — it implies the removed benchmark.
+- `de` / `fr` homepage titles carry no brand; candidate single-page test.
+
 ## 2026-09-24
 
 ### Three Kings rung-3 tests and best-image rollback
