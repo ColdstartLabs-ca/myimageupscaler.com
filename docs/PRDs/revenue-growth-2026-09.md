@@ -38,13 +38,13 @@ The business outcome is paying and repeat-use customers; a modest SEO rebound ca
 
 ## Integration Ledger
 
-| Capability             | Reachable consumer/trigger                                                                                                                                                                                                                         | Replaces / disposition                                                 | Evidence                               |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | -------------------------------------- |
+| Capability             | Reachable consumer/trigger                                                                                                                                                                                                                         | Replaces / disposition                                                 | Evidence                                 |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------- |
 | Homepage offer text    | Home render of `/` and localized routes via `HomePageClient.tsx:338`, `HeroSection.tsx:85`, `SectionSignupCTA.tsx:51` → `locales/*/common.json` `finalCtaSubtext` / `ctaSubtext`                                                                   | Raw-key render replaced by localized region-appropriate credit wording | AC-1 + homepage live; AC-2 checkout open |
-| Paid funnel definition | Client `PurchaseModal.tsx` → `CheckoutModal.tsx` → `app/api/checkout/route.ts` → `app/api/webhooks/stripe/handlers/payment.handler.ts`; definition source `server/analytics/coreKpiDefinitions.ts`; client sink `app/api/analytics/event/route.ts` | Telemetry unchanged — stop decision recorded, no fix shipped           | AC-3 done; AC-4 met (5-journey stop)   |
-| Job health             | `server/services/upscale-completion-health.service.ts` via `scripts/diagnostics/upscale-completion-rate.ts` (read-only Amplitude) and `scripts/monitor-processing-failure-rate.ts` (offline `--mode test`)                                         | Reused read-only; Sep 1–8 incident found, recovered Sep 9              | AC-5a done                             |
-| Recovery delivery      | No existing read-only aggregate command; audit `revenue_recovery_intents` / `email_lifecycle_queue` with a bounded read-only query (`server/services/revenue-recovery.service.ts` writes them)                                                     | Audited via new read-only `yarn diag:paid-funnel`; no emails sent      | AC-5b done                             |
-| Founder-led test       | No runtime code; João outreach and tracking assets                                                                                                                                                                                                 | None                                                                   | AC-6                                   |
+| Paid funnel definition | Client `PurchaseModal.tsx` → `CheckoutModal.tsx` → `app/api/checkout/route.ts` → `app/api/webhooks/stripe/handlers/payment.handler.ts`; definition source `server/analytics/coreKpiDefinitions.ts`; client sink `app/api/analytics/event/route.ts` | Telemetry unchanged — stop decision recorded, no fix shipped           | AC-3 done; AC-4 met (5-journey stop)     |
+| Job health             | `server/services/upscale-completion-health.service.ts` via `scripts/diagnostics/upscale-completion-rate.ts` (read-only Amplitude) and `scripts/monitor-processing-failure-rate.ts` (offline `--mode test`)                                         | Reused read-only; Sep 1–8 incident found, recovered Sep 9              | AC-5a done                               |
+| Recovery delivery      | No existing read-only aggregate command; audit `revenue_recovery_intents` / `email_lifecycle_queue` with a bounded read-only query (`server/services/revenue-recovery.service.ts` writes them)                                                     | Audited via new read-only `yarn diag:paid-funnel`; no emails sent      | AC-5b done                               |
+| Founder-led test       | No runtime code; João outreach and tracking assets                                                                                                                                                                                                 | None                                                                   | AC-6                                     |
 
 ## Execution Phases
 
@@ -236,10 +236,60 @@ Top skip/cancel reasons: 2,785 `suppressed_campaign_cooldown`, 916 `stale_first_
 226 `suppressed_lifecycle_weekly_cap`, 195 `suppressed_revenue_72h_cap`.
 
 **5,462 of the 5,463 pending rows are already past their `scheduled_for` time.** Only ~84 emails a
-day actually send, against the ~240/day drain ceiling. The queue is not draining; it is accumulating
-a permanently-late backlog that is 45% of everything queued. Recovery delivery is therefore _not_
-healthy, and any plan that assumes lifecycle email will recover revenue is assuming throughput the
-system does not have.
+day actually send, against the ~240/day provider ceiling.
+
+**Root cause (traced 2026-09-16; corrects the first read of this number).** The cron is _not_ broken
+and the provider cap is _not_ binding. The drain is eligibility-capped, and the backlog is a
+bookkeeping artifact.
+
+- Drain entry point: `processDueQueue` @ `server/services/email-lifecycle.service.ts:586`, exposed at
+  `app/api/cron/email-lifecycle/route.ts` and driven by `workers/cron/index.ts:116` `scheduled()`.
+  Cron is configured: `workers/cron/wrangler.toml:27-29` — `"10 * * * *"` and `"40 * * * *"`.
+  Verified present in config; live deployment is not verifiable read-only, but sends are observed.
+- `get_due_email_lifecycle_queue` only returns marketing rows already classified keep/protected (or
+  holdout-released). Rows it excludes never enter the send loop, so they never receive a terminal
+  status — they sit `pending` until 30-day expiry cancels them (`20260725000100:367-400`). Rows that
+  _do_ enter the loop and fail a cooldown/weekly/72h cap are correctly written terminal `skipped`
+  (`email-lifecycle.service.ts:700-718`).
+- Caps, in order of how binding they are: holdout release `p_daily_limit: 100`
+  (`email-lifecycle.service.ts:646`, hard-capped `LEAST(...,100)` @ `20260725000100:300`) with a
+  `floor(stratum_count * 0.1)` per-stratum floor @ `20260725000100:348`, so any (country, campaign)
+  stratum holding fewer than 10 rows releases **zero**, permanently. Then the marketing daily limit
+  of 200 (`email-lifecycle.service.ts:1543`). `MAX_SEND_LIMIT = 1`
+  (`app/api/cron/email-lifecycle/route.ts:7`) × `LIFECYCLE_DRAINS_PER_SCHEDULE = 10`
+  (`workers/cron/index.ts:47`) × 2 schedules/hour = 480/day theoretical — not the constraint.
+
+**Verified against production (read-only), 5,466 overdue pending rows:**
+
+| `recipient_value_decision` |          rows | can it ever send?                                         |
+| -------------------------- | ------------: | --------------------------------------------------------- |
+| `cancel`                   | 3,966 (72.6%) | **no** — no send path exists for this decision            |
+| `hold_experiment`          | 1,498 (27.4%) | only via holdout release: ≤100/day, 0 for strata under 10 |
+| `keep_medium`              |             2 | yes                                                       |
+
+**5,464 of 5,466 overdue rows are not currently sendable.** Every row is classified at
+`policy_version = v1` — there are no unclassified or legacy rows, so the manual-only classification
+tooling (`yarn email:queue:audit*`) is not implicated. By campaign the stuck set is
+winback-never-uploaded-14d 2,762, winback-credit-holder-21d 1,405, signup-no-upload-2h 468,
+low-credits 288, first-result-followup 222, winback-free-7d 216.
+
+**What this means for the plan.** The earlier reading — "throughput you don't have" — was the right
+number with the wrong cause. Throughput is not the constraint: the recipient-value classifier judged
+73% of the queued audience not worth emailing, and win-back scans keep re-enqueueing the same users
+with no age ceiling, so inflow exceeds eligible outflow. Lifecycle email still cannot be assumed to
+recover revenue, but the reason is that the system has already decided most of this audience is not
+worth contacting. Raising send limits or the provider tier would change nothing.
+
+**Smallest fix, NOT applied (owner decision).** At enqueue in `insertQueueRow`
+(`email-lifecycle.service.ts:1437-1460`), write `status: 'cancelled'` when
+`classification.decision === 'cancel'` instead of `pending`. One conditional; the `cancel` decision
+has no send path, so this changes no delivery behaviour — it stops manufacturing 3,966 rows that
+masquerade as a send backlog. It does **not** address the `hold_experiment` starvation, which lives
+in the release floor/cap at `20260725000100:300,348` and is a policy decision, not a bug fix.
+
+Diagnosis was delegated to a cheap arm per the `save-tokens` skill; its quantitative claim was
+independently re-verified against production above (the arm estimated "4,600+", actual 5,464) and
+its sub-hypothesis about unclassified/legacy rows was **falsified** — there are none.
 
 ### Cost inputs (AC-8)
 
