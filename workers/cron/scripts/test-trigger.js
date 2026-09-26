@@ -6,11 +6,14 @@
  * Works with both local dev and deployed workers.
  *
  * Usage:
+ *   CRON_SECRET=... node scripts/test-trigger.js <job-name> [worker-url]
  *   node scripts/test-trigger.js webhook-recovery
  *   node scripts/test-trigger.js expiration-check
  *   node scripts/test-trigger.js reconciliation
  *   node scripts/test-trigger.js refresh-3kings-sitemap
  *   node scripts/test-trigger.js gallery-cleanup
+ *   node scripts/test-trigger.js upscale-input-cleanup
+ *   node scripts/test-trigger.js database-retention
  *   node scripts/test-trigger.js upscale-completion-health
  *   node scripts/test-trigger.js email-lifecycle
  *   node scripts/test-trigger.js email-lifecycle-catch-up
@@ -23,6 +26,8 @@ const JOBS = {
   reconciliation: '5 3 * * *',
   'refresh-3kings-sitemap': '30 4 * * *',
   'gallery-cleanup': '0 0 * * *',
+  'upscale-input-cleanup': '20 * * * *',
+  'database-retention': '25 * * * *',
   'upscale-completion-health': '15 1 * * *',
   'email-lifecycle': '10 * * * *',
   'email-lifecycle-catch-up': '40 * * * *',
@@ -30,10 +35,18 @@ const JOBS = {
 
 async function triggerCron(jobName, workerUrl = 'http://localhost:8787') {
   const pattern = JOBS[jobName];
+  // Standalone Node script runs outside the app config module.
+  // eslint-disable-next-line no-restricted-syntax
+  const cronSecret = process.env.CRON_SECRET;
 
   if (!pattern) {
     console.error(`Unknown job: ${jobName}`);
     console.log('Available jobs:', Object.keys(JOBS).join(', '));
+    process.exit(1);
+  }
+
+  if (!cronSecret) {
+    console.error('CRON_SECRET is required to authenticate manual triggers.');
     process.exit(1);
   }
 
@@ -44,7 +57,10 @@ async function triggerCron(jobName, workerUrl = 'http://localhost:8787') {
   console.log(`URL: ${url}\n`);
 
   try {
-    const response = await fetch(url, { method: 'POST' });
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'x-cron-secret': cronSecret },
+    });
     const data = await response.json();
 
     if (response.ok) {

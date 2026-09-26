@@ -30,6 +30,15 @@ describe('Cron Worker Router', () => {
     expect(productionVars).not.toMatch(/_ENABLED\s*=/);
   });
 
+  it('sends the cron secret from the manual trigger script', () => {
+    const script = readFileSync(
+      resolve(process.cwd(), 'workers/cron/scripts/test-trigger.js'),
+      'utf8'
+    );
+    expect(script).toContain('process.env.CRON_SECRET');
+    expect(script).toMatch(/['"]x-cron-secret['"]\s*:/);
+  });
+
   it('maps 30 4 * * * to the 3-kings sitemap endpoint', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
@@ -63,6 +72,40 @@ describe('Cron Worker Router', () => {
 
     expect(fetchMock).toHaveBeenCalledWith(
       'https://myimageupscaler.com/api/cron/recover-webhooks',
+      expect.any(Object)
+    );
+  });
+
+  it('maps 20 * * * * to temporary upscale input cleanup', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ success: true, deleted: 100, failed: 0 }),
+    });
+    global.fetch = fetchMock;
+
+    const ctx = makeCtx();
+    await worker.scheduled({ cron: '20 * * * *', scheduledTime: Date.now() }, mockEnv, ctx);
+    await ctx.flush();
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://myimageupscaler.com/api/cron/upscale-input-cleanup',
+      expect.any(Object)
+    );
+  });
+
+  it('maps 25 * * * * to bounded database retention', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ success: true, totalDeleted: 500 }),
+    });
+    global.fetch = fetchMock;
+
+    const ctx = makeCtx();
+    await worker.scheduled({ cron: '25 * * * *', scheduledTime: Date.now() }, mockEnv, ctx);
+    await ctx.flush();
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://myimageupscaler.com/api/cron/database-retention',
       expect.any(Object)
     );
   });
@@ -157,6 +200,44 @@ describe('Cron Worker Router', () => {
     await worker.scheduled({ cron: '40 * * * *', scheduledTime: Date.now() }, mockEnv, ctx);
     await ctx.flush();
     expect(fetchMock).toHaveBeenCalledOnce();
+  });
+
+  it('rejects unauthenticated manual triggers before scheduling destructive jobs', async () => {
+    const ctx = makeCtx();
+    const response = await worker.fetch(
+      new Request('https://cron.example.com/trigger?pattern=25%20*%20*%20*%20*', {
+        method: 'POST',
+      }),
+      mockEnv,
+      ctx
+    );
+
+    expect(response.status).toBe(401);
+    await ctx.flush();
+  });
+
+  it('accepts authenticated manual triggers', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ success: true, totalDeleted: 0 }),
+    });
+    global.fetch = fetchMock;
+    const ctx = makeCtx();
+    const response = await worker.fetch(
+      new Request('https://cron.example.com/trigger?pattern=25%20*%20*%20*%20*', {
+        method: 'POST',
+        headers: { 'x-cron-secret': 'test-secret' },
+      }),
+      mockEnv,
+      ctx
+    );
+
+    expect(response.status).toBe(200);
+    await ctx.flush();
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://myimageupscaler.com/api/cron/database-retention',
+      expect.any(Object)
+    );
   });
 
   it('logs an error for unknown cron patterns', async () => {

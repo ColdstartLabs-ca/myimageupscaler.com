@@ -21,6 +21,10 @@ crons = [
   "30 4 * * *",
   # Gallery cleanup - daily at midnight UTC
   "0 0 * * *",
+  # Temporary upscale input cleanup - hourly at :20 UTC
+  "20 * * * *",
+  # Terminal database history retention - hourly at :25 UTC
+  "25 * * * *",
   # Upscale completion health alert - after the previous UTC day closes
   "15 1 * * *",
   # Email lifecycle retention drips - hourly at :10 UTC

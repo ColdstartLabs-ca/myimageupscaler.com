@@ -34,6 +34,7 @@ const BUCKET_NAME = GALLERY_STORAGE_CONFIG.bucketName;
 const UPSCALE_INPUT_BUCKET_NAME = 'upscale-inputs';
 const UPSCALE_INPUT_TTL_MS = 60 * 60 * 1000;
 const STORAGE_PAGE_LIMIT = 100;
+const STORAGE_MAX_PAGES_PER_RUN = 10;
 const CLEANUP_STATE_VERSION = 1;
 const CLEANUP_STATE_PATH = '_system/gallery-cleanup-state.png';
 const CLEANUP_STATE_VERSION_KEY = 'cleanup_version';
@@ -97,6 +98,11 @@ export interface ICleanupJobResult {
 export interface IUpscaleInputCleanupResult {
   deleted: number;
   failed: number;
+  eligible?: number;
+}
+
+export interface IUpscaleInputCleanupOptions {
+  dryRun?: boolean;
 }
 
 type StorageBucket = ReturnType<typeof supabaseAdmin.storage.from>;
@@ -177,6 +183,7 @@ async function persistCleanupCursor(bucket: StorageBucket, cursor: string | null
 
 function getDirectUpscaleInputPath(file: { key: string }): string | null {
   const segments = file.key.split('/');
+  const userId = segments[0];
   const objectName = segments[1];
   const extension = objectName ? UPSCALE_INPUT_EXTENSION_PATTERN.exec(objectName)?.[0] : undefined;
   const objectId = extension && objectName ? objectName.slice(0, -extension.length) : undefined;
@@ -184,7 +191,8 @@ function getDirectUpscaleInputPath(file: { key: string }): string | null {
   // Keep cleaning UUID-shaped files admitted before the UUIDv4 contract was enforced.
   if (
     segments.length !== 2 ||
-    !segments[0] ||
+    !userId ||
+    !isUuidShaped(userId) ||
     !objectId ||
     !isUuidShaped(objectId)
   ) {
@@ -206,42 +214,18 @@ function getDirectUpscaleInputPath(file: { key: string }): string | null {
  * files are eligible; nested `outputs/` objects remain available for delivery.
  */
 export async function cleanupStaleUpscaleInputs(
-  now = new Date()
+  now = new Date(),
+  options: IUpscaleInputCleanupOptions = {}
 ): Promise<IUpscaleInputCleanupResult> {
   const bucket = supabaseAdmin.storage.from(UPSCALE_INPUT_BUCKET_NAME);
   const staleBefore = now.getTime() - UPSCALE_INPUT_TTL_MS;
-  const cursor = await readCleanupCursor(bucket);
-  const listOptions = {
-    limit: STORAGE_PAGE_LIMIT,
-    prefix: '',
-    ...(cursor ? { cursor } : {}),
-    with_delimiter: false,
-    sortBy: { column: 'name' as const, order: 'asc' as const },
-  };
-  const { data, error } = await bucket.listV2(listOptions);
-
-  if (error) {
-    throw new Error(`Failed to list temporary upscale inputs: ${getStorageErrorMessage(error)}`);
-  }
-  if (!data || !Array.isArray(data.objects)) {
-    throw new Error('Failed to list temporary upscale inputs: invalid list response');
-  }
-  if (data.objects.length > STORAGE_PAGE_LIMIT) {
-    throw new Error('Failed to list temporary upscale inputs: page exceeded cleanup limit');
-  }
-
-  const nextCursor: string | null = data.hasNext ? (data.nextCursor ?? null) : null;
-  if (data.hasNext && (!isValidCleanupCursor(nextCursor) || nextCursor === cursor)) {
-    throw new Error('Failed to list temporary upscale inputs: invalid continuation cursor');
-  }
-
+  let cursor = await readCleanupCursor(bucket);
   let deleted = 0;
   let failed = 0;
-  let deletionFailed = false;
-  let batch: string[] = [];
+  let eligible = 0;
 
   const deleteBatch = async (paths: string[]): Promise<boolean> => {
-    const { error: removeError } = await bucket.remove(paths);
+    const { data: removedObjects, error: removeError } = await bucket.remove(paths);
     if (removeError) {
       failed += paths.length;
       console.error(
@@ -251,35 +235,92 @@ export async function cleanupStaleUpscaleInputs(
       return false;
     }
 
-    deleted += paths.length;
+    const confirmedDeleted = Math.min(
+      paths.length,
+      Array.isArray(removedObjects) ? removedObjects.length : 0
+    );
+    deleted += confirmedDeleted;
+
+    const unconfirmed = paths.length - confirmedDeleted;
+    if (unconfirmed > 0) {
+      failed += unconfirmed;
+      console.error(
+        `[GalleryCleanup] Storage confirmed only ${confirmedDeleted}/${paths.length} temporary input deletions`
+      );
+      return false;
+    }
+
     return true;
   };
 
-  for (const file of data.objects) {
-    if (file.metadata == null || !file.created_at) continue;
+  for (let page = 0; page < STORAGE_MAX_PAGES_PER_RUN; page += 1) {
+    const pageStartCursor = cursor;
+    const listOptions = {
+      limit: STORAGE_PAGE_LIMIT,
+      prefix: '',
+      ...(cursor ? { cursor } : {}),
+      with_delimiter: false,
+      sortBy: { column: 'name' as const, order: 'asc' as const },
+    };
+    const { data, error } = await bucket.listV2(listOptions);
 
-    const inputPath = getDirectUpscaleInputPath(file);
-    if (!inputPath) continue;
+    if (error) {
+      throw new Error(`Failed to list temporary upscale inputs: ${getStorageErrorMessage(error)}`);
+    }
+    if (!data || !Array.isArray(data.objects)) {
+      throw new Error('Failed to list temporary upscale inputs: invalid list response');
+    }
+    if (data.objects.length > STORAGE_PAGE_LIMIT) {
+      throw new Error('Failed to list temporary upscale inputs: page exceeded cleanup limit');
+    }
 
-    const createdAt = Date.parse(file.created_at);
-    if (!Number.isFinite(createdAt) || createdAt >= staleBefore) continue;
+    const nextCursor: string | null = data.hasNext ? (data.nextCursor ?? null) : null;
+    if (data.hasNext && (!isValidCleanupCursor(nextCursor) || nextCursor === cursor)) {
+      throw new Error('Failed to list temporary upscale inputs: invalid continuation cursor');
+    }
 
-    batch.push(inputPath);
-    if (batch.length < BATCH_SIZE) continue;
+    let batch: string[] = [];
+    let deletionFailed = false;
+    for (const file of data.objects) {
+      if (file.metadata == null || !file.created_at) continue;
 
-    if (!(await deleteBatch(batch))) {
+      const inputPath = getDirectUpscaleInputPath(file);
+      if (!inputPath) continue;
+
+      const createdAt = Date.parse(file.created_at);
+      if (!Number.isFinite(createdAt) || createdAt >= staleBefore) continue;
+
+      eligible += 1;
+      if (options.dryRun) continue;
+
+      batch.push(inputPath);
+      if (batch.length < BATCH_SIZE) continue;
+
+      if (!(await deleteBatch(batch))) {
+        deletionFailed = true;
+        break;
+      }
+      batch = [];
+    }
+
+    if (!deletionFailed && batch.length > 0 && !(await deleteBatch(batch))) {
       deletionFailed = true;
+    }
+
+    if (deletionFailed) {
+      cursor = pageStartCursor;
       break;
     }
-    batch = [];
+
+    cursor = nextCursor;
+    if (!cursor) break;
   }
 
-  if (!deletionFailed && batch.length > 0 && !(await deleteBatch(batch))) {
-    deletionFailed = true;
+  if (options.dryRun) {
+    return { deleted, failed, eligible };
   }
 
-  await persistCleanupCursor(bucket, deletionFailed ? cursor : nextCursor);
-
+  await persistCleanupCursor(bucket, cursor);
   return { deleted, failed };
 }
 

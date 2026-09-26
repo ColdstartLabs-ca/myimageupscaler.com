@@ -141,6 +141,12 @@ export default {
     } else if (cronPattern === '0 0 * * *') {
       endpoint = '/api/cron/gallery-cleanup';
       jobName = 'Gallery Cleanup';
+    } else if (cronPattern === '20 * * * *') {
+      endpoint = '/api/cron/upscale-input-cleanup';
+      jobName = 'Temporary Upscale Input Cleanup';
+    } else if (cronPattern === '25 * * * *') {
+      endpoint = '/api/cron/database-retention';
+      jobName = 'Database Retention';
     } else if (cronPattern === '15 1 * * *') {
       endpoint = '/api/cron/upscale-completion-health';
       jobName = 'Upscale Completion Health';
@@ -204,8 +210,16 @@ export default {
       );
     }
 
-    // Manual trigger endpoint for testing
+    // Manual trigger endpoint for testing. This must remain authenticated because
+    // it can invoke destructive maintenance routes with the Worker's cron secret.
     if (url.pathname === '/trigger' && request.method === 'POST') {
+      if (request.headers.get('x-cron-secret') !== env.CRON_SECRET) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
       const pattern = url.searchParams.get('pattern');
 
       if (!pattern) {
