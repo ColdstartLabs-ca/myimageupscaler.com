@@ -9,6 +9,29 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-09-28
+
+### Three Kings final-data check and rollback-loop guard
+
+Evidence:
+
+- Refreshed final GSC daily data through 2026-09-24. The corrected manager result is 0 `REGRESSION`, 0 `EDIT_NOW`, 6 `HOLD`, 3 `GATED`, 1 `STOP`, and 1 `VERDICT`.
+- Three 2026-09-10 rollback rows measured as LOSS, but undoing those protective rollbacks would reapply experiments already proven to lose. The flagship rollback row also combines later Product Truth/fact corrections, and its only recorded prior title (`Only 3 Worked`) is unsupported without the removed benchmark.
+
+Changes:
+
+- `tkm.cjs` now persists rollback outcomes for diagnosis but never emits a second `REGRESSION` from a `rollback` row; pages return to the normal HOLD/GATED/STOP/VERDICT gates instead of oscillating between failed copy states.
+- Recorded the closed rollback-window outcomes in `three-kings-ledger.json`. No production blog content or metadata changed, so no database backup or API/live-HTML write verification was required; blog changelog and indexing rows remain unchanged.
+
+Validation:
+
+- Focused manager suite covers the rollback-loop guard. Full `yarn verify` run in this job.
+- GSC UI submission was not attempted: the attached Google account opened the `myimageupscaler.com` property as “you don't have access,” so no indexing request is claimed and all pending rows remain truthful.
+
+Follow-up:
+
+- Earliest actionable review: 2026-10-02, when final GSC data can include 14 complete post-edit days for `/blog/how-to-upscale-youtube-thumbnails` plus the three-day holdback.
+
 ## 2026-09-25
 
 ### Restore free-offer conversion copy (partial revert of 2026-09-10 Product Truth)

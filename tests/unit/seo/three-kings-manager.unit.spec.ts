@@ -19,6 +19,7 @@ const tkm = require(
   windowClose: (date: string, days?: number) => string;
   cmdRecordEdit: (args: Record<string, string>) => void;
   cmdRecordRevert: (args: Record<string, string>) => void;
+  isActionableRegression: (latest: Record<string, unknown> | undefined) => boolean;
   RUNG_FIELDS: Record<number, string>;
   WINDOW_DAYS: number;
 };
@@ -152,6 +153,21 @@ describe('three-kings-manager classify gates', () => {
 });
 
 describe('three-kings-manager edit outcomes', () => {
+  it('does not treat a measured rollback loss as another actionable regression', () => {
+    expect(
+      tkm.isActionableRegression({
+        field: 'rollback',
+        outcome: { verdict: 'LOSS' },
+      })
+    ).toBe(false);
+    expect(
+      tkm.isActionableRegression({
+        field: 'seo_description',
+        outcome: { verdict: 'LOSS' },
+      })
+    ).toBe(true);
+  });
+
   it('waits for 14 complete post-edit GSC days before judging', () => {
     const entry = { history: [{ date: '2026-08-31', rung: 1, field: 'seo_title', outcome: null }] };
     const rows = mkRows([
