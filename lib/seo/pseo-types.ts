@@ -21,6 +21,12 @@ export interface IBasePSEOPage {
   lastUpdated: string;
   noindex?: boolean;
   category?: PSEOCategory; // Category is added by data loader for breadcrumb navigation
+  // Page-specific final CTA copy. Only tool and generic templates render these;
+  // tests/unit/seo/pseo-cta-contract.unit.spec.tsx rejects them elsewhere.
+  ctaTitle?: string;
+  ctaHighlightText?: string;
+  ctaDescription?: string;
+  ctaTrustItems?: string[];
 }
 
 /**

@@ -38,6 +38,9 @@ import { ImageToText } from '@/app/(pseo)/_components/tools/ImageToText';
 import { PdfToImageConverter } from '@/app/(pseo)/_components/tools/PdfToImageConverter';
 import { ImageCropper } from '@/app/(pseo)/_components/tools/ImageCropper';
 
+/** In-page anchor on the tool widget; page CTAs link to `#tool`. */
+export const TOOL_ANCHOR_ID = 'tool';
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   ImageResizer,
@@ -184,7 +187,7 @@ export function InteractiveToolPageTemplate({
           {/* Interactive Tool Component */}
           {ToolComponent && (
             <FadeIn delay={0.1}>
-              <div className="py-4">
+              <div id={TOOL_ANCHOR_ID} className="py-4 scroll-mt-24">
                 <ToolComponent {...getToolProps(data.toolComponent!, data.toolConfig)} />
                 {/* Phase 9: Post-tool cross-sell CTA */}
                 <PostToolCTA slug={data.slug} />
@@ -263,15 +266,30 @@ export function InteractiveToolPageTemplate({
         </article>
       </div>
 
-      {/* Final CTA Full Width */}
-      <CTASection
-        title={t('templates.tool.cta.title')}
-        description={t('templates.tool.cta.description')}
-        ctaText={t('templates.tool.cta.ctaText')}
-        ctaUrl="/?signup=1"
-        pageType="tool"
-        slug={data.slug}
-      />
+      {/* Final CTA Full Width. Legacy ctaText/ctaUrl on interactive pages are unvetted
+          (self-links, misaligned locale copy), so they only render once a page opts in
+          with its own ctaTitle; otherwise keep the upscaler signup CTA. */}
+      {data.ctaTitle ? (
+        <CTASection
+          title={data.ctaTitle}
+          highlightText={data.ctaHighlightText}
+          description={data.ctaDescription ?? data.intro}
+          ctaText={data.ctaText}
+          ctaUrl={data.ctaUrl}
+          trustItems={data.ctaTrustItems}
+          pageType="tool"
+          slug={data.slug}
+        />
+      ) : (
+        <CTASection
+          title={t('templates.tool.cta.title')}
+          description={t('templates.tool.cta.description')}
+          ctaText={t('templates.tool.cta.ctaText')}
+          ctaUrl="/?signup=1"
+          pageType="tool"
+          slug={data.slug}
+        />
+      )}
 
       <div className="relative max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Footer spacing */}

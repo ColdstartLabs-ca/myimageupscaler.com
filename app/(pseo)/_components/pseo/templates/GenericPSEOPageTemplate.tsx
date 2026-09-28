@@ -347,10 +347,13 @@ export function GenericPSEOPageTemplate({
 
       {hasCTA && (
         <CTASection
-          title={('description' in data ? (data.description as string) : undefined) || data.h1}
+          title={data.ctaTitle ?? `Ready to try ${data.title}?`}
+          highlightText={data.ctaHighlightText}
           description={
-            ('description' in data ? (data.description as string) : undefined) || data.intro
+            data.ctaDescription ??
+            (('description' in data ? (data.description as string) : undefined) || data.intro)
           }
+          trustItems={data.ctaTrustItems}
           ctaText={('ctaText' in data ? (data.ctaText as string) : undefined) || 'Get Started Free'}
           ctaUrl={('ctaUrl' in data ? (data.ctaUrl as string) : undefined) || '/?signup=1'}
           pageType={category as unknown as Parameters<typeof CTASection>[0]['pageType']}

@@ -53,4 +53,18 @@ describe('/tools/remove-bg keeps the prerequisites that captured the Sep 2026 sp
     expect(metadata.robots).toMatchObject({ index: true, follow: true });
     expect(metadata.openGraph?.url).toBe(REMOVE_BG_URL);
   }, 20_000); // cold import of the page module takes 2-5s
+
+  it('closes with a free remove-background CTA that returns to the widget', () => {
+    const tool = toolsData.pages.find(page => page.slug === 'remove-bg');
+
+    expect(tool).toMatchObject({
+      ctaTitle: 'Ready for a clean cutout?',
+      ctaHighlightText: 'Remove your background free',
+      ctaDescription:
+        'Upload a JPG, PNG, or WebP. No signup, no watermark, and your image stays in your browser.',
+      ctaText: 'Remove Background Free',
+      ctaUrl: '#tool',
+      ctaTrustItems: ['Free to use', 'No account required', 'Processed in your browser'],
+    });
+  });
 });

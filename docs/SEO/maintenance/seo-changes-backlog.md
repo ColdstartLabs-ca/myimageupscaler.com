@@ -11,6 +11,26 @@ Maintenance rules:
 
 ## 2026-09-28
 
+### pSEO final-CTA audit: remove-bg closes on its own tool; shared CTA contract guarded
+
+Audit (every template rendering `CTASection`):
+
+- Interactive tools (~55 pages across `tools`, `interactive-tools`, `social-media-resize`, `format-conversion`): the final CTA ignored page data and always showed the upscaler signup pitch. That pitch is coherent but duplicates the post-tool cross-sell. The legacy `ctaText`/`ctaUrl` values can't be switched on: 17 self-reload their own URL, about 20 pair "Convert…" text with `/?signup=1`, and the ja locale copy is misaligned by slug.
+- Generic template (ai-features, use-cases-expanded, bulk-tools): the CTA heading was the whole `description` paragraph, repeated underneath. The bulk-tools hero and final CTAs linked back to their own page, and those pages have no widget.
+- The Tool (non-interactive), compare, alternatives, formats, scale, free, guides, use-cases, platform(-format), format-scale and device-use CTAs are coherent upscaler/pricing CTAs (`/`, `/?signup=1`, `/pricing`). They were left unchanged.
+
+Action:
+
+- `CTASection` accepts optional `highlightText`/`trustItems`. The defaults, including "No credit card required" and the regional free-credit line, are unchanged.
+- `IBasePSEOPage` gains optional `ctaTitle`/`ctaHighlightText`/`ctaDescription`/`ctaTrustItems`. Tool, InteractiveTool and Generic templates honor them. An interactive page uses its data CTA only once it defines `ctaTitle`, so the other interactive pages keep the upscaler signup CTA. The widget is wrapped in a stable `#tool` anchor.
+- English `/tools/remove-bg` only (localized copies unchanged): "Ready for a clean cutout? / Remove your background free", `Remove Background Free` → `#tool`, trust "Free to use / No account required / Processed in your browser". The free framing is kept.
+- Generic CTA heading is now `Ready to try {title}?`. Bulk-tools CTAs point to `/tools/resize/bulk-image-resizer` and `/tools/compress/bulk-image-compressor`.
+- Guard: `tests/unit/seo/pseo-cta-contract.unit.spec.tsx` covers CTASection defaults and overrides, `pseo_cta_clicked` attribution, template rendering, and data validation over English and loaded locale files. The validation checks that extended fields appear only where rendered and are complete, that `#tool` is used only on interactive pages, and that no CTA self-reloads.
+
+Follow-up:
+
+- One page per deploy. Read back remove-bg `pseo_cta_clicked` (`bottom-cta`) and signups 7 days after deploy before opting in other interactive pages (e.g. `ai-background-remover`, converters).
+
 ### Sep 24–26 impression spike: external remove-bg SERP episode; sitemap prerequisite guarded
 
 Evidence (GSC web, final data through 2026-09-26, fetched 2026-09-28):

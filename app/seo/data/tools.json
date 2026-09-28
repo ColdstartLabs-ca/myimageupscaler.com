@@ -679,8 +679,12 @@
         "upscale-product-photos-amazon-etsy-guide",
         "ai-image-enhancement-ecommerce-guide"
       ],
-      "ctaText": "Remove BG Now",
-      "ctaUrl": "/tools/remove-bg"
+      "ctaTitle": "Ready for a clean cutout?",
+      "ctaHighlightText": "Remove your background free",
+      "ctaDescription": "Upload a JPG, PNG, or WebP. No signup, no watermark, and your image stays in your browser.",
+      "ctaText": "Remove Background Free",
+      "ctaUrl": "#tool",
+      "ctaTrustItems": ["Free to use", "No account required", "Processed in your browser"]
     },
     {
       "slug": "transparent-background-maker",
