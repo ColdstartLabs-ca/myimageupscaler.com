@@ -35,7 +35,7 @@ Verification:
 
 Commit/deploy state:
 
-- Commit: `68cab709` (`fix(seo): align remove-bg metadata with search intent`).
+- Commit: `95ab08c4` (`fix(seo): align remove-bg metadata with search intent`).
 - Deployment: not pushed or deployed by this cron; live HTML remains unchanged until deployment.
 
 Next trigger:
