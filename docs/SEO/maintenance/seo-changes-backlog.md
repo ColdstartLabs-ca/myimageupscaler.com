@@ -30,8 +30,10 @@ Verification:
 - GSC/GA evidence refreshed in this run: GSC through 2026-09-25; GA organic through 2026-09-27.
 - Focused test: `yarn -s vitest run tests/unit/seo/cannibalization.unit.spec.ts` passed.
 - `yarn -s validate:seo:pseo` passed.
-- Refreshed the pSEO performance snapshot/report from the 90-day GSC export (`content/pseo-performance.json`, `seo-reports/indexation-2026-09-25.md`) because `yarn verify` refused the stale 2026-08-13 indexation snapshot.
-- Full `yarn verify` passed after the snapshot refresh; ESLint emitted pre-existing warnings only.
+- The first snapshot refresh was rejected during review: it came from a truncated top-pages export and reduced earning identities from 358 to 36, which would have silently removed 323 previously earning pages from sitemap/index eligibility.
+- Corrected `content/pseo-performance.json` and `seo-reports/indexation-2026-09-25.md` with a conservative union of the two verified GSC evidence windows (2026-05-12→2026-08-09 and 2026-06-28→2026-09-25). The corrected inventory has 472 routeable pages, preserves all 358 previously earning identities, and adds one newly earning identity.
+- Added a sync guard that refuses refreshes losing at least 20 earning pages and 25% of prior earning identities unless a human explicitly passes `--allow-earning-drop` after validation. Restored the omitted `use-cases-expanded` inventory category and added regression tests.
+- Corrective verification passed: focused SEO tests (`12/12`), `validate:seo:pseo`, `seo:indexation:gate`, and full `yarn verify`. TypeScript, ICU, schema, indexation gate, and cache-config tests passed; ESLint reported 0 errors and 1,674 pre-existing warnings.
 
 Commit/deploy state:
 
