@@ -11,6 +11,37 @@ Maintenance rules:
 
 ## 2026-09-28
 
+### Remove-background CTR owner metadata refresh
+
+Evidence:
+
+- Fresh GSC export for 2026-08-29→2026-09-25 found `/tools/remove-bg` ranking for the remove-background cluster with 27,950 impressions, 0 clicks, average position 4.56 across five query/page rows. The largest query, `remove background`, had 24,064 impressions, 0 clicks, and average position 4.81.
+- Live production before the edit returned `200`, `index, follow`, and self-canonical for `/tools/remove-bg`, but its title/H1 led with `Remove BG`/`Background Remover` instead of the exact high-impression `remove background` intent.
+- Three Kings/blog ladder state blocked fresh blog edits today (`0 EDIT_NOW`, six HOLD rows), so the safer growth action was a pSEO SERP-field refresh on an already-ranking tool URL.
+
+Action:
+
+- Updated `app/seo/data/tools.json` for `remove-bg`: title/meta title/H1/intro/primary keyword now front-load `Remove Background Online Free`; meta description now says `Remove background from photos online for free` and keeps truthful no-signup/no-watermark/browser-tool copy.
+- Added unit coverage in `tests/unit/seo/cannibalization.unit.spec.ts` for exact-intent ownership and 30–60 title / 120–160 description bounds.
+- Added `/tools/remove-bg` to the indexing backlog for post-deploy manual GSC request indexing.
+
+Verification:
+
+- GSC/GA evidence refreshed in this run: GSC through 2026-09-25; GA organic through 2026-09-27.
+- Focused test: `yarn -s vitest run tests/unit/seo/cannibalization.unit.spec.ts` passed.
+- `yarn -s validate:seo:pseo` passed.
+- Refreshed the pSEO performance snapshot/report from the 90-day GSC export (`content/pseo-performance.json`, `seo-reports/indexation-2026-09-25.md`) because `yarn verify` refused the stale 2026-08-13 indexation snapshot.
+- Full `yarn verify` passed after the snapshot refresh; ESLint emitted pre-existing warnings only.
+
+Commit/deploy state:
+
+- Commit: `68cab709` (`fix(seo): align remove-bg metadata with search intent`).
+- Deployment: not pushed or deployed by this cron; live HTML remains unchanged until deployment.
+
+Next trigger:
+
+- After deployment, verify live `/tools/remove-bg` title/canonical/robots, request indexing in GSC, then judge CTR no earlier than 14 complete GSC days after first crawl plus the three-day GSC holdback.
+
 ### Three Kings final-data check and rollback-loop guard
 
 Evidence:

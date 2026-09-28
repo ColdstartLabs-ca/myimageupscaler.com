@@ -37,6 +37,10 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 > it is recorded below as an intentional noindex cleanup, not as an accepted
 > indexing request.
 
+### Remove-background CTR metadata refresh — request after deployment
+
+- [ ] `https://myimageupscaler.com/tools/remove-bg` — 2026-09-28 pSEO title/meta/H1/intro refresh for the 27,950-impression remove-background cluster; request indexing only after deployment and live HTML exposes `Remove Background Online Free`.
+
 ### Three Kings refresh — live verified, ready to request
 
 - [ ] `https://myimageupscaler.com/blog/poster-size-dimensions-pixels` — 2026-09-21 Three Kings rung-3 proof-led body pass; API readback matches the direct answer and effective-PPI evidence module. Public HTML still serves the prior cached body, so request indexing only after live HTML matches.
