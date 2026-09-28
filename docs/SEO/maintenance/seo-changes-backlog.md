@@ -11,6 +11,24 @@ Maintenance rules:
 
 ## 2026-09-28
 
+### Sep 24–26 impression spike: external remove-bg SERP episode; sitemap prerequisite guarded
+
+Evidence (GSC web, final data through 2026-09-26, fetched 2026-09-28):
+
+- Site impressions 15,101 / 36,378 / 10,840 on Sep 24/25/26 vs 11,341/day for Sep 10–23; clicks flat (184/day vs 197/day). Excluding `/tools/remove-bg`, the spike days were 10,724 imps/day and 1.70% CTR, i.e. no site-wide movement.
+- `/tools/remove-bg` alone: 30,148 imps, 4 clicks, avg position 4.6 on Sep 24–26 vs 1,576 imps, 7 clicks, position 55.5 on Sep 9–23. Sep 25 was 98.9% desktop and 97% US, and 86% of it came from the exact query `remove background`. It dropped back to 1 impression on Sep 27. The same zero-CTR pattern showed up Sep 4–8 on `/es/tools/remove-bg` (2,997 imps, 1 click, position 2.1).
+- Call: this is a Google-side ranking test or SERP-surface episode on the head term `remove background`. It was not caused by a repo change. `remove-bg` data was unchanged from 2026-07-18 until the undeployed `95ab08c4`. The Sep 10 and Sep 25 copy commits did not touch it. The Sep 16 cache deploy is 8 days off and site-wide. `0e9cf4c2`/`95ab08c4` are local and postdate the spike. Its business value is about 0 (0.01% CTR).
+- The remove-bg metadata entry below says "27,950 impressions, position 4.56", and that figure is spike-contaminated. For Aug 29–Sep 23 the page actually had 2,844 imps at position 53.2. When judging that edit, exclude Sep 24–26 and compare against the ~position 50 baseline.
+
+Repo-owned prerequisite protected:
+
+- MIU could only surface because `/tools/remove-bg` was routeable, `index, follow`, self-canonical and in `sitemap-tools.xml`. Sitemap inclusion depends on `content/pseo-performance.json`, and from 2026-08-13 to 2026-09-28 the committed row held a single impression. The sync guard only blocks mass drops (≥20 pages and ≥25%), so losing this one row would silently de-list the page.
+- Added `tests/unit/seo/remove-bg-demand-capture.unit.spec.ts`, which asserts eligibility reason `impressions`, a `<loc>` in the English tools sitemap, and `index, follow` with a self URL. Red was confirmed by zeroing the snapshot row (2 tests fail) and by flipping the page robots (1 fails).
+
+Follow-up:
+
+- Re-read GSC ~2026-10-12. If remove-bg reaches page 1 for more than a day with real clicks, it is a ranking change worth a Three Kings decision. Repeated zero-CTR spikes should be quarantined from page-level CTR evidence, like the query quarantine.
+
 ### Remove-background CTR owner metadata refresh
 
 Evidence:
