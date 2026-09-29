@@ -56,6 +56,8 @@ import { isAccountSetupPending, isFreeleaderBlocked } from '@/lib/anti-freeloade
 import { ErrorCodes, createErrorResponse } from '@shared/utils/errors';
 import {
   decodeImageDimensions,
+  getMaxPixelsForModel,
+  getScaleAwareMaxInputPixelsForModel,
   IMAGE_VALIDATION,
   upscaleSchema,
   validateImageDimensions,
@@ -1036,7 +1038,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Even if client-side validation is bypassed, server should reject oversized images
     if (inputDimensions) {
       const pixels = inputDimensions.width * inputDimensions.height;
-      const maxPixels = modelRegistry.getMaxInputPixels(resolvedModelId);
+      const isQuickRealEsrganPath = resolvedTier === 'quick' && billingModelId === 'real-esrgan';
+      const maxPixels = isQuickRealEsrganPath
+        ? getScaleAwareMaxInputPixelsForModel(
+            resolvedModelId,
+            config.scale,
+            selectedModel.maxOutputResolution
+          )
+        : getMaxPixelsForModel(resolvedModelId);
 
       if (pixels > maxPixels) {
         logFailure('image_exceeds_model_pixel_limit', {

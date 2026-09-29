@@ -3,7 +3,11 @@ import {
   MODEL_MAX_INPUT_PIXELS,
   SCALE_PRESERVING_FALLBACK_MAX_SIDE,
 } from '@shared/config/model-costs.config';
-import { IMAGE_VALIDATION, getMaxPixelsForQualityTier } from '@shared/validation/upscale.schema';
+import {
+  IMAGE_VALIDATION,
+  getMaxPixelsForQualityTier,
+  getScaleAwareMaxInputPixelsForModel,
+} from '@shared/validation/upscale.schema';
 import { loadImageDimensions } from './file-validation';
 import { compressImageWithinByteLimit } from './image-compression';
 import {
@@ -85,7 +89,7 @@ export async function prepareFileForProcessing(
   let requiresResize = false;
 
   if (qualityTier === 'quick') {
-    const realEsrganMaxPixels = MODEL_MAX_INPUT_PIXELS['real-esrgan'];
+    const realEsrganMaxPixels = getScaleAwareMaxInputPixelsForModel('real-esrgan', scale);
     const fitsRealEsrgan = pixels <= realEsrganMaxPixels;
     const fitsScalePreservingFallback =
       scale === 2 &&
