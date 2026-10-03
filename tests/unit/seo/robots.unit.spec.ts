@@ -185,11 +185,25 @@ describe('robots.ts', () => {
       expect(wildcardRule?.disallow).toContain('/api/');
       expect(wildcardRule?.disallow).not.toContain('/dashboard/');
       expect(wildcardRule?.disallow).toContain('/admin/');
-      expect(wildcardRule?.disallow).toContain('/_next/');
       expect(wildcardRule?.disallow).toContain('/private/');
       expect(wildcardRule?.disallow).toContain('/*.json$');
       expect(wildcardRule?.disallow).toContain('/success');
       expect(wildcardRule?.disallow).toContain('/canceled');
+    });
+
+    // Googlebot must be able to fetch the JS/CSS in /_next/static/ to render
+    // the page; disallowing /_next/ starves it of render-blocking assets.
+    it('wildcard rule must not disallow the /_next/ static asset path', async () => {
+      const { default: robots } = await import('@/app/robots');
+      const result = robots();
+
+      const wildcardRule = result.rules.find(
+        rule => typeof rule === 'object' && rule.userAgent === '*'
+      );
+      const disallowed = (wildcardRule?.disallow ?? []) as string[];
+
+      expect(disallowed.some(pattern => pattern.startsWith('/_next'))).toBe(false);
+      expect(disallowed.some(pattern => pattern.startsWith('/_next/static'))).toBe(false);
     });
   });
 

@@ -5,6 +5,7 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import {
+  ALL_CATEGORIES,
   LOCALIZED_CATEGORIES,
   ENGLISH_ONLY_CATEGORIES,
   isTranslatedPair,
@@ -82,12 +83,10 @@ describe('Sitemap Index Localization', () => {
     });
 
     it('should calculate correct total sitemap index count', () => {
-      // English-only sitemap categories (not in LOCALIZED or ENGLISH_ONLY arrays)
-      const EXTRA_ENGLISH_ONLY = ['static', 'blog'];
-      const routedEnglishOnlySitemapCount =
-        ENGLISH_ONLY_CATEGORIES.length + EXTRA_ENGLISH_ONLY.length;
+      // Non-pSEO child sitemaps (static pages + blog) sit outside PSEO_CATEGORIES
+      const NON_PSEO_SITEMAPS = ['static', 'blog'];
 
-      const localizedEnglishCount = LOCALIZED_CATEGORIES.length;
+      const englishCount = ALL_CATEGORIES.length + NON_PSEO_SITEMAPS.length;
       const localeSpecificCount = LOCALIZED_CATEGORIES.reduce(
         (count, category) =>
           count +
@@ -97,10 +96,9 @@ describe('Sitemap Index Localization', () => {
         0
       );
 
-      const totalSitemaps =
-        routedEnglishOnlySitemapCount + localizedEnglishCount + localeSpecificCount;
+      const totalSitemaps = englishCount + localeSpecificCount;
 
-      expect(totalSitemaps).toBe(43);
+      expect(totalSitemaps).toBe(46);
     });
 
     it('should have correct locale count', () => {
@@ -189,7 +187,32 @@ describe('Sitemap Index Route', () => {
     const xml = await response.text();
 
     const matches = xml.match(/<sitemap>/g);
-    expect(matches).toHaveLength(43);
+    expect(matches).toHaveLength(46);
+  });
+
+  // A category with zero translated non-English pairs falls out of
+  // LOCALIZED_CATEGORIES. Its English pages are still indexable, so the index
+  // must keep listing the English child sitemap.
+  it.each(['scale', 'free', 'guides'] as const)(
+    'should list the %s English child sitemap even with no translated locale pairs',
+    async category => {
+      const { GET } = await import('@/app/sitemap.xml/route');
+      const xml = await (await GET()).text();
+
+      expect(LOCALIZED_CATEGORIES).not.toContain(category);
+      expect(xml).toContain(`/sitemap-${category}.xml`);
+    }
+  );
+
+  it.each([
+    ['scale', '/scale/upscale-to-4k'],
+    ['free', '/free/free-image-upscaler'],
+    ['guides', '/guides/how-to-upscale-images'],
+  ] as const)('should serve %s page URLs from its child sitemap', async (category, url) => {
+    const { GET } = await import(`@/app/sitemap-${category}.xml/route`);
+    const xml = await (await GET()).text();
+
+    expect(xml).toContain(url);
   });
 });
 
