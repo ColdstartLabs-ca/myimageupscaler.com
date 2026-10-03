@@ -115,12 +115,13 @@ describe('llms.txt Route', () => {
       expect(content).toContain('Download enhanced result');
     });
 
-    it('should mention no signup required', async () => {
+    it('should offer a free account, not claim guest upscaling', async () => {
       const { GET } = await import('@/app/llms.txt/route');
       const response = await GET();
       const content = await response.text();
 
-      expect(content).toContain('No signup required');
+      expect(content).not.toContain('No signup required');
+      expect(content).toMatch(/no credit card required/i);
     });
   });
 
@@ -293,6 +294,15 @@ describe('llms.txt Route', () => {
       expect(content).toContain('Processing:');
       expect(content).toContain('Supported Formats:');
       expect(content).toContain('Output Quality:');
+    });
+
+    it('should offer a free account, not claim guest upscaling', async () => {
+      const { GET } = await import('@/app/llms-full.txt/route');
+      const response = await GET();
+      const content = await response.text();
+
+      expect(content).not.toContain('No signup required');
+      expect(content).toMatch(/no credit card required/i);
     });
   });
 

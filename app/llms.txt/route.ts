@@ -47,7 +47,7 @@ const content = `# llms.txt - ${clientEnv.APP_NAME}
 3. Select scale factor (2x or 4x)
 4. Download enhanced result
 
-No signup required for basic use. Batch processing available for premium users.
+Free account with free credits — no credit card required. Batch processing available for premium users.
 
 ## Key Features
 - AI-powered upscaling up to 4x resolution

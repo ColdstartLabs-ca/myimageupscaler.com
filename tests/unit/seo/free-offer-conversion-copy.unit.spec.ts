@@ -38,6 +38,29 @@ describe('free-offer conversion copy', () => {
     expect(homepage.ctaSubtext).toMatch(/No credit card required/i);
   });
 
+  it('English meta.homepage.description keeps the free offer in the "/" snippet', () => {
+    const description = en.meta.homepage.description;
+
+    expect(description).toMatch(/free/i);
+    expect(description).toMatch(/no credit card/i);
+    expect(description).not.toContain('Create an account to see');
+  });
+
+  it('English homepage FAQ keeps "How to upscale images for free?" and leads with the free offer', () => {
+    const freeQuestion = /upscale images for free/i;
+    const faqItems = en.homepage.faqItems;
+
+    expect(en.homepage.faq3Question).toMatch(freeQuestion);
+
+    for (const answer of [
+      en.homepage.faq3Answer,
+      faqItems.find(item => freeQuestion.test(item.question))?.answer ?? '',
+    ]) {
+      expect(answer).toMatch(/free credits/i);
+      expect(answer).toMatch(/no credit card/i);
+    }
+  });
+
   it.each(Object.entries(LOCALES))(
     '%s/common.json has a non-empty creditOfferCount with {credits} and a ctaFixImagesFree',
     (_locale, messages) => {
