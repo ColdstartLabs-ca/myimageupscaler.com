@@ -1,6 +1,6 @@
 import type { IAnalyticsEventName, IUserIdentity } from '@server/analytics/types';
 import type { IAnalyticsProvider } from '../types';
-import { GA4_EVENT_MAP } from '../types';
+import { GA4_EVENT_MAP, sanitizeGa4Params } from '../types';
 
 type TGtag = (...args: unknown[]) => void;
 
@@ -34,8 +34,9 @@ export class GA4Provider implements IAnalyticsProvider {
     // Map internal event names to GA4 recommended events
     const ga4EventName = this.mapEventName(name);
 
-    // Extract value/revenue for purchase events
-    const ga4Params: Record<string, unknown> = { ...properties };
+    // Rename GA4-reserved params (source/medium/...) before the purchase
+    // `value` is derived below, so a UI origin cannot open a session.
+    const ga4Params: Record<string, unknown> = sanitizeGa4Params(name, properties);
 
     if (
       name === 'purchase_confirmed' ||
@@ -75,7 +76,7 @@ export class GA4Provider implements IAnalyticsProvider {
     gtag('event', 'page_view', {
       page_path: path,
       page_title: properties.pageTitle || document?.title || '',
-      ...properties,
+      ...sanitizeGa4Params('page_view', properties),
     });
   }
 
