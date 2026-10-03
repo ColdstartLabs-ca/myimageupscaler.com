@@ -172,6 +172,9 @@ Windows: A = Sep 1–11, B = Sep 12–22, C = Sep 26–Oct 2. "Real sessions" ex
 | `feat(analytics): real-user Core Web Vitals + stop GA4 self-referral sessions` | `web_vitals` event (LCP/INP/CLS/FCP/TTFB by template); GA4 `source`→`ui_source` param rename      | §4 step 1, Fix 5  |
 | `fix(analytics): keep account_created alive past the Worker response`          | `waitUntil` for `account_created` / `free_credits_reduced`                                        | §5 tracking break |
 
+| `fix(deploy): pass the Ahrefs analytics key to the CI build` | Ahrefs Web Analytics has shown ~0 visitors since 2026-09-11. That is a tracking break, not real traffic: the push-to-master build never received `NEXT_PUBLIC_AHREFS_ANALYTICS_KEY`, which existed only in the local deploy secret. The on/off gaps in Jul–Aug follow which deploy path was used. Guard test added. | new |
+| `test: realign 4 unit specs…` | Pre-existing `yarn test:unit` failures from `caec093e`/`0e9cf4c2` that would have blocked the deploy pipeline | gate |
+
 **Not shipped:**
 
 - The single canonical/hreflang emitter is on branch `seo/canonical-single-emitter`. It has a high blast radius and needs review.
