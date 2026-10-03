@@ -51,6 +51,9 @@ describe('free-offer conversion copy', () => {
     const faqItems = en.homepage.faqItems;
 
     expect(en.homepage.faq3Question).toMatch(freeQuestion);
+    // Rendered FAQ and FAQPage JSON-LD must say the same thing.
+    const schemaItem = faqItems.find(item => item.question === en.homepage.faq3Question);
+    expect(schemaItem?.answer).toBe(en.homepage.faq3Answer);
 
     for (const answer of [
       en.homepage.faq3Answer,
