@@ -26,26 +26,57 @@
  */
 
 import { test, expect } from '@playwright/test';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/i18n/config';
-import {
-  ALL_CATEGORIES,
-  LOCALIZED_CATEGORIES,
-  isTranslatedPair,
-} from '@/lib/seo/localization-config';
 
-/** Child sitemaps outside the pSEO category list (mirrors app/sitemap.xml/route.ts). */
-const NON_PSEO_SITEMAPS = ['static', 'blog'];
+// Playwright's ESM loader rejects lib/seo/localization-config.ts (it imports JSON without
+// an import attribute), so this spec reads the same sources directly instead.
+interface ILocaleCoveragePair {
+  category: string;
+  locale: string;
+  sampled: number;
+  translated: number;
+  englishMirror: number;
+  soft404: number;
+  missing: number;
+}
 
-// Derived from lib/seo/localization-config.ts — never hand-kept. A hand-kept list here
-// is what silently let scale/free/guides fall out of the index for 5 weeks in Sep 2026.
-const EXPECTED_SITEMAP_URLS = new Set([
-  ...ALL_CATEGORIES.map(category => `sitemap-${category}.xml`),
-  ...NON_PSEO_SITEMAPS.map(name => `sitemap-${name}.xml`),
-  ...LOCALIZED_CATEGORIES.flatMap(category =>
-    SUPPORTED_LOCALES.filter(locale => locale !== DEFAULT_LOCALE && isTranslatedPair(category, locale))
-      .map(locale => `sitemap-${category}-${locale}.xml`)
-  ),
-].map(name => `https://myimageupscaler.com/${name}`));
+const coverageArtifact = JSON.parse(
+  readFileSync(join(process.cwd(), 'seo-reports/locale-coverage-2026-08-25.json'), 'utf8')
+) as { pairs: ILocaleCoveragePair[] };
+
+/** Mirrors isTranslatedPair in lib/seo/localization-config.ts. */
+const isTranslatedPair = (category: string, locale: string): boolean => {
+  if (locale === 'en') return true;
+  const pair = coverageArtifact.pairs.find(
+    candidate => candidate.category === category && candidate.locale === locale
+  );
+  return Boolean(
+    pair &&
+    pair.sampled > 0 &&
+    pair.translated === pair.sampled &&
+    pair.englishMirror === 0 &&
+    pair.soft404 === 0 &&
+    pair.missing === 0
+  );
+};
+
+// Never hand-kept: a hand-kept list here is what silently let scale/free/guides fall out
+// of the index for 5 weeks in Sep 2026. English child sitemaps = every routed
+// app/sitemap-<name>.xml without a locale suffix (images is deliberately unlisted);
+// locale child sitemaps = every translated category × locale pair.
+const LOCALE_SUFFIX = new RegExp(`-(${SUPPORTED_LOCALES.join('|')})\\.xml$`);
+const ENGLISH_SITEMAPS = readdirSync(join(process.cwd(), 'app'))
+  .filter(dir => /^sitemap-.+\.xml$/.test(dir) && !LOCALE_SUFFIX.test(dir))
+  .filter(dir => dir !== 'sitemap-images.xml');
+const LOCALE_SITEMAPS = coverageArtifact.pairs
+  .filter(pair => pair.locale !== DEFAULT_LOCALE && isTranslatedPair(pair.category, pair.locale))
+  .map(pair => `sitemap-${pair.category}-${pair.locale}.xml`);
+
+const EXPECTED_SITEMAP_URLS = new Set(
+  [...ENGLISH_SITEMAPS, ...LOCALE_SITEMAPS].map(name => `https://myimageupscaler.com/${name}`)
+);
 
 // Base URL for production checks (canonical URLs should always use this)
 const PRODUCTION_BASE_URL = 'https://myimageupscaler.com';
