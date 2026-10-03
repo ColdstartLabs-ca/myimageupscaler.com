@@ -1,9 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 
-const { mockClaimFreeCreditGrant, mockTrackServerEvent } = vi.hoisted(() => ({
+const { mockClaimFreeCreditGrant, mockTrackServerEvent, mockWaitUntil } = vi.hoisted(() => ({
   mockClaimFreeCreditGrant: vi.fn(),
   mockTrackServerEvent: vi.fn(),
+  mockWaitUntil: vi.fn(),
+}));
+
+vi.mock('@opennextjs/cloudflare', () => ({
+  getCloudflareContext: () => ({ ctx: { waitUntil: mockWaitUntil } }),
 }));
 
 vi.mock('@server/services/free-credit-grant.service', () => ({
@@ -277,6 +282,38 @@ describe('POST /api/users/setup', () => {
     );
     expect(JSON.stringify(mockTrackServerEvent.mock.calls)).not.toContain('example.com');
     expect(JSON.stringify(mockTrackServerEvent.mock.calls)).not.toContain('user@example.com');
+  });
+
+  it('registers account_created as background work so the Workers runtime cannot cancel it', async () => {
+    let resolveTracked: (value: boolean) => void = () => {};
+    const tracked = new Promise<boolean>(resolve => {
+      resolveTracked = resolve;
+    });
+    mockTrackServerEvent.mockImplementationOnce(() => tracked);
+
+    const res = await POST(makeRequest({ userId: 'user-waituntil', country: 'US' }));
+
+    expect(res.status).toBe(200);
+    expect(mockWaitUntil).toHaveBeenCalledTimes(1);
+    const background = mockWaitUntil.mock.calls[0][0] as Promise<void>;
+    let settled = false;
+    void background.then(() => {
+      settled = true;
+    });
+    await Promise.resolve();
+    expect(settled).toBe(false);
+    resolveTracked(true);
+    await background;
+    expect(settled).toBe(true);
+  });
+
+  it('registers no background tracking work for a repeat setup', async () => {
+    mockProfile(makeProfile({ region_tier: 'standard', signup_country: 'US' }));
+
+    const res = await POST(makeRequest({ userId: 'user-repeat', country: 'US' }));
+
+    expect(res.status).toBe(200);
+    expect(mockWaitUntil).not.toHaveBeenCalled();
   });
 
   it('records direct traffic as available attribution with null UTM values', async () => {
