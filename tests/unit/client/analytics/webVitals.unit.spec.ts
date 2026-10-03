@@ -1,7 +1,13 @@
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 
 const track = vi.fn();
-const loadAnalytics = vi.fn(async () => ({ track }));
+const clientState = { enabled: true, consent: 'granted' as 'granted' | 'denied' | 'pending' };
+const analytics = {
+  track,
+  isEnabled: () => clientState.enabled,
+  getConsent: () => clientState.consent,
+};
+const loadAnalytics = vi.fn(async () => analytics);
 
 // Repo rule: analytics must never fire in development or test.
 const env = vi.hoisted(() => ({ development: false, test: false }));
@@ -68,8 +74,11 @@ describe('web vitals - path template', () => {
 
 describe('web vitals - reporting', () => {
   beforeEach(() => {
+    vi.resetModules();
     track.mockClear();
     loadAnalytics.mockClear();
+    clientState.enabled = true;
+    clientState.consent = 'granted';
     env.development = false;
     env.test = false;
   });
@@ -162,5 +171,73 @@ describe('web vitals - reporting', () => {
       'web_vitals',
       expect.objectContaining({ path_template: '/scale/[slug]' })
     );
+  });
+});
+
+describe('web vitals - buffering before analytics init', () => {
+  beforeEach(() => {
+    vi.resetModules();
+    track.mockClear();
+    loadAnalytics.mockClear();
+    clientState.enabled = false;
+    clientState.consent = 'pending';
+    env.development = false;
+    env.test = false;
+  });
+
+  test('buffers vitals reported while not yet enabled and sends them once on flush', async () => {
+    const { reportWebVital, flushWebVitals } = await loadReporter();
+
+    reportWebVital(makeMetric({ name: 'TTFB', value: 120 }));
+    reportWebVital(makeMetric({ name: 'FCP', value: 900 }));
+    await vi.waitFor(() => expect(loadAnalytics).toHaveBeenCalledTimes(2));
+    expect(track).not.toHaveBeenCalled();
+
+    clientState.enabled = true;
+    flushWebVitals(analytics);
+    flushWebVitals(analytics);
+
+    expect(track.mock.calls).toEqual([
+      ['web_vitals', expect.objectContaining({ metric: 'TTFB', value: 120 })],
+      ['web_vitals', expect.objectContaining({ metric: 'FCP', value: 900 })],
+    ]);
+  });
+
+  test('drops buffered vitals without sending when consent is denied', async () => {
+    const { reportWebVital, flushWebVitals } = await loadReporter();
+
+    reportWebVital(makeMetric({ name: 'TTFB', value: 120 }));
+    await vi.waitFor(() => expect(loadAnalytics).toHaveBeenCalled());
+
+    clientState.consent = 'denied';
+    flushWebVitals(analytics);
+
+    expect(track).not.toHaveBeenCalled();
+  });
+
+  test('caps the buffer so a long-lived session cannot grow it without bound', async () => {
+    const { reportWebVital, flushWebVitals } = await loadReporter();
+
+    for (let i = 0; i < 14; i++) {
+      reportWebVital(makeMetric({ name: 'TTFB', value: i }));
+    }
+    await vi.waitFor(() => expect(loadAnalytics).toHaveBeenCalledTimes(14));
+
+    clientState.enabled = true;
+    flushWebVitals(analytics);
+
+    expect(track).toHaveBeenCalledTimes(10);
+  });
+
+  test('never buffers in development or test environments', async () => {
+    const { reportWebVital, flushWebVitals } = await loadReporter();
+
+    env.test = true;
+    reportWebVital(makeMetric());
+    env.test = false;
+
+    flushWebVitals(analytics);
+    expect(loadAnalytics).not.toHaveBeenCalled();
+    expect(track).not.toHaveBeenCalled();
   });
 });
