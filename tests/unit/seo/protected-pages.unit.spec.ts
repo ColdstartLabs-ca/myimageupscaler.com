@@ -34,8 +34,20 @@ const pageOf = (data: { pages: IPseoPage[] }, slug: string): IPseoPage => {
 };
 
 const LOCALES_DIR = join(process.cwd(), 'locales');
-const homepageTitle = (locale: string): string =>
-  JSON.parse(readFileSync(join(LOCALES_DIR, locale, 'common.json'), 'utf8')).meta.homepage.title;
+
+interface IFaqItem {
+  question: string;
+  answer: string;
+}
+
+interface ILocaleCommon {
+  meta: { homepage: { title: string; description: string } };
+  homepage: { faq3Question: string; faq3Answer: string; faqItems: IFaqItem[] };
+}
+
+const localeCommon = (locale: string): ILocaleCommon =>
+  JSON.parse(readFileSync(join(LOCALES_DIR, locale, 'common.json'), 'utf8'));
+const homepageTitle = (locale: string): string => localeCommon(locale).meta.homepage.title;
 
 describe('protected pages keep the terms their top queries match', () => {
   it('keeps "Image Upscaler", "Free" and the brand in the English homepage title', () => {
@@ -43,6 +55,24 @@ describe('protected pages keep the terms their top queries match', () => {
     expect(title).toMatch(/image upscaler/i);
     expect(title).toMatch(/free/i);
     expect(title).toContain('MyImageUpscaler');
+  });
+
+  // The 2026-09-10 pass stripped "free"/"no credit card" from the description and the
+  // restore missed both. The snippet is the biggest organic click surface we own.
+  it('keeps the free offer in the English homepage meta description', () => {
+    const description = localeCommon('en').meta.homepage.description;
+    expect(description).toMatch(/\bfree\b/i);
+    expect(description).toMatch(/no credit card/i);
+    expect(description).not.toContain('Create an account to see');
+  });
+
+  // "how to upscale images for free" is a top organic query; the deleted FAQ entry was
+  // the page that matched it. The rendered FAQ and the FAQPage JSON-LD must agree.
+  it('keeps the "How to upscale images for free?" FAQ question on the homepage', () => {
+    const { homepage } = localeCommon('en');
+    expect(homepage.faq3Question).toMatch(/upscale images for free/i);
+    const rendered = homepage.faqItems.find(item => item.question === homepage.faq3Question);
+    expect(rendered?.answer).toBe(homepage.faq3Answer);
   });
 
   // de/fr titles are unbranded today; adding the brand there is a separate single-page test.

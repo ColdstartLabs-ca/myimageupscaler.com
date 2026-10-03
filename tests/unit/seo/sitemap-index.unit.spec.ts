@@ -3,6 +3,8 @@
  * Tests sitemap index generation with proper localization categories
  */
 
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, it, expect, vi } from 'vitest';
 import {
   ALL_CATEGORIES,
@@ -155,6 +157,13 @@ describe('Sitemap Index Localization', () => {
   });
 });
 
+/** Child sitemap filenames the index actually renders, e.g. `sitemap-tools.xml`. */
+const listedChildSitemaps = async (): Promise<string[]> => {
+  const { GET } = await import('@/app/sitemap.xml/route');
+  const xml = await (await GET()).text();
+  return Array.from(xml.matchAll(/<loc>[^<]*\/([^/<]+\.xml)<\/loc>/g), match => match[1]);
+};
+
 describe('Sitemap Index Route', () => {
   it('should include ai-features in the sitemap index', async () => {
     const { GET } = await import('@/app/sitemap.xml/route');
@@ -213,6 +222,29 @@ describe('Sitemap Index Route', () => {
     const xml = await (await GET()).text();
 
     expect(xml).toContain(url);
+  });
+
+  it('should list an English child sitemap for every category in ALL_CATEGORIES', async () => {
+    const names = await listedChildSitemaps();
+
+    for (const category of ALL_CATEGORIES) {
+      expect(names, `index should list sitemap-${category}.xml`).toContain(
+        `sitemap-${category}.xml`
+      );
+    }
+  });
+
+  // A listed child sitemap with no route file 404s in production and silently drops
+  // its URLs — the Sep 2026 index listed categories that could not be fetched.
+  it('should have a route file for every child sitemap listed in the index', async () => {
+    const names = await listedChildSitemaps();
+    expect(names.length).toBeGreaterThan(0);
+
+    const unrouted = names.filter(
+      name => !existsSync(join(process.cwd(), 'app', name, 'route.ts'))
+    );
+
+    expect(unrouted, `child sitemaps without a route file: ${unrouted.join(', ')}`).toEqual([]);
   });
 });
 

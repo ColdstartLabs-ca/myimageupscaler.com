@@ -26,74 +26,26 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { SUPPORTED_LOCALES } from '@/i18n/config';
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/i18n/config';
+import {
+  ALL_CATEGORIES,
+  LOCALIZED_CATEGORIES,
+  isTranslatedPair,
+} from '@/lib/seo/localization-config';
 
-interface ILocaleCoveragePair {
-  category: string;
-  locale: string;
-  sampled: number;
-  translated: number;
-  englishMirror: number;
-  soft404: number;
-  missing: number;
-}
+/** Child sitemaps outside the pSEO category list (mirrors app/sitemap.xml/route.ts). */
+const NON_PSEO_SITEMAPS = ['static', 'blog'];
 
-const coverageArtifact = JSON.parse(
-  readFileSync(join(process.cwd(), 'seo-reports/locale-coverage-2026-08-25.json'), 'utf8')
-) as { pairs: ILocaleCoveragePair[] };
-
-const isTranslatedPair = (category: string, locale: string): boolean => {
-  if (locale === 'en') return true;
-  const pair = coverageArtifact.pairs.find(
-    candidate => candidate.category === category && candidate.locale === locale
-  );
-  return Boolean(
-    pair &&
-    pair.sampled > 0 &&
-    pair.translated === pair.sampled &&
-    pair.englishMirror === 0 &&
-    pair.soft404 === 0 &&
-    pair.missing === 0
-  );
-};
-
-const LOCALIZED_CATEGORIES = [
-  ...new Set(
-    coverageArtifact.pairs
-      .filter(pair => pair.locale !== 'en' && isTranslatedPair(pair.category, pair.locale))
-      .map(pair => pair.category)
+// Derived from lib/seo/localization-config.ts — never hand-kept. A hand-kept list here
+// is what silently let scale/free/guides fall out of the index for 5 weeks in Sep 2026.
+const EXPECTED_SITEMAP_URLS = new Set([
+  ...ALL_CATEGORIES.map(category => `sitemap-${category}.xml`),
+  ...NON_PSEO_SITEMAPS.map(name => `sitemap-${name}.xml`),
+  ...LOCALIZED_CATEGORIES.flatMap(category =>
+    SUPPORTED_LOCALES.filter(locale => locale !== DEFAULT_LOCALE && isTranslatedPair(category, locale))
+      .map(locale => `sitemap-${category}-${locale}.xml`)
   ),
-];
-const ENGLISH_ONLY_CATEGORIES = [
-  'compare',
-  'comparisons-expanded',
-  'platforms',
-  'bulk-tools',
-  'content',
-  'photo-restoration',
-  'camera-raw',
-  'industry-insights',
-  'device-optimization',
-  'ai-features',
-  'technical-guides',
-  'personas-expanded',
-  'use-cases-expanded',
-  'ai-photo-editor',
-] as const;
-
-const TOTAL_SITEMAP_COUNT =
-  2 +
-  ENGLISH_ONLY_CATEGORIES.length +
-  LOCALIZED_CATEGORIES.length +
-  LOCALIZED_CATEGORIES.reduce(
-    (count, category) =>
-      count +
-      SUPPORTED_LOCALES.filter(locale => locale !== 'en' && isTranslatedPair(category, locale))
-        .length,
-    0
-  );
+].map(name => `https://myimageupscaler.com/${name}`));
 
 // Base URL for production checks (canonical URLs should always use this)
 const PRODUCTION_BASE_URL = 'https://myimageupscaler.com';
@@ -175,7 +127,7 @@ test.describe('SEO Guard - Deploy Blocker', () => {
       expect(text).toContain('http://www.sitemaps.org/schemas/sitemap');
     });
 
-    test('sitemap index contains all expected sitemaps', async ({ request }) => {
+    test('sitemap index contains exactly the derived child sitemap set', async ({ request }) => {
       const response = await request.get('/sitemap.xml');
       const text = await response.text();
 
@@ -184,35 +136,20 @@ test.describe('SEO Guard - Deploy Blocker', () => {
         /<loc>(https:\/\/myimageupscaler\.com\/sitemap-[^<]+\.xml)<\/loc>/g
       );
       const sitemapUrls = Array.from(sitemapMatches).map(m => m[1]);
+      const actual = new Set(sitemapUrls);
 
-      // Should contain every routed child sitemap.
-      expect(sitemapUrls.length).toBe(TOTAL_SITEMAP_COUNT);
+      // Set equality in both directions: no missing child sitemaps, no strays.
+      const missing = [...EXPECTED_SITEMAP_URLS].filter(url => !actual.has(url));
+      const extra = [...actual].filter(url => !EXPECTED_SITEMAP_URLS.has(url));
+      expect({ missing, extra }).toEqual({ missing: [], extra: [] });
 
-      // Should contain core English-only sitemaps
-      expect(sitemapUrls).toContain(`${PRODUCTION_BASE_URL}/sitemap-static.xml`);
-      expect(sitemapUrls).toContain(`${PRODUCTION_BASE_URL}/sitemap-blog.xml`);
+      // English-only pSEO categories — the ones dropped from the index in Sep 2026.
+      for (const category of ['scale', 'free', 'guides'] as const) {
+        expect(sitemapUrls).toContain(`${PRODUCTION_BASE_URL}/sitemap-${category}.xml`);
+      }
+
+      // /sitemap-images.xml is deliberately unlisted.
       expect(sitemapUrls).not.toContain(`${PRODUCTION_BASE_URL}/sitemap-images.xml`);
-
-      // Should contain English-only category sitemaps
-      for (const category of ENGLISH_ONLY_CATEGORIES) {
-        expect(sitemapUrls).toContain(`${PRODUCTION_BASE_URL}/sitemap-${category}.xml`);
-      }
-
-      // Should contain English versions of localized categories
-      for (const category of LOCALIZED_CATEGORIES) {
-        expect(sitemapUrls).toContain(`${PRODUCTION_BASE_URL}/sitemap-${category}.xml`);
-      }
-
-      // Should contain locale-specific sitemaps for localized categories
-      for (const category of LOCALIZED_CATEGORIES) {
-        for (const locale of SUPPORTED_LOCALES) {
-          if (locale !== 'en' && isTranslatedPair(category, locale)) {
-            expect(sitemapUrls).toContain(
-              `${PRODUCTION_BASE_URL}/sitemap-${category}-${locale}.xml`
-            );
-          }
-        }
-      }
     });
   });
 
