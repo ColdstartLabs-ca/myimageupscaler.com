@@ -103,7 +103,12 @@ vi.mock('@shared/config/env', () => ({
   serverEnv: { AMPLITUDE_API_KEY: 'test-key', ENV: 'test' },
 }));
 vi.mock('@shared/config/model-costs.config', () => ({
-  MODEL_COSTS: { PREMIUM_QUALITY_TIERS: [], SMART_ANALYSIS_REQUIRES_PAID: false },
+  MODEL_MAX_INPUT_PIXELS: { 'real-esrgan': 2_096_704 },
+  MODEL_COSTS: {
+    MAX_OUTPUT_RESOLUTION: 4096 * 4096,
+    PREMIUM_QUALITY_TIERS: [],
+    SMART_ANALYSIS_REQUIRES_PAID: false,
+  },
 }));
 vi.mock('@shared/config/subscription.utils', () => ({
   calculateFinalProviderAwareCredits: mocks.calculateFinalProviderAwareCredits,

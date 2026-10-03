@@ -738,7 +738,9 @@ describe('authenticated async upscale contract', () => {
   it('keeps the largest accepted Quick 4x input on its existing model and one-credit price', async () => {
     mocks.resolveInput.mockResolvedValue({
       imageReference: INPUT_URL,
-      validationImageData: pngHeader(1224, 1224),
+      // The largest input the 4096x4096 output contract allows at 4x: 4096^2 / 16
+      // = 1,048,576px. Anything larger is now rejected before admission.
+      validationImageData: pngHeader(1024, 1024),
       sizeBytes: IMAGE_VALIDATION.MAX_SIZE_PAID,
       mimeType: 'image/png',
     });
