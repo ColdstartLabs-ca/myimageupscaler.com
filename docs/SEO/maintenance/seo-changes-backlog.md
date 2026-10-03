@@ -9,6 +9,33 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-10-03
+
+### Traffic/signup decline root cause: Sep 12 step; homepage snippet + llms.txt free offer restored; sitemap/robots fixes
+
+Report: [seo-report-2026-10-03](../reports/seo-report-2026-10-03.md).
+
+Evidence:
+
+- All of these stepped down on 2026-09-12: signups (~100 → ~60/day, later 50), GA4 Google sessions (249 → 175/day), branded GSC clicks (~25 → ~5/day at position 1.0, CTR flat), and Gemini/ChatGPT referrals (−60%). The drop is uniform across every country, device and tier. Non-brand clicks rose 5–9%, and indexing, manual actions and core updates are clean.
+- Sep 12 is when the Sep 10 Product Truth copy reached users through the 24h homepage ISR. The 3143e88e restore missed `meta.homepage.description`, which still said "Create an account to see the free credit grant…", and it also missed the deleted FAQ "How to upscale images for free?".
+- Best-free flagship CTR fell from 7% to 2.2% at a flat position after the Sep 10 title rewrite (still live; DB edit parked for the owner).
+- Amplitude: signups per signup-intent fell from 0.75 to 0.52 from Sep 12 and did not recover after Sep 25. Every auth.users row completes, so abandonment happens before account creation (Google OAuth is 88%).
+
+Action (each change is a separate squash commit; deploy the homepage snippet on its own for a clean readback):
+
+- `locales/en/common.json`: homepage meta description now leads with "free online … free credits, no credit card needed" (no hardcoded count). Restored FAQ "How to upscale images for free?" in both the rendered FAQ and the FAQPage source, with a free-first answer.
+- `app/llms.txt` and `app/llms-full.txt`: replaced the false "No signup required" with "Free account with free credits — no credit card required".
+- `app/sitemap.xml/route.ts`: the index is derived from `ALL_CATEGORIES`. scale/free/guides had dropped out since d08a19da (2026-08-25). 43 → 46 child sitemaps.
+- `app/robots.ts`: removed the `/_next/` disallow, which blocked Googlebot from fetching the JS/CSS it renders with.
+- Guards: `free-offer-conversion-copy`, `llms-txt`, `sitemap-index`, `robots`, `pseo-category-coverage` unit specs.
+
+Follow-up:
+
+- After the deploy, request indexing for `/` in GSC and confirm the live `<meta name="description">`, since the homepage is 24h ISR.
+- Readback around 2026-10-12: branded clicks/wk (baseline 41–43), gemini sessions/day (3–4), signups/day (50), and the flagship CTR.
+- Not shipped and needing review: single canonical/hreflang emitter on branch `seo/canonical-single-emitter`. It fixes the duplicate canonical on `/scale/2k-upscaler` and the duplicated hreflang on `/` and `/es`, but removes `alternates` from metadata-factory site-wide.
+
 ## 2026-09-28
 
 ### pSEO final-CTA audit: remove-bg closes on its own tool; shared CTA contract guarded
