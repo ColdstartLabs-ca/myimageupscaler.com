@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { assertRealTestDatabase } from './test-env-isolation';
 
 export type ITestUser = {
   id: string;
@@ -21,6 +22,10 @@ export class TestDataManager {
     if (!this.isTestMode) {
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
       const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      assertRealTestDatabase(supabaseUrl, [
+        supabaseServiceKey,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      ]);
 
       if (!supabaseUrl || !supabaseServiceKey) {
         throw new Error(
@@ -71,6 +76,10 @@ export class TestDataManager {
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    assertRealTestDatabase(supabaseUrl, [
+      supabaseServiceKey,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    ]);
 
     if (!supabaseUrl || !supabaseServiceKey) return;
 

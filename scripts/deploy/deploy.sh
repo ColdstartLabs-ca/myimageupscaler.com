@@ -132,12 +132,22 @@ echo -e "${GREEN}✓ Verification passed${NC}"
 echo ""
 
 echo -e "${CYAN}▸ Running SEO guard...${NC}"
-if ! yarn test:seo-guard; then
+SEO_GUARD_LOG="$(mktemp)"
+if ! yarn test:seo-guard 2>&1 | tee "$SEO_GUARD_LOG"; then
     echo -e "${RED}✗ SEO guard failed. Deployment blocked.${NC}"
-    echo -e "${YELLOW}  SEO regressions detected. Fix issues before deploying.${NC}"
-    echo -e "${YELLOW}  Run 'yarn test:seo-guard' locally to debug.${NC}"
+    if grep -q "Unsafe test environment" "$SEO_GUARD_LOG"; then
+        echo -e "${YELLOW}  Test harness refused an unsafe environment; no SEO assertions ran.${NC}"
+    elif grep -q "config.webServer" "$SEO_GUARD_LOG"; then
+        echo -e "${YELLOW}  Test server failed to start; no SEO assertions ran (infrastructure, not SEO).${NC}"
+        echo -e "${YELLOW}  Debug with: DEBUG=pw:webserver yarn test:seo-guard${NC}"
+    else
+        echo -e "${YELLOW}  SEO regressions detected. Fix issues before deploying.${NC}"
+        echo -e "${YELLOW}  Run 'yarn test:seo-guard' locally to debug.${NC}"
+    fi
+    rm -f "$SEO_GUARD_LOG"
     exit 1
 fi
+rm -f "$SEO_GUARD_LOG"
 echo -e "${GREEN}✓ SEO guard passed${NC}"
 echo ""
 

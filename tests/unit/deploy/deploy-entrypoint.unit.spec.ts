@@ -80,4 +80,15 @@ describe('yarn deploy safety gates', () => {
   test('does not block deploys by opening the Playwright HTML report server', () => {
     expect(playwrightConfig).toContain("['html', { open: 'never' }]");
   });
+
+  test('isolates the Playwright runner from the production env deploy.sh loads before tests', () => {
+    expect(deployScript.indexOf('load-env.sh" --prod')).toBeLessThan(
+      deployScript.indexOf('yarn test:seo-guard')
+    );
+    expect(playwrightConfig).toContain('applyIsolatedTestEnv();');
+    expect(playwrightConfig.indexOf('applyIsolatedTestEnv();')).toBeLessThan(
+      playwrightConfig.indexOf('defineConfig({')
+    );
+    expect(playwrightConfig).not.toContain('dotenv.config(');
+  });
 });

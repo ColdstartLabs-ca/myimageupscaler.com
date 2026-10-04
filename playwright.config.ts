@@ -1,16 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
-import dotenv from 'dotenv';
+import { applyIsolatedTestEnv } from './tests/helpers/test-env-isolation';
 
-// Load test environment variables (quiet: true suppresses dotenv tips)
-dotenv.config({ path: '.env.test', quiet: true });
-
-// API/E2E tests rely on the app's test-mode auth, billing, and AI mocks.
-// The normal local env files set ENV=development, so force test mode here
-// after optional .env.test loading.
-process.env.ENV = 'test';
-process.env.NEXT_PUBLIC_ENV = 'test';
-process.env.PLAYWRIGHT_TEST = 'true';
-process.env.STRIPE_SECRET_KEY = 'sk_test_dummy_key';
+// Replace the inherited environment (which may hold production secrets, e.g. inside
+// deploy.sh) with one sanitized test environment shared by the runner, workers,
+// teardown and the webServer child. Fails closed if .env.test targets production.
+applyIsolatedTestEnv();
 
 const isCI = !!process.env.CI;
 
