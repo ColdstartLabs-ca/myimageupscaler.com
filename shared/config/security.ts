@@ -3,7 +3,7 @@
  * Contains CSP policies and other security-related settings
  */
 
-import { isDevelopment } from './env';
+import { clientEnv, isDevelopment } from './env';
 
 /**
  * Content Security Policy configuration
@@ -59,10 +59,26 @@ export const CSP_POLICY = {
 } as const;
 
 /**
+ * A loopback Supabase (the disposable test database) is not covered by *.supabase.co, so the
+ * browser would block its calls. Only an http loopback origin qualifies; production's
+ * https://<ref>.supabase.co never does, so production headers are unchanged.
+ */
+function loopbackSupabaseOrigin(): string | null {
+  try {
+    const url = new URL(clientEnv.SUPABASE_URL);
+    const isLoopback = url.hostname === '127.0.0.1' || url.hostname === 'localhost';
+    return url.protocol === 'http:' && isLoopback ? url.origin : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Build CSP header string from policy object
  * Note: upgrade-insecure-requests is skipped in development to allow HTTP localhost
  */
 export function buildCspHeader(): string {
+  const loopbackSupabase = loopbackSupabaseOrigin();
   return Object.entries(CSP_POLICY)
     .filter(([directive]) => {
       // Skip upgrade-insecure-requests in development (breaks HTTP localhost)
@@ -72,10 +88,12 @@ export function buildCspHeader(): string {
       return true;
     })
     .map(([directive, values]) => {
-      if (values.length === 0) {
+      const sources: readonly string[] =
+        directive === 'connect-src' && loopbackSupabase ? [...values, loopbackSupabase] : values;
+      if (sources.length === 0) {
         return directive;
       }
-      return `${directive} ${values.join(' ')}`;
+      return `${directive} ${sources.join(' ')}`;
     })
     .join('; ');
 }

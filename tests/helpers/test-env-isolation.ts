@@ -4,15 +4,22 @@
  * production no matter what the invoking shell (e.g. deploy.sh after `load-env.sh --prod`)
  * or `.env.test` contains. There is deliberately no "allow production" switch.
  *
- * Real-database tests are BLOCKED: no independently provisioned and verified MIU test
- * database exists, and a URL/flag in the environment cannot prove ownership. Only the
- * mock-only target is accepted; every helper that needs a real database refuses before
- * any network request. Opening that path needs a separately reviewed provisioning change.
+ * Two targets are accepted: the mock-only sentinel, and the disposable local Supabase that
+ * `scripts/test-db.sh up` provisions. A URL/flag in the environment cannot prove ownership,
+ * so the local target is only accepted while Docker reports that exact container publishing
+ * that exact port (tests/helpers/test-database.ts). Every other real-database target is
+ * refused before any network request.
  */
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { parse } from 'dotenv';
+import {
+  areTestDatabaseKeys,
+  isOwnedTestDatabaseRunning,
+  TEST_DB_DEFAULTS,
+  TEST_DB_URL,
+} from './test-database';
 
 type IEnv = Record<string, string | undefined>;
 
@@ -127,7 +134,7 @@ function productionClaim(value: string): string | null {
   return null;
 }
 
-/** Throws unless the Supabase target is the mock-only sentinel (the only accepted target). */
+/** Throws unless the Supabase target is the mock sentinel or the verified local test database. */
 export function assertSafeTestDatabaseTarget(env: IEnv = process.env): void {
   for (const name of ['NEXT_PUBLIC_SUPABASE_URL', ...SUPABASE_KEY_VARS]) {
     const claim = env[name] ? productionClaim(env[name]!) : null;
@@ -142,17 +149,24 @@ export function assertSafeTestDatabaseTarget(env: IEnv = process.env): void {
   } catch {
     throw unsafe('NEXT_PUBLIC_SUPABASE_URL is malformed');
   }
-  if (url.origin !== MOCK_SUPABASE_URL) {
-    throw unsafe(
-      `Supabase target ${url.host} is not the mock-only sentinel; real-database tests are blocked`
-    );
+  if (url.origin === MOCK_SUPABASE_URL) return;
+  if (
+    url.origin === TEST_DB_URL &&
+    areTestDatabaseKeys(SUPABASE_KEY_VARS.map(name => env[name])) &&
+    isOwnedTestDatabaseRunning()
+  ) {
+    return;
   }
+  throw unsafe(
+    `Supabase target ${url.host} is not the mock sentinel or the running local test database; real-database tests are blocked`
+  );
 }
 
 /**
  * Call with the EXACT url and keys about to be passed to createClient (not a re-read of
- * process.env, which can differ from cached config). Always throws while no verified
- * MIU test database exists; production-looking values are reported as unsafe first.
+ * process.env, which can differ from cached config). Passes only for the running local
+ * test database (exact url, exact demo keys, Docker-verified); production-looking values are
+ * reported as unsafe first, anything else is refused.
  */
 export function assertRealTestDatabase(
   url: string | undefined,
@@ -162,23 +176,38 @@ export function assertRealTestDatabase(
     const claim = value ? productionClaim(value) : null;
     if (claim) throw unsafe(`a Supabase client value ${claim}`);
   }
+  const origin = url ? safeOrigin(url) : undefined;
+  if (origin === TEST_DB_URL && areTestDatabaseKeys(keys) && isOwnedTestDatabaseRunning()) return;
   throw new Error(
-    'Real-database test helpers are disabled: no independently provisioned and verified ' +
-      'MIU test database exists. Only mock-only suites (e.g. yarn test:seo-guard) can run.'
+    'Real-database test helpers are disabled: the local test database is not running. ' +
+      'Start it with `yarn test:db:up` (or run via `yarn test`); mock-only suites ' +
+      '(e.g. yarn test:seo-guard) need no database.'
   );
+}
+
+function safeOrigin(value: string): string | undefined {
+  try {
+    return new URL(value).origin;
+  } catch {
+    return undefined;
+  }
 }
 
 /**
  * One deterministic test environment: allowlisted shell/runner keys + allowlisted
  * `.env.test` keys + forced test flags. Everything else is dropped, never merged.
  */
-export function buildIsolatedTestEnv(inherited: IEnv, envTestFile: IEnv | undefined): IEnv {
+export function buildIsolatedTestEnv(
+  inherited: IEnv,
+  envTestFile: IEnv | undefined,
+  databaseDefaults: IEnv = isOwnedTestDatabaseRunning() ? TEST_DB_DEFAULTS : MOCK_DEFAULTS
+): IEnv {
   const pick = (source: IEnv, names: Set<string>) =>
     Object.fromEntries(
       Object.entries(source).filter(([name, value]) => value !== undefined && names.has(name))
     );
   const env: IEnv = {
-    ...MOCK_DEFAULTS,
+    ...databaseDefaults,
     ...pick(inherited, INHERITED_NAMES),
     ...pick(envTestFile ?? {}, ENV_TEST_FILE_NAMES),
     ...FORCED,

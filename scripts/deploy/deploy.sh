@@ -105,10 +105,24 @@ source "$SCRIPT_DIR/steps/00-database-migrations.sh" && deploy_database_migratio
 if [ "$SKIP_TESTS" = "false" ]; then
     echo -e "${CYAN}▸ Running tests...${NC}"
     cd "$PROJECT_ROOT"
+    # The disposable test database (scripts/test-db.sh) is built from a schema-only dump taken
+    # AFTER the migrations above, so it matches production as of this deploy. Read-only; it
+    # is not written to backups/ (which rotates the pre-deploy backup set) and holds no data.
+    TEST_DB_SCHEMA="$(mktemp "${TMPDIR:-/tmp}/miu-prod-schema.XXXXXX.sql")"
+    export TEST_DB_SCHEMA
+    if ! run_supabase_cli db dump --linked --password "$SUPABASE_DB_PASSWORD" --file "$TEST_DB_SCHEMA" \
+        || [ ! -s "$TEST_DB_SCHEMA" ]; then
+        rm -f "$TEST_DB_SCHEMA"
+        echo -e "${RED}✗ Could not dump the production schema for the test database. Deployment blocked.${NC}"
+        exit 1
+    fi
     if ! yarn test; then
+        rm -f "$TEST_DB_SCHEMA"
         echo -e "${RED}✗ Tests failed. Deployment blocked.${NC}"
         exit 1
     fi
+    rm -f "$TEST_DB_SCHEMA"
+    unset TEST_DB_SCHEMA
     echo -e "${GREEN}✓ All tests passed${NC}"
     echo ""
 else

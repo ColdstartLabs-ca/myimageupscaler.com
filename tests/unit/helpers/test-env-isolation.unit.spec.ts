@@ -4,15 +4,30 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { mockCreateClient } = vi.hoisted(() => ({ mockCreateClient: vi.fn() }));
+const { mockCreateClient, mockOwnedDb } = vi.hoisted(() => ({
+  mockCreateClient: vi.fn(),
+  mockOwnedDb: vi.fn(() => false),
+}));
 vi.mock('@supabase/supabase-js', () => ({ createClient: mockCreateClient }));
+// Hermetic: whether the real local test database happens to be running (it is during
+// `yarn test`) must not change these results. The Docker probe has its own spec.
+vi.mock('../../helpers/test-database', async importOriginal => ({
+  ...(await importOriginal<typeof import('../../helpers/test-database')>()),
+  isOwnedTestDatabaseRunning: mockOwnedDb,
+}));
 
 import {
   applyIsolatedTestEnv,
+  assertRealTestDatabase,
   assertSafeTestDatabaseTarget,
   buildIsolatedTestEnv,
   MOCK_SUPABASE_URL,
 } from '../../helpers/test-env-isolation';
+import {
+  TEST_DB_ANON_KEY,
+  TEST_DB_SERVICE_ROLE_KEY,
+  TEST_DB_URL,
+} from '../../helpers/test-database';
 import { cleanupOldTestUsers, resetTestUser } from '../../helpers/test-user-reset';
 import { TestDataManager } from '../../helpers/test-data-manager';
 
@@ -436,5 +451,72 @@ describe('review blockers (2026-10-03)', () => {
       expect(run.stderr).toMatch(/\.env\.test\.local would be auto-loaded/);
       expect(probed(run.stdout)).toBeNull();
     });
+  });
+});
+
+describe('verified local test database', () => {
+  const localEnv = (extra: Record<string, string> = {}) =>
+    dbEnv(TEST_DB_URL, {
+      SUPABASE_SERVICE_ROLE_KEY: TEST_DB_SERVICE_ROLE_KEY,
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: TEST_DB_ANON_KEY,
+      ...extra,
+    });
+  beforeEach(() => mockOwnedDb.mockReset().mockReturnValue(false));
+
+  it('is accepted only while Docker confirms the provisioned stack, with the demo keys', () => {
+    mockOwnedDb.mockReturnValue(true);
+    expect(() => assertSafeTestDatabaseTarget(localEnv())).not.toThrow();
+    expect(() =>
+      assertRealTestDatabase(TEST_DB_URL, [TEST_DB_SERVICE_ROLE_KEY, TEST_DB_ANON_KEY])
+    ).not.toThrow();
+
+    mockOwnedDb.mockReturnValue(false);
+    expect(() => assertSafeTestDatabaseTarget(localEnv())).toThrow(
+      /real-database tests are blocked/
+    );
+    expect(() => assertRealTestDatabase(TEST_DB_URL, [TEST_DB_SERVICE_ROLE_KEY])).toThrow(
+      /Real-database test helpers are disabled/
+    );
+  });
+
+  it('stays closed for any other loopback port, key, or production value even when the stack runs', () => {
+    mockOwnedDb.mockReturnValue(true);
+    expect(() =>
+      assertSafeTestDatabaseTarget(localEnv({ NEXT_PUBLIC_SUPABASE_URL: 'http://127.0.0.1:54321' }))
+    ).toThrow(/real-database tests are blocked/);
+    expect(() =>
+      assertSafeTestDatabaseTarget(localEnv({ SUPABASE_SERVICE_ROLE_KEY: LOCAL_DEMO_JWT }))
+    ).toThrow(/real-database tests are blocked/);
+    expect(() =>
+      assertSafeTestDatabaseTarget(localEnv({ NEXT_PUBLIC_SUPABASE_URL: PROD_URL }))
+    ).toThrow(/Unsafe test environment/);
+    expect(() =>
+      assertRealTestDatabase('http://127.0.0.1:54321', [TEST_DB_SERVICE_ROLE_KEY])
+    ).toThrow(/Real-database test helpers are disabled/);
+    expect(() => assertRealTestDatabase(TEST_DB_URL, [PROD_SERVICE_JWT])).toThrow(
+      /Unsafe test environment/
+    );
+    expect(() => assertRealTestDatabase(TEST_DB_URL, ['synthetic-service-key'])).toThrow(
+      /Real-database test helpers are disabled/
+    );
+  });
+
+  it('is the default database target only while the stack runs, never overriding a production .env.test', () => {
+    expect(buildIsolatedTestEnv({}, undefined).NEXT_PUBLIC_SUPABASE_URL).toBe(MOCK_SUPABASE_URL);
+
+    mockOwnedDb.mockReturnValue(true);
+    const env = buildIsolatedTestEnv({}, undefined);
+    expect(env.NEXT_PUBLIC_SUPABASE_URL).toBe(TEST_DB_URL);
+    expect(env.SUPABASE_SERVICE_ROLE_KEY).toBe(TEST_DB_SERVICE_ROLE_KEY);
+    expect(() =>
+      buildIsolatedTestEnv({}, { ENV: 'test', NEXT_PUBLIC_SUPABASE_URL: PROD_URL })
+    ).toThrow(/Unsafe test environment/);
+    expect(() =>
+      buildIsolatedTestEnv({ NEXT_PUBLIC_SUPABASE_URL: PROD_URL }, undefined)
+    ).not.toThrow();
+    expect(
+      buildIsolatedTestEnv({ NEXT_PUBLIC_SUPABASE_URL: PROD_URL }, undefined)
+        .NEXT_PUBLIC_SUPABASE_URL
+    ).toBe(TEST_DB_URL);
   });
 });
