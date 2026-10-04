@@ -691,6 +691,8 @@ export type IAnalyticsEventName =
   // Page and session events
   | 'page_view'
   | 'return_visit'
+  // Real-user Core Web Vitals (one event per metric, client-side)
+  | 'web_vitals'
   // Authentication events
   | 'signup_started'
   | 'signup_completed'

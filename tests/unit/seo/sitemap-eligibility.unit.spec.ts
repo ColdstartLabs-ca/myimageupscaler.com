@@ -1,4 +1,37 @@
 import { describe, expect, it, vi } from 'vitest';
+
+/**
+ * The eligibility policy reads the committed GSC snapshot at import time, so
+ * asserting against the live `content/pseo-performance.json` made this policy
+ * test fail whenever a monthly snapshot refresh drops or adds a locale row.
+ * Pin the rows the policy branches on instead.
+ */
+vi.mock('@/content/pseo-performance.json', () => ({
+  default: {
+    generatedAt: '2026-08-13T00:00:00.000Z',
+    pages: [
+      // Tracked in GSC but earning nothing -> pruned.
+      {
+        category: 'tools',
+        slug: 'svg-to-jpg',
+        locale: 'fr',
+        impressions: 0,
+        clicks: 0,
+        lastUpdated: '2025-01-01T00:00:00.000Z',
+      },
+      // The English page earns impressions -> stays submitted.
+      {
+        category: 'tools',
+        slug: 'convert-jpeg-to-png',
+        locale: 'en',
+        impressions: 12,
+        clicks: 1,
+        lastUpdated: '2025-01-01T00:00:00.000Z',
+      },
+    ],
+  },
+}));
+
 import { generateLocalizedSitemap, generateSitemapUrlEntry } from '@/lib/seo/sitemap-generator';
 import {
   generateLocaleCategorySitemapResponse,

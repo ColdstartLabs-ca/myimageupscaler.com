@@ -8,6 +8,7 @@ import {
   type Route,
 } from '@playwright/test';
 import { clientEnv, serverEnv } from '@shared/config/env';
+import { assertRealTestDatabase } from './test-env-isolation';
 
 const TEST_PASSWORD = 'AccountCreationE2E!123';
 const TEST_EMAIL_DOMAIN = 'test.local';
@@ -115,6 +116,10 @@ export class AccountCreationHarness {
     if (serverEnv.ENV !== 'test') {
       throw new Error('AccountCreationHarness may only run with ENV=test');
     }
+    assertRealTestDatabase(clientEnv.SUPABASE_URL, [
+      serverEnv.SUPABASE_SERVICE_ROLE_KEY,
+      clientEnv.SUPABASE_ANON_KEY,
+    ]);
     if (!serverEnv.SUPABASE_SERVICE_ROLE_KEY) {
       throw new Error('SUPABASE_SERVICE_ROLE_KEY is required for account-creation E2E tests');
     }

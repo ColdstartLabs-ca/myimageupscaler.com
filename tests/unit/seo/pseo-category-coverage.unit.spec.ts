@@ -19,8 +19,8 @@ describe('use-cases-expanded route coverage', () => {
   });
 
   it('should register and serve the use-cases-expanded sitemap', async () => {
-    const indexSource = read('app/sitemap.xml/route.ts');
-    expect(indexSource).toContain("'use-cases-expanded'");
+    const index = await import('@/app/sitemap.xml/route');
+    expect(await (await index.GET()).text()).toContain('/sitemap-use-cases-expanded.xml');
 
     const { GET } = await import('@/app/sitemap-use-cases-expanded.xml/route');
     const response = await GET();

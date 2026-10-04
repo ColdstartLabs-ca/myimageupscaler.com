@@ -1,8 +1,10 @@
 'use client';
 
 import { usePathname, useSearchParams } from 'next/navigation';
+import { useReportWebVitals } from 'next/web-vitals';
 import { type ReactNode, useEffect, Suspense } from 'react';
 import { loadAnalytics } from '@client/utils/loadAnalytics';
+import { reportWebVital, flushWebVitals } from '@client/analytics/webVitals';
 import { clientEnv, isDevelopment } from '@shared/config/env';
 
 interface IAnalyticsProviderProps {
@@ -47,6 +49,10 @@ function PageViewTracker(): null {
 export function AnalyticsProvider({ children }: IAnalyticsProviderProps): ReactNode {
   const apiKey = clientEnv.AMPLITUDE_API_KEY;
 
+  // LCP/INP/CLS/FCP/TTFB. The callback is module-scoped so the effect that
+  // registers the PerformanceObservers does not re-subscribe on re-render.
+  useReportWebVitals(reportWebVital);
+
   useEffect(() => {
     // Skip analytics in development or if no API key
     if (!apiKey || isDevelopment()) {
@@ -54,19 +60,23 @@ export function AnalyticsProvider({ children }: IAnalyticsProviderProps): ReactN
     }
 
     void loadAnalytics()
-      .then(analytics => {
+      .then(async analytics => {
         // Initialize Amplitude (respects stored consent internally)
-        analytics.init(apiKey).catch(err => {
-          console.warn('Analytics initialization failed:', err);
-        });
-
         // Set consent to granted by default (can be changed via consent UI)
-        // In production, you'd want to check for a cookie consent banner first
+        // In production, you'd want to check for a cookie consent banner first.
+        // setConsent re-runs init, so await whichever path actually initializes
+        // before sending the web vitals buffered during startup.
         if (analytics.getConsent() === 'pending') {
-          analytics.setConsent('granted', apiKey).catch(err => {
+          await analytics.setConsent('granted', apiKey).catch(err => {
             console.warn('Analytics consent initialization failed:', err);
           });
+        } else {
+          await analytics.init(apiKey).catch(err => {
+            console.warn('Analytics initialization failed:', err);
+          });
         }
+
+        flushWebVitals(analytics);
       })
       .catch(() => {});
   }, [apiKey]);

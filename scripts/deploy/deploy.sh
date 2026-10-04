@@ -105,10 +105,24 @@ source "$SCRIPT_DIR/steps/00-database-migrations.sh" && deploy_database_migratio
 if [ "$SKIP_TESTS" = "false" ]; then
     echo -e "${CYAN}▸ Running tests...${NC}"
     cd "$PROJECT_ROOT"
+    # The disposable test database (scripts/test-db.sh) is built from a schema-only dump taken
+    # AFTER the migrations above, so it matches production as of this deploy. Read-only; it
+    # is not written to backups/ (which rotates the pre-deploy backup set) and holds no data.
+    TEST_DB_SCHEMA="$(mktemp "${TMPDIR:-/tmp}/miu-prod-schema.XXXXXX.sql")"
+    export TEST_DB_SCHEMA
+    if ! run_supabase_cli db dump --linked --password "$SUPABASE_DB_PASSWORD" --file "$TEST_DB_SCHEMA" \
+        || [ ! -s "$TEST_DB_SCHEMA" ]; then
+        rm -f "$TEST_DB_SCHEMA"
+        echo -e "${RED}✗ Could not dump the production schema for the test database. Deployment blocked.${NC}"
+        exit 1
+    fi
     if ! yarn test; then
+        rm -f "$TEST_DB_SCHEMA"
         echo -e "${RED}✗ Tests failed. Deployment blocked.${NC}"
         exit 1
     fi
+    rm -f "$TEST_DB_SCHEMA"
+    unset TEST_DB_SCHEMA
     echo -e "${GREEN}✓ All tests passed${NC}"
     echo ""
 else
@@ -132,12 +146,22 @@ echo -e "${GREEN}✓ Verification passed${NC}"
 echo ""
 
 echo -e "${CYAN}▸ Running SEO guard...${NC}"
-if ! yarn test:seo-guard; then
+SEO_GUARD_LOG="$(mktemp)"
+if ! yarn test:seo-guard 2>&1 | tee "$SEO_GUARD_LOG"; then
     echo -e "${RED}✗ SEO guard failed. Deployment blocked.${NC}"
-    echo -e "${YELLOW}  SEO regressions detected. Fix issues before deploying.${NC}"
-    echo -e "${YELLOW}  Run 'yarn test:seo-guard' locally to debug.${NC}"
+    if grep -q "Unsafe test environment" "$SEO_GUARD_LOG"; then
+        echo -e "${YELLOW}  Test harness refused an unsafe environment; no SEO assertions ran.${NC}"
+    elif grep -q "config.webServer" "$SEO_GUARD_LOG"; then
+        echo -e "${YELLOW}  Test server failed to start; no SEO assertions ran (infrastructure, not SEO).${NC}"
+        echo -e "${YELLOW}  Debug with: DEBUG=pw:webserver yarn test:seo-guard${NC}"
+    else
+        echo -e "${YELLOW}  SEO regressions detected. Fix issues before deploying.${NC}"
+        echo -e "${YELLOW}  Run 'yarn test:seo-guard' locally to debug.${NC}"
+    fi
+    rm -f "$SEO_GUARD_LOG"
     exit 1
 fi
+rm -f "$SEO_GUARD_LOG"
 echo -e "${GREEN}✓ SEO guard passed${NC}"
 echo ""
 

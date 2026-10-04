@@ -9,6 +9,127 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-10-03
+
+### Traffic/signup decline root cause: Sep 12 step; homepage snippet + llms.txt free offer restored; sitemap/robots fixes
+
+Report: [seo-report-2026-10-03](../reports/seo-report-2026-10-03.md).
+
+Evidence:
+
+- All of these stepped down on 2026-09-12: signups (~100 → ~60/day, later 50), GA4 Google sessions (249 → 175/day), branded GSC clicks (~25 → ~5/day at position 1.0, CTR flat), and Gemini/ChatGPT referrals (−60%). The drop is uniform across every country, device and tier. Non-brand clicks rose 5–9%, and indexing, manual actions and core updates are clean.
+- Sep 12 is when the Sep 10 Product Truth copy reached users through the 24h homepage ISR. The 3143e88e restore missed `meta.homepage.description`, which still said "Create an account to see the free credit grant…", and it also missed the deleted FAQ "How to upscale images for free?".
+- Best-free flagship CTR fell from 7% to 2.2% at a flat position after the Sep 10 title rewrite (still live; DB edit parked for the owner).
+- Amplitude: signups per signup-intent fell from 0.75 to 0.52 from Sep 12 and did not recover after Sep 25. Every auth.users row completes, so abandonment happens before account creation (Google OAuth is 88%).
+
+Action (each change is a separate squash commit; deploy the homepage snippet on its own for a clean readback):
+
+- `locales/en/common.json`: homepage meta description now leads with "free online … free credits, no credit card needed" (no hardcoded count). Restored FAQ "How to upscale images for free?" in both the rendered FAQ and the FAQPage source, with a free-first answer.
+- `app/llms.txt` and `app/llms-full.txt`: replaced the false "No signup required" with "Free account with free credits — no credit card required".
+- `app/sitemap.xml/route.ts`: the index is derived from `ALL_CATEGORIES`. scale/free/guides had dropped out since d08a19da (2026-08-25). 43 → 46 child sitemaps.
+- `app/robots.ts`: removed the `/_next/` disallow, which blocked Googlebot from fetching the JS/CSS it renders with.
+- Guards: `free-offer-conversion-copy`, `llms-txt`, `sitemap-index`, `robots`, `pseo-category-coverage` unit specs.
+
+Follow-up:
+
+- After the deploy, request indexing for `/` in GSC and confirm the live `<meta name="description">`, since the homepage is 24h ISR.
+- Readback around 2026-10-12: branded clicks/wk (baseline 41–43), gemini sessions/day (3–4), signups/day (50), and the flagship CTR.
+- Not shipped and needing review: single canonical/hreflang emitter on branch `seo/canonical-single-emitter`. It fixes the duplicate canonical on `/scale/2k-upscaler` and the duplicated hreflang on `/` and `/es`, but removes `alternates` from metadata-factory site-wide.
+
+## 2026-09-28
+
+### pSEO final-CTA audit: remove-bg closes on its own tool; shared CTA contract guarded
+
+Audit (every template rendering `CTASection`):
+
+- Interactive tools (~55 pages across `tools`, `interactive-tools`, `social-media-resize`, `format-conversion`): the final CTA ignored page data and always showed the upscaler signup pitch. That pitch is coherent but duplicates the post-tool cross-sell. The legacy `ctaText`/`ctaUrl` values can't be switched on: 17 self-reload their own URL, about 20 pair "Convert…" text with `/?signup=1`, and the ja locale copy is misaligned by slug.
+- Generic template (ai-features, use-cases-expanded, bulk-tools): the CTA heading was the whole `description` paragraph, repeated underneath. The bulk-tools hero and final CTAs linked back to their own page, and those pages have no widget.
+- The Tool (non-interactive), compare, alternatives, formats, scale, free, guides, use-cases, platform(-format), format-scale and device-use CTAs are coherent upscaler/pricing CTAs (`/`, `/?signup=1`, `/pricing`). They were left unchanged.
+
+Action:
+
+- `CTASection` accepts optional `highlightText`/`trustItems`. The defaults, including "No credit card required" and the regional free-credit line, are unchanged.
+- `IBasePSEOPage` gains optional `ctaTitle`/`ctaHighlightText`/`ctaDescription`/`ctaTrustItems`. Tool, InteractiveTool and Generic templates honor them. An interactive page uses its data CTA only once it defines `ctaTitle`, so the other interactive pages keep the upscaler signup CTA. The widget is wrapped in a stable `#tool` anchor.
+- English `/tools/remove-bg` only (localized copies unchanged): "Ready for a clean cutout? / Remove your background free", `Remove Background Free` → `#tool`, trust "Free to use / No account required / Processed in your browser". The free framing is kept.
+- Generic CTA heading is now `Ready to try {title}?`. Bulk-tools CTAs point to `/tools/resize/bulk-image-resizer` and `/tools/compress/bulk-image-compressor`.
+- Guard: `tests/unit/seo/pseo-cta-contract.unit.spec.tsx` covers CTASection defaults and overrides, `pseo_cta_clicked` attribution, template rendering, and data validation over English and loaded locale files. The validation checks that extended fields appear only where rendered and are complete, that `#tool` is used only on interactive pages, and that no CTA self-reloads.
+
+Follow-up:
+
+- One page per deploy. Read back remove-bg `pseo_cta_clicked` (`bottom-cta`) and signups 7 days after deploy before opting in other interactive pages (e.g. `ai-background-remover`, converters).
+
+### Sep 24–26 impression spike: external remove-bg SERP episode; sitemap prerequisite guarded
+
+Evidence (GSC web, final data through 2026-09-26, fetched 2026-09-28):
+
+- Site impressions 15,101 / 36,378 / 10,840 on Sep 24/25/26 vs 11,341/day for Sep 10–23; clicks flat (184/day vs 197/day). Excluding `/tools/remove-bg`, the spike days were 10,724 imps/day and 1.70% CTR, i.e. no site-wide movement.
+- `/tools/remove-bg` alone: 30,148 imps, 4 clicks, avg position 4.6 on Sep 24–26 vs 1,576 imps, 7 clicks, position 55.5 on Sep 9–23. Sep 25 was 98.9% desktop and 97% US, and 86% of it came from the exact query `remove background`. It dropped back to 1 impression on Sep 27. The same zero-CTR pattern showed up Sep 4–8 on `/es/tools/remove-bg` (2,997 imps, 1 click, position 2.1).
+- Call: this is a Google-side ranking test or SERP-surface episode on the head term `remove background`. It was not caused by a repo change. `remove-bg` data was unchanged from 2026-07-18 until the undeployed `95ab08c4`. The Sep 10 and Sep 25 copy commits did not touch it. The Sep 16 cache deploy is 8 days off and site-wide. `0e9cf4c2`/`95ab08c4` are local and postdate the spike. Its business value is about 0 (0.01% CTR).
+- The remove-bg metadata entry below says "27,950 impressions, position 4.56", and that figure is spike-contaminated. For Aug 29–Sep 23 the page actually had 2,844 imps at position 53.2. When judging that edit, exclude Sep 24–26 and compare against the ~position 50 baseline.
+
+Repo-owned prerequisite protected:
+
+- MIU could only surface because `/tools/remove-bg` was routeable, `index, follow`, self-canonical and in `sitemap-tools.xml`. Sitemap inclusion depends on `content/pseo-performance.json`, and from 2026-08-13 to 2026-09-28 the committed row held a single impression. The sync guard only blocks mass drops (≥20 pages and ≥25%), so losing this one row would silently de-list the page.
+- Added `tests/unit/seo/remove-bg-demand-capture.unit.spec.ts`, which asserts eligibility reason `impressions`, a `<loc>` in the English tools sitemap, and `index, follow` with a self URL. Red was confirmed by zeroing the snapshot row (2 tests fail) and by flipping the page robots (1 fails).
+
+Follow-up:
+
+- Re-read GSC ~2026-10-12. If remove-bg reaches page 1 for more than a day with real clicks, it is a ranking change worth a Three Kings decision. Repeated zero-CTR spikes should be quarantined from page-level CTR evidence, like the query quarantine.
+
+### Remove-background CTR owner metadata refresh
+
+Evidence:
+
+- Fresh GSC export for 2026-08-29→2026-09-25 found `/tools/remove-bg` ranking for the remove-background cluster with 27,950 impressions, 0 clicks, average position 4.56 across five query/page rows. The largest query, `remove background`, had 24,064 impressions, 0 clicks, and average position 4.81.
+- Live production before the edit returned `200`, `index, follow`, and self-canonical for `/tools/remove-bg`, but its title/H1 led with `Remove BG`/`Background Remover` instead of the exact high-impression `remove background` intent.
+- Three Kings/blog ladder state blocked fresh blog edits today (`0 EDIT_NOW`, six HOLD rows), so the safer growth action was a pSEO SERP-field refresh on an already-ranking tool URL.
+
+Action:
+
+- Updated `app/seo/data/tools.json` for `remove-bg`: title/meta title/H1/intro/primary keyword now front-load `Remove Background Online Free`; meta description now says `Remove background from photos online for free` and keeps truthful no-signup/no-watermark/browser-tool copy.
+- Added unit coverage in `tests/unit/seo/cannibalization.unit.spec.ts` for exact-intent ownership and 30–60 title / 120–160 description bounds.
+- Added `/tools/remove-bg` to the indexing backlog for post-deploy manual GSC request indexing.
+
+Verification:
+
+- GSC/GA evidence refreshed in this run: GSC through 2026-09-25; GA organic through 2026-09-27.
+- Focused test: `yarn -s vitest run tests/unit/seo/cannibalization.unit.spec.ts` passed.
+- `yarn -s validate:seo:pseo` passed.
+- The first snapshot refresh was rejected during review: it came from a truncated top-pages export and reduced earning identities from 358 to 36, which would have silently removed 323 previously earning pages from sitemap/index eligibility.
+- Corrected `content/pseo-performance.json` and `seo-reports/indexation-2026-09-25.md` with a conservative union of the two verified GSC evidence windows (2026-05-12→2026-08-09 and 2026-06-28→2026-09-25). The corrected inventory has 472 routeable pages, preserves all 358 previously earning identities, and adds one newly earning identity.
+- Added a sync guard that refuses refreshes losing at least 20 earning pages and 25% of prior earning identities unless a human explicitly passes `--allow-earning-drop` after validation. Restored the omitted `use-cases-expanded` inventory category and added regression tests.
+- Corrective verification passed: focused SEO tests (`12/12`), `validate:seo:pseo`, `seo:indexation:gate`, and full `yarn verify`. TypeScript, ICU, schema, indexation gate, and cache-config tests passed; ESLint reported 0 errors and 1,674 pre-existing warnings.
+
+Commit/deploy state:
+
+- Commit: `95ab08c4` (`fix(seo): align remove-bg metadata with search intent`).
+- Deployment: not pushed or deployed by this cron; live HTML remains unchanged until deployment.
+
+Next trigger:
+
+- After deployment, verify live `/tools/remove-bg` title/canonical/robots, request indexing in GSC, then judge CTR no earlier than 14 complete GSC days after first crawl plus the three-day GSC holdback.
+
+### Three Kings final-data check and rollback-loop guard
+
+Evidence:
+
+- Refreshed final GSC daily data through 2026-09-24. The corrected manager result is 0 `REGRESSION`, 0 `EDIT_NOW`, 6 `HOLD`, 3 `GATED`, 1 `STOP`, and 1 `VERDICT`.
+- Three 2026-09-10 rollback rows measured as LOSS, but undoing those protective rollbacks would reapply experiments already proven to lose. The flagship rollback row also combines later Product Truth/fact corrections, and its only recorded prior title (`Only 3 Worked`) is unsupported without the removed benchmark.
+
+Changes:
+
+- `tkm.cjs` now persists rollback outcomes for diagnosis but never emits a second `REGRESSION` from a `rollback` row; pages return to the normal HOLD/GATED/STOP/VERDICT gates instead of oscillating between failed copy states.
+- Recorded the closed rollback-window outcomes in `three-kings-ledger.json`. No production blog content or metadata changed, so no database backup or API/live-HTML write verification was required; blog changelog and indexing rows remain unchanged.
+
+Validation:
+
+- Focused manager suite covers the rollback-loop guard. Full `yarn verify` run in this job.
+- GSC UI submission was not attempted: the attached Google account opened the `myimageupscaler.com` property as “you don't have access,” so no indexing request is claimed and all pending rows remain truthful.
+
+Follow-up:
+
+- Earliest actionable review: 2026-10-02, when final GSC data can include 14 complete post-edit days for `/blog/how-to-upscale-youtube-thumbnails` plus the three-day holdback.
+
 ## 2026-09-25
 
 ### Restore free-offer conversion copy (partial revert of 2026-09-10 Product Truth)

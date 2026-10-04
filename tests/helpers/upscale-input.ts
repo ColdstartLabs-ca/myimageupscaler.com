@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 import { serverEnv } from '@shared/config/env';
 
 import { AuthenticatedApiClient, ApiResponse } from './api-client';
+import { assertRealTestDatabase } from './test-env-isolation';
 
 const UPSCALE_INPUT_BUCKET = 'upscale-inputs';
 
@@ -41,6 +42,14 @@ export async function uploadUpscaleInput(
   const bytes = Buffer.from(base64Payload, 'base64');
   const jobId = randomUUID();
 
+  // Validate the exact storage-client config before any request (grant POST included).
+  const supabaseUrl = serverEnv.NEXT_PUBLIC_SUPABASE_URL ?? serverEnv.SUPABASE_URL;
+  const supabaseKey = serverEnv.SUPABASE_SERVICE_ROLE_KEY || serverEnv.SUPABASE_ANON_KEY;
+  assertRealTestDatabase(supabaseUrl, [supabaseKey]);
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Supabase credentials are required to upload test upscale inputs');
+  }
+
   const grant = await api.post<{
     storagePath: string;
     uploadToken: string;
@@ -56,12 +65,6 @@ export async function uploadUpscaleInput(
   }
 
   const grantBody = await grant.json();
-
-  const supabaseUrl = serverEnv.NEXT_PUBLIC_SUPABASE_URL ?? serverEnv.SUPABASE_URL;
-  const supabaseKey = serverEnv.SUPABASE_SERVICE_ROLE_KEY || serverEnv.SUPABASE_ANON_KEY;
-  if (!supabaseUrl || !supabaseKey) {
-    throw new Error('Supabase credentials are required to upload test upscale inputs');
-  }
 
   const { error } = await createClient(supabaseUrl, supabaseKey, {
     auth: { persistSession: false },

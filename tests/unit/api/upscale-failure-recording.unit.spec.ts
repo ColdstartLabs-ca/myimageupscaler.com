@@ -142,6 +142,8 @@ vi.mock('@shared/validation/upscale.schema', () => ({
   validateImageDimensions: () => ({ valid: true }),
   validateImageSizeForTier: () => ({ valid: true }),
   validateMagicBytes: () => ({ valid: true, detectedMimeType: 'image/jpeg' }),
+  getMaxPixelsForModel: () => Number.MAX_SAFE_INTEGER,
+  getScaleAwareMaxInputPixelsForModel: () => Number.MAX_SAFE_INTEGER,
   IMAGE_VALIDATION: {
     ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/webp', 'image/heic'],
     MAX_REQUEST_BYTES: 64 * 1024,

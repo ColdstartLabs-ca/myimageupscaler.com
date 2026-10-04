@@ -227,9 +227,13 @@ test('should reject unauthenticated requests', async ({ request }) => {
 });
 ```
 
+## Test database
+
+`yarn test` runs inside `scripts/with-test-db.sh`: a disposable local Supabase (`miu-test`, docker, port 55421) built from the newest schema-only `backups/*.schema.sql.gz` (run `yarn db:backup` first if none) is started, used, and always removed. Nothing touches production; the harness guard (`tests/helpers/test-env-isolation.ts`) only accepts the mock target or that exact verified container. For `yarn test:api` / `yarn test:e2e` on their own, run `yarn test:db:up` first and `yarn test:db:down` after.
+
 ## Commands
 
-- `yarn test` - Run unit tests
+- `yarn test` - Run API + E2E + unit tests against the disposable test database
 - `yarn test:e2e` - Run E2E tests
 - `yarn test:api` - Run API tests
 - `yarn test:coverage` - Generate coverage report

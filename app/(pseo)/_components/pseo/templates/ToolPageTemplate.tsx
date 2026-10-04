@@ -252,8 +252,10 @@ export function ToolPageTemplate({
 
       {/* Final CTA Full Width */}
       <CTASection
-        title={t('templates.tool.cta.readyTitle')}
-        description={t('templates.tool.cta.readyDescription')}
+        title={data.ctaTitle ?? t('templates.tool.cta.readyTitle')}
+        highlightText={data.ctaHighlightText}
+        description={data.ctaDescription ?? t('templates.tool.cta.readyDescription')}
+        trustItems={data.ctaTrustItems}
         ctaText={data.ctaText}
         ctaUrl={data.ctaUrl}
         pageType="tool"

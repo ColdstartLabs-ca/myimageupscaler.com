@@ -21,7 +21,8 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/admin/', '/_next/', '/private/', '/*.json$', '/success', '/canceled'],
+        // /_next/ stays crawlable: Googlebot needs the JS/CSS to render pages.
+        disallow: ['/api/', '/admin/', '/private/', '/*.json$', '/success', '/canceled'],
       },
       // AI Search Engine Bots — explicitly allowed for AEO/GEO visibility
       {

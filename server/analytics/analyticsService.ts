@@ -30,7 +30,11 @@ import type { IAnalyticsEvent } from '@server/analytics/types';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
 import { TIMEOUTS } from '@shared/config/timeouts.config';
-import { GA4_EVENT_MAP, GA4_CONVERSION_EVENTS } from '@shared/analytics/types';
+import {
+  GA4_EVENT_MAP,
+  GA4_CONVERSION_EVENTS,
+  sanitizeGa4Params,
+} from '@shared/analytics/types';
 
 // =============================================================================
 // Server-side HTTP API (for use in API routes)
@@ -341,7 +345,10 @@ async function trackGA4ServerEvent(
 
   const ga4EventName = GA4_EVENT_MAP[name] || name;
 
-  const ga4Params: Record<string, unknown> = { ...properties };
+  // Measurement Protocol honours the same reserved names as gtag, so the
+  // mapper runs here too: a server event carrying `source` would otherwise
+  // open a source-attributed session server-side as well.
+  const ga4Params: Record<string, unknown> = sanitizeGa4Params(name, properties);
   if (options.userId) {
     ga4Params.user_id = options.userId;
   }

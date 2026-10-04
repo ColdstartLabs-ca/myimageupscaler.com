@@ -24,6 +24,21 @@ import { welcomeCreditCopy } from '@shared/config/product-capabilities';
 
 const LOCALES = { en, de, es, fr, it: itLocale, ja, pt } as const;
 
+/** The word each locale's SERP snippet uses for "free", read from its current copy. */
+const LOCALE_FREE_WORD: Record<string, RegExp> = {
+  en: /\bfree\b/i,
+  es: /\bgratis\b|\bgratuito\b/i,
+  pt: /\bgr[aá]tis\b|\bgratuito\b/i,
+  de: /\bkostenlos\b/i,
+  fr: /\bgratuit\b/i,
+  it: /\bgratis\b|\bgratuito\b/i,
+  ja: /無料/,
+};
+
+interface IHomepageMetaLocale {
+  meta: { homepage: { description: string } };
+}
+
 describe('free-offer conversion copy', () => {
   it('welcomeCreditCopy claims "free" only when credits are actually granted', () => {
     expect(welcomeCreditCopy(5)).toMatch(/free/i);
@@ -37,6 +52,44 @@ describe('free-offer conversion copy', () => {
     expect(homepage.ctaFixImagesFree).toMatch(/Free/);
     expect(homepage.ctaSubtext).toMatch(/No credit card required/i);
   });
+
+  it('English meta.homepage.description keeps the free offer in the "/" snippet', () => {
+    const description = en.meta.homepage.description;
+
+    expect(description).toMatch(/free/i);
+    expect(description).toMatch(/no credit card/i);
+    expect(description).not.toContain('Create an account to see');
+  });
+
+  it('English homepage FAQ keeps "How to upscale images for free?" and leads with the free offer', () => {
+    const freeQuestion = /upscale images for free/i;
+    const faqItems = en.homepage.faqItems;
+
+    expect(en.homepage.faq3Question).toMatch(freeQuestion);
+    // Rendered FAQ and FAQPage JSON-LD must say the same thing.
+    const schemaItem = faqItems.find(item => item.question === en.homepage.faq3Question);
+    expect(schemaItem?.answer).toBe(en.homepage.faq3Answer);
+
+    for (const answer of [
+      en.homepage.faq3Answer,
+      faqItems.find(item => freeQuestion.test(item.question))?.answer ?? '',
+    ]) {
+      expect(answer).toMatch(/free credits/i);
+      expect(answer).toMatch(/no credit card/i);
+    }
+  });
+
+  // The 2026-09-10 pass only edited English; the restore checked English only too.
+  // Every locale's SERP snippet is a conversion surface.
+  it.each(Object.entries(LOCALES) as [string, IHomepageMetaLocale][])(
+    '%s meta.homepage.description keeps its locale free word and never teases a paywall',
+    (locale, messages) => {
+      const description = messages.meta.homepage.description;
+
+      expect(description).toMatch(LOCALE_FREE_WORD[locale]);
+      expect(description).not.toContain('Create an account to see');
+    }
+  );
 
   it.each(Object.entries(LOCALES))(
     '%s/common.json has a non-empty creditOfferCount with {credits} and a ctaFixImagesFree',

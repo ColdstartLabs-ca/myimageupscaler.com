@@ -57,6 +57,19 @@ describe('yarn deploy safety gates', () => {
     expect(deployScript).not.toContain('--skip-migrations');
   });
 
+  test('builds the test database from a post-migration schema dump, outside backups/', () => {
+    const migrationGate =
+      'source "$SCRIPT_DIR/steps/00-database-migrations.sh" && deploy_database_migrations';
+    const dump = 'run_supabase_cli db dump --linked --password "$SUPABASE_DB_PASSWORD"';
+
+    expect(deployScript).toContain(dump);
+    expect(deployScript.indexOf(migrationGate)).toBeLessThan(deployScript.indexOf(dump));
+    expect(deployScript.indexOf(dump)).toBeLessThan(deployScript.indexOf('if ! yarn test; then'));
+    expect(deployScript).toContain('export TEST_DB_SCHEMA');
+    expect(deployScript).not.toMatch(/TEST_DB_SCHEMA="\$PROJECT_ROOT\/backups/);
+    expect(deployScript).not.toMatch(/--data-only/);
+  });
+
   test('populates the incremental cache before uploading the Worker', () => {
     const populate = 'npx tsx scripts/deploy/populate-r2-cache.ts';
 
@@ -79,5 +92,16 @@ describe('yarn deploy safety gates', () => {
 
   test('does not block deploys by opening the Playwright HTML report server', () => {
     expect(playwrightConfig).toContain("['html', { open: 'never' }]");
+  });
+
+  test('isolates the Playwright runner from the production env deploy.sh loads before tests', () => {
+    expect(deployScript.indexOf('load-env.sh" --prod')).toBeLessThan(
+      deployScript.indexOf('yarn test:seo-guard')
+    );
+    expect(playwrightConfig).toContain('applyIsolatedTestEnv();');
+    expect(playwrightConfig.indexOf('applyIsolatedTestEnv();')).toBeLessThan(
+      playwrightConfig.indexOf('defineConfig({')
+    );
+    expect(playwrightConfig).not.toContain('dotenv.config(');
   });
 });

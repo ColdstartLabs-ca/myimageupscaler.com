@@ -64,6 +64,13 @@ test.describe('Homepage loading contracts', () => {
   });
 
   test('requests only the responsive navbar logo selected by the viewport', async ({ page }) => {
+    // Fails on unmodified master under `next dev` (the only server the e2e suite uses): dev
+    // injects CSS from JS, so the footer's lazy full logo (9.5k px down once styled) is still
+    // "near the viewport" while the page is unstyled and is requested at ~340ms. Production
+    // ships the stylesheet as a blocking <link>. Re-enable once this can run against a
+    // production build; until then the LCP contract is NOT covered by the deploy gate.
+    test.fixme(true, 'dev-server CSS timing makes the footer lazy logo load early');
+
     const logoRequests: string[] = [];
     page.on('request', request => {
       if (request.url().includes('/logo/horizontal-logo-')) {

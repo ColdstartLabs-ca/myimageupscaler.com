@@ -18,6 +18,8 @@ import { ReactElement } from 'react';
 
 interface ICTASectionProps {
   title: string;
+  /** Replaces the default "Start upscaling today" line. */
+  highlightText?: string;
   description: string;
   ctaText: string;
   ctaUrl: string;
@@ -36,15 +38,19 @@ interface ICTASectionProps {
     | 'platform-format'
     | 'device-use';
   slug?: string;
+  /** Replaces the default credit/account/watermark trust row. */
+  trustItems?: string[];
 }
 
 export function CTASection({
   title,
+  highlightText = 'Start upscaling today',
   description,
   ctaText,
   ctaUrl,
   pageType,
   slug,
+  trustItems,
 }: ICTASectionProps): ReactElement {
   const { tier } = useRegionTier();
   const welcomeCredits = tier ? welcomeCreditsForTier(tier) : null;
@@ -52,6 +58,7 @@ export function CTASection({
   const accountCopy = PRODUCT_CAPABILITIES.guestAccess
     ? 'No account required'
     : 'No credit card required';
+  const trustRow = trustItems ?? [creditOffer, accountCopy, 'No watermarks'];
 
   function handleCTAClick(): void {
     if (pageType && slug) {
@@ -87,7 +94,7 @@ export function CTASection({
         >
           {title}
           <br />
-          <span className="gradient-text-primary">Start upscaling today</span>
+          <span className="gradient-text-primary">{highlightText}</span>
         </motion.h2>
         <motion.p
           className="text-xl text-text-secondary mb-10 max-w-2xl mx-auto font-light"
@@ -131,36 +138,18 @@ export function CTASection({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3, ease: [0.25, 0.4, 0.25, 1] }}
         >
-          <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span>{creditOffer}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span>{accountCopy}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span>No watermarks</span>
-          </div>
+          {trustRow.map(item => (
+            <div key={item} className="flex items-center gap-2">
+              <svg className="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <span>{item}</span>
+            </div>
+          ))}
         </motion.div>
       </div>
     </section>

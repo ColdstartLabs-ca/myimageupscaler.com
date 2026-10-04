@@ -141,7 +141,7 @@
       "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
       "relatedGuides": ["how-to-upscale-images", "tiff-format-guide"],
       "ctaText": "Start Bulk Resizing",
-      "ctaUrl": "/bulk-tools/bulk-image-resizer"
+      "ctaUrl": "/tools/resize/bulk-image-resizer"
     },
     {
       "slug": "bulk-image-compressor",
@@ -282,7 +282,7 @@
       "relatedTools": ["ai-image-upscaler", "ai-photo-enhancer"],
       "relatedGuides": ["how-to-upscale-images", "webp-format-guide"],
       "ctaText": "Start Bulk Compressing",
-      "ctaUrl": "/bulk-tools/bulk-image-compressor"
+      "ctaUrl": "/tools/compress/bulk-image-compressor"
     }
   ],
   "meta": {

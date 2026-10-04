@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { MODEL_MAX_INPUT_PIXELS } from '@shared/config/model-costs.config';
+import { MODEL_COSTS, MODEL_MAX_INPUT_PIXELS } from '@shared/config/model-costs.config';
 import { QUALITY_TIER_CONFIG, type QualityTier } from '@shared/types/coreflow.types';
 import { UUID_V4_PATTERN } from '@shared/validation/uuid';
 
@@ -169,6 +169,17 @@ export function getMaxPixelsForModel(modelId: string): number {
   }
   // Fallback to global default (most conservative)
   return IMAGE_VALIDATION.MAX_PIXELS;
+}
+
+export function getScaleAwareMaxInputPixelsForModel(
+  modelId: string,
+  scale: number,
+  maxOutputPixels: number = MODEL_COSTS.MAX_OUTPUT_RESOLUTION
+): number {
+  const modelInputLimit = getMaxPixelsForModel(modelId);
+  const outputBoundedInputLimit = Math.floor(maxOutputPixels / (scale * scale));
+
+  return Math.min(modelInputLimit, outputBoundedInputLimit);
 }
 
 /**

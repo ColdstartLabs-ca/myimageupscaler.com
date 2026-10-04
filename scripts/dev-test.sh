@@ -5,20 +5,14 @@
 
 set -e
 
-# Load test environment variables when present.
-# The standard local test invocation sources .env.client/.env.api before this
-# script runs, so .env.test is optional in developer worktrees.
-if [ -f ".env.test" ]; then
-  set -a
-  # shellcheck disable=SC1091
-  source .env.test
-  set +a
+# .env.test is never sourced here. tests/helpers/test-env-isolation.ts builds the same
+# sanitized environment as playwright.config.ts (allowlisted keys only, mock-only
+# Supabase, NODE_ENV=development) and fails closed before anything else runs.
+ISOLATE="npx tsx tests/helpers/test-env-isolation.ts"
+if ! $ISOLATE; then
+  echo "Test server refused to start: unsafe test environment (see above)." >&2
+  exit 1
 fi
-
-export ENV="test"
-export NEXT_PUBLIC_ENV="test"
-export PLAYWRIGHT_TEST="true"
-export STRIPE_SECRET_KEY="sk_test_dummy_key"
 
 # Use ports from environment or defaults
 TEST_PORT=${TEST_PORT:-3100}
@@ -48,4 +42,4 @@ fi
 
 echo "Starting test server on port $TEST_PORT"
 
-npx next dev --port $TEST_PORT
+exec $ISOLATE npx next dev --port "$TEST_PORT"

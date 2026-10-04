@@ -433,3 +433,30 @@ available. Do not treat the pre-fix rates above as a post-deploy measurement.
 - **Assessment:** 26 memory-limit failures in 7,644 requests over 3 hours (0.34%), with healthy endpoints and no failures in the last 15 minutes.
 - **Next action:** Inspect affected workloads and memory usage, then optimize or raise the worker limit and monitor recurrence.
 - **Status:** Open
+### 2026-09-27T18:31:34+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 18 in the sampled window
+- **Evidence:** `{"count_15m": 3, "count_3h": 18, "live_health": {"api_health": {"latency_ms": 506, "status": 200}, "homepage": {"latency_ms": 54, "status": 200}}, "rate_15m": 0.01807, "rate_3h": 0.00586, "requests_15m": 166, "requests_3h": 3072}`
+- **Assessment:** 18 exceeded-memory errors across 3,072 requests in 3 hours while homepage and API health remain normal.
+- **Next action:** Review worker memory usage and limits, identify affected workloads, and tune or reproduce the failures.
+- **Status:** Open
+
+### 2026-09-28T12:49:36+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 13 in the sampled window
+- **Evidence:** `{"count_15m": 0, "count_3h": 13, "live_health": {"api_health": {"latency_ms": 580, "status": 200}, "homepage": {"latency_ms": 60, "status": 200}}, "rate_15m": 0.0, "rate_3h": 0.00503, "requests_15m": 121, "requests_3h": 2585}`
+- **Assessment:** 13 failures in 2,585 requests over 3h (0.5%), with none in the last 15m and healthy endpoints.
+- **Next action:** Inspect affected image sizes and worker memory limits, then reproduce and tune or cap resource-heavy jobs.
+- **Status:** Open
+
+### 2026-10-02T02:15:42+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 11 in the sampled window
+- **Evidence:** `{"count_15m": 1, "count_3h": 11, "live_health": {"api_health": {"latency_ms": 749, "status": 200}, "homepage": {"latency_ms": 82, "status": 200}}, "rate_15m": 0.00495, "rate_3h": 0.00574, "requests_15m": 202, "requests_3h": 1916}`
+- **Assessment:** 11 exceeded-memory errors among 1,916 requests in 3 hours (~0.57%), with healthy endpoints and predominantly successful workers.
+- **Next action:** Investigate memory usage and workload-size patterns, then tune limits or processing before monitoring the failure rate.
+- **Status:** Open
+
