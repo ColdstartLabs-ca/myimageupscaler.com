@@ -127,6 +127,10 @@ function productionClaim(value: string): string | null {
   return null;
 }
 
+export const REAL_TEST_DATABASE_BLOCKED =
+  'Real-database test helpers are disabled: no independently provisioned and verified ' +
+  'MIU test database exists. Only mock-only suites (e.g. yarn test:seo-guard) can run.';
+
 /** Throws unless the Supabase target is the mock-only sentinel (the only accepted target). */
 export function assertSafeTestDatabaseTarget(env: IEnv = process.env): void {
   for (const name of ['NEXT_PUBLIC_SUPABASE_URL', ...SUPABASE_KEY_VARS]) {
@@ -162,10 +166,7 @@ export function assertRealTestDatabase(
     const claim = value ? productionClaim(value) : null;
     if (claim) throw unsafe(`a Supabase client value ${claim}`);
   }
-  throw new Error(
-    'Real-database test helpers are disabled: no independently provisioned and verified ' +
-      'MIU test database exists. Only mock-only suites (e.g. yarn test:seo-guard) can run.'
-  );
+  throw new Error(REAL_TEST_DATABASE_BLOCKED);
 }
 
 /**

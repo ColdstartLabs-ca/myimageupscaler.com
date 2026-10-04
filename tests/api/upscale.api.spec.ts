@@ -226,22 +226,17 @@ test.describe('API: Image Upscale Integration', () => {
       const user = await ctx.createUser({ credits: 100 }); // Ensure sufficient credits
       api = new ApiClient(request).withAuth(user.token);
 
-      try {
-        const response = await postUpscale(api);
+      const response = await postUpscale(api);
 
-        // If the request succeeds, check that credits were properly used
-        if (response.status === 200) {
-          const data = await response.json();
-          if (data.success && data.result?.creditsUsed) {
-            expect(data.result.creditsUsed).toBeGreaterThan(0);
-          }
-        } else {
-          // If it fails, that's also valid behavior in test environment
-          expect([401, 402, 403, 422, 500, 503]).toContain(response.status);
+      // If the request succeeds, check that credits were properly used
+      if (response.status === 200) {
+        const data = await response.json();
+        if (data.success && data.result?.creditsUsed) {
+          expect(data.result.creditsUsed).toBeGreaterThan(0);
         }
-      } catch (error) {
-        // If we can't get user profile due to database issues, skip the credit tracking
-        console.warn('Skipping credit tracking test due to database issue:', error);
+      } else {
+        // If it fails, that's also valid behavior in test environment
+        expect([401, 402, 403, 422, 500, 503]).toContain(response.status);
       }
     });
   });

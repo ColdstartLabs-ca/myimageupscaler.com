@@ -1,10 +1,11 @@
 import { randomUUID } from 'node:crypto';
 
+import { test } from '@playwright/test';
 import { createClient } from '@supabase/supabase-js';
 import { serverEnv } from '@shared/config/env';
 
 import { AuthenticatedApiClient, ApiResponse } from './api-client';
-import { assertRealTestDatabase } from './test-env-isolation';
+import { assertRealTestDatabase, REAL_TEST_DATABASE_BLOCKED } from './test-env-isolation';
 
 const UPSCALE_INPUT_BUCKET = 'upscale-inputs';
 
@@ -95,7 +96,15 @@ export async function postUpscaleWithStoredImage(
   image: { dataUrl: string; mimeType: string },
   config: Record<string, unknown>
 ): Promise<ApiResponse<unknown>> {
-  const upload = await uploadUpscaleInput(api, image);
+  const upload = await uploadUpscaleInput(api, image).catch((error: unknown) => {
+    // Storage-backed upscale needs a real Supabase: skip, don't fail, while none is verified.
+    // Unsafe (production) targets still throw.
+    test.skip(
+      error instanceof Error && error.message === REAL_TEST_DATABASE_BLOCKED,
+      String(error)
+    );
+    throw error;
+  });
 
   return api.post('/api/upscale', {
     storagePath: upload.storagePath,
