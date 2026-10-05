@@ -366,6 +366,52 @@ describe('three-kings-manager ledger commands', () => {
   });
 });
 
+describe('three-kings-manager pending public exposure', () => {
+  it('HOLDs an API-applied rung until the new copy is verified in public HTML', () => {
+    const entry = {
+      ...baseEntry,
+      history: [{ date: '2026-08-01', liveVerification: { status: 'pending' } }],
+    };
+    const result = tkm.classify(
+      entry,
+      { current: healthyCurrent, prior: healthyPrior },
+      '2026-09-01'
+    );
+    expect(result.verdict).toBe('HOLD');
+    expect(result.reason).toContain('public HTML');
+  });
+
+  it('does not judge a GSC window before an API-applied change reaches public HTML', () => {
+    const entry = {
+      history: [
+        {
+          date: '2026-08-01',
+          rung: 3,
+          field: 'proof-led body pass',
+          outcome: null,
+          liveVerification: { status: 'pending' },
+        },
+      ],
+    };
+    const rows = mkRows([
+      ['2026-07-20', 20, 1000, 7],
+      ['2026-08-10', 1, 1000, 7],
+    ]);
+    expect(tkm.judgeEdits(entry, rows, '2026-09-01').judged).toBe(0);
+    expect(entry.history[0].outcome).toBeNull();
+  });
+
+  it('does not raise a regression from a change whose public exposure is pending', () => {
+    expect(
+      tkm.isActionableRegression({
+        field: 'proof-led body pass',
+        outcome: { verdict: 'LOSS' },
+        liveVerification: { status: 'pending' },
+      })
+    ).toBe(false);
+  });
+});
+
 describe('three-kings-manager constants', () => {
   it('uses a 14-day window and 3 rungs', () => {
     expect(tkm.WINDOW_DAYS).toBe(14);

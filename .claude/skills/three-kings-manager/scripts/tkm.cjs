@@ -33,6 +33,9 @@ function classify(entry, metrics, today) {
   if (entry.stopRule) {
     return { verdict: 'STOP', reason: `stop rule fired ${entry.stopRule.date}: ${entry.stopRule.reason}`, nextRung: null };
   }
+  if (entry.history?.[entry.history.length - 1]?.liveVerification?.status === 'pending') {
+    return { verdict: 'HOLD', reason: 'API write is verified but public HTML still serves prior copy; verify live exposure and start 14 complete GSC days from that confirmation before judging or editing', nextRung: null };
+  }
   if (today < win) {
     return { verdict: 'HOLD', reason: `verdict window open until ${win} (last edit ${entry.lastEdit})`, nextRung: null };
   }
@@ -104,7 +107,7 @@ function windowStats(rows, end, days) {
 function judgeEdits(entry, rows, dataEnd) {
   const wd = entry.windowDays || WINDOW_DAYS;
   for (const h of entry.history) {
-    if (h.outcome) continue;
+    if (h.outcome || h.liveVerification?.status === 'pending') continue;
     // The edit date itself is not a complete post-edit GSC day. Measure the
     // following 14 calendar days and do not judge until all are final.
     const postEnd = shift(h.date, wd);
@@ -146,7 +149,7 @@ function parseArgs(argv) {
 }
 
 function isActionableRegression(latest) {
-  return latest?.field !== 'rollback' && latest?.outcome?.verdict === 'LOSS';
+  return latest?.liveVerification?.status !== 'pending' && latest?.field !== 'rollback' && latest?.outcome?.verdict === 'LOSS';
 }
 
 function cmdCheck(args) {

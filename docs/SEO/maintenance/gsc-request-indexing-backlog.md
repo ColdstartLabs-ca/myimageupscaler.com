@@ -117,7 +117,7 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 - [ ] `https://myimageupscaler.com/blog/fixing-pixelated-photos` — 2026-09-10 regression rollback restored the prior meta/opening and removed the failed proof module; request indexing after live HTML exposes the repair.
 - [x] `https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark`
 - [x] `https://myimageupscaler.com/blog/how-to-upscale-midjourney-images-for-print`
-- [ ] `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails` — Three Kings rung-2 `seo_description` updated 2026-09-14; live HTML now serves the updated description (rung-2 copy) after the 2026-09-16 deploy, so it is eligible for a manual GSC request. **Not yet requested.**
+- [ ] `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails` — 2026-10-05 Three Kings rung-3 content-only diagnostic proof module and current YouTube upload guidance. Authenticated API readback matches the exact body hash; normal public HTML still serves the prior body (HTTP 200, self-canonical, index/follow, cache HIT). Request indexing only after the new module is visible in the rendered article. Native GSC browser control timed out on 2026-10-05; **not requested**. Start the 14-complete-GSC-day window from the first verified public exposure, not the DB write.
 - [x] `https://myimageupscaler.com/blog/image-upscaler-8x`
 - [ ] `https://myimageupscaler.com/blog/photo-restoration-program` — 2026-09-10 regression rollback removed the failed comparison expansion while retaining truthful metadata and credit copy; request indexing after live HTML exposes the repair.
 

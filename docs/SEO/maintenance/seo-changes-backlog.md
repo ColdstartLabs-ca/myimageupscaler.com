@@ -9,6 +9,30 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-10-05
+
+### Three Kings YouTube rung 3 — API applied, public HTML pending
+
+Evidence:
+
+- Refreshed final GSC daily evidence through 2026-10-01 and the current 28-day query/page export. Initial ledger check: 1 EDIT_NOW, 5 HOLD, 4 GATED, 1 STOP, 0 REGRESSION/VERDICT/NO_DATA. YouTube rung 2 closed FLAT over all 14 complete post-edit GSC days (1.00→0.93 clicks/day; impressions +4%, position −0.2); latest 14 days: 13 clicks / 3,854 impressions at position 6.5. No competing canonical page was found for the blur/low-quality intent; fragment sitelinks are the same owner.
+- Current official YouTube Help was fetched directly and confirms 3840×2160, 16:9, JPG/PNG, 2 MB mobile / 50 MB desktop video-thumbnail guidance. The Google search fetch returned a JS redirect shell, so an exact top-three competitive-depth comparison was not available; no whole-article expansion or benchmark claim was added.
+
+Action and verification:
+
+- Changed only `content` on `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails`: direct answer, an original/export/YouTube diagnostic proof module, pixel-count proof and linked upload guidance; corrected related contradictory DPI, guest-access and upload statements. Title, SEO title/description, slug, status, existing media and canonical remained unchanged. No new posts, deletion or unrelated production change.
+- Fresh verified backup: `backups/backup_2026-10-05_09-27-17.schema.sql.gz` and `backups/backup_2026-10-05_09-27-17.data.sql.gz`. `yarn db:backup` succeeded with test extraction/byte comparison, both archives appeared in `yarn db:backups`, and both passed `gzip -t` before PATCH. Existing backup sets were retained.
+- PATCH applied at `2026-10-05T16:33:09.439607+00:00`; authenticated GET exactly matches body SHA256 `1e8e067b7bc53313c50e9802a16bcd92e9e3f825213d353c2f736b1a785f7fc9`. Exact prior body SHA256 `467031956c2145dc245d6cb61196570bab592667716fba2c9ade1dcd394dd16d` is preserved in the ledger for rollback.
+- **End-to-end action remains incomplete:** repeated normal public-URL checks return 200, self-canonical, `index, follow`, cache HIT, but the rendered article does not contain the new module. Revalidation/cache cause is not established; the target is absent from the local static blog inventory, so static precedence is not proven. No broad cache purge or unrelated deploy was attempted.
+- Added a pending-public-exposure HOLD guard to the manager/skill so an API-only change cannot be judged as a search experiment or emit a premature regression. The final check is 0 EDIT_NOW, 6 HOLD, 4 GATED, 1 STOP, 0 REGRESSION/VERDICT/NO_DATA.
+- Recorded the rung/prior value and pending exposure in the Three Kings ledger; updated the existing indexing row in place and the blog changelog. Indexing backlog remains 76 unique pending URLs (oldest pending group: 2026-08-13). Native browser `list_pages` timed out twice; CLI MCP connectivity passed but page control did not, so **no indexing request is claimed**.
+- RED/GREEN verified for the new content transformation and pending-exposure guards; affected SEO suites pass 35/35. Full `yarn verify` passed after the changes (TypeScript, ICU, schema, indexation and 12 cache-config tests; 0 ESLint errors, 1,674 existing warnings). `git diff --check` passed. Unrelated dirty `content/blog-data.json` is byte-preserved (SHA256 `23ce65096417ee751d8959fce313037f9880cc24e7cd83c95d31333f516cc24e`).
+
+Follow-up:
+
+- Recheck normal public HTML before indexing. Once exposure is verified, retain the DB date, anchor the ledger's measurement date to the first confirmed public date, and require 14 complete post-exposure GSC days plus export holdback; do not treat the provisional 2026-10-19 DB-date window as a verdict deadline.
+- Earliest other closed-window review: 2026-10-09, when this exporter's three-day holdback plus excluded current day can include final data through 2026-10-05 for the Topaz free-trial and poster rows. The September 24 rows become reviewable from 2026-10-12.
+
 ## 2026-10-03
 
 ### Traffic/signup decline root cause: Sep 12 step; homepage snippet + llms.txt free offer restored; sitemap/robots fixes

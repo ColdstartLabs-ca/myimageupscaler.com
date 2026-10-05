@@ -11,6 +11,7 @@ Autonomous owner of ladder discipline for MIU content edits. On invocation it ru
 
 **Every 3 days (read-only):**
 
+0. Reconcile any history row with `liveVerification.status: "pending"` before judging it. Read the authenticated API field and the **normal public URL's rendered article**, not script/RSC text or a cache-busting URL. If public HTML is still old, retain HOLD, skip indexing and do not judge the GSC window. If the recorded field/hash and public copy match, retain the original DB date as `dbEditDate`, set the history `date` and entry `lastEdit` to the first confirmed public-exposure date (conservatively today if the earlier date is unknown), and set `liveVerification.status: "verified"` with confirmation date. Then require 14 complete post-confirmation GSC days. API success alone is not evidence of search exposure; do not deploy unrelated dirty work or purge site-wide caches to force a one-page change.
 1. Refresh the correlator export (final GSC data, 3-day holdback):
    ```bash
    node ./.claude/skills/gsc-causation-correlation/scripts/gsc-daily-correlate.cjs --output=/tmp/gsc-daily.json
@@ -40,7 +41,8 @@ Autonomous owner of ladder discipline for MIU content edits. On invocation it ru
 3. Execute the edit with the `blog-edit` skill (`.agents/skills/blog-edit/SKILL.md`) — it owns the production mechanics: `PATCH /api/blog/posts/[slug]` with `x-api-key: BLOG_API_KEY` from `.env.api`, GET readback, and the live-HTML spot check. Blog DB writes are effective immediately; repo/backlog changes ride the next deploy.
 4. Production blog writes require the `yarn db:backup` gate first (project rule).
 5. After the edit lands live: `node tkm.cjs record-edit --ledger=docs/SEO/maintenance/three-kings-ledger.json --url=<url> --rung=<n> --note="<what changed>" --previous="<prior field value>"`. This re-opens the 14-day window; `previous` captures the old value so a REGRESSION rollback is executable without archaeology. The ladder enforces one rung at a time.
-6. Append the blog changelog entry (`blog-edit` after-finishing rule) and record the edit in `docs/SEO/maintenance/seo-changes-backlog.md`; update the GSC request-indexing backlog row and request indexing manually (the 3-kings skill's indexing loop rule).
+6. If API readback succeeds but public HTML remains stale, still record the exact prior field value and DB write immediately, attach `liveVerification: {status: "pending", field, sha256, checkedOn, apiUpdatedAt, reason}` to that history row, and HOLD it. Do not label the edit live or measure an unexposed experiment. A public-cache blocker is an incomplete end-to-end action, not a reason to fabricate success or issue another blog write.
+7. Append the blog changelog entry (`blog-edit` after-finishing rule) and record the edit in `docs/SEO/maintenance/seo-changes-backlog.md`; update the GSC request-indexing backlog row and request indexing manually only after normal public HTML matches (the 3-kings skill's indexing loop rule).
 
 **Monitoring (automatic in every `check`):** each history row is judged once its window closes — WIN (clicks/d ≥ 1.2x prior), FLAT, or LOSS (clicks/d ≤ 0.8x prior, or position degraded >2 without click gain). Outcomes persist in the ledger. A measured `rollback` row is diagnostic only and must never raise another `REGRESSION`: re-applying the already-losing experiment creates an undo loop. After a rollback window closes, route the page through the normal HOLD/GATED/STOP/VERDICT gates instead.
 
