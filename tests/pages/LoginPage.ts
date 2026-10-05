@@ -47,37 +47,20 @@ export class LoginPage extends BasePage {
     // Wait for authentication loading to complete
     await this.waitForAuthLoadingComplete();
 
-    // Try to find and click the sign in button with multiple strategies
-    try {
-      // First, try desktop sign in button
-      const desktopSignInButton = this.page
-        .locator('button:has-text("Sign In"):not([hidden])')
-        .first();
-      if (await desktopSignInButton.isVisible({ timeout: 5000 })) {
-        await desktopSignInButton.click();
-      } else {
-        // If not visible on desktop, try mobile menu
-        await this.openMobileMenuAndSignIn();
+    // A click that lands before hydration is dropped, so retry click -> modal until it opens.
+    const desktopSignInButton = this.page
+      .locator('button:has-text("Sign In"):not([hidden])')
+      .first();
+    await expect(async () => {
+      if (!(await this.modal.isVisible())) {
+        if (await desktopSignInButton.isVisible()) {
+          await desktopSignInButton.click({ timeout: 2000 });
+        } else {
+          await this.openMobileMenuAndSignIn();
+        }
       }
-    } catch {
-      // Fallback strategy
-      try {
-        await this.openMobileMenuAndSignIn();
-      } catch {
-        // Last resort - look for any sign in button
-        const anySignInButton = this.page.locator('button:has-text("Sign In")').first();
-        await anySignInButton.click({ timeout: 5000 });
-      }
-    }
-
-    // Wait for modal to appear with multiple strategies
-    try {
-      await this.waitForModal();
-    } catch {
-      // Fallback: wait a bit and try again
-      await this.wait(1000);
-      await this.waitForModal();
-    }
+      await expect(this.modal).toBeVisible({ timeout: 2000 });
+    }).toPass({ timeout: 30000 });
   }
 
   /**
@@ -88,7 +71,7 @@ export class LoginPage extends BasePage {
     const mobileMenuToggle = this.page.locator(
       'button[aria-label="Toggle menu"], .md\\:hidden button'
     );
-    if (await mobileMenuToggle.isVisible({ timeout: 3000 })) {
+    if (await mobileMenuToggle.isVisible()) {
       // Open mobile menu
       await mobileMenuToggle.click();
       await this.wait(500); // Wait for menu to animate open

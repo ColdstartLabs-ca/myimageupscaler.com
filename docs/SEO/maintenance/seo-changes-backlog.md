@@ -3083,3 +3083,7 @@ Note: `CLOUDFLARE_API_TOKEN` in the production secret returns `Authentication er
 Checked and found **correct**, contrary to first impression: `effectivePpi = min(horizontalPpi, verticalPpi)` is algebraically identical to crop-to-fill scaling, which is the right default for posters. The analytics event is properly registered in both `ALLOWED_EVENTS` and `IAnalyticsEventName`, and the `useRegionTier` fetch guard is sound.
 
 Noted, not fixed: the commit message claims it removes "the unused AI PR review workflow and the PRD scaffolding workflows", but the commit touches zero `.github` files.
+
+### Sitemap duplicate check moved off production — 2026-10-04
+
+`tests/e2e/seo/sitemap-duplicates.e2e.spec.ts` fetched all ~87 live production sitemaps sequentially, so it tested the deployed site instead of the build, and it flaked on edge rate limiting (the "watch for recurrence" item above came back in the 2026-10-04 deploy run). Deleted. The `seo-guard` duplicate check now covers **every** `<loc>` across all child sitemaps of the local build, not just `/blog`, and also pins `/blog` → `sitemap-blog.xml` and `/platforms` → `sitemap-platforms.xml`. No sitemap output changed.

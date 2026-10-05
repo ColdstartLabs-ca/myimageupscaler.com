@@ -1,4 +1,10 @@
 import { expect, test } from '../test-fixtures';
+import { getCdnImageUrl } from '@client/utils/image-loader';
+
+// Exact navbar <picture> URLs: the lazy footer <Image> also uses the full logo, and under
+// load it can come into lazy-load range, so matching on the filename alone is flaky.
+const NAVBAR_FULL_LOGO = getCdnImageUrl('/logo/horizontal-logo-full.png', 200);
+const NAVBAR_COMPACT_LOGO = getCdnImageUrl('/logo/horizontal-logo-compact.png', 100);
 
 test.describe('Homepage loading contracts', () => {
   test('loads both visible hero images eagerly without loading Stripe', async ({ page }) => {
@@ -84,7 +90,7 @@ test.describe('Homepage loading contracts', () => {
       expect(
         logoRequests.filter(url => url.includes('horizontal-logo-compact.png')).length
       ).toBeGreaterThan(0);
-      expect(logoRequests.some(url => url.includes('horizontal-logo-full.png'))).toBe(false);
+      expect(logoRequests.some(url => url.endsWith(NAVBAR_FULL_LOGO))).toBe(false);
     }
 
     await page.setViewportSize({ width: 800, height: 823 });
@@ -99,6 +105,6 @@ test.describe('Homepage loading contracts', () => {
     expect(
       logoRequests.filter(url => url.includes('horizontal-logo-full.png')).length
     ).toBeGreaterThan(0);
-    expect(logoRequests.some(url => url.includes('horizontal-logo-compact.png'))).toBe(false);
+    expect(logoRequests.some(url => url.endsWith(NAVBAR_COMPACT_LOGO))).toBe(false);
   });
 });

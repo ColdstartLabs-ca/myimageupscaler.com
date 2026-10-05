@@ -7,6 +7,8 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
+    // Cold dynamic imports of large module graphs exceed the 5s default when ~500 files run in parallel.
+    testTimeout: 20000,
     setupFiles: ['./vitest.setup.tsx'],
     include: [
       'client/**/*.{test,spec}.{ts,tsx}',

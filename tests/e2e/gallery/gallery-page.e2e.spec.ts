@@ -139,9 +139,8 @@ class GalleryPage extends BasePage {
    * Waits for images to load
    */
   async waitForImages(): Promise<void> {
-    await this.page.waitForSelector('[data-testid="gallery-image-card"]', {
-      timeout: 10000,
-    });
+    // Dashboard routes compile on demand under `next dev`; 10s was too short under full-suite load.
+    await expect(this.imageCards.first()).toBeVisible({ timeout: 30000 });
   }
 
   /**

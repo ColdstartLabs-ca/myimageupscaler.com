@@ -19,8 +19,10 @@ type IEnv = Record<string, string | undefined>;
 // Public project id of the production Supabase project (not a secret).
 const PRODUCTION_SUPABASE_REF = 'xqysaylskffsfwunczbd';
 
-// Reserved .invalid TLD (RFC 2606): never resolves, so mock-only runs cannot reach any database.
-export const MOCK_SUPABASE_URL = 'http://supabase.miu-test.invalid';
+// Hyphenated ref: real Supabase refs are 20 lowercase letters, so this is never a project and
+// does not resolve (NXDOMAIN). It must sit under https://*.supabase.co or the app CSP (connect-src)
+// blocks browser requests before Playwright route mocks see them.
+export const MOCK_SUPABASE_URL = 'https://miu-test-mock.supabase.co';
 
 const SUPABASE_KEY_VARS = ['SUPABASE_SERVICE_ROLE_KEY', 'NEXT_PUBLIC_SUPABASE_ANON_KEY'];
 

@@ -234,42 +234,37 @@ test.describe('SEO Guard - Deploy Blocker', () => {
   // Group 4: Sitemap Duplicate Prevention (Sample Check)
   // ========================================================================
   test.describe('Sitemap Duplicate Prevention', () => {
-    test('critical pages appear in only one sitemap', async ({ request }) => {
-      // Only check blog to avoid timeout - this validates the pattern
-      const pageUrl = `${PRODUCTION_BASE_URL}/blog`;
-
+    test('no URL appears in more than one sitemap', async ({ request }) => {
       const response = await request.get('/sitemap.xml');
       const text = await response.text();
-
-      // Get all sitemap URLs
-      const sitemapMatches = text.matchAll(
-        /<loc>(https:\/\/myimageupscaler\.com\/sitemap-[^<]+\.xml)<\/loc>/g
-      );
-      const sitemapUrls = Array.from(sitemapMatches).map(m => m[1]);
+      const sitemapUrls = Array.from(
+        text.matchAll(/<loc>(https:\/\/myimageupscaler\.com\/sitemap-[^<]+\.xml)<\/loc>/g)
+      ).map(m => m[1]);
 
       // Fetch all sitemaps in parallel to avoid timeout
       const sitemapContents = await Promise.all(
         sitemapUrls.map(async sitemapUrl => {
           const sitemapResponse = await request.get(sitemapUrl.replace(PRODUCTION_BASE_URL, ''));
-          const sitemapText = await sitemapResponse.text();
-          return { sitemapUrl, sitemapText };
+          return { sitemapUrl, sitemapText: await sitemapResponse.text() };
         })
       );
 
-      // Track which sitemaps contain the blog URL
-      const foundIn: string[] = [];
-
+      // Only <url><loc> entries count; xhtml:link hreflang alternates are expected to repeat.
+      const foundIn = new Map<string, string[]>();
       for (const { sitemapUrl, sitemapText } of sitemapContents) {
-        if (sitemapText.includes(`<loc>${pageUrl}</loc>`)) {
-          foundIn.push(sitemapUrl);
+        for (const [, url] of sitemapText.matchAll(/<loc>([^<]+)<\/loc>/g)) {
+          foundIn.set(url, [...(foundIn.get(url) ?? []), sitemapUrl]);
         }
       }
 
-      // Blog should appear in exactly one sitemap
-      expect(
-        foundIn.length,
-        `${pageUrl} should appear in exactly 1 sitemap, found in: ${foundIn.join(', ')}`
-      ).toBe(1);
+      const duplicates = [...foundIn].filter(([, sitemaps]) => sitemaps.length > 1);
+      expect(duplicates, 'URLs listed in more than one sitemap').toEqual([]);
+      expect(foundIn.get(`${PRODUCTION_BASE_URL}/blog`)).toEqual([
+        `${PRODUCTION_BASE_URL}/sitemap-blog.xml`,
+      ]);
+      expect(foundIn.get(`${PRODUCTION_BASE_URL}/platforms`)).toEqual([
+        `${PRODUCTION_BASE_URL}/sitemap-platforms.xml`,
+      ]);
     });
 
     test('blog is not in static sitemap', async ({ request }) => {
