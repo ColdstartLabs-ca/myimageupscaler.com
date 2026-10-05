@@ -43,14 +43,14 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 
 ### Three Kings refresh — live verified, ready to request
 
-- [ ] `https://myimageupscaler.com/blog/poster-size-dimensions-pixels` — 2026-09-21 Three Kings rung-3 proof-led body pass; API readback matches the direct answer and effective-PPI evidence module. Public HTML still serves the prior cached body, so request indexing only after live HTML matches.
+- [x] `https://myimageupscaler.com/blog/poster-size-dimensions-pixels` — **API-resolved 2026-10-05, not a manual request:** `Submitted and indexed`, successful crawl `2026-09-27T09:53:32Z` after the 2026-09-21 write, matching Google/user canonical. Normal public article now exposes the effective-PPI module; API body hash verified. Earlier public exposure is unknown: measurement conservatively starts 2026-10-05; earliest final-data verdict 2026-10-23.
 - [x] `https://myimageupscaler.com/alternatives/vs-adobe-express` — indexing requested 2026-09-04, confirmed "added to a priority crawl queue" — 2026-09-03 Three Kings refresh; production HTML and sitemap `lastmod` verified after deploy.
 - [x] `https://myimageupscaler.com/blog/photoshop-upscale-image` — indexing requested 2026-09-04, confirmed "added to a priority crawl queue" — 2026-09-03 Three Kings refresh; production HTML verified after deploy.
 
 ### Three Kings ladder actions — request after current live HTML is verified
 
-- [ ] `https://myimageupscaler.com/blog/best-ai-upscaler` — 2026-09-24 Three Kings rung-3 proof-led body pass added an above-fold 12-tool evidence rubric. API readback matches; public HTML still serves the prior cached body, so request indexing only after live HTML matches.
-- [ ] `https://myimageupscaler.com/blog/topaz-video-upscaler` — 2026-09-24 Three Kings rung-3 proof-led body pass added a direct Topaz Video vs Pro/legacy-name answer for the zero-click query cluster. API readback matches; public HTML still serves the prior cached body, so request indexing only after live HTML matches.
+- [x] `https://myimageupscaler.com/blog/best-ai-upscaler` — **API-resolved 2026-10-05, not a manual request:** `Submitted and indexed`, successful crawl `2026-10-03T14:26:04Z` after the 2026-09-24 write, matching Google/user canonical. Normal public article now exposes the 12-tool evidence rubric; API body hash verified. Earlier public exposure is unknown: measurement conservatively starts 2026-10-05; earliest final-data verdict 2026-10-23.
+- [x] `https://myimageupscaler.com/blog/topaz-video-upscaler` — **API-resolved 2026-10-05, not a manual request:** `Submitted and indexed`, successful crawl `2026-09-26T02:42:58Z` after the 2026-09-24 write, matching Google/user canonical. Normal public article now exposes the Topaz Video vs Pro module; API body hash verified. Earlier public exposure is unknown: measurement conservatively starts 2026-10-05; earliest final-data verdict 2026-10-23.
 - [ ] `https://myimageupscaler.com/blog/best-image-upscaler` — 2026-09-24 regression rollback restored the exact pre-rung-2 `seo_description`. API and public HTML readback match; eligible for a new manual GSC request. **Not yet requested.**
 
 ### Blog index parameter deindex signal — request after deployment
@@ -117,7 +117,7 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 - [ ] `https://myimageupscaler.com/blog/fixing-pixelated-photos` — 2026-09-10 regression rollback restored the prior meta/opening and removed the failed proof module; request indexing after live HTML exposes the repair.
 - [x] `https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark`
 - [x] `https://myimageupscaler.com/blog/how-to-upscale-midjourney-images-for-print`
-- [ ] `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails` — 2026-10-05 Three Kings rung-3 content-only diagnostic proof module and current YouTube upload guidance. Authenticated API readback matches the exact body hash; normal public HTML still serves the prior body (HTTP 200, self-canonical, index/follow, cache HIT). Request indexing only after the new module is visible in the rendered article. Native GSC browser control timed out on 2026-10-05; **not requested**. Start the 14-complete-GSC-day window from the first verified public exposure, not the DB write.
+- [ ] `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails` — 2026-10-05 Three Kings rung-3 content-only diagnostic proof module and current YouTube upload guidance. Authenticated API readback matches the exact body hash; normal public HTML still lacks the diagnostic module (HTTP 200, self-canonical, index/follow, cache HIT), rechecked 2026-10-05 10:38 PDT. URL Inspection reports indexed but last crawled 2026-10-02, before this write: **not resolved or requested**. A tested local OpenNext tag-cache fix is prepared, not deployed. After an authorized preview/deploy and a scoped revalidation, verify normal public article exposure before indexing; start the 14-complete-GSC-day window from that confirmation, not the DB write. No broad purge or repeated body write.
 - [x] `https://myimageupscaler.com/blog/image-upscaler-8x`
 - [ ] `https://myimageupscaler.com/blog/photo-restoration-program` — 2026-09-10 regression rollback removed the failed comparison expansion while retaining truthful metadata and credit copy; request indexing after live HTML exposes the repair.
 
@@ -148,7 +148,7 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 - [x] `https://myimageupscaler.com/blog/mejorar-calidad-imagen-ia-gratis`
 - [x] `https://myimageupscaler.com/blog/pixelcut-ai-photo-editor`
 - [x] `https://myimageupscaler.com/blog/topaz-denoise-ai`
-- [ ] `https://myimageupscaler.com/blog/topaz-labs-free-trial` — 2026-09-21 Three Kings rung-2 `seo_description` now answers the current no-trial/2-day-refund policy directly. API readback matches; public HTML still serves the prior cached description, so request indexing only after live HTML matches.
+- [x] `https://myimageupscaler.com/blog/topaz-labs-free-trial` — **API-resolved 2026-10-05, not a manual request:** `Submitted and indexed`, successful crawl `2026-09-29T20:50:32Z` after the 2026-09-21 write, matching Google/user canonical. Normal public meta description exactly matches the API value. Earlier public exposure is unknown: measurement conservatively starts 2026-10-05; earliest final-data verdict 2026-10-23.
 
 - [x] `https://myimageupscaler.com/blog/video-upscaling-software`
 - [x] `https://myimageupscaler.com/scale/upscale-16x`
