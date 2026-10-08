@@ -9,6 +9,16 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-10-08
+
+### Three Kings — YouTube exposure reconciled; no production edits eligible
+
+- Refreshed final GSC daily evidence through Oct 4. Ledger check: 0 EDIT_NOW/REGRESSION/VERDICT/NO_DATA, 6 HOLD, 4 GATED, 1 STOP. No new rung, rollback, publication, production DB write, deployment or purge; backup gate was not needed.
+- Normal public `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails` returns 200, self-canonical, index/follow, cache HIT and exposes the diagnostic module in the rendered article. Authenticated API hash exactly matches the Oct 5 write (`1e8e067b7bc53313c50e9802a16bcd92e9e3f825213d353c2f736b1a785f7fc9`). Reconciled its pending ledger row to verified with first confirmed exposure Oct 8 while preserving `dbEditDate`, rung 3 and exact prior body; no assumption about earlier exposure.
+- URL Inspection reports Submitted and indexed, indexing allowed, successful crawl `2026-10-07T04:57:12Z` after the Oct 5 write and matching Google/user canonicals. Resolved its existing indexing row in place as **API-resolved, not a manual request**; unique pending rows 72 → 71 (oldest pending group Aug 13). Native desktop `list_pages` timed out; no manual request is claimed.
+- Updated the blog changelog with exposure confirmation only. After reconciliation, focused manager/YouTube tests pass 30/30 and full `yarn verify` passes (TypeScript, ICU, schema, indexation and 12 cache-config tests; 0 ESLint errors, 1,680 existing warnings). No API/E2E suite claim. Unrelated dirty files remain hash-verified unchanged; pre-existing SEO backlog edits preserved. Bookkeeping is a local-only commit, not pushed or deployed.
+- Next eligible review: best-image rollback Oct 12 (final data through Oct 8); four Oct 5 exposure rows Oct 23; YouTube Oct 26 (14 complete post-exposure days Oct 9–22 plus exporter holdback). Existing HOLD/GATED/STOP gates remain mandatory.
+
 ## 2026-10-05
 
 ### Blog growth operator — persistent invalidation fix; four indexing blockers resolved

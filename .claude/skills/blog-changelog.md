@@ -1,5 +1,12 @@
 # Blog Changelog
 
+## 2026-10-08
+
+### Verification: YouTube rung-3 public exposure confirmed
+
+**Affected:** how-to-upscale-youtube-thumbnails
+**Changes:** No new blog edit. The normal public rendered article now contains the diagnostic module; authenticated API SHA256 remains `1e8e067b7bc53313c50e9802a16bcd92e9e3f825213d353c2f736b1a785f7fc9`. Retained the Oct 5 DB write and exact prior body; anchored the measurement date to first confirmed public exposure Oct 8. URL Inspection reports `Submitted and indexed`, successful Oct 7 post-write crawl and matching canonicals; existing indexing row API-resolved, not manually requested. Earliest final-data verdict: Oct 26.
+
 ## 2026-10-05
 
 ### SEO: YouTube thumbnail rung-3 diagnostic proof pass — public exposure pending
