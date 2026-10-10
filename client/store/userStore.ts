@@ -1,8 +1,7 @@
 import type { ISubscription, IUserProfile } from '@/shared/types/stripe.types';
 import { TIMEOUTS } from '@shared/config/timeouts.config';
-import { createClient } from '@shared/utils/supabase/client';
 import { clientEnv } from '@shared/config/env';
-import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
+import type { AuthChangeEvent, Session, SupabaseClient } from '@supabase/supabase-js';
 import { create } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
 import { handlePostAuthRedirect } from './auth/postAuthRedirect';
@@ -59,14 +58,48 @@ export interface IUserState {
   updatePassword: (newPassword: string) => Promise<void>;
 }
 
-// Lazy initialization to avoid creating Supabase client during SSR/SSG
-let supabaseInstance: ReturnType<typeof createClient> | null = null;
+// The Supabase client is ~178KB and anonymous visitors never need it. Callbacks
+// and signed-in sessions do, so we load it on demand and pre-load it only when
+// a cookie, cached profile or auth URL says the SDK is needed right now.
+let supabasePromise: Promise<SupabaseClient> | null = null;
 
-function getSupabase() {
-  if (!supabaseInstance) {
-    supabaseInstance = createClient();
+export function getSupabase(): Promise<SupabaseClient> {
+  if (!supabasePromise) {
+    supabasePromise = import('@shared/utils/supabase/client')
+      .then(({ createClient }) => {
+        const client = createClient();
+        registerAuthListener(client);
+        return client;
+      })
+      .catch(err => {
+        supabasePromise = null;
+        throw err;
+      });
   }
-  return supabaseInstance;
+  return supabasePromise;
+}
+
+export function shouldInitSupabaseEagerly(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    if (/(?:^|;\s*)sb-[^=;]*-auth-token/.test(document.cookie)) return true;
+  } catch {
+    // Ignore cookie access failures.
+  }
+  try {
+    if (localStorage.getItem(USER_CACHE_KEY) !== null) return true;
+  } catch {
+    // Ignore storage access failures.
+  }
+  const params = new URLSearchParams(window.location.search);
+  for (const key of ['code', 'error', 'error_description', 'token_hash', 'type']) {
+    if (params.has(key)) return true;
+  }
+  const hash = window.location.hash;
+  if (hash.includes('access_token') || hash.includes('refresh_token') || hash.includes('error')) {
+    return true;
+  }
+  return window.location.pathname.includes('/auth/');
 }
 
 // In-flight request deduplication
@@ -129,7 +162,7 @@ export const useUserStore = create<IUserState>((set, get) => ({
             setTimeout(() => reject(new Error('RPC timeout after 5s')), 5000);
           });
 
-          const rpcPromise = getSupabase().rpc('get_user_data', {
+          const rpcPromise = (await getSupabase()).rpc('get_user_data', {
             target_user_id: userId,
           });
 
@@ -254,7 +287,8 @@ export const useUserStore = create<IUserState>((set, get) => ({
 
   signInWithEmail: async (email, password) => {
     enablePostAuthRedirect();
-    const { data, error } = await getSupabase().auth.signInWithPassword({ email, password });
+    const supabase = await getSupabase();
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
     if (!data.session?.access_token) {
       throw new Error('Sign in did not return an authenticated session');
@@ -264,7 +298,8 @@ export const useUserStore = create<IUserState>((set, get) => ({
 
   signUpWithEmail: async (email, password) => {
     enablePostAuthRedirect();
-    const { data, error } = await getSupabase().auth.signUp({
+    const supabase = await getSupabase();
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { emailRedirectTo: `${window.location.origin}/auth/confirm` },
@@ -278,7 +313,8 @@ export const useUserStore = create<IUserState>((set, get) => ({
   },
 
   signOut: async () => {
-    await getSupabase().auth.signOut();
+    const supabase = await getSupabase();
+    await supabase.auth.signOut();
     // Auth state change listener will call reset()
   },
 
@@ -288,27 +324,31 @@ export const useUserStore = create<IUserState>((set, get) => ({
       throw new Error('No authenticated user found');
     }
 
+    const supabase = await getSupabase();
+
     // Verify current password
-    const { error: signInError } = await getSupabase().auth.signInWithPassword({
+    const { error: signInError } = await supabase.auth.signInWithPassword({
       email: currentUser.email,
       password: currentPassword,
     });
     if (signInError) throw signInError;
 
     // Update to new password
-    const { error } = await getSupabase().auth.updateUser({ password: newPassword });
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
     if (error) throw error;
   },
 
   resetPassword: async email => {
-    const { error } = await getSupabase().auth.resetPasswordForEmail(email, {
+    const supabase = await getSupabase();
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth/reset-password`,
     });
     if (error) throw error;
   },
 
   updatePassword: async newPassword => {
-    const { error } = await getSupabase().auth.updateUser({ password: newPassword });
+    const supabase = await getSupabase();
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
     if (error) throw error;
   },
 }));
@@ -347,10 +387,9 @@ function clearUserCache(): void {
   }
 }
 
-// Only run client-side initialization
-if (typeof window !== 'undefined') {
+function registerAuthListener(client: SupabaseClient): void {
   // Auth state listener (single source of truth)
-  getSupabase().auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
+  client.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
     const store = useUserStore.getState();
 
     if (event === 'SIGNED_OUT' || !session) {
@@ -432,8 +471,15 @@ if (typeof window !== 'undefined') {
       }
     }
   });
+}
 
-  // Initialize on module load (client-side only)
+// Only run client-side initialization
+if (typeof window !== 'undefined') {
+  if (shouldInitSupabaseEagerly()) {
+    // Fire and forget; a failed chunk load resets the promise so the next auth
+    // action retries instead of leaving an unhandled rejection behind.
+    void getSupabase().catch(() => {});
+  }
   useUserStore.getState().initialize();
 }
 

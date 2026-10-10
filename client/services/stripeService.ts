@@ -9,7 +9,11 @@ import type {
   ICheckoutRescueOfferRequest,
   ICheckoutRescueOfferResponse,
 } from '@shared/types/checkout-offer';
-import { supabase } from '@server/supabase/supabaseClient';
+
+// Load the Supabase client on first use so anonymous visitors skip the SDK.
+async function getSupabase() {
+  return (await import('@server/supabase/supabaseClient')).supabase;
+}
 
 interface ICreditTransaction {
   id: string;
@@ -228,6 +232,7 @@ async function createCheckoutSessionInternal(
     autoTopUp?: ICheckoutSessionRequest['autoTopUp'];
   }
 ): Promise<ICheckoutSessionResponse> {
+  const supabase = await getSupabase();
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -330,6 +335,7 @@ export class StripeService {
   }
 
   static async createCheckoutRescueOffer(priceId: string): Promise<ICheckoutRescueOffer> {
+    const supabase = await getSupabase();
     const {
       data: { session },
     } = await supabase.auth.getSession();
@@ -445,6 +451,7 @@ export class StripeService {
    * @returns The user's profile with credits and subscription info
    */
   static async getUserProfile(): Promise<IUserProfile | null> {
+    const supabase = await getSupabase();
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -472,6 +479,7 @@ export class StripeService {
    * @returns The user's active subscription or null
    */
   static async getActiveSubscription(): Promise<ISubscription | null> {
+    const supabase = await getSupabase();
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -503,6 +511,7 @@ export class StripeService {
    * @returns True if the user has sufficient credits
    */
   static async hasSufficientCredits(requiredAmount: number): Promise<boolean> {
+    const supabase = await getSupabase();
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -530,6 +539,7 @@ export class StripeService {
    * @returns The new credits balance
    */
   static async decrementCredits(amount: number): Promise<number> {
+    const supabase = await getSupabase();
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -555,6 +565,7 @@ export class StripeService {
    * @returns The portal URL to redirect the user to
    */
   static async createPortalSession(): Promise<{ url: string }> {
+    const supabase = await getSupabase();
     const {
       data: { session },
     } = await supabase.auth.getSession();
@@ -598,6 +609,7 @@ export class StripeService {
     limit: number = 50,
     offset: number = 0
   ): Promise<ICreditHistoryResponse> {
+    const supabase = await getSupabase();
     const {
       data: { session },
     } = await supabase.auth.getSession();
@@ -643,6 +655,7 @@ export class StripeService {
       effective_immediately: boolean;
     }
   > {
+    const supabase = await getSupabase();
     const {
       data: { session },
     } = await supabase.auth.getSession();
@@ -682,6 +695,7 @@ export class StripeService {
    * @returns Subscription change result
    */
   static async changeSubscription(targetPriceId: string): Promise<ISubscriptionChangeResponse> {
+    const supabase = await getSupabase();
     const {
       data: { session },
     } = await supabase.auth.getSession();
@@ -717,6 +731,7 @@ export class StripeService {
    * @returns Success message
    */
   static async cancelScheduledChange(): Promise<{ message: string }> {
+    const supabase = await getSupabase();
     const {
       data: { session },
     } = await supabase.auth.getSession();
@@ -752,6 +767,7 @@ export class StripeService {
     cancel_at_period_end: boolean;
     current_period_end: number;
   }> {
+    const supabase = await getSupabase();
     const {
       data: { session },
     } = await supabase.auth.getSession();
