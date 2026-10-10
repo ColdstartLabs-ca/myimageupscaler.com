@@ -123,6 +123,7 @@ test.describe('Internal Link Validation', () => {
 
   // Test related pages section on a sample page
   test('Related pages should contain valid links', async ({ page }) => {
+    test.setTimeout(120000); // Each related link is a dev-server navigation; 8 links x 2 gotos exceeds 60s under load
     const url = '/tools/ai-image-upscaler';
     await page.goto(url);
 
