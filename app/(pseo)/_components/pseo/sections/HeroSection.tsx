@@ -13,16 +13,6 @@ import { ReactElement } from 'react';
 // Animation variants for hero section
 // Note: delayChildren removed so badge/intro/CTA animate in immediately after paint.
 // H1 is rendered outside this container so it is never hidden by framer-motion (LCP fix).
-const heroContainerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-    },
-  },
-};
-
 const heroItemVariants = {
   hidden: { opacity: 0, y: 30 },
   visible: {
@@ -96,16 +86,12 @@ export function HeroSection({
           {subtitle && <span className="block mt-4 gradient-text-primary">{subtitle}</span>}
         </h1>
 
-        {/* Badge, intro and CTA animate in after initial paint */}
-        <motion.div
-          className="flex flex-col items-center"
-          initial="hidden"
-          animate="visible"
-          variants={heroContainerVariants}
-        >
+        <div className="flex flex-col items-center">
           {/* Badge */}
           {!hideBadge && (
             <motion.div
+              initial="hidden"
+              animate="visible"
               variants={heroItemVariants}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-strong text-muted-foreground font-medium text-sm mb-8 hover:shadow-xl hover:shadow-accent/20 transition-all duration-300 cursor-default group"
             >
@@ -118,16 +104,18 @@ export function HeroSection({
           )}
 
           {/* Intro Text */}
-          <motion.p
-            variants={heroItemVariants}
-            className="text-xl md:text-2xl text-text-secondary mb-10 max-w-3xl mx-auto leading-relaxed font-light"
-          >
+          <p className="text-xl md:text-2xl text-text-secondary mb-10 max-w-3xl mx-auto leading-relaxed font-light">
             {intro}
-          </motion.p>
+          </p>
 
           {/* CTA Section */}
           {ctaText && ctaUrl && (
-            <motion.div variants={heroItemVariants} className="flex flex-col items-center gap-8">
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={heroItemVariants}
+              className="flex flex-col items-center gap-8"
+            >
               <motion.a
                 href={ctaUrl}
                 onClick={handleCTAClick}
@@ -182,7 +170,7 @@ export function HeroSection({
               </div>
             </motion.div>
           )}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

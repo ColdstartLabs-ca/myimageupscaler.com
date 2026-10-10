@@ -26,21 +26,28 @@ import { describe, expect, it } from 'vitest';
 
 const ROOT = join(process.cwd());
 const HERO_PATH = join(ROOT, 'app/(pseo)/_components/pseo/sections/HeroSection.tsx');
+const LOCALE_HERO_PATH = join(
+  ROOT,
+  'app/[locale]/(pseo)/_components/pseo/sections/HeroSection.tsx'
+);
 
 describe('pSEO Hero LCP — Phase 3 fix', () => {
   const source = readFileSync(HERO_PATH, 'utf-8');
+  const localeSource = readFileSync(LOCALE_HERO_PATH, 'utf-8');
 
   describe('H1 element is NOT wrapped in framer-motion', () => {
     it('should render the H1 as a plain <h1> tag (not motion.h1)', () => {
       // The fix requires a plain <h1 — framer-motion wraps its output in a div/element
       // controlled by its own opacity animations, delaying paint.
       expect(source).toContain('<h1 ');
+      expect(localeSource).toContain('<h1 ');
     });
 
     it('should NOT have a motion.h1 element (would delay LCP)', () => {
       // motion.h1 starts hidden (opacity: 0) and requires JS hydration before
       // painting — incompatible with fast LCP.
       expect(source).not.toContain('<motion.h1');
+      expect(localeSource).not.toContain('<motion.h1');
     });
 
     it('H1 should NOT use heroItemVariants (would set opacity:0 on initial render)', () => {
@@ -52,6 +59,12 @@ describe('pSEO Hero LCP — Phase 3 fix', () => {
       const h1Tag = h1TagMatch![0];
       expect(h1Tag).not.toContain('variants');
       expect(h1Tag).not.toContain('heroItemVariants');
+
+      const localeH1TagMatch = localeSource.match(/<h1[^>]*>/);
+      expect(localeH1TagMatch).not.toBeNull();
+      const localeH1Tag = localeH1TagMatch![0];
+      expect(localeH1Tag).not.toContain('variants');
+      expect(localeH1Tag).not.toContain('heroItemVariants');
     });
 
     it('H1 should NOT have initial="hidden" (would start invisible)', () => {
@@ -59,6 +72,30 @@ describe('pSEO Hero LCP — Phase 3 fix', () => {
       expect(h1TagMatch).not.toBeNull();
       const h1Tag = h1TagMatch![0];
       expect(h1Tag).not.toContain('initial=');
+
+      const localeH1TagMatch = localeSource.match(/<h1[^>]*>/);
+      expect(localeH1TagMatch).not.toBeNull();
+      const localeH1Tag = localeH1TagMatch![0];
+      expect(localeH1Tag).not.toContain('initial=');
+    });
+
+    it('localized intro paragraph should NOT be wrapped in framer-motion (plain <p>)', () => {
+      expect(localeSource).not.toContain('<motion.p');
+    });
+
+    it('English intro paragraph should NOT be wrapped in framer-motion (plain <p>)', () => {
+      expect(source).not.toContain('<motion.p');
+    });
+
+    it('English HeroSection preserves badge -> intro -> CTA order in source', () => {
+      const badgePos = source.indexOf('AI-Powered Tool');
+      const introPos = source.indexOf('{intro}');
+      const ctaPos = source.indexOf('{ctaText}');
+      expect(badgePos).toBeGreaterThan(-1);
+      expect(introPos).toBeGreaterThan(-1);
+      expect(ctaPos).toBeGreaterThan(-1);
+      expect(badgePos).toBeLessThan(introPos);
+      expect(introPos).toBeLessThan(ctaPos);
     });
   });
 
@@ -70,30 +107,23 @@ describe('pSEO Hero LCP — Phase 3 fix', () => {
       // We match only the property assignment form (key: value), not comments.
       expect(source).not.toMatch(/delayChildren\s*:/);
     });
-
-    it('should still have staggerChildren for badge/intro/CTA animation', () => {
-      // The remaining children (badge, intro, CTA) still animate in with stagger
-      // for visual polish — this should be preserved.
-      expect(source).toContain('staggerChildren');
-    });
   });
 
   describe('H1 is rendered outside the motion.div container', () => {
     it('should have the plain <h1 before the <motion.div animation container', () => {
-      const h1Pos = source.indexOf('<h1 ');
-      const motionDivPos = source.indexOf('<motion.div');
-
-      expect(h1Pos).toBeGreaterThan(-1);
-      expect(motionDivPos).toBeGreaterThan(-1);
-      // H1 must appear in the source before the animated motion.div that wraps
-      // badge/intro/CTA — this confirms H1 is outside that container.
-      expect(h1Pos).toBeLessThan(motionDivPos);
+      const localeH1Pos = localeSource.indexOf('<h1 ');
+      const localeMotionDivPos = localeSource.indexOf('<motion.div');
+      expect(localeH1Pos).toBeGreaterThan(-1);
+      expect(localeMotionDivPos).toBeGreaterThan(-1);
+      expect(localeH1Pos).toBeLessThan(localeMotionDivPos);
     });
 
     it('the outer wrapper div should NOT be a motion.div', () => {
       // The outermost container inside <section> should be a plain <div> so nothing
       // hides the H1 at the container level either.
-      const sectionContentMatch = source.match(/<section[^>]*>[\s\S]*?<AmbientBackground[^/]*\/>\s*\n\s*(<[^\s>]+)/);
+      const sectionContentMatch = source.match(
+        /<section[^>]*>[\s\S]*?<AmbientBackground[^/]*\/>\s*\n\s*(<[^\s>]+)/
+      );
       if (sectionContentMatch) {
         const firstElement = sectionContentMatch[1];
         // The element directly after AmbientBackground should be a plain <div, not <motion.div
@@ -103,6 +133,8 @@ describe('pSEO Hero LCP — Phase 3 fix', () => {
         // Fallback: verify the source has a plain <div after AmbientBackground
         expect(source).toMatch(/<AmbientBackground[^/]*\/>\s*\n\s*<div /);
       }
+
+      expect(localeSource).toMatch(/<AmbientBackground[^/]*\/>\s*\n\s*<div /);
     });
   });
 

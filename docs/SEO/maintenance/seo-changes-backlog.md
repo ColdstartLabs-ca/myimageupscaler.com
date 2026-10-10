@@ -3129,6 +3129,10 @@ Fixed with `lib/blog/revalidate-blog-paths.ts`, which spells out the locale segm
 
 Note: `CLOUDFLARE_API_TOKEN` in the production secret returns `Authentication error` on a targeted `purge_cache` call, so a per-URL purge was not available as a workaround. Worth rotating that token with purge scope.
 
+### pSEO hero: intro paragraph no longer hidden until hydration — 2026-10-07
+
+Perf-only change, no copy, title, H1 or metadata edits. `app/(pseo)/.../HeroSection.tsx` (English, all pSEO templates incl. `/tools/*`) shipped the intro `<p>` inside a framer-motion container with inline `opacity:0` until hydration, so it painted late. Under Slow-4G + 4x CPU throttling on the live tool page the intro became the LCP element in 1 of 5 runs at ~6.8s (vs LCP = FCP ~3.4-4.4s when visible; 5/5 runs after forcing it visible). The intro is now a plain `<p>`; badge and CTA keep their entrance animation and the visual order (h1, badge, intro, CTA) is unchanged and asserted. `app/[locale]/(pseo)/.../HeroSection.tsx` (localized routes) additionally had the H1 itself gated and now renders H1 and intro as plain elements. Guarded by `tests/unit/seo/pseo-hero-lcp.unit.spec.ts` and `tests/e2e/performance/web-vitals-fixes.e2e.spec.ts`. Post-deploy readback: PSI mobile on `/tools/ai-image-upscaler` (baseline score 71-74, LCP 5.5-7.1s) and one localized tool URL.
+
 ### Review of `b960b7b3` (PRD 3) — three defects fixed
 
 - **Missing-translation errors on every render.** `BlogCTA` computed `t('printReadiness.title')` and `t('printReadiness.description')` _before_ the `printReadiness` early return, and `blog.cta.printReadiness` does not exist. Confirmed by render probe: two `IntlError: MISSING_MESSAGE` per render. The page did not crash, but the noise would have started the moment the poster marker went live. Fixed by returning before the lookups.
