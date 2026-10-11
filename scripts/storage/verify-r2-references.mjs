@@ -430,6 +430,7 @@ export async function verifyR2References({
   }
 
   const publicFetch = publicReadbackFetch(fetchFn);
+  let sourceETagUnbound = 0;
 
   for (const batch of chunk([...entries.values()], batchSize)) {
     const sourceRows = batch.map(entry => ({
@@ -438,7 +439,8 @@ export async function verifyR2References({
       sha256: entry.sha256,
       bytes: entry.bytes,
     }));
-    await verifyFrozenArtifacts({ runDir: freshIdentity.runDir, rows: sourceRows });
+    const sourceProof = await verifyFrozenArtifacts({ runDir: freshIdentity.runDir, rows: sourceRows });
+    sourceETagUnbound += sourceProof.etagUnbound;
     await verifyRemoteBatch({ identity: freshIdentity, rows: sourceRows, runner });
     for (const entry of batch) {
       await readbackVerify({
@@ -492,6 +494,7 @@ export async function verifyR2References({
     verified_count: verified.length,
     target_count: entries.size,
     missing_count: missing.length,
+    source_etag_unbound: sourceETagUnbound,
     verified: Object.freeze(verified.map(ref => Object.freeze({ ...ref }))),
     missing: Object.freeze(missing.map(item => Object.freeze({ ...item }))),
     plan: Object.freeze(plan),

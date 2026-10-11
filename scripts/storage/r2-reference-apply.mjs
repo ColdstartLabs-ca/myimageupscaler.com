@@ -267,6 +267,9 @@ export async function runReferenceApply({
   if (!current || current.ok !== true || current.missing_count !== 0) {
     throw new Error(`Current reference verification failed: missing_count=${current?.missing_count ?? 'unknown'}`);
   }
+  if (current.source_etag_unbound !== 0) {
+    throw new Error(`Current source eTag proof is incomplete: unbound=${current.source_etag_unbound ?? 'unknown'}`);
+  }
   if (current.plan_sha256 !== rawSha256) throw new Error('Current plan digest does not match the frozen plan');
   if (!isDeepEqual(current.plan, plan)) throw new Error('Current plan does not match the frozen plan');
 

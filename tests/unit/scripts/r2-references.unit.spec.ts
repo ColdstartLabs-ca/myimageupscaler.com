@@ -229,6 +229,7 @@ describe('r2-references: verifyR2References', () => {
 
     expect(result.ok).toBe(true);
     expect(result.missing_count).toBe(0);
+    expect(result.source_etag_unbound).toBe(2);
     expect(result.verified_count).toBeGreaterThan(0);
     expect(r2.gets).toContain('/miu-private/saved/user/aaa.png');
     expect(r2.gets).toContain('/miu-public/posts/bbb.jpg');
