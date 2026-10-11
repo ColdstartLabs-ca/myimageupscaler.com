@@ -3,6 +3,8 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { pathToFileURL } from 'node:url';
 
 import * as migration from '../../../scripts/storage/migrate-r2.mjs';
 
@@ -320,6 +322,79 @@ describe('r2-migration: runMigrationCopy', () => {
     const identity = await loadIdentity(run.runDir);
     return { run, identity };
   }
+
+  it.each([200, 412, 502])('handles HTTP %s while streaming the file upload', async status => {
+    const object = makeObject(INPUT_BUCKET, 'user/early.png', 'x'.repeat(8 * 1024 * 1024));
+    const { run } = await setup([object]);
+    const script = `
+      import assert from 'node:assert/strict';
+      import { createHash } from 'node:crypto';
+      import { createServer } from 'node:http';
+      import { readFileSync, rmSync } from 'node:fs';
+      import fs from 'node:fs';
+      import { syncBuiltinESMExports } from 'node:module';
+      import { setTimeout as delay } from 'node:timers/promises';
+      import { runMigrationCopy } from ${JSON.stringify(pathToFileURL(path.resolve('scripts/storage/migrate-r2.mjs')).href)};
+      import { loadBackupIdentity } from ${JSON.stringify(pathToFileURL(path.resolve('scripts/storage/backup-verification.mjs')).href)};
+      const runDir = ${JSON.stringify(run.runDir)};
+      const identity = await loadBackupIdentity(runDir);
+      const bytes = readFileSync(${JSON.stringify(path.join(run.runDir, INPUT_BUCKET, object.row.path))});
+      const streams = [];
+      const createReadStream = fs.createReadStream;
+      fs.createReadStream = (...args) => {
+        const stream = createReadStream(...args);
+        streams.push(stream);
+        return stream;
+      };
+      syncBuiltinESMExports();
+      let puts = 0;
+      const server = createServer(async (request, response) => {
+        if (request.method === 'PUT') {
+          puts++;
+          assert.equal(request.headers['if-none-match'], '*');
+          assert.equal(request.headers['content-length'], String(bytes.length));
+          assert.equal(request.headers['content-type'], 'image/png');
+          if (${status} === 200) {
+            let received = 0;
+            const hash = createHash('sha256');
+            for await (const chunk of request) { received += chunk.length; hash.update(chunk); }
+            assert.equal(received, bytes.length);
+            assert.equal(hash.digest('hex'), ${JSON.stringify(object.row.sha256)});
+          }
+          response.writeHead(${status});
+          response.end('early response');
+          request.resume();
+        } else { response.writeHead(200); response.end(bytes); }
+      });
+      await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+      const url = 'http://127.0.0.1:' + server.address().port + '/object';
+      const runner = async (_command, args, options = {}) => args[1].includes('sha256sum -c -')
+        ? options.input.split('\\n').filter(Boolean).map(line => line.replace(/^[0-9a-f]{64} {2}/, '') + ': OK').join('\\n')
+        : identity.manifestSha256 + '  manifest.jsonl\\n';
+      try {
+        for (let index = 0; index < 12; index++) {
+          const copy = runMigrationCopy({ identity, signing: ${JSON.stringify(SIGNING)}, runner,
+            presignPut: async () => url, presignGet: async () => url,
+            fetchFn: index === 0 && ${status} !== 200 ? async (_url, init) => {
+              if (init.method === 'PUT') { puts++; return new Response('early', { status: ${status} }); }
+              return new Response(bytes);
+            } : fetch });
+          if (${status} === 502) await assert.rejects(copy, /PUT failed.*HTTP 502/);
+          else assert.equal((await copy).receipt.object_count, 1);
+          await delay(20);
+          assert(streams.every(stream => stream.destroyed), 'Early response leaked an open input file stream');
+          rmSync(runDir + '/r2-migration-checkpoint.json', { force: true });
+        }
+        assert.equal(puts, 12);
+      } finally { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); }
+    `;
+    const result = spawnSync(process.execPath, ['--input-type=module', '-e', script], {
+      encoding: 'utf8', timeout: 30_000,
+    });
+    expect(result.error).toBeUndefined();
+    expect(result.stderr).toBe('');
+    expect(result.status).toBe(0);
+  }, 35_000);
 
   it('copies every object, read-back verified, and publishes a receipt', async () => {
     const { saved, blog, input, run } = threeBucketBackup(root);

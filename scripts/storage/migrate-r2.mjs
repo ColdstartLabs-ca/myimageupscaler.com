@@ -597,18 +597,24 @@ export async function runMigrationCopy({
         expiresSeconds: resolvedSigning.expiresSeconds,
       });
 
-      const putResponse = await fetchFn(putUrl, {
-        method: 'PUT',
-        headers: {
-          'content-type': entry.contentType,
-          'content-length': String(entry.bytes),
-          'if-none-match': '*',
-        },
-        body: Readable.toWeb(createReadStream(localPath)),
-        duplex: 'half',
-        redirect: 'error',
-        signal: AbortSignal.timeout(READBACK_TIMEOUT_MS),
-      });
+      const upload = createReadStream(localPath);
+      let putResponse;
+      try {
+        putResponse = await fetchFn(putUrl, {
+          method: 'PUT',
+          headers: {
+            'content-type': entry.contentType,
+            'content-length': String(entry.bytes),
+            'if-none-match': '*',
+          },
+          body: upload,
+          duplex: 'half',
+          redirect: 'error',
+          signal: AbortSignal.timeout(READBACK_TIMEOUT_MS),
+        });
+      } finally {
+        upload.destroy();
+      }
 
       if (putResponse.status !== 412 && !putResponse.ok) {
         throw new Error(`PUT failed for ${targetId}: HTTP ${putResponse.status}`);
