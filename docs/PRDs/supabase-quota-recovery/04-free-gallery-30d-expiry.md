@@ -39,9 +39,9 @@
 - [ ] AC-4 [shared]: The first scheduled run after deploy logs counts (warned, deleted, failed: 0), and its `last_success_at` (from PRD-SQR-03) is updated. proof: cron worker logs. Evidence: pending.
 - [ ] AC-5 [local]: The gallery page and the terms state the retention rule, and the free-offer protection tests pass. proof: `yarn test tests/unit/seo/free-offer-conversion-copy.unit.spec.ts tests/unit/seo/protected-pages.unit.spec.ts`. Evidence: pending.
 
-## Blocked on
+## Remaining activation gates
 
-- The deploy needs João's go. Ping: `Project: MIU quota. Blocker: gallery-expiry deploy ready. Action: reply go or stop.`
+- João has authorized deployment and continued execution. Automatic expiry remains disabled until per-image desktop/laptop backup registration, immutable recovery-copy proof, and scheduled warning/delivery verification pass. The paused production cron must not be replaced until those safety gates are satisfied.
 
 ## Integration Ledger
 
@@ -79,6 +79,6 @@
 
 - Integration now dispatches to the verified executor only when the strictly parsed `GALLERY_EXPIRY_ENABLED` flag is true; its default and example are false. Executor failures return cron 500 and do not record success. Deployment allowlist carries the flag without changing any real secret. Missing registry proof keeps every image. The actual R2 recovery-copy smoke and operator go are still mandatory before enabling it.
 
-- Production safety distinction (2026-10-11): expiry is disabled by default only in this prepared implementation. The legacy production cron schedules are still installed. A separate cron-only safety pause (`04d59656`, sibling `supabase-quota-recovery` checkout) has passed 40 focused tests, `yarn verify`, and Wrangler dry-run, but is not deployed. It pauses gallery and temporary-input cleanup without an app/schema rollout. Keep that pause until the guarded app and its required migrations are deployed; only then replace the worker with this lane's warning-first handler. Actual expiry still requires verified per-image two-copy backup registration, real R2 platform proof, and an explicit enable/deploy decision.
+- Production safety state (verified 2026-10-11): cron Worker `fd509583-a496-45ec-9248-ef798efefbb6`, deployment prefix `2c76fc18`, is deployed at 100% and its actual module pauses gallery and temporary-input cleanup before dispatch. All 11 schedules remain installed. The main app rollout to `7d7bd068-dcac-467a-ba9c-7c697fbcf12e` preserved that exact cron version and pause. Automatic expiry remains disabled. Keep the pause until per-image verified two-copy backup registration, immutable recovery-copy proof, and warning-first scheduled execution are verified; app deployment alone does not enable deletion.
 
 - 2026-10-11 review fix (local only): warning candidates now require a current saved image; deleting the last image makes a pending warning stale before the bounded cancellation limit. Existing policy fixtures now explicitly contain old gallery images, so paid/activity/delivery assertions still exercise their original predicates. Both regressions failed before the SQL change and pass afterward; the 20-case real PostgreSQL warning suite and 17-case expiry registry suite pass. Production rollout remains gated.
