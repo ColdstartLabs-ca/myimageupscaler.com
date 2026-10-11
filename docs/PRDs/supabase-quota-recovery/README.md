@@ -26,6 +26,10 @@ The Supabase org (MIU + AutopilotRank) went over the Free quota on 2026-10-09. T
 | Backup targets     | Desktop `~/backups/miu-storage/<run-id>/`. Laptop `joao@192.168.1.126:~/backups/miu-storage/<run-id>/` (SSH key auth; see the `laptop-offload` skill).                                                                                                                                                                                                                               |
 | Ping João          | `python3 ~/.claude/skills/attention-ping/scripts/ping_attention.py --title "Claude needs your attention" --message "Project: MIU quota. Blocker: <one line>. Action: <exact reply>."` Send it only at a go-gate, and only when no other safe work is left. Quiet hours 23:00–09:00 are deferred by the script.                                                                       |
 
+## Scope clarification (2026-10-11, João)
+
+Preserve the existing state and clean up junk. Pre-existing missing content does not require restoration to complete cleanup. This supersedes earlier absolute zero-missing requirements only for the exact known blog reference above; it does not waive backup verification, overwrite/concurrency safeguards, or authorize deleting retained customer content. Existing runtime guards remain fail-closed until they can enforce this precise baseline exception.
+
 ## Execution timeline
 
 | When            | Work                                                                                                                                                 | Gate                                 |
@@ -40,7 +44,7 @@ The Supabase org (MIU + AutopilotRank) went over the Free quota on 2026-10-09. T
 
 1. **Local backup first.** Before a script deletes or moves a Storage object, it writes the object to `~/backups/miu-storage/<run-id>/` plus a manifest (`path, bytes, sha256, bucket, db_reference`). Run `sha256sum -c` against the manifest before going on.
 2. **Copy, verify, then delete.** A migration copies to R2, reads back each object, and compares the sha256 with the manifest. A Supabase delete runs only for objects whose R2 hash matches.
-3. **No DB row may point at a missing object.** After each run, a check script resolves every `saved_images` path and blog image URL against the new store. The result must be `0 missing`.
+3. **No new missing objects.** After each run, resolve every `saved_images` path and blog image URL against the new store. Preserve every object that exists at the baseline with matching bytes. João accepted the already-missing blog object `2026/01/1769887240667-tools-inline-1.webp` for post `b26a2f86-ec30-40d0-8a33-bca21bfb7417` as a follow-up on 2026-10-11; leave its reference unchanged and report it separately. No other missing reference is exempt.
 4. **Deletes come from a frozen manifest only.** No prefix or bucket-wide delete. The script checks eligibility again just before the delete.
 5. **Bounded and resumable.** Batches of 50 or fewer. A failed batch stops the run. The DB row is never deleted before Storage confirms the delete.
 6. **Retain backups** for 30 days after the last verification in this set passes.

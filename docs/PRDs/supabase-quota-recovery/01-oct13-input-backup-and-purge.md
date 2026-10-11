@@ -40,7 +40,7 @@ Run `yarn db:backup` before the purge, as the repository's production-safety rul
 - [ ] AC-4 [local]: After the purge, every purge-manifest path is absent. `upscale-inputs` falls by about 4.25 GB (re-measured with the audit inventory query). proof: `purge-result.json` and the inventory query. Evidence: pending.
 - [ ] AC-5 [local]: `plan-expire` selects only free users inactive for 30 days, including persistent-session refreshes, recent gallery saves and credit reservations. It excludes paid users and users who purchased credits. `expire` deletes a row only after its object is confirmed absent. proof: `yarn test tests/unit/scripts/storage-purge.unit.spec.ts`. Evidence: partial — spec covers `expire` ordering (object removed and confirmed absent before row delete), refusal without `--confirm`, and skipping a row whose object is still present. A read-only production plan selected 1,351 rows across 1,113 users; its identical desktop/laptop SHA is recorded below. Live deletion and concurrent Storage replacement proof remain pending.
 - [ ] AC-6 [local]: After the gallery purge, the expired users' objects are absent. Their rows exist in `expire-rows.jsonl`, and every object hash is in the verified backup. No row of an eligible user saved after the freeze was touched. proof: `expire-result.json` and a row count query. Evidence: pending.
-- [ ] AC-7 [local]: After both purges, `verify-integrity` reports `missing: 0` for `saved_images` and blog images. proof: `verify-integrity` output. Evidence: pending.
+- [ ] AC-7 [local]: After both purges, `verify-integrity` reports no newly missing `saved_images` or blog references, with only the exact pre-existing missing blog reference in the parent safety contract reported separately. proof: `verify-integrity` output. Evidence: pending.
 
 ## Blocked on
 
@@ -50,7 +50,7 @@ Run `yarn db:backup` before the purge, as the repository's production-safety rul
 
 ## Baseline integrity (read-only, 2026-10-10)
 
-`verify-integrity` checked 1,764 gallery/blog references and reported one missing blog object before any production mutation: `blog-images/2026/01/1769887240667-tools-inline-1.webp`, used by `best-image-upscaling-tools-2026`. Git history (`e15b8c03`, SEO audit) already identified that broken URL. The existing object `2026/01/1769887231945-tools-inline-1.webp` downloaded successfully and visually shows an AI upscaling comparison; it is a candidate correction, not a proven byte-identical recovery. No URL or object was changed. AC-7 remains open until the reference is resolved and the complete check passes.
+`verify-integrity` checked 1,764 gallery/blog references and reported one missing blog object before any production mutation: `blog-images/2026/01/1769887240667-tools-inline-1.webp`, used by `best-image-upscaling-tools-2026`. Git history (`e15b8c03`, SEO audit) already identified that broken URL. The existing object `2026/01/1769887231945-tools-inline-1.webp` downloaded successfully and visually shows an AI upscaling comparison; it is a candidate correction, not a proven byte-identical recovery. No URL or object was changed. João accepted this exact pre-existing missing reference as a follow-up on 2026-10-11. AC-7 requires no new missing references; restoration of this image is no longer required. Runtime enforcement of the precise exception remains pending.
 
 ## Integration Ledger
 

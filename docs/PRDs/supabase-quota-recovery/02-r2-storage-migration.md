@@ -38,7 +38,7 @@ Existing pieces: `aws4fetch` is already in `package.json:203` but unused. `wrang
   1. Copy every object from the verified PRD-SQR-01 backup to R2. Read each object back and compare its sha256 with the manifest.
   2. Deploy the R2 code. New writes now go to R2.
   3. Delta copy: objects that Supabase created after the backup listing are copied and verified the same way.
-  4. `verify-integrity --store r2`: every `saved_images` row and every blog URL must resolve on R2 with the same hash. Required result: `missing: 0`.
+  4. `verify-integrity --store r2`: every `saved_images` row and every blog URL must resolve on R2 with the same hash. Required result: no newly missing references and no hash mismatch; the exact pre-existing missing blog reference in the parent safety contract remains unchanged and is reported separately.
   5. Delete from Supabase, from a frozen manifest only, in batches of 50 or fewer. Every deleted object must have a matching R2 hash.
 
   Between steps 2 and 3, a few minutes of new saves can show as broken thumbnails. No data is lost, because the Supabase object is not deleted until step 5.
@@ -51,7 +51,7 @@ Existing pieces: `aws4fetch` is already in `package.json:203` but unused. `wrang
 - [ ] AC-3 [local]: Uploading a blog image returns a URL on the R2 custom domain, and `next/image` renders it. proof: a blog image upload test. Evidence: pending.
 - [ ] AC-4 [local]: `grep -rn "storage.from(" app server client` returns 0 matches. The input sweeper route and schedule are removed, and `scripts/check-cron-setup.mjs` passes. proof: grep plus `node scripts/check-cron-setup.mjs`. Evidence: pending.
 - [ ] AC-5 [local]: The R2 copy matches the backup manifest. Every object's read-back sha256 matches, and the count equals saved-images + blog-images + the delta. proof: `backup-and-purge.mjs migrate-r2` output. Evidence: pending.
-- [ ] AC-6 [local]: `verify-integrity --store r2` reports `missing: 0, hash_mismatch: 0` for all `saved_images` rows and all blog URLs. proof: script output. Evidence: pending.
+- [ ] AC-6 [local]: `verify-integrity --store r2` reports no newly missing references and `hash_mismatch: 0` for all `saved_images` rows and all blog URLs, with only the exact parent-contract baseline exception reported separately. proof: script output. Evidence: pending.
 - [ ] AC-7 [local]: After the Supabase delete, the total of the three Supabase buckets is less than 50 MB. The R2 lifecycle rule on `inputs/` is active. proof: the audit inventory query plus `wrangler r2 bucket lifecycle list miu-private`. Evidence: pending.
 
 ## Blocked on
@@ -222,3 +222,7 @@ Executable `/home/joao/.cache/miu-quota-temp/native-ordered-fence-probe.mjs`, SH
 - Rebuilt successfully with a real worktree-local dependency directory. The resulting handler now contains OpenNext’s `getMiddlewareManifest(){return null}` patch, confirming the linked dependency trace caused the runtime failure. Ran this exact built Worker locally under Wrangler/workerd with production bindings: `/api/health` returned 200, database passed; cron freshness correctly reported missing success records as degraded. No production data mutation occurred in this check. Publishing the corrected build remains the next gate.
 
 - Corrected production rollout completed via staged Worker versions: `9290783f-9c18-490b-a893-048e818410e8`, 100% traffic. Before activation, verified required secret, R2, Durable Object and self-reference binding names on that exact version. All 4,570 cache objects uploaded. Live health returned 200 with passing database connectivity and correctly degraded missing cron records. Full deployment verification returned 0: remote cron schedules, anonymous HTML cache, provider-health authentication, webhook signature, recovery dry-run, no-send email readiness, subscription reconciliation, and both checkout smoke tests passed. Production browser R2 canary passed homepage 200, upload 200, duplicate overwrite 412, readback 200 with exact SHA, and owned-object cleanup verified 404. This proves direct browser R2/CSP/CORS behavior; source reference cutover and full authenticated provider canary remain separate gates.
+
+## Scope clarification (2026-10-11, João)
+
+Preserve the current state and remove junk. The original missing blog image `2026/01/1769887240667-tools-inline-1.webp` for post `b26a2f86-ec30-40d0-8a33-bca21bfb7417` is accepted as a follow-up, superseding historical notes that made its restoration a cleanup blocker. Keep that reference unchanged; do not substitute a different image or exempt any other missing object. Native source fencing and deletion safety remain required. The operator still refuses this missing reference today: precise exception handling is pending, and no runtime safety flag was bypassed.
