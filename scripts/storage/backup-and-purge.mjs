@@ -31,7 +31,16 @@ import path from 'node:path';
 import { Readable, Transform } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { pathToFileURL } from 'node:url';
-import { loadBackupIdentity, loadFrozenPlan, normalizeSourceStore, verifyFrozenArtifacts, verifyRemoteBatch } from './backup-verification.mjs';
+import {
+  compareSourceETag,
+  createETagHasher,
+  loadBackupIdentity,
+  loadFrozenPlan,
+  normalizeSourceStore,
+  parseSourceETag,
+  verifyFrozenArtifacts,
+  verifyRemoteBatch,
+} from './backup-verification.mjs';
 
 // =============================================================================
 // Configuration
@@ -543,28 +552,16 @@ function sha256OfText(text) {
   return createHash('sha256').update(text).digest('hex');
 }
 
-async function streamHashFile(filePath) {
+/** Stream-hash a file. An `etagHasher` adds the source eTag digest in the same pass. */
+async function streamHashFile(filePath, etagHasher = null) {
   const hash = createHash('sha256');
-  const md5 = createHash('md5');
   let bytes = 0;
   for await (const chunk of createReadStream(filePath)) {
     hash.update(chunk);
-    md5.update(chunk);
+    if (etagHasher) etagHasher.update(chunk);
     bytes += chunk.length;
   }
-  return { sha256: hash.digest('hex'), md5: md5.digest('hex'), bytes };
-}
-
-const SINGLE_PART_ETAG_RE = /^(?:"([0-9a-f]{32})"|([0-9a-f]{32}))$/;
-
-/**
- * Content MD5 of a single-part Storage/S3 eTag, or null. A multipart
- * (`<hex>-<parts>`), weak, empty or malformed eTag is not a content MD5.
- */
-export function singlePartETagMd5(etag) {
-  if (typeof etag !== 'string') return null;
-  const match = SINGLE_PART_ETAG_RE.exec(etag);
-  return match ? (match[1] ?? match[2]) : null;
+  return { sha256: hash.digest('hex'), bytes, etag: etagHasher ? etagHasher.digest() : null };
 }
 
 /** Canonical identity of one listed object: full identity, not only a count. */
@@ -750,17 +747,21 @@ export async function assertSafeArtifactPath(backupRoot, bucket, objectPath) {
 /**
  * Stream one Storage object to disk over authenticated HTTP. Writes a private
  * temp file, hashes while streaming, and renames only after the byte count is
- * exact and, when `expectedETag` is given, the streamed MD5 equals that source
- * eTag. A CDN can serve stale bytes of the same length, so the byte count alone
- * does not bind the bytes to the source. An unsupported eTag fails before any
- * fetch; `undefined` keeps the If-Match contract of the R2 caller. A failed
- * stream or check leaves the unverified temp file and never creates the artifact.
+ * exact and, when `expectedETag` is given, the streamed digest equals that
+ * source eTag: the content MD5 of a single-part object, or the multipart eTag of
+ * the Supabase 5 MiB layout. A CDN can serve stale bytes of the same length, so
+ * the byte count alone does not bind the bytes to the source. An unsupported
+ * eTag fails before any fetch; `undefined` keeps the If-Match contract of the R2
+ * caller. A failed stream or check leaves the unverified temp file and never
+ * creates the artifact.
  */
 export async function streamDownloadToFile({
   url, headers, targetPath, expectedBytes, expectedETag, fetchFn = fetch,
 }) {
-  const expectedMd5 = expectedETag === undefined ? undefined : singlePartETagMd5(expectedETag);
-  if (expectedMd5 === null) {
+  const expected = expectedETag === undefined
+    ? undefined
+    : parseSourceETag(expectedETag, expectedBytes == null ? undefined : Number(expectedBytes));
+  if (expected === null) {
     throw new Error(`Unsupported source eTag for ${targetPath}: ${JSON.stringify(expectedETag)}`);
   }
   const response = await fetchFn(url, { headers });
@@ -769,12 +770,12 @@ export async function streamDownloadToFile({
   }
   const tmp = `${targetPath}.part.${process.pid}.${Date.now()}.${(atomicTmpCounter += 1)}`;
   const hash = createHash('sha256');
-  const md5 = createHash('md5');
+  const etagHasher = createETagHasher();
   let bytes = 0;
   const hashing = new Transform({
     transform(chunk, _encoding, callback) {
       hash.update(chunk);
-      md5.update(chunk);
+      etagHasher.update(chunk);
       bytes += chunk.length;
       callback(null, chunk);
     },
@@ -785,12 +786,15 @@ export async function streamDownloadToFile({
   if (expectedBytes != null && bytes !== Number(expectedBytes)) {
     throw new Error(`Byte size mismatch for ${targetPath}: expected ${expectedBytes}, got ${bytes}`);
   }
-  const streamedMd5 = md5.digest('hex');
-  if (expectedMd5 !== undefined && streamedMd5 !== expectedMd5) {
-    throw new Error(`Source eTag mismatch for ${targetPath}: expected ${expectedMd5}, got ${streamedMd5}`);
+  const digest = etagHasher.digest();
+  if (expected !== undefined) {
+    const check = compareSourceETag(expected, digest);
+    if (!check.ok) {
+      throw new Error(`Source eTag mismatch for ${targetPath}: expected ${check.expected}, got ${check.actual}`);
+    }
   }
   await fs.rename(tmp, targetPath);
-  return { sha256: hash.digest('hex'), md5: streamedMd5, bytes };
+  return { sha256: hash.digest('hex'), md5: digest.md5, bytes };
 }
 
 /**
@@ -1005,7 +1009,9 @@ async function runBackupBody({
           // A Supabase listing carries the source content eTag. Reuse then needs
           // the cached bytes to match it, not only a checkpoint SHA that a stale
           // CDN read could have produced. R2 listings bind downloads with If-Match.
-          const expectedMd5 = object.etag === undefined ? undefined : singlePartETagMd5(object.etag);
+          const expectedETag = object.etag === undefined
+            ? undefined
+            : parseSourceETag(object.etag, Number(object.bytes) || 0);
           const entry = checkpoint.downloaded[key];
           const sameSource =
             entry &&
@@ -1016,13 +1022,16 @@ async function runBackupBody({
             Number(entry.bytes) === (Number(object.bytes) || 0) &&
             (entry.version ?? null) === (object.id ?? null) &&
             (entry.source_version ?? null) === (object.version ?? null);
-          if (sameSource && expectedMd5 !== null) {
+          if (sameSource && expectedETag !== null) {
             try {
-              const hashed = await streamHashFile(targetPath);
+              const hashed = await streamHashFile(
+                targetPath,
+                expectedETag === undefined ? null : createETagHasher()
+              );
               if (
                 hashed.sha256 === entry.sha256 &&
                 hashed.bytes === entry.bytes &&
-                (expectedMd5 === undefined || hashed.md5 === expectedMd5)
+                (expectedETag === undefined || compareSourceETag(expectedETag, hashed.etag).ok)
               ) {
                 sha256 = hashed.sha256;
                 bytes = hashed.bytes;

@@ -15,6 +15,8 @@ const {
   verifyFrozenArtifacts,
   buildBatchChecksumInput,
   verifyRemoteBatch,
+  parseSourceETag,
+  createETagHasher,
 } = verificationModule as any;
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -442,6 +444,315 @@ describe('backup-verification: verifyFrozenArtifacts', () => {
     await expect(verifyFrozenArtifacts({ runDir, rows: [a.row] })).rejects.toThrow(
       /Symlink escape/
     );
+  });
+});
+
+const PART_BYTES = 5 * 1024 * 1024;
+
+function md5Hex(value: Buffer): string {
+  return crypto.createHash('md5').update(value).digest('hex');
+}
+
+/** S3-style multipart eTag: MD5 of the concatenated binary part MD5s plus the part count. */
+function multipartEtag(value: Buffer, partBytes = PART_BYTES): string {
+  const digests: Buffer[] = [];
+  for (let offset = 0; offset < value.length; offset += partBytes) {
+    digests.push(
+      crypto.createHash('md5').update(value.subarray(offset, offset + partBytes)).digest()
+    );
+  }
+  return `${md5Hex(Buffer.concat(digests))}-${digests.length}`;
+}
+
+function patterned(size: number, seed: number): Buffer {
+  const buffer = Buffer.alloc(size);
+  for (let index = 0; index < size; index += 1) buffer[index] = (index * 31 + seed) & 0xff;
+  return buffer;
+}
+
+describe('backup-verification: source eTag parsing and streaming digest', () => {
+  const HEX = 'a'.repeat(32);
+
+  it.each([
+    [`"${HEX}"`, { md5: HEX, parts: null }],
+    [HEX, { md5: HEX, parts: null }],
+    [`"${HEX}-1"`, { md5: HEX, parts: 1 }],
+    [`${HEX}-37`, { md5: HEX, parts: 37 }],
+    [`"${HEX}-10000"`, { md5: HEX, parts: 10000 }],
+  ])('parses supported eTag %j', (etag, expected) => {
+    expect(parseSourceETag(etag)).toMatchObject(expected);
+  });
+
+  it.each([
+    null,
+    undefined,
+    '',
+    '""',
+    '"abc"',
+    `W/"${HEX}"`,
+    `"${'A'.repeat(32)}"`,
+    `"${'a'.repeat(31)}"`,
+    `"${HEX}-0"`,
+    `"${HEX}-01"`,
+    `"${HEX}-10001"`,
+    `"${HEX}-2-3"`,
+    `"${HEX}-"`,
+    ` "${HEX}"`,
+  ])('rejects unsupported eTag %j', etag => {
+    expect(parseSourceETag(etag)).toBeNull();
+  });
+
+  it('rejects a multipart count that cannot come from the 5 MiB layout of the expected size', () => {
+    expect(parseSourceETag(`"${HEX}-2"`, PART_BYTES + 1)).not.toBeNull();
+    expect(parseSourceETag(`"${HEX}-2"`, 2 * PART_BYTES)).not.toBeNull();
+    expect(parseSourceETag(`"${HEX}-1"`, 1)).not.toBeNull();
+    expect(parseSourceETag(`"${HEX}-1"`, PART_BYTES)).not.toBeNull();
+    expect(parseSourceETag(`"${HEX}-2"`, PART_BYTES)).toBeNull();
+    expect(parseSourceETag(`"${HEX}-3"`, 2 * PART_BYTES)).toBeNull();
+    expect(parseSourceETag(`"${HEX}-1"`, 0)).toBeNull();
+    // A single-part eTag has no layout and an unknown size skips the check.
+    expect(parseSourceETag(`"${HEX}"`, 2 * PART_BYTES)).not.toBeNull();
+    expect(parseSourceETag(`"${HEX}-9"`)).not.toBeNull();
+  });
+
+  it.each([
+    ['one byte', 1],
+    ['just under one part', PART_BYTES - 1],
+    ['exactly one part', PART_BYTES],
+    ['one part plus one byte', PART_BYTES + 1],
+    ['exactly two parts', 2 * PART_BYTES],
+    ['two parts and a remainder', 2 * PART_BYTES + 17],
+  ])('streams the whole MD5 and the multipart eTag for %s regardless of chunking', (_label, size) => {
+    const payload = patterned(size, size % 251);
+    for (const chunkSize of [1_000_003, 65_536, size]) {
+      const hasher = createETagHasher();
+      for (let offset = 0; offset < payload.length; offset += chunkSize) {
+        hasher.update(payload.subarray(offset, offset + chunkSize));
+      }
+      expect(hasher.digest()).toEqual({
+        md5: md5Hex(payload),
+        multipartEtag: multipartEtag(payload),
+      });
+    }
+  });
+});
+
+describe('backup-verification: verifyFrozenArtifacts source eTag binding', () => {
+  let root: string;
+  const KEY = (bucket: string, objectPath: string) => `${bucket}::${objectPath}`;
+
+  beforeEach(() => {
+    root = fs.mkdtempSync(path.join(os.tmpdir(), 'sqr-etag-bind-'));
+  });
+
+  afterEach(() => {
+    fs.rmSync(root, { recursive: true, force: true });
+  });
+
+  function writeCheckpoint(runDir: string, downloaded: Record<string, AnyRow>, extra: AnyRow = {}) {
+    fs.writeFileSync(
+      path.join(runDir, 'backup-checkpoint.json'),
+      JSON.stringify({ downloaded, retained: {}, ...extra })
+    );
+  }
+
+  function entryFor(row: AnyRow, extra: AnyRow): AnyRow {
+    return { sha256: row.sha256, bytes: row.bytes, created_at: CREATED, updated_at: UPDATED, ...extra };
+  }
+
+  function binaryObject(bucket: string, objectPath: string, buffer: Buffer) {
+    return {
+      row: {
+        bucket,
+        path: objectPath,
+        bytes: buffer.length,
+        sha256: sha256(buffer),
+        created_at: CREATED,
+        updated_at: UPDATED,
+        db_reference: false,
+      },
+      buffer,
+    };
+  }
+
+  it('accepts bytes whose MD5 equals the checkpoint source_etag', async () => {
+    const a = makeObject(INPUT_BUCKET, 'user/aaa.png', 'bound bytes');
+    const { runDir, rows } = makeBackupRun(root, [a]);
+    writeCheckpoint(runDir, {
+      [KEY(INPUT_BUCKET, 'user/aaa.png')]: entryFor(a.row, { source_etag: `"${md5Hex(a.buffer)}"` }),
+    });
+
+    const result = await verifyFrozenArtifacts({ runDir, rows });
+    expect(result.verified).toBe(1);
+    expect(result.etagBound).toBe(1);
+    expect(result.etagUnbound).toBe(0);
+  });
+
+  it('rejects equal-length stale bytes even when the manifest SHA-256 was taken from the stale copy', async () => {
+    const stale = Buffer.from('stale-bytes-v1');
+    const current = Buffer.from('fresh-bytes-v2');
+    expect(stale.length).toBe(current.length);
+    const a = makeObject(INPUT_BUCKET, 'user/aaa.png', stale.toString());
+    const { runDir, rows } = makeBackupRun(root, [a]);
+    writeCheckpoint(runDir, {
+      [KEY(INPUT_BUCKET, 'user/aaa.png')]: entryFor(a.row, { source_etag: `"${md5Hex(current)}"` }),
+    });
+
+    await expect(verifyFrozenArtifacts({ runDir, rows })).rejects.toThrow(
+      /user\/aaa\.png: Source eTag mismatch/
+    );
+  });
+
+  it('accepts legitimate 5 MiB multipart bytes and rejects a wrong part digest or count', async () => {
+    const multi = binaryObject(GALLERY_BUCKET, 'saved/big.webp', patterned(PART_BYTES + 4096, 7));
+    const { runDir, rows } = makeBackupRun(root, [multi]);
+    const key = KEY(GALLERY_BUCKET, 'saved/big.webp');
+
+    writeCheckpoint(runDir, {
+      [key]: entryFor(multi.row, { source_etag: `"${multipartEtag(multi.buffer)}"` }),
+    });
+    await expect(verifyFrozenArtifacts({ runDir, rows })).resolves.toMatchObject({
+      verified: 1,
+      etagBound: 1,
+    });
+
+    // Same count, different part boundaries: the part digests differ.
+    writeCheckpoint(runDir, {
+      [key]: entryFor(multi.row, { source_etag: `"${multipartEtag(multi.buffer, 4 * 1024 * 1024)}"` }),
+    });
+    await expect(verifyFrozenArtifacts({ runDir, rows })).rejects.toThrow(/Source eTag mismatch/);
+
+    // A count the 5 MiB layout cannot produce is unsupported, never guessed.
+    writeCheckpoint(runDir, {
+      [key]: entryFor(multi.row, { source_etag: `"${md5Hex(multi.buffer)}-3"` }),
+    });
+    await expect(verifyFrozenArtifacts({ runDir, rows })).rejects.toThrow(/Unsupported source eTag/);
+  });
+
+  it('rejects stale multipart bytes of the same size', async () => {
+    const current = patterned(PART_BYTES + 100, 3);
+    const stale = patterned(PART_BYTES + 100, 4);
+    const multi = binaryObject(GALLERY_BUCKET, 'saved/big.webp', stale);
+    const { runDir, rows } = makeBackupRun(root, [multi]);
+    writeCheckpoint(runDir, {
+      [KEY(GALLERY_BUCKET, 'saved/big.webp')]: entryFor(multi.row, {
+        source_etag: `"${multipartEtag(current)}"`,
+      }),
+    });
+
+    await expect(verifyFrozenArtifacts({ runDir, rows })).rejects.toThrow(/Source eTag mismatch/);
+  });
+
+  it('enforces the legacy checkpoint source_version, which holds the metadata eTag', async () => {
+    const stale = Buffer.from('stale-legacy-v1');
+    const current = Buffer.from('fresh-legacy-v2');
+    const a = makeObject(INPUT_BUCKET, 'user/aaa.png', stale.toString());
+    const { runDir, rows } = makeBackupRun(root, [a]);
+    const key = KEY(INPUT_BUCKET, 'user/aaa.png');
+
+    writeCheckpoint(runDir, { [key]: entryFor(a.row, { source_version: `"${md5Hex(current)}"` }) });
+    await expect(verifyFrozenArtifacts({ runDir, rows })).rejects.toThrow(/Source eTag mismatch/);
+
+    writeCheckpoint(runDir, { [key]: entryFor(a.row, { source_version: `"${md5Hex(stale)}"` }) });
+    await expect(verifyFrozenArtifacts({ runDir, rows })).resolves.toMatchObject({ etagBound: 1 });
+  });
+
+  it('fails closed on a frozen eTag that is not a supported shape', async () => {
+    const a = makeObject(INPUT_BUCKET, 'user/aaa.png', 'bytes');
+    const { runDir, rows } = makeBackupRun(root, [a]);
+    writeCheckpoint(runDir, {
+      [KEY(INPUT_BUCKET, 'user/aaa.png')]: entryFor(a.row, {
+        source_etag: `W/"${md5Hex(a.buffer)}"`,
+      }),
+    });
+
+    await expect(verifyFrozenArtifacts({ runDir, rows })).rejects.toThrow(/Unsupported source eTag/);
+  });
+
+  it('enforces the digest-bound frozen expire plan eTag for a legacy run without checkpoint eTags', async () => {
+    const stale = Buffer.from('stale-gallery-1');
+    const current = Buffer.from('fresh-gallery-2');
+    const a = makeObject(GALLERY_BUCKET, 'saved/aaa.png', stale.toString());
+    const { runDir, rows } = makeBackupRun(root, [a]);
+    // The legacy checkpoint predates eTag capture: identity fields only.
+    writeCheckpoint(runDir, {
+      [KEY(GALLERY_BUCKET, 'saved/aaa.png')]: entryFor(a.row, { version: 'object-id' }),
+    });
+    writePlan(runDir, 'expire-rows.jsonl', 'expire-rows.digest', [
+      {
+        ...expireRow(a.row),
+        object_metadata: { eTag: `"${md5Hex(current)}"`, size: String(a.row.bytes) },
+      },
+    ]);
+    await expect(verifyFrozenArtifacts({ runDir, rows })).rejects.toThrow(/Source eTag mismatch/);
+
+    writePlan(runDir, 'expire-rows.jsonl', 'expire-rows.digest', [
+      {
+        ...expireRow(a.row),
+        object_metadata: { eTag: `"${md5Hex(stale)}"`, size: String(a.row.bytes) },
+      },
+    ]);
+    await expect(verifyFrozenArtifacts({ runDir, rows })).resolves.toMatchObject({
+      verified: 1,
+      etagBound: 1,
+    });
+  });
+
+  it('rejects a frozen expire plan whose digest does not bind its bytes', async () => {
+    const a = makeObject(GALLERY_BUCKET, 'saved/aaa.png', 'gallery bytes');
+    const { runDir, rows } = makeBackupRun(root, [a]);
+    writePlan(runDir, 'expire-rows.jsonl', 'expire-rows.digest', [
+      { ...expireRow(a.row), object_metadata: { eTag: `"${md5Hex(a.buffer)}"` } },
+    ]);
+    fs.writeFileSync(path.join(runDir, 'expire-rows.digest'), `${'0'.repeat(64)}\n`);
+
+    await expect(verifyFrozenArtifacts({ runDir, rows })).rejects.toThrow(/expire plan digest/i);
+  });
+
+  it('keeps a legacy run without any frozen eTag verifiable and reports the rows as unbound', async () => {
+    const a = makeObject(INPUT_BUCKET, 'user/aaa.png', 'legacy a');
+    const b = makeObject(INPUT_BUCKET, 'user/bbb.png', 'legacy b');
+    const { runDir, rows } = makeBackupRun(root, [a, b]);
+    writeCheckpoint(runDir, {
+      [KEY(INPUT_BUCKET, 'user/aaa.png')]: entryFor(a.row, { version: 'id-a' }),
+      [KEY(INPUT_BUCKET, 'user/bbb.png')]: entryFor(b.row, { version: 'id-b' }),
+    });
+
+    const result = await verifyFrozenArtifacts({ runDir, rows });
+    expect(result).toMatchObject({ verified: 2, etagBound: 0, etagUnbound: 2 });
+  });
+
+  it('fails closed on an unbound row once the run captured source eTags', async () => {
+    const a = makeObject(INPUT_BUCKET, 'user/aaa.png', 'bound a');
+    const b = makeObject(INPUT_BUCKET, 'user/bbb.png', 'unbound b');
+    const { runDir, rows } = makeBackupRun(root, [a, b]);
+    writeCheckpoint(runDir, {
+      [KEY(INPUT_BUCKET, 'user/aaa.png')]: entryFor(a.row, { source_etag: `"${md5Hex(a.buffer)}"` }),
+      [KEY(INPUT_BUCKET, 'user/bbb.png')]: entryFor(b.row, { source_etag: null }),
+    });
+
+    await expect(verifyFrozenArtifacts({ runDir, rows })).rejects.toThrow(
+      /user\/bbb\.png: Missing source eTag binding/
+    );
+  });
+
+  it('leaves the R2 source_store to its If-Match contract and never applies the Supabase eTag layout', async () => {
+    const big = binaryObject(GALLERY_BUCKET, 'saved/r2-big.webp', patterned(PART_BYTES + 10, 9));
+    const { runDir, rows, receipt } = makeBackupRun(root, [big]);
+    fs.writeFileSync(
+      path.join(runDir, 'backup-verification.json'),
+      JSON.stringify({ ...receipt, source_store: 'r2' }, null, 2)
+    );
+    // An R2 multipart eTag over 8 MiB parts is not the Supabase 5 MiB layout.
+    writeCheckpoint(runDir, {
+      [KEY(GALLERY_BUCKET, 'saved/r2-big.webp')]: entryFor(big.row, {
+        source_version: `"${md5Hex(big.buffer)}-2"`,
+        source_etag: null,
+      }),
+    });
+
+    const result = await verifyFrozenArtifacts({ runDir, rows });
+    expect(result).toMatchObject({ verified: 1, etagBound: 0 });
   });
 });
 

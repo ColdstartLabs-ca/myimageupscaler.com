@@ -109,11 +109,95 @@ export function assertSafeRunBasename(runBasename) {
   return runBasename;
 }
 
-async function streamHashFile(filePath) {
+/**
+ * Source eTag binding. A Supabase/S3 eTag is the content MD5 of a single-part
+ * object and `<MD5 of the concatenated binary part MD5s>-<part count>` of a
+ * multipart one. A stale CDN read can return old bytes of the same length, so
+ * only a streamed digest binds the bytes to the source.
+ *
+ * Known limit: only the proven Supabase 5 MiB part layout is recomputed. Every
+ * other multipart layout rejects. Upgrade when the real source part boundaries
+ * are available.
+ */
+export const SUPABASE_ETAG_PART_BYTES = 5 * 1024 * 1024;
+const MAX_ETAG_PARTS = 10000;
+const SOURCE_ETAG_REGEX =
+  /^(?:"([0-9a-f]{32})(?:-([1-9][0-9]*))?"|([0-9a-f]{32})(?:-([1-9][0-9]*))?)$/;
+const ETAG_SHAPED_REGEX = /^(?:W\/)?"?[0-9a-f]{32}/i;
+
+/**
+ * Parse a supported source eTag into `{ md5, parts }`, or return null. `md5` is
+ * the hex digest of the eTag and `parts` is null for a single-part eTag. Weak,
+ * empty, uppercase, short or malformed values are unsupported. With
+ * `expectedBytes`, a part count that the 5 MiB layout cannot produce for that
+ * size is unsupported as well.
+ */
+export function parseSourceETag(etag, expectedBytes) {
+  if (typeof etag !== 'string') return null;
+  const match = SOURCE_ETAG_REGEX.exec(etag);
+  if (!match) return null;
+  const partsText = match[2] ?? match[4];
+  const parts = partsText === undefined ? null : Number(partsText);
+  if (parts !== null) {
+    if (parts > MAX_ETAG_PARTS) return null;
+    if (expectedBytes !== undefined && expectedBytes !== null) {
+      if (!isSafeByteCount(expectedBytes)) return null;
+      if (parts !== Math.ceil(expectedBytes / SUPABASE_ETAG_PART_BYTES)) return null;
+    }
+  }
+  return Object.freeze({ md5: match[1] ?? match[3], parts });
+}
+
+/**
+ * Single-use streaming digest in constant memory. One pass over the chunks gives
+ * the whole-content MD5 and the multipart eTag of the 5 MiB layout.
+ */
+export function createETagHasher() {
+  const whole = createHash('md5');
+  const partDigests = createHash('md5');
+  let part = createHash('md5');
+  let partFill = 0;
+  let partCount = 0;
+
+  const closePart = () => {
+    partDigests.update(part.digest());
+    partCount += 1;
+    part = createHash('md5');
+    partFill = 0;
+  };
+
+  return {
+    update(chunk) {
+      whole.update(chunk);
+      let offset = 0;
+      while (offset < chunk.length) {
+        const take = Math.min(chunk.length - offset, SUPABASE_ETAG_PART_BYTES - partFill);
+        part.update(chunk.subarray(offset, offset + take));
+        partFill += take;
+        offset += take;
+        if (partFill === SUPABASE_ETAG_PART_BYTES) closePart();
+      }
+    },
+    digest() {
+      if (partFill > 0) closePart();
+      return { md5: whole.digest('hex'), multipartEtag: `${partDigests.digest('hex')}-${partCount}` };
+    },
+  };
+}
+
+/** Compare a parsed source eTag with a finished hasher digest. */
+export function compareSourceETag(parsed, digest) {
+  const expected = parsed.parts === null ? parsed.md5 : `${parsed.md5}-${parsed.parts}`;
+  const actual = parsed.parts === null ? digest.md5 : digest.multipartEtag;
+  return { ok: actual === expected, expected, actual };
+}
+
+async function streamHashFile(filePath, etagHasher) {
   const hash = createHash('sha256');
   let bytes = 0;
   for await (const chunk of createReadStream(filePath)) {
     hash.update(chunk);
+    if (etagHasher) etagHasher.update(chunk);
     bytes += chunk.length;
   }
   return { sha256: hash.digest('hex'), bytes };
@@ -382,15 +466,118 @@ export async function loadFrozenPlan({ backupRunDir, kind, planPath, planDigestP
   });
 }
 
+const CHECKPOINT_FILE = 'backup-checkpoint.json';
+
+async function readOptionalJson(rootResolved, fileName) {
+  const target = path.join(rootResolved, fileName);
+  try {
+    await fs.lstat(target);
+  } catch (error) {
+    if (error.code === 'ENOENT') return null;
+    throw error;
+  }
+  await assertSafeRegularFile(rootResolved, target);
+  try {
+    return JSON.parse(await fs.readFile(target, 'utf8'));
+  } catch (error) {
+    throw new Error(`Invalid ${fileName}: ${error.message}`);
+  }
+}
+
+/** Frozen `object_metadata.eTag` per `bucket::path`, bound by the raw plan digest. */
+async function loadExpirePlanETags(rootResolved) {
+  const { planFile, digestFile } = PLAN_SPECS.expire;
+  const planPath = path.join(rootResolved, planFile);
+  const etags = new Map();
+  try {
+    await fs.lstat(planPath);
+  } catch (error) {
+    if (error.code === 'ENOENT') return etags;
+    throw error;
+  }
+  const digestPath = path.join(rootResolved, digestFile);
+  await assertSafeRegularFile(rootResolved, planPath);
+  await assertSafeRegularFile(rootResolved, digestPath);
+  const rawPlan = await fs.readFile(planPath, 'utf8');
+  const rawDigest = (await fs.readFile(digestPath, 'utf8')).trim();
+  const planSha256 = sha256Text(rawPlan);
+  if (rawDigest !== planSha256) {
+    throw new Error(`Expire plan digest mismatch: expected ${rawDigest}, got ${planSha256}`);
+  }
+  for (const row of parseRawJsonl(rawPlan)) {
+    const eTag = isPlainObject(row.object_metadata) ? row.object_metadata.eTag : undefined;
+    if (eTag == null) continue;
+    const key = `${row.bucket}::${row.path}`;
+    assertNoDuplicate(new Set(etags.keys()), key, 'expire plan object');
+    etags.set(key, eTag);
+  }
+  return etags;
+}
+
 /**
- * Stream-hash every selected artifact against its bound hash and exact byte count.
- * The whole batch is checked before success is returned. No hash override exists.
+ * Frozen source eTags of one backup run, read from files the run already owns:
+ * the checkpoint (`source_etag`, or the legacy `source_version`, which held the
+ * metadata eTag) and the digest-bound expire plan (`object_metadata.eTag`). A run
+ * that recorded any `source_etag` is eTag-aware and every row of it needs a
+ * binding. An older run is verified where it has an eTag and counted unbound
+ * elsewhere. An R2 source store binds its downloads with If-Match instead.
+ */
+async function loadSourceETagBinding(rootResolved) {
+  const receipt = await readOptionalJson(rootResolved, RECEIPT_FILE);
+  const sourceStore = normalizeSourceStore(isPlainObject(receipt) ? receipt.source_store : undefined);
+  if (sourceStore !== DEFAULT_SOURCE_STORE) return null;
+
+  const checkpoint = await readOptionalJson(rootResolved, CHECKPOINT_FILE);
+  const downloaded = checkpoint === null ? {} : checkpoint?.downloaded;
+  if (!isPlainObject(downloaded)) throw new Error(`${CHECKPOINT_FILE} has no downloaded map`);
+  const aware = Object.values(downloaded).some(
+    entry => isPlainObject(entry) && typeof entry.source_etag === 'string'
+  );
+  return { downloaded, aware, planETags: await loadExpirePlanETags(rootResolved) };
+}
+
+/** The parsed frozen eTag for one row, or null when the row has none. */
+function resolveSourceETag(binding, row) {
+  const key = `${row.bucket}::${row.path}`;
+  const entry = binding.downloaded[key];
+  const found = [];
+  const note = (origin, value) => {
+    const parsed = parseSourceETag(value, Number(row.bytes));
+    if (!parsed) throw new Error(`Unsupported source eTag in ${origin}: ${JSON.stringify(value)}`);
+    found.push(parsed);
+  };
+
+  if (isPlainObject(entry)) {
+    if (entry.source_etag != null) note('checkpoint source_etag', entry.source_etag);
+    else if (typeof entry.source_version === 'string' && ETAG_SHAPED_REGEX.test(entry.source_version)) {
+      note('checkpoint source_version', entry.source_version);
+    }
+  }
+  if (binding.planETags.has(key)) note('expire plan object_metadata', binding.planETags.get(key));
+  if (isPlainObject(row.object_metadata) && row.object_metadata.eTag != null) {
+    note('row object_metadata', row.object_metadata.eTag);
+  }
+
+  const [first] = found;
+  if (found.some(other => other.md5 !== first.md5 || other.parts !== first.parts)) {
+    throw new Error('Conflicting frozen source eTags');
+  }
+  return first ?? null;
+}
+
+/**
+ * Stream-hash every selected artifact against its bound hash and exact byte count,
+ * and against its frozen source eTag where the run recorded one, so equal-length
+ * stale bytes cannot pass on a matching SHA256 alone. The whole batch is checked
+ * before success is returned. No hash override exists.
  */
 export async function verifyFrozenArtifacts({ runDir, rows } = {}) {
   const rootResolved = path.resolve(runDir);
+  const binding = await loadSourceETagBinding(rootResolved);
   const results = [];
   const errors = [];
   let totalBytes = 0;
+  let etagBound = 0;
 
   for (const row of rows ?? []) {
     const key = `${row.bucket}/${row.path}`;
@@ -398,10 +585,20 @@ export async function verifyFrozenArtifacts({ runDir, rows } = {}) {
       if (!isSafeObjectPath(row.path)) throw new Error('unsafe object path');
       const artifactPath = path.join(rootResolved, row.bucket, row.path);
       await assertSafeRegularFile(rootResolved, artifactPath);
-      const actual = await streamHashFile(artifactPath);
+      const expectedETag = binding ? resolveSourceETag(binding, row) : null;
+      if (binding?.aware && !expectedETag) throw new Error('Missing source eTag binding');
+      const etagHasher = expectedETag ? createETagHasher() : null;
+      const actual = await streamHashFile(artifactPath, etagHasher);
       if (actual.sha256 !== row.sha256) throw new Error(`SHA256 mismatch (${actual.sha256})`);
       if (actual.bytes !== Number(row.bytes)) {
         throw new Error(`byte count mismatch (${actual.bytes} != ${row.bytes})`);
+      }
+      if (expectedETag) {
+        const check = compareSourceETag(expectedETag, etagHasher.digest());
+        if (!check.ok) {
+          throw new Error(`Source eTag mismatch: expected ${check.expected}, got ${check.actual}`);
+        }
+        etagBound += 1;
       }
       totalBytes += actual.bytes;
       results.push(Object.freeze({ key, sha256: actual.sha256, bytes: actual.bytes }));
@@ -413,7 +610,13 @@ export async function verifyFrozenArtifacts({ runDir, rows } = {}) {
   if (errors.length > 0) {
     throw new Error(`Artifact verification failed:\n${errors.join('\n')}`);
   }
-  return Object.freeze({ verified: results.length, totalBytes, artifacts: Object.freeze(results) });
+  return Object.freeze({
+    verified: results.length,
+    totalBytes,
+    artifacts: Object.freeze(results),
+    etagBound,
+    etagUnbound: results.length - etagBound,
+  });
 }
 
 /** Build a shell-safe `sha256sum -c` input for the selected batch. */

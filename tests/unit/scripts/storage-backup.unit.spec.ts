@@ -35,6 +35,33 @@ function md5(value: Buffer | string) {
   return crypto.createHash('md5').update(value).digest('hex');
 }
 
+const PART_BYTES = 5 * 1024 * 1024;
+
+/** S3-style multipart eTag: MD5 of the concatenated binary part MD5s plus the part count. */
+function multipartEtagOf(payload: Buffer, partBytes = PART_BYTES) {
+  const digests: Buffer[] = [];
+  for (let offset = 0; offset < payload.length; offset += partBytes) {
+    digests.push(
+      crypto.createHash('md5').update(payload.subarray(offset, offset + partBytes)).digest()
+    );
+  }
+  return `${md5(Buffer.concat(digests))}-${digests.length}`;
+}
+
+function chunkedBodyOf(payload: Buffer, chunkSize: number) {
+  let offset = 0;
+  return new ReadableStream({
+    pull(controller) {
+      if (offset >= payload.length) {
+        controller.close();
+        return;
+      }
+      controller.enqueue(new Uint8Array(payload.subarray(offset, offset + chunkSize)));
+      offset += chunkSize;
+    },
+  });
+}
+
 function bodyOf(payload: Buffer) {
   return new ReadableStream({
     start(controller) {
@@ -1353,6 +1380,106 @@ describe('streamDownloadToFile', () => {
   });
 });
 
+describe('streamDownloadToFile multipart source eTag', () => {
+  let dir: string;
+
+  beforeEach(() => {
+    dir = fs.mkdtempSync(path.join(os.tmpdir(), 'sqr-stream-mp-'));
+  });
+
+  afterEach(() => {
+    fs.rmSync(dir, { recursive: true, force: true });
+  });
+
+  function download(payload: Buffer, etag: string | null, body: any = bodyOf(payload), name = 'mp.bin') {
+    const targetPath = path.join(dir, name);
+    const fetchFn = vi.fn(async () => ({ ok: true, status: 200, body }));
+    return {
+      targetPath,
+      fetchFn,
+      run: () =>
+        streamDownloadToFile({
+          url: 'https://example.invalid/object',
+          headers: {},
+          targetPath,
+          expectedBytes: payload.length,
+          expectedETag: etag,
+          fetchFn,
+        }),
+    };
+  }
+
+  it.each([
+    ['exactly one 5 MiB part', PART_BYTES, 1],
+    ['one part plus one byte', PART_BYTES + 1, 2],
+    ['exactly two parts', 2 * PART_BYTES, 2],
+    ['two parts and a tail', 2 * PART_BYTES + 7, 3],
+  ])('accepts a legitimate multipart eTag for %s across odd chunk boundaries', async (_label, size, parts) => {
+    const payload = Buffer.alloc(size);
+    for (let index = 0; index < size; index += 1) payload[index] = (index * 13 + parts) & 0xff;
+    const etag = `"${multipartEtagOf(payload)}"`;
+    expect(etag.endsWith(`-${parts}"`)).toBe(true);
+    const job = download(payload, etag, chunkedBodyOf(payload, 1_000_003));
+
+    const result = await job.run();
+
+    // The existing stream contract: whole-content sha256 and md5, never the part digest.
+    expect(result).toEqual({ sha256: sha256(payload), md5: md5(payload), bytes: size });
+    expect(fs.readFileSync(job.targetPath).equals(payload)).toBe(true);
+    expect(fs.readdirSync(dir).filter(name => name.includes('.part.'))).toEqual([]);
+  });
+
+  it('rejects equal-size stale bytes against a multipart eTag and never creates the artifact', async () => {
+    const current = Buffer.alloc(PART_BYTES + 100, 1);
+    const stale = Buffer.alloc(PART_BYTES + 100, 2);
+    const job = download(stale, `"${multipartEtagOf(current)}"`);
+
+    await expect(job.run()).rejects.toThrow(/Source eTag mismatch/);
+    expect(fs.existsSync(job.targetPath)).toBe(false);
+  });
+
+  it('rejects a multipart eTag computed over a different part layout', async () => {
+    const payload = Buffer.alloc(2 * PART_BYTES + 50, 3);
+    const job = download(payload, `"${multipartEtagOf(payload, 8 * 1024 * 1024)}"`);
+    // Same bytes, count 2 from 8 MiB parts, but the 5 MiB layout of this size has 3.
+    await expect(job.run()).rejects.toThrow(/Unsupported source eTag/);
+    expect(job.fetchFn).not.toHaveBeenCalled();
+
+    const sameCount = Buffer.alloc(PART_BYTES + 50, 3);
+    const wrongBoundary = download(
+      sameCount,
+      `"${multipartEtagOf(sameCount, 4 * 1024 * 1024)}"`,
+      bodyOf(sameCount),
+      'wrong-boundary.bin'
+    );
+    // A 4 MiB layout of 5 MiB + 50 bytes also yields 2 parts: the digest differs.
+    await expect(wrongBoundary.run()).rejects.toThrow(/Source eTag mismatch/);
+    expect(fs.existsSync(wrongBoundary.targetPath)).toBe(false);
+  });
+
+  it('rejects a part count that the 5 MiB layout cannot produce before any fetch', async () => {
+    const payload = Buffer.alloc(PART_BYTES + 1, 4);
+    for (const etag of [`"${'b'.repeat(32)}-3"`, `"${'b'.repeat(32)}-1"`, `"${'b'.repeat(32)}-0"`]) {
+      const job = download(payload, etag, bodyOf(payload), `count-${etag.length}-${etag.slice(-3, -1)}.bin`);
+      await expect(job.run()).rejects.toThrow(/Unsupported source eTag/);
+      expect(job.fetchFn).not.toHaveBeenCalled();
+    }
+  });
+
+  it('keeps the If-Match contract: no expected eTag accepts a large body unbound', async () => {
+    const payload = Buffer.alloc(PART_BYTES + 5, 5);
+    const targetPath = path.join(dir, 'if-match.bin');
+    const result = await streamDownloadToFile({
+      url: 'https://example.invalid/object',
+      headers: {},
+      targetPath,
+      expectedBytes: payload.length,
+      fetchFn: async () => ({ ok: true, status: 200, body: bodyOf(payload) }),
+    });
+    expect(result.md5).toBe(md5(payload));
+  });
+});
+
 describe('runBackup source eTag binding', () => {
   let root: string;
 
@@ -1443,6 +1570,138 @@ describe('runBackup source eTag binding', () => {
     expect(result.manifest.find((r: any) => r.path === 'input/a.png').sha256).toBe(sha256(v2));
     const retained = path.join(runDir, INPUT_BUCKET, '.superseded', `input/a.png.${sha256(v1)}`);
     expect(fs.readFileSync(retained, 'utf8')).toBe(v1);
+  });
+});
+
+describe('runBackup multipart source eTag resume', () => {
+  let root: string;
+
+  beforeEach(() => {
+    root = fs.mkdtempSync(path.join(os.tmpdir(), 'sqr-etag-mp-'));
+  });
+
+  afterEach(() => {
+    fs.rmSync(root, { recursive: true, force: true });
+  });
+
+  function multipartObject(objectPath: string, content: string) {
+    return {
+      ...objectFor(INPUT_BUCKET, objectPath, content),
+      etag: `"${multipartEtagOf(Buffer.from(content))}"`,
+    };
+  }
+
+  it('records the multipart eTag and reuses the cached artifact on resume when its bytes match', async () => {
+    const big = multipartObject('input/big.png', `${'a'.repeat(PART_BYTES)}tail-bytes`);
+    const other = { ...objectFor(INPUT_BUCKET, 'input/b.png', 'b-bytes'), etag: `"${md5('b-bytes')}"` };
+    const runDir = path.join(root, 'resume-mp');
+
+    await expect(
+      runBackup({
+        outputRoot: root,
+        runId: 'resume-mp',
+        buckets: [INPUT_BUCKET],
+        listObjects: async () => [big, other],
+        downloadObject: async (args: any) => {
+          if (args.path === 'input/b.png') throw new Error('first pass failure');
+          return storeDownload([big])(args);
+        },
+        runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/first pass failure/);
+
+    const checkpoint = JSON.parse(
+      fs.readFileSync(path.join(runDir, 'backup-checkpoint.json'), 'utf8')
+    );
+    expect(checkpoint.downloaded[makeObjectKey(INPUT_BUCKET, 'input/big.png')].source_etag).toBe(
+      big.etag
+    );
+
+    const secondDownload = vi.fn(storeDownload([other]));
+    const result = await runBackup({
+      outputRoot: root,
+      resumeDir: runDir,
+      buckets: [INPUT_BUCKET],
+      listObjects: async () => [big, other],
+      downloadObject: secondDownload,
+      runCommand: realRunner(runDir),
+    });
+
+    expect(secondDownload.mock.calls.map((c: any) => c[0].path)).toEqual(['input/b.png']);
+    expect(result.manifest.map((r: any) => r.path).sort()).toEqual(['input/b.png', 'input/big.png']);
+  });
+
+  it('re-downloads and preserves a cached multipart artifact that is stale against the listed eTag', async () => {
+    const v1 = `${'a'.repeat(PART_BYTES)}tail-v1`;
+    const v2 = `${'a'.repeat(PART_BYTES)}tail-v2`;
+    expect(v1.length).toBe(v2.length);
+    const first = multipartObject('input/big.png', v1);
+    const other = { ...objectFor(INPUT_BUCKET, 'input/b.png', 'b-bytes'), etag: `"${md5('b-bytes')}"` };
+    const runDir = path.join(root, 'resume-mp-stale');
+
+    await expect(
+      runBackup({
+        outputRoot: root,
+        runId: 'resume-mp-stale',
+        buckets: [INPUT_BUCKET],
+        listObjects: async () => [first, other],
+        downloadObject: async (args: any) => {
+          if (args.path === 'input/b.png') throw new Error('first pass failure');
+          return storeDownload([first])(args);
+        },
+        runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/first pass failure/);
+
+    // Same identity and size; only the listed multipart eTag proves the cached bytes are old.
+    const changed = multipartObject('input/big.png', v2);
+    const secondDownload = vi.fn(storeDownload([changed, other]));
+    const result = await runBackup({
+      outputRoot: root,
+      resumeDir: runDir,
+      buckets: [INPUT_BUCKET],
+      listObjects: async () => [changed, other],
+      downloadObject: secondDownload,
+      runCommand: realRunner(runDir),
+    });
+
+    expect(secondDownload.mock.calls.map((c: any) => c[0].path).sort()).toEqual([
+      'input/b.png',
+      'input/big.png',
+    ]);
+    expect(result.manifest.find((r: any) => r.path === 'input/big.png').sha256).toBe(sha256(v2));
+    const retained = path.join(runDir, INPUT_BUCKET, '.superseded', `input/big.png.${sha256(v1)}`);
+    expect(fs.readFileSync(retained, 'utf8')).toBe(v1);
+  });
+
+  it('never reuses a cached artifact against a multipart eTag the 5 MiB layout cannot produce', async () => {
+    const content = `${'a'.repeat(PART_BYTES)}tail`;
+    const object = {
+      ...objectFor(INPUT_BUCKET, 'input/big.png', content),
+      etag: `"${md5(content)}-3"`,
+    };
+
+    await expect(
+      runBackup({
+        outputRoot: root,
+        runId: 'unsupported-layout',
+        buckets: [INPUT_BUCKET],
+        listObjects: async () => [object],
+        downloadObject: ({ targetPath, expectedBytes, expectedETag }: any) =>
+          streamDownloadToFile({
+            url: 'https://example.invalid/object',
+            headers: {},
+            targetPath,
+            expectedBytes,
+            expectedETag,
+            fetchFn: async () => ({ ok: true, status: 200, body: bodyOf(Buffer.from(content)) }),
+          }),
+        runCommand: realRunner(path.join(root, 'unsupported-layout')),
+      })
+    ).rejects.toThrow(/Unsupported source eTag/);
+    expect(
+      fs.existsSync(path.join(root, 'unsupported-layout', INPUT_BUCKET, 'input/big.png'))
+    ).toBe(false);
   });
 });
 
