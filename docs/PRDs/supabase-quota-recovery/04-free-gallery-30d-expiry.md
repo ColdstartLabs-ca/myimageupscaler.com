@@ -11,7 +11,7 @@
 - `runGalleryCleanup` (`server/services/galleryCleanup.service.ts:333-399`) treats a user as inactive when `profiles.updated_at` is more than 30 days old. Any profile write changes that field, not only a login. `auth.users.last_sign_in_at` is not used anywhere.
 - `galleryCleanup.service.ts:428-445` and `galleryStorage.service.ts:409-447` delete DB rows even when the Storage remove fails. This leaves orphan files and loses the path needed to retry. A user-wide row delete can also remove an image saved during the run (audit §4.1).
 - Schedule: `workers/cron/wrangler.toml` `0 0 * * *` → `/api/cron/gallery-cleanup`.
-- Email hook: `queueLifecycleEmail` (`server/services/email-lifecycle.service.ts:391`). Helpers at `:484` and `:565` show the pattern. Campaign seeds are in `supabase/migrations/20260607011814_create_email_lifecycle_tables.sql:109`. The template map is in `base-email-provider-adapter.ts:~310-325`.
+- Email hook: `queueLifecycleEmail` (`server/services/email-lifecycle.service.ts:391`). Helpers at `:484` and `:565` show the pattern. Campaign seeds are in `supabase/migrations/20260607011814_create_email_lifecycle_tables.sql:109`. The template map is in `base-email-provider-adapter.ts:326-354` (`GalleryExpiryWarning` registered at `:326`/`:354`).
 - Brevo free tier: 276 emails per day (memory: email lifecycle send constraints). The warning emails share that cap.
 
 ## Approved safety contract (2026-10-10)
@@ -48,13 +48,14 @@
 | Capability     | Reachable consumer/trigger                                             | Replaces / disposition                                                             | Evidence         |
 | -------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------- |
 | Gallery expiry | cron `0 0 * * *` → `/api/cron/gallery-cleanup` → `runGalleryCleanup`   | Edited in place. The signal moves from `profiles.updated_at` to `last_sign_in_at`. | AC-1, AC-2, AC-4 |
-| Warning email  | Daily lifecycle scan → `queueLifecycleEmail('gallery_expiry_warning')` | New campaign                                                                       | AC-3             |
+| Warning email  | gallery-cleanup cron → `queueGalleryExpiryWarnings` → `queueLifecycleEmail('gallery_expiry_warning')` | New campaign                                                                       | AC-3             |
 
 ## Decisions
 
 - 2026-10-10 (João): Inactive means no sign-in for 30 days. Only free users expire. A warning email goes out about 7 days before deletion.
 - 2026-10-10: The dated manual first-wave warning exception is separate from scheduled expiry. It does not waive the verified two-copy gate or authorize executing a production delete. Scheduled expiry requires seven days after actual warning delivery.
 - 2026-10-10 (João): Recently active persistent logged-in users are kept. Any sign-in or gallery use resets the inactivity period, and paid users are exempt. The copy states the rule as "may expire after 30 days of inactivity, only after at least 7 days warning".
+- 2026-10-11: The gallery-cleanup cron queues warnings through `queueLifecycleEmail`; the seeded campaign, registered template and delivery trigger persist actual `warning_sent_at`. Warnings become eligible at 23 days, and expiry requires both 30 days of inactivity and 7 days after delivery. Production deployment and the separate legacy-cron pause remain pending.
 
 ## Execution Phases
 
@@ -66,7 +67,7 @@
 
 #### Phase 2: Warning email and copy
 
-**Status:** IN PROGRESS — template, adapter registration, English gallery UI and terms copy done and tested; the campaign seed migration, `email-lifecycle.service.ts` queue wiring and eligibility remain root-owned and unwired.
+**Status:** IN PROGRESS — template, adapter registration, English gallery UI and terms copy done and tested; the campaign seed migration, the gallery-cleanup cron queue wiring and the actual-delivery eligibility guard are implemented and tested. Production deploy remains pending.
 **Files:** a campaign seed migration, `emails/templates/GalleryExpiryWarning.tsx`, the adapter map, `email-lifecycle.service.ts`, the gallery UI and terms copy
 **Verification:** AC-3 and AC-5. AC-4 after deploy.
 

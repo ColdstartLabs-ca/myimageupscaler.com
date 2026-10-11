@@ -1,6 +1,6 @@
 # PRD-SQR-02 — Move all MIU file storage from Supabase to Cloudflare R2
 
-**Status:** NOT STARTED
+**Status:** IN PROGRESS
 **Priority:** P0 — After PRD-SQR-01, the retained gallery (about 3.2 GB) is still about 3× the Free storage limit. GB-hours run out about 3–4 days after the 2026-10-13 refill until AC-7 lands.
 **Complexity:** 8 (HIGH); risk override: customer-data migration.
 **Owner:** Claude (code and migration script), João (deploy, R2 bucket/domain setup, go for the Supabase delete)
