@@ -621,3 +621,43 @@ describe('r2-references: CLI', () => {
     await expect(runVerifyReferencesCli(['apply', '--manifest', 'a'])).rejects.toThrow(/--confirm/);
   });
 });
+
+
+describe('source-proof operator', () => {
+  it.each(['valid', 'stale-bytes', 'changed-id', 'missing-version'])('captures only verified current source metadata (%s)', async mode => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'sqr-source-proof-'));
+    try {
+      const object = makeObject('saved-images', 'user/aaa.png', 'saved bytes');
+      const run = makeBackupRun(root, [object]);
+      fs.writeFileSync(path.join(run.runDir, 'backup-checkpoint.json'), JSON.stringify({downloaded: {
+        'saved-images::user/aaa.png': {version: 'object-id', created_at: CREATED, updated_at: CREATED},
+      }}));
+      const native = {
+        bucket_id: 'saved-images', name: 'user/aaa.png', id: mode === 'changed-id' ? 'other-id' : 'object-id',
+        version: mode === 'missing-version' ? null : 'native-version', created_at: CREATED, updated_at: CREATED,
+        metadata: {size: object.buffer.length, eTag: crypto.createHash('md5').update(mode === 'stale-bytes' ? 'other bytes' : object.buffer).digest('hex')},
+      };
+      const queries: string[] = [];
+      const end = vi.fn(async () => {});
+      const task = runVerifyReferencesCli(['source-proof', '--manifest', run.runDir], {
+        config: {dbConfig: {}}, runner: vi.fn(), log: vi.fn(),
+        createDb: async () => ({end, query: async (sql: string) => {
+          queries.push(sql); return {rows: sql.startsWith('SELECT') ? [{row: native}] : []};
+        }}),
+      });
+      if (mode === 'valid') {
+        const proof = await task;
+        expect(proof.objects).toHaveLength(1);
+        expect(proof.objects[0].source.version).toBe('native-version');
+        const raw = fs.readFileSync(path.join(run.runDir, 'source-object-proof.json'));
+        expect(fs.readFileSync(path.join(run.runDir, 'source-object-proof.digest'), 'utf8').trim()).toBe(sha256(raw));
+      } else {
+        await expect(task).rejects.toThrow(/source|eTag/i);
+        expect(fs.existsSync(path.join(run.runDir, 'source-object-proof.json'))).toBe(false);
+      }
+      expect(queries[0]).toMatch(/READ ONLY/);
+      expect(queries.at(-1)).toBe('ROLLBACK');
+      expect(end).toHaveBeenCalledOnce();
+    } finally { fs.rmSync(root, {recursive: true, force: true}); }
+  });
+});

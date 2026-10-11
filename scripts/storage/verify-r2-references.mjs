@@ -37,6 +37,7 @@ import { pathToFileURL } from 'node:url';
 
 import {
   SHA256_REGEX,
+  assertSafeRegularFile,
   isSafeObjectPath,
   loadBackupIdentity,
   verifyFrozenArtifacts,
@@ -768,6 +769,62 @@ export async function runApplyReferencesCommand(deps = {}) {
   }
 }
 
+/** Capture current source metadata separately; never rewrite a historical backup. */
+export async function runSourceProofCommand({ manifest, config, createDb, log = () => {} }) {
+  const identity = await loadBackupIdentity(path.resolve(required(manifest, 'manifest')));
+  assertSupabaseSource(identity, 'source-proof');
+  const checkpointPath = path.join(identity.runDir, 'backup-checkpoint.json');
+  await assertSafeRegularFile(identity.runDir, checkpointPath);
+  const checkpoint = JSON.parse(await fs.readFile(checkpointPath, 'utf8'));
+  const { exactTimestampMicros } = await import('./backup-and-purge.mjs');
+  const milliseconds = value => {
+    const micros = exactTimestampMicros(value);
+    if (micros === null) throw new Error('Invalid source identity timestamp');
+    return micros / 1000n;
+  };
+  const db = await createDb(config.dbConfig);
+  let sources;
+  try {
+    await db.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
+    sources = (await db.query(
+      'SELECT to_jsonb(o) AS row FROM storage.objects AS o WHERE bucket_id = ANY($1::text[])',
+      [[...new Set(identity.manifest.map(row => row.bucket))]]
+    )).rows.map(entry => entry.row);
+  } finally {
+    try { await db.query('ROLLBACK'); } finally { await db.end(); }
+  }
+  const byKey = new Map(sources.map(row => [`${row.bucket_id}::${row.name}`, row]));
+  const rows = identity.manifest.map(row => {
+    const key = `${row.bucket}::${row.path}`;
+    const source = byKey.get(key);
+    const frozen = checkpoint.downloaded?.[key];
+    if (!source || !frozen || source.id !== frozen.version ||
+        typeof source.version !== 'string' || source.version.length === 0 ||
+        Number(source.metadata?.size) !== row.bytes ||
+        milliseconds(source.created_at) !== milliseconds(frozen.created_at) ||
+        milliseconds(source.updated_at) !== milliseconds(frozen.updated_at)) {
+      throw new Error(`Changed or missing source identity: ${key}`);
+    }
+    if (typeof source.metadata?.eTag !== 'string') throw new Error(`Missing source eTag: ${key}`);
+    return { ...row, object_metadata: source.metadata };
+  });
+  const verified = await verifyFrozenArtifacts({ runDir: identity.runDir, rows });
+  if (verified.etagUnbound !== 0) throw new Error('Incomplete source eTag proof');
+  const proof = {
+    manifest_sha256: identity.manifestSha256,
+    captured_at: new Date().toISOString(),
+    objects: identity.manifest.map(row => ({
+      bucket: row.bucket, path: row.path, source: byKey.get(`${row.bucket}::${row.path}`),
+    })),
+  };
+  await writeReferencePlan(identity.runDir, proof, {
+    planPath: path.join(identity.runDir, 'source-object-proof.json'),
+    planDigestPath: path.join(identity.runDir, 'source-object-proof.digest'),
+  });
+  log(`[storage] captured ${proof.objects.length} source object identities; cutover remains gated`);
+  return proof;
+}
+
 /** Fill only the dependencies the caller did not inject; secrets load last. */
 async function resolveReferenceDeps(deps, needsApply) {
   const resolved = { ...deps };
@@ -803,6 +860,7 @@ function usage() {
     [
       'Usage: node scripts/storage/verify-r2-references.mjs <command>',
       '  help',
+      '  source-proof --manifest <backup-run-dir>',
       '  verify --manifest <backup-run-dir> [--plan <file>] [--digest <file>]',
       '  apply  --manifest <backup-run-dir> --confirm [--plan <file>] [--digest <file>]',
     ].join('\n') + '\n'
@@ -816,6 +874,13 @@ export async function runVerifyReferencesCli(argv, deps = {}) {
     case 'help':
     case undefined:
       return usage();
+    case 'source-proof': {
+      const flags = parseReferenceFlags(rest);
+      if (!flags.manifest) throw new Error('missing required --manifest <backup-run-dir>');
+      if (flags.confirm || flags.plan || flags.digest) throw new Error('source-proof accepts only --manifest');
+      const resolved = await resolveReferenceDeps(deps, false);
+      return runSourceProofCommand({ ...resolved, manifest: flags.manifest, log: resolved.log ?? writeLog });
+    }
     case 'verify': {
       const flags = parseReferenceFlags(rest);
       if (!flags.manifest) throw new Error('missing required --manifest <backup-run-dir>');
