@@ -42,4 +42,5 @@ fi
 
 echo "Starting test server on port $TEST_PORT"
 
-exec $ISOLATE npx next dev --port "$TEST_PORT"
+# Match the production bundler and support linked worktree dependencies.
+exec $ISOLATE npx next dev --webpack --port "$TEST_PORT"

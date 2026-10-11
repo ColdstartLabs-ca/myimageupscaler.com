@@ -426,6 +426,7 @@ describe('review blockers (2026-10-03)', () => {
       expect(guard).toBeGreaterThan(-1);
       expect(guard).toBeLessThan(script.indexOf('rm -'));
       expect(script).toMatch(/^exec \$ISOLATE npx next dev /m);
+      expect(script).toMatch(/^exec \$ISOLATE npx next dev --webpack /m);
       expect(script.match(/next dev/g)).toHaveLength(1);
     });
 
