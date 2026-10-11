@@ -597,23 +597,28 @@ export async function runMigrationCopy({
         expiresSeconds: resolvedSigning.expiresSeconds,
       });
 
-      const upload = createReadStream(localPath);
       let putResponse;
-      try {
-        putResponse = await fetchFn(putUrl, {
-          method: 'PUT',
-          headers: {
-            'content-type': entry.contentType,
-            'content-length': String(entry.bytes),
-            'if-none-match': '*',
-          },
-          body: upload,
-          duplex: 'half',
-          redirect: 'error',
-          signal: AbortSignal.timeout(READBACK_TIMEOUT_MS),
-        });
-      } finally {
-        upload.destroy();
+      for (let attempt = 1; attempt <= 3; attempt += 1) {
+        const upload = createReadStream(localPath);
+        try {
+          putResponse = await fetchFn(putUrl, {
+            method: 'PUT',
+            headers: {
+              'content-type': entry.contentType,
+              'content-length': String(entry.bytes),
+              'if-none-match': '*',
+            },
+            body: upload,
+            duplex: 'half',
+            redirect: 'error',
+            signal: AbortSignal.timeout(READBACK_TIMEOUT_MS),
+          });
+        } finally {
+          upload.destroy();
+        }
+        if (putResponse.status !== 502 || attempt === 3) break;
+        await putResponse.body?.cancel();
+        await new Promise(resolve => setTimeout(resolve, attempt * 1000));
       }
 
       if (putResponse.status !== 412 && !putResponse.ok) {

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -372,7 +372,7 @@ describe('r2-migration: runMigrationCopy', () => {
         ? options.input.split('\\n').filter(Boolean).map(line => line.replace(/^[0-9a-f]{64} {2}/, '') + ': OK').join('\\n')
         : identity.manifestSha256 + '  manifest.jsonl\\n';
       try {
-        for (let index = 0; index < 12; index++) {
+        for (let index = 0; index < (${status} === 502 ? 2 : 12); index++) {
           const copy = runMigrationCopy({ identity, signing: ${JSON.stringify(SIGNING)}, runner,
             presignPut: async () => url, presignGet: async () => url,
             fetchFn: index === 0 && ${status} !== 200 ? async (_url, init) => {
@@ -385,7 +385,7 @@ describe('r2-migration: runMigrationCopy', () => {
           assert(streams.every(stream => stream.destroyed), 'Early response leaked an open input file stream');
           rmSync(runDir + '/r2-migration-checkpoint.json', { force: true });
         }
-        assert.equal(puts, 12);
+        assert.equal(puts, ${status} === 502 ? 6 : 12);
       } finally { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); }
     `;
     const result = spawnSync(process.execPath, ['--input-type=module', '-e', script], {
@@ -395,6 +395,49 @@ describe('r2-migration: runMigrationCopy', () => {
     expect(result.stderr).toBe('');
     expect(result.status).toBe(0);
   }, 35_000);
+
+  it.each([false, true])('bounds conditional 502 retries (always fails: %s)', async alwaysFails => {
+    const object = makeObject(INPUT_BUCKET, 'user/retry.png', 'retry bytes');
+    const { run, identity } = await setup([object]);
+    const r2 = new FakeR2();
+    const streams: Array<fs.ReadStream> = [];
+    const statuses: number[] = [];
+    const delays: number[] = [];
+    const realSetTimeout = globalThis.setTimeout;
+    const timer = vi.spyOn(globalThis, 'setTimeout').mockImplementation((callback: any, ms: any, ...args: any[]) => {
+      if (ms === 1000 || ms === 2000) delays.push(ms);
+      return realSetTimeout(callback, ms === 1000 || ms === 2000 ? 0 : ms, ...args);
+    });
+    const fetchFn = async (url: string, init: any = {}) => {
+      if (init.method !== 'PUT') return r2.fetch(url, init);
+      streams.push(init.body);
+      expect(init.headers).toMatchObject({
+        'if-none-match': '*', 'content-length': String(object.buffer.length), 'content-type': 'image/png',
+      });
+      const response = await r2.fetch(url, init);
+      const status = alwaysFails || streams.length === 1 ? 502 : response.status;
+      statuses.push(status);
+      return new Response(null, { status });
+    };
+    try {
+      const copy = runMigrationCopy({ identity, signing: SIGNING, fetchFn, runner: makeRunner(identity) });
+      if (alwaysFails) {
+        await expect(copy).rejects.toThrow(/PUT failed.*HTTP 502/);
+        expect(statuses).toEqual([502, 502, 502]);
+        expect(delays).toEqual([1000, 2000]);
+        expect(r2.gets).toHaveLength(0);
+        expect(fs.existsSync(path.join(run.runDir, 'r2-migration-receipt.json'))).toBe(false);
+      } else {
+        expect((await copy).receipt.object_count).toBe(1);
+        expect(statuses).toEqual([502, 412]);
+        expect(delays).toEqual([1000]);
+        expect(r2.gets).toHaveLength(1);
+      }
+      expect(new Set(streams).size).toBe(streams.length);
+      expect(streams.every(stream => stream.destroyed)).toBe(true);
+      expect(r2.store.get(targetPathname('miu-private', 'inputs/user/retry.png'))).toEqual(object.buffer);
+    } finally { timer.mockRestore(); }
+  });
 
   it('copies every object, read-back verified, and publishes a receipt', async () => {
     const { saved, blog, input, run } = threeBucketBackup(root);
