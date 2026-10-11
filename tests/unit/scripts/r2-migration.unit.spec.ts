@@ -101,7 +101,7 @@ class FakeR2 {
       for await (const part of init.body) chunks.push(Buffer.from(part));
       const body = Buffer.concat(chunks);
       if (this.failPutAt !== null && this.putCount === this.failPutAt) {
-        return new Response('boom', { status: 500 });
+        return new Response('boom', { status: 501 });
       }
       if (this.store.has(pathname)) return new Response('precondition failed', { status: 412 });
       this.store.set(pathname, body);
@@ -396,7 +396,9 @@ describe('r2-migration: runMigrationCopy', () => {
     expect(result.status).toBe(0);
   }, 35_000);
 
-  it.each([false, true])('bounds conditional 502 retries (always fails: %s)', async alwaysFails => {
+  it.each(
+    [500, 502, 503, 504].flatMap(status => [false, true].map(alwaysFails => ({ status, alwaysFails })))
+  )('bounds conditional $status retries (always fails: $alwaysFails)', async ({ status: retryStatus, alwaysFails }) => {
     const object = makeObject(INPUT_BUCKET, 'user/retry.png', 'retry bytes');
     const { run, identity } = await setup([object]);
     const r2 = new FakeR2();
@@ -415,21 +417,21 @@ describe('r2-migration: runMigrationCopy', () => {
         'if-none-match': '*', 'content-length': String(object.buffer.length), 'content-type': 'image/png',
       });
       const response = await r2.fetch(url, init);
-      const status = alwaysFails || streams.length === 1 ? 502 : response.status;
+      const status = alwaysFails || streams.length === 1 ? retryStatus : response.status;
       statuses.push(status);
       return new Response(null, { status });
     };
     try {
       const copy = runMigrationCopy({ identity, signing: SIGNING, fetchFn, runner: makeRunner(identity) });
       if (alwaysFails) {
-        await expect(copy).rejects.toThrow(/PUT failed.*HTTP 502/);
-        expect(statuses).toEqual([502, 502, 502]);
+        await expect(copy).rejects.toThrow(new RegExp(`PUT failed.*HTTP ${retryStatus}`));
+        expect(statuses).toEqual([retryStatus, retryStatus, retryStatus]);
         expect(delays).toEqual([1000, 2000]);
         expect(r2.gets).toHaveLength(0);
         expect(fs.existsSync(path.join(run.runDir, 'r2-migration-receipt.json'))).toBe(false);
       } else {
         expect((await copy).receipt.object_count).toBe(1);
-        expect(statuses).toEqual([502, 412]);
+        expect(statuses).toEqual([retryStatus, 412]);
         expect(delays).toEqual([1000]);
         expect(r2.gets).toHaveLength(1);
       }
@@ -437,6 +439,24 @@ describe('r2-migration: runMigrationCopy', () => {
       expect(streams.every(stream => stream.destroyed)).toBe(true);
       expect(r2.store.get(targetPathname('miu-private', 'inputs/user/retry.png'))).toEqual(object.buffer);
     } finally { timer.mockRestore(); }
+  });
+
+  it.each([403, 501])('does not retry HTTP %s', async status => {
+    const object = makeObject(INPUT_BUCKET, 'user/no-retry.png', 'no retry bytes');
+    const { run, identity } = await setup([object]);
+    const streams: Array<fs.ReadStream> = [];
+    const fetchFn = async (_url: string, init: any) => {
+      expect(init.method).toBe('PUT');
+      streams.push(init.body);
+      await new Response(init.body).arrayBuffer();
+      return new Response(null, { status });
+    };
+    await expect(
+      runMigrationCopy({ identity, signing: SIGNING, fetchFn, runner: makeRunner(identity) })
+    ).rejects.toThrow(new RegExp(`PUT failed.*HTTP ${status}`));
+    expect(streams).toHaveLength(1);
+    expect(streams[0].destroyed).toBe(true);
+    expect(fs.existsSync(path.join(run.runDir, 'r2-migration-receipt.json'))).toBe(false);
   });
 
   it('copies every object, read-back verified, and publishes a receipt', async () => {

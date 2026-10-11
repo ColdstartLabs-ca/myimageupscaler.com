@@ -616,7 +616,7 @@ export async function runMigrationCopy({
         } finally {
           upload.destroy();
         }
-        if (putResponse.status !== 502 || attempt === 3) break;
+        if (![500, 502, 503, 504].includes(putResponse.status) || attempt === 3) break;
         await putResponse.body?.cancel();
         await new Promise(resolve => setTimeout(resolve, attempt * 1000));
       }
