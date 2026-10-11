@@ -20,8 +20,8 @@
  *     reference is reported verified.
  *   - A reference with no manifest row, a changed hash, an ambiguous URL or an
  *     unknown storage URL is reported missing with its count and source id. It is
- *     never reported verified. A known pre-existing gap is an explicit failure, not
- *     a whitelist.
+ *     never reported verified. Only the exact user-accepted baseline gap may remain
+ *     missing without blocking; its URL is left unchanged.
  *   - The gallery backend flips `supabase` -> `r2` only after object proof, binding
  *     the exact row id and owner. Blog URLs swap the exact Supabase public
  *     `blog-images` prefix for the assets domain, preserving the path, only for
@@ -44,7 +44,7 @@ import {
   verifyRemoteBatch,
 } from './backup-verification.mjs';
 import { SAVED_BUCKET as GALLERY_BUCKET, BLOG_BUCKET, DEFAULT_EXPIRES_SECONDS, mapManifestRow, readbackVerify, defaultRunner } from './migrate-r2.mjs';
-import { chunk } from './backup-and-purge.mjs';
+import { chunk, isAcceptedBaselineMissingReference } from './backup-and-purge.mjs';
 import { presignGetUrl } from '../../server/services/r2-presign.mjs';
 
 export const DEFAULT_PUBLIC_BASE = 'https://assets.myimageupscaler.com';
@@ -103,10 +103,7 @@ const BODY_URL_REGEX = /https?:\/\/[^\s"'<>(){}[\]]+/g;
 export function hasOnlyAcceptedMissingReferences(result) {
   if (result?.missing_count === 0) return !result.missing || (Array.isArray(result.missing) && result.missing.length === 0);
   if (result?.missing_count !== 1 || !Array.isArray(result.missing) || result.missing.length !== 1) return false;
-  const item = result.missing[0];
-  return item?.sourceId === 'blog_posts:b26a2f86-ec30-40d0-8a33-bca21bfb7417' &&
-    item.table === 'blog_posts' && item.field === 'content' &&
-    item.source === '2026/01/1769887240667-tools-inline-1.webp' && item.reason === 'missing_manifest';
+  return isAcceptedBaselineMissingReference(result.missing[0]);
 }
 
 export function extractBodyUrls(content) {

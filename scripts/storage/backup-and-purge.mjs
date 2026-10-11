@@ -2019,59 +2019,57 @@ export function extractBlogPathsFromMarkdown(content) {
   return Array.from(found);
 }
 
+// João accepted only this original broken body reference as a follow-up.
+export function isAcceptedBaselineMissingReference(item) {
+  return item?.sourceId === 'blog_posts:b26a2f86-ec30-40d0-8a33-bca21bfb7417' &&
+    item.table === 'blog_posts' && item.field === 'content' &&
+    item.source === '2026/01/1769887240667-tools-inline-1.webp' && item.reason === 'missing_manifest';
+}
+
+export async function verifyStorageIntegrity({ db, storage, log = () => {} }) {
+  const gallery = await db.query('SELECT id, storage_path FROM public.saved_images');
+  const blogImages = await db.query('SELECT id, storage_path, url FROM public.blog_images');
+  const blogPosts = await db.query('SELECT id, featured_image_url, content FROM public.blog_posts');
+  const targets = new Map();
+  function addTarget(bucket, objectPath, table, id, field) {
+    if (!objectPath) return;
+    const key = makeObjectKey(bucket, objectPath);
+    const source = { sourceId: `${table}:${id}`, table, field, source: objectPath, reason: 'missing_manifest' };
+    if (!targets.has(key)) targets.set(key, { bucket, path: objectPath, sources: [] });
+    targets.get(key).sources.push(source);
+  }
+  for (const row of gallery.rows) addTarget(GALLERY_BUCKET, row.storage_path, 'saved_images', row.id, 'storage_path');
+  for (const row of blogImages.rows) {
+    addTarget(BLOG_BUCKET, row.storage_path, 'blog_images', row.id, 'storage_path');
+    addTarget(BLOG_BUCKET, blogPathFromUrl(row.url), 'blog_images', row.id, 'url');
+  }
+  for (const row of blogPosts.rows) {
+    addTarget(BLOG_BUCKET, blogPathFromUrl(row.featured_image_url), 'blog_posts', row.id, 'featured_image_url');
+    for (const objectPath of extractBlogPathsFromMarkdown(row.content)) {
+      addTarget(BLOG_BUCKET, objectPath, 'blog_posts', row.id, 'content');
+    }
+  }
+  const inventories = new Map();
+  for (const bucket of new Set([...targets.values()].map(target => target.bucket))) {
+    inventories.set(bucket, new Set((await listAllObjects(storage, bucket)).map(object => object.path)));
+  }
+  const missing = [...targets.values()].filter(target => !inventories.get(target.bucket).has(target.path));
+  const unexpected = missing.filter(target => target.bucket !== BLOG_BUCKET || !target.sources.every(isAcceptedBaselineMissingReference));
+  log(`verify-integrity: total targets checked: ${targets.size}, missing: ${missing.length}, unexpected: ${unexpected.length}`);
+  for (const item of missing) {
+    log(`  missing ${item.bucket}/${item.path} (from: ${item.sources.map(source => `${source.sourceId}.${source.field}`).join(', ')})`);
+  }
+  return { ok: unexpected.length === 0, missing, unexpected };
+}
+
 async function cmdVerifyIntegrity() {
   const config = loadConfig();
   const storage = await createStorage(config);
   await preflightQuota(storage);
   const db = await createDb(config);
   try {
-    const gallery = await db.query('SELECT storage_path FROM public.saved_images');
-    const blogImages = await db.query('SELECT storage_path, url FROM public.blog_images');
-    const blogPosts = await db.query(
-      "SELECT featured_image_url, content FROM public.blog_posts"
-    );
-
-    const targets = new Map();
-    function addTarget(bucket, p, source) {
-      if (!p) return;
-      const key = makeObjectKey(bucket, p);
-      if (!targets.has(key)) {
-        targets.set(key, { bucket, path: p, sources: [source] });
-      } else {
-        targets.get(key).sources.push(source);
-      }
-    }
-
-    for (const row of gallery.rows) {
-      addTarget(GALLERY_BUCKET, row.storage_path, 'saved_images.storage_path');
-    }
-    for (const row of blogImages.rows) {
-      if (row.storage_path) addTarget(BLOG_BUCKET, row.storage_path, 'blog_images.storage_path');
-      const pathFromUrl = blogPathFromUrl(row.url);
-      if (pathFromUrl) addTarget(BLOG_BUCKET, pathFromUrl, 'blog_images.url');
-    }
-    for (const row of blogPosts.rows) {
-      const pathFromFeatured = blogPathFromUrl(row.featured_image_url);
-      if (pathFromFeatured) addTarget(BLOG_BUCKET, pathFromFeatured, 'blog_posts.featured_image_url');
-      const bodyPaths = extractBlogPathsFromMarkdown(row.content);
-      for (const bp of bodyPaths) addTarget(BLOG_BUCKET, bp, 'blog_posts.content');
-    }
-
-    const inventories = new Map();
-    for (const bucket of new Set([...targets.values()].map(target => target.bucket))) {
-      inventories.set(bucket, new Set((await listAllObjects(storage, bucket)).map(object => object.path)));
-    }
-    const missing = [];
-    for (const target of targets.values()) {
-      if (!inventories.get(target.bucket).has(target.path)) {
-        missing.push(target);
-      }
-    }
-    log(`verify-integrity: total targets checked: ${targets.size}, missing: ${missing.length}`);
-    if (missing.length > 0) {
-      for (const item of missing) log(`  missing ${item.bucket}/${item.path} (from: ${item.sources.join(', ')})`);
-      process.exitCode = 1;
-    }
+    const result = await verifyStorageIntegrity({ db, storage, log });
+    if (!result.ok) process.exitCode = 1;
   } finally {
     await db.end();
   }

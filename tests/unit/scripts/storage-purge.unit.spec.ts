@@ -21,6 +21,7 @@ const {
   verifyArtifactHash,
   blogPathFromUrl,
   extractBlogPathsFromMarkdown,
+  verifyStorageIntegrity,
 } = storagePurgeModule as any;
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -185,4 +186,32 @@ describe('Integrity URL and Markdown extractors', () => {
     expect(extracted).toContain('2026/01/inline-1.webp');
     expect(extracted).toContain('2026/02/inline-2.png');
   });
+});
+
+
+describe('Storage integrity baseline preservation', () => {
+  it.each(['baseline', 'other-post', 'featured', 'shared-path', 'gallery', 'restored'])(
+    'preserves only the accepted missing body reference (%s)', async mode => {
+      const objectPath = '2026/01/1769887240667-tools-inline-1.webp';
+      const url = `https://project.supabase.co/storage/v1/object/public/blog-images/${objectPath}`;
+      const post = { id: 'b26a2f86-ec30-40d0-8a33-bca21bfb7417', content: `![x](${url})` };
+      const posts = mode === 'other-post' ? [{ ...post, id: 'other' }] :
+        mode === 'featured' ? [{ ...post, content: '', featured_image_url: url }] :
+        mode === 'shared-path' ? [post, { ...post, id: 'other' }] : [post];
+      const calls: string[] = [];
+      const db = { query: async (sql: string) => {
+        calls.push(sql);
+        return { rows: sql.includes('public.saved_images') ? (mode === 'gallery' ? [{ id: 's1', storage_path: objectPath }] : []) :
+          sql.includes('public.blog_images') ? [] : posts };
+      } };
+      const storage = { from: () => ({ list: async () => ({ data: mode === 'restored' ? [{ name: objectPath, id: 'restored' }] : [], error: null }) }) };
+      const messages: string[] = [];
+      const result = await verifyStorageIntegrity({ db, storage, log: (value: string) => messages.push(value) });
+      expect(result.ok).toBe(mode === 'baseline' || mode === 'restored');
+      expect(result.missing.length).toBe(mode === 'restored' ? 0 : mode === 'gallery' ? 2 : 1);
+      expect(messages.join(' ')).toContain('missing:');
+      expect(calls.every(sql => sql.startsWith('SELECT'))).toBe(true);
+      expect(calls.some(sql => sql.includes('SELECT id, featured_image_url'))).toBe(true);
+    }
+  );
 });
