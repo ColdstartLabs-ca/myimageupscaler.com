@@ -496,6 +496,7 @@ export async function verifyR2References({
     target_count: entries.size,
     missing_count: missing.length,
     source_etag_unbound: sourceETagUnbound,
+    source_native_fenced: false,
     verified: Object.freeze(verified.map(ref => Object.freeze({ ...ref }))),
     missing: Object.freeze(missing.map(item => Object.freeze({ ...item }))),
     plan: Object.freeze(plan),

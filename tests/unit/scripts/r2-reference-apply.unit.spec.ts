@@ -253,7 +253,7 @@ describe('r2-reference-apply: runReferenceApply', () => {
   }
 
   function verifier(plan: AnyRow, rawSha256: string, overrides: AnyRow = {}) {
-    return async () => ({ ok: true, missing_count: 0, source_etag_unbound: 0, plan, plan_sha256: rawSha256, ...overrides });
+    return async () => ({ ok: true, missing_count: 0, source_etag_unbound: 0, source_native_fenced: true, plan, plan_sha256: rawSha256, ...overrides });
   }
 
   function applyCurrent(plan: AnyRow, rawSha256: string, db: FakeDb, overrides: AnyRow = {}) {
@@ -344,7 +344,7 @@ describe('r2-reference-apply: runReferenceApply', () => {
         db,
         verifyCurrent: async () => {
           order.push('verifyCurrent');
-          return { ok: true, missing_count: 0, source_etag_unbound: 0, plan, plan_sha256: rawSha256 };
+          return { ok: true, missing_count: 0, source_etag_unbound: 0, source_native_fenced: true, plan, plan_sha256: rawSha256 };
         },
         verifyFreshDatabaseBackup: async () => {
           order.push('verifyFreshDatabaseBackup');
@@ -385,6 +385,19 @@ describe('r2-reference-apply: runReferenceApply', () => {
       verifyCurrent: verifier(plan, rawSha256, { source_etag_unbound: unbound }),
       verifyFreshDatabaseBackup: backup,
     })).rejects.toThrow(/source eTag proof/);
+    expect(backup).not.toHaveBeenCalled();
+    expect(db.queries).toHaveLength(0);
+  });
+
+  it('keeps apply disabled until native source fencing is proved', async () => {
+    const plan = makePlan(identity, [savedEntry()]);
+    const db = new FakeDb();
+    const { rawSha256 } = await writePlan(plan);
+    const backup = vi.fn(async () => {});
+    await expect(runReferenceApply({identity, db,
+      verifyCurrent: verifier(plan, rawSha256, {source_native_fenced: false}),
+      verifyFreshDatabaseBackup: backup,
+    })).rejects.toThrow(/Native source fencing/);
     expect(backup).not.toHaveBeenCalled();
     expect(db.queries).toHaveLength(0);
   });
@@ -594,7 +607,7 @@ describe.runIf(dockerAvailable)('r2-reference-apply: real PostgreSQL 17 CAS', ()
     const result = await runReferenceApply({
       identity,
       db: client,
-      verifyCurrent: async () => ({ ok: true, missing_count: 0, source_etag_unbound: 0, plan, plan_sha256: rawSha256 }),
+      verifyCurrent: async () => ({ ok: true, missing_count: 0, source_etag_unbound: 0, source_native_fenced: true, plan, plan_sha256: rawSha256 }),
       verifyFreshDatabaseBackup: async () => {},
     });
     expect(result.applied).toEqual({ gallery: 1, blog: 0, total: 1 });
@@ -609,7 +622,7 @@ describe.runIf(dockerAvailable)('r2-reference-apply: real PostgreSQL 17 CAS', ()
       runReferenceApply({
         identity,
         db: client,
-        verifyCurrent: async () => ({ ok: true, missing_count: 0, source_etag_unbound: 0, plan, plan_sha256: rawSha256 }),
+        verifyCurrent: async () => ({ ok: true, missing_count: 0, source_etag_unbound: 0, source_native_fenced: true, plan, plan_sha256: rawSha256 }),
         verifyFreshDatabaseBackup: async () => {},
       })
     ).rejects.toThrow(/CAS failed/);

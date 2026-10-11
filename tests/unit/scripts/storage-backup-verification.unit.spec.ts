@@ -709,6 +709,25 @@ describe('backup-verification: verifyFrozenArtifacts source eTag binding', () =>
     await expect(verifyFrozenArtifacts({ runDir, rows })).rejects.toThrow(/expire plan digest/i);
   });
 
+  it.each(['valid', 'bad-digest', 'wrong-manifest', 'duplicate', 'stale-bytes', 'missing-version'])('consumes a separate source proof only when fully bound (%s)', async mode => {
+    const a = makeObject(INPUT_BUCKET, 'user/aaa.png', 'proof bytes');
+    const { runDir, rows } = makeBackupRun(root, [a]);
+    writeCheckpoint(runDir, {[KEY(a.row.bucket, a.row.path)]: entryFor(a.row, {version: 'object-id'})});
+    const item = {bucket: a.row.bucket, path: a.row.path, source: {
+      bucket_id: a.row.bucket, name: a.row.path, id: 'object-id',
+      version: mode === 'missing-version' ? null : 'native-version', created_at: CREATED, updated_at: UPDATED,
+      metadata: {size: a.row.bytes, eTag: md5Hex(mode === 'stale-bytes' ? Buffer.from('stale bytes') : a.buffer)},
+    }};
+    const proof = {manifest_sha256: mode === 'wrong-manifest' ? '0'.repeat(64) : sha256(fs.readFileSync(path.join(runDir, 'manifest.jsonl'))),
+      captured_at: UPDATED, objects: mode === 'duplicate' ? [item, item] : [item]};
+    const raw = JSON.stringify(proof);
+    fs.writeFileSync(path.join(runDir, 'source-object-proof.json'), raw);
+    fs.writeFileSync(path.join(runDir, 'source-object-proof.digest'), mode === 'bad-digest' ? '0'.repeat(64) : sha256(raw));
+    const task = verifyFrozenArtifacts({runDir, rows});
+    if (mode === 'valid') await expect(task).resolves.toMatchObject({etagBound: 1, etagUnbound: 0});
+    else await expect(task).rejects.toThrow(/source.*proof|eTag/i);
+  });
+
   it('keeps a legacy run without any frozen eTag verifiable and reports the rows as unbound', async () => {
     const a = makeObject(INPUT_BUCKET, 'user/aaa.png', 'legacy a');
     const b = makeObject(INPUT_BUCKET, 'user/bbb.png', 'legacy b');

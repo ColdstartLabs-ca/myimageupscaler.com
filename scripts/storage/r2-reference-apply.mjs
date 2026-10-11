@@ -270,6 +270,8 @@ export async function runReferenceApply({
   if (current.source_etag_unbound !== 0) {
     throw new Error(`Current source eTag proof is incomplete: unbound=${current.source_etag_unbound ?? 'unknown'}`);
   }
+  // Source byte proof alone does not fence a concurrent Storage overwrite.
+  if (current.source_native_fenced !== true) throw new Error('Native source fencing is not verified');
   if (current.plan_sha256 !== rawSha256) throw new Error('Current plan digest does not match the frozen plan');
   if (!isDeepEqual(current.plan, plan)) throw new Error('Current plan does not match the frozen plan');
 

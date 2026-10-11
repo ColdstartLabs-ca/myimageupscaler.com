@@ -514,6 +514,51 @@ async function loadExpirePlanETags(rootResolved) {
   return etags;
 }
 
+/** A separately captured source snapshot, bound to this exact historical manifest. */
+export async function loadSourceObjectProof(rootResolved) {
+  const proofPath = path.join(rootResolved, 'source-object-proof.json');
+  const digestPath = path.join(rootResolved, 'source-object-proof.digest');
+  const proof = await readOptionalJson(rootResolved, 'source-object-proof.json');
+  if (proof === null) {
+    try { await fs.lstat(digestPath); } catch (error) { if (error.code === 'ENOENT') return null; throw error; }
+    throw new Error('Orphan source object proof digest');
+  }
+  await assertSafeRegularFile(rootResolved, digestPath);
+  const raw = await fs.readFile(proofPath, 'utf8');
+  const digest = (await fs.readFile(digestPath, 'utf8')).trim();
+  if (!isSha256(digest) || sha256Text(raw) !== digest || JSON.stringify(proof) !== raw) {
+    throw new Error('Source object proof digest mismatch');
+  }
+  const manifestPath = path.join(rootResolved, MANIFEST_FILE);
+  await assertSafeRegularFile(rootResolved, manifestPath);
+  const manifestRaw = await fs.readFile(manifestPath, 'utf8');
+  const manifest = validateManifestRows(parseRawJsonl(manifestRaw));
+  if (proof.manifest_sha256 !== sha256Text(manifestRaw) || !Array.isArray(proof.objects) ||
+      proof.objects.length !== manifest.length || !Number.isFinite(Date.parse(proof.captured_at))) {
+    throw new Error('Source object proof does not bind this complete manifest');
+  }
+  const checkpoint = await readOptionalJson(rootResolved, CHECKPOINT_FILE);
+  const manifestByKey = new Map(manifest.map(row => [`${row.bucket}::${row.path}`, row]));
+  const objects = new Map();
+  for (const item of proof.objects) {
+    const key = `${item.bucket}::${item.path}`;
+    const row = manifestByKey.get(key);
+    const frozen = checkpoint?.downloaded?.[key];
+    const source = item.source;
+    const sameTime = (left, right) => Number.isFinite(Date.parse(left)) && Date.parse(left) === Date.parse(right);
+    if (!row || objects.has(key) || !source || !frozen || source.id !== frozen.version ||
+        source.bucket_id !== item.bucket || source.name !== item.path ||
+        typeof source.version !== 'string' || source.version.length === 0 ||
+        Number(source.metadata?.size) !== row.bytes ||
+        !sameTime(source.created_at, frozen.created_at) || !sameTime(source.updated_at, frozen.updated_at) ||
+        !parseSourceETag(source.metadata?.eTag, row.bytes)) {
+      throw new Error(`Invalid source object proof identity: ${key}`);
+    }
+    objects.set(key, source);
+  }
+  return { digest, objects };
+}
+
 /**
  * Frozen source eTags of one backup run, read from files the run already owns:
  * the checkpoint (`source_etag`, or the legacy `source_version`, which held the
@@ -533,13 +578,15 @@ async function loadSourceETagBinding(rootResolved) {
   const aware = Object.values(downloaded).some(
     entry => isPlainObject(entry) && typeof entry.source_etag === 'string'
   );
-  return { downloaded, aware, planETags: await loadExpirePlanETags(rootResolved) };
+  const sourceProof = await loadSourceObjectProof(rootResolved);
+  return { downloaded, aware: aware || sourceProof !== null, sourceProof, planETags: await loadExpirePlanETags(rootResolved) };
 }
 
 /** The parsed frozen eTag for one row, or null when the row has none. */
 function resolveSourceETag(binding, row) {
   const key = `${row.bucket}::${row.path}`;
   const entry = binding.downloaded[key];
+  const source = binding.sourceProof?.objects.get(key);
   const found = [];
   const note = (origin, value) => {
     const parsed = parseSourceETag(value, Number(row.bytes));
@@ -553,6 +600,7 @@ function resolveSourceETag(binding, row) {
       note('checkpoint source_version', entry.source_version);
     }
   }
+  if (source) note('source object proof', source.metadata.eTag);
   if (binding.planETags.has(key)) note('expire plan object_metadata', binding.planETags.get(key));
   if (isPlainObject(row.object_metadata) && row.object_metadata.eTag != null) {
     note('row object_metadata', row.object_metadata.eTag);
