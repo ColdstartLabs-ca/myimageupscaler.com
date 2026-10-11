@@ -357,7 +357,7 @@ describe('r2-operator-cli: apply command', () => {
         createDb: async () => db,
         runner: () => '',
         loadIdentity: loadBackupIdentity,
-        engine: async () => ({ ok: true, missing_count: 0, plan, plan_sha256: rawSha256 }),
+        engine: async () => ({ ok: true, missing_count: 0, source_etag_unbound: 0, source_native_fenced: true, plan, plan_sha256: rawSha256 }),
         apply: runReferenceApply,
         freshBackup: async () => {
           backupCalls += 1;

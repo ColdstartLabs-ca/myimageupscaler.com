@@ -362,6 +362,24 @@ describe('r2-references: verifyR2References', () => {
     expect(result.plan.blog).toHaveLength(0);
   });
 
+  it.each(['content', 'featured_image_url', 'other-post', 'other-path'])(
+    'accepts only the exact original missing body image (%s)', async mode => {
+      const fx = referenceFixture(root);
+      const identity = await loadIdentity(fx.run.runDir);
+      const original = `${SUPABASE}/${KNOWN_MISSING_BLOG}`;
+      const url = mode === 'other-path' ? `${original}.other` : original;
+      const id = mode === 'other-post' ? 'another-post' : 'b26a2f86-ec30-40d0-8a33-bca21bfb7417';
+      const result = await verifyR2References({
+        identity, savedRows: [], blogRows: [],
+        postRows: [{ id, ...(mode === 'featured_image_url' ? { featured_image_url: url } : { content: `![x](${url})` }) }],
+        signing: SIGNING, presignGet: presignGetUrl, fetchFn: new FakeR2().fetch, runner: makeRunner(identity),
+      });
+      expect(result.ok).toBe(mode === 'content');
+      expect(result.missing_count).toBe(1);
+      expect(result.plan.blog).toHaveLength(0);
+    }
+  );
+
   it('supports a new assets-domain blog URL with the same path', async () => {
     const r2 = new FakeR2();
     const fx = referenceFixture(root);

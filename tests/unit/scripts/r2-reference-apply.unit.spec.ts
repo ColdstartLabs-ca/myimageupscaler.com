@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { execFileSync, spawnSync } from 'node:child_process';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -372,6 +372,31 @@ describe('r2-reference-apply: runReferenceApply', () => {
     ).rejects.toThrow(/missing_count=1/);
     expect(db.queries).toHaveLength(0);
   });
+
+  it.each(['accepted', 'other-post', 'wrong-count', 'no-details', 'unfenced'])(
+    'checks the exact baseline exception before source fencing (%s)', async mode => {
+      const plan = makePlan(identity, [savedEntry()]);
+      const db = new FakeDb();
+      seedBase(db, plan);
+      const { rawSha256 } = await writePlan(plan);
+      const missing = [{
+        sourceId: mode === 'other-post' ? 'blog_posts:other' : 'blog_posts:b26a2f86-ec30-40d0-8a33-bca21bfb7417',
+        table: 'blog_posts', field: 'content', source: '2026/01/1769887240667-tools-inline-1.webp', reason: 'missing_manifest',
+      }];
+      const backup = vi.fn(async () => { throw new Error('backup boundary reached'); });
+      await expect(runReferenceApply({
+        identity, db,
+        verifyCurrent: verifier(plan, rawSha256, {
+          ok: true, missing_count: mode === 'wrong-count' ? 2 : 1,
+          missing: mode === 'no-details' ? undefined : missing,
+          source_native_fenced: mode !== 'unfenced',
+        }),
+        verifyFreshDatabaseBackup: backup,
+      })).rejects.toThrow(mode === 'accepted' ? /backup boundary reached/ : mode === 'unfenced' ? /Native source fencing/ : /missing_count=/);
+      expect(backup).toHaveBeenCalledTimes(mode === 'accepted' ? 1 : 0);
+      expect(db.queries).toHaveLength(0);
+    }
+  );
 
   it.each([1, undefined, -1])('rejects unbound or absent source proof (%s) before any database work', async (unbound) => {
     const plan = makePlan(identity, [savedEntry()]);

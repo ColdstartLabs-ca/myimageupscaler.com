@@ -17,8 +17,8 @@
  *     verified run, manifest sha, object count, byte total and the canonical
  *     assets base.
  *   - A full current reference re-verification (`verifyCurrent`) must return
- *     `ok`, `missing_count: 0`, the frozen plan itself and the matching digest
- *     BEFORE any write. A known missing blog reference is not waivable.
+ *     `ok`, no newly missing references, the frozen plan itself and the matching
+ *     digest BEFORE any write. Only the exact accepted baseline image is exempt.
  *   - A fresh database backup (`verifyFreshDatabaseBackup`) must succeed BEFORE
  *     any transaction or UPDATE. Its failure means zero DB writes.
  *   - Writes run in bounded (<=50) READ COMMITTED transactions with a 2s lock
@@ -41,7 +41,7 @@ import {
   loadBackupIdentity,
 } from './backup-verification.mjs';
 import { chunk } from './backup-and-purge.mjs';
-import { DEFAULT_PUBLIC_BASE, PLAN_DIGEST_FILE, PLAN_FILE } from './verify-r2-references.mjs';
+import { DEFAULT_PUBLIC_BASE, PLAN_DIGEST_FILE, PLAN_FILE, hasOnlyAcceptedMissingReferences } from './verify-r2-references.mjs';
 
 export const APPLY_BATCH_SIZE = 50;
 export const PRIVATE_BUCKET = 'miu-private';
@@ -261,10 +261,9 @@ export async function runReferenceApply({
   if (JSON.stringify(plan) !== rawPlan) throw new Error('Reference plan file is not canonical JSON');
   assertPlanBinding(freshIdentity, plan);
 
-  // Full current reference re-verification BEFORE any write. A missing
-  // pre-existing blog reference is an explicit blocker, never waived.
+  // Reverify before writes; allow only the exact user-accepted baseline exception.
   const current = await verifyCurrent();
-  if (!current || current.ok !== true || current.missing_count !== 0) {
+  if (!current || current.ok !== true || !hasOnlyAcceptedMissingReferences(current)) {
     throw new Error(`Current reference verification failed: missing_count=${current?.missing_count ?? 'unknown'}`);
   }
   if (current.source_etag_unbound !== 0) {

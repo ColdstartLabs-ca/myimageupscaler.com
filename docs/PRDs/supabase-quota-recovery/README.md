@@ -28,7 +28,7 @@ The Supabase org (MIU + AutopilotRank) went over the Free quota on 2026-10-09. T
 
 ## Scope clarification (2026-10-11, João)
 
-Preserve the existing state and clean up junk. Pre-existing missing content does not require restoration to complete cleanup. This supersedes earlier absolute zero-missing requirements only for the exact known blog reference above; it does not waive backup verification, overwrite/concurrency safeguards, or authorize deleting retained customer content. Existing runtime guards remain fail-closed until they can enforce this precise baseline exception.
+Preserve the existing state and clean up junk. Pre-existing missing content does not require restoration to complete cleanup. This supersedes earlier absolute zero-missing requirements only for the exact known blog reference above; it does not waive backup verification, overwrite/concurrency safeguards, or authorize deleting retained customer content. The reference verifier/apply guard enforces this precise exception; native source fencing and deletion guards remain fail-closed.
 
 ## Execution timeline
 

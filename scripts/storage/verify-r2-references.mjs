@@ -99,6 +99,16 @@ export function assertCanonicalPublicBase(publicBase = DEFAULT_PUBLIC_BASE) {
 /** Body URLs: every absolute http(s) URL in Markdown or HTML content. */
 const BODY_URL_REGEX = /https?:\/\/[^\s"'<>(){}[\]]+/g;
 
+// João accepted this exact pre-existing broken body image; never exempt other references.
+export function hasOnlyAcceptedMissingReferences(result) {
+  if (result?.missing_count === 0) return !result.missing || (Array.isArray(result.missing) && result.missing.length === 0);
+  if (result?.missing_count !== 1 || !Array.isArray(result.missing) || result.missing.length !== 1) return false;
+  const item = result.missing[0];
+  return item?.sourceId === 'blog_posts:b26a2f86-ec30-40d0-8a33-bca21bfb7417' &&
+    item.table === 'blog_posts' && item.field === 'content' &&
+    item.source === '2026/01/1769887240667-tools-inline-1.webp' && item.reason === 'missing_manifest';
+}
+
 export function extractBodyUrls(content) {
   if (typeof content !== 'string') return [];
   const urls = [];
@@ -489,7 +499,7 @@ export async function verifyR2References({
   const planSha256 = sha256Text(JSON.stringify(plan));
 
   return Object.freeze({
-    ok: missing.length === 0,
+    ok: hasOnlyAcceptedMissingReferences({ missing_count: missing.length, missing }),
     manifest_sha256: freshIdentity.manifestSha256,
     reference_count: references.length + failures.length,
     verified_count: verified.length,
@@ -679,7 +689,8 @@ export async function runVerifyReferencesCommand(deps = {}) {
 
   log(
     `[storage] verify references=${result.reference_count} verified=${result.verified_count} ` +
-      `targets=${result.target_count} missing=${result.missing_count}`
+      `targets=${result.target_count} missing=${result.missing_count}` +
+      (result.missing_count > 0 && result.ok ? ` accepted_baseline=${missingReport(result)}` : '')
   );
 
   if (result.ok !== true) {
@@ -701,7 +712,7 @@ export async function runVerifyReferencesCommand(deps = {}) {
  * Apply command with injected dependencies. The confirm guard runs before the
  * database factory or any loader. The injected apply engine owns the ordering:
  * a fresh two-machine database backup is proven before any UPDATE, and a missing
- * baseline blog reference is never waived. Sources are only ever read.
+ * reference other than the exact accepted baseline is never waived. Sources are only ever read.
  */
 export async function runApplyReferencesCommand(deps = {}) {
   const {
