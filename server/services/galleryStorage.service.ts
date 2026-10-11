@@ -5,6 +5,8 @@
 
 import { randomUUID } from 'crypto';
 import { supabaseAdmin } from '../supabase/supabaseAdmin';
+import { buildSavedKey, deleteObject, head, presignGet, put, R2_PRIVATE_BUCKET } from './r2-storage.service';
+import { resolveGalleryObjectKeys } from './gallery-expiry-read.service';
 import {
   GALLERY_STORAGE_CONFIG,
   GALLERY_QUERY_CONFIG,
@@ -23,18 +25,16 @@ import type { ProcessingMode } from '@shared/config/subscription.types';
 // Configuration
 // =============================================================================
 
-const BUCKET_NAME = GALLERY_STORAGE_CONFIG.bucketName;
-
 /**
  * Signed URL expiration time in seconds (1 hour)
  */
 const SIGNED_URL_EXPIRES_IN = 3600;
-const THUMBNAIL_TRANSFORM = {
-  width: 512,
-  height: 512,
-  resize: 'cover' as const,
-  quality: 70,
-};
+
+/**
+ * Legacy Supabase Storage bucket. Gallery rows with `storage_backend = 'supabase'`
+ * still read their original object here until the operator marks them migrated.
+ */
+const LEGACY_GALLERY_BUCKET = 'saved-images';
 
 type GalleryImageMimeType = (typeof GALLERY_STORAGE_CONFIG.allowedMimeTypes)[number];
 
@@ -210,18 +210,10 @@ async function saveImageBufferInternal(
   // 9. Generate storage path: {user_id}/{uuid}.{extension}
   const storagePath = `${userId}/${randomUUID()}.${preparedImage.extension}`;
 
-  // 10. Upload to Supabase Storage
-  const { error: uploadError } = await supabaseAdmin.storage
-    .from(BUCKET_NAME)
-    .upload(storagePath, preparedImage.buffer, {
-      contentType: preparedImage.contentType,
-      cacheControl: '31536000', // 1 year cache
-      upsert: false,
-    });
-
-  if (uploadError) {
-    throw new Error(`Failed to upload image to storage: ${uploadError.message}`);
-  }
+  await put(
+    R2_PRIVATE_BUCKET, buildSavedKey(storagePath),
+    preparedImage.buffer as unknown as Parameters<typeof put>[2], preparedImage.contentType
+  );
 
   // 11. Insert database record
   const { data: dbRecord, error: dbError } = await supabaseAdmin
@@ -235,25 +227,20 @@ async function saveImageBufferInternal(
       height: preparedImage.height,
       model_used: metadata.modelUsed ?? 'unknown',
       processing_mode: metadata.processingMode ?? 'both',
+      // New writes always land in R2; the operator migration marks migrated rows later.
+      storage_backend: 'r2',
     })
     .select()
     .single();
 
   if (dbError) {
-    // Try to clean up uploaded file if DB insert fails
-    await supabaseAdmin.storage.from(BUCKET_NAME).remove([storagePath]);
+    // A lost response can follow a committed insert; retain the uploaded bytes.
     throw new Error(`Failed to save image record: ${dbError.message}`);
   }
 
   // 12. Generate signed URL for viewing
   const signedUrl = await generateSignedUrl(storagePath);
-  const thumbnailSignedUrl = await generateThumbnailSignedUrl(storagePath).catch(error => {
-    console.error('Failed to generate saved gallery thumbnail signed URL', {
-      storagePath,
-      error: error instanceof Error ? error.message : error,
-    });
-    return signedUrl;
-  });
+  const thumbnailSignedUrl = generateThumbnailUrl(dbRecord.id);
 
   return {
     image: dbRecord as IGalleryImage,
@@ -352,26 +339,29 @@ export async function listImages(
   const images = (data as IGalleryImage[]) ?? [];
   const total = count ?? 0;
 
-  // Generate signed URLs for each image. A single stale storage path should not
-  // make the whole gallery unavailable.
+  // Generate signed URLs for each image. One unreadable or unknown backend must
+  // not make the whole gallery unavailable, so each row is signed independently
+  // and dropped on failure.
+  //
+  // Only R2 rows use the expiry registry archive map: an image whose registry row
+  // is currently `deleting` is served from its immutable archive, so a crash
+  // mid-expiry never yields an unreadable DB reference. Legacy Supabase rows sign
+  // directly and never trigger a registry query.
+  const objectKeys = await resolveGalleryObjectKeys(
+    userId,
+    images
+      .filter(image => image.storage_backend === 'r2')
+      .map(image => ({ id: image.id, storage_path: image.storage_path }))
+  );
+
   const signedUrlResults = await Promise.allSettled(
     images.map(async image => {
-      const signedUrl = await generateSignedUrl(image.storage_path);
-      const thumbnailSignedUrl = await generateThumbnailSignedUrl(image.storage_path).catch(
-        error => {
-          console.error('Failed to generate gallery thumbnail signed URL', {
-            imageId: image.id,
-            storagePath: image.storage_path,
-            error: error instanceof Error ? error.message : error,
-          });
-          return signedUrl;
-        }
-      );
+      const signedUrl = await signGalleryReadUrl(image, objectKeys);
 
       return {
         ...image,
         signed_url: signedUrl,
-        thumbnail_signed_url: thumbnailSignedUrl,
+        thumbnail_signed_url: generateThumbnailUrl(image.id),
       };
     })
   );
@@ -423,14 +413,11 @@ export async function deleteImage(userId: string, imageId: string): Promise<bool
     throw new Error('Image not found or you do not have permission to delete it');
   }
 
-  // 2. Delete from storage
-  const { error: storageError } = await supabaseAdmin.storage
-    .from(BUCKET_NAME)
-    .remove([image.storage_path]);
-
-  if (storageError) {
-    // Log but continue - we still want to delete the DB record
-    console.error(`Failed to delete image from storage: ${storageError.message}`);
+  const key = buildSavedKey(image.storage_path);
+  await deleteObject(R2_PRIVATE_BUCKET, key);
+  const remaining = await head(R2_PRIVATE_BUCKET, key);
+  if (remaining.status !== 404) {
+    throw new Error('Unable to confirm image removal from storage');
   }
 
   // 3. Delete from database
@@ -438,7 +425,8 @@ export async function deleteImage(userId: string, imageId: string): Promise<bool
     .from('saved_images')
     .delete()
     .eq('id', imageId)
-    .eq('user_id', userId);
+    .eq('user_id', userId)
+    .eq('storage_path', image.storage_path);
 
   if (dbError) {
     throw new Error(`Failed to delete image record: ${dbError.message}`);
@@ -505,27 +493,38 @@ export async function getUsage(userId: string, tier?: GalleryTier): Promise<IGal
  * @returns Signed URL valid for 1 hour
  */
 async function generateSignedUrl(storagePath: string): Promise<string> {
-  const { data, error } = await supabaseAdmin.storage
-    .from(BUCKET_NAME)
-    .createSignedUrl(storagePath, SIGNED_URL_EXPIRES_IN);
-
-  if (error) {
-    throw new Error(`Failed to generate signed URL: ${error.message}`);
-  }
-
-  return data.signedUrl;
+  return presignGet(R2_PRIVATE_BUCKET, buildSavedKey(storagePath), SIGNED_URL_EXPIRES_IN);
 }
 
-async function generateThumbnailSignedUrl(storagePath: string): Promise<string> {
-  const { data, error } = await supabaseAdmin.storage
-    .from(BUCKET_NAME)
-    .createSignedUrl(storagePath, SIGNED_URL_EXPIRES_IN, {
-      transform: THUMBNAIL_TRANSFORM,
-    });
-
-  if (error) {
-    throw new Error(`Failed to generate thumbnail signed URL: ${error.message}`);
+/**
+ * Sign a read URL for one owned gallery row using its storage backend.
+ *
+ * R2 rows use the recovery archive map. Legacy rows sign their original Supabase
+ * object. An absent or unknown backend fails closed: the caller never guesses a
+ * source and never serves a possibly deleted object.
+ */
+async function signGalleryReadUrl(
+  image: IGalleryImage,
+  objectKeys: Map<string, string>
+): Promise<string> {
+  if (image.storage_backend === 'r2') {
+    const objectKey = objectKeys.get(image.id) ?? buildSavedKey(image.storage_path);
+    return presignGet(R2_PRIVATE_BUCKET, objectKey, SIGNED_URL_EXPIRES_IN);
   }
 
-  return data.signedUrl;
+  if (image.storage_backend === 'supabase') {
+    const { data, error } = await supabaseAdmin.storage
+      .from(LEGACY_GALLERY_BUCKET)
+      .createSignedUrl(image.storage_path, SIGNED_URL_EXPIRES_IN);
+    if (error || !data?.signedUrl) {
+      throw new Error(`Failed to sign legacy gallery image: ${error?.message ?? 'no signed URL'}`);
+    }
+    return data.signedUrl;
+  }
+
+  throw new Error(`Unknown gallery storage backend: ${String(image.storage_backend)}`);
+}
+
+function generateThumbnailUrl(imageId: string): string {
+  return `/api/gallery/thumb/${encodeURIComponent(imageId)}`;
 }

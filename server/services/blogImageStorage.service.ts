@@ -1,4 +1,10 @@
 import sharp from 'sharp';
+import {
+  deleteObject,
+  put,
+  R2_PUBLIC_BASE_URL,
+  R2_PUBLIC_BUCKET,
+} from '@server/services/r2-storage.service';
 import { supabaseAdmin } from '../supabase/supabaseAdmin';
 import type {
   IBlogImageMetadataWithDb,
@@ -9,8 +15,6 @@ import type {
 // =============================================================================
 // Configuration
 // =============================================================================
-
-const BUCKET_NAME = 'blog-images';
 
 /**
  * Supported MIME types for image uploads
@@ -43,12 +47,12 @@ const COMPRESSION_CONFIG = {
 // =============================================================================
 
 /**
- * Upload an image to Supabase Storage with compression
+ * Upload an image to R2 storage with compression
  *
  * @param buffer - Image data as buffer
  * @param filename - Original filename
  * @param mimeType - MIME type of the image
- * @returns Object with CDN URL and storage path
+ * @returns Object with public URL and relative storage path
  */
 export async function uploadBlogImage(
   buffer: Buffer,
@@ -79,41 +83,25 @@ export async function uploadBlogImage(
   const baseName = sanitizedName.replace(/\.[^.]+$/, ''); // Remove extension
   const storagePath = `${getDatePath()}/${timestamp}-${baseName}.webp`;
 
-  // Upload to Supabase Storage
-  const { data, error } = await supabaseAdmin.storage
-    .from(BUCKET_NAME)
-    .upload(storagePath, compressedBuffer, {
-      contentType: 'image/webp',
-      cacheControl: '31536000', // 1 year cache
-      upsert: false,
-    });
-
-  if (error) {
-    throw new Error(`Supabase Storage upload failed: ${error.message}`);
-  }
-
-  // Get public URL
-  const { data: urlData } = supabaseAdmin.storage.from(BUCKET_NAME).getPublicUrl(data.path);
+  // Upload to R2 (public bucket). The public bucket holds blog images only, so
+  // the object key equals the relative `storage_path` (`YYYY/MM/<name>.webp`).
+  await put(R2_PUBLIC_BUCKET, storagePath, new Uint8Array(compressedBuffer), 'image/webp');
 
   return {
-    url: urlData.publicUrl,
-    id: data.path,
+    url: buildPublicUrl(storagePath),
+    id: storagePath,
     width,
     height,
   };
 }
 
 /**
- * Delete an image from Supabase Storage
+ * Delete an image from R2 storage
  *
- * @param path - Storage path of the image
+ * @param path - Relative storage path of the image
  */
 export async function deleteBlogImage(path: string): Promise<void> {
-  const { error } = await supabaseAdmin.storage.from(BUCKET_NAME).remove([path]);
-
-  if (error) {
-    throw new Error(`Failed to delete image: ${error.message}`);
-  }
+  await deleteObject(R2_PUBLIC_BUCKET, path);
 }
 
 /**
@@ -204,6 +192,14 @@ function getDatePath(): string {
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, '0');
   return `${year}/${month}`;
+}
+
+/**
+ * Build the public URL for a blog object key, encoding each path segment.
+ */
+function buildPublicUrl(objectKey: string): string {
+  const encodedKey = objectKey.split('/').map(encodeURIComponent).join('/');
+  return `${R2_PUBLIC_BASE_URL}/${encodedKey}`;
 }
 
 // =============================================================================

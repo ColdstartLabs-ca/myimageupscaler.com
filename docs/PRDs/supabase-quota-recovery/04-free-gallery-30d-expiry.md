@@ -1,10 +1,10 @@
 # PRD-SQR-04 — Free-gallery 30-day inactivity expiry with warning email
 
-**Status:** NOT STARTED
+**Status:** IN PROGRESS
 **Priority:** P1 — Without a working expiry, gallery storage keeps growing toward the R2 10 GB free limit. The current cleanup uses the wrong activity signal and can leave orphan files (AC-1, AC-2).
 **Complexity:** 5 (MEDIUM)
 **Owner:** Claude
-**Depends on:** PRD-SQR-02 (the gallery lives on R2). PRD-SQR-01 already ran the first wave by hand.
+**Depends on:** PRD-SQR-02 (the gallery lives on R2). PRD-SQR-01's first-wave purge is planned only; no production deletion has run.
 
 ## Context
 
@@ -14,7 +14,17 @@
 - Email hook: `queueLifecycleEmail` (`server/services/email-lifecycle.service.ts:391`). Helpers at `:484` and `:565` show the pattern. Campaign seeds are in `supabase/migrations/20260607011814_create_email_lifecycle_tables.sql:109`. The template map is in `base-email-provider-adapter.ts:~310-325`.
 - Brevo free tier: 276 emails per day (memory: email lifecycle send constraints). The warning emails share that cap.
 
-## Solution
+## Approved safety contract (2026-10-10)
+
+- João requires both desktop and laptop copies to pass byte-count and SHA-256 verification before an image can expire. A scheduler cannot inspect LAN disks: missing, stale, or mismatched registered proof means KEEP, including beyond 30 days. No automatic deletion is enabled today.
+- Activity is the greatest account creation/sign-in, persistent-session refresh/create/update, gallery save, and processing reservation time. Preserve the raw PostgreSQL timestamp, including microseconds. Any recent activity resets the period. Paid subscriptions, purchased balance, and any positive historical purchase/subscription credit transaction exempt the user.
+- Expiry requires 30 days inactivity AND actual warning delivery at least 7 days earlier for the exact activity period. Queue insertion or failed delivery is insufficient. Delivery proof survives queue pruning.
+- Register verified individual image proofs only from the operator backup job after independently checking both machines. Bind the exact saved-image JSON snapshot, immutable source key/ETag/bytes, SHA-256, backup manifest/run, two verification timestamps, and a verified immutable private R2 recovery archive. An empty registry keeps every image. Registration, copy, migration, and deployment remain operator gated.
+- Before external deletion, durably claim an individual image as `deleting`. Gallery reads use the immutable verified recovery archive whenever a registered proof is ready or deleting. A stale worker can delete a restored original after a new worker releases the lease; keeping archive reads after release preserves availability through that race. Check source identity, delete only that object, require HEAD 404, then atomically recheck current activity/payment/warning and exact DB snapshot before deleting only that row. Never delete by user ID.
+- Process unfinished claims before new expiry on every run. If the row remains or commit outcome is uncertain, restore without overwriting using the immutable archive (R2 `x-amz-copy-source-if-match` plus `cf-copy-destination-if-none-match: *`), verify HEAD, then release the claim. Keep the archive and both LAN copies; no archive purge is part of this change. An absent row can complete the journal without deleting another object.
+- Recovery-copy conditions require a real R2 smoke proof before activation; documented destination conditions are beta. Source and destination checks occur at different times, so the archive itself must be immutable. Reference: https://developers.cloudflare.com/r2/api/s3/extensions/#conditional-operations-in-copyobject-for-the-destination-object.
+
+## Original solution (superseded where the approved contract is stricter)
 
 - **Inactivity:** `last_sign_in_at` is more than 30 days old (or null and the account is more than 30 days old). Same free-user filter as today: no active or trialing subscription, free or null tier. Also exclude users who have ever bought credits.
 - **Warning:** at 23 days without sign-in, queue a `gallery_expiry_warning` lifecycle email once per inactivity period. The email links to `/dashboard/gallery`. The cleanup deletes only users who were warned at least 7 days ago and still have not signed in. Signing in resets the period.
@@ -43,18 +53,27 @@
 ## Decisions
 
 - 2026-10-10 (João): Inactive means no sign-in for 30 days. Only free users expire. A warning email goes out about 7 days before deletion.
-- 2026-10-10 (João): The first wave runs on Oct 13 in PRD-SQR-01 with no warning email. Waves after that one get the warning.
+- 2026-10-10: The dated manual first-wave warning exception is separate from scheduled expiry. It does not waive the verified two-copy gate or authorize executing a production delete. Scheduled expiry requires seven days after actual warning delivery.
+- 2026-10-10 (João): Recently active persistent logged-in users are kept. Any sign-in or gallery use resets the inactivity period, and paid users are exempt. The copy states the rule as "may expire after 30 days of inactivity, only after at least 7 days warning".
 
 ## Execution Phases
 
 #### Phase 1: Signal and delete-order fix
 
-**Status:** NOT STARTED
+**Status:** LOCAL CODE COMPLETE — explicit `GALLERY_EXPIRY_ENABLED=false` gate retained
 **Files:** `galleryCleanup.service.ts`, `galleryStorage.service.ts`
 **Verification:** AC-1 and AC-2 red → green.
 
 #### Phase 2: Warning email and copy
 
-**Status:** NOT STARTED
+**Status:** IN PROGRESS — template, adapter registration, English gallery UI and terms copy done and tested; the campaign seed migration, `email-lifecycle.service.ts` queue wiring and eligibility remain root-owned and unwired.
 **Files:** a campaign seed migration, `emails/templates/GalleryExpiryWarning.tsx`, the adapter map, `email-lifecycle.service.ts`, the gallery UI and terms copy
 **Verification:** AC-3 and AC-5. AC-4 after deploy.
+
+- 2026-10-10 verification: warning policy correction passed 9 service, 4 email, and 14 real PostgreSQL 17 cases. Template/UI/terms and seven-locale copy suites passed. Automatic expiry remains gated. Registry, recovery journal, two-copy native metadata registration, concrete operator commands, and archive-backed reads are now implemented and tested locally.
+
+- Root concurrency review (2026-10-11): a renewed attempt UUID fences SQL completion but cannot fence a stale external R2 DELETE. Gallery reads therefore use the verified immutable archive for both `ready` and `deleting` proofs, including after restoration/release. Never purge an archive while its saved-image row exists. Both original and archive paths are immutable in application code. This avoids relying on a worker dying within its lease.
+- Completed Opus 5.5 high review confirmed final eligibility uses a fresh post-lock snapshot at READ COMMITTED. The finalizer now rejects repeatable-read/serializable invocations; 17 real PostgreSQL cases passed. This was a focused snapshot review, not approval of the entire implementation.
+- Recovery archive reads now cover both ready and deleting proofs; 53 focused gallery read/thumbnail tests passed. Registration requires full native-row metadata copied and verified on both machines, in addition to the pixels. Future R2 gallery backups use distinct source-store receipts; concrete adapters and real R2 conditional-copy proof remain under review. Automatic expiry is still disabled.
+
+- Integration now dispatches to the verified executor only when the strictly parsed `GALLERY_EXPIRY_ENABLED` flag is true; its default and example are false. Executor failures return cron 500 and do not record success. Deployment allowlist carries the flag without changing any real secret. Missing registry proof keeps every image. The actual R2 recovery-copy smoke and operator go are still mandatory before enabling it.

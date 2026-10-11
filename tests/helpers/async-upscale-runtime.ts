@@ -1,7 +1,7 @@
 import { defineConfig } from '@playwright/test';
 import { Miniflare, Response as WorkerResponse } from 'miniflare';
 import { WebSocket } from 'undici';
-import { createHash, createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
+import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
 import { execFileSync, spawn } from 'node:child_process';
 import { constants, createWriteStream, existsSync } from 'node:fs';
 import { copyFile, cp, mkdir, readFile, readdir, realpath, rm, writeFile } from 'node:fs/promises';
@@ -29,6 +29,9 @@ const ORIGIN = 'https://upscale-runtime.test';
 const SUPABASE_ORIGIN = 'https://upscale-test.supabase.co';
 const PROVIDER_ORIGIN = 'https://api.replicate.com';
 const DELIVERY_ORIGIN = 'https://replicate.delivery';
+const R2_ACCOUNT_ID = 'fixture-account';
+const R2_ORIGIN = `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
+const R2_PRIVATE_BUCKET = 'miu-private';
 export const ASYNC_RUNTIME_ARTIFACTS = path.join(ROOT, 'test-results/async-upscale-runtime');
 
 // This configuration deliberately has no test-mode dev server or remote-user teardown.
@@ -329,8 +332,10 @@ export async function startAsyncUpscaleRuntime(
   const calls: ICall[] = [];
   const invocations: IAsyncUpscaleRuntime['invocations'] = [];
   const users = new Map<string, IUser>();
-  const objects = new Map<string, { bytes: Buffer; width: number; height: number }>();
-  const capabilities = new Map<string, string>();
+  const objects = new Map<
+    string,
+    { bytes: Buffer; width: number; height: number; contentType: string }
+  >();
   const predictions = new Map<string, IPrediction>();
   let providerDelayMs = options.providerDelayMs;
   let losePredictionIdentity = false;
@@ -439,11 +444,9 @@ export async function startAsyncUpscaleRuntime(
           }
           const input = json().input as Record<string, unknown>;
           const imageUrl = new URL(String(input.image ?? input.img ?? input.input_image));
-          const storagePath = decodeURIComponent(
-            imageUrl.pathname.split('/upscale-inputs/')[1] ?? ''
-          );
-          const source = objects.get(storagePath);
-          if (!source) throw new Error(`Prediction input object missing: ${storagePath}`);
+          const objectKey = decodeURIComponent(imageUrl.pathname).replace(/^\/[^/]+\//, '');
+          const source = objects.get(objectKey);
+          if (!source) throw new Error(`Prediction input object missing: ${objectKey}`);
           const scale = Number(
             input.scale ?? input.upscale ?? input.scale_factor ?? input.upscale_factor ?? 2
           );
@@ -517,87 +520,68 @@ export async function startAsyncUpscaleRuntime(
               user_metadata: {},
             })
           : Response.json({ message: 'Invalid JWT' }, { status: 401 });
-      } else if (url.pathname.startsWith('/storage/v1/object/upload/sign/upscale-inputs/')) {
-        const storagePath = decodeURIComponent(url.pathname.split('/upscale-inputs/')[1]);
-        if (call.method === 'POST' && authorization === database.serviceRoleKey) {
-          const token = randomBytes(24).toString('hex');
-          capabilities.set(token, storagePath);
-          result = Response.json({
-            url: `/object/upload/sign/upscale-inputs/${storagePath}?token=${token}`,
-          });
-        } else if (
-          call.method === 'PUT' &&
-          capabilities.get(url.searchParams.get('token') ?? '') === storagePath &&
-          !objects.has(storagePath)
-        ) {
-          const form = await new Response(new Uint8Array(body!), { headers }).formData();
-          const upload = form.get('');
-          if (!upload || typeof upload === 'string')
-            throw new Error('Signed upload omitted the file');
-          const bytes = Buffer.from(await upload.arrayBuffer());
-          if (!bytes.subarray(0, 8).equals(Buffer.from('89504e470d0a1a0a', 'hex')))
-            throw new Error('Release fixture expects a PNG');
-          objects.set(storagePath, {
-            bytes,
-            width: bytes.readUInt32BE(16),
-            height: bytes.readUInt32BE(20),
-          });
-          result = Response.json({ Key: `upscale-inputs/${storagePath}` });
-        } else
-          result = Response.json(
-            { message: 'Invalid or already-used signed upload' },
-            { status: 400 }
-          );
-      } else if (
-        url.pathname === '/storage/v1/object/list/upscale-inputs' &&
-        authorization === database.serviceRoleKey
-      ) {
-        const { prefix, search = '' } = json();
-        result = Response.json(
-          [...objects]
-            .filter(
-              ([name]) =>
-                name.startsWith(`${prefix}/`) && name.split('/').at(-1)?.includes(String(search))
-            )
-            .map(([name, object]) => ({
-              name: name.split('/').at(-1),
-              id: name,
-              metadata: { size: object.bytes.length, mimetype: 'image/png' },
-            }))
-        );
-      } else if (url.pathname.startsWith('/storage/v1/object/sign/upscale-inputs/')) {
-        const storagePath = decodeURIComponent(url.pathname.split('/upscale-inputs/')[1]);
-        if (call.method === 'POST' && authorization === database.serviceRoleKey) {
-          const capability = randomBytes(24).toString('hex');
-          capabilities.set(capability, storagePath);
-          result = Response.json({
-            signedURL: `/object/sign/upscale-inputs/${storagePath}?token=${capability}`,
-          });
-        } else if (
-          capabilities.get(url.searchParams.get('token') ?? '') === storagePath &&
-          objects.has(storagePath)
-        ) {
-          const object = objects.get(storagePath)!;
+      } else if (originalHost === new URL(R2_ORIGIN).host) {
+        const objectPath = decodeURIComponent(url.pathname).replace(/^\//, '');
+        const separator = objectPath.indexOf('/');
+        const bucket = objectPath.slice(0, separator);
+        const key = objectPath.slice(separator + 1);
+        const object = objects.get(key);
+        if (bucket !== R2_PRIVATE_BUCKET) {
+          result = new Response(null, { status: 404 });
+        } else if (call.method === 'HEAD') {
+          result = object
+            ? new Response(null, {
+                status: 200,
+                headers: {
+                  'Content-Type': object.contentType,
+                  'Content-Length': String(object.bytes.length),
+                },
+              })
+            : new Response(null, { status: 404 });
+        } else if (call.method === 'GET') {
           const range = /^bytes=(\d+)-(\d+)$/.exec(headers.get('range') ?? '');
-          if (!range) throw new Error('Application unexpectedly read the full input image');
-          const start = Number(range[1]);
-          const end = Math.min(Number(range[2]), object.bytes.length - 1);
-          result = new Response(new Uint8Array(object.bytes.subarray(start, end + 1)), {
-            status: 206,
-            headers: {
-              'Content-Type': 'image/png',
-              'Content-Length': String(end - start + 1),
-              'Content-Range': `bytes ${start}-${end}/${object.bytes.length}`,
-            },
-          });
-        } else result = new Response(null, { status: 404 });
-      } else if (
-        url.pathname === '/storage/v1/object/upscale-inputs' &&
-        call.method === 'DELETE' &&
-        authorization === database.serviceRoleKey
-      ) {
-        for (const storagePath of json().prefixes as string[]) objects.delete(storagePath);
-        result = Response.json([]);
+          if (!object) result = new Response(null, { status: 404 });
+          else if (range) {
+            const start = Number(range[1]);
+            const end = Math.min(Number(range[2]), object.bytes.length - 1);
+            result = new Response(new Uint8Array(object.bytes.subarray(start, end + 1)), {
+              status: 206,
+              headers: {
+                'Content-Type': object.contentType,
+                'Content-Length': String(end - start + 1),
+                'Content-Range': `bytes ${start}-${end}/${object.bytes.length}`,
+              },
+            });
+          } else {
+            result = new Response(new Uint8Array(object.bytes), {
+              status: 200,
+              headers: {
+                'Content-Type': object.contentType,
+                'Content-Length': String(object.bytes.length),
+              },
+            });
+          }
+        } else if (call.method === 'PUT') {
+          // The presigned input PUT signs `If-None-Match: *`, so R2 refuses to
+          // overwrite a committed object and replays a 412.
+          if (objects.has(key) && headers.get('if-none-match') === '*') {
+            result = new Response(null, { status: 412 });
+          } else {
+            const bytes = Buffer.from(body ?? new Uint8Array());
+            objects.set(key, {
+              bytes,
+              width: bytes.readUInt32BE(16),
+              height: bytes.readUInt32BE(20),
+              contentType: headers.get('content-type') ?? 'image/png',
+            });
+            result = new Response(null, { status: 200 });
+          }
+        } else if (call.method === 'DELETE') {
+          objects.delete(key);
+          result = new Response(null, { status: 204 });
+        } else {
+          result = new Response(null, { status: 405 });
+        }
       } else {
         result = Response.json(
           {
@@ -684,10 +668,13 @@ export async function startAsyncUpscaleRuntime(
           BASELIME_API_KEY: '',
           CRON_SECRET: 'local-runtime-cron-only',
           ENABLE_PREMIUM_MODELS: options.premiumModels === false ? '' : 'true',
+          CLOUDFLARE_ACCOUNT_ID: R2_ACCOUNT_ID,
+          R2_ACCESS_KEY_ID: 'fixture-r2-access-key',
+          R2_SECRET_ACCESS_KEY: 'fixture-r2-secret-key',
         },
         outboundService: async request => {
           const url = new URL(request.url);
-          if (![SUPABASE_ORIGIN, PROVIDER_ORIGIN, DELIVERY_ORIGIN].includes(url.origin))
+          if (![SUPABASE_ORIGIN, PROVIDER_ORIGIN, DELIVERY_ORIGIN, R2_ORIGIN].includes(url.origin))
             throw new Error(`Unexpected Worker network egress: ${url.host}${url.pathname}`);
           const response = await fetch(`${fixtureOrigin}${url.pathname}${url.search}`, {
             method: request.method,
@@ -756,10 +743,11 @@ export async function startAsyncUpscaleRuntime(
           input.height * scale,
           options.outputBytes ?? 25 * 1024 * 1024
         );
-        objects.set(storagePath, {
+        objects.set(`inputs/${storagePath}`, {
           bytes: getImage(input.width, input.height, input.bytes),
           width: input.width,
           height: input.height,
+          contentType: 'image/png',
         });
         return storagePath;
       },

@@ -27,6 +27,8 @@ export const PRODUCTION_BUCKETS = [INPUT_BUCKET, GALLERY_BUCKET, BLOG_BUCKET];
 export const MANIFEST_FILE = 'manifest.jsonl';
 export const CHECKSUM_FILE = 'manifest.sha256';
 export const RECEIPT_FILE = 'backup-verification.json';
+export const SOURCE_STORES = ['supabase', 'r2'];
+export const DEFAULT_SOURCE_STORE = 'supabase';
 export const SHA256_REGEX = /^[0-9a-f]{64}$/;
 export const SAFE_OBJECT_PATH_REGEX = /^[a-zA-Z0-9_\-\.\/]+$/;
 export const SAFE_RUN_BASENAME_REGEX = /^[A-Za-z0-9_-]+$/;
@@ -75,6 +77,19 @@ function isSha256(value) {
 
 function isSafeByteCount(value) {
   return Number.isSafeInteger(value) && value >= 0;
+}
+
+/**
+ * A receipt's `source_store` names the object store the backup copied. A legacy
+ * receipt without the field is Supabase; any unknown value fails closed so an R2
+ * gallery backup can never be read as a Supabase backup.
+ */
+export function normalizeSourceStore(value) {
+  const store = value ?? DEFAULT_SOURCE_STORE;
+  if (!SOURCE_STORES.includes(store)) {
+    throw new Error(`Unknown source_store: ${String(store)}`);
+  }
+  return store;
 }
 
 export function isSafeObjectPath(objectPath) {
@@ -266,10 +281,12 @@ export async function loadBackupIdentity(runDir) {
   if (receipt.verified_at != null && typeof receipt.verified_at !== 'string') {
     throw new Error('Receipt verified_at must be a string');
   }
+  const sourceStore = normalizeSourceStore(receipt.source_store);
 
   return Object.freeze({
     runDir: rootResolved,
     runBasename,
+    sourceStore,
     manifest: Object.freeze(manifest.map(row => Object.freeze({ ...row }))),
     receipt: Object.freeze({ ...receipt }),
     manifestSha256,

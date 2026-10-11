@@ -131,7 +131,7 @@
         },
         {
           "question": "Mes images sont-elles stockées sur vos serveurs ?",
-          "answer": "Les images sont automatiquement supprimées dans l'heure qui suit le traitement. Nous n'utilisons pas vos images pour l'entraînement ni ne les partageons avec des tiers."
+          "answer": "Les envois temporaires sont programmés pour une suppression automatique après deux jours ; le nettoyage peut prendre plus de temps. Les images que vous enregistrez dans votre galerie suivent une politique de conservation distincte. Nous n'utilisons pas vos images pour l'entraînement et ne les partageons pas avec des tiers."
         }
       ],
       "faq": [

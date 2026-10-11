@@ -133,7 +133,7 @@ describe('storage-runtime: withDatabaseBatch', () => {
 
     expect(outcome).toEqual({ status: 'ok' });
     expect(callback).toHaveBeenCalledTimes(1);
-    expect(db.calls[0]).toBe('BEGIN');
+    expect(db.calls[0]).toBe('BEGIN ISOLATION LEVEL READ COMMITTED');
     expect(db.calls).toEqual(
       expect.arrayContaining([
         "SET LOCAL lock_timeout = '5s'",
@@ -141,23 +141,33 @@ describe('storage-runtime: withDatabaseBatch', () => {
       ])
     );
     const lockIndex = db.calls.findIndex(sql => sql.startsWith('LOCK TABLE'));
-    expect(lockIndex).toBeGreaterThan(db.calls.indexOf('BEGIN'));
+    expect(lockIndex).toBeGreaterThan(db.calls.indexOf('BEGIN ISOLATION LEVEL READ COMMITTED'));
     expect(db.calls.indexOf('SET LOCAL lock_timeout')).toBeLessThan(lockIndex);
     expect(lockIndex).toBeLessThan(db.calls.indexOf('COMMIT'));
     expect(db.calls[db.calls.length - 1]).toBe('COMMIT');
     expect(db.calls.some(sql => sql.includes('storage.objects'))).toBe(false);
   });
 
-  it('locks the expire domain tables including auth.users but never storage.objects', async () => {
+  it('locks the expire domain tables including auth.sessions but never storage.objects', async () => {
     const db = fakeDb();
 
     await storageModule.withDatabaseBatch(db, 'expire', async () => ({ status: 'ok' }));
 
     const lock = db.calls.find(sql => sql.startsWith('LOCK TABLE')) ?? '';
     expect(lock).toContain('auth.users');
+    expect(lock).toContain('auth.sessions');
     expect(lock).toContain('public.profiles');
     expect(lock).toContain('public.saved_images');
     expect(lock).not.toContain('storage.objects');
+  });
+
+  it('never locks auth.sessions for a purge batch', async () => {
+    const db = fakeDb();
+
+    await storageModule.withDatabaseBatch(db, 'purge', async () => ({ status: 'ok' }));
+
+    const lock = db.calls.find(sql => sql.startsWith('LOCK TABLE')) ?? '';
+    expect(lock).not.toContain('auth.sessions');
   });
 
   it('rolls back when the callback throws and rethrows', async () => {
@@ -206,6 +216,47 @@ describe('storage-runtime: withDatabaseBatch', () => {
     expect(db.calls).not.toContain('BEGIN');
   });
 });
+
+describe('storage-runtime: gallery expiry eligibility SQL invariants', () => {
+  const { INACTIVE_GALLERY_SQL, GALLERY_RECHECK_SQL } = storageModule as any;
+  const cases: Array<[string, string]> = [
+    ['initial gallery selection', INACTIVE_GALLERY_SQL],
+    ['fresh recheck', GALLERY_RECHECK_SQL],
+  ];
+
+  it.each(cases)('%s keeps the 30-day sign-in and account-age cutoff', (_label, sql) => {
+    expect(sql).toMatch(/u\.last_sign_in_at < now\(\) - interval '30 days'/);
+    expect(sql).toMatch(/u\.last_sign_in_at IS NULL AND u\.created_at < now\(\) - interval '30 days'/);
+  });
+
+  it.each(cases)('%s excludes any recent image of a recently active user', (_label, sql) => {
+    expect(sql).toMatch(/FROM public\.saved_images recentimage/);
+    expect(sql).toMatch(/recentimage\.user_id = s\.user_id/);
+    expect(sql).toMatch(/recentimage\.created_at >= now\(\) - interval '30 days'/);
+  });
+
+  it.each(cases)('%s treats session refreshed_at as UTC and guards every recent session column', (_label, sql) => {
+    expect(sql).toMatch(/FROM auth\.sessions\b/);
+    expect(sql).toMatch(/sess\.refreshed_at AT TIME ZONE 'UTC' >= now\(\) - interval '30 days'/);
+    expect(sql).toMatch(/sess\.created_at >= now\(\) - interval '30 days'/);
+    expect(sql).toMatch(/sess\.updated_at >= now\(\) - interval '30 days'/);
+  });
+
+  it.each(cases)('%s excludes saved images created within 30 days', (_label, sql) => {
+    expect(sql).toMatch(/s\.created_at < now\(\) - interval '30 days'/);
+  });
+
+  it.each(cases)('%s excludes credit reservations created at or within 30 days', (_label, sql) => {
+    expect(sql).toMatch(/FROM public\.processing_credit_reservations\b/);
+    expect(sql).toMatch(/res\.created_at >= now\(\) - interval '30 days'/);
+  });
+
+  it.each(cases)('%s exempts ever-paid users for both purchase and subscription credits', (_label, sql) => {
+    expect(sql).toMatch(/ct\.amount > 0/);
+    expect(sql).toMatch(/ct\.type IN \('purchase', 'subscription'\)/);
+  });
+});
+
 
 describe('storage-runtime: restoreGalleryObjects', () => {
   const config = { supabaseUrl: 'https://example.supabase.co', serviceRoleKey: 'service-role-key' };

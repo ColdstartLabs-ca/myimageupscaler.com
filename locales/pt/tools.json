@@ -131,7 +131,7 @@
         },
         {
           "question": "Minhas imagens são armazenadas em seus servidores?",
-          "answer": "Imagens são automaticamente excluídas dentro de 1 hora após o processamento. Não usamos suas imagens para treinamento ou compartilhamos com terceiros."
+          "answer": "Os envios temporários estão programados para exclusão automática após dois dias; a limpeza pode demorar mais. As imagens que você salva na sua galeria seguem uma política de retenção separada. Não usamos suas imagens para treinamento nem as compartilhamos com terceiros."
         }
       ],
       "faq": [

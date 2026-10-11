@@ -134,7 +134,7 @@
         },
         {
           "question": "Are my images stored on your servers?",
-          "answer": "Images are automatically deleted within 1 hour of processing. We don't use your images for training or share them with third parties."
+          "answer": "Temporary uploads are scheduled for automatic deletion after two days; cleanup may take longer. Images you save to your gallery follow a separate retention policy. We don't use your images for training or share them with third parties."
         }
       ],
       "faq": [

@@ -9,6 +9,88 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-10-10
+
+### Free-gallery retention disclosure in dashboard and terms
+
+Source: [PRD-SQR-04 — Free-gallery 30-day inactivity expiry](../../PRDs/supabase-quota-recovery/04-free-gallery-30d-expiry.md) (Phase 2, AC-5).
+
+Changes:
+
+- The English dashboard gallery (`client/components/dashboard/Gallery.tsx`) shows a retention note: free gallery images may expire after 30 days of inactivity, the user gets at least 7 days warning, signing in keeps them, and paid plans are exempt. Copy lives at `dashboard.gallery.retentionNote` in `locales/en/dashboard.json`; other locales fall back through the i18n deep merge.
+- All seven `locales/*/terms.json` append one retention sentence to `credits.free.description`. Existing free-offer wording in that string is preserved.
+- New lifecycle email template `emails/templates/GalleryExpiryWarning.tsx` (identifier `gallery-expiry-warning`, campaign key `gallery_expiry_warning`), registered in `server/services/email-providers/base-email-provider-adapter.ts` template, import and subject maps. CTA links to `/dashboard/gallery`. The queue, campaign seed migration and eligibility remain root-owned and are not wired here.
+
+Validation:
+
+- New `tests/unit/emails/gallery-expiry-warning-email.unit.spec.tsx` (4 tests) covers the copy, the CTA, the negative claims and the adapter registration.
+- New `tests/unit/seo/gallery-retention-copy.unit.spec.ts` (4 tests) covers the English gallery note and the retention disclosure in all seven terms locales.
+- `tests/unit/seo/free-offer-conversion-copy.unit.spec.ts` and `tests/unit/seo/protected-pages.unit.spec.ts` pass unchanged. Full `yarn verify` not run while other R2/queue editors are active.
+
+Follow-up:
+
+- Root wires the `gallery_expiry_warning` campaign seed and the warning send path. AC-5 stays evidence-pending until that send path exists.
+
+### Blog images now write to Cloudflare R2 (public custom domain)
+
+Source: [PRD-SQR-02 — Move all MIU file storage from Supabase to Cloudflare R2](../../PRDs/supabase-quota-recovery/02-r2-storage-migration.md) (Phase 2, AC-3).
+
+Changes:
+
+- `server/services/blogImageStorage.service.ts` now uses the shared R2 module (`put`/`deleteObject`, `R2_PUBLIC_BUCKET`, `R2_PUBLIC_BASE_URL`) instead of Supabase Storage. New uploads land in `miu-public`, whose object key equals the relative `storage_path` (no `blog/` prefix, because the public bucket holds blog images only), and return `https://assets.myimageupscaler.com/<YYYY/MM/<timestamp>-<name>.webp>`.
+- The database `storage_path` stays relative (`YYYY/MM/<timestamp>-<name>.webp`), so the phase-3 DB URL rewrite can be rolled back. **No DB URL rewrite is applied in this change.**
+- `next.config.js` allow-lists `assets.myimageupscaler.com` in `images.remotePatterns`; `client/utils/image-loader.ts` routes the R2 public domain through the site's Cloudflare image resizing.
+- Legacy Supabase blog URLs still work (loader rewrites them to the Supabase render endpoint) and the Supabase remotePattern, CSP entry and layout preconnect stay, so no old blog image breaks. `app/[locale]/layout.tsx` adds a preconnect for the new assets domain.
+
+Validation:
+
+- New `tests/unit/seo/r2-blog-images.unit.spec.ts` (12 tests) covers the R2 upload/delete path, custom-domain URL, legacy Supabase compatibility, signed private R2 URLs passing through unchanged and private URLs not leaking into the public domain.
+- `tests/unit/blog` (98 tests), `tests/unit/seo/image-optimization` and `tests/unit/seo/blog-lcp-hints` pass. `tsc --noEmit` and ESLint are clean on the owned files. Full `yarn verify` not run while another R2 editor is active.
+
+Follow-up:
+
+- Validation is pending post-deploy (AC-3 remains evidence-pending until a real blog upload renders on production).
+- Phase 3: copy/verify R2 hashes with a fresh backup before any DB URL rewrite or Supabase delete. Until then both stores serve.
+- Known-broken baseline: `best-image-upscaling-tools-2026` references `2026/01/1769887240667-tools-inline-1.webp`, which is absent. The similarly named `1769887231945` exists but is **not** proven to be the same asset. Do not silently replace or whitelist this reference; resolve it with hash evidence during phase-3 verification.
+- `app/api/blog/images/upload/route.ts` still maps only the old Supabase error strings; an R2 failure falls through to the generic 500. Harmless, but worth aligning in a later pass.
+
+### Temporary upscale inputs kept; retention relies on the R2 lifecycle rule
+
+Source: [PRD-SQR-02 — Move all MIU file storage from Supabase to Cloudflare R2](../../PRDs/supabase-quota-recovery/02-r2-storage-migration.md).
+
+Decision (corrects the earlier "clean up on terminal result" entry):
+
+- No code deletes a temporary input at a job terminal state or at a sync route exit. Two jobs can share the same `input_storage_path` (the reservation has no unique constraint), so an early delete can break another pending job. The existing `inputs/` R2 lifecycle rule is the single owner of input expiry. Removed the async terminal cleanup and the sync route `finally` cleanup; `IReservation` dropped the optional `input_storage_path`; the orphaned `temporaryStoragePath` variable and `removeUpscaleInput` import were removed. `removeUpscaleInput` stays exported in `upscale-input-storage.service.ts` for operator and test use.
+- Privacy FAQ copy corrected in `locales/en/tools.json` and `app/seo/data/tools.json`: the old answer claimed deletion "within 1 hour of processing", then "removed after processing". The answer now says temporary uploads are scheduled for automatic deletion after two days, cleanup may take longer, and saved-gallery retention is a separate policy. It no longer promises deletion after processing. Free-offer copy is unchanged.
+
+Validation:
+
+- `tests/unit/seo/tools-input-retention-copy.unit.spec.ts` (12 tests) pins the honest copy in both datasets, forbids a hard deletion deadline, and preserves the free-offer answer.
+- `tests/unit/api/async-upscale.unit.spec.ts` covers shared-input retention on terminal success and failure; `tests/unit/api/upscale-failure-recording.unit.spec.ts` covers route-failure retention. Verified red on the shared-input guard before green.
+
+Follow-up:
+
+- None required. Full `yarn verify` not run while other R2 editors are active on this lane.
+
+### Six localized dashboard gallery notes and privacy FAQ retention copy
+
+Source: [PRD-SQR-04 — Free-gallery 30-day inactivity expiry](../../PRDs/supabase-quota-recovery/04-free-gallery-30d-expiry.md) (AC-5) and the R2 input-retention copy.
+
+Changes:
+
+- Added `gallery.retentionNote` to `locales/{de,es,fr,it,ja,pt}/dashboard.json`. The six strings translate the English note's exact meaning: 30-day inactivity expiry, at least 7-day warning, signing in keeps images, paid plans exempt. No English fallback; each uses the locale's own words (for example `ausgenommen`, `exentos`, `対象外`, `isentos`).
+- Updated the ai-image-upscaler privacy FAQ answer in the same six `locales/*/tools.json` files (`pages[0].commonQuestions[4].answer`). The old copy promised deletion "within 1 hour of processing". The new answer matches the corrected English meaning: temporary uploads scheduled for automatic deletion after two days, cleanup may take longer, saved-gallery images follow a separate retention policy, and no training or third-party sharing.
+- Both updates used `scripts/translation-helper.ts apply-inline` (UTF-8 safe); the incidental short-array reformatting was reverted so only the intended lines changed.
+
+Validation:
+
+- New `tests/unit/seo/multilocale-retention-copy.unit.spec.ts` (7 tests) checks all seven dashboard notes are present and non-empty, each states the 30/7-day rules and the paid exemption, and the seven privacy answers drop the 1-hour claim, promise no hard deadline, state the two-day schedule, and separate gallery retention. JSON parse and ICU brace checks included.
+- Full `yarn verify` not run while other R2/queue editors are active.
+
+Follow-up:
+
+- None. English `tools.json` / `app/seo/data/tools.json` copy stays owned by the R2 lane.
+
 ## 2026-10-08
 
 ### Three Kings — YouTube exposure reconciled; no production edits eligible

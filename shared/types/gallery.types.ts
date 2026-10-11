@@ -6,6 +6,15 @@
 import type { ProcessingMode } from '../config/subscription.types';
 
 /**
+ * Object store holding a saved image's bytes.
+ *
+ * `supabase` is the legacy Supabase Storage bucket; `r2` is the migrated
+ * Cloudflare R2 object. The value is absent only on rows read before the
+ * `storage_backend` migration, where callers must fail closed.
+ */
+export type GalleryStorageBackend = 'supabase' | 'r2';
+
+/**
  * Represents a saved image in the user's gallery
  */
 export interface IGalleryImage {
@@ -13,8 +22,10 @@ export interface IGalleryImage {
   id: string;
   /** User ID who owns this image */
   user_id: string;
-  /** Path in Supabase Storage bucket */
+  /** Path in the owning storage bucket */
   storage_path: string;
+  /** Object store holding the bytes; absent means unknown, fail closed */
+  storage_backend?: GalleryStorageBackend;
   /** Original filename from user upload */
   original_filename: string;
   /** File size in bytes */

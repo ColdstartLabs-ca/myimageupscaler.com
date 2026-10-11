@@ -3,10 +3,15 @@ import type { ImageLoaderProps } from 'next/image';
 
 const SITE_ORIGIN = 'https://myimageupscaler.com';
 const SITE_HOSTNAMES = new Set(['myimageupscaler.com', 'www.myimageupscaler.com']);
+const R2_PUBLIC_HOSTNAME = 'assets.myimageupscaler.com';
 const SUPABASE_PUBLIC_OBJECT_PREFIX = '/storage/v1/object/public/';
 
 function isUnsplashHost(hostname: string): boolean {
   return hostname === 'images.unsplash.com' || hostname.endsWith('.unsplash.com');
+}
+
+function isR2PublicAsset(hostname: string): boolean {
+  return hostname === R2_PUBLIC_HOSTNAME;
 }
 
 function isSupabasePublicObject(url: URL): boolean {
@@ -73,6 +78,12 @@ export default function imageLoader({ src, width, quality }: ImageLoaderProps): 
     url.searchParams.set('quality', String(requestedQuality));
     url.searchParams.set('format', 'avif');
     return url.toString();
+  }
+
+  // R2 blog images are public and on a same-zone custom domain, so the site's
+  // Cloudflare image resizing can transform them from the absolute source.
+  if (isR2PublicAsset(url.hostname)) {
+    return `/cdn-cgi/image/width=${width},quality=${requestedQuality},format=auto/${url.toString()}`;
   }
 
   if (src.startsWith('/') || SITE_HOSTNAMES.has(url.hostname)) {

@@ -158,6 +158,27 @@ describe('backup-verification: loadBackupIdentity', () => {
     expect(Object.isFrozen(identity.manifest[0])).toBe(true);
   });
 
+  it('treats a legacy receipt without source_store as supabase and rejects an unknown store', async () => {
+    const a = makeObject(INPUT_BUCKET, 'user/aaa.png', 'input bytes');
+    const { runDir } = makeBackupRun(root, [a]);
+    const identity = await loadBackupIdentity(runDir);
+    expect(identity.sourceStore).toBe('supabase');
+
+    const { runDir: r2Dir, receipt: r2Receipt } = makeBackupRun(path.join(root, 'r2'), [a]);
+    fs.writeFileSync(
+      path.join(r2Dir, 'backup-verification.json'),
+      JSON.stringify({ ...r2Receipt, source_store: 'r2' }, null, 2)
+    );
+    expect((await loadBackupIdentity(r2Dir)).sourceStore).toBe('r2');
+
+    const { runDir: badDir, receipt: badReceipt } = makeBackupRun(path.join(root, 'bad'), [a]);
+    fs.writeFileSync(
+      path.join(badDir, 'backup-verification.json'),
+      JSON.stringify({ ...badReceipt, source_store: 's3' }, null, 2)
+    );
+    await expect(loadBackupIdentity(badDir)).rejects.toThrow(/Unknown source_store/);
+  });
+
   it('rejects a missing receipt', async () => {
     const a = makeObject(INPUT_BUCKET, 'user/aaa.png', 'input bytes');
     const { runDir } = makeBackupRun(root, [a]);

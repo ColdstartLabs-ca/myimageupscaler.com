@@ -125,6 +125,7 @@ export default async function LocaleLayout({ children, params }: ILocaleLayoutPr
       suppressHydrationWarning
     >
       <head>
+        <link rel="preconnect" href="https://assets.myimageupscaler.com" crossOrigin="" />
         <link rel="preconnect" href="https://xqysaylskffsfwunczbd.supabase.co" crossOrigin="" />
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />

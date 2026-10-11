@@ -408,8 +408,34 @@ describe('Cloudflare Cron Worker', () => {
       await waitUntilPromise;
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('failed with status 500'),
+        expect.stringContaining('reported failure (HTTP 500)'),
         expect.any(Object)
+      );
+
+      consoleSpy.mockRestore();
+    });
+
+    it('should report a measured body with failed rows as a failure', async () => {
+      const event = {
+        cron: '25 * * * *',
+        scheduledTime: Date.now(),
+      } as ScheduledEvent;
+
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({ success: true, totalDeleted: 10, failed: 4 }),
+      });
+      global.fetch = fetchMock;
+
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      await worker.scheduled(event, mockEnv, mockCtx as unknown);
+      await mockCtx.waitUntil.mock.calls[0][0];
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('reported failure (failed=4)'),
+        expect.objectContaining({ data: expect.objectContaining({ failed: 4 }) })
       );
 
       consoleSpy.mockRestore();
@@ -460,6 +486,7 @@ describe('Cloudflare Cron Worker', () => {
         'https://worker.dev/trigger?pattern=%2A%2F15%20%2A%20%2A%20%2A%20%2A',
         {
           method: 'POST',
+          headers: { 'x-cron-secret': 'test-secret-123' },
         }
       );
 
@@ -483,6 +510,7 @@ describe('Cloudflare Cron Worker', () => {
     it('should return error when pattern is missing', async () => {
       const request = new Request('https://worker.dev/trigger', {
         method: 'POST',
+        headers: { 'x-cron-secret': 'test-secret-123' },
       });
 
       const response = await worker.fetch(request, mockEnv, mockCtx as unknown);

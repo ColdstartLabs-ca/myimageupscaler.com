@@ -2,13 +2,13 @@
 
 Source audit: `docs/reports/supabase-cleanup-audit-2026-10-10.md`.
 
-The Supabase org (MIU + AutopilotRank) went over the Free quota on 2026-10-09. Supabase returns HTTP 402 to REST, Storage and Auth until the 2026-10-13 refill.
+The Supabase org (MIU + AutopilotRank) went over the Free quota on 2026-10-09. The audit recorded HTTP 402 restrictions. Read-only MIU checks on 2026-10-10 returned HTTP 200 for Storage and confirmed database access; execution must use current checks rather than assume a refill date.
 
 ## Decisions (2026-10-10, João)
 
 - Stay on the Free plan. Move all MIU file storage to Cloudflare R2.
 - Back up locally before any deletion or migration. Verify the backup before the source is touched.
-- Expire free-user gallery images after 30 days without sign-in (`auth.users.last_sign_in_at`). Send one warning email about 7 days before. Paid users are exempt.
+- Expire free-user gallery images after 30 days of inactivity. João confirmed that recently active users must be kept, including users whose sessions refresh without a new sign-in. Check sign-in, session refresh, gallery saves and processing activity. Send one warning email at least 7 days before deletion. Paid users are exempt.
 - Stay on Free as long as possible (decided 2026-10-10). Upgrade to Pro (about $35/mo) only when paying users make it worth the cost, or when retention can no longer keep a project inside its budget. Suggested revenue trigger (Claude, João to confirm): combined MRR of $350 or more, so Pro costs 10% of revenue or less.
 - The DB budget is shared. MIU prunes its own tables. AutopilotRank gets its own PRD in its repo.
 

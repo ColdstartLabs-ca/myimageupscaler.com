@@ -1,0 +1,17 @@
+{
+  "rules": [
+    {
+      "allowed": {
+        "origins": [
+          "https://myimageupscaler.com",
+          "https://www.myimageupscaler.com",
+          "http://localhost:3000"
+        ],
+        "methods": ["PUT", "GET", "HEAD"],
+        "headers": ["content-type", "if-none-match"]
+      },
+      "exposeHeaders": ["ETag"],
+      "maxAgeSeconds": 3600
+    }
+  ]
+}

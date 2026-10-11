@@ -26,10 +26,7 @@ import {
 import { ModelRegistry } from '@server/services/model-registry';
 import type { SubscriptionTier } from '@server/services/model-registry.types';
 import { providerHealthService } from '@server/services/provider-health.service';
-import {
-  removeUpscaleInput,
-  resolveUpscaleInput,
-} from '@server/services/upscale-input-storage.service';
+import { resolveUpscaleInput } from '@server/services/upscale-input-storage.service';
 import { ReplicateError } from '@server/services/replicate.service';
 import {
   getScalePreservingFallbackCandidates,
@@ -251,7 +248,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   let coreTerminalEventEmitted = false;
   const requestId = req.headers.get('x-request-id') || req.headers.get('cf-ray') || undefined;
   let creditsRefunded = false;
-  let temporaryStoragePath: string | undefined;
   let asyncHandoff = false;
   let replayError: AsyncUpscaleError | undefined;
   let latestFailure: { failureReason: string } | null = null;
@@ -681,7 +677,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       claimedMimeType: validatedInput.mimeType,
       isPaidUser,
     });
-    temporaryStoragePath = validatedInput.storagePath;
     const processingImageReference = storedInput.imageReference;
     const validationImageData = storedInput.validationImageData;
     const inputFileSizeBytes = storedInput.sizeBytes;
@@ -1876,18 +1871,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     } catch {
       // Failure telemetry must never mask the original route response.
     }
-    // A deferred replay error leaves job ownership unknown: the input may belong
-    // to an already-admitted job, so no exit may delete it.
-    if (temporaryStoragePath && !asyncHandoff && !replayError) {
-      try {
-        await removeUpscaleInput(temporaryStoragePath);
-      } catch (error) {
-        logger.warn('Failed to remove temporary upscale input', {
-          storagePath: temporaryStoragePath,
-          error: error instanceof Error ? error.message : String(error),
-        });
-      }
-    }
+    // A shared input may still serve a pending job, so no route exit deletes it;
+    // the `inputs/` R2 lifecycle rule expires it after two days.
     await logger.flush();
   }
 }

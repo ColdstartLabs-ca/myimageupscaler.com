@@ -24,14 +24,14 @@
 
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { createReadStream, createWriteStream, mkdirSync, readFileSync } from 'node:fs';
+import { constants as fsConstants, createReadStream, mkdirSync, readFileSync } from 'node:fs';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { Readable, Transform } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { pathToFileURL } from 'node:url';
-import { loadBackupIdentity, loadFrozenPlan, verifyFrozenArtifacts, verifyRemoteBatch } from './backup-verification.mjs';
+import { loadBackupIdentity, loadFrozenPlan, normalizeSourceStore, verifyFrozenArtifacts, verifyRemoteBatch } from './backup-verification.mjs';
 
 // =============================================================================
 // Configuration
@@ -58,10 +58,11 @@ const QUOTA_RESTRICTED_EXIT = 3;
 
 // Candidate query copied from docs/reports/supabase-cleanup-audit-2026-10-10.readonly.sql:16-38.
 // One row per object with the reference booleans that make deletion unsafe.
-const INPUT_CANDIDATE_SQL = `
+export const INPUT_CANDIDATE_SQL = `
   SELECT o.name AS path,
          coalesce((o.metadata->>'size')::bigint, 0) AS bytes,
-         o.created_at, o.updated_at,
+         to_jsonb(o)->>'created_at' AS created_at,
+         to_jsonb(o)->>'updated_at' AS updated_at,
          EXISTS (SELECT 1 FROM public.saved_images s WHERE s.storage_path = o.name) AS gallery_reference,
          EXISTS (SELECT 1 FROM public.processing_credit_reservations r
                  WHERE r.input_storage_path = o.name
@@ -82,10 +83,10 @@ const INPUT_CANDIDATE_SQL = `
 `;
 
 
-const INPUT_RECHECK_SQL = `
+export const INPUT_RECHECK_SQL = `
   SELECT o.name AS path,
-         o.created_at,
-         o.updated_at,
+         to_jsonb(o)->>'created_at' AS created_at,
+         to_jsonb(o)->>'updated_at' AS updated_at,
          coalesce((o.metadata->>'size')::bigint, 0) AS bytes,
          EXISTS (SELECT 1 FROM public.saved_images s WHERE s.storage_path = o.name) AS gallery_reference,
          EXISTS (SELECT 1 FROM public.processing_credit_reservations r
@@ -103,7 +104,7 @@ const INPUT_RECHECK_SQL = `
   WHERE o.bucket_id = $1 AND o.name = ANY($2::text[])
 `;
 
-const INACTIVE_GALLERY_SQL = `
+export const INACTIVE_GALLERY_SQL = `
   SELECT to_jsonb(s) AS snapshot, o.metadata AS object_metadata
   FROM public.saved_images s
   JOIN storage.objects o ON o.bucket_id = 'saved-images' AND o.name = s.storage_path
@@ -113,6 +114,26 @@ const INACTIVE_GALLERY_SQL = `
           u.last_sign_in_at < now() - interval '30 days'
           OR (u.last_sign_in_at IS NULL AND u.created_at < now() - interval '30 days')
         )
+    AND s.created_at < now() - interval '30 days'
+    AND NOT EXISTS (
+          SELECT 1 FROM public.saved_images recentimage
+          WHERE recentimage.user_id = s.user_id
+            AND recentimage.created_at >= now() - interval '30 days'
+        )
+    AND NOT EXISTS (
+          SELECT 1 FROM auth.sessions sess
+          WHERE sess.user_id = s.user_id
+            AND (
+                  sess.refreshed_at AT TIME ZONE 'UTC' >= now() - interval '30 days'
+                  OR sess.created_at >= now() - interval '30 days'
+                  OR sess.updated_at >= now() - interval '30 days'
+                )
+        )
+    AND NOT EXISTS (
+          SELECT 1 FROM public.processing_credit_reservations res
+          WHERE res.user_id = s.user_id
+            AND res.created_at >= now() - interval '30 days'
+        )
     AND (p.subscription_tier IS NULL OR p.subscription_tier = 'free')
     AND coalesce(p.subscription_status, '') NOT IN ('active', 'trialing')
     AND NOT EXISTS (
@@ -122,11 +143,12 @@ const INACTIVE_GALLERY_SQL = `
     AND coalesce(p.purchased_credits_balance, 0) = 0
     AND NOT EXISTS (
           SELECT 1 FROM public.credit_transactions ct
-          WHERE ct.user_id = s.user_id AND ct.type = 'purchase' AND ct.amount > 0
+          WHERE ct.user_id = s.user_id AND ct.amount > 0
+            AND ct.type IN ('purchase', 'subscription')
         )
 `;
 
-const GALLERY_RECHECK_SQL = `
+export const GALLERY_RECHECK_SQL = `
   SELECT s.id, s.user_id, s.storage_path
   FROM public.saved_images s
   JOIN auth.users u ON u.id = s.user_id
@@ -136,6 +158,26 @@ const GALLERY_RECHECK_SQL = `
           u.last_sign_in_at < now() - interval '30 days'
           OR (u.last_sign_in_at IS NULL AND u.created_at < now() - interval '30 days')
         )
+    AND s.created_at < now() - interval '30 days'
+    AND NOT EXISTS (
+          SELECT 1 FROM public.saved_images recentimage
+          WHERE recentimage.user_id = s.user_id
+            AND recentimage.created_at >= now() - interval '30 days'
+        )
+    AND NOT EXISTS (
+          SELECT 1 FROM auth.sessions sess
+          WHERE sess.user_id = s.user_id
+            AND (
+                  sess.refreshed_at AT TIME ZONE 'UTC' >= now() - interval '30 days'
+                  OR sess.created_at >= now() - interval '30 days'
+                  OR sess.updated_at >= now() - interval '30 days'
+                )
+        )
+    AND NOT EXISTS (
+          SELECT 1 FROM public.processing_credit_reservations res
+          WHERE res.user_id = s.user_id
+            AND res.created_at >= now() - interval '30 days'
+        )
     AND (p.subscription_tier IS NULL OR p.subscription_tier = 'free')
     AND coalesce(p.subscription_status, '') NOT IN ('active', 'trialing')
     AND NOT EXISTS (
@@ -145,7 +187,8 @@ const GALLERY_RECHECK_SQL = `
     AND coalesce(p.purchased_credits_balance, 0) = 0
     AND NOT EXISTS (
           SELECT 1 FROM public.credit_transactions ct
-          WHERE ct.user_id = s.user_id AND ct.type = 'purchase' AND ct.amount > 0
+          WHERE ct.user_id = s.user_id AND ct.amount > 0
+            AND ct.type IN ('purchase', 'subscription')
         )
     AND (
           SELECT count(*) FROM public.saved_images s2
@@ -175,6 +218,34 @@ export function isInputCandidateEligible(row, now = Date.now()) {
   }
   const olderThanCutoff = value => value != null && new Date(value).getTime() < now - MIN_INPUT_AGE_MS;
   return olderThanCutoff(row.created_at) && olderThanCutoff(row.updated_at);
+}
+
+/**
+ * Exact microsecond identity for one explicit ISO timestamp STRING with a
+ * timezone (Z or +/-HH:mm) and at most 6 fractional digits. A Date object, a
+ * value without a timezone, or more than 6 fractional digits has already lost
+ * or cannot prove precision and returns null (fail closed).
+ */
+const EXACT_TIMESTAMP_RE =
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.(\d{1,6}))?(?:Z|[+-]\d{2}:\d{2})$/;
+
+export function exactTimestampMicros(value) {
+  if (typeof value !== 'string') return null;
+  const match = EXACT_TIMESTAMP_RE.exec(value);
+  if (!match) return null;
+  const ms = Date.parse(value);
+  if (!Number.isFinite(ms)) return null;
+  // Date.parse keeps integer milliseconds; the 4th-6th fractional digits are the
+  // PostgreSQL microseconds that a JS Date would have truncated.
+  const fraction = match[1] ?? '';
+  return BigInt(ms) * 1000n + BigInt(fraction.padEnd(6, '0').slice(3));
+}
+
+/** Both values must be exact, non-null microsecond instants and equal. */
+export function sameExactTimestamp(left, right) {
+  const a = exactTimestampMicros(left);
+  const b = exactTimestampMicros(right);
+  return a !== null && b !== null && a === b;
 }
 
 /**
@@ -237,6 +308,18 @@ export function selectPurgePaths(rows, { now = Date.now(), verifiedByPath, verif
 
 
 
+
+/**
+ * Supabase purge and expiry operate on Storage objects. They must refuse a
+ * backup whose objects came from R2, so an R2 manifest cannot authorize a
+ * Supabase delete. A legacy identity with no source store is Supabase.
+ */
+export function requireSupabaseSourceStore(identity) {
+  if (!identity || normalizeSourceStore(identity.sourceStore) !== 'supabase') {
+    throw new Error('This operation requires a Supabase-source backup');
+  }
+  return identity;
+}
 
 export function parseManifestJsonl(text) {
   return text
@@ -315,6 +398,116 @@ export function readCheckpoint(checkpointPath) {
   }
 }
 
+/** Read JSON only from a real, non-symlink regular file. A missing file is null. */
+async function readRegularJson(filePath) {
+  let stats;
+  try {
+    stats = await fs.lstat(filePath);
+  } catch (error) {
+    if (error.code === 'ENOENT') return null;
+    throw error;
+  }
+  if (stats.isSymbolicLink()) throw new Error(`Symlink is not allowed: ${path.basename(filePath)}`);
+  if (!stats.isFile()) throw new Error(`Not a regular file: ${path.basename(filePath)}`);
+  const raw = await fs.readFile(filePath, 'utf8');
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (error) {
+    throw new Error(`Invalid JSON in ${path.basename(filePath)}: ${error.message}`);
+  }
+  // An existing file that is null, an array, or a scalar is corruption, not an
+  // absent run: a silent null would let a failed resume overwrite the old proof.
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    throw new Error(`Invalid JSON object in ${path.basename(filePath)}`);
+  }
+  return parsed;
+}
+
+/** Buckets already proven by an existing regular manifest.jsonl. Absent file is null. */
+async function readManifestBuckets(runDir) {
+  const manifestPath = path.join(runDir, 'manifest.jsonl');
+  let stats;
+  try {
+    stats = await fs.lstat(manifestPath);
+  } catch (error) {
+    if (error.code === 'ENOENT') return null;
+    throw error;
+  }
+  if (stats.isSymbolicLink()) throw new Error('Manifest is a symlink');
+  if (!stats.isFile()) throw new Error('Manifest is not a regular file');
+  const rows = parseManifestJsonl(await fs.readFile(manifestPath, 'utf8'));
+  return new Set(rows.map(row => row?.bucket).filter(bucket => typeof bucket === 'string'));
+}
+
+/** Bucket names already proven by a checkpoint's downloaded keys. */
+function checkpointBucketNames(checkpoint) {
+  const names = new Set();
+  for (const key of Object.keys(checkpoint?.downloaded ?? {})) {
+    const [bucket] = key.split('::');
+    if (bucket) names.add(bucket);
+  }
+  return names;
+}
+
+/**
+ * Refuse a resume that would invalidate an existing proof: a different or
+ * unknown source store, a differing explicit bucket set, or a requested set
+ * that drops a bucket a legacy checkpoint already proved. Widening a legacy
+ * inferred set is allowed; a legacy empty checkpoint allows any set.
+ */
+function assertResumeScope({ checkpoint, receipt, sourceStore, buckets, manifestBuckets = null }) {
+  const hasCheckpoint = !!checkpoint && typeof checkpoint === 'object';
+  const hasReceipt = !!receipt && typeof receipt === 'object';
+  if (!hasCheckpoint && !hasReceipt) return;
+  // A receipt's source_store is authoritative for a legacy checkpoint with none.
+  const checkpointStore = hasCheckpoint && checkpoint.source_store != null
+    ? normalizeSourceStore(checkpoint.source_store) : null;
+  // A legacy receipt with no source_store is Supabase. Normalizing it always
+  // stops an R2 checkpoint from overriding an old Supabase proof.
+  const receiptStore = hasReceipt ? normalizeSourceStore(receipt.source_store) : null;
+  if (checkpointStore && receiptStore && checkpointStore !== receiptStore) {
+    throw new Error('Refusing resume: checkpoint and receipt disagree on source_store');
+  }
+  const storedStore = checkpointStore ?? receiptStore ?? 'supabase';
+  if (storedStore !== sourceStore) {
+    throw new Error(`Refusing resume: source_store ${storedStore} != requested ${sourceStore}`);
+  }
+  const explicit = Array.isArray(checkpoint?.buckets) ? checkpoint.buckets
+    : Array.isArray(receipt?.buckets) ? receipt.buckets : null;
+  const requested = new Set(buckets);
+  const manifested = manifestBuckets instanceof Set ? manifestBuckets : new Set(manifestBuckets ?? []);
+  const omittedFromManifest = [...manifested].filter(bucket => !requested.has(bucket));
+  if (explicit) {
+    const stored = new Set(explicit);
+    if (stored.size !== requested.size || [...stored].some(bucket => !requested.has(bucket))) {
+      throw new Error('Refusing resume: bucket scope differs from the recorded run');
+    }
+    if (omittedFromManifest.length) {
+      throw new Error(`Refusing resume: requested buckets omit ${omittedFromManifest.join(', ')}`);
+    }
+    return;
+  }
+  // No explicit bucket set: infer the proven scope from the checkpoint's
+  // downloaded keys unioned with the existing manifest's buckets, so a
+  // checkpoint subset can never forget a bucket the manifest already proves.
+  const proven = new Set();
+  if (hasCheckpoint) for (const bucket of checkpointBucketNames(checkpoint)) proven.add(bucket);
+  for (const bucket of manifested) proven.add(bucket);
+  if (proven.size === 0) {
+    // A legacy receipt with no checkpoint and no readable manifest cannot prove
+    // its bucket scope; refusing keeps the old proof instead of discarding it.
+    if (hasReceipt && manifestBuckets == null) {
+      throw new Error('Refusing resume: cannot prove the recorded bucket scope');
+    }
+    return;
+  }
+  const missing = [...proven].filter(bucket => !requested.has(bucket));
+  if (missing.length) {
+    throw new Error(`Refusing resume: requested buckets omit ${missing.join(', ')}`);
+  }
+}
+
 let atomicTmpCounter = 0;
 
 function nextAtomicTmp(targetPath) {
@@ -360,22 +553,147 @@ async function streamHashFile(filePath) {
   return { sha256: hash.digest('hex'), bytes };
 }
 
-/** Stable inventory fingerprint: full identity, not only a count. */
+/** Canonical identity of one listed object: full identity, not only a count. */
+export function objectFingerprint(object, bucket = '') {
+  return [
+    bucket || object.bucket || '',
+    object.path,
+    object.id ?? '',
+    object.version ?? '',
+    object.created_at ?? '',
+    object.updated_at ?? '',
+    Number(object.bytes) || 0,
+  ].join('\u0000');
+}
+
+/** Stable inventory fingerprint over a whole listing. */
 export function inventoryFingerprint(objects, bucket = '') {
-  return (objects ?? [])
-    .map(object =>
-      [
-        bucket || object.bucket || '',
-        object.path,
-        object.id ?? '',
-        object.version ?? '',
-        object.created_at ?? '',
-        object.updated_at ?? '',
-        Number(object.bytes) || 0,
-      ].join('\u0000')
-    )
-    .sort()
-    .join('\n');
+  return (objects ?? []).map(object => objectFingerprint(object, bucket)).sort().join('\n');
+}
+
+/** A listing must never repeat a path; a duplicate is a malformed page. */
+function assertNoDuplicatePaths(objects, bucket) {
+  const seen = new Set();
+  for (const object of objects ?? []) {
+    if (seen.has(object.path)) {
+      throw new Error(`Duplicate object path in ${bucket} listing: ${object.path}`);
+    }
+    seen.add(object.path);
+  }
+}
+
+/**
+ * The starting inventory is the freeze point. Every object seen in the first
+ * listing must still appear in the second with identical identity; additive
+ * arrivals are allowed. A removal or a changed object is unstable.
+ */
+function assertInitialInventoryStable(first, second, bucket) {
+  assertNoDuplicatePaths(first, bucket);
+  assertNoDuplicatePaths(second, bucket);
+  const secondByPath = new Map((second ?? []).map(object => [object.path, object]));
+  for (const object of first ?? []) {
+    const live = secondByPath.get(object.path);
+    if (!live || objectFingerprint(live, bucket) !== objectFingerprint(object, bucket)) {
+      throw new InventoryUnstableError(`Unstable object listing for ${bucket}`);
+    }
+  }
+}
+
+/**
+ * Every frozen object must survive the run unchanged. Objects that arrived after
+ * the freeze are additive: they are returned as pending deltas and are never
+ * part of the verified snapshot.
+ */
+function assertFrozenInventoryStable(final, frozen, bucket) {
+  assertNoDuplicatePaths(final, bucket);
+  const finalByPath = new Map((final ?? []).map(object => [object.path, object]));
+  for (const object of frozen ?? []) {
+    const live = finalByPath.get(object.path);
+    if (!live || objectFingerprint(live, bucket) !== objectFingerprint(object, bucket)) {
+      throw new InventoryUnstableError(`Inventory changed during backup: ${bucket}`);
+    }
+  }
+  const frozenPaths = new Set((frozen ?? []).map(object => object.path));
+  return (final ?? []).filter(object => !frozenPaths.has(object.path));
+}
+
+/** Canonical, sorted raw JSONL for the unbacked pending delta, plus its count. */
+export function buildPendingDelta(objectsByBucket) {
+  const rows = [];
+  for (const [bucket, objects] of objectsByBucket) {
+    for (const object of objects ?? []) {
+      rows.push({
+        bucket,
+        path: object.path,
+        id: object.id ?? null,
+        version: object.version ?? null,
+        bytes: Number(object.bytes) || 0,
+        created_at: object.created_at ?? null,
+        updated_at: object.updated_at ?? null,
+      });
+    }
+  }
+  rows.sort((a, b) => (a.bucket + '::' + a.path < b.bucket + '::' + b.path ? -1 : 1));
+  return {
+    content: rows.length ? rows.map(row => JSON.stringify(row)).join('\n') + '\n' : '',
+    count: rows.length,
+  };
+}
+
+/**
+ * Invalidate a prior valid receipt before a new verification can fail. The old
+ * bytes are kept content-addressed, so no backup data is lost.
+ */
+async function preservePriorReceipt(runDir, log = () => {}) {
+  const receiptPath = path.join(runDir, 'backup-verification.json');
+  let raw;
+  try {
+    const stats = await fs.lstat(receiptPath);
+    if (stats.isSymbolicLink()) throw new Error('Prior receipt is a symlink');
+    if (!stats.isFile()) throw new Error('Prior receipt is not a regular file');
+    raw = await fs.readFile(receiptPath);
+  } catch (error) {
+    if (error.code === 'ENOENT') return null;
+    throw error;
+  }
+  const digest = createHash('sha256').update(raw).digest('hex');
+  const retainedRel = `.superseded/backup-verification.json.${digest}`;
+  const supersededDir = path.join(runDir, '.superseded');
+  const retainedPath = path.join(supersededDir, `backup-verification.json.${digest}`);
+  // Create only the direct directory, then reject a symlink or non-directory
+  // before any copy, so a planted `.superseded` symlink cannot redirect writes.
+  try {
+    await fs.mkdir(supersededDir, { mode: 0o700 });
+  } catch (error) {
+    if (error.code !== 'EEXIST') throw error;
+  }
+  const dirStats = await fs.lstat(supersededDir);
+  if (dirStats.isSymbolicLink() || !dirStats.isDirectory()) {
+    throw new Error('Superseded directory is a symlink or non-directory');
+  }
+  let alreadyExists = true;
+  try {
+    const stats = await fs.lstat(retainedPath);
+    if (!stats.isFile() || stats.isSymbolicLink()) {
+      throw new Error('Retained receipt is not a regular file');
+    }
+  } catch (error) {
+    if (error.code === 'ENOENT') alreadyExists = false;
+    else throw error;
+  }
+  if (alreadyExists) {
+    // The retained bytes must equal the raw receipt; a mismatch fails closed
+    // and leaves the original receipt in place.
+    const existing = await fs.readFile(retainedPath);
+    if (createHash('sha256').update(existing).digest('hex') !== digest) {
+      throw new Error('Retained receipt mismatch');
+    }
+  } else {
+    await fs.copyFile(receiptPath, retainedPath, fsConstants.COPYFILE_EXCL);
+  }
+  await fs.unlink(receiptPath);
+  log(`preserved prior receipt: ${retainedRel}`);
+  return retainedRel;
 }
 
 /**
@@ -436,7 +754,8 @@ export async function streamDownloadToFile({ url, headers, targetPath, expectedB
       callback(null, chunk);
     },
   });
-  const sink = createWriteStream(tmp, { mode: 0o600 });
+  const file = await fs.open(tmp, 'wx', 0o600);
+  const sink = file.createWriteStream();
   await pipeline(Readable.fromWeb(response.body), hashing, sink);
   if (expectedBytes != null && bytes !== Number(expectedBytes)) {
     throw new Error(`Byte size mismatch for ${targetPath}: expected ${expectedBytes}, got ${bytes}`);
@@ -446,21 +765,105 @@ export async function streamDownloadToFile({ url, headers, targetPath, expectedB
 }
 
 /**
+ * Preserve the bytes already on disk before a redownload replaces them. The
+ * artifact is streamed and copied to a content-addressed, non-overwriting
+ * location under `<runDir>/<bucket>/.superseded/`, and the checkpoint journals
+ * its path/hash/bytes atomically before the caller overwrites the artifact.
+ * A symlink or non-regular artifact fails closed.
+ */
+async function preserveExistingArtifact({ runDir, bucket, objectPath, checkpoint, persistCheckpoint, log }) {
+  const targetPath = path.join(runDir, bucket, objectPath);
+  let stats;
+  try {
+    stats = await fs.lstat(targetPath);
+  } catch (error) {
+    if (error.code === 'ENOENT') return null;
+    throw error;
+  }
+  if (stats.isSymbolicLink()) {
+    throw new Error(`Symlink escape detected: ${bucket}/${objectPath}`);
+  }
+  if (!stats.isFile()) {
+    throw new Error(`Non-regular artifact cannot be preserved: ${bucket}/${objectPath}`);
+  }
+  const existing = await streamHashFile(targetPath);
+  const retainedRel = `${bucket}/.superseded/${objectPath}.${existing.sha256}`;
+  const retainedPath = await assertSafeArtifactPath(runDir, bucket, `.superseded/${objectPath}.${existing.sha256}`);
+  const plainRel = `${bucket}/${objectPath}`;
+  // The live path is about to change; a prior orphan journal for it is stale.
+  delete checkpoint.retained[plainRel];
+  if (checkpoint.retained[retainedRel]) {
+    const retainedStat = await fs.lstat(retainedPath);
+    if (!retainedStat.isFile() || retainedStat.isSymbolicLink()) throw new Error('Retained artifact is a symlink or non-regular file');
+    const current = await streamHashFile(retainedPath).catch(() => null);
+    if (!current || current.sha256 !== existing.sha256) {
+      throw new Error(`Retained version mismatch: ${retainedRel}`);
+    }
+  } else {
+    await fs.mkdir(path.dirname(retainedPath), { recursive: true, mode: 0o700 });
+    let alreadyExists = true;
+    try {
+      const retainedStat = await fs.lstat(retainedPath);
+      if (!retainedStat.isFile() || retainedStat.isSymbolicLink()) throw new Error('Retained artifact is a symlink or non-regular file');
+    } catch (error) {
+      if (error.code === 'ENOENT') alreadyExists = false;
+      else throw error;
+    }
+    if (alreadyExists) {
+      const current = await streamHashFile(retainedPath);
+      if (current.sha256 !== existing.sha256) {
+        throw new Error(`Retained version mismatch: ${retainedRel}`);
+      }
+    } else {
+      await fs.copyFile(targetPath, retainedPath, fsConstants.COPYFILE_EXCL);
+    }
+    checkpoint.retained[retainedRel] = {
+      path: retainedRel,
+      sha256: existing.sha256,
+      bytes: existing.bytes,
+    };
+    log(`retained superseded artifact: ${retainedRel} (${existing.bytes} bytes)`);
+  }
+  await persistCheckpoint();
+  return retainedRel;
+}
+
+/** Raised only when a bucket listing is unstable or changed; safe to retry. */
+class InventoryUnstableError extends Error {}
+
+/**
  * Backup orchestrator. Injectable listing/download/runner keep the destructive
  * and network behavior out of tests while the real functions run in production.
+ *
+ * `inventoryRetries` bounds recursive retries when a bucket listing is unstable
+ * at the start or changes at the end. It defaults to 0, so the library path
+ * stays fail-closed; the CLI passes a small positive budget.
  */
-export async function runBackup({
-  outputRoot = BACKUP_ROOT,
-  runId: runIdValue = runId(),
-  resumeDir,
-  buckets = ALL_BUCKETS,
-  listObjects,
-  downloadObject,
-  dbRefs = new Set(),
-  runCommand,
-  laptop = LAPTOP,
-  log = () => {},
-} = {}) {
+export async function runBackup(options = {}) {
+  // Validate the source store before any directory or artifact write.
+  const sourceStore = normalizeSourceStore(options.sourceStore);
+  const retriesLeft =
+    Number.isSafeInteger(options.inventoryRetries) && options.inventoryRetries > 0
+      ? options.inventoryRetries
+      : 0;
+  return runBackupPass({ ...options, sourceStore }, retriesLeft);
+}
+
+async function runBackupPass(options = {}, retriesLeft = 0) {
+  const {
+    outputRoot = BACKUP_ROOT,
+    runId: runIdValue = runId(),
+    resumeDir,
+    buckets = ALL_BUCKETS,
+    listObjects,
+    downloadObject,
+    dbRefs = new Set(),
+    runCommand,
+    laptop = LAPTOP,
+    log = () => {},
+    sourceStore = 'supabase',
+  } = options;
+
   if (typeof listObjects !== 'function') throw new Error('runBackup requires listObjects');
   if (typeof downloadObject !== 'function') throw new Error('runBackup requires downloadObject');
   if (typeof runCommand !== 'function') throw new Error('runBackup requires runCommand');
@@ -475,17 +878,71 @@ export async function runBackup({
   } else {
     runDir = path.join(root, runIdValue);
   }
+  if (path.dirname(runDir) !== root) throw new Error('Backup run directory must be a direct child of the backup root');
   mkdirSync(root, { recursive: true, mode: 0o700 });
   mkdirSync(runDir, { recursive: true, mode: 0o700 });
+  // The parent root is trusted config; the run directory itself must be a real
+  // directory so no receipt or checkpoint write follows a planted symlink.
+  const runDirStats = await fs.lstat(runDir);
+  if (runDirStats.isSymbolicLink() || !runDirStats.isDirectory()) {
+    throw new Error('Backup run directory must be a regular directory');
+  }
 
+  try {
+    return await runBackupBody({
+      runDir, buckets, listObjects, downloadObject, dbRefs, runCommand, laptop, log, sourceStore,
+    });
+  } catch (error) {
+    if (error instanceof InventoryUnstableError && retriesLeft > 0) {
+      log(`inventory unstable, retrying (${retriesLeft} left): ${error.message}`);
+      return runBackupPass({ ...options, resumeDir: runDir }, retriesLeft - 1);
+    }
+    throw error;
+  }
+}
+
+async function runBackupBody({
+  runDir, buckets, listObjects, downloadObject, dbRefs, runCommand, laptop, log, sourceStore = 'supabase',
+}) {
+  // Bind the run to its source store and bucket scope BEFORE any receipt or
+  // manifest mutation, so a resume can never destroy an existing proof by
+  // switching stores or narrowing the backed bucket set.
   const checkpointFile = path.join(runDir, 'backup-checkpoint.json');
-  const checkpoint = readCheckpoint(checkpointFile) ?? { downloaded: {} };
+  const priorCheckpoint = await readRegularJson(checkpointFile);
+  const priorReceipt = await readRegularJson(path.join(runDir, 'backup-verification.json'));
+  const manifestBuckets = priorCheckpoint || priorReceipt ? await readManifestBuckets(runDir) : null;
+  assertResumeScope({
+    checkpoint: priorCheckpoint, receipt: priorReceipt, sourceStore, buckets, manifestBuckets,
+  });
+
+  // A prior receipt must not appear valid after a failed re-verification.
+  await preservePriorReceipt(runDir, log);
+
+  const checkpoint = priorCheckpoint ?? { downloaded: {} };
   if (!checkpoint.downloaded || typeof checkpoint.downloaded !== 'object') {
     checkpoint.downloaded = {};
   }
+  if (!checkpoint.retained || typeof checkpoint.retained !== 'object') {
+    checkpoint.retained = {};
+  }
+
+  // Serialize checkpoint writes so a concurrent batch cannot drop a journaled
+  // retained entry; stringify at write time so each write sees all mutations.
+  let checkpointWriteChain = Promise.resolve();
+  const persistCheckpoint = () => {
+    const next = checkpointWriteChain.then(() => writeAtomicJson(checkpointFile, checkpoint));
+    checkpointWriteChain = next.catch(() => {});
+    return next;
+  };
+
+  // Record this run's store and scope before the first download, so a later
+  // resume can verify them; legacy checkpoints are backfilled here.
+  checkpoint.source_store = checkpoint.source_store ?? sourceStore;
+  checkpoint.buckets = Array.isArray(checkpoint.buckets) ? checkpoint.buckets : [...buckets];
+  await persistCheckpoint();
 
   const manifest = [];
-  const inventories = new Map();
+  const frozenByBucket = new Map();
   let expectedCount = 0;
   let expectedBytes = 0;
   let completedObjects = 0;
@@ -495,11 +952,11 @@ export async function runBackup({
   for (const bucket of buckets) {
     const first = await listObjects(bucket);
     const second = await listObjects(bucket);
-    if (inventoryFingerprint(first, bucket) !== inventoryFingerprint(second, bucket)) {
-      throw new Error(`Unstable object listing for ${bucket}`);
-    }
+    // Additive arrivals are allowed; a removal or mutation of a starting object
+    // is unstable. The second listing is the frozen snapshot for this run.
+    assertInitialInventoryStable(first, second, bucket);
     const objects = second ?? [];
-    inventories.set(bucket, inventoryFingerprint(objects, bucket));
+    frozenByBucket.set(bucket, objects);
     log(`${bucket}: ${objects.length} objects`);
     expectedCount += objects.length;
     for (const object of objects) expectedBytes += Number(object.bytes) || 0;
@@ -524,7 +981,8 @@ export async function runBackup({
             entry.created_at === (object.created_at ?? null) &&
             entry.updated_at === (object.updated_at ?? null) &&
             Number(entry.bytes) === (Number(object.bytes) || 0) &&
-            (entry.version ?? null) === (object.id ?? null);
+            (entry.version ?? null) === (object.id ?? null) &&
+            (entry.source_version ?? null) === (object.version ?? null);
           if (sameSource) {
             try {
               const hashed = await streamHashFile(targetPath);
@@ -539,6 +997,10 @@ export async function runBackup({
 
           let downloadedEntry = null;
           if (!sha256) {
+            // Preserve any bytes already on disk before the downloader replaces them.
+            await preserveExistingArtifact({
+              runDir, bucket, objectPath: object.path, checkpoint, persistCheckpoint, log,
+            });
             const result = await downloadObject({
               bucket,
               path: object.path,
@@ -553,6 +1015,7 @@ export async function runBackup({
               created_at: object.created_at ?? null,
               updated_at: object.updated_at ?? null,
               version: object.id ?? null,
+              source_version: object.version ?? null,
             };
           }
 
@@ -587,7 +1050,7 @@ export async function runBackup({
 
       // One atomic checkpoint per settled batch. Sequential batches mean no
       // concurrent checkpoint overwrites, even when a task in the batch failed.
-      await writeAtomicJson(checkpointFile, checkpoint);
+      await persistCheckpoint();
       if (completedObjects >= nextProgressAt) {
         log(`progress: ${bucket} ${completedObjects} objects, ${completedBytes} bytes`);
         nextProgressAt += 50;
@@ -596,10 +1059,12 @@ export async function runBackup({
     }
   }
 
-  for (const [bucket, fingerprint] of inventories) {
-    if (inventoryFingerprint(await listObjects(bucket), bucket) !== fingerprint) {
-      throw new Error(`Inventory changed during backup: ${bucket}`);
-    }
+  // Every frozen object must still exist, byte-for-byte and identity-for-identity.
+  // Objects that arrived after the freeze are unbacked pending deltas.
+  const pendingByBucket = new Map();
+  for (const bucket of buckets) {
+    const final = await listObjects(bucket);
+    pendingByBucket.set(bucket, assertFrozenInventoryStable(final, frozenByBucket.get(bucket) ?? [], bucket));
   }
 
   if (manifest.length !== expectedCount) {
@@ -610,20 +1075,85 @@ export async function runBackup({
     throw new Error(`Manifest byte mismatch: ${manifestBytes} != ${expectedBytes}`);
   }
 
+  // Prior-checkpoint artifacts that vanished from the live inventory must stay
+  // on disk and be covered by the retained checksum proof.
+  const liveKeys = new Set(manifest.map(row => makeObjectKey(row.bucket, row.path)));
+  for (const bucket of buckets) {
+    for (const key of Object.keys(checkpoint.downloaded)) {
+      if (!key.startsWith(`${bucket}::`) || liveKeys.has(key)) continue;
+      const objectPath = key.slice(bucket.length + 2);
+      const artifactPath = await assertSafeArtifactPath(runDir, bucket, objectPath);
+      let stats;
+      try {
+        stats = await fs.lstat(artifactPath);
+      } catch {
+        throw new Error(`Retained artifact is missing: ${bucket}/${objectPath}`);
+      }
+      if (!stats.isFile() || stats.isSymbolicLink()) throw new Error('Retained artifact is a symlink or non-regular file');
+      const retainedRel = `${bucket}/${objectPath}`;
+      const hashed = await streamHashFile(artifactPath);
+      const expected = checkpoint.downloaded[key];
+      if (hashed.sha256 !== expected.sha256 || hashed.bytes !== expected.bytes) {
+        throw new Error(`Retained artifact mismatch: ${retainedRel}`);
+      }
+      if (checkpoint.retained[retainedRel]) continue;
+      checkpoint.retained[retainedRel] = {
+        path: retainedRel,
+        sha256: hashed.sha256,
+        bytes: hashed.bytes,
+        orphaned: true,
+      };
+      log(`retained orphaned artifact: ${retainedRel} (${hashed.bytes} bytes)`);
+    }
+  }
+  await persistCheckpoint();
+
   const manifestContent = manifest.map(row => JSON.stringify(row)).join('\n') + '\n';
   const sha256Content = manifest.map(row => `${row.sha256}  ${row.bucket}/${row.path}`).join('\n') + '\n';
   await writeAtomicRawText(path.join(runDir, 'manifest.jsonl'), manifestContent);
   await writeAtomicRawText(path.join(runDir, 'manifest.sha256'), sha256Content);
 
-  // Local integrity gate before any second copy.
-  await runCommand('sha256sum', ['-c', 'manifest.sha256'], { cwd: runDir });
+  // Unbacked arrivals after the freeze are recorded explicitly so an operator
+  // cannot mistake them for part of the verified snapshot.
+  const pendingDelta = buildPendingDelta(pendingByBucket);
+  await writeAtomicRawText(path.join(runDir, 'pending-delta.jsonl'), pendingDelta.content);
+  const pendingDeltaSha256 = sha256OfText(pendingDelta.content);
+
+  const retainedEntries = Object.values(checkpoint.retained);
+  for (const entry of retainedEntries) {
+    if (typeof entry.path !== 'string') throw new Error('Unsafe retained artifact path');
+    const [bucket, ...segments] = entry.path.split('/');
+    if (!ALL_BUCKETS.includes(bucket) || !validateObjectPath(segments.join('/'))) {
+      throw new Error('Unsafe retained artifact path');
+    }
+    const file = await assertSafeArtifactPath(runDir, bucket, segments.join('/'));
+    const stat = await fs.lstat(file);
+    if (!stat.isFile() || stat.isSymbolicLink()) throw new Error('Retained artifact is a symlink or non-regular file');
+    const actual = await streamHashFile(file);
+    if (actual.sha256 !== entry.sha256 || actual.bytes !== entry.bytes) throw new Error('Retained artifact mismatch');
+  }
+  const retainedContent = retainedEntries.length
+    ? retainedEntries.map(entry => `${entry.sha256}  ${entry.path}`).join('\n') + '\n'
+    : null;
+  if (retainedContent) {
+    await writeAtomicRawText(path.join(runDir, 'retained.sha256'), retainedContent);
+  }
+
+  // Local integrity gates before any second copy.
+  await runCommand('sha256sum', ['-c', 'manifest.sha256'], { cwd: runDir, timeoutMs: 15 * 60_000 });
+  if (retainedContent) {
+    await runCommand('sha256sum', ['-c', 'retained.sha256'], { cwd: runDir, timeoutMs: 15 * 60_000 });
+  }
   log(`manifest verified locally: ${manifest.length} objects, ${manifestBytes} bytes`);
 
   // Second copy to the Debian laptop, then verify both sides.
   const remoteBase = `~/backups/miu-storage/${path.basename(runDir)}`;
   await runCommand('ssh', [laptop, `mkdir -p ${remoteBase}/`]);
-  await runCommand('rsync', ['-a', '--checksum', `${runDir}/`, `${laptop}:${remoteBase}/`]);
-  await runCommand('ssh', [laptop, `cd ${remoteBase} && sha256sum -c manifest.sha256`]);
+  await runCommand('rsync', ['-a', '--checksum', `${runDir}/`, `${laptop}:${remoteBase}/`], { timeoutMs: 30 * 60_000 });
+  await runCommand('ssh', [laptop, `cd ${remoteBase} && sha256sum -c -`], { input: sha256Content, timeoutMs: 15 * 60_000 });
+  if (retainedContent) {
+    await runCommand('ssh', [laptop, `cd ${remoteBase} && sha256sum -c -`], { input: retainedContent, timeoutMs: 15 * 60_000 });
+  }
 
   const localManifestDigest = sha256OfText(manifestContent);
   const remoteOutput = await runCommand('ssh', [laptop, `sha256sum ${remoteBase}/manifest.jsonl`]);
@@ -632,16 +1162,51 @@ export async function runBackup({
     throw new Error(`Remote manifest digest mismatch: local=${localManifestDigest} remote=${remoteManifestDigest}`);
   }
 
+  // Prove the pending-delta file mirrored byte-for-byte, so the reported delta
+  // count can never disagree with the copy on the laptop.
+  const remotePendingOutput = await runCommand('ssh', [laptop, `sha256sum ${remoteBase}/pending-delta.jsonl`]);
+  const remotePendingDigest = String(remotePendingOutput ?? '').trim().split(/\s+/)[0];
+  if (remotePendingDigest !== pendingDeltaSha256) {
+    throw new Error(`Remote pending-delta digest mismatch: local=${pendingDeltaSha256} remote=${remotePendingDigest}`);
+  }
+
   const receipt = {
     run_id: path.basename(runDir),
     object_count: manifest.length,
     total_bytes: manifestBytes,
     manifest_sha256: localManifestDigest,
     checksum_list_sha256: sha256OfText(sha256Content),
+    source_store: sourceStore,
+    buckets: [...buckets],
+    source_inventory_scope: 'frozen-starting-inventory',
+    pending_delta_count: pendingDelta.count,
+    pending_delta_sha256: pendingDeltaSha256,
     remote: `${laptop}:${remoteBase}/`,
     verified_at: new Date().toISOString(),
   };
-  await writeAtomicJson(path.join(runDir, 'backup-verification.json'), receipt);
+  if (retainedContent) {
+    receipt.retained_count = retainedEntries.length;
+    receipt.retained_sha256 = sha256OfText(retainedContent);
+  }
+  const receiptFile = path.join(runDir, 'backup-verification.json');
+  await writeAtomicJson(receiptFile, receipt);
+  // The receipt is written after the object mirror, so the rsync above never
+  // included it. Copy ONLY the receipt, then prove the laptop bytes against a
+  // checksum generated from the LOCAL raw bytes over stdin. The prior receipt
+  // is already preserved by preservePriorReceipt under .superseded/ and mirrored
+  // by the rsync. Success requires the laptop receipt bytes to match too.
+  const receiptBytes = await fs.readFile(receiptFile);
+  const receiptChecksum = `${createHash('sha256').update(receiptBytes).digest('hex')}  backup-verification.json\n`;
+  try {
+    await runCommand('rsync', ['-a', '--checksum', receiptFile, `${laptop}:${remoteBase}/backup-verification.json`], { timeoutMs: 15 * 60_000 });
+    await runCommand('ssh', [laptop, `cd ${remoteBase} && sha256sum -c -`], { input: receiptChecksum, timeoutMs: 15 * 60_000 });
+  } catch (error) {
+    // A receipt proves both copies only when the laptop bytes match. Drop the
+    // local receipt so a failed upload cannot leave a valid-looking proof; the
+    // prior receipt stays in .superseded/ and a resume retries the upload.
+    await fs.rm(receiptFile, { force: true });
+    throw error;
+  }
   log(`laptop copy verified: ${laptop}:${remoteBase}/`);
   return { runDir, manifest, receipt };
 }
@@ -707,8 +1272,8 @@ async function verifyDeletionBatch(plan, rows, runner) {
 
 function sameObjectVersion(live, frozen) {
   return Number(live.bytes) === frozen.bytes &&
-    new Date(live.created_at).getTime() === Date.parse(frozen.object_created_at) &&
-    new Date(live.updated_at).getTime() === Date.parse(frozen.object_updated_at);
+    sameExactTimestamp(live.created_at, frozen.object_created_at) &&
+    sameExactTimestamp(live.updated_at, frozen.object_updated_at);
 }
 
 export async function runPurge({
@@ -898,7 +1463,7 @@ async function defaultRunCommand(command, args, options = {}) {
     encoding: 'utf8',
     input: options.input,
     stdio: [options.input === undefined ? 'ignore' : 'pipe', 'pipe', 'inherit'],
-    timeout: 120_000,
+    timeout: options.timeoutMs ?? 120_000,
   });
 }
 
@@ -1027,9 +1592,11 @@ export async function pathExists(storage, bucket, objectPath) {
 
 export async function withDatabaseBatch(db, kind, callback) {
   const tables = ['public.saved_images', 'public.processing_credit_reservations', 'public.processing_jobs'];
-  if (kind === 'expire') tables.push('auth.users', 'public.profiles', 'public.subscriptions', 'public.credit_transactions');
+  // The fresh recheck reads auth.sessions.refreshed_at; lock it for expire only so a
+  // concurrent refresh cannot commit between the recheck and the row delete.
+  if (kind === 'expire') tables.push('auth.users', 'auth.sessions', 'public.profiles', 'public.subscriptions', 'public.credit_transactions');
   else if (kind !== 'purge') throw new Error('Unknown batch kind');
-  await db.query('BEGIN');
+  await db.query('BEGIN ISOLATION LEVEL READ COMMITTED');
   try {
     await db.query("SET LOCAL lock_timeout = '5s'");
     await db.query("SET LOCAL statement_timeout = '30s'");
@@ -1138,6 +1705,7 @@ async function cmdBackup(args) {
     resumeDir: args.resume,
     buckets,
     dbRefs,
+    inventoryRetries: 2,
     listObjects: bucket => listAllObjects(storage, bucket),
     downloadObject: makeServiceRoleDownload({
       supabaseUrl: config.supabaseUrl,
@@ -1164,6 +1732,7 @@ export async function writeFrozenPlan(backupDir, kind, rows) {
 async function cmdPlanPurge(args) {
   const backupDir = required(args.manifest, '--manifest <backup-run-dir>');
   const identity = await loadBackupIdentity(backupDir);
+  requireSupabaseSourceStore(identity);
   const config = loadConfig();
   const storage = await createStorage(config);
   await preflightQuota(storage);
@@ -1180,8 +1749,8 @@ async function cmdPlanPurge(args) {
         const live = liveByPath.get(row.path);
         const backup = verifiedByKey.get(makeObjectKey(INPUT_BUCKET, row.path));
         return Number(live.bytes) === backup.bytes &&
-          new Date(live.created_at).getTime() === Date.parse(backup.created_at) &&
-          new Date(live.updated_at).getTime() === Date.parse(backup.updated_at);
+          sameExactTimestamp(live.created_at, backup.created_at) &&
+          sameExactTimestamp(live.updated_at, backup.updated_at);
       })
       .map(row => {
         const backup = verifiedByKey.get(makeObjectKey(INPUT_BUCKET, row.path));
@@ -1201,6 +1770,7 @@ async function cmdPurge(args) {
   const manifestPath = path.resolve(required(args.manifest, '--manifest <purge-manifest.jsonl>'));
   if (!args.confirm) throw new Error('purge requires --confirm');
   const plan = await loadFrozenPlan({ backupRunDir: path.dirname(manifestPath), kind: 'purge', planPath: manifestPath });
+  requireSupabaseSourceStore(plan.identity);
   const config = loadConfig();
   const storage = await createStorage(config);
   await preflightQuota(storage);
@@ -1222,6 +1792,7 @@ async function cmdPurge(args) {
 async function cmdPlanExpire(args) {
   const backupDir = required(args.manifest, '--manifest <backup-run-dir>');
   const identity = await loadBackupIdentity(backupDir);
+  requireSupabaseSourceStore(identity);
   const config = loadConfig();
   const storage = await createStorage(config);
   await preflightQuota(storage);
@@ -1269,6 +1840,7 @@ async function cmdExpire(args) {
   const manifestPath = path.resolve(required(args.manifest, '--manifest <expire-rows.jsonl>'));
   if (!args.confirm) throw new Error('expire requires --confirm');
   const plan = await loadFrozenPlan({ backupRunDir: path.dirname(manifestPath), kind: 'expire', planPath: manifestPath });
+  requireSupabaseSourceStore(plan.identity);
   const config = loadConfig();
   const storage = await createStorage(config);
   await preflightQuota(storage);
@@ -1282,7 +1854,8 @@ async function cmdExpire(args) {
       loadCurrentRows: async ids => {
         const { rows } = await db.query(`WITH eligible AS (${GALLERY_RECHECK_SQL})
           SELECT to_jsonb(s) AS snapshot, e.id IS NOT NULL AS eligible,
-                 o.created_at AS object_created_at, o.updated_at AS object_updated_at,
+                 to_jsonb(o)->>'created_at' AS object_created_at,
+                 to_jsonb(o)->>'updated_at' AS object_updated_at,
                  (o.metadata->>'size')::bigint AS object_bytes
           FROM public.saved_images s LEFT JOIN eligible e ON e.id = s.id
           LEFT JOIN storage.objects o ON o.bucket_id = 'saved-images' AND o.name = s.storage_path

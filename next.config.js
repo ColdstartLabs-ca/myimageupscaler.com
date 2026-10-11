@@ -55,6 +55,11 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'assets.myimageupscaler.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'myimageupscaler.com',
       },
     ],

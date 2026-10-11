@@ -1,6 +1,6 @@
 # PRD-SQR-01 — Oct 13 full Storage backup, stale-input purge, and inactive free-gallery purge
 
-**Status:** IN PROGRESS (Phase 1 script hardening & tests passed. Phases 2–3 pending; all production execution gates still pending).
+**Status:** IN PROGRESS (Phase 1 script hardening & tests passed. Phase 2 backup verified; Phase 3 destructive execution remains gated).
 **Priority:** P0 — Storage usage (7.9 GB) is 7× the Free limit. GB-hours run out again about 4 days after the 2026-10-13 refill unless AC-4 lands.
 **Complexity:** 3 (LOW); risk override: HIGH — destructive production Storage deletes.
 **Owner:** Claude (scripts), João (go/no-go for the live purge)
@@ -36,7 +36,7 @@ Run `yarn db:backup` before the purge, as the repository's production-safety rul
 
 - [ ] AC-1 [local]: `plan-purge` excludes any path referenced by `saved_images`, a nonterminal reservation, a nonterminal job, or a reservation/job output, and any path younger than 7 days. proof: `yarn test tests/unit/scripts/storage-purge.unit.spec.ts`. Evidence: unit logic passes; prod DB dry-run gate pending.
 - [ ] AC-2 [local]: `purge` deletes only paths in the frozen manifest that have a verified backup hash. It stops at the first failed batch and drops any path that became referenced. proof: same spec. Evidence: unit tests verify hash refusal, path traversal protection, symlink checks, manifest digest binding, dropped mid-run references, and fail-closed batch stops; live execution pending.
-- [ ] AC-3 [local]: The full backup of all 3 buckets passes `sha256sum -c` with 0 failures. The object count equals the live listing count. The laptop copy passes the same check. proof: `backup --bucket all` output. Evidence: pending.
+- [x] AC-3 [local]: The full backup of all 3 buckets passes `sha256sum -c` with 0 failures. The object count equals the frozen starting-inventory listing count; objects that arrive after the freeze are recorded in `pending-delta.jsonl` and are not counted or backed. The laptop copy passes the same check. proof: `backup --bucket all` output. Evidence: 2026-10-11 00:17:05 UTC verified 6,553 objects / 7,919,497,410 bytes on both machines, pending delta 0. Receipt and manifest SHA are recorded below.
 - [ ] AC-4 [local]: After the purge, every purge-manifest path is absent. `upscale-inputs` falls by about 4.25 GB (re-measured with the audit inventory query). proof: `purge-result.json` and the inventory query. Evidence: pending.
 - [ ] AC-5 [local]: `plan-expire` selects only free users with no sign-in for 30 days. It excludes paid users and users who purchased credits. `expire` deletes a row only after its object is confirmed absent. proof: `yarn test tests/unit/scripts/storage-purge.unit.spec.ts`. Evidence: partial — spec covers `expire` ordering (object removed and confirmed absent before row delete), refusal without `--confirm`, and skipping a row whose object is still present. The `plan-expire` SQL user-selection still needs live DB verification.
 - [ ] AC-6 [local]: After the gallery purge, the expired users' objects are absent. Their rows exist in `expire-rows.jsonl`, and every object hash is in the verified backup. No row of an eligible user saved after the freeze was touched. proof: `expire-result.json` and a row count query. Evidence: pending.
@@ -64,6 +64,8 @@ Integration: unchanged. This is an operator-run script with no production code p
 - 2026-10-10 (João): Run the first inactive free-gallery cleanup in this PRD on Oct 13. This first wave has no warning email. Restore is possible from the local backup and `expire-rows.jsonl`. Later waves send the warning email (PRD-SQR-04).
 - 2026-10-10 (João): Back up all buckets, not only the purge candidates. This gives a safety net for the R2 migration.
 - 2026-10-10 (backup repair): Backup creation/resume hardened against the review findings. Deletion stays DISABLED; Phase 1 remains IN PROGRESS until independent review clears the backup and concurrency safeguards. Live backup (AC-3) still requires Storage access.
+- 2026-10-10 (João approved): Keep recently active users, including persistent refreshed sessions. The initial query and the fresh recheck must exclude any user with an `auth.sessions` row refreshed within 30 days, any saved image created within 30 days, or any credit reservation created within 30 days. Keep the `last_sign_in_at` and account-age cutoff. Exempt ever-paid users for both purchase and subscription `credit_transactions` with `amount > 0`. The expire batch locks `auth.sessions` (expire only, not purge) so a concurrent session refresh cannot commit between recheck and delete. CLI `purge` and `expire` stay hard-disabled.
+- 2026-10-10 (backup scope decision): Continuous additive uploads make whole-inventory equality unprovable, and no service pause is authorized. `backup` therefore proves an explicit frozen starting inventory, without weakening the version checks. The second listing at freeze is the verified snapshot; every object from the first listing must survive with an identical canonical identity (`bucket, path, id, version, created_at, updated_at, bytes`). Later arrivals are recorded in an unbacked `pending-delta.jsonl` with `source_inventory_scope='frozen-starting-inventory'`, `pending_delta_count`, and `pending_delta_sha256`. New arrivals never enter the verified manifest, the object count, or a frozen purge plan, so they can never be selected for delete. The README rule (local backup before any delete) is unchanged. A failed re-verification invalidates the live receipt and keeps the old bytes content-addressed.
 
 ## Execution Phases
 
@@ -76,7 +78,7 @@ Integration: unchanged. This is an operator-run script with no production code p
 
 #### Phase 2: Oct 13 backup (read-only on prod)
 
-**Status:** IN PROGRESS
+**Status:** DONE — both copies and final receipt verified.
 **Verification:** AC-3. Run it on the laptop if the desktop is busy. Each download is read-only.
 
 #### Phase 3: Oct 13 purges (needs João's go)
@@ -84,3 +86,13 @@ Integration: unchanged. This is an operator-run script with no production code p
 **Status:** NOT STARTED
 **Go-gate:** after AC-3, send the ping with the counts: `Project: MIU quota. Blocker: purge ready (<n> inputs, <GB>; <u> inactive users, <m> images, <GB>). Action: reply go or stop.` Wait for João's reply in chat.
 **Verification:** Run `yarn db:backup`, then `plan-purge` and `plan-expire`. Show João the counts and bytes, then run `purge --confirm` and `expire --confirm`. Then confirm AC-4, AC-6 and AC-7.
+
+- 2026-10-11 local verification: 137 storage unit cases and 22 real PostgreSQL 17 cases passed, including persistent-session activity, positive historical paid-credit exemptions, and source timestamps differing by one microsecond. `yarn verify` passed in 81.45 seconds. Destructive CLI actions remain hard disabled.
+- Backup resume now freezes an exact starting inventory and validates every selected identity/version again; new uploads are separately recorded as unbacked pending delta and never become deletion eligible. Prior bytes/receipts are retained. Laptop proof uses desktop-generated expected checksums through SSH stdin, not a laptop-controlled checksum list. Current run `/home/joao/backups/miu-storage/2026-10-10T22-28-34-951Z` has locally verified 6,553 objects / 7,919,497,410 bytes; remote copy and receipt remain pending.
+
+- Final read-only backup run succeeded (exit 0): `/home/joao/backups/miu-storage/2026-10-10T22-28-34-951Z`; laptop `joao@192.168.1.126:~/backups/miu-storage/2026-10-10T22-28-34-951Z/`. Manifest SHA-256 `61c97432a04cdb0291f016617db318d88be306d56b34613159e96611bf77cb66`; 6,553 objects, 7,919,497,410 bytes; pending delta 0 at final inventory. Desktop-generated checksums verified both copies. Root also copied the final `backup-verification.json` to the laptop and verified its bytes independently. No source objects, gallery rows, or production schema were changed.
+
+- Final receipt synchronization is now part of the backup command, after object verification; its laptop SHA is checked against desktop bytes. A failed receipt transfer/check invalidates the local completion receipt. Storage backup suite: 43 passed; final `yarn verify`: passed in 48.82 seconds.
+
+- 2026-10-11 read-only purge plan: 4 stale input objects, 7,205,323 bytes; frozen plan SHA-256 `0d361ad29fb3986176ef544d1f07844f6aff8ee762af8158c8e73a9445d68d60`. Path: `/home/joao/backups/miu-storage/2026-10-10T22-28-34-951Z/purge-manifest.jsonl`. No deletion was enabled or executed.
+- Source-store and resume hardening: receipts distinguish R2 from Supabase while historical receipts remain Supabase-compatible. ETag changes require a new download and preserve the previous bytes. Different source stores or narrowed bucket scopes must be refused before any active receipt changes. The first source-store suite passed 130 tests and `yarn verify` in 42.68 seconds; the additional resume-scope correction requires final verification.

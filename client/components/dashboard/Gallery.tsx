@@ -174,6 +174,7 @@ export function Gallery(): JSX.Element {
         <div>
           <h1 className="text-2xl font-bold text-white">{t('title')}</h1>
           <p className="text-muted-foreground mt-1">{t('subtitle')}</p>
+          <p className="text-xs text-muted-foreground mt-2 max-w-xl">{t('retentionNote')}</p>
         </div>
         <button
           onClick={refresh}

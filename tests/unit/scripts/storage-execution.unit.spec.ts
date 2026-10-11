@@ -432,6 +432,81 @@ describe('storage-execution: runPurge', () => {
     expect(removeObjects).not.toHaveBeenCalled();
   });
 
+  it('treats a one-microsecond difference as a changed version and deletes nothing', async () => {
+    const frozen = {
+      ...artifact(INPUT_BUCKET, 'user/micro.png', 'micro-content'),
+      updated_at: '2000-01-01T00:00:00.123456Z',
+    };
+    const run = makeBackupRun(root, [frozen]);
+    writeFrozenPlan(run.runDir, 'purge', [purgeRow(frozen)]);
+    const plan = await loadFrozenPlan({ backupRunDir: run.runDir, kind: 'purge' });
+    const removeObjects = vi.fn();
+
+    const result = await runPurge({
+      plan,
+      confirm: true,
+      removeObjects,
+      listExisting: async (_bucket: string, paths: string[]) => paths,
+      checkStillEligible: async (_bucket: string, paths: string[]) =>
+        paths.map(() => livePurgeRow(frozen, { updated_at: '2000-01-01T00:00:00.123457Z' })),
+      withLockedBatch: async (fn: any) => fn(),
+      runner: makeRunner(plan.identity),
+    });
+
+    expect(result.status).toBe('ok');
+    expect(result.dropped).toEqual(['user/micro.png']);
+    expect(removeObjects).not.toHaveBeenCalled();
+  });
+
+  it('accepts the same instant expressed with Z and with +00:00', async () => {
+    const frozen = {
+      ...artifact(INPUT_BUCKET, 'user/offset.png', 'offset-content'),
+      updated_at: '2000-01-01T00:00:00.123456Z',
+    };
+    const run = makeBackupRun(root, [frozen]);
+    writeFrozenPlan(run.runDir, 'purge', [purgeRow(frozen)]);
+    const plan = await loadFrozenPlan({ backupRunDir: run.runDir, kind: 'purge' });
+    const base = store([frozen]);
+
+    const result = await runPurge({
+      plan,
+      confirm: true,
+      removeObjects: base.removeObjects,
+      listExisting: base.listExisting,
+      checkStillEligible: async (_bucket: string, paths: string[]) =>
+        paths.map(() => livePurgeRow(frozen, { updated_at: '2000-01-01T00:00:00.123456+00:00' })),
+      withLockedBatch: async (fn: any) => fn(),
+      runner: makeRunner(plan.identity),
+    });
+
+    expect(result.status).toBe('ok');
+    expect(result.deleted).toEqual(['user/offset.png']);
+    expect(base.removeObjects).toHaveBeenCalledWith(INPUT_BUCKET, ['user/offset.png']);
+  });
+
+  it('fails closed when the live source timestamp is a Date object', async () => {
+    const frozen = artifact(INPUT_BUCKET, 'user/datemix.png', 'date-content');
+    const run = makeBackupRun(root, [frozen]);
+    writeFrozenPlan(run.runDir, 'purge', [purgeRow(frozen)]);
+    const plan = await loadFrozenPlan({ backupRunDir: run.runDir, kind: 'purge' });
+    const removeObjects = vi.fn();
+
+    const result = await runPurge({
+      plan,
+      confirm: true,
+      removeObjects,
+      listExisting: async (_bucket: string, paths: string[]) => paths,
+      checkStillEligible: async (_bucket: string, paths: string[]) =>
+        paths.map(() => livePurgeRow(frozen, { created_at: new Date(OLD) })),
+      withLockedBatch: async (fn: any) => fn(),
+      runner: makeRunner(plan.identity),
+    });
+
+    expect(result.status).toBe('ok');
+    expect(result.dropped).toEqual(['user/datemix.png']);
+    expect(removeObjects).not.toHaveBeenCalled();
+  });
+
   it('drops a path that became newly referenced between plan and purge', async () => {
     const { objects, plan, identity, byPath } = await purgeSetup(1);
     const removeObjects = vi.fn();
@@ -738,6 +813,38 @@ describe('storage-execution: runExpire', () => {
 
     expect(result.status).toBe('ok');
     expect(result.skipped).toContain(rows[0].id);
+    expect(world.removeObjects).not.toHaveBeenCalled();
+    expect(world.deleteRows).not.toHaveBeenCalled();
+    expect(world.restoreObjects).not.toHaveBeenCalled();
+  });
+
+  it('preserves a row whose present object changed by one microsecond', async () => {
+    const frozen = {
+      ...artifact(GALLERY_BUCKET, 'saved/micro.png', 'gallery-micro'),
+      updated_at: '2000-01-01T00:00:00.123456Z',
+    };
+    const run = makeBackupRun(root, [frozen]);
+    const rows = [expireRow(frozen, 0)];
+    writeFrozenPlan(run.runDir, 'expire', rows);
+    const plan = await loadFrozenPlan({ backupRunDir: run.runDir, kind: 'expire' });
+    const world = expireWorld(rows, {
+      currentRows: ids =>
+        liveRows(
+          rows.filter(row => ids.includes(row.id)),
+          () => ({ object_updated_at: '2000-01-01T00:00:00.123457Z' })
+        ),
+    });
+
+    const result = await runExpire({
+      plan,
+      confirm: true,
+      ...world,
+      runner: makeRunner(plan.identity),
+    });
+
+    expect(result.status).toBe('ok');
+    expect(result.skipped).toContain(rows[0].id);
+    expect(result.deletedRows).toEqual([]);
     expect(world.removeObjects).not.toHaveBeenCalled();
     expect(world.deleteRows).not.toHaveBeenCalled();
     expect(world.restoreObjects).not.toHaveBeenCalled();

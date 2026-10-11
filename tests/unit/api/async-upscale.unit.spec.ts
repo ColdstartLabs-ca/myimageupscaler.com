@@ -1195,6 +1195,25 @@ describe('authenticated async upscale contract', () => {
     expect(terminalEvents()).toEqual([]);
   });
 
+  it('retains the shared input after terminal success so a pending job stays deliverable', async () => {
+    expect((await startAndSucceed()).status).toBe(200);
+    expect(mocks.removeInput, 'a shared input must survive a terminal success').not.toHaveBeenCalled();
+    await route.GET(statusRequest());
+    expect(mocks.removeInput).not.toHaveBeenCalled();
+  });
+
+  it('retains the shared input after terminal failure so a pending job stays deliverable', async () => {
+    await route.POST(request());
+    if (reservation) delete reservation.result_context.recovery;
+    await vi.advanceTimersByTimeAsync(5000);
+    mocks.fetch.mockResolvedValueOnce(
+      providerResponse({ id: PREDICTION_ID, status: 'failed', error: 'provider timed out' })
+    );
+    const response = await route.GET(statusRequest());
+    expect(response.status).toBe(503);
+    expect(mocks.removeInput, 'a shared input must survive a terminal failure').not.toHaveBeenCalled();
+  });
+
   it.each(['analytics', 'lifecycle', 'cost'])(
     'keeps ready output deliverable when %s helpers throw',
     async helper => {

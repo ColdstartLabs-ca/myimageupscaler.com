@@ -16,6 +16,7 @@ const {
   streamDownloadToFile,
   parseManifestJsonl,
   makeObjectKey,
+  selectPurgePaths,
   INPUT_BUCKET,
   GALLERY_BUCKET,
   DOWNLOAD_CONCURRENCY,
@@ -69,9 +70,16 @@ function realRunner(runDir: string) {
     }
     if (command === 'ssh') {
       const script = args[1] ?? '';
+      if (script.includes('sha256sum -c -')) {
+        return execFileSync('sha256sum', ['-c', '-'], { cwd: runDir, input: options.input, encoding: 'utf8' });
+      }
       if (script.includes('sha256sum ') && script.includes('manifest.jsonl')) {
         const digest = sha256(fs.readFileSync(path.join(runDir, 'manifest.jsonl')));
         return `${digest}  manifest.jsonl\n`;
+      }
+      if (script.includes('sha256sum ') && script.includes('pending-delta.jsonl')) {
+        const digest = sha256(fs.readFileSync(path.join(runDir, 'pending-delta.jsonl')));
+        return `${digest}  pending-delta.jsonl\n`;
       }
       return '';
     }
@@ -158,13 +166,22 @@ describe('runBackup (AC-3)', () => {
     });
     expect(verified).not.toMatch(/FAILED/);
 
-    // Both the local and the laptop sha256sum -c gates ran.
+    // Both the local and the laptop sha256sum -c gates ran. The laptop gate
+    // verifies against the LOCAL checksum list sent over stdin, never the
+    // laptop's own copy of manifest.sha256.
     const localCheck = runner.calls.filter((c: any) => c.command === 'sha256sum');
     const remoteCheck = runner.calls.filter(
-      (c: any) => c.command === 'ssh' && (c.args[1] ?? '').includes('sha256sum -c manifest.sha256')
+      (c: any) => c.command === 'ssh' && (c.args[1] ?? '').includes('sha256sum -c -')
     );
     expect(localCheck).toHaveLength(1);
-    expect(remoteCheck).toHaveLength(1);
+    // The object proof gate plus the final-receipt gate each run on the laptop.
+    expect(remoteCheck).toHaveLength(2);
+    expect(remoteCheck[0].options.input).toBe(rawChecksum);
+    expect(
+      runner.calls.some(
+        (c: any) => c.command === 'ssh' && (c.args[1] ?? '').includes('manifest.sha256')
+      )
+    ).toBe(false);
     expect(
       runner.calls.some((c: any) => c.command === 'rsync' && c.args.includes('--checksum'))
     ).toBe(true);
@@ -225,6 +242,35 @@ describe('runBackup (AC-3)', () => {
     expect(fs.existsSync(path.join(runDir, 'backup-verification.json'))).toBe(false);
   });
 
+  it('never trusts the laptop copy of manifest.sha256 for the remote gate', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'content');
+    const runDir = path.join(root, 'no-remote-list');
+    const base = realRunner(runDir);
+    const runner: any = async (command: string, args: string[], options: any = {}) => {
+      if (command === 'ssh' && (args[1] ?? '').includes('sha256sum -c manifest.sha256')) {
+        throw new Error('must not trust the laptop checksum list');
+      }
+      return base(command, args, options);
+    };
+
+    await runBackup({
+      outputRoot: root,
+      runId: 'no-remote-list',
+      buckets: [INPUT_BUCKET],
+      listObjects: async () => [a],
+      downloadObject: storeDownload([a]),
+      runCommand: runner,
+    });
+
+    const remoteCheck = base.calls.find(
+      (c: any) => c.command === 'ssh' && (c.args[1] ?? '').includes('sha256sum -c -')
+    );
+    expect(remoteCheck).toBeTruthy();
+    expect(remoteCheck.options.input).toBe(
+      fs.readFileSync(path.join(runDir, 'manifest.sha256'), 'utf8')
+    );
+  });
+
   it('writes no verification receipt when the remote manifest digest does not match the local digest', async () => {
     const a = objectFor(INPUT_BUCKET, 'input/a.png', 'content');
     const runDir = path.join(root, 'run-digest-fail');
@@ -251,6 +297,34 @@ describe('runBackup (AC-3)', () => {
       })
     ).rejects.toThrow(/Remote manifest digest mismatch/);
     expect(fs.existsSync(path.join(runDir, 'backup-verification.json'))).toBe(false);
+  });
+
+  it('defaults the receipt source_store to supabase and rejects an unknown store before writing', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/source.png', 'source bytes');
+    const runDir = path.join(root, 'run-source-store');
+    const result = await runBackup({
+      outputRoot: root,
+      runId: 'run-source-store',
+      buckets: [INPUT_BUCKET],
+      listObjects: async () => [a],
+      downloadObject: storeDownload([a]),
+      runCommand: realRunner(runDir),
+    });
+    expect(result.receipt.source_store).toBe('supabase');
+
+    const badDir = path.join(root, 'run-bad-store');
+    await expect(
+      runBackup({
+        outputRoot: root,
+        runId: 'run-bad-store',
+        sourceStore: 'ftp',
+        buckets: [INPUT_BUCKET],
+        listObjects: async () => [a],
+        downloadObject: storeDownload([a]),
+        runCommand: realRunner(badDir),
+      })
+    ).rejects.toThrow(/Unknown source_store/);
+    expect(fs.existsSync(badDir)).toBe(false);
   });
 
   it('fails closed on a same-count inventory change between the two listings', async () => {
@@ -333,6 +407,79 @@ describe('runBackup (AC-3)', () => {
   });
 });
 
+describe('runBackup final receipt upload (SQR-01)', () => {
+  let root: string;
+
+  beforeEach(() => {
+    root = fs.mkdtempSync(path.join(os.tmpdir(), 'sqr-receipt-'));
+  });
+
+  afterEach(() => {
+    fs.rmSync(root, { recursive: true, force: true });
+  });
+
+  function basicRun(runId: string, runner: any) {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'content');
+    return runBackup({
+      outputRoot: root,
+      runId,
+      buckets: [INPUT_BUCKET],
+      listObjects: async () => [a],
+      downloadObject: storeDownload([a]),
+      runCommand: runner,
+    });
+  }
+
+  it('uploads the final receipt to the laptop after the object proof, verified against the local raw bytes', async () => {
+    const runId = 'receipt-upload';
+    const runDir = path.join(root, runId);
+    const runner = realRunner(runDir);
+    await basicRun(runId, runner);
+
+    const receiptBytes = fs.readFileSync(path.join(runDir, 'backup-verification.json'));
+    const expected = `${sha256(receiptBytes)}  backup-verification.json\n`;
+
+    // The receipt copy follows the object proof (manifest gate).
+    const receiptRsync = runner.calls.findIndex(
+      (c: any) => c.command === 'rsync' && c.args.some((a: string) => a.includes('backup-verification.json'))
+    );
+    const objectGate = runner.calls.findIndex(
+      (c: any) => c.command === 'ssh' && (c.options.input ?? '').includes(`${INPUT_BUCKET}/`)
+    );
+    expect(receiptRsync).toBeGreaterThan(-1);
+    expect(objectGate).toBeGreaterThan(-1);
+    expect(receiptRsync).toBeGreaterThan(objectGate);
+
+    // Only the receipt is copied, and the expected checksum comes from the raw
+    // local bytes, never the laptop's own checksum list.
+    const receiptRsyncCall = runner.calls[receiptRsync];
+    // Only the receipt file is the rsync source.
+    expect(receiptRsyncCall.args[2]).toBe(path.join(runDir, 'backup-verification.json'));
+    expect(receiptRsyncCall.args[3]).toContain('backup-verification.json');
+    const receiptCheck = runner.calls.find(
+      (c: any) => c.command === 'ssh' && (c.options.input ?? '').includes('backup-verification.json')
+    );
+    expect(receiptCheck).toBeTruthy();
+    expect(receiptCheck.options.input).toBe(expected);
+    expect(receiptCheck.options.input).not.toContain(INPUT_BUCKET);
+  });
+
+  it('fails the command and drops the receipt when the laptop receipt checksum does not match', async () => {
+    const runId = 'receipt-fail';
+    const runDir = path.join(root, runId);
+    const base = realRunner(runDir);
+    const runner: any = async (command: string, args: string[], options: any = {}) => {
+      if (command === 'ssh' && (options.input ?? '').includes('backup-verification.json')) {
+        throw new Error('remote receipt checksum failed');
+      }
+      return base(command, args, options);
+    };
+
+    await expect(basicRun(runId, runner)).rejects.toThrow(/remote receipt checksum failed/);
+    expect(fs.existsSync(path.join(runDir, 'backup-verification.json'))).toBe(false);
+  });
+});
+
 describe('runBackup resume (AC-3)', () => {
   let root: string;
 
@@ -374,6 +521,7 @@ describe('runBackup resume (AC-3)', () => {
       created_at: CREATED,
       updated_at: UPDATED,
       version: a.id,
+      source_version: a.version,
     });
     const downloadObject = vi.fn(storeDownload([a]));
 
@@ -389,6 +537,94 @@ describe('runBackup resume (AC-3)', () => {
     expect(downloadObject).not.toHaveBeenCalled();
     expect(result.manifest[0].sha256).toBe(sha256(content));
     expect(result.manifest[0].bytes).toBe(content.length);
+  });
+
+  it('re-downloads and preserves old bytes when only the source ETag changes', async () => {
+    const oldContent = Buffer.from('old-pixel-123456');
+    const newContent = Buffer.from('new-pixel-654321');
+    const a = objectFor(INPUT_BUCKET, 'input/etag.png', oldContent.toString());
+    const changed = { ...a, version: 'etag-v2', content: newContent.toString() };
+    const runDir = path.join(root, 'resume-changed-etag');
+    writeArtifact(runDir, INPUT_BUCKET, a.path, oldContent);
+    writeCheckpoint(runDir, INPUT_BUCKET, a.path, {
+      sha256: sha256(oldContent),
+      bytes: oldContent.length,
+      created_at: CREATED,
+      updated_at: UPDATED,
+      version: a.id,
+      source_version: a.version,
+    });
+    const downloadObject = vi.fn(storeDownload([changed]));
+
+    const result = await runBackup({
+      outputRoot: root,
+      resumeDir: runDir,
+      buckets: [INPUT_BUCKET],
+      listObjects: async () => [changed],
+      downloadObject,
+      runCommand: realRunner(runDir),
+    });
+
+    expect(downloadObject).toHaveBeenCalledTimes(1);
+    expect(result.manifest[0].sha256).toBe(sha256(newContent));
+    const retainedRel = `${INPUT_BUCKET}/.superseded/${a.path}.${sha256(oldContent)}`;
+    expect(fs.readFileSync(path.join(runDir, retainedRel), 'utf8')).toBe(oldContent.toString());
+  });
+
+  it('resumes without downloading when the source ETag is unchanged', async () => {
+    const content = Buffer.from('stable etag bytes');
+    const a = objectFor(INPUT_BUCKET, 'input/etag-same.png', content.toString());
+    const runDir = path.join(root, 'resume-same-etag');
+    writeArtifact(runDir, INPUT_BUCKET, a.path, content);
+    writeCheckpoint(runDir, INPUT_BUCKET, a.path, {
+      sha256: sha256(content),
+      bytes: content.length,
+      created_at: CREATED,
+      updated_at: UPDATED,
+      version: a.id,
+      source_version: a.version,
+    });
+    const downloadObject = vi.fn(storeDownload([a]));
+
+    const result = await runBackup({
+      outputRoot: root,
+      resumeDir: runDir,
+      buckets: [INPUT_BUCKET],
+      listObjects: async () => [a],
+      downloadObject,
+      runCommand: realRunner(runDir),
+    });
+
+    expect(downloadObject).not.toHaveBeenCalled();
+    expect(result.manifest[0].sha256).toBe(sha256(content));
+  });
+
+  it('resumes a historical checkpoint with no source_version against an object with no version', async () => {
+    const content = Buffer.from('supabase legacy bytes');
+    const legacy: any = objectFor(INPUT_BUCKET, 'input/legacy.png', content.toString());
+    delete legacy.version;
+    const runDir = path.join(root, 'resume-legacy');
+    writeArtifact(runDir, INPUT_BUCKET, legacy.path, content);
+    writeCheckpoint(runDir, INPUT_BUCKET, legacy.path, {
+      sha256: sha256(content),
+      bytes: content.length,
+      created_at: CREATED,
+      updated_at: UPDATED,
+      version: legacy.id,
+    });
+    const downloadObject = vi.fn(storeDownload([legacy]));
+
+    const result = await runBackup({
+      outputRoot: root,
+      resumeDir: runDir,
+      buckets: [INPUT_BUCKET],
+      listObjects: async () => [legacy],
+      downloadObject,
+      runCommand: realRunner(runDir),
+    });
+
+    expect(downloadObject).not.toHaveBeenCalled();
+    expect(result.manifest[0].sha256).toBe(sha256(content));
   });
 
   it('re-downloads a corrupt artifact instead of trusting the checkpoint', async () => {
@@ -464,6 +700,84 @@ describe('runBackup resume (AC-3)', () => {
         runCommand: realRunner(runDir),
       })
     ).rejects.toThrow(/Symlink escape/);
+    expect(fs.readdirSync(outside)).toEqual([]);
+  });
+
+  it('refuses a symlinked .superseded directory before copying or unlinking the prior receipt', async () => {
+    const content = Buffer.from('bytes');
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', content.toString());
+    const runDir = path.join(root, 'receipt-superseded-symlink');
+    fs.mkdirSync(runDir, { recursive: true });
+    const prior = JSON.stringify({ run_id: 'prior', buckets: [INPUT_BUCKET] }, null, 2);
+    fs.writeFileSync(path.join(runDir, 'backup-verification.json'), prior);
+    const outside = path.join(root, 'receipt-outside');
+    fs.mkdirSync(outside, { recursive: true });
+    fs.symlinkSync(outside, path.join(runDir, '.superseded'));
+    const downloadObject = vi.fn(storeDownload([a]));
+
+    await expect(
+      runBackup({
+        outputRoot: root,
+        resumeDir: runDir,
+        buckets: [INPUT_BUCKET],
+        listObjects: async () => [a],
+        downloadObject,
+        runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/superseded.*symlink/i);
+    expect(fs.readdirSync(outside)).toEqual([]);
+    expect(fs.existsSync(path.join(runDir, 'backup-verification.json'))).toBe(true);
+    expect(downloadObject).not.toHaveBeenCalled();
+  });
+
+  it('refuses to unlink the prior receipt when the retained copy holds different bytes', async () => {
+    const content = Buffer.from('bytes');
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', content.toString());
+    const runDir = path.join(root, 'receipt-retained-mismatch');
+    fs.mkdirSync(runDir, { recursive: true });
+    const prior = JSON.stringify({ run_id: 'prior', buckets: [INPUT_BUCKET] }, null, 2);
+    fs.writeFileSync(path.join(runDir, 'backup-verification.json'), prior);
+    fs.mkdirSync(path.join(runDir, '.superseded'), { recursive: true });
+    fs.writeFileSync(
+      path.join(runDir, '.superseded', `backup-verification.json.${sha256(prior)}`),
+      'tampered retained bytes'
+    );
+    const downloadObject = vi.fn(storeDownload([a]));
+
+    await expect(
+      runBackup({
+        outputRoot: root,
+        resumeDir: runDir,
+        buckets: [INPUT_BUCKET],
+        listObjects: async () => [a],
+        downloadObject,
+        runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/retained.*mismatch/i);
+    expect(fs.existsSync(path.join(runDir, 'backup-verification.json'))).toBe(true);
+    expect(downloadObject).not.toHaveBeenCalled();
+  });
+
+  it('refuses a resume directory that is a symlink before any download or write', async () => {
+    const content = Buffer.from('bytes');
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', content.toString());
+    const outside = path.join(root, 'resume-dir-outside');
+    fs.mkdirSync(outside, { recursive: true });
+    const runDir = path.join(root, 'resume-dir-symlink');
+    fs.symlinkSync(outside, runDir);
+    const downloadObject = vi.fn(storeDownload([a]));
+
+    await expect(
+      runBackup({
+        outputRoot: root,
+        resumeDir: runDir,
+        buckets: [INPUT_BUCKET],
+        listObjects: async () => [a],
+        downloadObject,
+        runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/regular directory/i);
+    expect(downloadObject).not.toHaveBeenCalled();
     expect(fs.readdirSync(outside)).toEqual([]);
   });
 
@@ -648,6 +962,245 @@ describe('runBackup bounded concurrency (AC-3)', () => {
   });
 });
 
+describe('runBackup frozen-starting-inventory scope (SQR-01)', () => {
+  let root: string;
+
+  beforeEach(() => {
+    root = fs.mkdtempSync(path.join(os.tmpdir(), 'sqr-frozen-'));
+  });
+
+  afterEach(() => {
+    fs.rmSync(root, { recursive: true, force: true });
+  });
+
+  it('accepts additive objects that appear only in the second listing and freezes them', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'a-bytes');
+    const b = objectFor(INPUT_BUCKET, 'input/b.png', 'b-bytes');
+    const runDir = path.join(root, 'additive');
+    let call = 0;
+
+    const result = await runBackup({
+      outputRoot: root,
+      runId: 'additive',
+      buckets: [INPUT_BUCKET],
+      listObjects: async () => {
+        call += 1;
+        return call === 1 ? [a] : [a, b];
+      },
+      downloadObject: storeDownload([a, b]),
+      runCommand: realRunner(runDir),
+    });
+
+    expect(result.manifest.map((r: any) => r.path).sort()).toEqual([
+      'input/a.png',
+      'input/b.png',
+    ]);
+    const receipt = JSON.parse(
+      fs.readFileSync(path.join(runDir, 'backup-verification.json'), 'utf8')
+    );
+    expect(receipt.source_inventory_scope).toBe('frozen-starting-inventory');
+    expect(receipt.pending_delta_count).toBe(0);
+    expect(receipt.object_count).toBe(2);
+    expect(fs.readFileSync(path.join(runDir, 'pending-delta.jsonl'), 'utf8')).toBe('');
+  });
+
+  it('records an object that arrives after the freeze as an unbacked pending delta', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'a-bytes');
+    const b = objectFor(INPUT_BUCKET, 'input/b.png', 'b-bytes');
+    const runDir = path.join(root, 'delta');
+    let call = 0;
+
+    const result = await runBackup({
+      outputRoot: root,
+      runId: 'delta',
+      buckets: [INPUT_BUCKET],
+      listObjects: async () => {
+        call += 1;
+        return call <= 2 ? [a] : [a, b];
+      },
+      downloadObject: storeDownload([a]),
+      runCommand: realRunner(runDir),
+    });
+
+    // The frozen snapshot backs only a; b arrived after the freeze.
+    expect(result.manifest.map((r: any) => r.path)).toEqual(['input/a.png']);
+    const rawDelta = fs.readFileSync(path.join(runDir, 'pending-delta.jsonl'), 'utf8');
+    const delta = parseManifestJsonl(rawDelta);
+    expect(delta).toHaveLength(1);
+    expect(delta[0]).toMatchObject({ bucket: INPUT_BUCKET, path: 'input/b.png' });
+    expect(delta[0].sha256).toBeUndefined();
+
+    const receipt = JSON.parse(
+      fs.readFileSync(path.join(runDir, 'backup-verification.json'), 'utf8')
+    );
+    expect(receipt.object_count).toBe(1);
+    expect(receipt.pending_delta_count).toBe(1);
+    expect(receipt.pending_delta_sha256).toBe(sha256(rawDelta));
+    // The unbacked arrival never enters the verified manifest count.
+    expect(receipt.total_bytes).toBe(a.bytes);
+  });
+
+  it('refuses the receipt when the remote pending-delta digest does not match', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'a-bytes');
+    const runDir = path.join(root, 'pending-digest-fail');
+    const base = realRunner(runDir);
+    const runner: any = async (command: string, args: string[], options: any = {}) => {
+      if (command === 'ssh' && (args[1] ?? '').includes('pending-delta.jsonl')) {
+        return `${'0'.repeat(64)}  pending-delta.jsonl\n`;
+      }
+      return base(command, args, options);
+    };
+
+    await expect(
+      runBackup({
+        outputRoot: root,
+        runId: 'pending-digest-fail',
+        buckets: [INPUT_BUCKET],
+        listObjects: async () => [a],
+        downloadObject: storeDownload([a]),
+        runCommand: runner,
+      })
+    ).rejects.toThrow(/Remote pending-delta digest mismatch/);
+    expect(fs.existsSync(path.join(runDir, 'backup-verification.json'))).toBe(false);
+  });
+
+  it('fails closed when a frozen object changes version before the final listing', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'a-bytes');
+    const changed = { ...a, version: 'v2' };
+    const runDir = path.join(root, 'frozen-version-change');
+    let call = 0;
+
+    await expect(
+      runBackup({
+        outputRoot: root,
+        runId: 'frozen-version-change',
+        buckets: [INPUT_BUCKET],
+        listObjects: async () => {
+          call += 1;
+          return call <= 2 ? [a] : [changed];
+        },
+        downloadObject: storeDownload([a]),
+        runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/Inventory changed during backup/);
+    expect(fs.existsSync(path.join(runDir, 'manifest.jsonl'))).toBe(false);
+    expect(fs.existsSync(path.join(runDir, 'backup-verification.json'))).toBe(false);
+  });
+
+  it('fails closed when a frozen object is removed before the final listing', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'a-bytes');
+    const runDir = path.join(root, 'frozen-removal');
+    let call = 0;
+
+    await expect(
+      runBackup({
+        outputRoot: root,
+        runId: 'frozen-removal',
+        buckets: [INPUT_BUCKET],
+        listObjects: async () => {
+          call += 1;
+          return call <= 2 ? [a] : [];
+        },
+        downloadObject: storeDownload([a]),
+        runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/Inventory changed during backup/);
+    expect(fs.existsSync(path.join(runDir, 'backup-verification.json'))).toBe(false);
+  });
+
+  it('rejects duplicate paths in the first listing', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'a-bytes');
+    const runDir = path.join(root, 'dup-first');
+
+    await expect(
+      runBackup({
+        outputRoot: root,
+        runId: 'dup-first',
+        buckets: [INPUT_BUCKET],
+        listObjects: async () => [a, { ...a }],
+        downloadObject: storeDownload([a]),
+        runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/Duplicate object path/);
+  });
+
+  it('rejects duplicate paths in the second listing', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'a-bytes');
+    const runDir = path.join(root, 'dup-second');
+    let call = 0;
+
+    await expect(
+      runBackup({
+        outputRoot: root,
+        runId: 'dup-second',
+        buckets: [INPUT_BUCKET],
+        listObjects: async () => {
+          call += 1;
+          return call === 1 ? [a] : [a, { ...a }];
+        },
+        downloadObject: storeDownload([a]),
+        runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/Duplicate object path/);
+  });
+
+  it('preserves and removes a prior receipt on a failed resume', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'a-bytes');
+    const runDir = path.join(root, 'resume-receipt');
+    fs.mkdirSync(runDir, { recursive: true });
+    const prior = JSON.stringify({ run_id: 'prior', object_count: 0, buckets: [INPUT_BUCKET] }, null, 2);
+    fs.writeFileSync(path.join(runDir, 'backup-verification.json'), prior);
+
+    await expect(
+      runBackup({
+        outputRoot: root,
+        resumeDir: runDir,
+        buckets: [INPUT_BUCKET],
+        listObjects: async () => [a],
+        downloadObject: async () => {
+          throw new Error('network reset');
+        },
+        runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/network reset/);
+
+    // No stale valid receipt survives a failed verification.
+    expect(fs.existsSync(path.join(runDir, 'backup-verification.json'))).toBe(false);
+    const retained = path.join(runDir, `.superseded/backup-verification.json.${sha256(prior)}`);
+    expect(fs.readFileSync(retained, 'utf8')).toBe(prior);
+  });
+
+  it('never selects a pending-delta arrival for a purge plan', () => {
+    const frozen = {
+      bucket: INPUT_BUCKET,
+      path: 'input/backed.png',
+      bytes: 3,
+      sha256: 'a'.repeat(64),
+      created_at: CREATED,
+      updated_at: UPDATED,
+    };
+    const verifiedByKey = new Map([[makeObjectKey(INPUT_BUCKET, frozen.path), frozen]]);
+    const candidate = (p: string) => ({
+      path: p,
+      bytes: 1,
+      created_at: '2026-10-01T00:00:00.000Z',
+      updated_at: '2026-10-01T00:00:00.000Z',
+      gallery_reference: false,
+      nonterminal_reservation_reference: false,
+      nonterminal_job_reference: false,
+      reservation_output_reference: false,
+      job_output_reference: false,
+    });
+    const now = Date.parse('2026-10-20T00:00:00.000Z');
+
+    const selected = selectPurgePaths([candidate('input/new-arrival.png')], {
+      now,
+      verifiedByKey,
+    });
+    expect(selected).toEqual([]);
+  });
+});
+
 describe('streamDownloadToFile', () => {
   let dir: string;
 
@@ -706,5 +1259,625 @@ describe('streamDownloadToFile', () => {
 
     expect(result).toEqual({ sha256: sha256(payload), bytes: payload.length });
     expect(fs.readFileSync(targetPath)).toEqual(payload);
+  });
+});
+
+describe('runBackup bounded inventory retry and preservation (SQR-01)', () => {
+  let root: string;
+
+  beforeEach(() => {
+    root = fs.mkdtempSync(path.join(os.tmpdir(), 'sqr-sqr01-'));
+  });
+
+  afterEach(() => {
+    fs.rmSync(root, { recursive: true, force: true });
+  });
+
+  // Mirrors the production downloader: write a private temp file, then rename
+  // over the target, so a preserved hardlink/copy is not truncated in place.
+  function renamingDownload(contentFor: (bucket: string, objectPath: string) => string) {
+    return async ({ bucket, path: objectPath, targetPath }: any) => {
+      const buffer = Buffer.from(contentFor(bucket, objectPath));
+      const tmp = `${targetPath}.fake.${Math.random().toString(36).slice(2)}`;
+      fs.writeFileSync(tmp, buffer);
+      fs.renameSync(tmp, targetPath);
+      return { sha256: sha256(buffer), bytes: buffer.length };
+    };
+  }
+
+  it('retries a same-count replacement during download and preserves the superseded bytes', async () => {
+    const oldObject = objectFor(INPUT_BUCKET, 'input/x.png', 'old-bytes');
+    const newObject = objectFor(INPUT_BUCKET, 'input/x.png', 'new-bytes');
+    newObject.updated_at = '2026-10-09T00:00:00.000Z';
+    const runDir = path.join(root, 'retry-preserve');
+    let live = oldObject;
+    let listingCalls = 0;
+    const listObjects = async () => {
+      listingCalls += 1;
+      if (listingCalls === 3) live = newObject;
+      return [live];
+    };
+    const downloadObject = vi.fn(async ({ targetPath }: any) => {
+      const buffer = Buffer.from(live.content);
+      const tmp = `${targetPath}.fake`;
+      fs.writeFileSync(tmp, buffer);
+      fs.renameSync(tmp, targetPath);
+      return { sha256: sha256(buffer), bytes: buffer.length };
+    });
+
+    const result = await runBackup({
+      outputRoot: root,
+      runId: 'retry-preserve',
+      buckets: [INPUT_BUCKET],
+      listObjects,
+      downloadObject,
+      inventoryRetries: 2,
+      runCommand: realRunner(runDir),
+    });
+
+    expect(downloadObject).toHaveBeenCalledTimes(2);
+    const retainedRel = `${INPUT_BUCKET}/.superseded/input/x.png.${sha256('old-bytes')}`;
+    expect(fs.readFileSync(path.join(runDir, retainedRel), 'utf8')).toBe('old-bytes');
+    expect(result.manifest[0].sha256).toBe(sha256('new-bytes'));
+    const retained = fs.readFileSync(path.join(runDir, 'retained.sha256'), 'utf8');
+    expect(retained).toContain(`${sha256('old-bytes')}  ${retainedRel}`);
+    const receipt = JSON.parse(
+      fs.readFileSync(path.join(runDir, 'backup-verification.json'), 'utf8')
+    );
+    expect(receipt.object_count).toBe(1);
+    expect(receipt.retained_count).toBe(1);
+  });
+
+  it('retains a checkpoint artifact removed from the live inventory and checksums it remotely', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'keep');
+    const b = objectFor(INPUT_BUCKET, 'input/b.png', 'removed');
+    const runDir = path.join(root, 'orphan-run');
+    await runBackup({
+      outputRoot: root,
+      runId: 'orphan-run',
+      buckets: [INPUT_BUCKET],
+      listObjects: async () => [a, b],
+      downloadObject: renamingDownload((_bucket, objectPath) =>
+        objectPath === b.path ? b.content : a.content
+      ),
+      runCommand: realRunner(runDir),
+    });
+
+    const runner2 = realRunner(runDir);
+    const result = await runBackup({
+      outputRoot: root,
+      resumeDir: runDir,
+      buckets: [INPUT_BUCKET],
+      listObjects: async () => [a],
+      downloadObject: renamingDownload(() => a.content),
+      runCommand: runner2,
+    });
+
+    expect(fs.readFileSync(path.join(runDir, INPUT_BUCKET, b.path), 'utf8')).toBe('removed');
+    expect(result.manifest).toHaveLength(1);
+    const retained = fs.readFileSync(path.join(runDir, 'retained.sha256'), 'utf8');
+    expect(retained).toContain(`${sha256('removed')}  ${INPUT_BUCKET}/${b.path}`);
+    expect(
+      runner2.calls.some(
+        (c: any) => c.command === 'ssh' && (c.args[1] ?? '').includes('sha256sum -c -') && c.options.input === retained
+      )
+    ).toBe(true);
+    const receipt = JSON.parse(
+      fs.readFileSync(path.join(runDir, 'backup-verification.json'), 'utf8')
+    );
+    expect(receipt.object_count).toBe(1);
+    expect(receipt.retained_count).toBe(1);
+  });
+
+  it('downloads only the delta when a new source appears on resume', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'a-bytes');
+    const b = objectFor(INPUT_BUCKET, 'input/b.png', 'b-bytes');
+    const runDir = path.join(root, 'delta-run');
+    await runBackup({
+      outputRoot: root,
+      runId: 'delta-run',
+      buckets: [INPUT_BUCKET],
+      listObjects: async () => [a],
+      downloadObject: renamingDownload(() => a.content),
+      runCommand: realRunner(runDir),
+    });
+
+    const download2 = vi.fn(
+      renamingDownload((_bucket, objectPath) => (objectPath === b.path ? b.content : a.content))
+    );
+    const result = await runBackup({
+      outputRoot: root,
+      resumeDir: runDir,
+      buckets: [INPUT_BUCKET],
+      listObjects: async () => [a, b],
+      downloadObject: download2,
+      runCommand: realRunner(runDir),
+    });
+
+    expect(download2.mock.calls.map((c: any) => c[0].path)).toEqual(['input/b.png']);
+    expect(result.manifest).toHaveLength(2);
+  });
+
+  it('preserves an existing artifact that has no checkpoint entry before overwriting it', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'fresh-bytes');
+    const runDir = path.join(root, 'no-cp-preserve');
+    const existing = path.join(runDir, INPUT_BUCKET, a.path);
+    fs.mkdirSync(path.dirname(existing), { recursive: true });
+    fs.writeFileSync(existing, 'original-bytes');
+
+    const result = await runBackup({
+      outputRoot: root,
+      resumeDir: runDir,
+      buckets: [INPUT_BUCKET],
+      listObjects: async () => [a],
+      downloadObject: renamingDownload(() => a.content),
+      runCommand: realRunner(runDir),
+    });
+
+    const retainedRel = `${INPUT_BUCKET}/.superseded/input/a.png.${sha256('original-bytes')}`;
+    expect(fs.readFileSync(path.join(runDir, retainedRel), 'utf8')).toBe('original-bytes');
+    expect(result.manifest[0].sha256).toBe(sha256('fresh-bytes'));
+  });
+
+  it('bounds retries on perpetual inventory churn and publishes no receipt', async () => {
+    let n = 0;
+    const runDir = path.join(root, 'perpetual');
+    const listObjects = async () => {
+      n += 1;
+      const churned = objectFor(INPUT_BUCKET, 'input/p.png', 'churn');
+      churned.updated_at = `2026-10-${String((n % 9) + 1).padStart(2, '0')}T00:00:00.000Z`;
+      return [churned];
+    };
+    const downloadObject = vi.fn(renamingDownload(() => 'ignored'));
+
+    await expect(
+      runBackup({
+        outputRoot: root,
+        runId: 'perpetual',
+        buckets: [INPUT_BUCKET],
+        listObjects,
+        downloadObject,
+        inventoryRetries: 2,
+        runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/Unstable object listing/);
+
+    // One initial attempt plus two bounded retries, two listings each.
+    expect(n).toBe(6);
+    expect(fs.existsSync(path.join(runDir, 'backup-verification.json'))).toBe(false);
+    expect(fs.existsSync(path.join(runDir, 'manifest.jsonl'))).toBe(false);
+  });
+
+  it('does not retry unrelated download failures', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'content');
+    const runDir = path.join(root, 'no-retry-download');
+    const downloadObject = vi.fn(async () => {
+      throw new Error('network reset');
+    });
+
+    await expect(
+      runBackup({
+        outputRoot: root,
+        runId: 'no-retry-download',
+        buckets: [INPUT_BUCKET],
+        listObjects: async () => [a],
+        downloadObject,
+        inventoryRetries: 2,
+        runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/network reset/);
+    expect(downloadObject).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('retained backup integrity', () => {
+  let root: string;
+  beforeEach(() => { root = fs.mkdtempSync(path.join(os.tmpdir(), 'sqr-retained-')); });
+  afterEach(() => { fs.rmSync(root, { recursive: true, force: true }); });
+
+  it('refuses corrupted copies whose source disappeared', async () => {
+    const runDir = path.join(root, 'corrupt-orphan');
+    const gone = objectFor(INPUT_BUCKET, 'input/gone.png', 'original');
+    const live = objectFor(INPUT_BUCKET, 'input/live.png', 'live');
+    fs.mkdirSync(path.join(runDir, INPUT_BUCKET, 'input'), { recursive: true });
+    fs.writeFileSync(path.join(runDir, INPUT_BUCKET, gone.path), 'corrupt');
+    fs.writeFileSync(path.join(runDir, 'backup-checkpoint.json'), JSON.stringify({ downloaded: {
+      [makeObjectKey(INPUT_BUCKET, gone.path)]: { sha256: sha256(gone.content), bytes: gone.bytes },
+    } }));
+    await expect(runBackup({ outputRoot: root, resumeDir: runDir, buckets: [INPUT_BUCKET],
+      listObjects: async () => [live], downloadObject: storeDownload([live]), runCommand: realRunner(runDir),
+    })).rejects.toThrow(/retained.*mismatch/i);
+    expect(fs.existsSync(path.join(runDir, 'backup-verification.json'))).toBe(false);
+  });
+
+  it('refuses a superseded destination that is a symlink', async () => {
+    const runDir = path.join(root, 'symlink-retained');
+    const live = objectFor(INPUT_BUCKET, 'input/old.png', 'replacement');
+    const previous = 'original';
+    const retained = path.join(runDir, INPUT_BUCKET, '.superseded', `${live.path}.${sha256(previous)}`);
+    fs.mkdirSync(path.dirname(retained), { recursive: true });
+    fs.mkdirSync(path.join(runDir, INPUT_BUCKET, 'input'), { recursive: true });
+    fs.writeFileSync(path.join(runDir, INPUT_BUCKET, live.path), previous);
+    const outside = path.join(root, 'outside');
+    fs.writeFileSync(outside, previous);
+    fs.symlinkSync(outside, retained);
+    await expect(runBackup({ outputRoot: root, resumeDir: runDir, buckets: [INPUT_BUCKET],
+      listObjects: async () => [live], downloadObject: storeDownload([live]), runCommand: realRunner(runDir),
+    })).rejects.toThrow(/symlink/i);
+    expect(fs.readFileSync(outside, 'utf8')).toBe(previous);
+  });
+
+  it('refuses retained checkpoint paths outside the backup', async () => {
+    const runDir = path.join(root, 'unsafe-retained');
+    const live = objectFor(INPUT_BUCKET, 'input/live.png', 'live');
+    fs.mkdirSync(runDir, { recursive: true });
+    fs.writeFileSync(path.join(root, 'outside'), 'outside');
+    fs.writeFileSync(path.join(runDir, 'backup-checkpoint.json'), JSON.stringify({ downloaded: {}, retained: {
+      '../outside': { path: '../outside', sha256: sha256('outside'), bytes: 7 },
+    } }));
+    await expect(runBackup({ outputRoot: root, resumeDir: runDir, buckets: [INPUT_BUCKET],
+      listObjects: async () => [live], downloadObject: storeDownload([live]), runCommand: realRunner(runDir),
+    })).rejects.toThrow(/unsafe|path|traversal/i);
+  });
+});
+
+describe('runBackup source store and bucket scope binding (data loss)', () => {
+  let root: string;
+
+  beforeEach(() => {
+    root = fs.mkdtempSync(path.join(os.tmpdir(), 'sqr-scope-'));
+  });
+
+  afterEach(() => {
+    fs.rmSync(root, { recursive: true, force: true });
+  });
+
+  function seedRun(
+    runId: string,
+    receipt: Record<string, unknown> | null,
+    checkpoint: Record<string, unknown> | null
+  ) {
+    const runDir = path.join(root, runId);
+    fs.mkdirSync(runDir, { recursive: true });
+    if (receipt) {
+      fs.writeFileSync(path.join(runDir, 'backup-verification.json'), JSON.stringify(receipt, null, 2));
+    }
+    if (checkpoint) {
+      fs.writeFileSync(path.join(runDir, 'backup-checkpoint.json'), JSON.stringify(checkpoint));
+    }
+    return runDir;
+  }
+
+  function entryFor(object: ReturnType<typeof objectFor>, content: string) {
+    return {
+      sha256: sha256(content),
+      bytes: Buffer.byteLength(content),
+      created_at: CREATED,
+      updated_at: UPDATED,
+      version: object.id,
+      source_version: object.version,
+    };
+  }
+
+  it('refuses to resume an r2 run as supabase and leaves the receipt byte-for-byte', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'content');
+    const runDir = seedRun(
+      'r2-to-supabase',
+      { run_id: 'r2-to-supabase', source_store: 'r2', buckets: [INPUT_BUCKET] },
+      { source_store: 'r2', buckets: [INPUT_BUCKET], downloaded: {} }
+    );
+    const prior = fs.readFileSync(path.join(runDir, 'backup-verification.json'), 'utf8');
+    const downloadObject = vi.fn(storeDownload([a]));
+
+    await expect(
+      runBackup({
+        outputRoot: root, resumeDir: runDir, buckets: [INPUT_BUCKET],
+        listObjects: async () => [a], downloadObject, runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/source_store/);
+
+    expect(downloadObject).not.toHaveBeenCalled();
+    expect(fs.readFileSync(path.join(runDir, 'backup-verification.json'), 'utf8')).toBe(prior);
+  });
+
+  it('refuses to resume a supabase run as r2 and leaves the receipt byte-for-byte', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'content');
+    const runDir = seedRun(
+      'supabase-to-r2',
+      { run_id: 'supabase-to-r2', source_store: 'supabase', buckets: [INPUT_BUCKET] },
+      { source_store: 'supabase', buckets: [INPUT_BUCKET], downloaded: {} }
+    );
+    const prior = fs.readFileSync(path.join(runDir, 'backup-verification.json'), 'utf8');
+    const downloadObject = vi.fn(storeDownload([a]));
+
+    await expect(
+      runBackup({
+        outputRoot: root, resumeDir: runDir, sourceStore: 'r2', buckets: [INPUT_BUCKET],
+        listObjects: async () => [a], downloadObject, runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/source_store/);
+
+    expect(downloadObject).not.toHaveBeenCalled();
+    expect(fs.readFileSync(path.join(runDir, 'backup-verification.json'), 'utf8')).toBe(prior);
+  });
+
+  it('refuses a narrower bucket set and leaves the receipt untouched', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'content');
+    const runDir = seedRun(
+      'narrower',
+      { run_id: 'narrower', source_store: 'supabase', buckets: [INPUT_BUCKET, GALLERY_BUCKET] },
+      { source_store: 'supabase', buckets: [INPUT_BUCKET, GALLERY_BUCKET], downloaded: {} }
+    );
+    const prior = fs.readFileSync(path.join(runDir, 'backup-verification.json'), 'utf8');
+    const downloadObject = vi.fn(storeDownload([a]));
+
+    await expect(
+      runBackup({
+        outputRoot: root, resumeDir: runDir, buckets: [INPUT_BUCKET],
+        listObjects: async () => [a], downloadObject, runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/bucket scope/i);
+
+    expect(downloadObject).not.toHaveBeenCalled();
+    expect(fs.readFileSync(path.join(runDir, 'backup-verification.json'), 'utf8')).toBe(prior);
+  });
+
+  it('resumes when the source store and explicit bucket set match', async () => {
+    const content = Buffer.from('matching bytes');
+    const a = objectFor(INPUT_BUCKET, 'input/match.png', content.toString());
+    const runDir = seedRun(
+      'matching',
+      { run_id: 'matching', source_store: 'supabase', buckets: [INPUT_BUCKET] },
+      {
+        source_store: 'supabase',
+        buckets: [INPUT_BUCKET],
+        downloaded: { [makeObjectKey(INPUT_BUCKET, a.path)]: entryFor(a, content.toString()) },
+      }
+    );
+    fs.mkdirSync(path.join(runDir, INPUT_BUCKET, 'input'), { recursive: true });
+    fs.writeFileSync(path.join(runDir, INPUT_BUCKET, a.path), content);
+    const downloadObject = vi.fn(storeDownload([a]));
+
+    const result = await runBackup({
+      outputRoot: root, resumeDir: runDir, buckets: [INPUT_BUCKET],
+      listObjects: async () => [a], downloadObject, runCommand: realRunner(runDir),
+    });
+
+    expect(downloadObject).not.toHaveBeenCalled();
+    expect(result.manifest[0].sha256).toBe(sha256(content));
+  });
+
+  it('refuses a legacy checkpoint resumed with a set that omits its proven bucket', async () => {
+    const content = Buffer.from('legacy bytes');
+    const a = objectFor(INPUT_BUCKET, 'input/legacy.png', content.toString());
+    const runDir = seedRun('legacy-narrow', null, {
+      downloaded: { [makeObjectKey(INPUT_BUCKET, a.path)]: entryFor(a, content.toString()) },
+    });
+    const downloadObject = vi.fn(storeDownload([a]));
+
+    await expect(
+      runBackup({
+        outputRoot: root, resumeDir: runDir, buckets: [GALLERY_BUCKET],
+        listObjects: async () => [], downloadObject, runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/omit/i);
+    expect(downloadObject).not.toHaveBeenCalled();
+  });
+
+  it('allows a legacy checkpoint to widen to a new bucket without re-downloading the old one', async () => {
+    const content = Buffer.from('legacy widen bytes');
+    const a = objectFor(INPUT_BUCKET, 'input/widen.png', content.toString());
+    const g = objectFor(GALLERY_BUCKET, 'saved/widen.png', 'gallery widen');
+    const runDir = seedRun('legacy-widen', null, {
+      downloaded: { [makeObjectKey(INPUT_BUCKET, a.path)]: entryFor(a, content.toString()) },
+    });
+    fs.mkdirSync(path.join(runDir, INPUT_BUCKET, 'input'), { recursive: true });
+    fs.writeFileSync(path.join(runDir, INPUT_BUCKET, a.path), content);
+    const bucketMap: Record<string, ReturnType<typeof objectFor>[]> = {
+      [INPUT_BUCKET]: [a],
+      [GALLERY_BUCKET]: [g],
+    };
+    const downloadObject = vi.fn(storeDownload([a, g]));
+
+    const result = await runBackup({
+      outputRoot: root, resumeDir: runDir, buckets: [INPUT_BUCKET, GALLERY_BUCKET],
+      listObjects: async (bucket: string) => bucketMap[bucket] ?? [],
+      downloadObject, runCommand: realRunner(runDir),
+    });
+
+    expect(downloadObject.mock.calls.map((c: any) => c[0].path)).toEqual([g.path]);
+    expect(result.manifest.map((r: any) => r.path).sort()).toEqual([a.path, g.path].sort());
+    const cp = JSON.parse(fs.readFileSync(path.join(runDir, 'backup-checkpoint.json'), 'utf8'));
+    expect([...cp.buckets].sort()).toEqual([INPUT_BUCKET, GALLERY_BUCKET].sort());
+    expect(cp.source_store).toBe('supabase');
+  });
+
+  it('records the source store and bucket scope before the first download', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/new.png', 'new bytes');
+    const runDir = path.join(root, 'new-run-scope');
+    const result = await runBackup({
+      outputRoot: root, runId: 'new-run-scope', buckets: [INPUT_BUCKET],
+      listObjects: async () => [a], downloadObject: storeDownload([a]),
+      runCommand: realRunner(runDir),
+    });
+
+    expect(result.receipt.buckets).toEqual([INPUT_BUCKET]);
+    const cp = JSON.parse(fs.readFileSync(path.join(runDir, 'backup-checkpoint.json'), 'utf8'));
+    expect(cp.source_store).toBe('supabase');
+    expect(cp.buckets).toEqual([INPUT_BUCKET]);
+  });
+
+  it('refuses a symlinked checkpoint before reading it or mutating the receipt', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'content');
+    const runDir = path.join(root, 'symlink-checkpoint');
+    fs.mkdirSync(runDir, { recursive: true });
+    const prior = JSON.stringify({ run_id: 'symlink-checkpoint', source_store: 'supabase' }, null, 2);
+    fs.writeFileSync(path.join(runDir, 'backup-verification.json'), prior);
+    const outside = path.join(root, 'outside-checkpoint.json');
+    const outsideBytes = JSON.stringify({ downloaded: {} });
+    fs.writeFileSync(outside, outsideBytes);
+    fs.symlinkSync(outside, path.join(runDir, 'backup-checkpoint.json'));
+    const downloadObject = vi.fn(storeDownload([a]));
+
+    await expect(
+      runBackup({
+        outputRoot: root, resumeDir: runDir, buckets: [INPUT_BUCKET],
+        listObjects: async () => [a], downloadObject, runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/symlink/i);
+
+    expect(downloadObject).not.toHaveBeenCalled();
+    expect(fs.readFileSync(path.join(runDir, 'backup-verification.json'), 'utf8')).toBe(prior);
+    expect(fs.readFileSync(outside, 'utf8')).toBe(outsideBytes);
+  });
+
+  it('refuses a corrupt checkpoint before mutating the receipt or downloading', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'content');
+    const runDir = seedRun(
+      'corrupt-checkpoint',
+      { run_id: 'corrupt-checkpoint', source_store: 'supabase', buckets: [INPUT_BUCKET] },
+      null
+    );
+    const prior = fs.readFileSync(path.join(runDir, 'backup-verification.json'), 'utf8');
+    fs.writeFileSync(path.join(runDir, 'backup-checkpoint.json'), '{ not valid json');
+    const downloadObject = vi.fn(storeDownload([a]));
+
+    await expect(
+      runBackup({
+        outputRoot: root, resumeDir: runDir, buckets: [INPUT_BUCKET],
+        listObjects: async () => [a], downloadObject, runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/Invalid JSON/i);
+
+    expect(downloadObject).not.toHaveBeenCalled();
+    expect(fs.readFileSync(path.join(runDir, 'backup-verification.json'), 'utf8')).toBe(prior);
+    expect(fs.existsSync(path.join(runDir, '.superseded'))).toBe(false);
+  });
+
+  it('refuses a malformed receipt before mutating the checkpoint or downloading', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'content');
+    const checkpoint = { source_store: 'supabase', downloaded: {} };
+    const runDir = seedRun('corrupt-receipt', null, checkpoint);
+    const checkpointBytes = fs.readFileSync(path.join(runDir, 'backup-checkpoint.json'), 'utf8');
+    fs.writeFileSync(path.join(runDir, 'backup-verification.json'), '{ "run_id": ');
+    const downloadObject = vi.fn(storeDownload([a]));
+
+    await expect(
+      runBackup({
+        outputRoot: root, resumeDir: runDir, buckets: [INPUT_BUCKET],
+        listObjects: async () => [a], downloadObject, runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/Invalid JSON/i);
+
+    expect(downloadObject).not.toHaveBeenCalled();
+    expect(fs.readFileSync(path.join(runDir, 'backup-checkpoint.json'), 'utf8')).toBe(checkpointBytes);
+  });
+
+  it('refuses a receipt that is not a JSON object', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'content');
+    const runDir = seedRun('array-receipt', null, null);
+    fs.writeFileSync(path.join(runDir, 'backup-verification.json'), '[]');
+    const downloadObject = vi.fn(storeDownload([a]));
+
+    await expect(
+      runBackup({
+        outputRoot: root, resumeDir: runDir, buckets: [INPUT_BUCKET],
+        listObjects: async () => [a], downloadObject, runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/Invalid JSON object/i);
+
+    expect(downloadObject).not.toHaveBeenCalled();
+  });
+
+  it('refuses an r2 checkpoint that disagrees with a legacy supabase receipt', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'content');
+    const runDir = seedRun(
+      'legacy-receipt-r2-cp',
+      { run_id: 'legacy-receipt-r2-cp' },
+      { source_store: 'r2', buckets: [INPUT_BUCKET], downloaded: {} }
+    );
+    const prior = fs.readFileSync(path.join(runDir, 'backup-verification.json'), 'utf8');
+    const downloadObject = vi.fn(storeDownload([a]));
+
+    await expect(
+      runBackup({
+        outputRoot: root, resumeDir: runDir, buckets: [INPUT_BUCKET],
+        listObjects: async () => [a], downloadObject, runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/source_store/);
+
+    expect(downloadObject).not.toHaveBeenCalled();
+    expect(fs.readFileSync(path.join(runDir, 'backup-verification.json'), 'utf8')).toBe(prior);
+  });
+
+  it('refuses a legacy receipt that a requested r2 store would reinterpret', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'content');
+    const runDir = seedRun('legacy-receipt-r2', { run_id: 'legacy-receipt-r2' }, null);
+    const downloadObject = vi.fn(storeDownload([a]));
+
+    await expect(
+      runBackup({
+        outputRoot: root, resumeDir: runDir, sourceStore: 'r2', buckets: [INPUT_BUCKET],
+        listObjects: async () => [a], downloadObject, runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/source_store/);
+
+    expect(downloadObject).not.toHaveBeenCalled();
+  });
+
+  it('infers a legacy receipt scope from the manifest and refuses an omitted bucket', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'content');
+    const runDir = seedRun('legacy-manifest-narrow', { run_id: 'legacy-manifest-narrow' }, null);
+    fs.writeFileSync(
+      path.join(runDir, 'manifest.jsonl'),
+      `${JSON.stringify({ bucket: INPUT_BUCKET, path: a.path, bytes: a.bytes, sha256: sha256(a.content) })}\n`
+    );
+    const downloadObject = vi.fn(storeDownload([a]));
+
+    await expect(
+      runBackup({
+        outputRoot: root, resumeDir: runDir, buckets: [GALLERY_BUCKET],
+        listObjects: async () => [], downloadObject, runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/omit/i);
+
+    expect(downloadObject).not.toHaveBeenCalled();
+  });
+
+  it('refuses to infer a legacy receipt scope when the manifest is missing', async () => {
+    const a = objectFor(INPUT_BUCKET, 'input/a.png', 'content');
+    const runDir = seedRun('legacy-no-manifest', { run_id: 'legacy-no-manifest' }, null);
+    const downloadObject = vi.fn(storeDownload([a]));
+
+    await expect(
+      runBackup({
+        outputRoot: root, resumeDir: runDir, buckets: [INPUT_BUCKET],
+        listObjects: async () => [a], downloadObject, runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/cannot prove/i);
+
+    expect(downloadObject).not.toHaveBeenCalled();
+  });
+
+  it('refuses when requested buckets forget a bucket recorded only in the manifest', async () => {
+    const g = objectFor(GALLERY_BUCKET, 'saved/g.png', 'gallery');
+    const runDir = seedRun('cp-manifest-union', null, {
+      source_store: 'supabase',
+      downloaded: { [makeObjectKey(GALLERY_BUCKET, g.path)]: entryFor(g, 'gallery') },
+    });
+    fs.writeFileSync(
+      path.join(runDir, 'manifest.jsonl'),
+      `${JSON.stringify({ bucket: INPUT_BUCKET, path: 'input/x.png' })}\n`
+    );
+    const downloadObject = vi.fn(storeDownload([g]));
+
+    await expect(
+      runBackup({
+        outputRoot: root, resumeDir: runDir, buckets: [GALLERY_BUCKET],
+        listObjects: async () => [], downloadObject, runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/omit/i);
+
+    expect(downloadObject).not.toHaveBeenCalled();
   });
 });
