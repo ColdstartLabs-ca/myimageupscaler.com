@@ -100,6 +100,13 @@ export function evaluateCronResult(
   return { failed: false };
 }
 
+// Temporary guard: pause automatic legacy cleanup jobs until the verified-backup
+// retention rollout replaces them. Legacy cleanup deletes without two-copy protection.
+const PAUSED_CLEANUP_ENDPOINTS = new Set([
+  '/api/cron/gallery-cleanup',
+  '/api/cron/upscale-input-cleanup',
+]);
+
 function shouldStopLifecycleDrain(
   result: ILifecycleDrainResponse,
   consecutiveEligibilityStalls: number
@@ -227,6 +234,12 @@ export default {
         try {
           if (lifecycleIncludeEligibility !== null) {
             await runLifecycleSequence(env, lifecycleIncludeEligibility);
+            return;
+          }
+          if (PAUSED_CLEANUP_ENDPOINTS.has(endpoint)) {
+            console.warn(`[CRON] ${jobName} paused: awaiting verified-backup retention rollout`, {
+              endpoint,
+            });
             return;
           }
           const { ok, status, data } = await postCron(env, endpoint);

@@ -164,29 +164,25 @@ describe('Cloudflare Cron Worker', () => {
       );
     });
 
-    it('should route gallery cleanup cron pattern correctly', async () => {
+    it('should pause gallery cleanup without any outbound API request', async () => {
       const event = {
         cron: '0 0 * * *',
         scheduledTime: Date.now(),
       } as ScheduledEvent;
 
-      const fetchMock = vi.fn().mockResolvedValue({
-        ok: true,
-        status: 200,
-        json: async () => ({ success: true, usersProcessed: 2, imagesDeleted: 4 }),
-      });
+      const fetchMock = vi.fn();
       global.fetch = fetchMock;
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
       await worker.scheduled(event, mockEnv, mockCtx as unknown);
+      await mockCtx.waitUntil.mock.calls[0][0];
 
-      expect(mockCtx.waitUntil).toHaveBeenCalled();
-      const waitUntilPromise = mockCtx.waitUntil.mock.calls[0][0];
-      await waitUntilPromise;
-
-      expect(fetchMock).toHaveBeenCalledWith(
-        'https://api.example.com/api/cron/gallery-cleanup',
-        expect.any(Object)
+      expect(fetchMock).not.toHaveBeenCalled();
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Gallery Cleanup paused'),
+        expect.objectContaining({ endpoint: '/api/cron/gallery-cleanup' })
       );
+      consoleSpy.mockRestore();
     });
 
     it('should route daily upscale completion health correctly', async () => {
@@ -505,6 +501,29 @@ describe('Cloudflare Cron Worker', () => {
         pattern: '*/15 * * * *',
         timestamp: expect.any(String),
       });
+    });
+
+    it('should not make an outbound request for a manually triggered paused cleanup job', async () => {
+      const request = new Request(
+        'https://worker.dev/trigger?pattern=0%200%20*%20*%20*',
+        {
+          method: 'POST',
+          headers: { 'x-cron-secret': 'test-secret-123' },
+        }
+      );
+
+      const fetchMock = vi.fn();
+      global.fetch = fetchMock;
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      const response = await worker.fetch(request, mockEnv, mockCtx as unknown);
+
+      expect(response.status).toBe(200);
+      const body = await response.json();
+      expect(body.message).toBe('Cron job triggered');
+      await mockCtx.waitUntil.mock.calls[0][0];
+      expect(fetchMock).not.toHaveBeenCalled();
+      consoleSpy.mockRestore();
     });
 
     it('should return error when pattern is missing', async () => {

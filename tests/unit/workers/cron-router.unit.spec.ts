@@ -76,6 +76,23 @@ describe('Cron Worker Router', () => {
     );
   });
 
+  it('pauses 0 0 * * * gallery cleanup without an outbound request', async () => {
+    const fetchMock = vi.fn();
+    global.fetch = fetchMock;
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    const ctx = makeCtx();
+    await worker.scheduled({ cron: '0 0 * * *', scheduledTime: Date.now() }, mockEnv, ctx);
+    await ctx.flush();
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Gallery Cleanup paused'),
+      expect.objectContaining({ endpoint: '/api/cron/gallery-cleanup' })
+    );
+    warnSpy.mockRestore();
+  });
+
   it('maps 25 * * * * to bounded database retention', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
