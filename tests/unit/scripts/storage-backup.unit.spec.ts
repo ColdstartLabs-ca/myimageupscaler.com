@@ -14,6 +14,7 @@ import * as storageModule from '../../../scripts/storage/backup-and-purge.mjs';
 const {
   runBackup,
   streamDownloadToFile,
+  makeServiceRoleDownload,
   parseManifestJsonl,
   makeObjectKey,
   selectPurgePaths,
@@ -28,6 +29,19 @@ const UPDATED = '2026-10-01T00:00:00.000Z';
 
 function sha256(value: Buffer | string) {
   return crypto.createHash('sha256').update(value).digest('hex');
+}
+
+function md5(value: Buffer | string) {
+  return crypto.createHash('md5').update(value).digest('hex');
+}
+
+function bodyOf(payload: Buffer) {
+  return new ReadableStream({
+    start(controller) {
+      controller.enqueue(new Uint8Array(payload));
+      controller.close();
+    },
+  });
 }
 
 function objectFor(bucket: string, objectPath: string, content: string) {
@@ -1257,8 +1271,178 @@ describe('streamDownloadToFile', () => {
       fetchFn,
     });
 
-    expect(result).toEqual({ sha256: sha256(payload), bytes: payload.length });
+    expect(result).toEqual({ sha256: sha256(payload), md5: md5(payload), bytes: payload.length });
     expect(fs.readFileSync(targetPath)).toEqual(payload);
+  });
+
+  it('rejects equal-length stale CDN bytes that do not match the source eTag', async () => {
+    const targetPath = path.join(dir, 'stale.png');
+    const stale = Buffer.from('version-one-bytes');
+    const current = Buffer.from('version-two-bytes');
+    expect(stale.length).toBe(current.length);
+
+    await expect(
+      streamDownloadToFile({
+        url: 'https://example.invalid/object',
+        headers: {},
+        targetPath,
+        expectedBytes: current.length,
+        expectedETag: `"${md5(current)}"`,
+        fetchFn: async () => ({ ok: true, status: 200, body: bodyOf(stale) }),
+      })
+    ).rejects.toThrow(/Source eTag mismatch/);
+    expect(fs.existsSync(targetPath)).toBe(false);
+  });
+
+  it('accepts bytes whose MD5 equals the quoted single-part source eTag', async () => {
+    const targetPath = path.join(dir, 'bound.png');
+    const payload = Buffer.from('bound payload');
+
+    const result = await streamDownloadToFile({
+      url: 'https://example.invalid/object',
+      headers: {},
+      targetPath,
+      expectedBytes: payload.length,
+      expectedETag: `"${md5(payload)}"`,
+      fetchFn: async () => ({ ok: true, status: 200, body: bodyOf(payload) }),
+    });
+
+    expect(result.md5).toBe(md5(payload));
+    expect(fs.readFileSync(targetPath)).toEqual(payload);
+  });
+
+  it.each([
+    null,
+    '',
+    '"abc"',
+    `"${'a'.repeat(32)}-2"`,
+    `W/"${'a'.repeat(32)}"`,
+    `"${'A'.repeat(32)}"`,
+  ])('fails closed before any fetch for unsupported source eTag %j', async etag => {
+    const fetchFn = vi.fn();
+    await expect(
+      streamDownloadToFile({
+        url: 'https://example.invalid/object',
+        headers: {},
+        targetPath: path.join(dir, 'never.png'),
+        expectedBytes: 1,
+        expectedETag: etag,
+        fetchFn,
+      })
+    ).rejects.toThrow(/Unsupported source eTag/);
+    expect(fetchFn).not.toHaveBeenCalled();
+  });
+
+  it('requires a listed eTag for every Supabase service-role download', async () => {
+    const fetchFn = vi.fn();
+    const download = makeServiceRoleDownload({
+      supabaseUrl: 'https://example.invalid',
+      serviceRoleKey: 'test-key',
+      fetchFn,
+    });
+
+    await expect(
+      download({
+        bucket: INPUT_BUCKET,
+        path: 'a.png',
+        targetPath: path.join(dir, 'a.png'),
+        expectedBytes: 1,
+      })
+    ).rejects.toThrow(/Unsupported source eTag/);
+    expect(fetchFn).not.toHaveBeenCalled();
+  });
+});
+
+describe('runBackup source eTag binding', () => {
+  let root: string;
+
+  beforeEach(() => {
+    root = fs.mkdtempSync(path.join(os.tmpdir(), 'sqr-etag-'));
+  });
+
+  afterEach(() => {
+    fs.rmSync(root, { recursive: true, force: true });
+  });
+
+  it('passes the listed eTag to the downloader and stops before the checkpoint advances on stale bytes', async () => {
+    const stale = Buffer.from('stale-cdn-v1');
+    const current = 'fresh-src-v2';
+    const object = {
+      ...objectFor(INPUT_BUCKET, 'input/stale.png', current),
+      etag: `"${md5(current)}"`,
+    };
+    const runDir = path.join(root, 'stale');
+
+    await expect(
+      runBackup({
+        outputRoot: root,
+        runId: 'stale',
+        buckets: [INPUT_BUCKET],
+        listObjects: async () => [object],
+        downloadObject: ({ targetPath, expectedBytes, expectedETag }: any) =>
+          streamDownloadToFile({
+            url: 'https://example.invalid/object',
+            headers: {},
+            targetPath,
+            expectedBytes,
+            expectedETag,
+            fetchFn: async () => ({ ok: true, status: 200, body: bodyOf(stale) }),
+          }),
+        runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/Source eTag mismatch/);
+
+    const checkpoint = JSON.parse(
+      fs.readFileSync(path.join(runDir, 'backup-checkpoint.json'), 'utf8')
+    );
+    expect(checkpoint.downloaded).toEqual({});
+    expect(fs.existsSync(path.join(runDir, INPUT_BUCKET, 'input/stale.png'))).toBe(false);
+    expect(fs.existsSync(path.join(runDir, 'manifest.jsonl'))).toBe(false);
+  });
+
+  it('does not reuse a cached artifact whose bytes do not match the current listed eTag on resume', async () => {
+    const v1 = 'cached-v1';
+    const v2 = 'source-v2';
+    const first = { ...objectFor(INPUT_BUCKET, 'input/a.png', v1), etag: `"${md5(v1)}"` };
+    const other = {
+      ...objectFor(INPUT_BUCKET, 'input/b.png', 'b-bytes'),
+      etag: `"${md5('b-bytes')}"`,
+    };
+    const runDir = path.join(root, 'resume-etag');
+
+    await expect(
+      runBackup({
+        outputRoot: root,
+        runId: 'resume-etag',
+        buckets: [INPUT_BUCKET],
+        listObjects: async () => [first, other],
+        downloadObject: async (args: any) => {
+          if (args.path === 'input/b.png') throw new Error('first pass failure');
+          return storeDownload([first])(args);
+        },
+        runCommand: realRunner(runDir),
+      })
+    ).rejects.toThrow(/first pass failure/);
+
+    // Same identity and size, but the listed content eTag no longer matches the cached bytes.
+    const changed = { ...objectFor(INPUT_BUCKET, 'input/a.png', v2), etag: `"${md5(v2)}"` };
+    const secondDownload = vi.fn(storeDownload([changed, other]));
+    const result = await runBackup({
+      outputRoot: root,
+      resumeDir: runDir,
+      buckets: [INPUT_BUCKET],
+      listObjects: async () => [changed, other],
+      downloadObject: secondDownload,
+      runCommand: realRunner(runDir),
+    });
+
+    expect(secondDownload.mock.calls.map((c: any) => c[0].path).sort()).toEqual([
+      'input/a.png',
+      'input/b.png',
+    ]);
+    expect(result.manifest.find((r: any) => r.path === 'input/a.png').sha256).toBe(sha256(v2));
+    const retained = path.join(runDir, INPUT_BUCKET, '.superseded', `input/a.png.${sha256(v1)}`);
+    expect(fs.readFileSync(retained, 'utf8')).toBe(v1);
   });
 });
 

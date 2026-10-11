@@ -314,7 +314,11 @@ describe('r2-gallery-operator-adapters: adapters', () => {
       targetPath,
       expectedBytes: SRC_BYTES.length,
     });
-    expect(result).toEqual({ sha256: sha256(SRC_BYTES), bytes: SRC_BYTES.length });
+    expect(result).toEqual({
+      sha256: sha256(SRC_BYTES),
+      md5: crypto.createHash('md5').update(SRC_BYTES).digest('hex'),
+      bytes: SRC_BYTES.length,
+    });
     expect(fs.readFileSync(targetPath)).toEqual(SRC_BYTES);
     expect(r2.gets).toContain(sourceKey());
     expect(r2.getHeaders.at(-1)?.['if-match']).toBe(SRC_ETAG);
