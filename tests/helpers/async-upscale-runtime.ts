@@ -96,6 +96,7 @@ export interface IAsyncUpscaleRuntime {
   artifact: IArtifact;
   createUser: IAsyncUpscaleDatabase['createUser'];
   setProviderDelayMs(milliseconds: number): void;
+  holdOutputDelivery(): () => void;
   losePredictionIdentityOnce(): void;
   rejectNextCreateOnce(status: number): void;
   failNextPredictionOnce(message: string): void;
@@ -196,12 +197,13 @@ async function forward(response: Response, target: ServerResponse): Promise<void
   stream.pipe(target);
 }
 
-function imageStream(bytes: Buffer, slow = false): Response {
+function imageStream(bytes: Buffer, slow = false, outputGate?: Promise<void>): Response {
   let offset = 0;
   let canceled = false;
   return new Response(
     new ReadableStream<Uint8Array>({
       async pull(controller) {
+        if (offset > 0) await outputGate;
         if (slow) await delay(2);
         if (canceled) return;
         if (offset === bytes.length) return controller.close();
@@ -338,6 +340,7 @@ export async function startAsyncUpscaleRuntime(
   >();
   const predictions = new Map<string, IPrediction>();
   let providerDelayMs = options.providerDelayMs;
+  let outputGate: Promise<void> | undefined;
   let losePredictionIdentity = false;
   let nextCreateStatus: number | null = null;
   let nextPredictionError: string | null = null;
@@ -482,7 +485,7 @@ export async function startAsyncUpscaleRuntime(
       } else if (originalHost === new URL(DELIVERY_ORIGIN).host) {
         const prediction = predictions.get(url.pathname.split('/')[1]);
         result = prediction
-          ? imageStream(prediction.output, true)
+          ? imageStream(prediction.output, true, outputGate)
           : new Response(null, { status: 404 });
       } else if (url.pathname.startsWith('/rest/v1/')) {
         if (
@@ -715,6 +718,14 @@ export async function startAsyncUpscaleRuntime(
       invocations,
       inspector,
       close,
+      holdOutputDelivery: () => {
+        let release!: () => void;
+        outputGate = new Promise<void>(resolve => { release = resolve; });
+        return () => {
+          outputGate = undefined;
+          release();
+        };
+      },
       setProviderDelayMs: milliseconds => {
         if (!Number.isFinite(milliseconds) || milliseconds < 0)
           throw new Error('Invalid provider fixture delay');
