@@ -472,6 +472,23 @@ describe('r2-reference-apply: runReferenceApply', () => {
     expect(fieldDb.queries).toHaveLength(0);
   });
 
+  it.each(['lock_timeout', 'statement_timeout'])('rolls back when %s setup fails before any reference update', async setting => {
+    const plan = makePlan(identity, [savedEntry()]);
+    const db = new FakeDb();
+    seedBase(db, plan);
+    const query = db.query;
+    db.query = async (sql: string, params: any[] = []) => {
+      if (sql.startsWith('SET LOCAL') && sql.includes(setting)) throw new Error('timeout setup failed');
+      return query(sql, params);
+    };
+
+    await expect(run(plan, db)).rejects.toThrow('timeout setup failed');
+    expect(db.snapshot).toBeNull();
+    expect(db.queries.at(-1)?.sql).toBe('ROLLBACK');
+    expect(db.queries.some(q => /^(UPDATE|COMMIT)/.test(q.sql))).toBe(false);
+    expect(db.row('saved_images', SAVED_ID).storage_backend).toBe('supabase');
+  });
+
   it('stops after an uncertain COMMIT and never reverses committed writes', async () => {
     const gallery = Array.from({ length: 101 }, (_, index) => makeSavedEntry(index + 1));
     const plan = makePlan(identity, gallery);

@@ -291,9 +291,9 @@ export async function runReferenceApply({
   for (const batch of chunk(operations, APPLY_BATCH_SIZE)) {
     batches += 1;
     await db.query(BEGIN_SQL);
-    await db.query(LOCK_TIMEOUT_SQL);
-    await db.query(STATEMENT_TIMEOUT_SQL);
     try {
+      await db.query(LOCK_TIMEOUT_SQL);
+      await db.query(STATEMENT_TIMEOUT_SQL);
       for (const operation of batch) {
         const result = await db.query(operation.sql, operation.params);
         if (!result || result.rowCount !== 1) {
