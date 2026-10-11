@@ -20,6 +20,7 @@ import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import { env as hostEnvironment } from 'node:process';
 
 import { AwsClient } from 'aws4fetch';
 
@@ -30,6 +31,7 @@ const R2_PREFIX_ENV_NAME = 'NEXT_INC_CACHE_R2_PREFIX';
 
 const DEFAULT_CONCURRENCY = 64;
 const MAX_ATTEMPTS = 4;
+class R2CacheAccessDeniedError extends Error {}
 
 export interface ICacheAsset {
   fullPath: string;
@@ -177,6 +179,10 @@ async function uploadViaS3(
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
       const response = await client.fetch(url, { method: 'PUT', body });
       if (response.ok) return;
+      if (response.status === 403) {
+        await response.body?.cancel();
+        throw new R2CacheAccessDeniedError('R2 S3 credentials cannot write the cache bucket');
+      }
 
       const retriable = response.status === 429 || response.status >= 500;
       if (!retriable || attempt === MAX_ATTEMPTS) {
@@ -196,7 +202,13 @@ async function uploadViaS3(
     }
   };
 
-  await Promise.all(Array.from({ length: Math.min(concurrency, assets.length) }, worker));
+  // Finish in-flight S3 requests before changing upload transports.
+  const results = await Promise.allSettled(
+    Array.from({ length: Math.min(concurrency, assets.length) }, worker)
+  );
+  const failures = results.filter(result => result.status === 'rejected');
+  const failure = failures.find(result => !(result.reason instanceof R2CacheAccessDeniedError)) ?? failures[0];
+  if (failure) throw failure.reason;
   report(true);
   if (process.stdout.isTTY) process.stdout.write('\n');
 }
@@ -208,7 +220,8 @@ async function uploadViaS3(
 function uploadViaWrangler(
   assets: ICacheAsset[],
   bucketConfig: IR2BucketConfig,
-  prefix: string
+  prefix: string,
+  useOAuth = false
 ): void {
   const objectList = assets.map(asset => ({
     key: computeCacheKey(asset.key, {
@@ -232,13 +245,16 @@ function uploadViaWrangler(
       'bulk',
       'put',
       bucketConfig.bucket,
+      '--remote',
       '--filename',
       listFile,
       '--concurrency',
       '50',
     ];
     if (bucketConfig.jurisdiction) args.push('--jurisdiction', bucketConfig.jurisdiction);
-    const result = spawnSync('npx', args, { stdio: 'inherit' });
+    const childEnv = { ...hostEnvironment };
+    if (useOAuth) delete childEnv.CLOUDFLARE_API_TOKEN;
+    const result = spawnSync('npx', args, { stdio: 'inherit', env: childEnv });
     if (result.status !== 0) throw new Error('wrangler r2 bulk put failed');
   } finally {
     fs.rmSync(path.dirname(listFile), { recursive: true, force: true });
@@ -278,13 +294,19 @@ export async function populateR2Cache(): Promise<void> {
   }
 
   const concurrency = Math.max(1, Number(process.env.R2_UPLOAD_CONCURRENCY) || DEFAULT_CONCURRENCY);
-  await uploadViaS3(assets, {
-    client: new AwsClient({ accessKeyId, secretAccessKey, service: 's3', region: 'auto' }),
-    endpoint: buildEndpoint(accountId, bucketConfig.jurisdiction),
-    bucket: bucketConfig.bucket,
-    prefix,
-    concurrency,
-  });
+  try {
+    await uploadViaS3(assets, {
+      client: new AwsClient({ accessKeyId, secretAccessKey, service: 's3', region: 'auto' }),
+      endpoint: buildEndpoint(accountId, bucketConfig.jurisdiction),
+      bucket: bucketConfig.bucket,
+      prefix,
+      concurrency,
+    });
+  } catch (error) {
+    if (!(error instanceof R2CacheAccessDeniedError)) throw error;
+    console.log('  ⚠ Media S3 credentials cannot write the cache; using Wrangler OAuth.');
+    uploadViaWrangler(assets, bucketConfig, prefix, true);
+  }
 }
 
 const isDirectRun =
