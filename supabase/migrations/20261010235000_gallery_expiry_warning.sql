@@ -91,7 +91,8 @@ AS $$
   SELECT p.id AS user_id,
          public.gallery_expiry_activity_anchor(p.id) AS activity_anchor
   FROM public.profiles AS p, bounded
-  WHERE (p.subscription_tier IS NULL OR p.subscription_tier = 'free')
+  WHERE EXISTS (SELECT 1 FROM public.saved_images AS si WHERE si.user_id = p.id)
+    AND (p.subscription_tier IS NULL OR p.subscription_tier = 'free')
     AND COALESCE(p.subscription_status, '') NOT IN ('active', 'trialing')
     AND NOT EXISTS (
       SELECT 1 FROM public.subscriptions AS s
@@ -155,6 +156,7 @@ DECLARE
 BEGIN
   WITH stale AS MATERIALIZED (
     SELECT q.id,
+           NOT EXISTS (SELECT 1 FROM public.saved_images AS si WHERE si.user_id = q.user_id) AS gallery_empty,
            (
              COALESCE(p.subscription_tier, 'free') <> 'free'
              OR COALESCE(p.subscription_status, '') IN ('active', 'trialing')
@@ -176,7 +178,8 @@ BEGIN
       AND q.status = 'pending'
       AND q.sent_at IS NULL
       AND (
-        COALESCE(p.subscription_tier, 'free') <> 'free'
+        NOT EXISTS (SELECT 1 FROM public.saved_images AS si WHERE si.user_id = q.user_id)
+        OR COALESCE(p.subscription_tier, 'free') <> 'free'
         OR COALESCE(p.subscription_status, '') IN ('active', 'trialing')
         OR COALESCE(p.purchased_credits_balance, 0) > 0
         OR EXISTS (
@@ -205,6 +208,7 @@ BEGIN
   SET status = 'cancelled',
       reason = CASE
         WHEN s.is_paid THEN 'gallery_expiry_user_paid'
+        WHEN s.gallery_empty THEN 'gallery_expiry_gallery_empty'
         ELSE 'gallery_expiry_anchor_changed'
       END,
       updated_at = now(),

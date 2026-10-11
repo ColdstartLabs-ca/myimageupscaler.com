@@ -5,7 +5,14 @@
 
 import { randomUUID } from 'crypto';
 import { supabaseAdmin } from '../supabase/supabaseAdmin';
-import { buildSavedKey, deleteObject, head, presignGet, put, R2_PRIVATE_BUCKET } from './r2-storage.service';
+import {
+  buildSavedKey,
+  deleteObject,
+  head,
+  presignGet,
+  put,
+  R2_PRIVATE_BUCKET,
+} from './r2-storage.service';
 import { resolveGalleryObjectKeys } from './gallery-expiry-read.service';
 import {
   GALLERY_STORAGE_CONFIG,
@@ -211,8 +218,10 @@ async function saveImageBufferInternal(
   const storagePath = `${userId}/${randomUUID()}.${preparedImage.extension}`;
 
   await put(
-    R2_PRIVATE_BUCKET, buildSavedKey(storagePath),
-    preparedImage.buffer as unknown as Parameters<typeof put>[2], preparedImage.contentType
+    R2_PRIVATE_BUCKET,
+    buildSavedKey(storagePath),
+    preparedImage.buffer as unknown as Parameters<typeof put>[2],
+    preparedImage.contentType
   );
 
   // 11. Insert database record
@@ -400,7 +409,7 @@ export async function deleteImage(userId: string, imageId: string): Promise<bool
   // 1. Verify ownership and get storage path
   const { data: image, error: fetchError } = await supabaseAdmin
     .from('saved_images')
-    .select('id, storage_path')
+    .select('id, storage_path, storage_backend')
     .eq('id', imageId)
     .eq('user_id', userId)
     .maybeSingle();
@@ -413,6 +422,19 @@ export async function deleteImage(userId: string, imageId: string): Promise<bool
     throw new Error('Image not found or you do not have permission to delete it');
   }
 
+  if (image.storage_backend === 'supabase') {
+    // The SQL delete journals the native row atomically; source bytes remain until gated purge.
+    const { data: deleted, error } = await supabaseAdmin.rpc('delete_legacy_gallery_image', {
+      p_user_id: userId,
+      p_image_id: imageId,
+      p_storage_path: image.storage_path,
+    });
+    if (error) throw new Error(`Failed to delete legacy image record: ${error.message}`);
+    if (deleted !== true) throw new Error('Image changed before deletion; please retry');
+    return true;
+  }
+  if (image.storage_backend !== 'r2') throw new Error('Unknown gallery storage backend');
+
   const key = buildSavedKey(image.storage_path);
   await deleteObject(R2_PRIVATE_BUCKET, key);
   const remaining = await head(R2_PRIVATE_BUCKET, key);
@@ -421,17 +443,21 @@ export async function deleteImage(userId: string, imageId: string): Promise<bool
   }
 
   // 3. Delete from database
-  const { error: dbError } = await supabaseAdmin
+  const { data: deleted, error: dbError } = await supabaseAdmin
     .from('saved_images')
     .delete()
     .eq('id', imageId)
     .eq('user_id', userId)
-    .eq('storage_path', image.storage_path);
+    .eq('storage_path', image.storage_path)
+    .eq('storage_backend', 'r2')
+    .select('id')
+    .maybeSingle();
 
   if (dbError) {
     throw new Error(`Failed to delete image record: ${dbError.message}`);
   }
 
+  if (!deleted) throw new Error('Image changed before deletion; please retry');
   return true;
 }
 

@@ -185,7 +185,11 @@ describe.runIf(dockerAvailable)('gallery expiry warning policy on PostgreSQL 17'
     return new Date(result.rows[0].anchor).getTime();
   }
 
-  async function createUser(name: string, createdDaysAgo: number, lastSignInDaysAgo: number | null) {
+  async function createUser(
+    name: string,
+    createdDaysAgo: number,
+    lastSignInDaysAgo: number | null
+  ) {
     const lastSignIn = lastSignInDaysAgo === null ? null : await daysAgo(lastSignInDaysAgo);
     await client!.query(
       `INSERT INTO auth.users(id, created_at, last_sign_in_at) VALUES ($1, now() - ($2 || ' days')::interval, $3)`,
@@ -233,6 +237,10 @@ describe.runIf(dockerAvailable)('gallery expiry warning policy on PostgreSQL 17'
         overrides.subscription_tier ?? 'free',
         overrides.purchased_credits_balance ?? 0,
       ]
+    );
+    await client!.query(
+      `INSERT INTO public.saved_images(user_id, created_at) SELECT id, created_at FROM auth.users WHERE id = $1`,
+      [uid(name)]
     );
   }
 
@@ -290,6 +298,34 @@ describe.runIf(dockerAvailable)('gallery expiry warning policy on PostgreSQL 17'
       new Date(utcAnchor.rows[0].anchor).toISOString()
     );
     expect(laAnchor.rows[0].anchor.toISOString()).toBe('2026-08-01T12:00:00.123Z');
+  });
+
+  it('does not warn an inactive user with no gallery images', async () => {
+    await createUser('empty-gallery', 60, 40);
+    await createProfile('empty-gallery');
+    await client!.query('DELETE FROM public.saved_images WHERE user_id = $1', [
+      uid('empty-gallery'),
+    ]);
+    expect(await candidateIds()).not.toContain(uid('empty-gallery'));
+  });
+
+  it('cancels a pending warning after the last gallery image is deleted', async () => {
+    await createUser('emptied-gallery', 60, 40);
+    await createProfile('emptied-gallery');
+    const queued = await client!.query(
+      `INSERT INTO public.email_lifecycle_queue(campaign_key, user_id, status, metadata)
+       VALUES ('gallery_expiry_warning', $1, 'pending', jsonb_build_object('activity_anchor', $2::text)) RETURNING id`,
+      [uid('emptied-gallery'), await anchorTextOf('emptied-gallery')]
+    );
+    await client!.query('DELETE FROM public.saved_images WHERE user_id = $1', [
+      uid('emptied-gallery'),
+    ]);
+    await client!.query('SELECT public.cancel_stale_gallery_expiry_warnings()');
+    const row = await client!.query(
+      'SELECT status, reason FROM public.email_lifecycle_queue WHERE id = $1',
+      [queued.rows[0].id]
+    );
+    expect(row.rows[0]).toEqual({ status: 'cancelled', reason: 'gallery_expiry_gallery_empty' });
   });
 
   it('selects free, never-bought, inactive users and dedupes by period', async () => {
@@ -648,10 +684,9 @@ describe.runIf(dockerAvailable)('gallery expiry warning policy on PostgreSQL 17'
     expect(afterFailed.rows[0].warning_sent_at).not.toBeNull();
     const firstSentAt = afterFailed.rows[0].warning_sent_at;
 
-    await client!.query(
-      `UPDATE public.email_lifecycle_queue SET sent_at = now() WHERE id = $1`,
-      [queueId]
-    );
+    await client!.query(`UPDATE public.email_lifecycle_queue SET sent_at = now() WHERE id = $1`, [
+      queueId,
+    ]);
     const afterSecondSend = await client!.query(
       `SELECT warning_sent_at FROM public.gallery_expiry_notices WHERE id = $1`,
       [noticeId]
@@ -803,10 +838,10 @@ describe.runIf(dockerAvailable)('gallery expiry warning policy on PostgreSQL 17'
          RETURNING id`,
         [uid(name), notice.rows[0].id, anchor]
       );
-      await client!.query(
-        `UPDATE public.gallery_expiry_notices SET queue_id = $1 WHERE id = $2`,
-        [queued.rows[0].id, notice.rows[0].id]
-      );
+      await client!.query(`UPDATE public.gallery_expiry_notices SET queue_id = $1 WHERE id = $2`, [
+        queued.rows[0].id,
+        notice.rows[0].id,
+      ]);
     }
 
     await createUser('late-eligible', 210, 190);

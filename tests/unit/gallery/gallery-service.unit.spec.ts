@@ -22,12 +22,22 @@ import { describe, test, expect, vi, beforeEach } from 'vitest';
 
 const h = vi.hoisted(() => {
   const usage = vi.fn<() => { count: number; error: unknown }>(() => ({ count: 0, error: null }));
-  const ownership = vi.fn<() => { data: unknown; error: unknown }>(() => ({ data: null, error: null }));
+  const ownership = vi.fn<() => { data: unknown; error: unknown }>(() => ({
+    data: null,
+    error: null,
+  }));
   const insertResult = vi.fn<() => { data: unknown; error: unknown }>(() => ({
     data: { id: 'db-img-1' },
     error: null,
   }));
-  const deleteResult = vi.fn<() => { error: unknown }>(() => ({ error: null }));
+  const deleteResult = vi.fn<() => { data: unknown; error: unknown }>(() => ({
+    data: { id: 'img-1' },
+    error: null,
+  }));
+  const rpc = vi.fn(async (..._args: unknown[]) => ({
+    data: true as unknown,
+    error: null as unknown,
+  }));
   const listResult = vi.fn<() => { data: unknown; error: unknown; count: number }>(() => ({
     data: [],
     error: null,
@@ -72,7 +82,8 @@ const h = vi.hoisted(() => {
       if (table === 'profiles') return chain('profiles', profileResult);
       if (table === 'gallery_expiry_backups') return chain('registry', registryResult);
       if (opts?.head) return chain('usage', usage);
-      if (typeof cols === 'string' && cols.includes('storage_path')) return chain('ownership', ownership);
+      if (typeof cols === 'string' && cols.includes('storage_path'))
+        return chain('ownership', ownership);
       return chain('list', listResult);
     }),
     insert: vi.fn((row: unknown) => {
@@ -94,6 +105,7 @@ const h = vi.hoisted(() => {
     ownership,
     insertResult,
     deleteResult,
+    rpc,
     listResult,
     registryResult,
     profileResult,
@@ -110,6 +122,7 @@ const h = vi.hoisted(() => {
 vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: {
     from: h.from,
+    rpc: h.rpc,
     storage: {
       from: vi.fn(() => ({
         upload: h.upload,
@@ -172,7 +185,8 @@ describe('Gallery Storage Service (R2)', () => {
     h.usage.mockReturnValue({ count: 0, error: null });
     h.ownership.mockReturnValue({ data: null, error: null });
     h.insertResult.mockReturnValue({ data: { id: 'db-img-1' }, error: null });
-    h.deleteResult.mockReturnValue({ error: null });
+    h.deleteResult.mockReturnValue({ data: { id: 'img-1' }, error: null });
+    h.rpc.mockResolvedValue({ data: true, error: null });
     h.listResult.mockReturnValue({ data: [], error: null, count: 0 });
     h.registryResult.mockReturnValue({ data: [], error: null });
     h.insertArgs.length = 0;
@@ -253,7 +267,10 @@ describe('Gallery Storage Service (R2)', () => {
     });
 
     test('retains the uploaded R2 object when a committed insert response is lost', async () => {
-      h.insertResult.mockReturnValue({ data: null, error: { message: 'response lost after commit' } });
+      h.insertResult.mockReturnValue({
+        data: null,
+        error: { message: 'response lost after commit' },
+      });
 
       await expect(
         saveImage('user-123', 'https://replicate.delivery/result.png', {
@@ -411,6 +428,75 @@ describe('Gallery Storage Service (R2)', () => {
   });
 
   describe('deleteImage', () => {
+    test('journals a legacy deletion atomically without touching either object store', async () => {
+      h.ownership.mockReturnValue({
+        data: { id: 'img-1', storage_path: 'user-123/abc.png', storage_backend: 'supabase' },
+        error: null,
+      });
+      await expect(deleteImage('user-123', 'img-1')).resolves.toBe(true);
+      expect(h.rpc).toHaveBeenCalledWith('delete_legacy_gallery_image', {
+        p_user_id: 'user-123',
+        p_image_id: 'img-1',
+        p_storage_path: 'user-123/abc.png',
+      });
+      expect(r2.deleteObject).not.toHaveBeenCalled();
+      expect(h.remove).not.toHaveBeenCalled();
+      expect(h.deleteMock).not.toHaveBeenCalled();
+    });
+
+    test.each([false, null])(
+      'refuses a legacy deletion when the row changed (%s)',
+      async result => {
+        h.ownership.mockReturnValue({
+          data: { id: 'img-1', storage_path: 'user-123/abc.png', storage_backend: 'supabase' },
+          error: null,
+        });
+        h.rpc.mockResolvedValue({ data: result, error: null });
+        await expect(deleteImage('user-123', 'img-1')).rejects.toThrow(/changed/);
+        expect(r2.deleteObject).not.toHaveBeenCalled();
+        expect(h.deleteMock).not.toHaveBeenCalled();
+      }
+    );
+
+    test('retains a legacy row when journaling fails', async () => {
+      h.ownership.mockReturnValue({
+        data: { id: 'img-1', storage_path: 'user-123/abc.png', storage_backend: 'supabase' },
+        error: null,
+      });
+      h.rpc.mockResolvedValue({ data: null, error: { message: 'journal unavailable' } });
+      await expect(deleteImage('user-123', 'img-1')).rejects.toThrow(/journal unavailable/);
+      expect(r2.deleteObject).not.toHaveBeenCalled();
+      expect(h.deleteMock).not.toHaveBeenCalled();
+    });
+
+    test.each([undefined, 'gcs'])(
+      'refuses an unknown backend before storage mutation (%s)',
+      async backend => {
+        h.ownership.mockReturnValue({
+          data: { id: 'img-1', storage_path: 'user-123/abc.png', storage_backend: backend },
+          error: null,
+        });
+        await expect(deleteImage('user-123', 'img-1')).rejects.toThrow(/backend/);
+        expect(r2.deleteObject).not.toHaveBeenCalled();
+        expect(h.rpc).not.toHaveBeenCalled();
+      }
+    );
+
+    test('does not report success when an R2 backend/path change prevents the guarded row delete', async () => {
+      h.ownership.mockReturnValue({
+        data: { id: 'img-1', storage_path: 'user-123/abc.png', storage_backend: 'r2' },
+        error: null,
+      });
+      h.deleteResult.mockReturnValue({ data: null, error: null });
+      await expect(deleteImage('user-123', 'img-1')).rejects.toThrow(/changed/);
+      expect(h.ops).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ tag: 'delete', col: 'storage_path', val: 'user-123/abc.png' }),
+          expect.objectContaining({ tag: 'delete', col: 'storage_backend', val: 'r2' }),
+        ])
+      );
+    });
+
     test('should throw error if image not found or not owned by user', async () => {
       await expect(deleteImage('user-123', 'non-existent-img')).rejects.toThrow(
         /not found or you do not have permission/i
@@ -421,7 +507,12 @@ describe('Gallery Storage Service (R2)', () => {
 
     test('deletes the R2 object, confirms 404 with HEAD, then deletes the exact DB row', async () => {
       h.ownership.mockReturnValue({
-        data: { id: 'img-1', user_id: 'user-123', storage_path: 'user-123/abc.png' },
+        data: {
+          id: 'img-1',
+          user_id: 'user-123',
+          storage_path: 'user-123/abc.png',
+          storage_backend: 'r2',
+        },
         error: null,
       });
       r2.head.mockResolvedValue(new Response(null, { status: 404 }));
@@ -441,7 +532,12 @@ describe('Gallery Storage Service (R2)', () => {
 
     test('scopes the DB delete to the exact id and user', async () => {
       h.ownership.mockReturnValue({
-        data: { id: 'img-1', user_id: 'user-123', storage_path: 'user-123/abc.png' },
+        data: {
+          id: 'img-1',
+          user_id: 'user-123',
+          storage_path: 'user-123/abc.png',
+          storage_backend: 'r2',
+        },
         error: null,
       });
 
@@ -458,7 +554,12 @@ describe('Gallery Storage Service (R2)', () => {
 
     test('keeps the DB row when the R2 delete fails', async () => {
       h.ownership.mockReturnValue({
-        data: { id: 'img-1', user_id: 'user-123', storage_path: 'user-123/abc.png' },
+        data: {
+          id: 'img-1',
+          user_id: 'user-123',
+          storage_path: 'user-123/abc.png',
+          storage_backend: 'r2',
+        },
         error: null,
       });
       r2.deleteObject.mockRejectedValue(new Error('r2 delete failed'));
@@ -467,16 +568,24 @@ describe('Gallery Storage Service (R2)', () => {
       expect(h.deleteMock).not.toHaveBeenCalled();
     });
 
-    test.each([200, 503])('keeps the DB row when HEAD does not confirm deletion (%i)', async status => {
-      h.ownership.mockReturnValue({
-        data: { id: 'img-1', user_id: 'user-123', storage_path: 'user-123/abc.png' },
-        error: null,
-      });
-      r2.head.mockResolvedValue(new Response(null, { status }));
+    test.each([200, 503])(
+      'keeps the DB row when HEAD does not confirm deletion (%i)',
+      async status => {
+        h.ownership.mockReturnValue({
+          data: {
+            id: 'img-1',
+            user_id: 'user-123',
+            storage_path: 'user-123/abc.png',
+            storage_backend: 'r2',
+          },
+          error: null,
+        });
+        r2.head.mockResolvedValue(new Response(null, { status }));
 
-      await expect(deleteImage('user-123', 'img-1')).rejects.toThrow();
-      expect(h.deleteMock).not.toHaveBeenCalled();
-    });
+        await expect(deleteImage('user-123', 'img-1')).rejects.toThrow();
+        expect(h.deleteMock).not.toHaveBeenCalled();
+      }
+    );
   });
 
   describe('getUsage', () => {
