@@ -698,6 +698,18 @@ export async function verifyRemoteBatch({
   const remoteDir = remoteBase ?? `~/backups/miu-storage/${runBasename}`;
   const batch = rows ?? [];
 
+  const sourceProof = identity.sourceStore === 'r2' ? null : await loadSourceObjectProof(identity.runDir);
+  if (sourceProof) {
+    const digestBytes = await fs.readFile(path.join(identity.runDir, 'source-object-proof.digest'));
+    const input = `${sourceProof.digest}  source-object-proof.json\n${createHash('sha256').update(digestBytes).digest('hex')}  source-object-proof.digest\n`;
+    const output = await runner('ssh', [laptop, `cd ${remoteDir} && sha256sum -c -`], { input });
+    const lines = String(output ?? '').trim().split('\n');
+    if (lines.length !== 2 || lines[0].trim() !== 'source-object-proof.json: OK' ||
+        lines[1].trim() !== 'source-object-proof.digest: OK') {
+      throw new Error('Source proof laptop checksums failed or incomplete');
+    }
+  }
+
   const checksumInput = buildBatchChecksumInput(batch);
   const checkOutput = await runner('ssh', [laptop, `cd ${remoteDir} && sha256sum -c -`], {
     input: checksumInput,
@@ -722,6 +734,7 @@ export async function verifyRemoteBatch({
 
   return Object.freeze({
     verified: batch.length,
+    sourceProofDigest: sourceProof?.digest ?? null,
     manifestSha256: identity.manifestSha256,
     remoteDir,
     checksumInput,

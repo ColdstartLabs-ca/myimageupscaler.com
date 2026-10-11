@@ -863,6 +863,41 @@ describe('backup-verification: remote proof', () => {
     ).rejects.toThrow(/Remote manifest digest mismatch/);
   });
 
+  it.each(['valid', 'mismatch', 'missing', 'incomplete'])('requires matching laptop source-proof files (%s)', async mode => {
+    const {identity, rows} = await setup();
+    const downloaded: AnyRow = {};
+    const objects = rows.map((row: AnyRow, index: number) => {
+      downloaded[`${row.bucket}::${row.path}`] = {version: `id-${index}`, created_at: CREATED, updated_at: UPDATED};
+      return {bucket: row.bucket, path: row.path, source: {
+        bucket_id: row.bucket, name: row.path, id: `id-${index}`, version: `native-${index}`,
+        created_at: CREATED, updated_at: UPDATED,
+        metadata: {size: row.bytes, eTag: md5Hex(fs.readFileSync(path.join(identity.runDir, row.bucket, row.path)))},
+      }};
+    });
+    fs.writeFileSync(path.join(identity.runDir, 'backup-checkpoint.json'), JSON.stringify({downloaded}));
+    const raw = JSON.stringify({manifest_sha256: identity.manifestSha256, captured_at: UPDATED, objects});
+    const digest = sha256(raw);
+    fs.writeFileSync(path.join(identity.runDir, 'source-object-proof.json'), raw);
+    fs.writeFileSync(path.join(identity.runDir, 'source-object-proof.digest'), digest+'\n');
+    const baseRunner = makeRunner(identity);
+    let sourceInput = '';
+    const runner = async (command: string, args: string[], options: AnyRow = {}) => {
+      if (options.input?.includes('source-object-proof.json')) {
+        sourceInput = options.input;
+        if (mode === 'missing') throw new Error('laptop source proof missing');
+        if (mode === 'mismatch') return 'source-object-proof.json: FAILED\n';
+        if (mode === 'incomplete') return 'source-object-proof.json: OK\n';
+        return 'source-object-proof.json: OK\nsource-object-proof.digest: OK\n';
+      }
+      return baseRunner(command, args, options);
+    };
+    const task = verifyRemoteBatch({identity, rows, runner});
+    if (mode === 'valid') {
+      await expect(task).resolves.toMatchObject({sourceProofDigest: digest});
+      expect(sourceInput).toBe(`${digest}  source-object-proof.json\n${sha256(digest+'\n')}  source-object-proof.digest\n`);
+    } else await expect(task).rejects.toThrow(/source proof|Source proof/i);
+  });
+
   it('requires a runner and a bound identity', async () => {
     const { identity, rows } = await setup();
     await expect(verifyRemoteBatch({ identity, rows, runner: undefined })).rejects.toThrow(
