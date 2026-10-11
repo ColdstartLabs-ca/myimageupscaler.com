@@ -36,6 +36,7 @@ import {
   createETagHasher,
   loadBackupIdentity,
   loadFrozenPlan,
+  loadSourceObjectProof,
   normalizeSourceStore,
   parseSourceETag,
   verifyFrozenArtifacts,
@@ -1666,11 +1667,68 @@ export async function withDatabaseBatch(db, kind, callback) {
   }
 }
 
+/** Pinned hosted contract: immutable input backup + exact native-version DELETE. */
+export async function makeNativeVersionStorageActions({ plan, db, config, fetchFn = fetch }) {
+  requireSupabaseSourceStore(plan.identity);
+  const proof = await loadSourceObjectProof(plan.identity.runDir);
+  if (!proof) throw new Error('Native source proof is required');
+  const allowed = new Map(plan.rows.map(row => [row.path, row]));
+  if (plan.rows.some(row => row.bucket !== INPUT_BUCKET)) throw new Error('Native delete is proven only for the input bucket');
+  const origin = new URL(config.supabaseUrl);
+  if (origin.protocol !== 'https:' || origin.username || origin.password || origin.pathname !== '/') {
+    throw new Error('Storage credentials require a trusted HTTPS origin');
+  }
+  const headers = { apikey: config.serviceRoleKey, Authorization: `Bearer ${config.serviceRoleKey}` };
+  const assertTargets = (bucket, paths) => {
+    if (bucket !== INPUT_BUCKET || !Array.isArray(paths) || paths.length > PURGE_BATCH_SIZE ||
+        new Set(paths).size !== paths.length || paths.some(value => !allowed.has(value) || !validateObjectPath(value))) {
+      throw new Error('Native deletion requires a bounded set of planned input paths');
+    }
+  };
+  const guard = async () => {
+    const version = await fetchFn(`${origin.origin}/storage/v1/version`, { headers, signal: AbortSignal.timeout(30_000) });
+    if (!version.ok || (await version.text()).trim() !== '1.80.2') throw new Error('Unproven Storage server version');
+    const state = (await db.query('SELECT versioning_status FROM storage.buckets WHERE id = $1', [INPUT_BUCKET])).rows;
+    if (state.length !== 1 || state[0].versioning_status !== 'DISABLED') throw new Error('Unproven Storage version history contract');
+  };
+  return {
+    listExisting: async (bucket, paths) => {
+      assertTargets(bucket, paths);
+      return (await db.query('SELECT name AS path FROM storage.objects WHERE bucket_id = $1 AND name = ANY($2::text[])', [bucket, paths])).rows.map(row => row.path);
+    },
+    removeObjects: async (bucket, paths) => {
+      assertTargets(bucket, paths);
+      await guard();
+      for (const objectPath of paths) {
+        const source = proof.objects.get(`${bucket}::${objectPath}`);
+        if (!source || !/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(source.version)) {
+          throw new Error('Missing or invalid frozen native source version');
+        }
+        const current = (await db.query('SELECT to_jsonb(o) AS row FROM storage.objects o WHERE bucket_id = $1 AND name = $2', [bucket, objectPath])).rows;
+        if (current.length === 0) continue;
+        const row = current[0].row;
+        if (current.length !== 1 || row.id !== source.id || row.version !== source.version ||
+            row.archived_at !== null || row.is_versioned !== false || row.is_delete_marker !== false ||
+            row.metadata?.eTag !== source.metadata.eTag || Number(row.metadata?.size) !== Number(source.metadata.size) ||
+            !sameExactTimestamp(row.created_at, source.created_at) || !sameExactTimestamp(row.updated_at, source.updated_at)) {
+          throw new Error('Native source changed after backup proof');
+        }
+        const encodedPath = objectPath.split('/').map(encodeURIComponent).join('/');
+        const response = await fetchFn(`${origin.origin}/storage/v1/object/${bucket}/${encodedPath}?versionId=${encodeURIComponent(source.version)}`, {
+          method: 'DELETE', headers, signal: AbortSignal.timeout(30_000),
+        });
+        await response.body?.cancel();
+        if (!response.ok) throw new Error(`Native source deletion refused: HTTP ${response.status}`);
+      }
+      await guard();
+    },
+  };
+}
+
 function storageActions(storage) {
   return {
-    removeObjects: async (bucket, paths) => {
-      const { error } = await storage.from(bucket).remove(paths);
-      if (error) throw new Error(error.message);
+    removeObjects: async () => {
+      throw new Error('Unversioned Storage deletion is disabled');
     },
     listExisting: async (bucket, paths) => {
       const present = [];
@@ -1826,6 +1884,10 @@ async function cmdPurge(args) {
   if (!args.confirm) throw new Error('purge requires --confirm');
   const plan = await loadFrozenPlan({ backupRunDir: path.dirname(manifestPath), kind: 'purge', planPath: manifestPath });
   requireSupabaseSourceStore(plan.identity);
+  const { resolvePrimaryCheckoutRoot, verifyFreshDatabaseBackup } = await import('./database-backup-gate.mjs');
+  const repoRoot = await resolvePrimaryCheckoutRoot({ runner: defaultRunCommand });
+  const databaseBackup = await verifyFreshDatabaseBackup({ repoRoot, runner: defaultRunCommand });
+  log(`fresh database backup: ${JSON.stringify(databaseBackup)}`);
   const config = loadConfig();
   const storage = await createStorage(config);
   await preflightQuota(storage);
@@ -1834,10 +1896,10 @@ async function cmdPurge(args) {
   try {
     const result = await runPurge({
       plan, confirm: true, runner: defaultRunCommand,
-      ...storageActions(storage),
+      ...await makeNativeVersionStorageActions({ plan, db, config }),
       withLockedBatch: callback => withDatabaseBatch(db, 'purge', callback),
       checkStillEligible: async (bucket, paths) => (await db.query(INPUT_RECHECK_SQL, [bucket, paths])).rows,
-      writeResult: payload => writeAtomicJson(resultPath, payload),
+      writeResult: payload => writeAtomicJson(resultPath, { ...payload, database_backup: databaseBackup }),
     });
     log(`purge: ${result.status}, deleted ${result.deleted.length}, dropped ${result.dropped.length} -> ${resultPath}`);
     if (result.status !== 'ok') process.exitCode = 1;

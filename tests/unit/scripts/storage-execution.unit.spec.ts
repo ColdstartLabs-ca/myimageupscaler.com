@@ -1054,3 +1054,69 @@ describe('storage-execution: runExpire', () => {
     expect(world.deleteRows).not.toHaveBeenCalled();
   });
 });
+
+describe('native-version purge adapter', () => {
+  let root: string;
+  beforeEach(() => { root = fs.mkdtempSync(path.join(os.tmpdir(), 'sqr-native-delete-')); });
+  afterEach(() => { fs.rmSync(root, {recursive: true, force: true}); });
+
+  it.each(['valid', 'changed-before', 'changed-during', 'wrong-server', 'enabled-history', 'unplanned'])('deletes only the frozen native version (%s)', async mode => {
+    const object = artifact(INPUT_BUCKET, `${userFor(1)}/${idFor(1)}.png`, 'verified input');
+    const run = makeBackupRun(root, [object]);
+    const planned = [purgeRow(run.rows[0])];
+    await writeFrozenPlan(run.runDir, 'purge', planned);
+    const plan = await loadFrozenPlan({backupRunDir: run.runDir, kind: 'purge'});
+    const version = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+    const source: AnyRow = {id: idFor(9), bucket_id: INPUT_BUCKET, name: object.path, version,
+      created_at: OLD, updated_at: OLD, archived_at: null, is_versioned: false, is_delete_marker: false,
+      metadata: {size: object.bytes, eTag: crypto.createHash('md5').update(object.buffer).digest('hex')}};
+    fs.writeFileSync(path.join(run.runDir, 'backup-checkpoint.json'), JSON.stringify({downloaded: {
+      [`${INPUT_BUCKET}::${object.path}`]: {version: source.id, created_at: OLD, updated_at: OLD},
+    }}));
+    const raw = JSON.stringify({manifest_sha256: plan.identity.manifestSha256, captured_at: OLD,
+      objects: [{bucket: INPUT_BUCKET, path: object.path, source}]});
+    fs.writeFileSync(path.join(run.runDir, 'source-object-proof.json'), raw);
+    fs.writeFileSync(path.join(run.runDir, 'source-object-proof.digest'), sha256(raw)+'\n');
+    let current: AnyRow | null = {...source, version: mode === 'changed-before' ? idFor(8) : version};
+    const db = {query: async (sql: string) => {
+      if (sql.includes('versioning_status')) return {rows: [{versioning_status: mode === 'enabled-history' ? 'ENABLED' : 'DISABLED'}]};
+      if (sql.includes('ANY')) return {rows: current ? [{path: current.name}] : []};
+      return {rows: current ? [{row: {...current}}] : []};
+    }};
+    const fetchFn = vi.fn(async (url: string, init: AnyRow = {}) => {
+      if (url.endsWith('/storage/v1/version')) return new Response(mode === 'wrong-server' ? '9.0.0' : '1.80.2');
+      expect(init.method).toBe('DELETE');
+      expect(new URL(url).searchParams.get('versionId')).toBe(version);
+      if (mode === 'changed-during') {
+        current = {...source, version: idFor(8)};
+        return new Response('{"code":"NoSuchKey"}', {status: 400});
+      }
+      current = null;
+      return new Response('{}');
+    });
+    const actions = await (executionModule as any).makeNativeVersionStorageActions({
+      plan, db, config: {supabaseUrl: 'https://project.supabase.co', serviceRoleKey: 'test-only'}, fetchFn,
+    });
+    if (mode === 'unplanned') {
+      await expect(actions.removeObjects(INPUT_BUCKET, ['unplanned.png'])).rejects.toThrow(/planned/);
+      expect(fetchFn).not.toHaveBeenCalled();
+      return;
+    }
+    const result = await runPurge({plan, confirm: true, ...actions,
+      runner: makeRunner(plan.identity), withLockedBatch: async (fn: any) => fn(),
+      checkStillEligible: async () => [livePurgeRow(object)],
+    });
+    if (mode === 'valid') {
+      expect(result.status).toBe('ok');
+      expect(result.deleted).toEqual([object.path]);
+      expect(current).toBeNull();
+    } else {
+      expect(result.status).toBe('error');
+      expect(result.deleted).toEqual([]);
+      expect(current).not.toBeNull();
+    }
+    expect(fetchFn.mock.calls.filter(([, init]: any) => init?.method === 'DELETE')).toHaveLength(
+      mode === 'valid' || mode === 'changed-during' ? 1 : 0
+    );
+  });
+});
