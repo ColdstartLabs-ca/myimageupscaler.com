@@ -2,6 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
 import {
   png,
+  R2_ORIGIN,
   startAsyncUpscaleRuntime,
   type IAsyncUpscaleRuntime,
 } from '../helpers/async-upscale-runtime';
@@ -19,8 +20,8 @@ test.afterAll(async () => {
 });
 
 async function prepareBrowser(page: Page, user: { id: string; accessToken: string }) {
-  // Redirect only external Supabase transport. App APIs remain the built Worker.
-  await page.route('https://upscale-test.supabase.co/**', async route => {
+  // Redirect external storage transport. App APIs remain the built Worker.
+  await page.route(url => url.origin === 'https://upscale-test.supabase.co' || url.origin === R2_ORIGIN, async route => {
     const request = route.request();
     const response = await runtime.externalRequest(request.url(), {
       method: request.method(),

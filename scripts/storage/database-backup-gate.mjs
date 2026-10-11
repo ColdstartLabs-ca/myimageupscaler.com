@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * Fresh database backup gate for the SQR-04 operator registration CLI.
+ * Fresh database backup gate for production deployment and operator registration.
  *
- * Before registration records any proof row, it must take a new database backup
+ * Before production mutations, the caller must take a new database backup
  * and prove it on both machines. This module owns that gate. It always exports
  * the database, discovers the exactly-new schema and data archives, verifies
  * them locally, copies them to the laptop and re-verifies them there with the
@@ -11,12 +11,15 @@
  * NO PRODUCTION SIDE EFFECTS AT IMPORT and NO credentials are read here. Every
  * process effect is injected, so a hermetic test can prove the gate without a
  * real database, network or secret. No DB write happens and no secret is ever
- * printed. Any failure throws, so the caller registers nothing.
+ * printed. Any failure throws before the caller can mutate production.
  */
 
+import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { createReadStream, promises as fs } from 'node:fs';
 import path from 'node:path';
+import { argv } from 'node:process';
+import { pathToFileURL } from 'node:url';
 
 export const DEFAULT_LAPTOP = 'joao@192.168.1.126';
 export const BACKUP_DIR_NAME = 'backups';
@@ -167,4 +170,15 @@ export async function verifyFreshDatabaseBackup({
     remoteDir,
     verifiedAt: readNow(now),
   });
+}
+
+if (argv[1] && import.meta.url === pathToFileURL(path.resolve(argv[1])).href) {
+  const proof = await verifyFreshDatabaseBackup({
+    runner: (command, args, options = {}) => execFileSync(command, args, {
+      ...options,
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'inherit'],
+    }),
+  });
+  console.log(JSON.stringify(proof));
 }

@@ -29,8 +29,8 @@ const ORIGIN = 'https://upscale-runtime.test';
 const SUPABASE_ORIGIN = 'https://upscale-test.supabase.co';
 const PROVIDER_ORIGIN = 'https://api.replicate.com';
 const DELIVERY_ORIGIN = 'https://replicate.delivery';
-const R2_ACCOUNT_ID = 'fixture-account';
-const R2_ORIGIN = `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
+const R2_ACCOUNT_ID = 'c5dbf25d94692c78b79a8403959f8e54'; // Match the production CSP; all transport stays local.
+export const R2_ORIGIN = `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
 const R2_PRIVATE_BUCKET = 'miu-private';
 export const ASYNC_RUNTIME_ARTIFACTS = path.join(ROOT, 'test-results/async-upscale-runtime');
 
@@ -702,8 +702,8 @@ export async function startAsyncUpscaleRuntime(
       browserOrigin: (await runtimeWorker.ready).origin.replace('127.0.0.1', 'localhost'),
       externalRequest: async (urlString, init = {}) => {
         const url = new URL(urlString);
-        if (url.origin !== SUPABASE_ORIGIN)
-          throw new Error('Only local Supabase transport is exposed to browsers');
+        if (![SUPABASE_ORIGIN, R2_ORIGIN].includes(url.origin))
+          throw new Error('Only local storage transport is exposed to browsers');
         return fetch(`${fixtureOrigin}${url.pathname}${url.search}`, {
           ...init,
           headers: { ...Object.fromEntries(new Headers(init.headers)), 'x-fixture-host': url.host },

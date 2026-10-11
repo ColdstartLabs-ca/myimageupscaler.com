@@ -1,8 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { spawnSync } from 'node:child_process';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { execPath } from 'node:process';
 
 import * as gateModule from '../../../scripts/storage/database-backup-gate.mjs';
 
@@ -31,6 +33,18 @@ describe('verifyFreshDatabaseBackup', () => {
 
   afterEach(() => {
     fs.rmSync(root, { recursive: true, force: true });
+  });
+
+  it('makes CLI invocation fail closed outside an owning repository', () => {
+    const result = spawnSync(execPath, [path.resolve('scripts/storage/database-backup-gate.mjs')], {
+      cwd: root,
+      env: { PATH: '/usr/bin:/bin', GIT_CEILING_DIRECTORIES: root },
+      encoding: 'utf8',
+      timeout: 5000,
+    });
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('not a git repository');
+    expect(fs.readdirSync(backupsDir)).toEqual([]);
   });
 
   function writeBackup(name: string, content: string): string {
