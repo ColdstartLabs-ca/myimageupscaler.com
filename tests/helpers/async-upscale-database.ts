@@ -110,6 +110,12 @@ const BASELINE: Array<string | IMigrationSource> = [
   '20260810000100_processing_jobs_failed_rows.sql',
   '20260826120000_upscale_input_storage_and_credit_reservations.sql',
   '20260826143000_durable_delivery_ack_reservations.sql',
+  '20260503014805_create_saved_images_table.sql',
+  '20261011002000_saved_images_storage_backend.sql',
+  {
+    file: '20261011001000_gallery_expiry_verified_backups.sql',
+    before: 'CREATE OR REPLACE FUNCTION public.gallery_expiry_backup_is_claimable(',
+  },
 ];
 
 async function docker(args: string[], timeout = 30_000): Promise<string> {

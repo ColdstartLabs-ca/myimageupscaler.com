@@ -46,7 +46,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unable to load thumbnail' }, { status: 502, headers: PRIVATE_HEADERS });
     }
     const options = {
-      cache: 'no-store' as const, redirect: 'error' as const, signal: AbortSignal.timeout(30_000),
+      cache: 'no-store' as const, redirect: 'manual' as const, signal: AbortSignal.timeout(30_000),
       cf: { image: { width: 400, format: 'auto' as const } },
     };
     let upstream: Response | undefined;
@@ -54,7 +54,7 @@ export async function GET(
     if (!upstream?.ok) {
       await upstream?.body?.cancel();
       upstream = await fetch(url, {
-        cache: 'no-store', redirect: 'error', signal: AbortSignal.timeout(30_000),
+        cache: 'no-store', redirect: 'manual', signal: AbortSignal.timeout(30_000),
       });
     }
     const contentType = upstream.headers.get('content-type') ?? '';

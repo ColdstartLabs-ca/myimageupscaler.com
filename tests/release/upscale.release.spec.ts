@@ -181,3 +181,97 @@ test('uploads through the workspace and delivers an image charged exactly once',
     acknowledged_at: expect.any(String),
   });
 });
+
+test('saves lists protects thumbnails and deletes its own R2 gallery image', async () => {
+  const owner = await runtime.createUser({
+    tier: 'pro',
+    subscriptionCredits: 10,
+    purchasedCredits: 5,
+  });
+  const stranger = await runtime.createUser({
+    tier: 'pro',
+    subscriptionCredits: 10,
+    purchasedCredits: 5,
+  });
+  // The runtime helper does not export its private bucket name.
+  const privateBucket = 'miu-private';
+  const bytes = png(450, 389, 128 * 1024);
+  const form = new FormData();
+  form.set('file', new Blob([new Uint8Array(bytes)], { type: 'image/png' }), 'source.png');
+  form.set('filename', 'source.png');
+  form.set('width', '450');
+  form.set('height', '389');
+  form.set('modelUsed', 'synthetic-fixture');
+  form.set('processingMode', 'upscale');
+
+  // The runtime helper sends JSON only, so multipart save calls the built Worker origin directly.
+  const saved = await fetch(new URL('/api/gallery', runtime.browserOrigin), {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${owner.accessToken}` },
+    body: form,
+  });
+  const savedBody = await saved.text();
+  expect(saved.status, savedBody).toBe(201);
+  const { data: image } = JSON.parse(savedBody) as {
+    data: { id: string; storage_path: string };
+  };
+
+  const row = await runtime.database.pool.query(
+    'SELECT user_id, storage_path, storage_backend FROM saved_images WHERE id = $1',
+    [image.id]
+  );
+  expect(row.rows[0]).toEqual({
+    user_id: owner.id,
+    storage_path: image.storage_path,
+    storage_backend: 'r2',
+  });
+  const stored = await runtime.externalRequest(
+    `${R2_ORIGIN}/${privateBucket}/saved/${image.storage_path}`
+  );
+  expect(stored.status).toBe(200);
+  expect(Buffer.from(await stored.arrayBuffer()).equals(bytes)).toBe(true);
+
+  const list = await runtime.request(owner, '/api/gallery?sort_order=created_at_desc');
+  expect(list.status).toBe(200);
+  const listed = (await list.json()) as {
+    data: { images: Array<{ id: string; thumbnail_signed_url: string }> };
+    usage: { current_count: number };
+  };
+  expect(listed.data.images).toEqual([
+    expect.objectContaining({
+      id: image.id,
+      thumbnail_signed_url: `/api/gallery/thumb/${image.id}`,
+    }),
+  ]);
+  expect(listed.usage.current_count).toBe(1);
+
+  // Transport simulation only: the fixture returns the stored bytes, so this does not prove resizing.
+  const thumb = await runtime.request(owner, `/api/gallery/thumb/${image.id}`);
+  expect(thumb.status, JSON.stringify({ body: thumb.status === 200 ? undefined : await thumb.text(), calls: runtime.calls.slice(-8) })).toBe(200);
+  expect(thumb.headers.get('content-type')).toBe('image/png');
+  expect(thumb.headers.get('cache-control')).toBe('private, no-store');
+  expect(Buffer.from(await thumb.arrayBuffer()).subarray(0, 8).toString('hex')).toBe(
+    '89504e470d0a1a0a'
+  );
+  const denied = await runtime.request(stranger, `/api/gallery/thumb/${image.id}`);
+  expect(denied.status).toBe(403);
+
+  // The runtime helper cannot send DELETE, so this calls the same built Worker origin directly.
+  const deleted = await fetch(new URL(`/api/gallery/${image.id}`, runtime.browserOrigin), {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${owner.accessToken}` },
+  });
+  const deletedBody = await deleted.text();
+  expect(deleted.status, deletedBody).toBe(200);
+  expect(JSON.parse(deletedBody).data).toEqual({ deleted_id: image.id });
+  const remaining = await runtime.database.pool.query(
+    'SELECT count(*)::int AS count FROM saved_images WHERE id = $1',
+    [image.id]
+  );
+  expect(remaining.rows[0]).toEqual({ count: 0 });
+  const removed = await runtime.externalRequest(
+    `${R2_ORIGIN}/${privateBucket}/saved/${image.storage_path}`,
+    { method: 'HEAD' }
+  );
+  expect(removed.status).toBe(404);
+});

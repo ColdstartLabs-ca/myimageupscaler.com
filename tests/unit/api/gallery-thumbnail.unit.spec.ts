@@ -158,7 +158,7 @@ describe('GET /api/gallery/thumb/[id]', () => {
     const [calledUrl, init] = fetchMock.mock.calls[0] as [string, Record<string, unknown>];
     expect(calledUrl).toBe(SIGNED_URL);
     expect(init.cf).toMatchObject({ image: { width: 400, format: 'auto' } });
-    expect(init.redirect).toBe('error');
+    expect(init.redirect).toBe('manual');
     expect(init.cache).toBe('no-store');
 
     expect(res.status).toBe(200);
@@ -169,6 +169,38 @@ describe('GET /api/gallery/thumb/[id]', () => {
 
     const body = new Uint8Array(await res.arrayBuffer());
     expect(body.byteLength).toBe(3);
+  });
+
+  test.each([false, true])('uses workerd-supported manual redirects with fallback=%s', async fallback => {
+    setSupabase({ id: VALID_ID, user_id: 'user-1', storage_path: STORAGE_PATH, storage_backend: 'r2' });
+    fetchMock.mockImplementation(async (_url: string, init: RequestInit) => {
+      if (init.redirect === 'error') throw new TypeError('Invalid redirect value: error');
+      if (fallback && fetchMock.mock.calls.length === 1) return new Response(null, { status: 500 });
+      return imageResponse();
+    });
+    const res = await GET(request('user-1'), ctx());
+    expect(res.status).toBe(200);
+    expect(fetchMock).toHaveBeenCalledTimes(fallback ? 2 : 1);
+    for (const [url, init] of fetchMock.mock.calls) {
+      expect(url).toBe(SIGNED_URL);
+      expect(init.redirect).toBe('manual');
+    }
+  });
+
+  test('rejects redirect responses without fetching their Location', async () => {
+    setSupabase({ id: VALID_ID, user_id: 'user-1', storage_path: STORAGE_PATH, storage_backend: 'r2' });
+    fetchMock.mockImplementation(async () => new Response(null, {
+      status: 302, headers: { Location: 'https://other.example/private-image' },
+    }));
+    const res = await GET(request('user-1'), ctx());
+    expect(res.status).toBe(502);
+    expect(res.headers.get('cache-control')).toBe('private, no-store');
+    expect(res.headers.get('location')).toBeNull();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    for (const [url, init] of fetchMock.mock.calls) {
+      expect(url).toBe(SIGNED_URL);
+      expect(init.redirect).toBe('manual');
+    }
   });
 
   test('falls back to a plain fetch when the transform is not OK', async () => {
@@ -182,6 +214,7 @@ describe('GET /api/gallery/thumb/[id]', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
     const fallbackInit = fetchMock.mock.calls[1][1] as Record<string, unknown> | undefined;
     expect(fallbackInit?.cf).toBeUndefined();
+    expect(fallbackInit?.redirect).toBe('manual');
     expect(res.headers.get('content-type')).toContain('image/png');
   });
 
