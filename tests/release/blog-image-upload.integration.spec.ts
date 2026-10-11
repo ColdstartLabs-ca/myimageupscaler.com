@@ -113,25 +113,16 @@ test('blog image upload persists a public R2 asset the blog page renders', async
   );
 
   // Only the CDN image transport is intercepted, fulfilled from the stored public bytes.
-  await page.route('**/cdn-cgi/image/**', async route => {
-    const pathname = new URL(route.request().url()).pathname;
-    const marker = '/cdn-cgi/image/';
-    const afterOptions = pathname.slice(pathname.indexOf(marker) + marker.length);
-    const sourceUrl = afterOptions.slice(afterOptions.indexOf('/https://') + 1);
-    const object = runtime.getObject(
-      R2_PUBLIC_BUCKET,
-      new URL(sourceUrl).pathname.replace(/^\//, '')
-    );
-    if (!object) {
-      await route.fulfill({ status: 404, body: 'missing fixture object' });
-      return;
+  await page.route(
+    url => url.pathname.startsWith('/cdn-cgi/image/') && url.pathname.endsWith(`/${data.url}`),
+    async route => {
+      await route.fulfill({
+        status: 200,
+        headers: { 'content-type': stored!.contentType },
+        body: stored!.bytes,
+      });
     }
-    await route.fulfill({
-      status: 200,
-      headers: { 'content-type': object.contentType },
-      body: object.bytes,
-    });
-  });
+  );
 
   const response = await page.goto(`${runtime.browserOrigin}/blog/${slug}`);
   expect(response?.status(), `blog page did not render (${response?.status()})`).toBe(200);
