@@ -20,6 +20,10 @@ export default defineConfig({
       testDir: '../integration',
       testMatch: 'async-upscale-recovery.integration.spec.ts',
     },
-    { name: 'browser', testDir: '.', testMatch: 'upscale.release.spec.ts' },
+    {
+      name: 'browser',
+      testDir: '.',
+      testMatch: ['upscale.release.spec.ts', 'blog-image-upload.integration.spec.ts'],
+    },
   ],
 });

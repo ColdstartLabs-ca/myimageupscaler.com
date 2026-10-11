@@ -3228,3 +3228,7 @@ Noted, not fixed: the commit message claims it removes "the unused AI PR review 
 ### Sitemap duplicate check moved off production — 2026-10-04
 
 `tests/e2e/seo/sitemap-duplicates.e2e.spec.ts` fetched all ~87 live production sitemaps sequentially, so it tested the deployed site instead of the build, and it flaked on edge rate limiting (the "watch for recurrence" item above came back in the 2026-10-04 deploy run). Deleted. The `seo-guard` duplicate check now covers **every** `<loc>` across all child sitemaps of the local build, not just `/blog`, and also pins `/blog` → `sitemap-blog.xml` and `/platforms` → `sitemap-platforms.xml`. No sitemap output changed.
+
+### Worker-compatible blog image uploads — 2026-10-11 (in progress)
+
+A real local built-Worker request to `/api/blog/images/upload` returned 500 during native `sharp` initialization, before auth or R2 access. The planned correction preserves the upload API and WebP output while moving conversion to Cloudflare transformations with scoped temporary R2 cleanup. Owning plan and verification: `docs/PRDs/supabase-quota-recovery/02-r2-storage-migration.md`. No blog content, image references, metadata/schema output, sitemap or indexing state changed. Focused tests, browser integration and app deployment are pending; manual GSC backlog items remain unchecked.

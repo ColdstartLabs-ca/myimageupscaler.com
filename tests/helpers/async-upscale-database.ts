@@ -116,6 +116,10 @@ const BASELINE: Array<string | IMigrationSource> = [
     file: '20261011001000_gallery_expiry_verified_backups.sql',
     before: 'CREATE OR REPLACE FUNCTION public.gallery_expiry_backup_is_claimable(',
   },
+  // Blog image storage now writes metadata to blog_images and the blog page
+  // renders published posts from blog_posts. Both are real committed migrations.
+  '20260129000000_create_blog_posts.sql',
+  '20260212000100_create_blog_images_table.sql',
 ];
 
 async function docker(args: string[], timeout = 30_000): Promise<string> {

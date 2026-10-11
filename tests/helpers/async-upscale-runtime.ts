@@ -1,5 +1,6 @@
 import { defineConfig } from '@playwright/test';
 import { Miniflare, Response as WorkerResponse } from 'miniflare';
+import sharp from 'sharp';
 import { WebSocket } from 'undici';
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
 import { execFileSync, spawn } from 'node:child_process';
@@ -32,6 +33,9 @@ const DELIVERY_ORIGIN = 'https://replicate.delivery';
 const R2_ACCOUNT_ID = 'c5dbf25d94692c78b79a8403959f8e54'; // Match the production CSP; all transport stays local.
 export const R2_ORIGIN = `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
 const R2_PRIVATE_BUCKET = 'miu-private';
+export const R2_PUBLIC_BUCKET = 'miu-public';
+/** Private prefix the blog upload stages the original under before the edge transform. */
+export const R2_STAGED_BLOG_PREFIX = 'dev/blog-transform/';
 export const ASYNC_RUNTIME_ARTIFACTS = path.join(ROOT, 'test-results/async-upscale-runtime');
 
 // This configuration deliberately has no test-mode dev server or remote-user teardown.
@@ -107,6 +111,10 @@ export interface IAsyncUpscaleRuntime {
     height: number;
     bytes: number;
   }): string;
+  /** Exact WebP body the private `dev/blog-transform/` GET returns for the edge transform. */
+  transformOutputBytes: Buffer;
+  /** Read a fixture-stored object by bucket and relative key. */
+  getObject(bucket: string, key: string): { bytes: Buffer; contentType: string } | undefined;
   request(
     user: Pick<IUser, 'accessToken'> | null,
     pathname: string,
@@ -338,6 +346,15 @@ export async function startAsyncUpscaleRuntime(
     string,
     { bytes: Buffer; width: number; height: number; contentType: string }
   >();
+  const publicObjects = new Map<string, { bytes: Buffer; contentType: string }>();
+  // Real WebP bytes stand in for the Cloudflare edge transform. This proves the
+  // private-stage, public-write and browser consumer only; it does not prove
+  // hosted cf.image behaviour.
+  const transformOutputBytes = await sharp({
+    create: { width: 640, height: 360, channels: 3, background: { r: 20, g: 120, b: 200 } },
+  })
+    .webp({ quality: 80 })
+    .toBuffer();
   const predictions = new Map<string, IPrediction>();
   let providerDelayMs = options.providerDelayMs;
   let outputGate: Promise<void> | undefined;
@@ -528,62 +545,112 @@ export async function startAsyncUpscaleRuntime(
         const separator = objectPath.indexOf('/');
         const bucket = objectPath.slice(0, separator);
         const key = objectPath.slice(separator + 1);
-        const object = objects.get(key);
-        if (bucket !== R2_PRIVATE_BUCKET) {
-          result = new Response(null, { status: 404 });
-        } else if (call.method === 'HEAD') {
-          result = object
-            ? new Response(null, {
+        if (bucket === R2_PUBLIC_BUCKET) {
+          const object = publicObjects.get(key);
+          if (call.method === 'HEAD') {
+            result = object
+              ? new Response(null, {
+                  status: 200,
+                  headers: {
+                    'Content-Type': object.contentType,
+                    'Content-Length': String(object.bytes.length),
+                  },
+                })
+              : new Response(null, { status: 404 });
+          } else if (call.method === 'GET') {
+            result = object
+              ? new Response(new Uint8Array(object.bytes), {
+                  status: 200,
+                  headers: {
+                    'Content-Type': object.contentType,
+                    'Content-Length': String(object.bytes.length),
+                  },
+                })
+              : new Response(null, { status: 404 });
+          } else if (call.method === 'PUT') {
+            if (publicObjects.has(key) && headers.get('if-none-match') === '*') {
+              result = new Response(null, { status: 412 });
+            } else {
+              publicObjects.set(key, {
+                bytes: Buffer.from(body ?? new Uint8Array()),
+                contentType: headers.get('content-type') ?? 'application/octet-stream',
+              });
+              result = new Response(null, { status: 200 });
+            }
+          } else if (call.method === 'DELETE') {
+            publicObjects.delete(key);
+            result = new Response(null, { status: 204 });
+          } else {
+            result = new Response(null, { status: 405 });
+          }
+        } else {
+          const object = objects.get(key);
+          if (bucket !== R2_PRIVATE_BUCKET) {
+            result = new Response(null, { status: 404 });
+          } else if (call.method === 'GET' && object && key.startsWith(R2_STAGED_BLOG_PREFIX)) {
+            // Transport simulation of cf.image only: a real WebP body stands in
+            // for the hosted edge transform, which this fixture cannot exercise.
+            result = new Response(new Uint8Array(transformOutputBytes), {
+              status: 200,
+              headers: {
+                'Content-Type': 'image/webp',
+                'Content-Length': String(transformOutputBytes.length),
+              },
+            });
+          } else if (call.method === 'HEAD') {
+            result = object
+              ? new Response(null, {
+                  status: 200,
+                  headers: {
+                    'Content-Type': object.contentType,
+                    'Content-Length': String(object.bytes.length),
+                  },
+                })
+              : new Response(null, { status: 404 });
+          } else if (call.method === 'GET') {
+            const range = /^bytes=(\d+)-(\d+)$/.exec(headers.get('range') ?? '');
+            if (!object) result = new Response(null, { status: 404 });
+            else if (range) {
+              const start = Number(range[1]);
+              const end = Math.min(Number(range[2]), object.bytes.length - 1);
+              result = new Response(new Uint8Array(object.bytes.subarray(start, end + 1)), {
+                status: 206,
+                headers: {
+                  'Content-Type': object.contentType,
+                  'Content-Length': String(end - start + 1),
+                  'Content-Range': `bytes ${start}-${end}/${object.bytes.length}`,
+                },
+              });
+            } else {
+              result = new Response(new Uint8Array(object.bytes), {
                 status: 200,
                 headers: {
                   'Content-Type': object.contentType,
                   'Content-Length': String(object.bytes.length),
                 },
-              })
-            : new Response(null, { status: 404 });
-        } else if (call.method === 'GET') {
-          const range = /^bytes=(\d+)-(\d+)$/.exec(headers.get('range') ?? '');
-          if (!object) result = new Response(null, { status: 404 });
-          else if (range) {
-            const start = Number(range[1]);
-            const end = Math.min(Number(range[2]), object.bytes.length - 1);
-            result = new Response(new Uint8Array(object.bytes.subarray(start, end + 1)), {
-              status: 206,
-              headers: {
-                'Content-Type': object.contentType,
-                'Content-Length': String(end - start + 1),
-                'Content-Range': `bytes ${start}-${end}/${object.bytes.length}`,
-              },
-            });
+              });
+            }
+          } else if (call.method === 'PUT') {
+            // The presigned input PUT signs `If-None-Match: *`, so R2 refuses to
+            // overwrite a committed object and replays a 412.
+            if (objects.has(key) && headers.get('if-none-match') === '*') {
+              result = new Response(null, { status: 412 });
+            } else {
+              const bytes = Buffer.from(body ?? new Uint8Array());
+              objects.set(key, {
+                bytes,
+                width: bytes.readUInt32BE(16),
+                height: bytes.readUInt32BE(20),
+                contentType: headers.get('content-type') ?? 'image/png',
+              });
+              result = new Response(null, { status: 200 });
+            }
+          } else if (call.method === 'DELETE') {
+            objects.delete(key);
+            result = new Response(null, { status: 204 });
           } else {
-            result = new Response(new Uint8Array(object.bytes), {
-              status: 200,
-              headers: {
-                'Content-Type': object.contentType,
-                'Content-Length': String(object.bytes.length),
-              },
-            });
+            result = new Response(null, { status: 405 });
           }
-        } else if (call.method === 'PUT') {
-          // The presigned input PUT signs `If-None-Match: *`, so R2 refuses to
-          // overwrite a committed object and replays a 412.
-          if (objects.has(key) && headers.get('if-none-match') === '*') {
-            result = new Response(null, { status: 412 });
-          } else {
-            const bytes = Buffer.from(body ?? new Uint8Array());
-            objects.set(key, {
-              bytes,
-              width: bytes.readUInt32BE(16),
-              height: bytes.readUInt32BE(20),
-              contentType: headers.get('content-type') ?? 'image/png',
-            });
-            result = new Response(null, { status: 200 });
-          }
-        } else if (call.method === 'DELETE') {
-          objects.delete(key);
-          result = new Response(null, { status: 204 });
-        } else {
-          result = new Response(null, { status: 405 });
         }
       } else {
         result = Response.json(
@@ -674,6 +741,7 @@ export async function startAsyncUpscaleRuntime(
           CLOUDFLARE_ACCOUNT_ID: R2_ACCOUNT_ID,
           R2_ACCESS_KEY_ID: 'fixture-r2-access-key',
           R2_SECRET_ACCESS_KEY: 'fixture-r2-secret-key',
+          BLOG_API_KEY: 'synthetic-blog-key',
         },
         outboundService: async request => {
           const url = new URL(request.url);
@@ -720,7 +788,9 @@ export async function startAsyncUpscaleRuntime(
       close,
       holdOutputDelivery: () => {
         let release!: () => void;
-        outputGate = new Promise<void>(resolve => { release = resolve; });
+        outputGate = new Promise<void>(resolve => {
+          release = resolve;
+        });
         return () => {
           outputGate = undefined;
           release();
@@ -761,6 +831,15 @@ export async function startAsyncUpscaleRuntime(
           contentType: 'image/png',
         });
         return storagePath;
+      },
+      transformOutputBytes,
+      getObject: (bucket, key) => {
+        if (bucket === R2_PUBLIC_BUCKET) {
+          const object = publicObjects.get(key);
+          return object ? { bytes: object.bytes, contentType: object.contentType } : undefined;
+        }
+        const object = bucket === R2_PRIVATE_BUCKET ? objects.get(key) : undefined;
+        return object ? { bytes: object.bytes, contentType: object.contentType } : undefined;
       },
       request: async (user, pathname, body, signal) => {
         const startedAt = Date.now();
