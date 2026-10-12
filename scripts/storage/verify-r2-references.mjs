@@ -397,6 +397,31 @@ function buildPlan({ identity, publicBase, sourceOrigin, verifiedRefKeys, verifi
   };
 }
 
+// Inputs created after the frozen proof are never reference targets (references come only
+// from saved-images and blog-images), so they may exist; delta backs them up separately.
+const DELTA_TOLERANT_BUCKETS = new Set(['upscale-inputs']);
+
+/** Every proof object must still exist unchanged; only unreferenced input buckets may hold extra objects. */
+export function assertSourceMatchesProof(sourceRows, proofObjects) {
+  if (!(proofObjects instanceof Map) || !Array.isArray(sourceRows)) {
+    throw new Error('Current source snapshot does not match the complete source object proof');
+  }
+  const seen = new Set();
+  for (const source of sourceRows) {
+    const key = `${source.bucket_id}::${source.name}`;
+    if (seen.has(key)) throw new Error(`Current source identity differs from source object proof: ${key}`);
+    seen.add(key);
+    const proven = proofObjects.get(key);
+    if (proven === undefined && DELTA_TOLERANT_BUCKETS.has(source.bucket_id)) continue;
+    if (!isDeepStrictEqual(source, proven)) {
+      throw new Error(`Current source identity differs from source object proof: ${key}`);
+    }
+  }
+  for (const key of proofObjects.keys()) {
+    if (!seen.has(key)) throw new Error('Current source snapshot does not match the complete source object proof');
+  }
+}
+
 /**
  * Read-only operator engine. Every dependency is injectable so a test is hermetic:
  * no real network, no real credentials, no production read or write.
@@ -434,17 +459,7 @@ export async function verifyR2References({
   // This is a point-in-time identity check, never a permanent writer boundary.
   if (sourceRows !== undefined) {
     const proof = await loadSourceObjectProof(freshIdentity.runDir);
-    if (!proof || !Array.isArray(sourceRows) || sourceRows.length !== proof.objects.size) {
-      throw new Error('Current source snapshot does not match the complete source object proof');
-    }
-    const seen = new Set();
-    for (const source of sourceRows) {
-      const key = `${source.bucket_id}::${source.name}`;
-      if (seen.has(key) || !isDeepStrictEqual(source, proof.objects.get(key))) {
-        throw new Error(`Current source identity differs from source object proof: ${key}`);
-      }
-      seen.add(key);
-    }
+    assertSourceMatchesProof(sourceRows, proof?.objects);
   }
 
   const { references, failures } = collectR2References({ savedRows, blogRows, postRows, publicBase, sourceOrigin });
