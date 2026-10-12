@@ -737,6 +737,9 @@ describe.runIf(dockerAvailable)('r2-reference-apply: real PostgreSQL 17 CAS', ()
       -- The cached image seeds an older Storage table; model the native version
       -- column read by production without installing any permissions or triggers.
       ALTER TABLE storage.objects ADD COLUMN IF NOT EXISTS version TEXT;
+      ALTER TABLE storage.buckets ADD COLUMN IF NOT EXISTS public BOOLEAN DEFAULT FALSE;
+      ALTER TABLE storage.buckets ADD COLUMN IF NOT EXISTS file_size_limit BIGINT;
+      ALTER TABLE storage.buckets ADD COLUMN IF NOT EXISTS allowed_mime_types TEXT[];
     `);
     await client.query("INSERT INTO storage.buckets(id, name) VALUES ('saved-images','saved-images') ON CONFLICT DO NOTHING");
     await writer.connect();
@@ -824,6 +827,34 @@ describe.runIf(dockerAvailable)('r2-reference-apply: real PostgreSQL 17 CAS', ()
       server.closeAllConnections();
       await new Promise<void>(resolve => server.close(() => resolve()));
     }
+  }, 120_000);
+
+
+  it('reads the bucket fence gate from real storage.buckets and pg_policies', async () => {
+    const { isSourceFenced, readBucketFenceState } = await import('../../../scripts/storage/storage-bucket-fence.mjs');
+    await client.query(`
+      ALTER TABLE storage.buckets ADD COLUMN IF NOT EXISTS public BOOLEAN DEFAULT FALSE;
+      ALTER TABLE storage.buckets ADD COLUMN IF NOT EXISTS file_size_limit BIGINT;
+      ALTER TABLE storage.buckets ADD COLUMN IF NOT EXISTS allowed_mime_types TEXT[];
+    `);
+    for (const id of ['saved-images', 'blog-images', 'upscale-inputs']) {
+      await client.query('INSERT INTO storage.buckets(id, name) VALUES ($1,$1) ON CONFLICT DO NOTHING', [id]);
+    }
+    await client.query("DO $$ BEGIN CREATE ROLE anon NOLOGIN; EXCEPTION WHEN duplicate_object THEN NULL; END $$");
+    expect(isSourceFenced(await readBucketFenceState(client))).toBe(false);
+    await client.query("UPDATE storage.buckets SET file_size_limit = 1, allowed_mime_types = ARRAY['application/x-miu-storage-frozen']");
+    expect(isSourceFenced(await readBucketFenceState(client))).toBe(true);
+    await client.query('CREATE POLICY read_all ON storage.objects FOR SELECT TO anon USING (true)');
+    expect(isSourceFenced(await readBucketFenceState(client))).toBe(true);
+    await client.query('CREATE POLICY anon_insert ON storage.objects FOR INSERT TO anon WITH CHECK (true)');
+    expect(isSourceFenced(await readBucketFenceState(client))).toBe(false);
+    await client.query('DROP POLICY anon_insert ON storage.objects');
+    await client.query('CREATE POLICY pub_all ON storage.objects FOR ALL TO public USING (true)');
+    expect(isSourceFenced(await readBucketFenceState(client))).toBe(false);
+    await client.query('DROP POLICY pub_all ON storage.objects');
+    expect(isSourceFenced(await readBucketFenceState(client))).toBe(true);
+    await client.query("UPDATE storage.buckets SET file_size_limit = 2 WHERE id = 'blog-images'");
+    expect(isSourceFenced(await readBucketFenceState(client))).toBe(false);
   }, 120_000);
 
 });

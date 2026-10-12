@@ -368,14 +368,17 @@ describe('source-delete: delta classification', () => {
 });
 
 describe('source-delete: delta needs the live fence', () => {
-  const matrix = (insert: boolean) => Object.fromEntries(['PUBLIC', 'anon', 'authenticated', 'service_role'].map(role => [role, {
-    INSERT: insert, UPDATE: false, DELETE: false, SELECT: true, INSERT_ANY_COLUMN: false, UPDATE_ANY_COLUMN: false,
-  }]));
+  const state = (limit: number | null) => ({
+    buckets: Object.fromEntries(['saved-images', 'blog-images', 'upscale-inputs'].map(id => [id, {
+      public: false, file_size_limit: limit, allowed_mime_types: ['application/x-miu-storage-frozen'],
+    }])),
+    policies: [],
+  });
   const makeDb = (fenced: boolean) => {
     const sql: string[] = [];
     return { sql, query: async (text: string) => {
       sql.push(text);
-      return /storage\.objects/.test(text) && !/has_table_privilege/.test(text) ? { rows: [{ row: { name: 'a' } }] } : { rows: [{ matrix: matrix(!fenced) }] };
+      return /^SELECT to_jsonb\(o\)/.test(text) ? { rows: [{ row: { name: 'a' } }] } : { rows: [{ state: state(fenced ? 1 : null) }] };
     } };
   };
 

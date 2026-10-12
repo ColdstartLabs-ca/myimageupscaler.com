@@ -49,7 +49,7 @@ import {
 import { SAVED_BUCKET as GALLERY_BUCKET, BLOG_BUCKET, DEFAULT_EXPIRES_SECONDS, mapManifestRow, readbackVerify, defaultRunner } from './migrate-r2.mjs';
 import { chunk, isAcceptedBaselineMissingReference } from './backup-and-purge.mjs';
 import { presignGetUrl } from '../../server/services/r2-presign.mjs';
-import { FENCE_MATRIX_SQL, isNativeFenced, readFenceMatrix } from './storage-acl-fence.mjs';
+import { BUCKET_FENCE_STATE_SQL, isSourceFenced, readBucketFenceState } from './storage-bucket-fence.mjs';
 
 export const DEFAULT_PUBLIC_BASE = 'https://assets.myimageupscaler.com';
 export const SOURCE_SUPABASE_ORIGIN = 'https://xqysaylskffsfwunczbd.supabase.co';
@@ -407,7 +407,7 @@ export async function verifyR2References({
   blogRows = [],
   postRows = [],
   sourceRows,
-  fenceMatrix,
+  fenceState,
   signing,
   presignGet = presignGetUrl,
   fetchFn = fetch,
@@ -534,7 +534,7 @@ export async function verifyR2References({
     missing_count: missing.length,
     source_etag_unbound: sourceETagUnbound,
     // Live privilege matrix from the same snapshot; absent or malformed means not fenced.
-    source_native_fenced: isNativeFenced(fenceMatrix),
+    source_native_fenced: isSourceFenced(fenceState),
     verified: Object.freeze(verified.map(ref => Object.freeze({ ...ref }))),
     missing: Object.freeze(missing.map(item => Object.freeze({ ...item }))),
     plan: Object.freeze(plan),
@@ -648,7 +648,7 @@ export async function loadCurrentReferenceRows(db) {
       FROM public.blog_posts AS bp) AS post_rows,
     (SELECT COALESCE(jsonb_agg(to_jsonb(so) ORDER BY so.bucket_id, so.name, so.id), '[]'::jsonb)
       FROM storage.objects AS so WHERE so.bucket_id = ANY($1::text[])) AS source_rows,
-    ${FENCE_MATRIX_SQL} AS fence_matrix`,
+    ${BUCKET_FENCE_STATE_SQL} AS fence_state`,
   [PRODUCTION_BUCKETS]);
   const snapshot = rows[0];
   if (snapshot?.isolation !== 'read committed') {
@@ -659,7 +659,7 @@ export async function loadCurrentReferenceRows(db) {
     blogRows: Object.freeze(snapshot.blog_rows),
     postRows: Object.freeze(snapshot.post_rows),
     sourceRows: Object.freeze(snapshot.source_rows),
-    fenceMatrix: Object.freeze(snapshot.fence_matrix ?? null),
+    fenceState: Object.freeze(snapshot.fence_state ?? null),
   });
 }
 
@@ -726,7 +726,7 @@ export async function runVerifyReferencesCommand(deps = {}) {
       blogRows: rows.blogRows,
       postRows: rows.postRows,
       sourceRows: rows.sourceRows,
-      fenceMatrix: rows.fenceMatrix,
+      fenceState: rows.fenceState,
       signing: config.signing,
       presignGet,
       fetchFn,
@@ -782,7 +782,7 @@ export async function runApplyReferencesCommand(deps = {}) {
     apply,
     freshBackup,
     resolveCheckoutRoot,
-    readFence = readFenceMatrix,
+    readFence = readBucketFenceState,
     log = () => {},
   } = deps;
 
@@ -810,8 +810,7 @@ export async function runApplyReferencesCommand(deps = {}) {
         blogRows: rows.blogRows,
         postRows: rows.postRows,
         sourceRows: rows.sourceRows,
-        fenceMatrix: rows.fenceMatrix,
-      fenceMatrix: rows.fenceMatrix,
+        fenceState: rows.fenceState,
         signing: config.signing,
         presignGet,
         fetchFn,
@@ -827,7 +826,7 @@ export async function runApplyReferencesCommand(deps = {}) {
       db,
       verifyCurrent,
       // Re-read live on the apply connection immediately before every commit.
-      checkFence: async () => isNativeFenced(await readFence(db)),
+      checkFence: async () => isSourceFenced(await readFence(db)),
       verifyFreshDatabaseBackup: async () => {
         const repoRoot = await resolveCheckoutRoot({ runner });
         // `yarn db:backup` can run for minutes; the default runner timeout is 2 minutes.

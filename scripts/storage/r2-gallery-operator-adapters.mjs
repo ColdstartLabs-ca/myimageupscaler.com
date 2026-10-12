@@ -140,6 +140,19 @@ export function loadR2OperatorConfig({ exec = execFileSync } = {}) {
   });
 }
 
+/** Storage API origin and service-role key for bucket-level operations; never log the key. */
+export function loadSupabaseApiConfig({ exec = execFileSync } = {}) {
+  const raw = exec(
+    'gcloud',
+    ['secrets', 'versions', 'access', 'latest', `--secret=${GCLOUD_SECRET_API}`, `--project=${GCLOUD_PROJECT}`],
+    { encoding: 'utf8' }
+  );
+  return Object.freeze({
+    supabaseUrl: `https://${PROJECT_REF}.supabase.co`,
+    serviceRoleKey: requiredValue(parseDotenv(raw), 'SUPABASE_SERVICE_ROLE_KEY'),
+  });
+}
+
 // =============================================================================
 // Concrete adapters
 // =============================================================================

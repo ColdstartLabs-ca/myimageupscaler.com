@@ -260,32 +260,30 @@ describe('r2-references: verifyR2References', () => {
   });
 
   describe('live native fence', () => {
-    const matrix = (patch: AnyRow = {}) => {
-      const out: AnyRow = {};
-      for (const role of ['PUBLIC', 'anon', 'authenticated', 'service_role']) {
-        out[role] = { INSERT: false, UPDATE: false, DELETE: false, SELECT: true, INSERT_ANY_COLUMN: false, UPDATE_ANY_COLUMN: false, ...(patch[role] ?? {}) };
-      }
-      return out;
-    };
-    const fenceOf = async (fenceMatrix?: unknown) => {
+    const frozen = { public: false, file_size_limit: 1, allowed_mime_types: ['application/x-miu-storage-frozen'] };
+    const state = (patch: AnyRow = {}, policies: AnyRow[] = []) => ({
+      buckets: Object.fromEntries(['saved-images', 'blog-images', 'upscale-inputs'].map(id => [id, { ...frozen, ...(patch[id] ?? {}) }])),
+      policies,
+    });
+    const fenceOf = async (fenceState?: unknown) => {
       const r2 = new FakeR2();
       const { saved, blog } = referenceFixture(root);
       seed(r2, saved, blog);
-      return (await runEngine(root, r2, { fenceMatrix })).source_native_fenced;
+      return (await runEngine(root, r2, { fenceState })).source_native_fenced;
     };
 
-    it('is false without a live matrix, as before', async () => {
+    it('is false without a live state, as before', async () => {
       expect(await fenceOf(undefined)).toBe(false);
       expect(await fenceOf(null)).toBe(false);
       expect(await fenceOf({})).toBe(false);
     });
 
-    it('is true only when INSERT and UPDATE are revoked for all four roles', async () => {
-      expect(await fenceOf(matrix())).toBe(true);
-      expect(await fenceOf(matrix({ service_role: { DELETE: true } }))).toBe(true);
-      expect(await fenceOf(matrix({ anon: { INSERT: true } }))).toBe(false);
-      expect(await fenceOf(matrix({ service_role: { UPDATE: true } }))).toBe(false);
-      expect(await fenceOf(matrix({ authenticated: { DELETE: true } }))).toBe(false);
+    it('is true only when all three buckets are frozen and no direct-write policy exists', async () => {
+      expect(await fenceOf(state())).toBe(true);
+      expect(await fenceOf(state({}, [{ name: 'r', cmd: 'SELECT', roles: ['public'] }]))).toBe(true);
+      expect(await fenceOf(state({ 'blog-images': { file_size_limit: null } }))).toBe(false);
+      expect(await fenceOf(state({ 'upscale-inputs': { allowed_mime_types: null } }))).toBe(false);
+      expect(await fenceOf(state({}, [{ name: 'w', cmd: 'INSERT', roles: ['authenticated'] }]))).toBe(false);
     });
   });
 

@@ -21,7 +21,7 @@
  *   expire --manifest <expire-rows.jsonl> --confirm
  *   verify-integrity
  *   delta --manifest <backup-run-dir>
- *   delete-source --manifest <backup-run-dir> --confirm   (needs the live ACL fence)
+ *   delete-source --manifest <backup-run-dir> --confirm   (needs the live bucket fence)
  */
 
 import { execFileSync } from 'node:child_process';
@@ -45,7 +45,7 @@ import {
   verifyFrozenArtifacts,
   verifyRemoteBatch,
 } from './backup-verification.mjs';
-import { isNativeFenced, readFenceMatrix } from './storage-acl-fence.mjs';
+import { isSourceFenced, readBucketFenceState } from './storage-bucket-fence.mjs';
 
 // =============================================================================
 // Configuration
@@ -1410,7 +1410,7 @@ export async function runPurge({
 }
 
 // =============================================================================
-// Source delete: all three buckets, frozen manifest only, behind the live ACL fence
+// Source delete: all three buckets, frozen manifest only, behind the live bucket fence
 // =============================================================================
 
 export const R2_RECEIPT_FILE = 'r2-migration-receipt.json';
@@ -2103,7 +2103,7 @@ async function cmdDeleteSource(args) {
     const result = await runSourceDelete({
       plan, confirm: true, runner: defaultRunCommand,
       ...await makeNativeVersionStorageActions({ plan, db, config }),
-      checkFence: async () => isNativeFenced(await readFenceMatrix(db)),
+      checkFence: async () => isSourceFenced(await readBucketFenceState(db)),
       withLockedBatch: callback => withDatabaseBatch(db, 'source-delete', callback),
       checkStillEligible: async (bucket, paths) => bucket === INPUT_BUCKET
         ? (await db.query(INPUT_RECHECK_SQL, [bucket, paths])).rows
@@ -2117,7 +2117,7 @@ async function cmdDeleteSource(args) {
 
 /** The delta is only meaningful while no native write is possible, so the fence comes first. */
 export async function loadFencedSourceRows(db) {
-  if (!isNativeFenced(await readFenceMatrix(db))) throw new Error('delta requires the live ACL fence; run freeze first');
+  if (!isSourceFenced(await readBucketFenceState(db))) throw new Error('delta requires the live bucket fence; run bucket-fence freeze first');
   return (await db.query('SELECT to_jsonb(o) AS row FROM storage.objects AS o WHERE o.bucket_id = ANY($1::text[])', [ALL_BUCKETS]))
     .rows.map(entry => entry.row);
 }

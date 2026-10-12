@@ -406,16 +406,19 @@ describe('r2-operator-cli: apply command', () => {
     expect(db.endCalls).toBe(1);
   });
 
-  it('hands the apply engine a fence check that reads the live matrix on the apply connection', async () => {
+  it('hands the apply engine a fence check that reads the live bucket state on the apply connection', async () => {
     const { db } = makeDb();
-    const fenced = (insert: boolean) => Object.fromEntries(['PUBLIC', 'anon', 'authenticated', 'service_role'].map(role => [role, {
-      INSERT: insert, UPDATE: false, DELETE: false, SELECT: true, INSERT_ANY_COLUMN: false, UPDATE_ANY_COLUMN: false,
-    }]));
-    const matrices = [fenced(false), fenced(true)];
+    const state = (limit: number | null) => ({
+      buckets: Object.fromEntries(['saved-images', 'blog-images', 'upscale-inputs'].map(id => [id, {
+        public: false, file_size_limit: limit, allowed_mime_types: ['application/x-miu-storage-frozen'],
+      }])),
+      policies: [],
+    });
+    const states = [state(1), state(null)];
     const seen: unknown[] = [];
     await runApplyReferencesCommand({
       manifest: runDir, confirm: true, config: CONFIG, createDb: async () => db, runner: () => '',
-      readFence: async (connection: unknown) => { seen.push(connection); return matrices.shift(); },
+      readFence: async (connection: unknown) => { seen.push(connection); return states.shift(); },
       apply: async ({ checkFence, db: applyDb }: any) => {
         expect(applyDb).toBe(db);
         expect(await checkFence()).toBe(true);
