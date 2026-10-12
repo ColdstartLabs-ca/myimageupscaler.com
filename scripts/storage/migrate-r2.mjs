@@ -318,7 +318,7 @@ export async function readbackVerify({ presignGet, signing, fetchFn, targetBucke
     url: objectUrl(signing.endpoint, targetBucket, targetKey),
     accessKeyId: signing.accessKeyId,
     secretAccessKey: signing.secretAccessKey,
-    expiresSeconds: signing.expiresSeconds,
+    expiresSeconds: signing.expiresSeconds ?? DEFAULT_EXPIRES_SECONDS,
   });
   const response = await fetchFn(url, {
     method: 'GET',

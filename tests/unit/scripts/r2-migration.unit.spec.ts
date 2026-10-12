@@ -7,6 +7,7 @@ import { spawnSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 
 import * as migration from '../../../scripts/storage/migrate-r2.mjs';
+import { presignGetUrl } from '../../../server/services/r2-presign.mjs';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const {
@@ -303,6 +304,33 @@ describe('r2-migration: signing endpoint and object URL', () => {
     } finally {
       fs.rmSync(root, { recursive: true, force: true });
     }
+  });
+});
+
+describe('r2-migration: readback signed URL expiry', () => {
+  it.each([
+    { label: 'omitted', overrides: {}, expected: 900 },
+    { label: 'undefined', overrides: { expiresSeconds: undefined }, expected: 900 },
+    { label: 'explicit', overrides: { expiresSeconds: 300 }, expected: 300 },
+  ])('uses a bounded real presigned GET expiry when $label', async ({ overrides, expected }) => {
+    const body = Buffer.from('exact readback bytes');
+    const fetchFn = vi.fn(async (url: string) => {
+      const signed = new URL(url);
+      expect(signed.searchParams.get('X-Amz-Expires')).toBe(String(expected));
+      expect(signed.searchParams.get('X-Amz-Signature')).toMatch(/^[a-f0-9]{64}$/);
+      return new Response(body);
+    });
+    const result = await (migration as any).readbackVerify({
+      presignGet: presignGetUrl,
+      signing: { ...SIGNING, ...overrides },
+      fetchFn,
+      targetBucket: 'miu-private',
+      targetKey: 'archive/gallery/owned/fixture',
+      expectedSha256: sha256(body),
+      expectedBytes: body.length,
+    });
+    expect(result).toEqual({ sha256: sha256(body), bytes: body.length });
+    expect(fetchFn).toHaveBeenCalledOnce();
   });
 });
 
