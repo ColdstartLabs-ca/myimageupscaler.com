@@ -36,7 +36,7 @@ const originals = (): Record<string, Bucket> => ({
 });
 
 /** In-memory Storage bucket API plus the catalog read the gate uses. */
-function makeWorld(options: { policies?: any[]; failPutOn?: number; ignorePutFor?: string } = {}) {
+function makeWorld(options: { policies?: any[]; failPutOn?: number; ignorePutFor?: string; pending?: Record<string, number> } = {}) {
   const buckets: Record<string, Bucket> = originals();
   const calls: { method: string; id: string; body?: any }[] = [];
   let puts = 0;
@@ -57,8 +57,11 @@ function makeWorld(options: { policies?: any[]; failPutOn?: number; ignorePutFor
   };
   const db = {
     sql: [] as string[],
+    pending: options.pending as Record<string, number> | undefined,
     async query(text: string) {
       this.sql.push(text);
+      if (/to_regclass/.test(text)) return { rows: [{ present: this.pending !== undefined }] };
+      if (/s3_multipart_uploads/.test(text)) return { rows: Object.entries(this.pending ?? {}).map(([bucket_id, n]) => ({ bucket_id, n })) };
       return { rows: [{ state: { buckets: JSON.parse(JSON.stringify(buckets)), policies: options.policies ?? [] } }] };
     },
   };
@@ -252,6 +255,20 @@ describe('storage-bucket-fence: snapshot, freeze, restore', () => {
     const stubborn = makeWorld({ ignorePutFor: 'blog-images' });
     Object.assign(stubborn.buckets, JSON.parse(JSON.stringify(world.buckets)));
     await expect(runBucketRestore({ ...stubborn, snapshotPath: file, snapshotSha256: digest, confirm: true })).rejects.toThrow(/does not match the snapshot/);
+  });
+
+  it('reports in-progress multipart uploads, which the bucket fence cannot stop', async () => {
+    const quiet = makeWorld({ pending: {} });
+    expect((await runBucketStatus({ db: quiet.db })).pendingUploads).toMatchObject({ available: true, count: 0 });
+    const busy = makeWorld({ pending: { 'saved-images': 2, 'blog-images': 1 } });
+    expect((await runBucketStatus({ db: busy.db })).pendingUploads).toMatchObject({ count: 3, buckets: { 'saved-images': 2, 'blog-images': 1 } });
+    expect((await runBucketStatus({ db: makeWorld().db })).pendingUploads).toMatchObject({ available: false, count: null });
+
+    const logs: string[] = [];
+    const { sha256: digest } = await snapshotOf(busy);
+    const result = await runBucketFreeze({ ...busy, snapshotPath: file, snapshotSha256: digest, confirm: true, log: (line: string) => logs.push(line) });
+    expect(result.pendingUploads.count).toBe(3);
+    expect(logs.join('\n')).toMatch(/WARNING pending S3 multipart uploads=3/);
   });
 
   it('status reads the gate state without any request to the API', async () => {

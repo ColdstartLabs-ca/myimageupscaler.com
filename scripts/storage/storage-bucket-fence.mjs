@@ -108,6 +108,21 @@ export function isSourceFenced(state) {
   }
 }
 
+/**
+ * In-progress S3-protocol multipart uploads. The local Storage 1.80.2 proof showed that a
+ * multipart upload started before the freeze still completes (and overwrites) after it, so the
+ * bucket fence cannot stop it. Informational: it is not part of the gate, but freeze reports it.
+ */
+export async function readPendingUploads(db) {
+  const probe = await db.query("SELECT to_regclass('storage.s3_multipart_uploads') IS NOT NULL AS present");
+  if (probe?.rows?.[0]?.present !== true) return Object.freeze({ available: false, count: null, buckets: Object.freeze({}) });
+  const { rows } = await db.query(
+    `SELECT bucket_id, count(*)::int AS n FROM storage.s3_multipart_uploads WHERE bucket_id IN (${bucketList}) GROUP BY bucket_id`
+  );
+  const buckets = Object.fromEntries(rows.map(row => [row.bucket_id, Number(row.n)]));
+  return Object.freeze({ available: true, count: Object.values(buckets).reduce((sum, n) => sum + n, 0), buckets: Object.freeze(buckets) });
+}
+
 export async function readBucketFenceState(db) {
   const result = await db.query(BUCKET_FENCE_SQL);
   const state = result?.rows?.[0]?.state;
@@ -209,7 +224,7 @@ function restoreBody(config) {
 
 export async function runBucketStatus({ db } = {}) {
   const state = await readBucketFenceState(db);
-  return { ...deriveBucketFence(state), state };
+  return { ...deriveBucketFence(state), state, pendingUploads: await readPendingUploads(db) };
 }
 
 export async function runBucketSnapshot({ api, out, now } = {}) {
@@ -251,7 +266,11 @@ export async function runBucketFreeze({ api, db, snapshotPath, snapshotSha256, c
     const state = await readBucketFenceState(db);
     const result = deriveBucketFence(state);
     if (!result.fenced) throw new Error('Live state is not fenced after the freeze');
-    return { ...result, snapshot_sha256: sha256 };
+    const pendingUploads = await readPendingUploads(db);
+    if (pendingUploads.count !== 0) {
+      log(`[bucket-fence] WARNING pending S3 multipart uploads=${pendingUploads.count ?? 'unknown'}: they can still complete after the freeze`);
+    }
+    return { ...result, snapshot_sha256: sha256, pendingUploads };
   } catch (error) {
     const failed = [];
     for (const id of touched) {
@@ -338,7 +357,7 @@ function usage() {
 }
 
 function formatStatus(result) {
-  return `fenced=${result.fenced}` +
+  return `fenced=${result.fenced} pending_s3_multipart=${result.pendingUploads?.count ?? 'unknown'}` +
     (result.bucketViolations.length ? ` unfrozen=${result.bucketViolations.join(',')}` : '') +
     (result.policyViolations.length ? ` write_policies=${result.policyViolations.map(policy => policy.name).join(',')}` : '');
 }

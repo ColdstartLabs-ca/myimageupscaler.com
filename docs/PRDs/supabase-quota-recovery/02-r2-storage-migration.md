@@ -268,56 +268,64 @@ Independent read-only design review recommends avoiding custom managed-Storage t
 
 - Hosted gallery verification (2026-10-11): the production app passed the owned-fixture save/list/resize/foreign-access/delete flow above; the final invocation exited 0. Both fixture Auth users, profiles, preferences, sessions and inventoried dependent rows were verified absent, along with the image row/object. Fixtures began without email; preferences were disabled before admin-confirming a unique `.invalid` address, avoiding the immediate recovery-email eligibility window. Two earlier setup attempts stopped before gallery save: a stale fixture-only `credits_balance` select and disabled phone authentication; their fixtures were also fully removed. No customer content, credit balances, Stripe state, global Auth setting or cleanup schedule changed. Fresh database backup `2026-10-11_11-43-18` passed gzip and SHA verification on desktop and laptop before these writes: desktop `/home/joao/projects/myimageupscaler.com/backups/backup_2026-10-11_11-43-18.{schema,data}.sql.gz`, laptop `~/backups/miu-db/2026-10-11_11-43-18/`; schema SHA `16edbb4c45dbc3e499e204a98ed7955dd9ab76701741bdb045e6ceeda33617ae`, data SHA `562399741e20a40b3d256480c088256e615d0f01672974e23e391b52cb47a59f`. Proof and executable fixture journal remain in `/home/joao/.cache/miu-quota-temp/gallery-hosted-canary-lokwvv25/`; final journal `created-users-cdf5c116-88cc-45d3-8fa0-d760d61e2eef.jsonl`. A separate header-only validation exited 1 at its positive-integer-and-smaller Content-Length assertion; the image and both fixture accounts/dependents were fully removed (journal `created-users-f26cd621-bcbb-4cbc-811f-9ceea7dea7f6.jsonl`). It did not invalidate the earlier decoded resize/body proof. Cloudflare documents runtime-controlled Content-Length for streamed responses (https://developers.cloudflare.com/workers/runtime-apis/response/); the next diagnostic observed an absent Content-Length, chunked Transfer-Encoding and no Content-Encoding; both fixture accounts and their image/dependents were fully removed (journal `created-users-1a95a800-aaf4-4955-b3bd-508181bda6dd.jsonl`). This confirms the transport shape, but does not identify which runtime/adapter stage discarded the header. No application change was made to force a header or buffer private images. The header requirement, real provider canary and blog browser proof remain open; source cutover/purge and automatic expiry remain disabled.
 
-### ACL-freeze cutover runbook (approved 2026-10-12)
+### Bucket-fence cutover runbook (2026-10-12)
 
-João approved the short ACL freeze. The tools are `scripts/storage/storage-acl-fence.mjs` (snapshot, freeze, allow-delete, restore, status) and the `delta` and `delete-source` commands of `scripts/storage/backup-and-purge.mjs`. The fence state is now read live. `verify` reports `source_native_fenced` from `has_table_privilege`, `apply` reads it again before every commit, and `delete-source` reads it at the start of every batch. Every command below runs from the primary checkout. Do not use `bash -x`.
+The ACL freeze cannot run on hosted Supabase. Production `storage.objects` grants for anon, authenticated and service_role were made by `supabase_storage_admin`. The role `postgres` is not a member of that role. A REVOKE by `postgres` removes only grants that `postgres` made, so the four-role REVOKE would have no effect. The ACL code (`scripts/storage/storage-acl-fence.mjs`) stays in the repository but is no longer a gate.
+
+The replacement is a bucket-level upload fence through the supported Storage API: `scripts/storage/storage-bucket-fence.mjs` (`snapshot`, `freeze`, `restore`, `status`). It reads each bucket with `GET /storage/v1/bucket/{id}`, then sets `file_size_limit=1` and `allowed_mime_types=['application/x-miu-storage-frozen']` with `PUT`. The `public` flag does not change. `restore` sends the exact snapshot back and checks equality. The live gate (`isSourceFenced`) is true only when all three buckets carry exactly these limits and `storage.objects` has no permissive INSERT, UPDATE or ALL policy for anon, authenticated or public. `verify` reports it as `source_native_fenced`, `apply` re-reads it before every commit, `delta` needs it, and `delete-source` re-reads it at the start of every batch.
+
+THE BUCKET FENCE IS NOT A COMPLETE WRITE FENCE. The local proof below shows these paths still succeed with the service-role key after the freeze: completion of an upload started before the freeze (TUS PATCH and S3 multipart complete, both new and overwrite), server-side copy (to a new path, onto an existing path with `x-upsert: true`, and from another bucket), move to a new path, S3 CopyObject onto an existing path, and an upload of at most 1 byte that uses the frozen MIME type. Upload paths that start after the freeze are denied. The operator accepts this residual risk only because the live app does not write or copy these buckets (no `.upload`, `.copy`, `.move` or signed-upload call exists in `app/`, `server/`, `shared/`, `lib/` or `client/`) and because only holders of the service-role key can reach the open paths. Do not run any other script that writes to these buckets during the window.
 
 ```bash
 RUN=/home/joao/backups/miu-storage/2026-10-10T22-28-34-951Z
-ACL=/home/joao/backups/miu-storage-acl/storage-objects-acl-2026-10-12.json
-mkdir -p -m 700 "$(dirname "$ACL")"
+BF=/home/joao/backups/miu-storage-acl/bucket-config-2026-10-12.json
+mkdir -p -m 700 "$(dirname "$BF")"
 
-# 1. Prove the backup gate works. Freeze and apply each take their own fresh backup.
+# 1. Prove the backup gate works. Apply and delete-source each take their own fresh backup.
 node scripts/storage/database-backup-gate.mjs
-# 2. Record the exact ACL (read-only, mode 0600, never overwritten). Check grantor_reachable=true in the output.
-#    Copy the file to the laptop and compare the sha256. Put the printed sha256 in $SHA.
-node scripts/storage/storage-acl-fence.mjs snapshot --out "$ACL"
+# 2. Precheck (read-only). Expect fenced=false pending_s3_multipart=0. If pending is above 0, wait or inspect first.
+node scripts/storage/storage-bucket-fence.mjs status
+# 3. Record the exact bucket config (read-only, mode 0600, never overwritten). Put the printed sha256 in $SHA.
+node scripts/storage/storage-bucket-fence.mjs snapshot --out "$BF"
 SHA=<sha256 printed by the snapshot command>
 ssh joao@192.168.1.126 'mkdir -p -m 700 ~/backups/miu-storage-acl'
-rsync -a --ignore-existing "$ACL" joao@192.168.1.126:backups/miu-storage-acl/
-sha256sum "$ACL"; ssh joao@192.168.1.126 "sha256sum ~/backups/miu-storage-acl/$(basename "$ACL")"
-# 3. Fence. Takes a fresh dual backup, revokes INSERT/UPDATE/DELETE from PUBLIC/anon/authenticated/service_role, verifies all four roles.
-node scripts/storage/storage-acl-fence.mjs freeze --confirm --snapshot "$ACL" --snapshot-sha256 "$SHA"
-# 4. Expect fenced=true delete_open=false.
-node scripts/storage/storage-acl-fence.mjs status
-# 5. Delta. Expect "0 new, 0 changed". Any other result stops the cutover (see below).
+rsync -a --ignore-existing "$BF" joao@192.168.1.126:backups/miu-storage-acl/
+sha256sum "$BF"; ssh joao@192.168.1.126 "sha256sum ~/backups/miu-storage-acl/$(basename "$BF")"
+# 4. Fence. Refuses a stale snapshot, a direct-write policy and a wrong sha256. Rolls the PUTs back if the result is not fenced.
+node scripts/storage/storage-bucket-fence.mjs freeze --confirm --snapshot "$BF" --snapshot-sha256 "$SHA"
+# 5. Expect fenced=true pending_s3_multipart=0.
+node scripts/storage/storage-bucket-fence.mjs status
+# 6. Delta. Expect "0 new, 0 changed". Any other result stops the cutover (see below).
 node scripts/storage/backup-and-purge.mjs delta --manifest "$RUN"
-# 6. Verify. Expect only the accepted missing blog image.
+# 7. Verify. Expect only the accepted missing blog image.
 node scripts/storage/backup-and-purge.mjs verify-integrity
 node scripts/storage/verify-r2-references.mjs verify --manifest "$RUN"
-# 7. Flip the references (own fresh backup, fence re-read before every commit).
+# 8. Flip the references (own fresh backup, fence re-read before every commit).
 node scripts/storage/verify-r2-references.mjs apply --manifest "$RUN" --confirm
-# 8. Open DELETE for service_role, plus UPDATE on the single column last_accessed_at (Storage needs it for SELECT ... FOR UPDATE).
-node scripts/storage/storage-acl-fence.mjs allow-delete --confirm
-# 9. Delete from the frozen manifest (own fresh backup, batches of 50 or fewer, live fence check per batch).
+# 9. Delete from the frozen manifest (own fresh backup, batches of 50 or fewer, live fence check per batch). No grant change is needed.
 node scripts/storage/backup-and-purge.mjs delete-source --manifest "$RUN" --confirm
-# 10. Restore the exact original grants (see the stop rules for the failure case).
-node scripts/storage/storage-acl-fence.mjs restore --confirm --snapshot "$ACL" --snapshot-sha256 "$SHA"
-# 11. Expect fenced=false and the original matrix.
-node scripts/storage/storage-acl-fence.mjs status
+# 10. Restore the exact bucket config.
+node scripts/storage/storage-bucket-fence.mjs restore --confirm --snapshot "$BF" --snapshot-sha256 "$SHA"
+# 11. Expect fenced=false.
+node scripts/storage/storage-bucket-fence.mjs status
 # 12. Bucket size check. Expect less than 50 MB in total (AC-7).
 node --input-type=module -e "import {loadR2OperatorConfig as c} from './scripts/storage/r2-gallery-operator-adapters.mjs'; import {createDb} from './scripts/storage/backup-and-purge.mjs'; const db = await createDb(c().dbConfig); try { console.log(JSON.stringify((await db.query(\"SELECT bucket_id, count(*) AS objects, sum(coalesce((metadata->>'size')::bigint,0)) AS bytes FROM storage.objects GROUP BY bucket_id ORDER BY bytes DESC\")).rows)); } finally { await db.end(); }"
 ```
 
-- Expected outage: from `freeze` to `restore`, all Supabase Storage writes in all three buckets fail with `permission denied` (REST, TUS, S3, multipart, signed URLs). Three fresh database backups run inside this window (in `freeze`, `apply` and `delete-source`), so plan for the combined backup time. The live app already writes new objects to R2, so only legacy Supabase write paths see the outage. Reads continue.
-- Stop rules: any failed command from step 3 on stops the run. Run `status`. If it shows `fenced=true`, run `restore` (step 10), then report. If it shows `fenced=false`, do not run `restore`: the freeze did not apply or was already undone. If `freeze` failed because the snapshot is stale, take a new snapshot instead of restoring. `restore` refuses a fenced snapshot, an unfenced live state and a wrong `--snapshot-sha256`, so a stale snapshot cannot overwrite a newer ACL. `freeze` and `restore` run in one transaction and roll back when verification fails. A failed `restore` leaves Storage frozen and needs a manual fix from the snapshot.
-- `delta` refuses to run unless the live fence is held.
-- Delete-phase grant (local finding, 2026-10-12): DELETE alone is not enough. Storage 1.80.2 locks the row with `SELECT ... FOR UPDATE` before the versioned delete, which needs UPDATE on one column. With DELETE only, the exact-version `DELETE` returned HTTP 400 `permission denied for table objects` and the object stayed. `allow-delete` therefore also grants `UPDATE (last_accessed_at)` to `service_role`. That column holds no content, version, eTag, size or metadata. The fence matrix ignores that one column and still counts every other column. `restore` revokes it.
-- Local Storage API v1.80.2 proof (2026-10-12, `/home/joao/.cache/miu-quota-temp/delete-phase-20261012-4e2b/`, run `run4.log`, exit 0): the real fence tool froze a disposable PostgreSQL 17 / Storage 1.80.2 stack. After `freeze`, and again after `allow-delete`, REST new and upsert, TUS create and overwrite, S3 PUT and overwrite, multipart initiate, signed upload URL, copy and move all failed with `permission denied`, with no new objects and unchanged source bytes. A wrong `versionId` did not delete the object. The exact `versionId` DELETE returned 200, removed the row and exactly one backend blob, and left the other object unchanged. `restore` reproduced the raw `relacl` and column ACLs. Owned Docker resources were removed. SHA-256: `proof.py` 476952c3ea96f631173897e9ad52fa3704aa05b9cee7d8303f6c4e7831b2f7c2, `driver.mjs` 221025c9839348d096a98cef14af95a8d074ea5bd76da495fe2cff8092737de2, `run4.log` 0054445c1b09facb7c1646090d12a19a78b798920474f33b81ee9884074f4c63. Earlier runs in the same directory show the DELETE-only denial (`run2-delete-only-denied.log`) and a manual column-grant diagnostic. This is a local file-backend proof, not hosted proof.
-- `freeze` refuses a snapshot that is stale, already fenced, or has column-level ACLs, because a table-level REVOKE drops column grants. The production column ACLs were all NULL on 2026-10-11.
+- Expected outage: from `freeze` to `restore`, new uploads to all three buckets through REST, signed URL, TUS create and S3 fail with HTTP 400, 413 or 415. Reads continue. The live app writes new objects to R2, so only legacy write paths see the outage. The bucket config also holds the previous `file_size_limit` and MIME list, so `restore` must run before any legacy upload is expected to work again.
+- Stop rules: any failed command from step 4 on stops the run. Run `status`. If it shows `fenced=true`, run `restore` (step 10), then report. If it shows `fenced=false`, do not run `restore`: the freeze did not apply or was already undone. If `freeze` reports a stale snapshot, take a new snapshot. `restore` refuses a frozen snapshot, a wrong `--snapshot-sha256`, buckets that are not frozen, and buckets that changed after the freeze. A failed `freeze` PUT rolls back the buckets it changed. If that rollback is incomplete, the error says so and `restore` finishes it.
+- `delta` refuses to run unless the live fence is held. The freeze prints a warning when S3 multipart uploads are in progress (`storage.s3_multipart_uploads`). The pending count is informational, not part of the gate. A pending upload can still complete after the freeze.
 - `delete-source` deletes only objects that have a matching R2 read-back hash in `r2-migration-receipt.json`. It keeps (reports as `dropped`) any saved image still on the `supabase` backend, any blog image or post that still points at the source, and any input that is younger than 7 days or still referenced. It rechecks the exact native version and eTag right before each delete.
 - Delta: `delta` compares `storage.objects` with `source-object-proof.json`. For new objects it creates a second two-machine backup run limited to those objects and prints its directory (`$DELTA`). Then run `verify-r2-references.mjs source-proof --manifest "$DELTA"`, `migrate-r2.mjs plan --manifest "$DELTA"`, `migrate-r2.mjs copy --manifest "$DELTA" --confirm`, and `backup-and-purge.mjs delete-source --manifest "$DELTA" --confirm` after step 9. A reference to a delta object fails `verify` because the frozen manifest does not list it. Stop and ask João. A changed object stops `delta` because R2 copies are immutable.
-- Local evidence: unit tests only (`storage-acl-fence`, `source-delete`, `r2-reference-apply`, `r2-references`, `r2-operator-cli`), including a disposable PostgreSQL 17 container for the ACL SQL and the reference SQL. No production command has run.
+- Local Storage API v1.80.2 proof (2026-10-12, `/home/joao/.cache/miu-quota-temp/bucket-fence-20261012-c3a1/`, run `run5.log`, exit 0, same stack as the ACL proofs: Storage `v1.80.2` image `sha256:95b217a9c59e0ac06c6dcb539df3189a1668a2445fb43dbf29660d6968ffd7d2`, PostgreSQL `17.6.1.156`, file backend, service-role key). The real fence tool froze all three buckets. The local API is mounted at `/`, so the driver maps `/storage/v1/` to `/` and changes nothing else. Controls proved that every path works before the freeze. Result: 66 attempts (22 per bucket), 39 denied, 27 succeeded, identical in all three buckets.
+  - Denied, source row, version and bytes unchanged: REST new upload, REST upsert overwrite, REST PUT update, image/png upload, signed upload URL minted before the freeze (new and overwrite), TUS create (new and overwrite), S3 PutObject (new and overwrite), S3 multipart initiate, REST copy onto an existing path without upsert, REST move onto an existing path.
+  - Succeeded (per bucket): TUS PATCH completion of an upload started before the freeze (new and overwrite, HTTP 204), S3 multipart complete of an upload started before the freeze (new and overwrite, HTTP 200), REST copy to a new path, REST copy onto an existing path with `x-upsert: true`, cross-bucket REST copy onto an existing path with `x-upsert: true`, REST move to a new path (this removes the source path), S3 CopyObject onto an existing path.
+  - Residual: a 1-byte upload with `Content-Type: application/x-miu-storage-frozen` succeeded both as a new object and as an overwrite of `keep.bin`. A 2-byte upload with that type failed with HTTP 413.
+  - Exact-version delete still works: a wrong `versionId` did not delete; the exact `versionId` DELETE returned 200 in all three buckets and removed the row. `restore` returned the `storage.buckets` rows byte-for-byte equal to their pre-freeze state (including `public=true` and the original size and MIME limits on `blog-images`).
+  - In-progress S3 multipart uploads appear in `storage.s3_multipart_uploads` (six rows before the freeze). TUS uploads on the local file backend do not appear there, so a pending TUS upload is not observable by the catalog query.
+  - SHA-256: `proof.py` 08b51b67595aceec6c82eb787350483be44367be780ba361e032394be4e32353, `driver.mjs` 079c4a69065e8c51ef1fe141d7a20d3ca01f8f424007c6ba6bda83f51b4bcfe2, `run5.log` b8c788dfeb16c8e0f0ae361ff7cb9e2cf489237244d6ed67c0737bec84947488, `results.json` c3c01b7410377372a90bee62e32c11bc739e3f047656d14f7db62029a6b67176. Earlier runs show the fixture-MIME mistake (`run1-fixture-mime-bug.log`), a driver error (`run2-driver-error.log`), a missing gateway prefix (`run3-no-gateway-prefix.log`) and the first leak run (`run4-leaks-found.log`). Owned Docker resources were removed after each run. This is a local file-backend proof, not hosted proof. Only the service-role key was tested; the anon and authenticated roles are covered by the policy check and were not exercised.
+- Local evidence in unit tests: `storage-bucket-fence`, `source-delete`, `r2-reference-apply`, `r2-references`, `r2-operator-cli`, including a disposable PostgreSQL 17 container for the gate SQL and the reference SQL. No production command has run.
+- Earlier ACL evidence (superseded for production): the ACL freeze and delete-phase proofs in the sections above stay valid for a database where `postgres` owns the grants. They do not apply to hosted Supabase.
 
 ### Remaining blog integration proof
 
