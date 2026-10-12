@@ -427,6 +427,19 @@ describe('r2-operator-cli: apply command', () => {
     expect(seen).toEqual([db, db]);
   });
 
+  it('gives the database backup gate a runner without the 2-minute timeout', async () => {
+    const { db } = makeDb();
+    const seen: unknown[] = [];
+    await runApplyReferencesCommand({
+      manifest: runDir, confirm: true, config: CONFIG, createDb: async () => db,
+      runner: (_command: string, _args: string[], options: unknown) => { seen.push(options); return ''; },
+      apply: async ({ verifyFreshDatabaseBackup }: any) => { await verifyFreshDatabaseBackup(); return { applied: { total: 0 } }; },
+      freshBackup: async ({ runner }: any) => { runner('yarn', ['db:backup'], { cwd: '/x' }); },
+      resolveCheckoutRoot: async () => root,
+    });
+    expect(seen).toEqual([{ timeoutMs: 3_600_000, cwd: '/x' }]);
+  });
+
   it('rejects apply without --confirm before any database or secret work', async () => {
     let created = 0;
     await expect(

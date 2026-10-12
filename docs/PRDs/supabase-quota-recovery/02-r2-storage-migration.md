@@ -281,7 +281,9 @@ mkdir -p -m 700 "$(dirname "$ACL")"
 node scripts/storage/database-backup-gate.mjs
 # 2. Record the exact ACL (read-only, mode 0600, never overwritten). Copy it to the laptop and compare the sha256.
 node scripts/storage/storage-acl-fence.mjs snapshot --out "$ACL"
-rsync -a --ignore-existing "$ACL" joao@192.168.1.126:backups/miu-storage-acl/ && sha256sum "$ACL"
+ssh joao@192.168.1.126 'mkdir -p -m 700 ~/backups/miu-storage-acl'
+rsync -a --ignore-existing "$ACL" joao@192.168.1.126:backups/miu-storage-acl/
+sha256sum "$ACL"; ssh joao@192.168.1.126 "sha256sum ~/backups/miu-storage-acl/$(basename "$ACL")"
 # 3. Fence. Takes a fresh dual backup, revokes INSERT/UPDATE/DELETE from PUBLIC/anon/authenticated/service_role, verifies all four roles.
 node scripts/storage/storage-acl-fence.mjs freeze --confirm --snapshot "$ACL"
 # 4. Expect fenced=true delete_open=false.

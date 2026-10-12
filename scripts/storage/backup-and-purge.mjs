@@ -2091,8 +2091,10 @@ async function cmdDeleteSource(args) {
   if (!args.confirm) throw new Error('delete-source requires --confirm');
   const plan = await loadSourceDeletePlan({ backupRunDir: path.resolve(required(args.manifest, '--manifest <backup-run-dir>')) });
   const { resolvePrimaryCheckoutRoot, verifyFreshDatabaseBackup } = await import('./database-backup-gate.mjs');
-  const repoRoot = await resolvePrimaryCheckoutRoot({ runner: defaultRunCommand });
-  const databaseBackup = await verifyFreshDatabaseBackup({ repoRoot, runner: defaultRunCommand });
+  // `yarn db:backup` can run for minutes; the default runner timeout is 2 minutes.
+  const gateRunner = (command, args, options = {}) => defaultRunCommand(command, args, { timeoutMs: 60 * 60_000, ...options });
+  const repoRoot = await resolvePrimaryCheckoutRoot({ runner: gateRunner });
+  const databaseBackup = await verifyFreshDatabaseBackup({ repoRoot, runner: gateRunner });
   log(`fresh database backup: ${JSON.stringify(databaseBackup)}`);
   const config = loadConfig();
   const db = await createDb(config);

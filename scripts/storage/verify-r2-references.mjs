@@ -54,6 +54,7 @@ import { FENCE_MATRIX_SQL, isNativeFenced, readFenceMatrix } from './storage-acl
 export const DEFAULT_PUBLIC_BASE = 'https://assets.myimageupscaler.com';
 export const SOURCE_SUPABASE_ORIGIN = 'https://xqysaylskffsfwunczbd.supabase.co';
 export const VERIFY_BATCH_SIZE = 50;
+const BACKUP_GATE_TIMEOUT_MS = 60 * 60 * 1000;
 export const PLAN_FILE = 'r2-reference-plan.json';
 export const PLAN_DIGEST_FILE = 'r2-reference-plan.digest';
 export const SAVED_BACKEND_TABLE = 'saved_images';
@@ -829,7 +830,10 @@ export async function runApplyReferencesCommand(deps = {}) {
       checkFence: async () => isNativeFenced(await readFence(db)),
       verifyFreshDatabaseBackup: async () => {
         const repoRoot = await resolveCheckoutRoot({ runner });
-        return freshBackup({ repoRoot, runner });
+        // `yarn db:backup` can run for minutes; the default runner timeout is 2 minutes.
+        const gateRunner = (command, args, options = {}) =>
+          runner(command, args, { timeoutMs: BACKUP_GATE_TIMEOUT_MS, ...options });
+        return freshBackup({ repoRoot, runner: gateRunner });
       },
     });
     log(`[storage] applied ${result.applied.total} reference row(s)`);
