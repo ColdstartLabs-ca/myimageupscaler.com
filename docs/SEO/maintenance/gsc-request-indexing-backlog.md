@@ -104,12 +104,12 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 - [ ] `https://myimageupscaler.com/blog/reduce-image-noise`
 - [ ] `https://myimageupscaler.com/blog/noise-reduction-in-image`
 - [ ] `https://myimageupscaler.com/blog/ai-photo-restoration`
-- [ ] `https://myimageupscaler.com/blog/how-to-clear-up-a-photo`
+- [x] `https://myimageupscaler.com/blog/how-to-clear-up-a-photo` — indexing requested 2026-10-12 in the GSC URL Inspection UI, confirmed "URL was added to a priority crawl queue"; closes the 2026-08-13 PRD 06 pending request. Normal public GET: 200, self-canonical, index/follow, cache HIT. Fresh GSC Sep 12–Oct 9: 28 clicks / 4,009 impressions, position 13.8. Request acceptance is not a guarantee of a new crawl, revised Google copy, or traffic lift.
 - [ ] `https://myimageupscaler.com/blog/best-image-upscaling-tools-2026`
 
 - [x] `https://myimageupscaler.com/`
 
-- [ ] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared` — 2026-09-16 fact correction is now live in public HTML (cache HIT, corrected heading + four vendor facts); eligible for a manual GSC request. **Not yet requested.**
+- [x] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared` — indexing requested 2026-10-12 in the GSC URL Inspection UI, confirmed "URL was added to a priority crawl queue". Normal public GET: 200, self-canonical, index/follow, cache HIT; rendered article contains the corrected comparison heading and vendor facts from the 2026-09-16 factual repair. This closes that repair's pending request, not a new content experiment or proof of ranking recovery.
 - [x] `https://myimageupscaler.com/blog/best-free-ai-photo-enhancer-online`
 
 - [x] `https://myimageupscaler.com/blog/fix-blurry-photos-ai-methods-guide`
