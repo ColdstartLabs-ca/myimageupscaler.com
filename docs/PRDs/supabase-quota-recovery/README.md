@@ -71,6 +71,14 @@ A daily guard in each project alerts by email (`PROVIDER_ALERT_EMAIL`) at 80% of
 
 External: AutopilotRank PRDs AQR-01 to AQR-03 are in `autopilotrank.com/docs/PRDs/supabase-quota-recovery/`. The org DB total stays over 1.1 GB until PRD-AQR-03 AC-4 holds (AP 250 MB or less).
 
+## Status 2026-10-12
+
+- MIU database: 320–324 MB of the 450 MB budget. Done.
+- Supabase Storage: 311 MB (was about 7.5 GB). It drops below 50 MB after the 2026-10-18 input run (PRD-SQR-02 AC-7).
+- MIU R2: 8.03 GB now. It drops to about 3.6 GB after the 2-day `inputs/` lifecycle rule removes the copied inputs.
+- PRD-SQR-02 cutover, source delete and production deploy are done (see that PRD). PRD-SQR-03 is complete. PRD-SQR-04 activation is parked (D14).
+- AutopilotRank: João approved the AC-2 exception. The fresh measurement window is 2026-10-12T03:41:53Z to 2026-10-13T03:41:53Z. `QUOTA_ALERT_EMAIL` is set and AP was redeployed on 2026-10-12 (health and pages 200, migrations up to date). AP compaction (AQR-03) runs after the window passes.
+
 ## Current safety checkpoint (2026-10-12)
 
 Programmatic continuation (2026-10-12): reference verification now rejects uploads, reference edits and native-version changes during destination readback; 80 affected tests (including real PostgreSQL/HTTP races), `yarn verify` and an independent native review passed. A fresh 6,591-object native-version proof is verified on both machines, and the new snapshot loader matches it in a read-only production check (SQR-02). This is delta detection, not a permanent write fence; apply stays disabled. Existing OAuth has no R2 read/write scope and is expired; no credential/permission refresh or billable enumeration was performed, so aggregate metrics remain unmeasured. AP investigation confirms the original 25-article backlog assumption conflicts with 164 distinct first-block events; the original threshold/window remains FAIL. No explicitly authorized real warning recipient was found; email remains pending independently. Deployment, source deletion and automatic expiry remain unchanged.

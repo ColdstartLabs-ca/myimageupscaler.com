@@ -1,6 +1,6 @@
 # PRD-SQR-04 — Free-gallery 30-day inactivity expiry with warning email
 
-**Status:** IN PROGRESS
+**Status:** IN PROGRESS — activation PARKED by the operator on 2026-10-12 (decision D14). `GALLERY_EXPIRY_ENABLED` stays false.
 **Priority:** P1 — Without a working expiry, gallery storage keeps growing toward the R2 10 GB free limit. The current cleanup uses the wrong activity signal and can leave orphan files (AC-1, AC-2).
 **Complexity:** 5 (MEDIUM)
 **Owner:** Claude
@@ -40,6 +40,8 @@
 - [x] AC-5 [local]: The gallery page and terms state the retention rule, and the free-offer protection tests pass. Proof: `gallery-retention-copy`, `multilocale-retention-copy`, `free-offer-conversion-copy` and `protected-pages` unit suites. Evidence: 43 copy/SEO tests passed 2026-10-12; no rendered-browser copy check was performed.
 
 ## Remaining activation gates
+
+- 2026-10-12 (D14, operator): Activation is PARKED. `GALLERY_EXPIRY_ENABLED` stays false. Reasons: (1) there is no quota need, because MIU R2 is about 3.6 GB after the inputs lifecycle rule runs, (2) activation emails customers, (3) deletion needs per-image dual-machine proof registration first. AC-4 stays open. Revisit when R2 growth or a cost trigger makes expiry necessary.
 
 - João has authorized deployment and continued execution. Automatic expiry remains disabled until per-image desktop/laptop backup registration, immutable recovery-copy proof, and scheduled warning/delivery verification pass. The paused production cron must not be replaced until those safety gates are satisfied.
 
