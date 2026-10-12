@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
+import { buildInputKey, presignPut, R2_PRIVATE_BUCKET } from '@server/services/r2-storage.service';
 import {
   BoundedJsonBodyTooLargeError,
   readBoundedJsonBody,
@@ -9,7 +10,6 @@ import { UUID_V4_PATTERN } from '@shared/validation/uuid';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
-const BUCKET_NAME = 'upscale-inputs';
 const UPLOAD_REQUEST_MAX_BYTES = 8 * 1024;
 const uploadRequestSchema = z
   .object({
@@ -111,13 +111,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   const extension = extensionByMime[parsed.data.mimeType];
   const storagePath = `${userId}/${parsed.data.jobId}.${extension}`;
-  const { data, error } = await supabaseAdmin.storage
-    .from(BUCKET_NAME)
-    // Keep the validated input immutable while its signed read URL is in use.
-    .createSignedUploadUrl(storagePath, { upsert: false });
-  if (error || !data?.token) {
+
+  let uploadUrl: string;
+  try {
+    uploadUrl = await presignPut({
+      bucket: R2_PRIVATE_BUCKET,
+      key: buildInputKey(storagePath),
+      sizeBytes: parsed.data.sizeBytes,
+      contentType: parsed.data.mimeType,
+    });
+  } catch {
     return NextResponse.json({ error: 'Unable to prepare image upload' }, { status: 503 });
   }
 
-  return NextResponse.json({ storagePath, uploadToken: data.token });
+  return NextResponse.json({ storagePath, uploadUrl });
 }

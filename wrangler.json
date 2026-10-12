@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "myimageupscaler",
-  "main": ".open-next/worker.js",
+  "main": "worker.mjs",
   "compatibility_date": "2024-12-30",
   "compatibility_flags": ["nodejs_compat", "enable_request_signal"],
   "routes": [
@@ -19,9 +19,15 @@
     }
   ],
   "durable_objects": {
-    "bindings": [{ "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" }]
+    "bindings": [
+      { "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" },
+      { "name": "NEXT_TAG_CACHE_DO_SHARDED", "class_name": "DOShardedTagCache" }
+    ]
   },
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["DOQueueHandler"] }],
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["DOQueueHandler"] },
+    { "tag": "v2-tag-cache", "new_sqlite_classes": ["DOShardedTagCache"] }
+  ],
   "observability": {
     "enabled": true
   },

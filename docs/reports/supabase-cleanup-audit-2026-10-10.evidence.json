@@ -1,0 +1,122 @@
+{
+  "project": "myimageupscaler.com",
+  "project_ref": "xqysaylskffsfwunczbd",
+  "organization": "ColdStartLabs",
+  "organization_ref": "aqsyoufmnfjkrwhxcsxo",
+  "query_observed_at": "2026-10-10T17:52:11.932327Z",
+  "database_observed_at": "2026-10-10T17:53:23.236157Z",
+  "current_database_bytes": 644115603,
+  "cluster_database_bytes": 659356469,
+  "default_transaction_read_only": "off",
+  "storage_buckets": [
+    {
+      "bucket": "upscale-inputs",
+      "objects": 4750,
+      "bytes": 4600951110
+    },
+    {
+      "bucket": "saved-images",
+      "objects": 1658,
+      "bytes": 3296674531
+    },
+    {
+      "bucket": "blog-images",
+      "objects": 136,
+      "bytes": 5435208
+    }
+  ],
+  "conservative_temporary_candidates": {
+    "files": 3815,
+    "bytes": 4254281039,
+    "cutoff": "both created_at and updated_at older than query time minus seven days",
+    "grammar": "UUID-shaped-user/UUID-shaped-file.(jpg|png|webp|heic)",
+    "gallery_reference": false,
+    "nonterminal_reservation_reference": false,
+    "nonterminal_job_reference": false,
+    "reservation_output_reference": false,
+    "job_output_reference": false,
+    "not_a_deletion_manifest": true
+  },
+  "gallery": {
+    "referenced_objects": 1632,
+    "referenced_bytes": 3238661385,
+    "unreferenced_objects": 26,
+    "unreferenced_bytes": 58013146
+  },
+  "largest_application_tables": [
+    {
+      "name": "email_lifecycle_queue",
+      "total_bytes": 223723520,
+      "heap_bytes": 133701632,
+      "index_bytes": 89948160
+    },
+    {
+      "name": "email_lifecycle_events",
+      "total_bytes": 92815360,
+      "heap_bytes": 47112192,
+      "index_bytes": 45654016
+    },
+    {
+      "name": "webhook_events",
+      "total_bytes": 88457216,
+      "heap_bytes": 48775168,
+      "index_bytes": 11468800
+    }
+  ],
+  "email_queue": [
+    {
+      "status": "cancelled",
+      "rows": 9899,
+      "older_30d_updated_rows": 5202
+    },
+    {
+      "status": "failed",
+      "rows": 1106,
+      "older_30d_updated_rows": 1106
+    },
+    {
+      "status": "pending",
+      "rows": 3930,
+      "older_30d_updated_rows": 224
+    },
+    {
+      "status": "sent",
+      "rows": 10409,
+      "older_30d_updated_rows": 8311
+    },
+    {
+      "status": "skipped",
+      "rows": 194844,
+      "older_30d_updated_rows": 192625
+    }
+  ],
+  "cleanup_state_object_present": false,
+  "pg_cron_installed": false,
+  "restriction_log_window": {
+    "start": "2026-10-09T22:43:00Z",
+    "end": "2026-10-10T17:47:00Z",
+    "status_402_counts": {
+      "rest": 1924,
+      "storage": 194,
+      "auth": 160
+    },
+    "status_200_counts": {
+      "rest": 2,
+      "auth": 30
+    }
+  },
+  "notice": {
+    "received": "2026-10-09T22:43:00Z",
+    "organization_database_gb": 1.41,
+    "organization_storage_gb": 5.47,
+    "stated_limits_gb": 1.1,
+    "quota_refill_date": "2026-10-13"
+  },
+  "method": "Management API project attribution and native project-verified Supabase MCP SELECT-only queries; ClickHouse aggregate-only logs. No raw customer records or production writes.",
+  "derived": {
+    "current_storage_bytes": 7903060849,
+    "remaining_bytes_after_candidates": 3648779810,
+    "total_402_requests": 2278,
+    "storage_object_count": 6544
+  }
+}

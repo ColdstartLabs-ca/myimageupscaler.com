@@ -32,7 +32,7 @@ import type {
 } from '@server/analytics/types';
 import { isDevelopment, isTest, clientEnv } from '@shared/config/env';
 import { multiplexer } from '@shared/analytics/analyticsMultiplexer';
-import { AmplitudeProvider } from '@shared/analytics/providers/amplitude-provider';
+import type { AmplitudeProvider } from '@shared/analytics/providers/amplitude-provider';
 import { GA4Provider } from '@shared/analytics/providers/ga4-provider';
 import { getBrowserReferralSource } from './referralSource';
 import { buildOrganicFunnelDimensions } from '@client/analytics/funnel-attribution';
@@ -478,6 +478,7 @@ export const analytics = {
     }
 
     // Initialize providers via multiplexer
+    const { AmplitudeProvider } = await import('@shared/analytics/providers/amplitude-provider');
     amplitudeProvider = new AmplitudeProvider();
     multiplexer.addProvider(amplitudeProvider);
     await multiplexer.initProvider(amplitudeProvider, { apiKey });

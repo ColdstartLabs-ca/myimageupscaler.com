@@ -5,6 +5,9 @@ step_build() {
 
     cd "$PROJECT_ROOT"
 
+    # Next traces a linked dependency tree as one path, bypassing OpenNext's file patches.
+    [[ ! -L node_modules ]] || log_error "Production builds require a local node_modules directory"
+
     # Create .env.local for Next.js build (combines client + api env vars)
     log_info "Creating .env.local for Next.js build..."
     cat .env.client.prod .env.api.prod > .env.local 2>/dev/null || true

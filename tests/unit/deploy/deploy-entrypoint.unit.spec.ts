@@ -45,10 +45,11 @@ describe('yarn deploy safety gates', () => {
   });
 
   test('applies and verifies production migrations only after the database backup', () => {
-    const backup = 'if ! yarn db:backup; then';
+    const backup = 'if ! node "$PROJECT_ROOT/scripts/storage/database-backup-gate.mjs"; then';
     const migrationGate =
       'source "$SCRIPT_DIR/steps/00-database-migrations.sh" && deploy_database_migrations';
 
+    expect(deployScript).toContain(backup);
     expect(deployScript).toContain(migrationGate);
     expect(deployScript.indexOf(backup)).toBeLessThan(deployScript.indexOf(migrationGate));
     expect(deployScript.indexOf(migrationGate)).toBeLessThan(
@@ -79,5 +80,16 @@ describe('yarn deploy safety gates', () => {
 
   test('does not block deploys by opening the Playwright HTML report server', () => {
     expect(playwrightConfig).toContain("['html', { open: 'never' }]");
+  });
+
+  test('isolates the Playwright runner from the production env deploy.sh loads before tests', () => {
+    expect(deployScript.indexOf('load-env.sh" --prod')).toBeLessThan(
+      deployScript.indexOf('yarn test:seo-guard')
+    );
+    expect(playwrightConfig).toContain('applyIsolatedTestEnv();');
+    expect(playwrightConfig.indexOf('applyIsolatedTestEnv();')).toBeLessThan(
+      playwrightConfig.indexOf('defineConfig({')
+    );
+    expect(playwrightConfig).not.toContain('dotenv.config(');
   });
 });

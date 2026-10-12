@@ -5,9 +5,10 @@ import { test, expect } from '../test-fixtures';
  *
  * Tests the actual SEO metadata from the landing page:
  * - Meta title from locales/en/common.json meta.homepage.title
- * - Meta description contains enhance/upscale/ai keywords (no "free" claim: see
- *   SEO Recovery PRD 1 "Product Truth" - the product has no free tier, only a
- *   region-dependent welcome credit grant)
+ * - Meta description contains enhance/upscale/ai keywords and MUST keep the free
+ *   offer ("free" + "no credit card"). The 2026-09-10 copy pass stripped it and the
+ *   2026-09-25 restore missed it; signups fell ~40-55%. The regional welcome-credit
+ *   grant is real, so the claim is truthful and load-bearing.
  * - H1: "AI Image Upscaler & Photo Enhancer" (heroTitle + heroTitleHighlight)
  * - H2 subheadline exists
  */
@@ -37,8 +38,12 @@ test.describe('Landing Page SEO', () => {
       // Verify contains "ai"
       expect(metaDescription?.toLowerCase()).toContain('ai');
 
-      // Must NOT promise a free tier - product truth constraint
-      expect(metaDescription?.toLowerCase()).not.toMatch(/\bfree\b/);
+      // Must keep the free offer: stripping it in Sep 2026 cut signups ~40-55%.
+      expect(metaDescription?.toLowerCase()).toMatch(/\bfree\b/);
+      expect(metaDescription?.toLowerCase()).toMatch(/no credit card/);
+
+      // Never tease a paywall in the snippet.
+      expect(metaDescription).not.toContain('Create an account to see');
     });
 
     test('Verify canonical URL is set correctly', async ({ page }) => {

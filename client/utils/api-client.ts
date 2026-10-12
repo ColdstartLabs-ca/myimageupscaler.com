@@ -409,43 +409,27 @@ function getUploadErrorMessage(error: unknown): string {
   return 'Unknown storage error';
 }
 
-function isCommittedUploadConflict(error: unknown): boolean {
-  if (!error || typeof error !== 'object') return false;
-
-  const details = error as {
-    status?: unknown;
-    statusCode?: unknown;
-    message?: unknown;
-    error?: unknown;
-  };
-  const status = details.statusCode ?? details.status;
-  if (status === 409 || status === '409') return true;
-
-  return [details.message, details.error].some(
-    value => typeof value === 'string' && /already exists|duplicate/i.test(value)
-  );
-}
-
-async function uploadToSignedUrlWithRetry(
-  storagePath: string,
-  uploadToken: string,
+async function uploadToPresignedUrlWithRetry(
+  uploadUrl: string,
+  contentType: string,
   file: File
 ): Promise<void> {
-  const bucket = createClient().storage.from('upscale-inputs');
   let lastError: unknown;
 
   for (let attempt = 1; attempt <= UPLOAD_MAX_ATTEMPTS; attempt += 1) {
     try {
-      const { error } = await bucket.uploadToSignedUrl(storagePath, uploadToken, file, {
-        contentType: file.type || 'image/jpeg',
-        upsert: false,
+      // The presigned PUT binds the method, content type and immutable-write
+      // precondition, so they must match the values the upload route signed.
+      const response = await fetch(uploadUrl, {
+        method: 'PUT',
+        headers: { 'content-type': contentType, 'if-none-match': '*' },
+        body: file,
       });
-      if (!error) return;
-      // With an immutable grant, a response-loss after the storage commit is
-      // reported as a conflict. The server validates the stored object before
-      // it signs the provider-facing read URL.
-      if (isCommittedUploadConflict(error)) return;
-      lastError = error;
+      // 412 means the immutable object is already committed (for example, a
+      // retry after its first response was lost). The server validates the
+      // stored metadata and prefix, so treat it as a completed upload.
+      if (response.ok || response.status === 412) return;
+      lastError = new Error(`Storage rejected the upload with status ${response.status}`);
     } catch (error) {
       lastError = error;
     }
@@ -790,9 +774,13 @@ export const processImage = async (
     }
     const uploadGrant = await parseJsonResponse<{
       storagePath: string;
-      uploadToken: string;
+      uploadUrl: string;
     }>(uploadGrantResponse);
-    await uploadToSignedUrlWithRetry(uploadGrant.storagePath, uploadGrant.uploadToken, file);
+    await uploadToPresignedUrlWithRetry(
+      uploadGrant.uploadUrl,
+      file.type || 'image/jpeg',
+      file
+    );
 
     const response = await fetch('/api/upscale', {
       method: 'POST',

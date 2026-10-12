@@ -43,6 +43,8 @@ export const CSP_POLICY = {
     'https://*.replicate.delivery',
     'https://replicate.com',
     'https://*.replicate.com',
+    'https://c5dbf25d94692c78b79a8403959f8e54.r2.cloudflarestorage.com', // R2 input PUT
+    'https://assets.myimageupscaler.com', // R2 public blog images
   ],
   'frame-src': [
     'https://js.stripe.com',

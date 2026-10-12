@@ -11,6 +11,14 @@ vi.mock('@supabase/supabase-js', () => ({
   createClient: mockCreateClient,
 }));
 
+// Real-database helpers are closed at runtime (see test-env-isolation.unit.spec.ts); this
+// unit test only covers the deletion order against a fully mocked client.
+const { mockAssertRealTestDatabase } = vi.hoisted(() => ({ mockAssertRealTestDatabase: vi.fn() }));
+vi.mock('../../helpers/test-env-isolation', async importOriginal => ({
+  ...(await importOriginal<object>()),
+  assertRealTestDatabase: mockAssertRealTestDatabase,
+}));
+
 import { cleanupOldTestUsers } from '../../helpers/test-user-reset';
 
 describe('cleanupOldTestUsers', () => {
@@ -49,6 +57,12 @@ describe('cleanupOldTestUsers', () => {
 
     await expect(cleanupOldTestUsers()).resolves.toBe(1);
 
+    expect(mockAssertRealTestDatabase).toHaveBeenCalledWith('https://test-project.supabase.co', [
+      'test-service-role-key',
+    ]);
+    expect(mockAssertRealTestDatabase.mock.invocationCallOrder[0]).toBeLessThan(
+      mockCreateClient.mock.invocationCallOrder[0]
+    );
     expect(deletedTables.get('free_credit_grants')).toHaveBeenCalledWith('user_id', testUser.id);
     expect(deletedTables.get('credit_transactions')).toHaveBeenCalledWith('user_id', testUser.id);
     expect(mockDeleteUser).toHaveBeenCalledWith(testUser.id);

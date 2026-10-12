@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { createLogger } from '@server/monitoring/logger';
+import { getCloudflareContext } from '@opennextjs/cloudflare';
 import {
   ensureAntiFreeloaderProfile,
   type IAntiFreeloaderProfile,
@@ -14,6 +15,19 @@ import { NextRequest, NextResponse } from 'next/server';
 
 function isRegionTier(value: string | null | undefined): value is RegionTier {
   return value === 'standard' || value === 'restricted' || value === 'paywalled';
+}
+
+/**
+ * Analytics must never block account setup, but a promise that is neither awaited
+ * nor registered with the Workers runtime dies with the response. Local Next.js and
+ * unit tests have no execution context; there the promise simply runs unawaited.
+ */
+function runAfterResponse(promise: Promise<unknown>): void {
+  try {
+    getCloudflareContext().ctx.waitUntil(promise);
+  } catch {
+    // No Workers execution context: nothing to keep the promise alive.
+  }
 }
 
 async function readAccountSetupAttribution(req: NextRequest): Promise<Record<string, unknown>> {
@@ -104,38 +118,41 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const requestedCredits = getFreeCreditsForTier(resolvedProfile.region_tier);
     if (grant && !grant.existingGrant && grant.grantedCredits < requestedCredits) {
-      trackServerEvent(
-        'free_credits_reduced',
-        {
-          requestedCredits,
-          grantedCredits: grant.grantedCredits,
-          matchedAccountCount: grant.matchedAccountCount,
-          reason: grant.matchedAccountCount > 0 ? 'shared_identity' : 'region_tier',
-        },
-        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-      ).catch(err =>
-        logger.error('Failed to track free_credits_reduced event', { userId, error: String(err) })
+      runAfterResponse(
+        trackServerEvent(
+          'free_credits_reduced',
+          {
+            requestedCredits,
+            grantedCredits: grant.grantedCredits,
+            matchedAccountCount: grant.matchedAccountCount,
+            reason: grant.matchedAccountCount > 0 ? 'shared_identity' : 'region_tier',
+          },
+          { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+        ).catch(err =>
+          logger.error('Failed to track free_credits_reduced event', { userId, error: String(err) })
+        )
       );
     }
   }
 
   if (!alreadySetup && !grant?.existingGrant) {
-    // Fire-and-forget: analytics must never block account setup.
-    trackServerEvent(
-      'account_created',
-      {
-        ...normalizeCoreEventProperties('account_created', {
-          method: 'email',
-          pricingRegion: resolvedProfile?.region_tier,
-          utmSource: attribution.utmSource,
-          utmMedium: attribution.utmMedium,
-          utmCampaign: attribution.utmCampaign,
-          attributionAvailable: attribution.attributionAvailable,
-        }),
-      },
-      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
-    ).catch(err =>
-      logger.error('Failed to track account_created event', { userId, error: String(err) })
+    runAfterResponse(
+      trackServerEvent(
+        'account_created',
+        {
+          ...normalizeCoreEventProperties('account_created', {
+            method: 'email',
+            pricingRegion: resolvedProfile?.region_tier,
+            utmSource: attribution.utmSource,
+            utmMedium: attribution.utmMedium,
+            utmCampaign: attribution.utmCampaign,
+            attributionAvailable: attribution.attributionAvailable,
+          }),
+        },
+        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+      ).catch(err =>
+        logger.error('Failed to track account_created event', { userId, error: String(err) })
+      )
     );
   }
 

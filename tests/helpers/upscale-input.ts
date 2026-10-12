@@ -1,11 +1,10 @@
 import { randomUUID } from 'node:crypto';
 
-import { createClient } from '@supabase/supabase-js';
+import { test } from '@playwright/test';
 import { serverEnv } from '@shared/config/env';
 
 import { AuthenticatedApiClient, ApiResponse } from './api-client';
-
-const UPSCALE_INPUT_BUCKET = 'upscale-inputs';
+import { assertRealTestDatabase, REAL_TEST_DATABASE_BLOCKED } from './test-env-isolation';
 
 const extensionByMime: Record<string, string> = {
   'image/jpeg': 'jpg',
@@ -41,9 +40,14 @@ export async function uploadUpscaleInput(
   const bytes = Buffer.from(base64Payload, 'base64');
   const jobId = randomUUID();
 
+  // Validate the exact storage-client config before any request (grant POST included).
+  const supabaseUrl = serverEnv.NEXT_PUBLIC_SUPABASE_URL ?? serverEnv.SUPABASE_URL;
+  const supabaseKey = serverEnv.SUPABASE_SERVICE_ROLE_KEY || serverEnv.SUPABASE_ANON_KEY;
+  assertRealTestDatabase(supabaseUrl, [supabaseKey]);
+
   const grant = await api.post<{
     storagePath: string;
-    uploadToken: string;
+    uploadUrl: string;
   }>('/api/upscale/upload', {
     filename: `test-image.${extension}`,
     mimeType: image.mimeType,
@@ -57,27 +61,16 @@ export async function uploadUpscaleInput(
 
   const grantBody = await grant.json();
 
-  const supabaseUrl = serverEnv.NEXT_PUBLIC_SUPABASE_URL ?? serverEnv.SUPABASE_URL;
-  const supabaseKey = serverEnv.SUPABASE_SERVICE_ROLE_KEY || serverEnv.SUPABASE_ANON_KEY;
-  if (!supabaseUrl || !supabaseKey) {
-    throw new Error('Supabase credentials are required to upload test upscale inputs');
-  }
-
-  const { error } = await createClient(supabaseUrl, supabaseKey, {
-    auth: { persistSession: false },
-  })
-    .storage.from(UPSCALE_INPUT_BUCKET)
-    .uploadToSignedUrl(
-      grantBody.storagePath,
-      grantBody.uploadToken,
-      new Blob([bytes], { type: image.mimeType }),
-      {
-        contentType: image.mimeType,
-        upsert: false,
-      }
-    );
-  if (error) {
-    throw new Error(`Signed upload failed: ${error.message}`);
+  // Bytes go to the presigned R2 PUT URL. The signature binds the method,
+  // content type and immutable-write precondition, so all must match what the
+  // upload route signed.
+  const upload = await fetch(grantBody.uploadUrl, {
+    method: 'PUT',
+    headers: { 'content-type': image.mimeType, 'if-none-match': '*' },
+    body: bytes,
+  });
+  if (!upload.ok) {
+    throw new Error(`Signed upload failed: storage rejected the upload (${upload.status})`);
   }
 
   return { storagePath: grantBody.storagePath, jobId, mimeType: image.mimeType };
@@ -92,7 +85,15 @@ export async function postUpscaleWithStoredImage(
   image: { dataUrl: string; mimeType: string },
   config: Record<string, unknown>
 ): Promise<ApiResponse<unknown>> {
-  const upload = await uploadUpscaleInput(api, image);
+  const upload = await uploadUpscaleInput(api, image).catch((error: unknown) => {
+    // Storage-backed upscale needs a real Supabase: skip, don't fail, while none is verified.
+    // Unsafe (production) targets still throw.
+    test.skip(
+      error instanceof Error && error.message === REAL_TEST_DATABASE_BLOCKED,
+      String(error)
+    );
+    throw error;
+  });
 
   return api.post('/api/upscale', {
     storagePath: upload.storagePath,

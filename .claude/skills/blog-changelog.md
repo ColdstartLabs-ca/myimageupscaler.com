@@ -1,5 +1,24 @@
 # Blog Changelog
 
+## 2026-10-08
+
+### Verification: YouTube rung-3 public exposure confirmed
+
+**Affected:** how-to-upscale-youtube-thumbnails
+**Changes:** No new blog edit. The normal public rendered article now contains the diagnostic module; authenticated API SHA256 remains `1e8e067b7bc53313c50e9802a16bcd92e9e3f825213d353c2f736b1a785f7fc9`. Retained the Oct 5 DB write and exact prior body; anchored the measurement date to first confirmed public exposure Oct 8. URL Inspection reports `Submitted and indexed`, successful Oct 7 post-write crawl and matching canonicals; existing indexing row API-resolved, not manually requested. Earliest final-data verdict: Oct 26.
+
+## 2026-10-05
+
+### SEO: YouTube thumbnail rung-3 diagnostic proof pass — public exposure pending
+
+**Affected:** how-to-upscale-youtube-thumbnails
+**Why:** Final GSC through 2026-10-01 judged rung 2 FLAT (1.00→0.93 clicks/day, impressions +4%, position −0.2), with the current page still at position 6.5 and 13 clicks / 3,854 impressions. The blur/low-quality query cluster remains owned by this URL; fragment sitelinks are not competing canonical pages.
+**Changes:**
+
+- Changed only production `content`: direct diagnostic answer, reproducible original/export/YouTube comparison, pixel-count proof, and linked current official upload requirements; corrected contradictory DPI, upload and guest-access claims within that same body field. No title, meta, slug, canonical, media or publishing-status changes.
+- Fresh schema/data backup passed the full backup/list/gzip gate. API readback exactly matches SHA256 `1e8e067b7bc53313c50e9802a16bcd92e9e3f825213d353c2f736b1a785f7fc9` at `2026-10-05T16:33:09.439607+00:00`.
+- Public HTML verification remains **pending**: the normal URL returns 200/self-canonical/indexable/cache HIT but still renders the prior body. The ledger retains the exact prior body and explicitly HOLDs measurement until public exposure is verified. No GSC request was confirmed.
+
 ## 2026-09-24
 
 ### SEO: Three Kings rung-3 tests and description rollback

@@ -131,5 +131,8 @@
     "fields": {
       "admin": "Admin"
     }
+  },
+  "gallery": {
+    "retentionNote": "Kostenlose Galerie-Bilder können nach 30 Tagen Inaktivität ablaufen. Wir warnen mindestens 7 Tage vorher, und eine Anmeldung erhält sie. Kostenpflichtige Pläne sind ausgenommen."
   }
 }

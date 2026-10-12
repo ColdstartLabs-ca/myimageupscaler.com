@@ -4,10 +4,14 @@ import {
   createSpoofedIpAllocator,
   type IAccountCreationUser,
 } from '../helpers/account-creation-e2e';
+import { REAL_TEST_DATABASE_BLOCKED } from '../helpers/test-env-isolation';
 
 const nextIp = createSpoofedIpAllocator();
 
 test.describe('Account creation free-credit hardening', () => {
+  // ponytail: every test here needs real auth users + grants; un-skip once a verified MIU test database exists.
+  test.skip(true, REAL_TEST_DATABASE_BLOCKED);
+
   let harness: AccountCreationHarness;
 
   test.beforeEach(() => {
@@ -15,7 +19,7 @@ test.describe('Account creation free-credit hardening', () => {
   });
 
   test.afterEach(async () => {
-    await harness.cleanup();
+    await harness?.cleanup();
   });
 
   test('should grant five credits after standard email confirmation', async ({ page }) => {

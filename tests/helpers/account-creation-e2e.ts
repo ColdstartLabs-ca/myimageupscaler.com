@@ -8,6 +8,7 @@ import {
   type Route,
 } from '@playwright/test';
 import { clientEnv, serverEnv } from '@shared/config/env';
+import { assertRealTestDatabase } from './test-env-isolation';
 
 const TEST_PASSWORD = 'AccountCreationE2E!123';
 const TEST_EMAIL_DOMAIN = 'test.local';
@@ -115,6 +116,10 @@ export class AccountCreationHarness {
     if (serverEnv.ENV !== 'test') {
       throw new Error('AccountCreationHarness may only run with ENV=test');
     }
+    assertRealTestDatabase(clientEnv.SUPABASE_URL, [
+      serverEnv.SUPABASE_SERVICE_ROLE_KEY,
+      clientEnv.SUPABASE_ANON_KEY,
+    ]);
     if (!serverEnv.SUPABASE_SERVICE_ROLE_KEY) {
       throw new Error('SUPABASE_SERVICE_ROLE_KEY is required for account-creation E2E tests');
     }
@@ -331,43 +336,40 @@ export class AccountCreationHarness {
       throw new Error(`Unable to prepare account-creation upscale input: ${await grant.text()}`);
     }
 
-    const { storagePath, uploadToken } = (await grant.json()) as {
+    const { storagePath, uploadUrl } = (await grant.json()) as {
       storagePath: string;
-      uploadToken: string;
+      uploadUrl: string;
     };
-    const { error } = await this.admin.storage
-      .from('upscale-inputs')
-      .uploadToSignedUrl(storagePath, uploadToken, new Blob([imageBytes], { type: 'image/jpeg' }), {
-        contentType: 'image/jpeg',
-        upsert: false,
-      });
+    const uploadResponse = await fetch(uploadUrl, {
+      method: 'PUT',
+      headers: { 'content-type': 'image/jpeg', 'if-none-match': '*' },
+      body: imageBytes,
+    });
 
-    if (error) {
-      throw new Error(`Unable to upload account-creation upscale input: ${error.message}`);
+    if (!uploadResponse.ok) {
+      throw new Error(
+        `Unable to upload account-creation upscale input: ${uploadResponse.status}`
+      );
     }
 
-    try {
-      return await request.post('/api/upscale', {
-        data: {
-          storagePath,
-          jobId,
-          mimeType: 'image/jpeg',
-          config: {
-            scale: 2,
-            qualityTier: 'quick',
-            additionalOptions: {
-              smartAnalysis: false,
-              enhance: false,
-              enhanceFaces: false,
-              preserveText: false,
-            },
+    return request.post('/api/upscale', {
+      data: {
+        storagePath,
+        jobId,
+        mimeType: 'image/jpeg',
+        config: {
+          scale: 2,
+          qualityTier: 'quick',
+          additionalOptions: {
+            smartAnalysis: false,
+            enhance: false,
+            enhanceFaces: false,
+            preserveText: false,
           },
         },
-        headers,
-      });
-    } finally {
-      await this.admin.storage.from('upscale-inputs').remove([storagePath]);
-    }
+      },
+      headers,
+    });
   }
 
   async expectCheckoutCreated(

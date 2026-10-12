@@ -250,6 +250,9 @@ const serverEnvSchema = z.object({
   CLOUDFLARE_API_TOKEN: z.string().default(''),
   CLOUDFLARE_ACCOUNT_ID: z.string().default(''),
   CLOUDFLARE_ZONE_ID: z.string().default(''),
+  // Cloudflare R2 S3-compatible credentials (object read and write)
+  R2_ACCESS_KEY_ID: z.string().default(''),
+  R2_SECRET_ACCESS_KEY: z.string().default(''),
   DOMAIN_NAME: z.string().default('myimageupscaler.com'),
   WORKER_NAME: z.string().default('myimageupscaler'),
   // Cron Job Authentication
@@ -272,6 +275,10 @@ const serverEnvSchema = z.object({
   // ==========================================
   ENABLE_AUTO_MODEL_SELECTION: z.coerce.boolean().default(true),
   ENABLE_PREMIUM_MODELS: z.coerce.boolean().default(true),
+  GALLERY_EXPIRY_ENABLED: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform(value => value === 'true'),
 
   // ==========================================
   // EMAIL PROVIDERS
@@ -410,6 +417,9 @@ function loadServerEnv(): IServerEnv {
     CLOUDFLARE_API_TOKEN: process.env.CLOUDFLARE_API_TOKEN || '',
     CLOUDFLARE_ACCOUNT_ID: process.env.CLOUDFLARE_ACCOUNT_ID || '',
     CLOUDFLARE_ZONE_ID: process.env.CLOUDFLARE_ZONE_ID || '',
+    // Cloudflare R2 S3-compatible credentials (object read and write)
+    R2_ACCESS_KEY_ID: process.env.R2_ACCESS_KEY_ID || '',
+    R2_SECRET_ACCESS_KEY: process.env.R2_SECRET_ACCESS_KEY || '',
     DOMAIN_NAME: process.env.DOMAIN_NAME || 'myimageupscaler.com',
     WORKER_NAME: process.env.WORKER_NAME || 'myimageupscaler',
     // Cron Job Authentication
@@ -428,6 +438,7 @@ function loadServerEnv(): IServerEnv {
     // Feature Flags
     ENABLE_AUTO_MODEL_SELECTION: process.env.ENABLE_AUTO_MODEL_SELECTION ?? 'true',
     ENABLE_PREMIUM_MODELS: process.env.ENABLE_PREMIUM_MODELS ?? 'true',
+    GALLERY_EXPIRY_ENABLED: process.env.GALLERY_EXPIRY_ENABLED || 'false',
 
     // Email Providers
     CLOUDFLARE_EMAIL_API_TOKEN: process.env.CLOUDFLARE_EMAIL_API_TOKEN || '',

@@ -33,6 +33,9 @@ function classify(entry, metrics, today) {
   if (entry.stopRule) {
     return { verdict: 'STOP', reason: `stop rule fired ${entry.stopRule.date}: ${entry.stopRule.reason}`, nextRung: null };
   }
+  if (entry.history?.[entry.history.length - 1]?.liveVerification?.status === 'pending') {
+    return { verdict: 'HOLD', reason: 'API write is verified but public HTML still serves prior copy; verify live exposure and start 14 complete GSC days from that confirmation before judging or editing', nextRung: null };
+  }
   if (today < win) {
     return { verdict: 'HOLD', reason: `verdict window open until ${win} (last edit ${entry.lastEdit})`, nextRung: null };
   }
@@ -104,7 +107,7 @@ function windowStats(rows, end, days) {
 function judgeEdits(entry, rows, dataEnd) {
   const wd = entry.windowDays || WINDOW_DAYS;
   for (const h of entry.history) {
-    if (h.outcome) continue;
+    if (h.outcome || h.liveVerification?.status === 'pending') continue;
     // The edit date itself is not a complete post-edit GSC day. Measure the
     // following 14 calendar days and do not judge until all are final.
     const postEnd = shift(h.date, wd);
@@ -145,6 +148,10 @@ function parseArgs(argv) {
   return out;
 }
 
+function isActionableRegression(latest) {
+  return latest?.liveVerification?.status !== 'pending' && latest?.field !== 'rollback' && latest?.outcome?.verdict === 'LOSS';
+}
+
 function cmdCheck(args) {
   const ledger = loadLedger(args.ledger);
   const data = JSON.parse(fs.readFileSync(args.gsc, 'utf8'));
@@ -154,15 +161,15 @@ function cmdCheck(args) {
   for (const entry of ledger.entries) {
     const rows = data.pages[entry.label];
     if (!rows || !rows.length) { report.push({ url: entry.url, verdict: 'NO_DATA', reason: 'no series in export' }); continue; }
-    const { judged, latestOutcome } = judgeEdits(entry, rows, data.end);
+    const { judged } = judgeEdits(entry, rows, data.end);
     if (judged) ledgerDirty = true;
     const current = windowStats(rows, data.end, 14);
     const prior = windowStats(rows, shift(data.end, -14), 14);
     if (!current || !prior) { report.push({ url: entry.url, verdict: 'NO_DATA', reason: 'insufficient window data' }); continue; }
     const v = classify(entry, { current, prior }, today);
     const row = { url: entry.url, rung: entry.rung, lastEdit: entry.lastEdit, current14: `${current.clicks.toFixed(0)}c/${current.impressions.toFixed(0)}i pos ${current.position.toFixed(1)}`, prior14: `${prior.clicks.toFixed(0)}c pos ${prior.position.toFixed(1)}`, ...v };
-    if (latestOutcome === 'LOSS') {
-      const latest = entry.history[entry.history.length - 1];
+    const latest = entry.history[entry.history.length - 1];
+    if (isActionableRegression(latest)) {
       row.verdict = 'REGRESSION';
       row.reason = `latest edit ${latest.date} (${latest.field}) judged LOSS: ${latest.outcome.preCpd.toFixed(2)}→${latest.outcome.postCpd.toFixed(2)} clicks/d, pos ${latest.outcome.posDelta > 0 ? '+' : ''}${latest.outcome.posDelta}. Rollback: restore the prior ${latest.field} (from backups/blog API), then run record-revert. Do not re-edit for 14 days.`;
     }
@@ -240,4 +247,4 @@ if (require.main === module) {
   commands[cmd](parseArgs(process.argv.slice(3)));
 }
 
-module.exports = { classify, judgeEdits, windowClose, dailySeries, windowStats, cmdRecordEdit, cmdRecordRevert, RUNG_FIELDS, WINDOW_DAYS };
+module.exports = { classify, judgeEdits, isActionableRegression, windowClose, dailySeries, windowStats, cmdRecordEdit, cmdRecordRevert, RUNG_FIELDS, WINDOW_DAYS };

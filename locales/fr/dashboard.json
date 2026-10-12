@@ -143,5 +143,8 @@
     "fields": {
       "admin": "Admin"
     }
+  },
+  "gallery": {
+    "retentionNote": "Les images gratuites de la galerie peuvent expirer après 30 jours d'inactivité. Nous vous prévenons au moins 7 jours à l'avance, et la connexion les conserve. Les forfaits payants sont exemptés."
   }
 }

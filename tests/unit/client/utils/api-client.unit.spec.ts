@@ -4,19 +4,12 @@ import { DEFAULT_ENHANCEMENT_SETTINGS, type IUpscaleConfig } from '@/shared/type
 const mocks = vi.hoisted(() => ({
   getSession: vi.fn(),
   track: vi.fn(),
-  storageFrom: vi.fn(),
-  uploadToSignedUrl: vi.fn(),
 }));
 
 vi.mock('@shared/utils/supabase/client', () => ({
   createClient: vi.fn(() => ({
     auth: {
       getSession: mocks.getSession,
-    },
-    storage: {
-      from: mocks.storageFrom.mockImplementation(() => ({
-        uploadToSignedUrl: mocks.uploadToSignedUrl,
-      })),
     },
   })),
 }));
@@ -26,6 +19,12 @@ vi.mock('@client/analytics', () => ({
     track: mocks.track,
   },
 }));
+
+const UPLOAD_URL = 'https://r2.example/presigned-put';
+
+function uploadGrant(): Record<string, string> {
+  return { storagePath: 'user-1/job-1.png', uploadUrl: UPLOAD_URL };
+}
 
 import {
   listActiveAsyncUpscaleJobs,
@@ -69,13 +68,11 @@ describe('upscale API response handling', () => {
     vi.unstubAllGlobals();
   });
 
-  it('uploads image bytes directly to storage before dispatching the upscale job', async () => {
-    mocks.uploadToSignedUrl.mockResolvedValue({ data: { path: 'user-1/job-1.png' }, error: null });
+  it('uploads image bytes to the R2 presigned URL before dispatching the upscale job', async () => {
     const fetchMock = vi
       .fn()
-      .mockResolvedValueOnce(
-        Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' })
-      )
+      .mockResolvedValueOnce(Response.json(uploadGrant()))
+      .mockResolvedValueOnce(new Response(null, { status: 200 }))
       .mockResolvedValueOnce(
         Response.json({
           mimeType: 'image/png',
@@ -111,15 +108,17 @@ describe('upscale API response handling', () => {
         }),
       })
     );
-    expect(mocks.uploadToSignedUrl).toHaveBeenCalledWith(
-      'user-1/job-1.png',
-      'signed-token',
-      file,
-      expect.objectContaining({ contentType: 'image/png', upsert: false })
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      UPLOAD_URL,
+      expect.objectContaining({
+        method: 'PUT',
+        headers: { 'content-type': 'image/png', 'if-none-match': '*' },
+        body: file,
+      })
     );
-    expect(mocks.storageFrom).toHaveBeenCalledWith('upscale-inputs');
 
-    const upscaleBody = JSON.parse(String(fetchMock.mock.calls[1][1]?.body));
+    const upscaleBody = JSON.parse(String(fetchMock.mock.calls[2][1]?.body));
     expect(upscaleBody).toMatchObject({
       storagePath: 'user-1/job-1.png',
       mimeType: 'image/png',
@@ -127,22 +126,22 @@ describe('upscale API response handling', () => {
       config,
     });
     expect(upscaleBody).not.toHaveProperty('imageData');
-    expect(fetchMock.mock.calls[1][1]?.headers).toMatchObject({
+    expect(fetchMock.mock.calls[2][1]?.headers).toMatchObject({
       'X-Upscale-Job-Id': '11111111-1111-4111-8111-111111111111',
     });
   });
 
-  it('retries the same grant idempotently after a lost upload response', async () => {
-    mocks.uploadToSignedUrl
-      .mockRejectedValueOnce(new Error('upload response lost after storage commit'))
-      .mockResolvedValueOnce({ data: { path: 'user-1/job-1.png' }, error: null });
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(
-        Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' })
-      )
-      .mockResolvedValueOnce(
-        Response.json({
+  it('retries the presigned PUT after a lost upload response', async () => {
+    let putAttempts = 0;
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url === '/api/upscale/upload') return Response.json(uploadGrant());
+      if (url === UPLOAD_URL) {
+        putAttempts += 1;
+        if (putAttempts === 1) throw new Error('upload response lost after storage commit');
+        return new Response(null, { status: 200 });
+      }
+      if (url === '/api/upscale') {
+        return Response.json({
           mimeType: 'image/png',
           processing: {
             creditsRemaining: 4,
@@ -150,9 +149,12 @@ describe('upscale API response handling', () => {
             reservationJobId: '11111111-1111-4111-8111-111111111111',
             deliveryToken: 'delivery-token-'.padEnd(43, 'x'),
           },
-        })
-      )
-      .mockResolvedValueOnce(new Response(new Blob(['image-bytes']), { status: 200 }));
+        });
+      }
+      if (url === '/api/upscale/output')
+        return new Response(new Blob(['image-bytes']), { status: 200 });
+      throw new Error(`Unexpected URL: ${url}`);
+    });
     vi.stubGlobal('fetch', fetchMock);
     vi.stubGlobal('crypto', { randomUUID: () => '11111111-1111-4111-8111-111111111111' });
 
@@ -161,36 +163,22 @@ describe('upscale API response handling', () => {
       imageUrl: 'blob:https://app.test/output-1',
     });
 
-    expect(mocks.uploadToSignedUrl).toHaveBeenCalledTimes(2);
-    expect(mocks.uploadToSignedUrl).toHaveBeenNthCalledWith(
-      1,
-      'user-1/job-1.png',
-      'signed-token',
-      file,
-      expect.objectContaining({ contentType: 'image/png', upsert: false })
-    );
-    expect(mocks.uploadToSignedUrl).toHaveBeenNthCalledWith(
-      2,
-      'user-1/job-1.png',
-      'signed-token',
-      file,
-      expect.objectContaining({ contentType: 'image/png', upsert: false })
-    );
+    expect(putAttempts).toBe(2);
     expect(fetchMock.mock.calls.filter(call => call[0] === '/api/upscale')).toHaveLength(1);
   });
 
-  it('continues after an immutable upload reports the committed object conflict', async () => {
-    mocks.uploadToSignedUrl.mockResolvedValueOnce({
-      data: null,
-      error: { statusCode: 409, message: 'The resource already exists' },
-    });
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(
-        Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' })
-      )
-      .mockResolvedValueOnce(
-        Response.json({
+  it('treats an immutable-write 412 as a committed upload and continues the job', async () => {
+    let putAttempts = 0;
+    const uploadHeaders: Array<Record<string, string>> = [];
+    const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
+      if (url === '/api/upscale/upload') return Response.json(uploadGrant());
+      if (url === UPLOAD_URL) {
+        putAttempts += 1;
+        uploadHeaders.push(init?.headers as Record<string, string>);
+        return new Response(null, { status: 412 });
+      }
+      if (url === '/api/upscale') {
+        return Response.json({
           mimeType: 'image/png',
           processing: {
             creditsRemaining: 4,
@@ -198,9 +186,12 @@ describe('upscale API response handling', () => {
             reservationJobId: '11111111-1111-4111-8111-111111111111',
             deliveryToken: 'delivery-token-'.padEnd(43, 'x'),
           },
-        })
-      )
-      .mockResolvedValueOnce(new Response(new Blob(['image-bytes']), { status: 200 }));
+        });
+      }
+      if (url === '/api/upscale/output')
+        return new Response(new Blob(['image-bytes']), { status: 200 });
+      throw new Error(`Unexpected URL: ${url}`);
+    });
     vi.stubGlobal('fetch', fetchMock);
     vi.stubGlobal('crypto', { randomUUID: () => '11111111-1111-4111-8111-111111111111' });
 
@@ -209,17 +200,39 @@ describe('upscale API response handling', () => {
       imageUrl: 'blob:https://app.test/output-1',
     });
 
-    expect(mocks.uploadToSignedUrl).toHaveBeenCalledTimes(1);
+    expect(putAttempts).toBe(1);
+    expect(uploadHeaders[0]).toMatchObject({
+      'content-type': 'image/png',
+      'if-none-match': '*',
+    });
     expect(fetchMock.mock.calls.filter(call => call[0] === '/api/upscale')).toHaveLength(1);
+  });
+
+  it('fails the job when the presigned PUT is rejected', async () => {
+    let putAttempts = 0;
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url === '/api/upscale/upload') return Response.json(uploadGrant());
+      if (url === UPLOAD_URL) {
+        putAttempts += 1;
+        return new Response(null, { status: 403 });
+      }
+      throw new Error(`Unexpected URL: ${url}`);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    vi.stubGlobal('crypto', { randomUUID: () => '11111111-1111-4111-8111-111111111111' });
+
+    const file = new File(['image-bytes'], 'source.png', { type: 'image/png' });
+    await expect(processImage(file, config, vi.fn())).rejects.toThrow(/Failed to upload image/);
+
+    expect(putAttempts).toBe(3);
+    expect(fetchMock.mock.calls.filter(call => call[0] === '/api/upscale')).toHaveLength(0);
   });
 
   it('downloads staged output through the same job/token capability without exposing raw provider URLs', async () => {
-    mocks.uploadToSignedUrl.mockResolvedValue({ data: { path: 'user-1/job-1.png' }, error: null });
     const fetchMock = vi
       .fn()
-      .mockResolvedValueOnce(
-        Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' })
-      )
+      .mockResolvedValueOnce(Response.json(uploadGrant()))
+      .mockResolvedValueOnce(new Response(null, { status: 200 }))
       .mockResolvedValueOnce(
         Response.json({
           mimeType: 'image/png',
@@ -241,7 +254,7 @@ describe('upscale API response handling', () => {
     });
 
     expect(fetchMock).toHaveBeenNthCalledWith(
-      3,
+      4,
       '/api/upscale/output',
       expect.objectContaining({
         method: 'POST',
@@ -251,11 +264,10 @@ describe('upscale API response handling', () => {
         }),
       })
     );
-    expect(JSON.stringify(fetchMock.mock.calls[1][1]?.body)).not.toContain('replicate.delivery');
+    expect(JSON.stringify(fetchMock.mock.calls[2][1]?.body)).not.toContain('replicate.delivery');
   });
 
   it('retries the same output capability after a transient stream/blob failure without another upscale call', async () => {
-    mocks.uploadToSignedUrl.mockResolvedValue({ data: { path: 'user-1/job-1.png' }, error: null });
     const abortingResponse = new Response(
       new ReadableStream({
         pull(controller) {
@@ -266,9 +278,8 @@ describe('upscale API response handling', () => {
     );
     const fetchMock = vi
       .fn()
-      .mockResolvedValueOnce(
-        Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' })
-      )
+      .mockResolvedValueOnce(Response.json(uploadGrant()))
+      .mockResolvedValueOnce(new Response(null, { status: 200 }))
       .mockResolvedValueOnce(
         Response.json({
           mimeType: 'image/png',
@@ -293,17 +304,15 @@ describe('upscale API response handling', () => {
 
     expect(fetchMock.mock.calls.filter(call => call[0] === '/api/upscale')).toHaveLength(1);
     expect(fetchMock.mock.calls.filter(call => call[0] === '/api/upscale/output')).toHaveLength(2);
-    expect(fetchMock.mock.calls[2][1]?.body).toBe(fetchMock.mock.calls[3][1]?.body);
+    expect(fetchMock.mock.calls[3][1]?.body).toBe(fetchMock.mock.calls[4][1]?.body);
   });
 
   it('does not retry 4xx output capability failures', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
-    mocks.uploadToSignedUrl.mockResolvedValue({ data: { path: 'user-1/job-1.png' }, error: null });
     const fetchMock = vi
       .fn()
-      .mockResolvedValueOnce(
-        Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' })
-      )
+      .mockResolvedValueOnce(Response.json(uploadGrant()))
+      .mockResolvedValueOnce(new Response(null, { status: 200 }))
       .mockResolvedValueOnce(
         Response.json({
           mimeType: 'image/png',
@@ -433,10 +442,6 @@ describe('upscale API response handling', () => {
       vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true);
       vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('visible');
       vi.spyOn(console, 'error').mockImplementation(() => undefined);
-      mocks.uploadToSignedUrl.mockResolvedValue({
-        data: { path: 'user-1/job-1.png' },
-        error: null,
-      });
       vi.stubGlobal('crypto', { randomUUID: () => jobId });
     });
 
@@ -479,8 +484,9 @@ describe('upscale API response handling', () => {
         | { value?: Awaited<ReturnType<typeof processImage>>; error?: unknown }
         | undefined;
       const fetchMock = vi.fn(async (url: string) => {
+        if (url === UPLOAD_URL) return new Response(null, { status: 200 });
         if (url === '/api/upscale/upload') {
-          return Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' });
+          return Response.json(uploadGrant());
         }
         if (url === '/api/upscale') {
           admittedAt = Date.now();
@@ -522,8 +528,9 @@ describe('upscale API response handling', () => {
       vi.stubGlobal(
         'fetch',
         vi.fn(async (url: string) => {
+          if (url === UPLOAD_URL) return new Response(null, { status: 200 });
           if (url === '/api/upscale/upload')
-            return Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' });
+            return Response.json(uploadGrant());
           throw new TypeError('Connection lost after admission');
         })
       );
@@ -538,11 +545,9 @@ describe('upscale API response handling', () => {
         vi.stubGlobal(
           'fetch',
           vi.fn(async (url: string) => {
+            if (url === UPLOAD_URL) return new Response(null, { status: 200 });
             if (url === '/api/upscale/upload')
-              return Response.json({
-                storagePath: 'user-1/job-1.png',
-                uploadToken: 'signed-token',
-              });
+              return Response.json(uploadGrant());
             return new Response('upstream disconnected', { status });
           })
         );
@@ -556,8 +561,9 @@ describe('upscale API response handling', () => {
       vi.stubGlobal(
         'fetch',
         vi.fn(async (url: string) => {
+          if (url === UPLOAD_URL) return new Response(null, { status: 200 });
           if (url === '/api/upscale/upload')
-            return Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' });
+            return Response.json(uploadGrant());
           return Response.json(
             {
               jobId,
@@ -582,8 +588,9 @@ describe('upscale API response handling', () => {
       vi.stubGlobal(
         'fetch',
         vi.fn(async (url: string) => {
+          if (url === UPLOAD_URL) return new Response(null, { status: 200 });
           if (url === '/api/upscale/upload')
-            return Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' });
+            return Response.json(uploadGrant());
           if (url === '/api/upscale') return Response.json(ready());
           throw new TypeError('Output connection lost');
         })
@@ -597,8 +604,9 @@ describe('upscale API response handling', () => {
       vi.stubGlobal(
         'fetch',
         vi.fn(async (url: string) => {
+          if (url === UPLOAD_URL) return new Response(null, { status: 200 });
           if (url === '/api/upscale/upload')
-            return Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' });
+            return Response.json(uploadGrant());
           if (url === '/api/upscale') return Response.json(ready());
           if (url === '/api/upscale/output') return new Response(new Blob(['image-bytes']));
           throw new Error(`Unexpected URL: ${url}`);
@@ -685,8 +693,9 @@ describe('upscale API response handling', () => {
       let outputAttempts = 0;
       let busyAt = 0;
       const fetchMock = vi.fn(async (url: string) => {
+        if (url === UPLOAD_URL) return new Response(null, { status: 200 });
         if (url === '/api/upscale/upload')
-          return Response.json({ storagePath: 'user-1/job-1.png', uploadToken: 'signed-token' });
+          return Response.json(uploadGrant());
         if (url === '/api/upscale') return Response.json(pending(), { status: 202 });
         if (url === statusUrl) return Response.json(ready());
         if (url === '/api/upscale/output') {

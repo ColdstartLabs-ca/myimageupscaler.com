@@ -80,98 +80,94 @@ export function HeroSection({
     <section className="pt-12 pb-16 md:pt-16 md:pb-20 relative hero-gradient-2025">
       <AmbientBackground variant="hero" />
 
-      <motion.div
-        className="text-center max-w-6xl mx-auto relative z-10 px-4"
-        initial="hidden"
-        animate="visible"
-        variants={heroContainerVariants}
-      >
-        {/* Badge */}
-        <motion.div
-          variants={heroItemVariants}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-strong text-muted-foreground font-medium text-sm mb-8 hover:shadow-xl hover:shadow-accent/20 transition-all duration-300 cursor-default group"
-        >
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
-          </span>
-          AI-Powered Tool
-        </motion.div>
-
+      <div className="text-center max-w-6xl mx-auto relative z-10 px-4">
         {/* Main Headline */}
-        <motion.h1
-          variants={heroItemVariants}
-          className="text-6xl sm:text-6xl md:text-8xl font-black mb-8 tracking-tight text-white leading-[1.05]"
-        >
+        <h1 className="text-6xl sm:text-6xl md:text-8xl font-black mb-8 tracking-tight text-white leading-[1.05]">
           {mainTitle}
           {subtitle && <span className="block mt-4 gradient-text-primary">{subtitle}</span>}
-        </motion.h1>
+        </h1>
 
         {/* Intro Text */}
-        <motion.p
-          variants={heroItemVariants}
-          className="text-xl md:text-2xl text-text-secondary mb-10 max-w-3xl mx-auto leading-relaxed font-light"
-        >
+        <p className="text-xl md:text-2xl text-text-secondary mb-10 max-w-3xl mx-auto leading-relaxed font-light">
           {intro}
-        </motion.p>
+        </p>
 
-        {/* CTA Section */}
-        {ctaText && ctaUrl && (
-          <motion.div variants={heroItemVariants} className="flex flex-col items-center gap-8">
-            <motion.a
-              href={ctaUrl}
-              onClick={handleCTAClick}
-              className="group relative inline-flex items-center gap-3 px-10 py-5 text-white rounded-xl font-semibold text-xl transition-all duration-300 gradient-cta shine-effect shadow-xl shadow-accent/20"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              {ctaText}
-              <svg
-                className="w-6 h-6 group-hover:translate-x-1 transition-transform"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2.5}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            </motion.a>
-
-            {/* Trust Indicators */}
-            <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 text-base text-text-secondary">
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span>Free to start</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span>No watermarks</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span>Instant results</span>
-              </div>
-            </div>
+        <motion.div
+          className="flex flex-col items-center"
+          initial="hidden"
+          animate="visible"
+          variants={heroContainerVariants}
+        >
+          {/* Badge */}
+          <motion.div
+            variants={heroItemVariants}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-strong text-muted-foreground font-medium text-sm mb-8 hover:shadow-xl hover:shadow-accent/20 transition-all duration-300 cursor-default group"
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
+            </span>
+            AI-Powered Tool
           </motion.div>
-        )}
+
+          {/* CTA Section */}
+          {ctaText && ctaUrl && (
+            <motion.div variants={heroItemVariants} className="flex flex-col items-center gap-8">
+              <motion.a
+                href={ctaUrl}
+                onClick={handleCTAClick}
+                className="group relative inline-flex items-center gap-3 px-10 py-5 text-white rounded-xl font-semibold text-xl transition-all duration-300 gradient-cta shine-effect shadow-xl shadow-accent/20"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {ctaText}
+                <svg
+                  className="w-6 h-6 group-hover:translate-x-1 transition-transform"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </motion.a>
+
+              {/* Trust Indicators */}
+              <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 text-base text-text-secondary">
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span>Free to start</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span>No watermarks</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span>Instant results</span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </motion.div>
 
         {/* Hero Before/After Slider */}
         <motion.div
@@ -182,7 +178,7 @@ export function HeroSection({
         >
           <HeroBeforeAfter />
         </motion.div>
-      </motion.div>
+      </div>
     </section>
   );
 }

@@ -26,10 +26,12 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { SUPPORTED_LOCALES } from '@/i18n/config';
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/i18n/config';
 
+// Playwright's ESM loader rejects lib/seo/localization-config.ts (it imports JSON without
+// an import attribute), so this spec reads the same sources directly instead.
 interface ILocaleCoveragePair {
   category: string;
   locale: string;
@@ -44,6 +46,7 @@ const coverageArtifact = JSON.parse(
   readFileSync(join(process.cwd(), 'seo-reports/locale-coverage-2026-08-25.json'), 'utf8')
 ) as { pairs: ILocaleCoveragePair[] };
 
+/** Mirrors isTranslatedPair in lib/seo/localization-config.ts. */
 const isTranslatedPair = (category: string, locale: string): boolean => {
   if (locale === 'en') return true;
   const pair = coverageArtifact.pairs.find(
@@ -59,41 +62,21 @@ const isTranslatedPair = (category: string, locale: string): boolean => {
   );
 };
 
-const LOCALIZED_CATEGORIES = [
-  ...new Set(
-    coverageArtifact.pairs
-      .filter(pair => pair.locale !== 'en' && isTranslatedPair(pair.category, pair.locale))
-      .map(pair => pair.category)
-  ),
-];
-const ENGLISH_ONLY_CATEGORIES = [
-  'compare',
-  'comparisons-expanded',
-  'platforms',
-  'bulk-tools',
-  'content',
-  'photo-restoration',
-  'camera-raw',
-  'industry-insights',
-  'device-optimization',
-  'ai-features',
-  'technical-guides',
-  'personas-expanded',
-  'use-cases-expanded',
-  'ai-photo-editor',
-] as const;
+// Never hand-kept: a hand-kept list here is what silently let scale/free/guides fall out
+// of the index for 5 weeks in Sep 2026. English child sitemaps = every routed
+// app/sitemap-<name>.xml without a locale suffix (images is deliberately unlisted);
+// locale child sitemaps = every translated category × locale pair.
+const LOCALE_SUFFIX = new RegExp(`-(${SUPPORTED_LOCALES.join('|')})\\.xml$`);
+const ENGLISH_SITEMAPS = readdirSync(join(process.cwd(), 'app'))
+  .filter(dir => /^sitemap-.+\.xml$/.test(dir) && !LOCALE_SUFFIX.test(dir))
+  .filter(dir => dir !== 'sitemap-images.xml');
+const LOCALE_SITEMAPS = coverageArtifact.pairs
+  .filter(pair => pair.locale !== DEFAULT_LOCALE && isTranslatedPair(pair.category, pair.locale))
+  .map(pair => `sitemap-${pair.category}-${pair.locale}.xml`);
 
-const TOTAL_SITEMAP_COUNT =
-  2 +
-  ENGLISH_ONLY_CATEGORIES.length +
-  LOCALIZED_CATEGORIES.length +
-  LOCALIZED_CATEGORIES.reduce(
-    (count, category) =>
-      count +
-      SUPPORTED_LOCALES.filter(locale => locale !== 'en' && isTranslatedPair(category, locale))
-        .length,
-    0
-  );
+const EXPECTED_SITEMAP_URLS = new Set(
+  [...ENGLISH_SITEMAPS, ...LOCALE_SITEMAPS].map(name => `https://myimageupscaler.com/${name}`)
+);
 
 // Base URL for production checks (canonical URLs should always use this)
 const PRODUCTION_BASE_URL = 'https://myimageupscaler.com';
@@ -175,7 +158,7 @@ test.describe('SEO Guard - Deploy Blocker', () => {
       expect(text).toContain('http://www.sitemaps.org/schemas/sitemap');
     });
 
-    test('sitemap index contains all expected sitemaps', async ({ request }) => {
+    test('sitemap index contains exactly the derived child sitemap set', async ({ request }) => {
       const response = await request.get('/sitemap.xml');
       const text = await response.text();
 
@@ -184,35 +167,20 @@ test.describe('SEO Guard - Deploy Blocker', () => {
         /<loc>(https:\/\/myimageupscaler\.com\/sitemap-[^<]+\.xml)<\/loc>/g
       );
       const sitemapUrls = Array.from(sitemapMatches).map(m => m[1]);
+      const actual = new Set(sitemapUrls);
 
-      // Should contain every routed child sitemap.
-      expect(sitemapUrls.length).toBe(TOTAL_SITEMAP_COUNT);
+      // Set equality in both directions: no missing child sitemaps, no strays.
+      const missing = [...EXPECTED_SITEMAP_URLS].filter(url => !actual.has(url));
+      const extra = [...actual].filter(url => !EXPECTED_SITEMAP_URLS.has(url));
+      expect({ missing, extra }).toEqual({ missing: [], extra: [] });
 
-      // Should contain core English-only sitemaps
-      expect(sitemapUrls).toContain(`${PRODUCTION_BASE_URL}/sitemap-static.xml`);
-      expect(sitemapUrls).toContain(`${PRODUCTION_BASE_URL}/sitemap-blog.xml`);
+      // English-only pSEO categories — the ones dropped from the index in Sep 2026.
+      for (const category of ['scale', 'free', 'guides'] as const) {
+        expect(sitemapUrls).toContain(`${PRODUCTION_BASE_URL}/sitemap-${category}.xml`);
+      }
+
+      // /sitemap-images.xml is deliberately unlisted.
       expect(sitemapUrls).not.toContain(`${PRODUCTION_BASE_URL}/sitemap-images.xml`);
-
-      // Should contain English-only category sitemaps
-      for (const category of ENGLISH_ONLY_CATEGORIES) {
-        expect(sitemapUrls).toContain(`${PRODUCTION_BASE_URL}/sitemap-${category}.xml`);
-      }
-
-      // Should contain English versions of localized categories
-      for (const category of LOCALIZED_CATEGORIES) {
-        expect(sitemapUrls).toContain(`${PRODUCTION_BASE_URL}/sitemap-${category}.xml`);
-      }
-
-      // Should contain locale-specific sitemaps for localized categories
-      for (const category of LOCALIZED_CATEGORIES) {
-        for (const locale of SUPPORTED_LOCALES) {
-          if (locale !== 'en' && isTranslatedPair(category, locale)) {
-            expect(sitemapUrls).toContain(
-              `${PRODUCTION_BASE_URL}/sitemap-${category}-${locale}.xml`
-            );
-          }
-        }
-      }
     });
   });
 
@@ -266,42 +234,37 @@ test.describe('SEO Guard - Deploy Blocker', () => {
   // Group 4: Sitemap Duplicate Prevention (Sample Check)
   // ========================================================================
   test.describe('Sitemap Duplicate Prevention', () => {
-    test('critical pages appear in only one sitemap', async ({ request }) => {
-      // Only check blog to avoid timeout - this validates the pattern
-      const pageUrl = `${PRODUCTION_BASE_URL}/blog`;
-
+    test('no URL appears in more than one sitemap', async ({ request }) => {
       const response = await request.get('/sitemap.xml');
       const text = await response.text();
-
-      // Get all sitemap URLs
-      const sitemapMatches = text.matchAll(
-        /<loc>(https:\/\/myimageupscaler\.com\/sitemap-[^<]+\.xml)<\/loc>/g
-      );
-      const sitemapUrls = Array.from(sitemapMatches).map(m => m[1]);
+      const sitemapUrls = Array.from(
+        text.matchAll(/<loc>(https:\/\/myimageupscaler\.com\/sitemap-[^<]+\.xml)<\/loc>/g)
+      ).map(m => m[1]);
 
       // Fetch all sitemaps in parallel to avoid timeout
       const sitemapContents = await Promise.all(
         sitemapUrls.map(async sitemapUrl => {
           const sitemapResponse = await request.get(sitemapUrl.replace(PRODUCTION_BASE_URL, ''));
-          const sitemapText = await sitemapResponse.text();
-          return { sitemapUrl, sitemapText };
+          return { sitemapUrl, sitemapText: await sitemapResponse.text() };
         })
       );
 
-      // Track which sitemaps contain the blog URL
-      const foundIn: string[] = [];
-
+      // Only <url><loc> entries count; xhtml:link hreflang alternates are expected to repeat.
+      const foundIn = new Map<string, string[]>();
       for (const { sitemapUrl, sitemapText } of sitemapContents) {
-        if (sitemapText.includes(`<loc>${pageUrl}</loc>`)) {
-          foundIn.push(sitemapUrl);
+        for (const [, url] of sitemapText.matchAll(/<loc>([^<]+)<\/loc>/g)) {
+          foundIn.set(url, [...(foundIn.get(url) ?? []), sitemapUrl]);
         }
       }
 
-      // Blog should appear in exactly one sitemap
-      expect(
-        foundIn.length,
-        `${pageUrl} should appear in exactly 1 sitemap, found in: ${foundIn.join(', ')}`
-      ).toBe(1);
+      const duplicates = [...foundIn].filter(([, sitemaps]) => sitemaps.length > 1);
+      expect(duplicates, 'URLs listed in more than one sitemap').toEqual([]);
+      expect(foundIn.get(`${PRODUCTION_BASE_URL}/blog`)).toEqual([
+        `${PRODUCTION_BASE_URL}/sitemap-blog.xml`,
+      ]);
+      expect(foundIn.get(`${PRODUCTION_BASE_URL}/platforms`)).toEqual([
+        `${PRODUCTION_BASE_URL}/sitemap-platforms.xml`,
+      ]);
     });
 
     test('blog is not in static sitemap', async ({ request }) => {

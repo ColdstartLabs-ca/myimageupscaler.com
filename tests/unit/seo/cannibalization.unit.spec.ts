@@ -39,6 +39,9 @@ const BASE_URL = 'https://myimageupscaler.com';
 interface IPSEOPage {
   slug: string;
   metaTitle: string;
+  metaDescription: string;
+  h1: string;
+  intro: string;
   primaryKeyword: string;
   [key: string]: unknown;
 }
@@ -117,5 +120,35 @@ describe('Cannibalization — German bg pages (transparent-maker vs bg-remover)'
     expect(transparentMaker).toBeDefined();
     // Transparent maker should own "transparent" keyword cluster
     expect(transparentMaker!.primaryKeyword).toMatch(/transparent/i);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 3. Remove-background CTR owner — /tools/remove-bg
+// ---------------------------------------------------------------------------
+
+describe('Cannibalization — remove background owner', () => {
+  it('remove-bg front-loads the exact high-impression remove-background intent', () => {
+    const tools = loadJson<IPSEOData>('app/seo/data/tools.json');
+    const removeBg = tools.pages.find(p => p.slug === 'remove-bg');
+    expect(removeBg).toBeDefined();
+
+    expect(removeBg!.primaryKeyword).toBe('remove background');
+    expect(removeBg!.metaTitle).toMatch(/^Remove Background Online Free/i);
+    expect(removeBg!.h1).toMatch(/^Remove Background Online Free/i);
+    expect(removeBg!.intro.toLowerCase()).toContain('remove background from photos online');
+  });
+
+  it('keeps remove-bg SERP fields in safe CTR-test ranges', () => {
+    const tools = loadJson<IPSEOData>('app/seo/data/tools.json');
+    const removeBg = tools.pages.find(p => p.slug === 'remove-bg');
+    expect(removeBg).toBeDefined();
+
+    expect(removeBg!.metaTitle.length).toBeGreaterThanOrEqual(30);
+    expect(removeBg!.metaTitle.length).toBeLessThanOrEqual(60);
+    expect(removeBg!.metaDescription.length).toBeGreaterThanOrEqual(120);
+    expect(removeBg!.metaDescription.length).toBeLessThanOrEqual(160);
+    expect(removeBg!.metaDescription.toLowerCase()).toContain('remove background');
+    expect(removeBg!.metaDescription.toLowerCase()).toContain('no signup');
   });
 });

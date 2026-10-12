@@ -13,6 +13,14 @@ vi.mock('@shared/config/env', () => ({
   serverEnv: { CRON_SECRET: 'cron-secret' },
 }));
 
+vi.mock('@server/services/cronHealth.service', () => ({
+  recordCronJobSuccess: vi.fn().mockResolvedValue('2026-09-21T12:00:00.000Z'),
+  CRON_JOB_KEYS: {
+    databaseRetention: 'database-retention',
+    upscaleInputCleanup: 'upscale-input-cleanup',
+  },
+}));
+
 import { POST } from '@/app/api/cron/database-retention/route';
 
 function request(path = '', secret = 'cron-secret'): NextRequest {

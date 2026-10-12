@@ -131,7 +131,7 @@
         },
         {
           "question": "Le mie immagini sono archiviate sui vostri server?",
-          "answer": "Le immagini vengono eliminate automaticamente entro 1 ora dall'elaborazione. Non utilizziamo le tue immagini per l'addestramento o le condividiamo con terze parti."
+          "answer": "I caricamenti temporanei sono programmati per l'eliminazione automatica dopo due giorni; la pulizia può richiedere più tempo. Le immagini che salvi nella tua galleria seguono una politica di conservazione separata. Non utilizziamo le tue immagini per l'addestramento né le condividiamo con terze parti."
         }
       ],
       "faq": [

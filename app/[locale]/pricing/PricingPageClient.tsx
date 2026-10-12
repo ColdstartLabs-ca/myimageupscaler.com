@@ -10,6 +10,7 @@ import {
   PricingCardSkeleton,
 } from '@client/components/stripe';
 import { StripeService } from '@client/services/stripeService';
+import { shouldInitSupabaseEagerly } from '@client/store/userStore';
 import { clientEnv } from '@shared/config/env';
 import {
   STRIPE_PRICES,
@@ -273,6 +274,12 @@ export default function PricingPageClient({ initialGeo }: IPricingPageClientProp
   useEffect(() => {
     const loadUserData = async () => {
       try {
+        // Anonymous visitors have no session, so skip the SDK.
+        if (!shouldInitSupabaseEagerly()) {
+          setProfile(null);
+          setSubscription(null);
+          return;
+        }
         // Add timeout to prevent hanging forever on auth checks
         // Use shorter timeout in test mode for faster test execution
         const isTestMode = clientEnv.ENV === 'test';

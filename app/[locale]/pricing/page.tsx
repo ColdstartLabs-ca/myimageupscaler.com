@@ -75,7 +75,15 @@ export default async function PricingPage() {
           __html: JSON.stringify(generatePricingSchema()),
         }}
       />
-      <Suspense>
+      <Suspense
+        fallback={
+          <div
+            className="min-h-screen"
+            aria-hidden="true"
+            data-testid="pricing-suspense-fallback"
+          />
+        }
+      >
         <PricingPageClient initialGeo={initialGeo} />
       </Suspense>
     </>

@@ -109,31 +109,37 @@ describe('prepareFileForProcessing', () => {
     expect(result.resized).toBe(true);
   });
 
-  it('uses the Real-ESRGAN limit when auto-resizing oversized Quick 4x inputs', async () => {
-    const file = new File(['image'], 'quick-4x.png', { type: 'image/png' });
-    vi.mocked(loadImageDimensions).mockResolvedValue({ width: 1700, height: 2532 });
-    vi.mocked(compressImageWithinByteLimit).mockResolvedValue({
-      blob: new Blob(['resized'], { type: 'image/png' }),
-      originalSize: 1000,
-      compressedSize: 700,
-      reductionPercent: 30,
-      dimensions: { width: 1186, height: 1767 },
-    });
+  it.each([
+    ['1712x1223 customer input', 1712, 1223],
+    ['2235x938 customer input', 2235, 938],
+  ])(
+    'uses the scale-aware output contract when auto-resizing Quick 4x %s',
+    async (_label, width, height) => {
+      const file = new File(['image'], 'quick-4x.png', { type: 'image/png' });
+      vi.mocked(loadImageDimensions).mockResolvedValue({ width, height });
+      vi.mocked(compressImageWithinByteLimit).mockResolvedValue({
+        blob: new Blob(['resized'], { type: 'image/png' }),
+        originalSize: 1000,
+        compressedSize: 700,
+        reductionPercent: 30,
+        dimensions: { width: 1024, height: Math.floor((1024 * height) / width) },
+      });
 
-    const result = await prepareFileForProcessing(file, 'quick', 4);
+      const result = await prepareFileForProcessing(file, 'quick', 4);
 
-    expect(compressImageWithinByteLimit).toHaveBeenCalledWith(
-      file,
-      {
-        maxPixels: 2_096_704,
-        format: 'png',
-        quality: 95,
-        maintainAspectRatio: true,
-      },
-      IMAGE_VALIDATION.MAX_SIZE_FREE
-    );
-    expect(result.resized).toBe(true);
-  });
+      expect(compressImageWithinByteLimit).toHaveBeenCalledWith(
+        file,
+        {
+          maxPixels: 1_048_576,
+          format: 'png',
+          quality: 95,
+          maintainAspectRatio: true,
+        },
+        IMAGE_VALIDATION.MAX_SIZE_FREE
+      );
+      expect(result.resized).toBe(true);
+    }
+  );
 
   it('preserves JPEG output metadata while using near-lossless quality', async () => {
     const file = new File(['image'], 'portrait.jpg', { type: 'image/jpeg' });

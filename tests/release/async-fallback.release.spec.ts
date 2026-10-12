@@ -51,7 +51,7 @@ test('recovers a definitive GPU failure with one alternate prediction and one de
       async () => {
         // Concurrent tabs must never submit a second copy of the recovery attempt.
         const responses = await Promise.all(
-          Array.from({ length: 4 }, () => runtime.request(user, `/api/upscale?jobId=${jobId}`))
+          Array.from({ length: 4 }, () => runtime.requestHttp(user, `/api/upscale?jobId=${jobId}`))
         );
         const states = await Promise.all(responses.map(response => response.json()));
         state = states.find(value => value.status === 'ready') ?? states[0];

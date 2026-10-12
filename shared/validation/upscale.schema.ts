@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { MODEL_MAX_INPUT_PIXELS } from '@shared/config/model-costs.config';
+import { MODEL_COSTS, MODEL_MAX_INPUT_PIXELS } from '@shared/config/model-costs.config';
 import { QUALITY_TIER_CONFIG, type QualityTier } from '@shared/types/coreflow.types';
 import { UUID_V4_PATTERN } from '@shared/validation/uuid';
 
@@ -169,6 +169,17 @@ export function getMaxPixelsForModel(modelId: string): number {
   }
   // Fallback to global default (most conservative)
   return IMAGE_VALIDATION.MAX_PIXELS;
+}
+
+export function getScaleAwareMaxInputPixelsForModel(
+  modelId: string,
+  scale: number,
+  maxOutputPixels: number = MODEL_COSTS.MAX_OUTPUT_RESOLUTION
+): number {
+  const modelInputLimit = getMaxPixelsForModel(modelId);
+  const outputBoundedInputLimit = Math.floor(maxOutputPixels / (scale * scale));
+
+  return Math.min(modelInputLimit, outputBoundedInputLimit);
 }
 
 /**
@@ -424,8 +435,25 @@ export function decodeImageDimensions(imageData: string): { width: number; heigh
     }
   }
 
-  // WebP: check for VP8 or VP8L chunk
+  // WebP: check for VP8, VP8L or VP8X chunk
   if (bytes[0] === 0x52 && bytes[1] === 0x49) {
+    // VP8X extended (transparency/animation): canvas size at offset 24-29
+    if (bytes[12] === 0x56 && bytes[13] === 0x50 && bytes[14] === 0x38 && bytes[15] === 0x58) {
+      if (
+        bytes.length < 30 ||
+        bytes[2] !== 0x46 ||
+        bytes[3] !== 0x46 ||
+        bytes[8] !== 0x57 ||
+        bytes[9] !== 0x45 ||
+        bytes[10] !== 0x42 ||
+        bytes[11] !== 0x50
+      ) {
+        return null;
+      }
+      const width = (bytes[24] | (bytes[25] << 8) | (bytes[26] << 16)) + 1;
+      const height = (bytes[27] | (bytes[28] << 8) | (bytes[29] << 16)) + 1;
+      return { width, height };
+    }
     // VP8 lossy: dimensions at offset 26-29
     if (bytes[12] === 0x56 && bytes[13] === 0x50 && bytes[14] === 0x38 && bytes[15] === 0x20) {
       const width = ((bytes[27] << 8) | bytes[26]) & 0x3fff;

@@ -6,7 +6,6 @@ import { SmartTooltip } from '@client/components/ui/SmartTooltip';
 import { analytics } from '@client/analytics';
 import { setRepeatPurchaseContext } from '@client/utils/purchaseModalDefaults';
 import { setCheckoutTrackingContext } from '@client/utils/checkoutTrackingContext';
-import { supabase } from '@server/supabase/supabaseClient';
 
 // Low credit threshold - show warning when credits fall below this amount
 const LOW_CREDIT_THRESHOLD = 5;
@@ -58,8 +57,8 @@ export function CreditsDisplay({ onUpgrade }: ICreditsDisplayProps = {}): JSX.El
     setRepeatPackKey(null);
     if (user?.id) setRepeatPurchaseContext(user.id, null);
     if (!isProfileLoading && creditBalance <= LOW_CREDIT_THRESHOLD) {
-      void supabase.auth
-        .getSession()
+      void import('@server/supabase/supabaseClient')
+        .then(({ supabase }) => supabase.auth.getSession())
         .then(async ({ data }) => {
           if (!data.session?.access_token || !user?.id) return;
           const response = await fetch('/api/auto-top-up/settings', {

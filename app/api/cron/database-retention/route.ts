@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { runDatabaseRetention } from '@server/services/databaseRetention.service';
+import { recordCronJobSuccess, CRON_JOB_KEYS } from '@server/services/cronHealth.service';
 import { serverEnv } from '@shared/config/env';
 
 function parseBatchSize(request: NextRequest): number | undefined {
@@ -19,6 +20,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       dryRun: request.nextUrl.searchParams.get('dryRun') === 'true',
       batchSize: parseBatchSize(request),
     });
+
+    // Record a durable measured success so the health path can prove the run
+    // happened. A failed record fails the job closed (PRD-SQR-03 AC-1).
+    if (!result.dryRun) {
+      await recordCronJobSuccess(CRON_JOB_KEYS.databaseRetention, {
+        totalDeleted: result.totalDeleted,
+        totalCandidates: result.totalCandidates,
+      });
+    }
+
     return NextResponse.json({ success: true, ...result });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';

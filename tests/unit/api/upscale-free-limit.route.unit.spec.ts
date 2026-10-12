@@ -46,11 +46,16 @@ const mocks = vi.hoisted(() => ({
   analyze: vi.fn(),
   calculateCredits: vi.fn(),
   resolveResolution: vi.fn(),
+  asyncStart: vi.fn(),
+  asyncReplay: vi.fn(),
+  asyncRead: vi.fn(),
+  asyncListActive: vi.fn(),
   decodeImageDimensions: vi.fn(),
   getScalePreservingFallbackCandidates: vi.fn(),
   resolveScalePreservingModel: vi.fn(),
   resolveUpscaleInput: vi.fn(),
   removeUpscaleInput: vi.fn(),
+  getMaxInputPixels: vi.fn(),
 }));
 
 vi.mock('@server/analytics', () => ({ trackServerEvent: mocks.track }));
@@ -67,6 +72,34 @@ vi.mock('@server/services/batch-limit.service', () => ({
       resetAt: new Date('2026-07-26T21:00:00.000Z'),
     }),
     release: mocks.batchRelease,
+  },
+}));
+vi.mock('@server/services/async-upscale.service', () => ({
+  AsyncUpscaleError: class AsyncUpscaleError extends Error {
+    code: string;
+    status: number;
+    details?: Record<string, unknown>;
+    headers?: Record<string, string>;
+    retryAfter?: number;
+
+    constructor(
+      message: string,
+      code = 'AI_UNAVAILABLE',
+      status = 503,
+      details?: Record<string, unknown>
+    ) {
+      super(message);
+      this.code = code;
+      this.status = status;
+      this.details = details;
+      this.headers = {};
+    }
+  },
+  asyncUpscaleService: {
+    start: mocks.asyncStart,
+    replay: mocks.asyncReplay,
+    read: mocks.asyncRead,
+    listActive: mocks.asyncListActive,
   },
 }));
 vi.mock('@server/services/anti-freeloader.service', () => ({
@@ -92,7 +125,7 @@ vi.mock('@server/services/llm-image-analyzer', () => ({
 vi.mock('@server/services/model-registry', () => ({
   ModelRegistry: {
     getInstance: () => ({
-      getMaxInputPixels: () => Number.MAX_SAFE_INTEGER,
+      getMaxInputPixels: mocks.getMaxInputPixels,
       getModel: mocks.getModel,
       getModelsByTier: mocks.getModelsByTier,
       recommendModel: mocks.recommendModel,
@@ -150,6 +183,12 @@ vi.mock('@shared/validation/upscale.schema', () => ({
     parse: mocks.parseUpscale,
   },
   decodeImageDimensions: mocks.decodeImageDimensions,
+  getMaxPixelsForModel: mocks.getMaxInputPixels,
+  getScaleAwareMaxInputPixelsForModel: (
+    modelId: string,
+    scale: number,
+    maxOutputPixels = 4096 * 4096
+  ) => Math.min(mocks.getMaxInputPixels(modelId), Math.floor(maxOutputPixels / (scale * scale))),
   getBase64PayloadLength: (value: string) =>
     value.length - (value.startsWith('data:') ? value.indexOf(',') + 1 : 0),
   getBase64PayloadOffset: (value: string) =>
@@ -218,6 +257,14 @@ describe('POST /api/upscale free limit errors and synchronous provider regressio
     mocks.acquireProviderPermit.mockResolvedValue(true);
     mocks.recordProviderFailure.mockResolvedValue(true);
     mocks.recordProviderSuccess.mockResolvedValue(true);
+    mocks.asyncReplay.mockResolvedValue(null);
+    mocks.asyncStart.mockResolvedValue({
+      body: { success: true, jobId: '11111111-1111-4111-8111-111111111111' },
+      status: 202,
+      headers: {},
+    });
+    mocks.asyncRead.mockResolvedValue({ body: { success: true }, status: 200, headers: {} });
+    mocks.asyncListActive.mockResolvedValue({ body: { jobs: [] }, status: 200, headers: {} });
     mocks.createProcessorForModel.mockReturnValue({
       providerName: 'test',
       processImage: mocks.processImage,
@@ -261,6 +308,7 @@ describe('POST /api/upscale free limit errors and synchronous provider regressio
       providerCostUsd: 0.002,
     });
     mocks.resolveResolution.mockReturnValue(undefined);
+    mocks.getMaxInputPixels.mockReturnValue(Number.MAX_SAFE_INTEGER);
     mocks.resolveUpscaleInput.mockResolvedValue({
       imageReference: 'https://storage.example/signed-input?token=abc',
       validationImageData: 'iVBORw0KGgoAAAANSUhEUg==',
@@ -275,6 +323,7 @@ describe('POST /api/upscale free limit errors and synchronous provider regressio
       supportedScales: [2],
       tierRestriction: null,
       costPerRun: modelId === 'real-esrgan-large' ? 0.0047 : 0.0017,
+      maxOutputResolution: 4096 * 4096,
     }));
     mocks.parseUpscale.mockReturnValue({
       storagePath: 'user-1/11111111-1111-4111-8111-111111111111.jpg',
@@ -336,6 +385,8 @@ describe('POST /api/upscale free limit errors and synchronous provider regressio
       const response = await POST(request());
 
       expect(response.status).toBe(200);
+      expect(mocks.removeUpscaleInput, 'a successful upscale retains its shared input').not
+        .toHaveBeenCalled();
       expect(mocks.getScalePreservingFallbackCandidates).toHaveBeenCalledWith(
         expectedPaidClassification
       );
@@ -349,6 +400,127 @@ describe('POST /api/upscale free limit errors and synchronous provider regressio
       );
     }
   );
+
+  it.each([
+    ['1712x1223', 1712, 1223],
+    ['2235x938', 2235, 938],
+  ])(
+    'rejects Quick 4x %s before async admission because it exceeds the 4096x4096 output contract',
+    async (_label, width, height) => {
+      const oneCreditProfile = profile({ subscription_credits_balance: 10 });
+      mocks.from.mockImplementation(() => ({
+        select: () => ({
+          eq: () => ({
+            single: async () => ({ data: oneCreditProfile, error: null }),
+            maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
+          }),
+        }),
+      }));
+      mocks.parseUpscale.mockReturnValue({
+        storagePath: 'user-1/44444444-4444-4444-8444-444444444444.jpg',
+        jobId: '44444444-4444-4444-8444-444444444444',
+        mimeType: 'image/jpeg',
+        config: {
+          qualityTier: 'quick',
+          scale: 4,
+          additionalOptions: { smartAnalysis: false, enhance: true },
+        },
+      });
+      mocks.decodeImageDimensions.mockReturnValue({ width, height });
+      mocks.getMaxInputPixels.mockReturnValue(2_096_704);
+      mocks.getModel.mockReturnValue({
+        provider: 'replicate',
+        isEnabled: true,
+        supportedScales: [2, 4],
+        tierRestriction: null,
+        capabilities: ['upscale'],
+        displayName: 'Upscale',
+        maxOutputResolution: 4096 * 4096,
+      });
+
+      const response = await POST(request());
+      const body = await response.json();
+
+      expect(response.status).toBe(422);
+      expect(body).toMatchObject({
+        error: {
+          code: 'IMAGE_TOO_LARGE',
+          details: {
+            width,
+            height,
+            pixels: width * height,
+            maxPixels: 1_048_576,
+          },
+        },
+      });
+      expect(mocks.asyncStart).not.toHaveBeenCalled();
+      expect(mocks.batchCheck).not.toHaveBeenCalled();
+      expect(mocks.processImage).not.toHaveBeenCalled();
+    }
+  );
+
+  it('admits a valid Clarity Pro 1000x1000 8x request under the dedicated 64 MP policy', async () => {
+    const paidProfile = profile({ purchased_credits_balance: 50 });
+    mocks.from.mockImplementation(() => ({
+      select: () => ({
+        eq: () => ({
+          single: async () => ({ data: paidProfile, error: null }),
+          maybeSingle: async () => ({ data: { user_id: 'user-1' }, error: null }),
+        }),
+      }),
+    }));
+    mocks.parseUpscale.mockReturnValue({
+      storagePath: 'user-1/55555555-5555-4555-8555-555555555555.jpg',
+      jobId: '55555555-5555-4555-8555-555555555555',
+      mimeType: 'image/jpeg',
+      resolvedModel: 'clarity-pro-upscaler',
+      config: {
+        qualityTier: 'clarity-pro',
+        scale: 8,
+        additionalOptions: { smartAnalysis: false, enhance: true, enhanceFaces: true },
+      },
+    });
+    mocks.decodeImageDimensions.mockReturnValue({ width: 1000, height: 1000 });
+    mocks.getModelForTier.mockReturnValue('clarity-pro-upscaler');
+    mocks.modelIdToTier.mockReturnValue('clarity-pro');
+    mocks.getMaxInputPixels.mockReturnValue(4_000_000);
+    mocks.resolveScalePreservingModel.mockReturnValue({
+      usedFallback: false,
+      modelId: 'clarity-pro-upscaler',
+    });
+    mocks.getModel.mockReturnValue({
+      provider: 'replicate',
+      isEnabled: true,
+      supportedScales: [2, 4, 8],
+      tierRestriction: 'hobby',
+      capabilities: ['upscale', 'face-enhancement'],
+      displayName: 'Clarity Pro',
+      costPerRun: 0.03,
+      maxOutputResolution: 4096 * 4096,
+    });
+    mocks.calculateCredits.mockReturnValue({
+      finalCredits: 3,
+      credits: 3,
+      effectiveResolution: undefined,
+      pricingModel: 'output-megapixel',
+      providerCostUsd: 0.03,
+    });
+
+    const response = await POST(request());
+    const body = await response.json();
+
+    expect(response.status).toBe(202);
+    expect(body).toMatchObject({ success: true, jobId: '11111111-1111-4111-8111-111111111111' });
+    expect(mocks.asyncStart).toHaveBeenCalledWith(
+      expect.objectContaining({
+        modelId: 'clarity-pro-upscaler',
+        resolvedTier: 'clarity-pro',
+        creditCost: 3,
+      })
+    );
+    expect(mocks.batchCheck).not.toHaveBeenCalled();
+    expect(mocks.processImage).not.toHaveBeenCalled();
+  });
 
   it('charges the same 25 credits priced for an ultra 4K override', async () => {
     const paidProfile = profile({

@@ -738,7 +738,9 @@ describe('authenticated async upscale contract', () => {
   it('keeps the largest accepted Quick 4x input on its existing model and one-credit price', async () => {
     mocks.resolveInput.mockResolvedValue({
       imageReference: INPUT_URL,
-      validationImageData: pngHeader(1224, 1224),
+      // The largest input the 4096x4096 output contract allows at 4x: 4096^2 / 16
+      // = 1,048,576px. Anything larger is now rejected before admission.
+      validationImageData: pngHeader(1024, 1024),
       sizeBytes: IMAGE_VALIDATION.MAX_SIZE_PAID,
       mimeType: 'image/png',
     });
@@ -1191,6 +1193,25 @@ describe('authenticated async upscale contract', () => {
     expect(mocks.recordCost).not.toHaveBeenCalled();
     expect(mocks.lifecycleCancel).not.toHaveBeenCalled();
     expect(terminalEvents()).toEqual([]);
+  });
+
+  it('retains the shared input after terminal success so a pending job stays deliverable', async () => {
+    expect((await startAndSucceed()).status).toBe(200);
+    expect(mocks.removeInput, 'a shared input must survive a terminal success').not.toHaveBeenCalled();
+    await route.GET(statusRequest());
+    expect(mocks.removeInput).not.toHaveBeenCalled();
+  });
+
+  it('retains the shared input after terminal failure so a pending job stays deliverable', async () => {
+    await route.POST(request());
+    if (reservation) delete reservation.result_context.recovery;
+    await vi.advanceTimersByTimeAsync(5000);
+    mocks.fetch.mockResolvedValueOnce(
+      providerResponse({ id: PREDICTION_ID, status: 'failed', error: 'provider timed out' })
+    );
+    const response = await route.GET(statusRequest());
+    expect(response.status).toBe(503);
+    expect(mocks.removeInput, 'a shared input must survive a terminal failure').not.toHaveBeenCalled();
   });
 
   it.each(['analytics', 'lifecycle', 'cost'])(

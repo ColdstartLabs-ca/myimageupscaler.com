@@ -7,6 +7,7 @@ import { describe, it, expect } from 'vitest';
 
 import { MODEL_MAX_INPUT_PIXELS } from '@shared/config/model-costs.config';
 import {
+  getScaleAwareMaxInputPixelsForModel,
   getMaxPixelsForModel,
   getMaxPixelsForQualityTier,
   IMAGE_VALIDATION,
@@ -77,6 +78,18 @@ describe('Model Pixel Limits', () => {
 
     it('should skip Replicate pixel limits for background removal', () => {
       expect(getMaxPixelsForQualityTier('bg-removal')).toBeNull();
+    });
+  });
+
+  describe('getScaleAwareMaxInputPixelsForModel', () => {
+    it('caps Quick 4x input by the configured 4096x4096 output contract', () => {
+      expect(getScaleAwareMaxInputPixelsForModel('real-esrgan', 4)).toBe(1_048_576);
+      expect(1712 * 1223).toBeGreaterThan(1_048_576);
+      expect(2235 * 938).toBeGreaterThan(1_048_576);
+    });
+
+    it('keeps the verified Quick 2x fallback input limit unchanged', () => {
+      expect(getScaleAwareMaxInputPixelsForModel('real-esrgan-large', 2)).toBe(4_194_304);
     });
   });
 

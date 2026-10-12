@@ -13,6 +13,7 @@
   "gallery": {
     "title": "Gallery",
     "subtitle": "Your saved upscaled images",
+    "retentionNote": "Free gallery images may expire after 30 days of inactivity. We warn you at least 7 days before, and signing in keeps them. Paid plans are exempt.",
     "emptyTitle": "No saved images yet",
     "emptyDescription": "Images you save during processing will appear here for easy access later.",
     "saveFirstImage": "Save your first image",

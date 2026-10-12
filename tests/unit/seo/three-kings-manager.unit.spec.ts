@@ -19,6 +19,7 @@ const tkm = require(
   windowClose: (date: string, days?: number) => string;
   cmdRecordEdit: (args: Record<string, string>) => void;
   cmdRecordRevert: (args: Record<string, string>) => void;
+  isActionableRegression: (latest: Record<string, unknown> | undefined) => boolean;
   RUNG_FIELDS: Record<number, string>;
   WINDOW_DAYS: number;
 };
@@ -152,6 +153,21 @@ describe('three-kings-manager classify gates', () => {
 });
 
 describe('three-kings-manager edit outcomes', () => {
+  it('does not treat a measured rollback loss as another actionable regression', () => {
+    expect(
+      tkm.isActionableRegression({
+        field: 'rollback',
+        outcome: { verdict: 'LOSS' },
+      })
+    ).toBe(false);
+    expect(
+      tkm.isActionableRegression({
+        field: 'seo_description',
+        outcome: { verdict: 'LOSS' },
+      })
+    ).toBe(true);
+  });
+
   it('waits for 14 complete post-edit GSC days before judging', () => {
     const entry = { history: [{ date: '2026-08-31', rung: 1, field: 'seo_title', outcome: null }] };
     const rows = mkRows([
@@ -347,6 +363,52 @@ describe('three-kings-manager ledger commands', () => {
     expect(saved.entries[0].rung).toBe(1);
     expect(saved.entries[0].lastEdit).toBe('2026-08-20');
     expect(saved.entries[0].history[0].field).toBe('rollback');
+  });
+});
+
+describe('three-kings-manager pending public exposure', () => {
+  it('HOLDs an API-applied rung until the new copy is verified in public HTML', () => {
+    const entry = {
+      ...baseEntry,
+      history: [{ date: '2026-08-01', liveVerification: { status: 'pending' } }],
+    };
+    const result = tkm.classify(
+      entry,
+      { current: healthyCurrent, prior: healthyPrior },
+      '2026-09-01'
+    );
+    expect(result.verdict).toBe('HOLD');
+    expect(result.reason).toContain('public HTML');
+  });
+
+  it('does not judge a GSC window before an API-applied change reaches public HTML', () => {
+    const entry = {
+      history: [
+        {
+          date: '2026-08-01',
+          rung: 3,
+          field: 'proof-led body pass',
+          outcome: null,
+          liveVerification: { status: 'pending' },
+        },
+      ],
+    };
+    const rows = mkRows([
+      ['2026-07-20', 20, 1000, 7],
+      ['2026-08-10', 1, 1000, 7],
+    ]);
+    expect(tkm.judgeEdits(entry, rows, '2026-09-01').judged).toBe(0);
+    expect(entry.history[0].outcome).toBeNull();
+  });
+
+  it('does not raise a regression from a change whose public exposure is pending', () => {
+    expect(
+      tkm.isActionableRegression({
+        field: 'proof-led body pass',
+        outcome: { verdict: 'LOSS' },
+        liveVerification: { status: 'pending' },
+      })
+    ).toBe(false);
   });
 });
 

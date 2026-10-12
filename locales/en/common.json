@@ -21,8 +21,8 @@
     "faq1Answer": "Our AI-powered upscaler enlarges images while reconstructing details, edges, and textures. Results depend on the source image and selected model, so inspect the output before using it for a final export.",
     "faq2Question": "What should I look for in an AI image upscaler?",
     "faq2Answer": "Look for output quality on your own images, supported formats and scale factors, clear processing limits, and pricing that matches your workload. MyImageUpscaler is web-based and lets registered users process supported images without installing desktop software.",
-    "faq3Question": "How can I try MyImageUpscaler?",
-    "faq3Answer": "Create an account to see the free credit grant available in your region, then upload a supported image and choose an available processing mode. Credit cost depends on the selected processing option.",
+    "faq3Question": "How to upscale images for free?",
+    "faq3Answer": "Create a free account — new accounts get free credits and no credit card is required. Upload a supported image (JPEG, PNG, WebP or HEIC), choose a processing mode, and download the result without a watermark. Credit cost depends on the processing option you choose.",
     "faq4Question": "Is AI upscaling better than traditional upscaling?",
     "faq4Answer": "AI upscaling can reconstruct details that interpolation-based resizing cannot, but results vary by image and model. Compare the output at the size you plan to use and keep the original file available for reference.",
     "faqItems": [
@@ -35,8 +35,8 @@
         "answer": "Look for output quality on your own images, supported formats and scale factors, clear processing limits, and pricing that matches your workload. MyImageUpscaler is web-based and lets registered users process supported images without installing desktop software."
       },
       {
-        "question": "How can I try MyImageUpscaler?",
-        "answer": "Create an account to see the free credit grant available in your region, then upload a supported image and choose an available processing mode. Credit cost depends on the selected processing option."
+        "question": "How to upscale images for free?",
+        "answer": "Create a free account — new accounts get free credits and no credit card is required. Upload a supported image (JPEG, PNG, WebP or HEIC), choose a processing mode, and download the result without a watermark. Credit cost depends on the processing option you choose."
       },
       {
         "question": "Is AI upscaling better than traditional upscaling?",
@@ -170,7 +170,7 @@
   "meta": {
     "homepage": {
       "title": "AI Image Upscaler — Free Photo Enhancer Online | MyImageUpscaler",
-      "description": "Enhance, upscale, and restore supported JPEG, PNG, WebP, and HEIC images with AI. Create an account to see the free credit grant available in your region."
+      "description": "Enhance, upscale, and restore photos with AI — free online. Start with free credits, no credit card needed. Works with JPEG, PNG, WebP, and HEIC."
     }
   },
   "common": {

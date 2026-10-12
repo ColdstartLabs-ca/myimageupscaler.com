@@ -10,51 +10,39 @@
 import { NextResponse } from 'next/server';
 import { clientEnv } from '@shared/config/env';
 import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/i18n/config';
-import { LOCALIZED_CATEGORIES, isTranslatedPair } from '@/lib/seo/localization-config';
+import {
+  ALL_CATEGORIES,
+  LOCALIZED_CATEGORIES,
+  isTranslatedPair,
+} from '@/lib/seo/localization-config';
 
 const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
 
-// English-only categories (no locale-specific sitemaps)
-const ENGLISH_ONLY_SITEMAP_CATEGORIES = [
-  'static',
-  'blog',
-  'compare',
-  'platforms',
-  'content',
-  'photo-restoration',
-  'camera-raw',
-  'industry-insights',
-  'device-optimization',
-  'bulk-tools',
-  'ai-features',
-  'ai-photo-editor',
-  'comparisons-expanded',
-  'personas-expanded',
-  'use-cases-expanded',
-  'technical-guides',
-];
+/** Child sitemaps outside the pSEO category list. */
+const NON_PSEO_SITEMAPS = ['static', 'blog'];
 
 /**
  * Generate sitemap index with:
- * - One sitemap per English-only category
- * - One English sitemap per localized category
+ * - One English sitemap per category that has a routed child sitemap
  * - One locale-specific sitemap per localized category × non-English locale
  */
 export async function GET() {
   const sitemapEntries: Array<{ name: string; lastmod: string }> = [];
   const lastmod = new Date().toISOString();
 
-  // English-only categories: single sitemap each
-  for (const category of ENGLISH_ONLY_SITEMAP_CATEGORIES) {
+  // English (canonical) sitemap for every category whose pages are indexable,
+  // plus the non-pSEO sitemaps. Derived from ALL_CATEGORIES so a category with
+  // no translated locale pair (scale, free, guides) still gets listed.
+  for (const category of ALL_CATEGORIES) {
     sitemapEntries.push({ name: `sitemap-${category}.xml`, lastmod });
   }
 
-  // Localized categories: English + per-locale sitemaps
-  for (const category of LOCALIZED_CATEGORIES) {
-    // English (canonical) sitemap
+  for (const category of NON_PSEO_SITEMAPS) {
     sitemapEntries.push({ name: `sitemap-${category}.xml`, lastmod });
+  }
 
-    // Locale-specific sitemaps for non-English locales
+  // Locale-specific sitemaps for non-English locales with a measured translation
+  for (const category of LOCALIZED_CATEGORIES) {
     for (const locale of SUPPORTED_LOCALES) {
       if (locale !== DEFAULT_LOCALE && isTranslatedPair(category, locale)) {
         sitemapEntries.push({ name: `sitemap-${category}-${locale}.xml`, lastmod });

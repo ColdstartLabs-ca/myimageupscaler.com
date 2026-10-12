@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { assertRealTestDatabase, MOCK_SUPABASE_URL } from './test-env-isolation';
 
 /**
  * Fixed test user for all tests - reuses the same account
@@ -19,6 +20,7 @@ export async function resetTestUser(): Promise<{
 }> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  assertRealTestDatabase(supabaseUrl, [supabaseServiceKey]);
 
   if (!supabaseUrl || !supabaseServiceKey) {
     throw new Error(
@@ -121,6 +123,11 @@ async function getCurrentCredits(
 export async function cleanupOldTestUsers(): Promise<number> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (supabaseUrl === MOCK_SUPABASE_URL) {
+    console.log('Mock-only Supabase target: no database cleanup performed.');
+    return 0;
+  }
+  assertRealTestDatabase(supabaseUrl, [supabaseServiceKey]);
 
   if (!supabaseUrl || !supabaseServiceKey) {
     throw new Error('Missing Supabase environment variables');

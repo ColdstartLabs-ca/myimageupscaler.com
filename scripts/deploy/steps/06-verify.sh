@@ -27,7 +27,7 @@ step_verify() {
         sleep 3
     done
 
-    log_warn "Health check didn't return 200 (may still be propagating)"
+    log_error "Health check failed after 5 attempts: HTTP $status"
 }
 
 _verify_html_cache() {

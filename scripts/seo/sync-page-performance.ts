@@ -8,7 +8,7 @@
  * old page look unproven and silently change sitemap output.
  */
 
-import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
 import { serverEnv } from '@shared/config/env';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale } from '@/i18n/config';
@@ -161,7 +161,6 @@ export function buildInventory(rawPages: readonly IRawInventoryPage[]): IInvento
   for (const rawPage of rawPages) {
     if (!rawPage.slug) continue;
     const category = normalizeCategory(rawPage.category);
-    if (category === 'use-cases-expanded') continue;
     const slug = normalizeSlug(rawPage.slug);
     const path = getInventoryPath(category, slug, rawPage.path);
 
@@ -329,6 +328,35 @@ export function buildSnapshot(
   };
 }
 
+function earningPageKeys(snapshot: IPagePerformanceSnapshot): Set<string> {
+  return new Set(
+    snapshot.pages
+      .filter(page => page.impressions > 0 || page.clicks > 0)
+      .map(page => `${page.category}/${page.slug}/${page.locale || DEFAULT_LOCALE}`)
+  );
+}
+
+export function assertNoCatastrophicEarningRegression(
+  previous: IPagePerformanceSnapshot,
+  candidate: IPagePerformanceSnapshot
+): void {
+  const previousEarning = earningPageKeys(previous);
+  if (previousEarning.size < 20) return;
+
+  const candidateEarning = earningPageKeys(candidate);
+  const lost = [...previousEarning].filter(key => !candidateEarning.has(key));
+  const dropRatio = lost.length / previousEarning.size;
+
+  if (lost.length >= 20 && dropRatio >= 0.25) {
+    throw new Error(
+      `Refusing to overwrite pSEO performance: ${lost.length} previously earning pages ` +
+        `(${(dropRatio * 100).toFixed(1)}%) lost all GSC evidence. ` +
+        `This usually means the export is truncated. Re-run with complete GSC page rows, ` +
+        `or pass --allow-earning-drop only after manually validating the loss.`
+    );
+  }
+}
+
 function buildCategoryReport(snapshot: IPagePerformanceSnapshot): ICategoryReport[] {
   const groups = new Map<string, ICategoryReport>();
 
@@ -397,6 +425,11 @@ async function main(): Promise<void> {
   const siteUrl = getArg('site') || serverEnv.GSC_SITE_URL || DEFAULT_SITE_URL;
   const rows = await fetchRows(siteUrl, range);
   const snapshot = buildSnapshot(readInventory(), rows, range, siteUrl, new Date().toISOString());
+
+  if (existsSync(snapshotPath) && !process.argv.includes('--allow-earning-drop')) {
+    const previous = JSON.parse(readFileSync(snapshotPath, 'utf8')) as IPagePerformanceSnapshot;
+    assertNoCatastrophicEarningRegression(previous, snapshot);
+  }
 
   mkdirSync(resolve(process.cwd(), 'content'), { recursive: true });
   mkdirSync(resolve(process.cwd(), 'seo-reports'), { recursive: true });

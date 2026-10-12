@@ -29,7 +29,6 @@ import { recordUpgradePromptDismissal } from '@client/utils/upgrade-prompt-dismi
 import { getEnabledCreditPacks, getEnabledPlans } from '@shared/config/subscription.utils';
 import type { IExperimentAssignment } from '@shared/types/experiments.types';
 import type { ICreditPack, IPlanConfig } from '@shared/config/subscription.types';
-import { supabase } from '@server/supabase/supabaseClient';
 
 export interface IPurchaseModalProps {
   isOpen: boolean;
@@ -228,8 +227,8 @@ export function PurchaseModal({
 
     if (!isOpen || !isAuthenticated || !user?.id) return;
 
-    void supabase.auth
-      .getSession()
+    void import('@server/supabase/supabaseClient')
+      .then(({ supabase }) => supabase.auth.getSession())
       .then(async ({ data }) => {
         const accessToken = data.session?.access_token;
         if (!accessToken) return;

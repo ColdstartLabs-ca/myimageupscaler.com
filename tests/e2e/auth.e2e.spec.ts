@@ -275,18 +275,14 @@ test.describe('Authentication', () => {
       // Ensure Google button is visible before clicking
       await expect(loginPage.googleSignInButton).toBeVisible();
 
-      // Set up navigation listener before click
-      const navigationPromise = page
-        .waitForURL(/accounts\.google\.com|supabase/, { timeout: 5000 })
-        .catch(() => null);
+      // Stop the redirect at Supabase's authorize endpoint so no real network call is made
+      await page.route('**/auth/v1/authorize**', route => route.fulfill({ status: 200, body: '' }));
+      const authorizeRequest = page.waitForRequest('**/auth/v1/authorize**');
 
       await loginPage.googleSignInButton.click();
 
-      // Should navigate away (to Google or Supabase OAuth)
-      const navigated = await navigationPromise;
-      // If we're still on the same page, the navigation was blocked (expected in test env)
-      // If we navigated, the OAuth flow initiated correctly
-      expect(navigated !== null || page.url().includes('localhost')).toBeTruthy();
+      const url = new URL((await authorizeRequest).url());
+      expect(url.searchParams.get('provider')).toBe('google');
     });
 
     test('handles OAuth error hash gracefully', async ({ page }) => {
