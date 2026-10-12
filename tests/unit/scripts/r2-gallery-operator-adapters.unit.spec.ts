@@ -2,6 +2,8 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { AwsV4Signer } from 'aws4fetch';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { pathToFileURL } from 'node:url';
 import os from 'node:os';
 import path from 'node:path';
 
@@ -369,6 +371,59 @@ describe('r2-gallery-operator-adapters: adapters', () => {
     ).rejects.toThrow(/Byte size mismatch/);
     expect(fs.existsSync(targetPath)).toBe(false);
   });
+
+  it.each([200, 412, 500, 'rejection'])('closes the archive upload stream after %s', status => {
+    const bytes = Buffer.alloc(256 * 1024, 7);
+    const pixelSha = sha256(bytes);
+    const localPath = path.join(runDir, GALLERY_BUCKET, GALLERY_PATH);
+    fs.writeFileSync(localPath, bytes);
+    const script = `
+      import assert from 'node:assert/strict';
+      import fs from 'node:fs';
+      import { createHash } from 'node:crypto';
+      import { syncBuiltinESMExports } from 'node:module';
+      import { createR2GalleryAdapters } from ${JSON.stringify(pathToFileURL(path.resolve('scripts/storage/r2-gallery-operator-adapters.mjs')).href)};
+      const bytes = fs.readFileSync(${JSON.stringify(localPath)});
+      const streams = [];
+      const original = fs.createReadStream;
+      fs.createReadStream = (...args) => { const stream = original(...args); streams.push(stream); return stream; };
+      syncBuiltinESMExports();
+      const status = ${JSON.stringify(status)};
+      let gets = 0;
+      const fetchFn = async (_url, init) => {
+        if (init.method !== 'PUT') {
+          gets++;
+          return new Response(bytes, { headers: { etag: '"archive"' } });
+        }
+        assert.equal(init.headers['if-none-match'], '*');
+        assert.equal(init.headers['content-length'], String(bytes.length));
+        assert.equal(init.headers['content-type'], 'image/png');
+        if (status === 'rejection') throw new Error('transport rejected');
+        if (status === 200) {
+          const chunks = [];
+          for await (const chunk of init.body) chunks.push(Buffer.from(chunk));
+          const uploaded = Buffer.concat(chunks);
+          assert.equal(uploaded.length, bytes.length);
+          assert.equal(createHash('sha256').update(uploaded).digest('hex'), ${JSON.stringify(pixelSha)});
+        }
+        return new Response('response', { status });
+      };
+      const adapters = createR2GalleryAdapters({ db: { query: () => { throw new Error('Unexpected DB access'); } }, signing: ${JSON.stringify(SIGNING)},
+        runDir: ${JSON.stringify(runDir)}, runner: async () => '', fetchFn });
+      const copy = adapters.archiveAndVerify({ archiveKey: ${JSON.stringify(`archive/gallery/${IMAGE_ID}/${pixelSha}`)},
+        localPath: ${JSON.stringify(localPath)}, sha256: ${JSON.stringify(pixelSha)}, bytes: bytes.length, verifyExisting: () => true });
+      if (status === 500 || status === 'rejection') {
+        await assert.rejects(copy, status === 500 ? /Archive PUT failed.*HTTP 500/ : /transport rejected/);
+        assert.equal(gets, 0);
+      } else assert.equal((await copy).sha256, ${JSON.stringify(pixelSha)});
+      assert.equal(streams.length, 1);
+      assert(streams[0].destroyed, 'Early response leaked an open upload stream');
+    `;
+    const result = spawnSync(process.execPath, ['--input-type=module', '-e', script], { encoding: 'utf8', timeout: 10_000 });
+    expect(result.error).toBeUndefined();
+    expect(result.stderr).toBe('');
+    expect(result.status).toBe(0);
+  }, 15_000);
 
   it('never PUTs the original and signs an explicit content-length for the archive', async () => {
     const pixelSha = sha256(SRC_BYTES);

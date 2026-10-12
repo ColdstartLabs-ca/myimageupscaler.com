@@ -15,7 +15,6 @@ import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { createReadStream, promises as fs } from 'node:fs';
 import path from 'node:path';
-import { Readable } from 'node:stream';
 
 import {
   SHA256_REGEX,
@@ -367,18 +366,24 @@ export function createR2GalleryAdapters({
       sizeBytes: bytes,
       expiresSeconds: DEFAULT_EXPIRES_SECONDS,
     });
-    const putResponse = await fetchFn(url, {
-      method: 'PUT',
-      headers: {
-        'content-type': contentType,
-        'content-length': String(bytes),
-        'if-none-match': '*',
-      },
-      body: Readable.toWeb(createReadStream(localPath)),
-      duplex: 'half',
-      redirect: 'error',
-      signal: AbortSignal.timeout(READBACK_TIMEOUT_MS),
-    });
+    const upload = createReadStream(localPath);
+    let putResponse;
+    try {
+      putResponse = await fetchFn(url, {
+        method: 'PUT',
+        headers: {
+          'content-type': contentType,
+          'content-length': String(bytes),
+          'if-none-match': '*',
+        },
+        body: upload,
+        duplex: 'half',
+        redirect: 'error',
+        signal: AbortSignal.timeout(READBACK_TIMEOUT_MS),
+      });
+    } finally {
+      upload.destroy();
+    }
 
     if (putResponse.status === 412) {
       const existing = await getObjectProof(archiveKey, sha256, bytes);
