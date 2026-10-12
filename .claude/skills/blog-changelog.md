@@ -1,5 +1,17 @@
 # Blog Changelog
 
+## 2026-10-12
+
+### SEO: Best-image-upscaler rung-3 workflow evidence pass — final public copy pending
+
+**Affected:** best-image-upscaler
+**Why:** Final GSC through Oct 8 closed the Sep 24 rollback cooling-off window. The manager authorized rung 3 at position 11.8 with 7 clicks / 1,985 impressions (0.35% CTR). The rollback's diagnostic LOSS is not a reason to reapply the failed description. Query/page evidence supports software-workflow and PNG-selection gaps; the canonical free-comparison owner remains unchanged.
+**Changes:**
+
+- Changed only `content`: direct workflow answer plus an above-fold reproducible equal-size evaluation, PNG/transparency explanation and computed resolution proof. Linked live ON1, Topaz and W3C primary sources; no invented tests or vendor scores. Corrected four stale ten-credit claims to region-dependent availability within the same content rung; metadata, slug, status and existing media remained unchanged.
+- Fresh schema/data backup `backup_2026-10-12_09-31-36` passed test extraction/byte comparison, `yarn db:backups` and `gzip -t` before the initial write. Final audit found an additional closing-CTA ten-credit claim; after another fully verified backup `backup_2026-10-12_09-44-12`, a surgical factual completion changed that clause within the same rung/date, not a second experiment. Final PATCH `200` at `2026-10-12T16:46:09.796203+00:00`; GET content SHA256 `f3180ce35db4a0f7b910faa9a2bddae130d2fc66bb4a0efa74e8b84a555473a9`. Exact pre-rung body retained, SHA256 `fddb86f4a921147fe9fae9374967e2331873ff470077e4562e51945e9775cf94`; older backups retained.
+- Normal public URL returns 200, self-canonical, index/follow and exposes the new evidence module, not script/RSC text, but three final-copy checks still show the old closing CTA. **End-to-end completion is pending:** ledger HOLD and indexing deferred until the normal article exposes the corrected final copy. No new rung, broad purge or deployment. Existing indexing row updated in place; GSC browser control timed out and no manual request is claimed. Start 14 complete GSC days from first confirmed final-copy exposure, plus exporter holdback; no fixed target verdict date yet.
+
 ## 2026-10-08
 
 ### Verification: YouTube rung-3 public exposure confirmed

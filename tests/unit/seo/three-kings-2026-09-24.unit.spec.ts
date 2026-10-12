@@ -68,7 +68,7 @@ describe('2026-09-24 Three Kings actions', () => {
     expect(updated.title).toBe('unchanged');
   });
 
-  it('keeps one pending indexing row per affected URL', () => {
+  it('keeps one truthful indexing row per affected URL', () => {
     const backlog = fs.readFileSync(
       path.resolve(process.cwd(), 'docs/SEO/maintenance/gsc-request-indexing-backlog.md'),
       'utf8'
@@ -78,7 +78,12 @@ describe('2026-09-24 Three Kings actions', () => {
       const url = `https://myimageupscaler.com/blog/${slug}`;
       const rows = backlog.split('\n').filter(line => line.includes(`\`${url}\``));
       expect(rows, url).toHaveLength(1);
-      expect(rows[0], url).toContain('- [ ]');
+      expect(rows[0], url).toMatch(/^- \[( |x)\]/);
+      if (rows[0].startsWith('- [x]')) {
+        expect(rows[0], url).toMatch(
+          /API-resolved.*successful crawl|indexing requested.*confirmed/
+        );
+      }
       expect(rows[0], url).toContain('2026-09-24');
     }
   });
