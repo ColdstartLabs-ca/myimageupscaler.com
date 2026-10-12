@@ -66,7 +66,7 @@ A daily guard in each project alerts by email (`PROVIDER_ALERT_EMAIL`) at 80% of
 | --- | ------------------------------------------------------------------------ | -------- | ----------------------------------------------------------------------------------------------------- |
 | 1   | [01-oct13-input-backup-and-purge.md](01-oct13-input-backup-and-purge.md) | P0       | Must run at refill. It frees about 4.25 GB of inputs, plus the first wave of inactive free galleries. |
 | 2   | [02-r2-storage-migration.md](02-r2-storage-migration.md)                 | P0       | Gallery alone (3.24 GB) is over Free. Must land within about 3 days of refill.                        |
-| 3   | [03-db-retention-safety.md](03-db-retention-safety.md)                   | P1       | Also finds why the :20/:25 crons did not clean up.                                                    |
+| 3   | [03-db-retention-safety.md](../done/supabase-quota-recovery/03-db-retention-safety.md)                   | P1       | Also finds why the :20/:25 crons did not clean up.                                                    |
 | 4   | [04-free-gallery-30d-expiry.md](04-free-gallery-30d-expiry.md)           | P1       | Keeps R2 under 10 GB. Changes the customer contract.                                                  |
 
 External: AutopilotRank PRDs AQR-01 to AQR-03 are in `autopilotrank.com/docs/PRDs/supabase-quota-recovery/`. The org DB total stays over 1.1 GB until PRD-AQR-03 AC-4 holds (AP 250 MB or less).
