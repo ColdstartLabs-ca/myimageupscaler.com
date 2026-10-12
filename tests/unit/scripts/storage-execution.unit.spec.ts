@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { spawnSync } from 'node:child_process';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -1119,4 +1120,33 @@ describe('native-version purge adapter', () => {
       mode === 'valid' || mode === 'changed-during' ? 1 : 0
     );
   });
+});
+
+describe('storage-execution: CLI deletion pause', () => {
+  it.each(['purge', 'expire'])(
+    'the real CLI refuses %s before loading config or credentials',
+    command => {
+      const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'sqr-cli-pause-'));
+      try {
+        const script = path.resolve('scripts/storage/backup-and-purge.mjs');
+        const result = spawnSync(
+          process.execPath,
+          [script, command, '--confirm', '--manifest', path.join(cwd, 'nonexistent.jsonl')],
+          {
+            cwd,
+            env: { PATH: '', HOME: cwd, CLOUDSDK_CONFIG: cwd },
+            encoding: 'utf8',
+            timeout: 5000,
+          }
+        );
+        expect(result.status).toBe(1);
+        expect(result.stdout).toBe('');
+        expect(result.stderr).toContain(
+          'Deletion disabled until backup and concurrency safeguards pass independent review'
+        );
+      } finally {
+        fs.rmSync(cwd, { recursive: true, force: true });
+      }
+    }
+  );
 });

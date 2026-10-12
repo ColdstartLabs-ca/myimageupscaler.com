@@ -3,6 +3,13 @@ import { randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { Client } from 'pg';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import * as purgeSql from '../../../../scripts/storage/backup-and-purge.mjs';
+
+// The operator script is plain ESM (.mjs) with no JSDoc types; this test is
+// outside the tsc project, so read the two SQL strings through a loose cast.
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const { INACTIVE_GALLERY_SQL, GALLERY_RECHECK_SQL } = purgeSql as any;
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 /**
  * PRD-SQR-04 Phase 2 — SQL policy proof on a disposable PostgreSQL 17 container.
@@ -930,5 +937,79 @@ describe.runIf(dockerAvailable)('gallery expiry warning policy on PostgreSQL 17'
       'gallery_expiry_anchor_changed',
       'gallery_expiry_anchor_changed',
     ]);
+  });
+
+  it('requires a current seven-day delivered warning in both manual expiry SQL statements', async () => {
+    await client!.query('BEGIN');
+    try {
+      const name = 'manual-warning-gate';
+      await createUser(name, 80, 40);
+      await createProfile(name);
+      await client!.query('ALTER TABLE public.saved_images ADD COLUMN storage_path TEXT');
+      const objectPath = `manual/${uid(name)}.png`;
+      const saved = await client!.query(
+        'UPDATE public.saved_images SET storage_path=$2 WHERE user_id=$1 RETURNING id',
+        [uid(name), objectPath]
+      );
+      const imageId = saved.rows[0].id;
+      await client!.query(
+        "INSERT INTO storage.buckets(id,name) VALUES ('saved-images','saved-images') ON CONFLICT DO NOTHING"
+      );
+      await client!.query(
+        "INSERT INTO storage.objects(bucket_id,name,metadata) VALUES ('saved-images',$1,'{}'::jsonb)",
+        [objectPath]
+      );
+      const expectEligible = async (count: number) => {
+        expect((await client!.query(INACTIVE_GALLERY_SQL)).rows).toHaveLength(count);
+        expect((await client!.query(GALLERY_RECHECK_SQL, [[imageId]])).rows).toHaveLength(count);
+      };
+      await expectEligible(0); // no notice: baseline must fail here
+      await client!.query(
+        'INSERT INTO public.gallery_expiry_notices(user_id,activity_anchor) SELECT $1, public.gallery_expiry_activity_anchor($1)',
+        [uid(name)]
+      );
+      await expectEligible(0); // queued, not delivered
+      await client!.query(
+        "UPDATE public.gallery_expiry_notices SET warning_sent_at=now()-interval '6 days' WHERE user_id=$1",
+        [uid(name)]
+      );
+      await expectEligible(0);
+      await client!.query(
+        "UPDATE public.gallery_expiry_notices SET warning_sent_at=now()-interval '7 days' WHERE user_id=$1",
+        [uid(name)]
+      );
+      await expectEligible(1); // exact inclusive boundary, stable transaction now
+      await client!.query(
+        "UPDATE public.gallery_expiry_notices SET activity_anchor=activity_anchor-interval '1 microsecond' WHERE user_id=$1",
+        [uid(name)]
+      );
+      await expectEligible(0);
+      await client!.query(
+        'UPDATE public.gallery_expiry_notices SET activity_anchor=public.gallery_expiry_activity_anchor($1) WHERE user_id=$1',
+        [uid(name)]
+      );
+      await expectEligible(1);
+      await client!.query(
+        "UPDATE public.profiles SET subscription_tier='pro',subscription_status='active' WHERE id=$1",
+        [uid(name)]
+      );
+      await expectEligible(0);
+      await client!.query(
+        "UPDATE public.profiles SET subscription_tier='free',subscription_status='free',purchased_credits_balance=1 WHERE id=$1",
+        [uid(name)]
+      );
+      await expectEligible(0);
+      await client!.query('UPDATE public.profiles SET purchased_credits_balance=0 WHERE id=$1', [
+        uid(name),
+      ]);
+      await insertSession(name, {
+        createdAtDaysAgo: 40,
+        updatedAtDaysAgo: 40,
+        refreshedAtDaysAgo: 1,
+      });
+      await expectEligible(0);
+    } finally {
+      await client!.query('ROLLBACK');
+    }
   });
 });

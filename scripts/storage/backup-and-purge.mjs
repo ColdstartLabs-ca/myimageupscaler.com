@@ -114,6 +114,17 @@ export const INPUT_RECHECK_SQL = `
   WHERE o.bucket_id = $1 AND o.name = ANY($2::text[])
 `;
 
+// Expiry needs delivered-warning proof: only a warning sent for the user's
+// current anchor at least seven days ago makes an inactive free gallery deletable.
+const GALLERY_WARNING_GATE_SQL = `
+    AND EXISTS (
+          SELECT 1 FROM public.gallery_expiry_notices warning
+          WHERE warning.user_id = s.user_id
+            AND warning.activity_anchor = public.gallery_expiry_activity_anchor(s.user_id)
+            AND warning.warning_sent_at <= now() - interval '7 days'
+        )
+`;
+
 export const INACTIVE_GALLERY_SQL = `
   SELECT to_jsonb(s) AS snapshot, o.metadata AS object_metadata
   FROM public.saved_images s
@@ -156,7 +167,7 @@ export const INACTIVE_GALLERY_SQL = `
           WHERE ct.user_id = s.user_id AND ct.amount > 0
             AND ct.type IN ('purchase', 'subscription')
         )
-`;
+${GALLERY_WARNING_GATE_SQL}`;
 
 export const GALLERY_RECHECK_SQL = `
   SELECT s.id, s.user_id, s.storage_path
@@ -204,7 +215,7 @@ export const GALLERY_RECHECK_SQL = `
           SELECT count(*) FROM public.saved_images s2
           WHERE s2.storage_path = s.storage_path
         ) = 1
-`;
+${GALLERY_WARNING_GATE_SQL}`;
 // =============================================================================
 // Pure helpers (unit-tested)
 // =============================================================================
