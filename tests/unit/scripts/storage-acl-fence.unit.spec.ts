@@ -50,7 +50,8 @@ function makeDb(options: { currentUser?: string; columnAcl?: unknown; unreachabl
   const currentUser = options.currentUser ?? 'postgres';
   let entries = originalAcl();
   let actor = currentUser;
-  let saved: Entry[] | null = null;
+  let saved: { entries: Entry[]; colGrant: boolean } | null = null;
+  let colGrant = false;
   const sql: string[] = [];
   const holds = (role: string, privilege: string) =>
     entries.some(e => e.privilege === privilege && (e.grantee === role || e.grantee === 'PUBLIC'));
@@ -66,7 +67,10 @@ function makeDb(options: { currentUser?: string; columnAcl?: unknown; unreachabl
       })
     );
   const relacl = () => `{${entries.map(e => `${e.grantee}=${e.privilege}${e.grantable ? '*' : ''}/${e.grantor}`).join(',')}}`;
-  const columns = () => [{ attnum: 1, name: 'id', acl: options.columnAcl ?? null }];
+  const columns = () => [
+    { attnum: 1, name: 'id', acl: options.columnAcl ?? null },
+    { attnum: 2, name: 'last_accessed_at', acl: colGrant ? `{service_role=w/${OWNER}}` : null },
+  ];
   const list = (text: string) => text.split(',').map(s => s.trim()).map(s => s.replace(/^"|"$/g, ''));
 
   const db = {
@@ -78,9 +82,9 @@ function makeDb(options: { currentUser?: string; columnAcl?: unknown; unreachabl
     async query(text: string) {
       sql.push(text.replace(/\s+/g, ' ').trim());
       const statement = text.trim();
-      if (/^BEGIN/.test(statement)) { saved = entries.map(e => ({ ...e })); return { rows: [] }; }
+      if (/^BEGIN/.test(statement)) { saved = { entries: entries.map(e => ({ ...e })), colGrant }; return { rows: [] }; }
       if (statement === 'COMMIT') { saved = null; return { rows: [] }; }
-      if (statement === 'ROLLBACK') { if (saved) entries = saved; saved = null; actor = currentUser; return { rows: [] }; }
+      if (statement === 'ROLLBACK') { if (saved) { entries = saved.entries; colGrant = saved.colGrant; } saved = null; actor = currentUser; return { rows: [] }; }
       if (/^SET LOCAL (lock|statement)_timeout/.test(statement)) return { rows: [] };
       const setRole = /^SET LOCAL ROLE "([a-z_]+)"$/.exec(statement);
       if (setRole) { actor = setRole[1]; return { rows: [] }; }
@@ -91,6 +95,8 @@ function makeDb(options: { currentUser?: string; columnAcl?: unknown; unreachabl
         entries = entries.filter(e => !(e.grantor === actor && privs.includes(e.privilege) && from.includes(e.grantee)));
         return { rows: [] };
       }
+      if (statement === 'GRANT UPDATE (last_accessed_at) ON storage.objects TO service_role') { colGrant = true; return { rows: [] }; }
+      if (statement === 'REVOKE UPDATE (last_accessed_at) ON storage.objects FROM service_role') { colGrant = false; return { rows: [] }; }
       const grant = /^GRANT ([A-Z]+) ON storage\.objects TO ([A-Za-z_"]+)( WITH GRANT OPTION)?$/.exec(statement);
       if (grant) {
         entries.push({ grantor: actor, grantee: list(grant[2])[0], privilege: grant[1], grantable: !!grant[3] });
@@ -169,7 +175,7 @@ describe('storage-acl-fence: snapshot file', () => {
     expect(snapshot.owner).toBe(OWNER);
     expect(snapshot.captured_at).toBe('2026-10-12T10:00:00.000Z');
     expect(snapshot.acl).toContainEqual({ grantor: OWNER, grantee: 'service_role', privilege: 'DELETE', grantable: false });
-    expect(snapshot.columns).toHaveLength(1);
+    expect(snapshot.columns).toHaveLength(2);
     expect(snapshot.matrix.anon.INSERT).toBe(true);
     expect(db.sql.every((text: string) => /^SELECT/.test(text))).toBe(true);
   });
@@ -292,7 +298,11 @@ describe('storage-acl-fence: freeze, allow-delete and restore', () => {
     expect(result.matrix.service_role.INSERT).toBe(false);
     expect(result.matrix.service_role.UPDATE).toBe(false);
     expect(result.matrix.authenticated.DELETE).toBe(false);
-    expect(db.sql.filter((s: string) => /^GRANT/.test(s))).toEqual(['GRANT DELETE ON storage.objects TO service_role']);
+    // Storage locks the row with SELECT ... FOR UPDATE, which needs UPDATE on one column.
+    expect(db.sql.filter((s: string) => /^GRANT/.test(s))).toEqual([
+      'GRANT DELETE ON storage.objects TO service_role',
+      'GRANT UPDATE (last_accessed_at) ON storage.objects TO service_role',
+    ]);
   });
 
   it('restore reproduces the exact original ACL including grantors and grant options', async () => {
@@ -458,7 +468,7 @@ describe.runIf(dockerAvailable)('storage-acl-fence: real PostgreSQL 17', () => {
     await client.query(`
       CREATE SCHEMA IF NOT EXISTS storage;
       DROP TABLE IF EXISTS storage.objects;
-      CREATE TABLE storage.objects (id uuid PRIMARY KEY, bucket_id text, name text);
+      CREATE TABLE storage.objects (id uuid PRIMARY KEY, bucket_id text, name text, last_accessed_at timestamptz);
       ALTER TABLE storage.objects OWNER TO supabase_storage_admin;
       GRANT ALL ON storage.objects TO postgres, anon, authenticated, service_role;
       GRANT INSERT ON storage.objects TO PUBLIC;
@@ -482,12 +492,18 @@ describe.runIf(dockerAvailable)('storage-acl-fence: real PostgreSQL 17', () => {
     expect(open.delete_open).toBe(true);
     expect(open.matrix.authenticated.DELETE).toBe(false);
     expect(open.matrix.service_role.INSERT).toBe(false);
+    const columnUpdate = async (column: string) => (await client.query(
+      "SELECT has_column_privilege('service_role', 'storage.objects', $1, 'UPDATE') AS allowed", [column])).rows[0].allowed;
+    expect(await columnUpdate('last_accessed_at')).toBe(true);
+    expect(await columnUpdate('name')).toBe(false);
+    expect(await columnUpdate('id')).toBe(false);
 
     const restored = await runRestore({ db: client, snapshotPath: file, confirm: true });
     expect(restored.relacl_text_equal).toBe(true);
     const after = await captureSnapshot(client);
     expect(after.relacl).toBe(before.relacl);
     expect(after.acl).toEqual(before.acl);
+    expect(after.columns).toEqual(before.columns);
     expect(after.matrix).toEqual(before.matrix);
   }, 60_000);
 

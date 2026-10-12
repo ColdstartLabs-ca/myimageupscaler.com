@@ -32,6 +32,11 @@ const SNAPSHOT_VERSION = 1;
 const TXN_LOCK_TIMEOUT_SQL = "SET LOCAL lock_timeout = '3s'";
 const TXN_STATEMENT_TIMEOUT_SQL = "SET LOCAL statement_timeout = '30s'";
 
+// Storage deletes a version with SELECT ... FOR UPDATE, which needs UPDATE on one column. The delete
+// phase grants that on `last_accessed_at` only (proved on Storage API 1.80.2). It cannot change bytes,
+// version, eTag, size or metadata, so the fence ignores it.
+export const DELETE_PHASE_COLUMN = 'last_accessed_at';
+
 // A missing role yields NULL (not an error), which deriveFence rejects as malformed.
 const privilegeSql = (fn, privilege) =>
   `CASE WHEN r.role <> 'public' AND to_regrole(r.role) IS NULL THEN NULL ` +
@@ -41,7 +46,11 @@ const privilegeSql = (fn, privilege) =>
 export const FENCE_MATRIX_SQL = `(SELECT jsonb_object_agg(r.label, jsonb_build_object(
     ${TABLE_PRIVILEGES.map(p => `'${p}', ${privilegeSql('has_table_privilege', p)}`).join(',\n    ')},
     'INSERT_ANY_COLUMN', ${privilegeSql('has_any_column_privilege', 'INSERT')},
-    'UPDATE_ANY_COLUMN', ${privilegeSql('has_any_column_privilege', 'UPDATE')}))
+    'UPDATE_ANY_COLUMN', CASE WHEN r.role <> 'public' AND to_regrole(r.role) IS NULL THEN NULL ELSE EXISTS (
+      SELECT 1 FROM pg_attribute AS col
+      WHERE col.attrelid = 'storage.objects'::regclass AND col.attnum > 0 AND NOT col.attisdropped
+        AND col.attname <> '${DELETE_PHASE_COLUMN}'
+        AND has_column_privilege(r.role, col.attrelid, col.attnum, 'UPDATE')) END))
   FROM (VALUES ('public', 'PUBLIC'), ('anon', 'anon'), ('authenticated', 'authenticated'),
                ('service_role', 'service_role')) AS r(role, label))`;
 
@@ -249,13 +258,18 @@ export function buildFreezeStatements(acl, connectedAs) {
   ]));
 }
 
-export const ALLOW_DELETE_SQL = 'GRANT DELETE ON storage.objects TO service_role';
+export const ALLOW_DELETE_STATEMENTS = Object.freeze([
+  'GRANT DELETE ON storage.objects TO service_role',
+  `GRANT UPDATE (${DELETE_PHASE_COLUMN}) ON storage.objects TO service_role`,
+]);
+const REVOKE_DELETE_PHASE_COLUMN_SQL = `REVOKE UPDATE (${DELETE_PHASE_COLUMN}) ON storage.objects FROM service_role`;
 
 /** Remove every live fenced write grant, then re-grant exactly the snapshot grants with their grantors. */
 export function buildRestoreStatements(liveAcl, snapshotAcl, connectedAs) {
   const grants = sortedAcl(snapshotAcl.filter(isFencedWrite));
   const grantors = [...new Set(grants.map(entry => entry.grantor))].sort();
   return [
+    REVOKE_DELETE_PHASE_COLUMN_SQL,
     ...buildFreezeStatements(liveAcl, connectedAs),
     ...grantors.flatMap(grantor => actingAs(grantor, connectedAs, grants
       .filter(entry => entry.grantor === grantor)
@@ -338,13 +352,13 @@ export async function runFreeze({ db, snapshotPath, snapshotSha256, confirm, fre
   return Object.freeze({ ...state, snapshot_sha256: sha256 });
 }
 
-/** Open DELETE for service_role only. INSERT and UPDATE stay revoked. */
+/** Open DELETE for service_role only, plus UPDATE on one non-content column. INSERT stays revoked. */
 export async function runAllowDelete({ db, confirm } = {}) {
   requireConfirm(confirm, 'allow-delete');
   return inTransaction(db, async () => {
     const before = await readFenceState(db);
     if (!before.fenced) throw new Error(`Storage is not fenced; refuse to open DELETE: ${before.violations.join(', ')}`);
-    await db.query(ALLOW_DELETE_SQL);
+    for (const statement of ALLOW_DELETE_STATEMENTS) await db.query(statement);
     const after = await readFenceState(db);
     if (!after.fenced || after.matrix.service_role.DELETE !== true) {
       throw new Error('Storage is not fenced with service_role DELETE after GRANT');
