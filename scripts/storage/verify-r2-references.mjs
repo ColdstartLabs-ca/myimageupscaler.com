@@ -34,12 +34,15 @@ import { createHash } from 'node:crypto';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { isDeepStrictEqual } from 'node:util';
 
 import {
   SHA256_REGEX,
   assertSafeRegularFile,
   isSafeObjectPath,
   loadBackupIdentity,
+  loadSourceObjectProof,
+  PRODUCTION_BUCKETS,
   verifyFrozenArtifacts,
   verifyRemoteBatch,
 } from './backup-verification.mjs';
@@ -268,6 +271,12 @@ export function collectR2References({ savedRows = [], blogRows = [], postRows = 
   const failures = [];
 
   for (const row of savedRows) {
+    // Native R2 uploads are outside this legacy Supabase migration.
+    if (row.storage_backend === SAVED_BACKEND_TARGET) continue;
+    if (row.storage_backend != null && row.storage_backend !== SAVED_BACKEND_LEGACY) {
+      failures.push({ sourceId: `saved_images:${row.id}`, reason: 'unknown_storage_backend' });
+      continue;
+    }
     pushReference(references, failures, GALLERY_BUCKET, row.storage_path, SAVED_BACKEND_TABLE, row.id, 'storage_path');
   }
   for (const row of blogRows) {
@@ -395,6 +404,7 @@ export async function verifyR2References({
   savedRows = [],
   blogRows = [],
   postRows = [],
+  sourceRows,
   signing,
   presignGet = presignGetUrl,
   fetchFn = fetch,
@@ -417,6 +427,22 @@ export async function verifyR2References({
   const resolvedSigning = assertSigning(signing);
   const freshIdentity = await loadBackupIdentity(required(identity.runDir, 'backup identity runDir'));
   assertIdentityBindings(identity, freshIdentity);
+
+  // This is a point-in-time identity check, never a permanent writer boundary.
+  if (sourceRows !== undefined) {
+    const proof = await loadSourceObjectProof(freshIdentity.runDir);
+    if (!proof || !Array.isArray(sourceRows) || sourceRows.length !== proof.objects.size) {
+      throw new Error('Current source snapshot does not match the complete source object proof');
+    }
+    const seen = new Set();
+    for (const source of sourceRows) {
+      const key = `${source.bucket_id}::${source.name}`;
+      if (seen.has(key) || !isDeepStrictEqual(source, proof.objects.get(key))) {
+        throw new Error(`Current source identity differs from source object proof: ${key}`);
+      }
+      seen.add(key);
+    }
+  }
 
   const { references, failures } = collectR2References({ savedRows, blogRows, postRows, publicBase, sourceOrigin });
 
@@ -499,6 +525,7 @@ export async function verifyR2References({
     ok: hasOnlyAcceptedMissingReferences({ missing_count: missing.length, missing }),
     manifest_sha256: freshIdentity.manifestSha256,
     reference_count: references.length + failures.length,
+    excluded_r2_saved_count: savedRows.filter(row => row.storage_backend === SAVED_BACKEND_TARGET).length,
     verified_count: verified.length,
     target_count: entries.size,
     missing_count: missing.length,
@@ -602,21 +629,38 @@ function resolveChildPath(rootResolved, value, label) {
   return resolved;
 }
 
-/** Full native JSON rows for every current reference table. No Date coercion. */
+/** One READ COMMITTED statement snapshot; native JSON preserves timestamp precision. */
 export async function loadCurrentReferenceRows(db) {
   if (!db || typeof db.query !== 'function') {
     throw new Error('loadCurrentReferenceRows requires a db client');
   }
-  const [saved, blog, posts] = await Promise.all([
-    db.query('SELECT to_jsonb(si) AS row FROM public.saved_images AS si ORDER BY si.id'),
-    db.query('SELECT to_jsonb(bi) AS row FROM public.blog_images AS bi ORDER BY bi.id'),
-    db.query('SELECT to_jsonb(bp) AS row FROM public.blog_posts AS bp ORDER BY bp.id'),
-  ]);
+  const { rows } = await db.query(`SELECT
+    current_setting('transaction_isolation') AS isolation,
+    (SELECT COALESCE(jsonb_agg(to_jsonb(si) ORDER BY si.id), '[]'::jsonb)
+      FROM public.saved_images AS si) AS saved_rows,
+    (SELECT COALESCE(jsonb_agg(to_jsonb(bi) ORDER BY bi.id), '[]'::jsonb)
+      FROM public.blog_images AS bi) AS blog_rows,
+    (SELECT COALESCE(jsonb_agg(to_jsonb(bp) ORDER BY bp.id), '[]'::jsonb)
+      FROM public.blog_posts AS bp) AS post_rows,
+    (SELECT COALESCE(jsonb_agg(to_jsonb(so) ORDER BY so.bucket_id, so.name, so.id), '[]'::jsonb)
+      FROM storage.objects AS so WHERE so.bucket_id = ANY($1::text[])) AS source_rows`,
+  [PRODUCTION_BUCKETS]);
+  const snapshot = rows[0];
+  if (snapshot?.isolation !== 'read committed') {
+    throw new Error('Reference snapshots require READ COMMITTED to observe concurrent changes');
+  }
   return Object.freeze({
-    savedRows: Object.freeze(saved.rows.map(entry => entry.row)),
-    blogRows: Object.freeze(blog.rows.map(entry => entry.row)),
-    postRows: Object.freeze(posts.rows.map(entry => entry.row)),
+    savedRows: Object.freeze(snapshot.saved_rows),
+    blogRows: Object.freeze(snapshot.blog_rows),
+    postRows: Object.freeze(snapshot.post_rows),
+    sourceRows: Object.freeze(snapshot.source_rows),
   });
+}
+
+function assertUnchangedSnapshot(before, after) {
+  if (!isDeepStrictEqual(before, after)) {
+    throw new Error('Reference/source snapshot changed during destination verification; capture and verify a fresh delta');
+  }
 }
 
 function assertOperatorInputs({ manifest, config, createDb, runner }) {
@@ -675,17 +719,20 @@ export async function runVerifyReferencesCommand(deps = {}) {
       savedRows: rows.savedRows,
       blogRows: rows.blogRows,
       postRows: rows.postRows,
+      sourceRows: rows.sourceRows,
       signing: config.signing,
       presignGet,
       fetchFn,
       runner,
     });
+    assertUnchangedSnapshot(rows, await loadRows(db));
   } finally {
     await db.end();
   }
 
   log(
     `[storage] verify references=${result.reference_count} verified=${result.verified_count} ` +
+      `excluded_r2_saved=${result.excluded_r2_saved_count ?? 0} ` +
       `targets=${result.target_count} missing=${result.missing_count}` +
       (result.missing_count > 0 && result.ok ? ` accepted_baseline=${missingReport(result)}` : '')
   );
@@ -749,16 +796,19 @@ export async function runApplyReferencesCommand(deps = {}) {
   try {
     const verifyCurrent = async () => {
       const rows = await loadRows(db);
-      return engine({
+      const current = await engine({
         identity,
         savedRows: rows.savedRows,
         blogRows: rows.blogRows,
         postRows: rows.postRows,
+        sourceRows: rows.sourceRows,
         signing: config.signing,
         presignGet,
         fetchFn,
         runner,
       });
+      assertUnchangedSnapshot(rows, await loadRows(db));
+      return current;
     };
     const result = await apply({
       identity,

@@ -45,6 +45,7 @@ function makeDb() {
     endCalls: 0,
     query: async (sql: string, params?: any[]) => {
       queries.push({ sql, params });
+      if (sql.includes('saved_rows')) return { rows: [{ saved_rows: [{ id: 's1' }], blog_rows: [{ id: 'b1' }], post_rows: [{ id: 'p1' }], source_rows: [], isolation: 'read committed' }] };
       if (sql.includes('saved_images')) return { rows: [{ row: { id: 's1' } }], rowCount: 1 };
       if (sql.includes('blog_images')) return { rows: [{ row: { id: 'b1' } }], rowCount: 1 };
       return { rows: [{ row: { id: 'p1' } }], rowCount: 1 };
@@ -227,11 +228,9 @@ describe('r2-operator-cli: verify command', () => {
       },
     });
 
-    expect(queries.map(q => q.sql)).toEqual([
-      'SELECT to_jsonb(si) AS row FROM public.saved_images AS si ORDER BY si.id',
-      'SELECT to_jsonb(bi) AS row FROM public.blog_images AS bi ORDER BY bi.id',
-      'SELECT to_jsonb(bp) AS row FROM public.blog_posts AS bp ORDER BY bp.id',
-    ]);
+    expect(queries).toHaveLength(2);
+    expect(queries[0].sql).toBe(queries[1].sql);
+    expect(queries[0].sql).toContain('storage.objects');
     expect(captured.savedRows).toEqual([{ id: 's1' }]);
     expect(captured.blogRows).toEqual([{ id: 'b1' }]);
     expect(captured.postRows).toEqual([{ id: 'p1' }]);
@@ -239,6 +238,25 @@ describe('r2-operator-cli: verify command', () => {
     expect(db.endCalls).toBe(1);
     expect(written[0]).toBe('/x');
     expect(result.result.ok).toBe(true);
+  });
+
+  it.each(['savedRows', 'blogRows', 'postRows', 'sourceRows'])('refuses concurrent %s drift before publishing a plan', async field => {
+    let loads = 0;
+    let writes = 0;
+    const { db } = makeDb();
+    await expect(runVerifyReferencesCommand({
+      manifest: '/x', config: CONFIG, createDb: async () => db, runner: () => '',
+      loadIdentity: async () => ({ sourceStore: 'supabase', runDir: '/x' }),
+      loadRows: async () => {
+        const rows = { savedRows: [], blogRows: [], postRows: [], sourceRows: [] } as any;
+        if (loads++ > 0) rows[field] = [{ id: 'new-or-changed' }];
+        return rows;
+      },
+      engine: async () => ({ ok: true, missing_count: 0, plan: {} }),
+      writePlan: async () => { writes++; return {}; },
+    })).rejects.toThrow(/snapshot changed/);
+    expect(writes).toBe(0);
+    expect(db.endCalls).toBe(1);
   });
 
   it('writes no plan and throws with missing ids when a reference is missing', async () => {
@@ -340,6 +358,23 @@ describe('r2-operator-cli: apply command', () => {
 
   afterEach(() => {
     fs.rmSync(root, { recursive: true, force: true });
+  });
+
+  it('rejects apply current verification drift before backup or mutation', async () => {
+    const { db, queries } = makeDb();
+    let loads = 0;
+    let backups = 0;
+    await expect(runApplyReferencesCommand({
+      manifest: runDir, confirm: true, config: CONFIG, createDb: async () => db,
+      runner: () => '',
+      loadRows: async () => ({ savedRows: [{ id: SAVED_ID, revision: loads++ }], blogRows: [], postRows: [], sourceRows: [] }),
+      engine: async () => ({ ok: true, source_native_fenced: true }),
+      apply: async ({ verifyCurrent }: any) => { await verifyCurrent(); throw new Error('must not reach apply effects'); },
+      freshBackup: async () => { backups++; }, resolveCheckoutRoot: async () => root,
+    })).rejects.toThrow(/snapshot changed/);
+    expect(backups).toBe(0);
+    expect(queries).toHaveLength(0);
+    expect(db.endCalls).toBe(1);
   });
 
   it('proves the fresh database backup before any UPDATE and closes the database', async () => {

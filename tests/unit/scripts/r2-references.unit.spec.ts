@@ -266,11 +266,21 @@ describe('r2-references: verifyR2References', () => {
     const identity = await loadIdentity(fx.run.runDir);
     const result = await verifyR2References({
       identity,
-      savedRows: [{ ...fx.savedRows[0], storage_backend: 'r2' }],
+      savedRows: [{ ...fx.savedRows[0], storage_backend: 'r2', storage_path: 'new-r2-only/no-legacy-source.png' }],
       blogRows: [], postRows: [],
       signing: SIGNING, presignGet: presignGetUrl, fetchFn: r2.fetch, runner: makeRunner(identity),
     });
     expect(result.plan.gallery).toHaveLength(0);
+    expect(result.ok).toBe(true);
+    expect(result.reference_count).toBe(0);
+    expect(result.excluded_r2_saved_count).toBe(1);
+    expect(r2.gets).toHaveLength(0);
+  });
+
+  it('fails closed on an unknown saved-image backend', () => {
+    const result = collectR2References({ savedRows: [{ id: 'unknown', storage_path: 'x.png', storage_backend: 'other' }] });
+    expect(result.references).toHaveLength(0);
+    expect(result.failures).toEqual([{ sourceId: 'saved_images:unknown', reason: 'unknown_storage_backend' }]);
   });
 
   it('reports a missing current reference as missing and never verified', async () => {

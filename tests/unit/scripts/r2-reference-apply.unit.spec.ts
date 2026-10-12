@@ -4,10 +4,12 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { createServer, get } from 'node:http';
+import { Readable } from 'node:stream';
 
 import * as engine from '../../../scripts/storage/r2-reference-apply.mjs';
 import { loadBackupIdentity } from '../../../scripts/storage/backup-verification.mjs';
-import { writeReferencePlan } from '../../../scripts/storage/verify-r2-references.mjs';
+import { writeReferencePlan, runVerifyReferencesCommand, runSourceProofCommand, PLAN_FILE } from '../../../scripts/storage/verify-r2-references.mjs';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const { runReferenceApply } = engine as any;
@@ -560,6 +562,7 @@ describe.runIf(dockerAvailable)('r2-reference-apply: real PostgreSQL 17 CAS', ()
   let runDir: string;
   let identity: AnyRow;
   let client: any;
+  let connectionString: string;
   const RUN = 'backup-run-pg17';
 
   beforeEach(async () => {
@@ -574,7 +577,7 @@ describe.runIf(dockerAvailable)('r2-reference-apply: real PostgreSQL 17 CAS', ()
       await new Promise(resolve => setTimeout(resolve, 500));
     }
     const mapping = execFileSync('docker', ['port', containerName, '5432/tcp'], { encoding: 'utf8' }).trim();
-    const connectionString = `postgresql://supabase_admin:test@127.0.0.1:${mapping.split(':').at(-1)}/postgres`;
+    connectionString = `postgresql://supabase_admin:test@127.0.0.1:${mapping.split(':').at(-1)}/postgres`;
     for (let attempt = 0; attempt < 60; attempt += 1) {
       const candidate = new Client({ connectionString });
       try {
@@ -671,4 +674,104 @@ describe.runIf(dockerAvailable)('r2-reference-apply: real PostgreSQL 17 CAS', ()
     const stale = await client.query('SELECT original_filename FROM public.saved_images WHERE id = $1', [SAVED_ID]);
     expect(stale.rows[0].original_filename).toBe('changed.png');
   }, 120_000);
+  it('guards actual verify publication against concurrent references and same-byte native versions over HTTP', async () => {
+    const { Client } = await import('pg');
+    const writer = new Client({ connectionString });
+    const body = Buffer.from('hello bytes');
+    const etag = crypto.createHash('md5').update(body).digest('hex');
+    await client.query(`
+      CREATE TABLE public.blog_images(id UUID PRIMARY KEY, storage_path TEXT, url TEXT);
+      CREATE TABLE public.blog_posts(id UUID PRIMARY KEY, featured_image_url TEXT, content TEXT);
+      -- The cached image seeds an older Storage table; model the native version
+      -- column read by production without installing any permissions or triggers.
+      ALTER TABLE storage.objects ADD COLUMN IF NOT EXISTS version TEXT;
+    `);
+    await client.query("INSERT INTO storage.buckets(id, name) VALUES ('saved-images','saved-images') ON CONFLICT DO NOTHING");
+    await writer.connect();
+    // A second connection commits during the destination GET, after the initial snapshot.
+    let mutation: () => Promise<unknown> = async () => {};
+    let requests = 0;
+    let serverError: unknown;
+    const server = createServer(async (_request, response) => {
+      requests++;
+      try {
+        await mutation();
+        response.writeHead(200, { 'content-length': body.length });
+        response.end(body);
+      } catch (error) {
+        serverError = error;
+        response.writeHead(500); response.end();
+      }
+    });
+    await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+    const port = (server.address() as { port: number }).port;
+    const db = { query: client.query.bind(client), end: async () => {} };
+    try {
+      for (const mode of ['unchanged', 'insert-ref', 'edit-ref', 'delete-ref', 'source-version', 'source-added', 'stale-source', 'missing-proof', 'repeatable-read']) {
+        await client.query('TRUNCATE public.saved_images, storage.objects');
+        await client.query(`INSERT INTO public.saved_images VALUES ($1,$2,$3,'supabase','a.png',$4)`, [SAVED_ID, USER_ID, SAVED_PATH, CREATED]);
+        await client.query(`INSERT INTO storage.objects(id,bucket_id,name,version,metadata,created_at,updated_at) VALUES ($1,'saved-images',$2,'native-v1',$3,$4,$4)`, [SAVED_ID, SAVED_PATH, { size: body.length, eTag: etag }, CREATED]);
+        const caseDir = path.join(root, mode);
+        fs.mkdirSync(caseDir);
+        const manifest = `${JSON.stringify({ bucket: 'saved-images', path: SAVED_PATH, bytes: body.length, sha256: sha256(body), created_at: CREATED, updated_at: CREATED })}\n`;
+        const checksum = `${sha256(body)}  saved-images/${SAVED_PATH}\n`;
+        fs.writeFileSync(path.join(caseDir, 'manifest.jsonl'), manifest);
+        fs.writeFileSync(path.join(caseDir, 'manifest.sha256'), checksum);
+        fs.writeFileSync(path.join(caseDir, 'backup-verification.json'), JSON.stringify({ run_id: mode, object_count: 1, total_bytes: body.length, manifest_sha256: sha256(manifest), checksum_list_sha256: sha256(checksum) }));
+        const localPath = path.join(caseDir, 'saved-images', SAVED_PATH);
+        fs.mkdirSync(path.dirname(localPath), { recursive: true });
+        fs.writeFileSync(localPath, body);
+        fs.writeFileSync(path.join(caseDir, 'backup-checkpoint.json'), JSON.stringify({ downloaded: {
+          [`saved-images::${SAVED_PATH}`]: { version: SAVED_ID, source_version: `"${etag}"`, created_at: CREATED, updated_at: CREATED },
+        } }));
+        const config = { signing: { endpoint: `https://${'a'.repeat(32)}.r2.cloudflarestorage.com`, accessKeyId: 'local', secretAccessKey: 'local' }, dbConfig: {} };
+        if (mode !== 'missing-proof') await runSourceProofCommand({ manifest: caseDir, config, createDb: async () => db });
+        if (mode === 'stale-source') await writer.query("UPDATE storage.objects SET version = 'same-bytes-new-version'");
+        if (mode === 'repeatable-read') await client.query('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY');
+        mutation = async () => {
+          if (mode === 'insert-ref') return writer.query(`INSERT INTO public.saved_images VALUES ($1,$2,'new.png','r2','new.png',$3)`, [BLOG_ID, USER_ID, CREATED]);
+          if (mode === 'edit-ref') return writer.query("UPDATE public.saved_images SET original_filename = 'changed.png'");
+          if (mode === 'delete-ref') return writer.query('DELETE FROM public.saved_images');
+          if (mode === 'source-version') return writer.query("UPDATE storage.objects SET version = 'same-bytes-new-version'");
+          if (mode === 'source-added') return writer.query(`INSERT INTO storage.objects(id,bucket_id,name,version,metadata,created_at,updated_at) SELECT $1,bucket_id,'new.png','v2',metadata,created_at,updated_at FROM storage.objects`, [BLOG_ID]);
+        };
+        const beforeRequests = requests;
+        const task = runVerifyReferencesCommand({
+          manifest: caseDir, config, createDb: async () => db,
+          presignGet: () => `http://127.0.0.1:${port}/verified-object`,
+          // Unit setup mocks global fetch; use a real localhost HTTP stream.
+          fetchFn: (url: string, init: { signal: AbortSignal }) => new Promise((resolve, reject) => {
+            get(url, { signal: init.signal }, response => resolve({
+              ok: response.statusCode === 200, status: response.statusCode,
+              body: Readable.toWeb(response),
+            })).on('error', reject);
+          }),
+          runner: async (_command: string, _args: string[], options: { input?: string } = {}) => options.input !== undefined
+            ? options.input.trim().split('\n').map(line => `${line.replace(/^[a-f0-9]{64} {2}/, '')}: OK`).join('\n')
+            : `${sha256(manifest)}  manifest.jsonl\n`,
+        });
+        if (mode === 'unchanged') {
+          const verified = await task;
+          expect(verified.result.source_native_fenced).toBe(false);
+          expect(verified.result.verified_count).toBe(1);
+          expect(fs.existsSync(path.join(caseDir, PLAN_FILE))).toBe(true);
+        } else {
+          await expect(task, mode).rejects.toThrow(/snapshot changed|source identity|source snapshot|READ COMMITTED/);
+          expect(fs.existsSync(path.join(caseDir, PLAN_FILE)), mode).toBe(false);
+          expect(fs.existsSync(path.join(caseDir, 'r2-reference-plan.digest')), mode).toBe(false);
+        }
+        expect(requests - beforeRequests, mode).toBe(['stale-source', 'missing-proof', 'repeatable-read'].includes(mode) ? 0 : 1);
+        expect(serverError).toBeUndefined();
+        await client.query('ROLLBACK');
+        const rows = await writer.query('SELECT id, storage_backend FROM public.saved_images');
+        expect(rows.rows.filter((row: AnyRow) => row.id === SAVED_ID).map((row: AnyRow) => row.storage_backend), mode).toEqual(mode === 'delete-ref' ? [] : ['supabase']);
+      }
+    } finally {
+      await client.query('ROLLBACK');
+      await writer.end();
+      server.closeAllConnections();
+      await new Promise<void>(resolve => server.close(() => resolve()));
+    }
+  }, 120_000);
+
 });
