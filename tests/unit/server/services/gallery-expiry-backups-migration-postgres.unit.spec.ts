@@ -272,6 +272,112 @@ describe.runIf(dockerAvailable)('gallery expiry verified-backup gate on PostgreS
       .rows;
   }
 
+  it('finalizes exactly seven days after delivery but keeps a warning one microsecond newer', async () => {
+    await client!.query('BEGIN');
+    try {
+      const images: string[] = [];
+      for (const name of ['boundary-7-exact', 'boundary-7-recent']) {
+        await createUser(name, 60, 40);
+        await createProfile(name);
+        const image = await createImage(name);
+        images.push(image);
+        await registerBackup(image);
+        await sendWarning(name, 7);
+      }
+      await client!.query(
+        `UPDATE public.gallery_expiry_notices
+         SET warning_sent_at = now() - interval '7 days' + interval '1 microsecond'
+         WHERE user_id = $1`,
+        [uid('boundary-7-recent')]
+      );
+      const exact = await client!.query(
+        `SELECT warning_sent_at = now() - interval '7 days' AS exact
+         FROM public.gallery_expiry_notices WHERE user_id = $1`,
+        [uid('boundary-7-exact')]
+      );
+      expect(exact.rows[0].exact).toBe(true);
+      const claimed = await claim(10);
+      expect(claimed.map(row => row.image_id)).toEqual([images[0]]);
+      const finished = await client!.query(
+        `SELECT public.finish_gallery_expiry_image($1, $2) AS outcome`,
+        [images[0], claimed[0].attempt_id]
+      );
+      expect(finished.rows[0].outcome).toBe('completed');
+      const remaining = await client!.query(
+        `SELECT id FROM public.saved_images WHERE id = ANY($1::uuid[])`,
+        [images]
+      );
+      expect(remaining.rows.map(row => row.id)).toEqual([images[1]]);
+    } finally {
+      await client!.query('ROLLBACK');
+    }
+  });
+
+  it('keeps a recent Auth sign-in even when profiles.updated_at is old', async () => {
+    const image = await createEligible('old-profile-recent-signin');
+    await client!.query(
+      `UPDATE public.profiles SET updated_at = now() - interval '80 days' WHERE id = $1`,
+      [uid('old-profile-recent-signin')]
+    );
+    await client!.query(
+      `UPDATE auth.users SET last_sign_in_at = now() - interval '1 day' WHERE id = $1`,
+      [uid('old-profile-recent-signin')]
+    );
+    const timestamps = await client!.query(
+      `SELECT p.updated_at < now() - interval '30 days' AS old_profile,
+              u.last_sign_in_at > now() - interval '2 days' AS recent_signin
+       FROM public.profiles p JOIN auth.users u ON u.id = p.id WHERE p.id = $1`,
+      [uid('old-profile-recent-signin')]
+    );
+    expect(timestamps.rows[0]).toEqual({ old_profile: true, recent_signin: true });
+    expect(await claim(10)).toHaveLength(0);
+    const remaining = await client!.query(`SELECT id FROM public.saved_images WHERE id = $1`, [image]);
+    expect(remaining.rows.map(row => row.id)).toEqual([image]);
+  });
+
+  it('keeps a new image unchanged when saved after claim and before finalization', async () => {
+    const image = await createEligible('save-after-claim');
+    const claimed = await claim(10);
+    expect(claimed.map(row => row.image_id)).toEqual([image]);
+    const newImage = await createImage('save-after-claim', 0);
+    await client!.query(
+      `UPDATE public.saved_images SET storage_path = $2, original_filename = 'new-after-claim.png'
+       WHERE id = $1`,
+      [newImage, `${uid('save-after-claim')}/${newImage}.png`]
+    );
+    const before = await client!.query(
+      `SELECT to_jsonb(si) AS row FROM public.saved_images si WHERE id = $1`,
+      [newImage]
+    );
+    const finished = await client!.query(
+      `SELECT public.finish_gallery_expiry_image($1, $2) AS outcome`,
+      [image, claimed[0].attempt_id]
+    );
+    // The new save refreshes activity, so the old claim must be recovered too.
+    expect(finished.rows[0].outcome).toBe('restore_required');
+    const released = await client!.query(
+      `SELECT public.release_gallery_expiry_image($1, $2, '"source-etag"') AS released`,
+      [image, claimed[0].attempt_id]
+    );
+    expect(released.rows[0].released).toBe(true);
+    const after = await client!.query(
+      `SELECT to_jsonb(si) AS row FROM public.saved_images si WHERE id = $1`,
+      [newImage]
+    );
+    expect(after.rows).toEqual(before.rows);
+    const registry = await client!.query(
+      `SELECT image_id, state FROM public.gallery_expiry_backups WHERE user_id = $1`,
+      [uid('save-after-claim')]
+    );
+    expect(registry.rows).toEqual([{ image_id: image, state: 'ready' }]);
+    const remaining = await client!.query(
+      `SELECT id FROM public.saved_images WHERE user_id = $1 ORDER BY id`,
+      [uid('save-after-claim')]
+    );
+    expect(remaining.rows.map(row => row.id).sort()).toEqual([image, newImage].sort());
+    expect(await claim(10)).toHaveLength(0);
+  });
+
   it('keeps every image when the registry is empty', async () => {
     await createUser('empty-1', 60, 40);
     await createProfile('empty-1');

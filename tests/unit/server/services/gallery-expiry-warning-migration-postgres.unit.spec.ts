@@ -251,6 +251,36 @@ describe.runIf(dockerAvailable)('gallery expiry warning policy on PostgreSQL 17'
     return candidates.rows.map(row => row.user_id);
   }
 
+  it('includes exactly 23 inactive days but excludes one microsecond more recent', async () => {
+    await client!.query('BEGIN');
+    try {
+      for (const name of ['boundary-23-exact', 'boundary-23-recent']) {
+        await createUser(name, 60, 23);
+        await createProfile(name);
+      }
+      await client!.query(
+        `UPDATE auth.users SET last_sign_in_at = now() - interval '23 days'
+         WHERE id = $1`,
+        [uid('boundary-23-exact')]
+      );
+      await client!.query(
+        `UPDATE auth.users SET last_sign_in_at = now() - interval '23 days' + interval '1 microsecond'
+         WHERE id = $1`,
+        [uid('boundary-23-recent')]
+      );
+      const exact = await client!.query(
+        `SELECT public.gallery_expiry_activity_anchor($1) = now() - interval '23 days' AS exact`,
+        [uid('boundary-23-exact')]
+      );
+      expect(exact.rows[0].exact).toBe(true);
+      const ids = await candidateIds();
+      expect(ids).toContain(uid('boundary-23-exact'));
+      expect(ids).not.toContain(uid('boundary-23-recent'));
+    } finally {
+      await client!.query('ROLLBACK');
+    }
+  });
+
   it('anchors inactivity on the newest real activity signal', async () => {
     await createUser('anchor-1', 100, 40);
     await insertSession('anchor-1', {
