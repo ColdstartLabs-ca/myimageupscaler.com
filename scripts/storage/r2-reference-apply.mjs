@@ -21,6 +21,8 @@
  *     digest BEFORE any write. Only the exact accepted baseline image is exempt.
  *   - A fresh database backup (`verifyFreshDatabaseBackup`) must succeed BEFORE
  *     any transaction or UPDATE. Its failure means zero DB writes.
+ *   - `checkFence` re-reads the live native fence right before every COMMIT; a lost
+ *     fence rolls the batch back and stops (closes the verifyCurrent timing gap).
  *   - Writes run in bounded (<=50) READ COMMITTED transactions with a 2s lock
  *     timeout and a 30s statement timeout. Each row uses a native full-row CAS
  *     (`to_jsonb(t) = before::jsonb`). A zero-row CAS rolls the batch back and
@@ -228,6 +230,7 @@ export async function runReferenceApply({
   db,
   verifyCurrent,
   verifyFreshDatabaseBackup,
+  checkFence,
   log = () => {},
 } = {}) {
   if (!identity || typeof identity !== 'object') throw new Error('runReferenceApply requires a backup identity');
@@ -236,6 +239,7 @@ export async function runReferenceApply({
   if (typeof verifyFreshDatabaseBackup !== 'function') {
     throw new Error('runReferenceApply requires a verifyFreshDatabaseBackup function');
   }
+  if (typeof checkFence !== 'function') throw new Error('runReferenceApply requires a checkFence function');
   if (typeof log !== 'function') throw new Error('runReferenceApply requires a log function');
 
   const freshIdentity = await loadBackupIdentity(required(identity.runDir, 'backup identity runDir'));
@@ -307,6 +311,8 @@ export async function runReferenceApply({
         else blogCount += 1;
         log(`applied ${operation.table}:${operation.id}`);
       }
+      // A failed check or a throw rolls this batch back before it can commit.
+      if ((await checkFence()) !== true) throw new Error('Native source fence was lost before commit');
     } catch (error) {
       await db.query(ROLLBACK_SQL);
       throw error;

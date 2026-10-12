@@ -12,7 +12,9 @@ import { loadBackupIdentity } from '../../../scripts/storage/backup-verification
 import { writeReferencePlan, runVerifyReferencesCommand, runSourceProofCommand, PLAN_FILE } from '../../../scripts/storage/verify-r2-references.mjs';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const { runReferenceApply } = engine as any;
+const { runReferenceApply: runReferenceApplyEngine } = engine as any;
+// Existing cases run with a held fence; the fence cases below override checkFence.
+const runReferenceApply = (args: AnyRow) => runReferenceApplyEngine({ checkFence: async () => true, ...args });
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 type AnyRow = Record<string, any>;
@@ -543,6 +545,56 @@ describe('r2-reference-apply: runReferenceApply', () => {
     expect(result.applied.total).toBe(51);
     expect(db.queries.filter(q => q.sql.startsWith('BEGIN'))).toHaveLength(2);
     expect(db.queries.filter(q => q.sql.startsWith('COMMIT'))).toHaveLength(2);
+  });
+
+  describe('live fence re-check before every commit', () => {
+    it('requires a checkFence function before any write', async () => {
+      const plan = makePlan(identity, [savedEntry()]);
+      const db = new FakeDb();
+      seedBase(db, plan);
+      const { rawSha256 } = await writePlan(plan);
+      await expect(runReferenceApplyEngine({
+        identity, db, verifyCurrent: verifier(plan, rawSha256), verifyFreshDatabaseBackup: async () => {},
+      })).rejects.toThrow(/checkFence/);
+      expect(db.queries).toHaveLength(0);
+    });
+
+    it('checks the fence once per batch, after the updates and immediately before COMMIT', async () => {
+      const plan = makePlan(identity, Array.from({ length: 51 }, (_, index) => makeSavedEntry(index + 1)));
+      const db = new FakeDb();
+      seedBase(db, plan);
+      const events: string[] = [];
+      const original = db.query;
+      db.query = async (sql: string, params: any[] = []) => {
+        events.push(sql.startsWith('UPDATE') ? 'UPDATE' : sql.split(' ')[0]);
+        return original(sql, params);
+      };
+      await run(plan, db, { checkFence: async () => { events.push('FENCE'); return true; } });
+      const compact = events.filter(e => ['BEGIN', 'UPDATE', 'FENCE', 'COMMIT'].includes(e)).join(',');
+      expect(compact).toBe(`BEGIN,${'UPDATE,'.repeat(50)}FENCE,COMMIT,BEGIN,UPDATE,FENCE,COMMIT`);
+    });
+
+    it('rolls back the batch and stops when the fence is lost before a commit', async () => {
+      const plan = makePlan(identity, Array.from({ length: 51 }, (_, index) => makeSavedEntry(index + 1)));
+      const db = new FakeDb();
+      seedBase(db, plan);
+      let checks = 0;
+      await expect(run(plan, db, { checkFence: async () => (checks += 1) === 1 })).rejects.toThrow(/fence/i);
+      expect(checks).toBe(2);
+      expect(db.queries.filter(q => q.sql.startsWith('COMMIT'))).toHaveLength(1);
+      expect(db.queries.filter(q => q.sql.startsWith('ROLLBACK'))).toHaveLength(1);
+      expect(db.row('saved_images', plan.gallery[50].id).storage_backend).toBe('supabase');
+      expect(db.row('saved_images', plan.gallery[0].id).storage_backend).toBe('r2');
+    });
+
+    it('treats a throwing fence check as lost', async () => {
+      const plan = makePlan(identity, [savedEntry()]);
+      const db = new FakeDb();
+      seedBase(db, plan);
+      await expect(run(plan, db, { checkFence: async () => { throw new Error('catalog unreadable'); } })).rejects.toThrow(/catalog unreadable/);
+      expect(db.queries.some(q => q.sql.startsWith('COMMIT'))).toBe(false);
+      expect(db.row('saved_images', plan.gallery[0].id).storage_backend).toBe('supabase');
+    });
   });
 
   function saveWithTable(): AnyRow {

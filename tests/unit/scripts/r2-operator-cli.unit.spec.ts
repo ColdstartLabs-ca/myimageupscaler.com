@@ -406,6 +406,27 @@ describe('r2-operator-cli: apply command', () => {
     expect(db.endCalls).toBe(1);
   });
 
+  it('hands the apply engine a fence check that reads the live matrix on the apply connection', async () => {
+    const { db } = makeDb();
+    const fenced = (insert: boolean) => Object.fromEntries(['PUBLIC', 'anon', 'authenticated', 'service_role'].map(role => [role, {
+      INSERT: insert, UPDATE: false, DELETE: false, SELECT: true, INSERT_ANY_COLUMN: false, UPDATE_ANY_COLUMN: false,
+    }]));
+    const matrices = [fenced(false), fenced(true)];
+    const seen: unknown[] = [];
+    await runApplyReferencesCommand({
+      manifest: runDir, confirm: true, config: CONFIG, createDb: async () => db, runner: () => '',
+      readFence: async (connection: unknown) => { seen.push(connection); return matrices.shift(); },
+      apply: async ({ checkFence, db: applyDb }: any) => {
+        expect(applyDb).toBe(db);
+        expect(await checkFence()).toBe(true);
+        expect(await checkFence()).toBe(false);
+        return { applied: { total: 0 } };
+      },
+      freshBackup: async () => {}, resolveCheckoutRoot: async () => root,
+    });
+    expect(seen).toEqual([db, db]);
+  });
+
   it('rejects apply without --confirm before any database or secret work', async () => {
     let created = 0;
     await expect(

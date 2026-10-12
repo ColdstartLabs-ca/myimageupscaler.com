@@ -32,14 +32,16 @@ const SNAPSHOT_VERSION = 1;
 const TXN_LOCK_TIMEOUT_SQL = "SET LOCAL lock_timeout = '3s'";
 const TXN_STATEMENT_TIMEOUT_SQL = "SET LOCAL statement_timeout = '30s'";
 
+// A missing role yields NULL (not an error), which deriveFence rejects as malformed.
+const privilegeSql = (fn, privilege) =>
+  `CASE WHEN r.role <> 'public' AND to_regrole(r.role) IS NULL THEN NULL ` +
+  `ELSE ${fn}(r.role, 'storage.objects', '${privilege}') END`;
+
 /** Scalar jsonb subquery: effective privileges per fenced role (PUBLIC = 'public'). */
 export const FENCE_MATRIX_SQL = `(SELECT jsonb_object_agg(r.label, jsonb_build_object(
-    'INSERT', has_table_privilege(r.role, 'storage.objects', 'INSERT'),
-    'UPDATE', has_table_privilege(r.role, 'storage.objects', 'UPDATE'),
-    'DELETE', has_table_privilege(r.role, 'storage.objects', 'DELETE'),
-    'SELECT', has_table_privilege(r.role, 'storage.objects', 'SELECT'),
-    'INSERT_ANY_COLUMN', has_any_column_privilege(r.role, 'storage.objects', 'INSERT'),
-    'UPDATE_ANY_COLUMN', has_any_column_privilege(r.role, 'storage.objects', 'UPDATE')))
+    ${TABLE_PRIVILEGES.map(p => `'${p}', ${privilegeSql('has_table_privilege', p)}`).join(',\n    ')},
+    'INSERT_ANY_COLUMN', ${privilegeSql('has_any_column_privilege', 'INSERT')},
+    'UPDATE_ANY_COLUMN', ${privilegeSql('has_any_column_privilege', 'UPDATE')}))
   FROM (VALUES ('public', 'PUBLIC'), ('anon', 'anon'), ('authenticated', 'authenticated'),
                ('service_role', 'service_role')) AS r(role, label))`;
 

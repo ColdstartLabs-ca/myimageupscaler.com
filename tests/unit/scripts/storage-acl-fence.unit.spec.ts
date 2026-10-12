@@ -24,7 +24,6 @@ const {
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 type Entry = { grantor: string; grantee: string; privilege: string; grantable: boolean };
-const WRITE = ['INSERT', 'UPDATE', 'DELETE'];
 const ALL = ['INSERT', 'SELECT', 'UPDATE', 'DELETE', 'TRUNCATE', 'REFERENCES', 'TRIGGER', 'MAINTAIN'];
 const OWNER = 'supabase_storage_admin';
 

@@ -259,6 +259,36 @@ describe('r2-references: verifyR2References', () => {
     expect(direct.manifestSha256).toBe(result.manifest_sha256);
   });
 
+  describe('live native fence', () => {
+    const matrix = (patch: AnyRow = {}) => {
+      const out: AnyRow = {};
+      for (const role of ['PUBLIC', 'anon', 'authenticated', 'service_role']) {
+        out[role] = { INSERT: false, UPDATE: false, DELETE: false, SELECT: true, INSERT_ANY_COLUMN: false, UPDATE_ANY_COLUMN: false, ...(patch[role] ?? {}) };
+      }
+      return out;
+    };
+    const fenceOf = async (fenceMatrix?: unknown) => {
+      const r2 = new FakeR2();
+      const { saved, blog } = referenceFixture(root);
+      seed(r2, saved, blog);
+      return (await runEngine(root, r2, { fenceMatrix })).source_native_fenced;
+    };
+
+    it('is false without a live matrix, as before', async () => {
+      expect(await fenceOf(undefined)).toBe(false);
+      expect(await fenceOf(null)).toBe(false);
+      expect(await fenceOf({})).toBe(false);
+    });
+
+    it('is true only when INSERT and UPDATE are revoked for all four roles', async () => {
+      expect(await fenceOf(matrix())).toBe(true);
+      expect(await fenceOf(matrix({ service_role: { DELETE: true } }))).toBe(true);
+      expect(await fenceOf(matrix({ anon: { INSERT: true } }))).toBe(false);
+      expect(await fenceOf(matrix({ service_role: { UPDATE: true } }))).toBe(false);
+      expect(await fenceOf(matrix({ authenticated: { DELETE: true } }))).toBe(false);
+    });
+  });
+
   it('does not rewrite a saved row already on the r2 backend', async () => {
     const r2 = new FakeR2();
     const fx = referenceFixture(root);
