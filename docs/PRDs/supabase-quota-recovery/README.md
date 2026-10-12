@@ -70,3 +70,10 @@ A daily guard in each project alerts by email (`PROVIDER_ALERT_EMAIL`) at 80% of
 | 4   | [04-free-gallery-30d-expiry.md](04-free-gallery-30d-expiry.md)           | P1       | Keeps R2 under 10 GB. Changes the customer contract.                                                  |
 
 External: AutopilotRank PRDs AQR-01 to AQR-03 are in `autopilotrank.com/docs/PRDs/supabase-quota-recovery/`. The org DB total stays over 1.1 GB until PRD-AQR-03 AC-4 holds (AP 250 MB or less).
+
+## Current safety checkpoint (2026-10-12)
+
+- Fresh Storage snapshot: 6,591 objects / 7,955,094,701 bytes verified on desktop and laptop, fully mirrored to R2 with full per-object readback SHA verification. Final mirror receipt and frozen plan are also verified on both machines; see SQR-02. This proves the frozen snapshot, not a source write fence or later delta coverage.
+- Controlled recovery archive, repeat conditional registration and authenticated owner read passed; the synthetic account, metadata and its two R2 objects were then removed under a fresh dual database backup. All backups retained. SQR-04 local AC-1/2/3/5 pass, including exact timing and concurrent-save cases.
+- Activation remains blocked: source fencing/delta/reference cutover and source purge are unverified; automatic gallery expiry and input cleanup remain paused. A real test-warning recipient is not authorized, scheduled gallery execution remains unproven, and R2 metrics access/actual budget alert delivery remain unresolved.
+- AutopilotRank fixed-window measurement at 00:53:25Z: 164 warnings for 164 distinct articles, maximum one each, zero generic failures. The original 25-row criterion remains FAIL; no reset, waiver, archive registration or compaction. The updated source measurement is recorded in the AP PRDs.
