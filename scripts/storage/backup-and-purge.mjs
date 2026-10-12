@@ -20,6 +20,8 @@
  *   plan-expire --manifest <backup-run-dir>
  *   expire --manifest <expire-rows.jsonl> --confirm
  *   verify-integrity
+ *   delta --manifest <backup-run-dir>
+ *   delete-source --manifest <backup-run-dir> --confirm   (needs the live ACL fence)
  */
 
 import { execFileSync } from 'node:child_process';
@@ -32,6 +34,7 @@ import { Readable, Transform } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { pathToFileURL } from 'node:url';
 import {
+  assertSafeRegularFile,
   compareSourceETag,
   createETagHasher,
   loadBackupIdentity,
@@ -42,6 +45,7 @@ import {
   verifyFrozenArtifacts,
   verifyRemoteBatch,
 } from './backup-verification.mjs';
+import { isNativeFenced, readFenceMatrix } from './storage-acl-fence.mjs';
 
 // =============================================================================
 // Configuration
@@ -1309,8 +1313,9 @@ async function executionCheckpoint(plan, kind, suppliedPath) {
   if (state.plan_sha256 !== plan.planSha256 || state.manifest_sha256 !== plan.identity.manifestSha256) {
     throw new Error('Checkpoint belongs to a different frozen plan or backup');
   }
-  const known = new Set(plan.rows.map(row => kind === 'purge' ? row.path : row.id));
-  const completed = kind === 'purge' ? state.deleted : state.deletedRows;
+  const known = new Set(plan.rows.map(row =>
+    kind === 'purge' ? row.path : kind === 'source-delete' ? makeObjectKey(row.bucket, row.path) : row.id));
+  const completed = kind === 'expire' ? state.deletedRows : state.deleted;
   if (!Array.isArray(completed) || completed.some(value => !known.has(value))) {
     throw new Error('Checkpoint contains unknown completed entries');
   }
@@ -1402,6 +1407,165 @@ export async function runPurge({
   }
   await writeResult(result);
   return result;
+}
+
+// =============================================================================
+// Source delete: all three buckets, frozen manifest only, behind the live ACL fence
+// =============================================================================
+
+export const R2_RECEIPT_FILE = 'r2-migration-receipt.json';
+const R2_PUBLIC_BASE = 'https://assets.myimageupscaler.com';
+
+// Reference flag per bucket, read inside the locked batch. A saved row still on the
+// supabase backend, or a blog row/post that still points at the source, keeps the object.
+export const SOURCE_RECHECK_SQL = Object.freeze({
+  [GALLERY_BUCKET]: `
+    SELECT n.path,
+           EXISTS (SELECT 1 FROM public.saved_images s
+                   WHERE s.storage_path = n.path AND s.storage_backend IS DISTINCT FROM 'r2') AS source_reference
+    FROM unnest($1::text[]) AS n(path)`,
+  [BLOG_BUCKET]: `
+    SELECT n.path,
+           (EXISTS (SELECT 1 FROM public.blog_images b
+                    WHERE b.storage_path = n.path AND b.url IS DISTINCT FROM $2::text || '/' || n.path)
+            OR EXISTS (SELECT 1 FROM public.blog_posts p
+                       WHERE strpos(coalesce(p.content, ''), 'blog-images/' || n.path) > 0
+                          OR strpos(coalesce(p.featured_image_url, ''), 'blog-images/' || n.path) > 0)) AS source_reference
+    FROM unnest($1::text[]) AS n(path)`,
+});
+
+export function isSourceDeleteEligible(bucket, live) {
+  if (bucket === INPUT_BUCKET) return isInputCandidateEligible(live);
+  if (bucket === GALLERY_BUCKET || bucket === BLOG_BUCKET) return live.source_reference === false;
+  return false;
+}
+
+/**
+ * Every manifest object whose immutable R2 copy was read back with the same
+ * sha256 and byte count. Any difference between the receipt and the manifest
+ * fails the whole plan; there is no partial or bucket-wide fallback.
+ */
+export async function loadSourceDeletePlan({ backupRunDir } = {}) {
+  const identity = requireSupabaseSourceStore(await loadBackupIdentity(backupRunDir));
+  const receiptPath = path.join(identity.runDir, R2_RECEIPT_FILE);
+  await assertSafeRegularFile(identity.runDir, receiptPath);
+  const raw = await fs.readFile(receiptPath, 'utf8');
+  const receipt = JSON.parse(raw);
+  if (receipt.manifest_sha256 !== identity.manifestSha256 || receipt.object_count !== identity.objectCount ||
+      receipt.total_bytes !== identity.totalBytes || !Array.isArray(receipt.objects) ||
+      receipt.objects.length !== identity.manifest.length) {
+    throw new Error('R2 copy receipt does not bind this backup manifest');
+  }
+  const copied = new Map(receipt.objects.map(object => [makeObjectKey(object.source_bucket, object.source_path), object]));
+  if (copied.size !== receipt.objects.length) throw new Error('R2 copy receipt repeats an object');
+  const rows = identity.manifest.map(row => {
+    const key = makeObjectKey(row.bucket, row.path);
+    const object = copied.get(key);
+    if (!ALL_BUCKETS.includes(row.bucket)) throw new Error(`Unsupported bucket in the backup manifest: ${row.bucket}`);
+    if (!object || object.sha256 !== row.sha256 || object.bytes !== row.bytes) {
+      throw new Error(`R2 copy receipt does not match the backup for ${key}`);
+    }
+    return Object.freeze({ bucket: row.bucket, path: row.path, bytes: row.bytes, sha256: row.sha256 });
+  });
+  return Object.freeze({ kind: 'source-delete', identity, planSha256: sha256OfText(raw), rows: Object.freeze(rows) });
+}
+
+/**
+ * Bounded, fail-closed native delete of the planned objects, one bucket at a
+ * time in batches of at most 50. Every batch starts by re-reading the live ACL
+ * fence inside the locked database batch; the injected `removeObjects` rechecks
+ * the exact native version and eTag right before each delete. The first failed
+ * batch stops the run.
+ */
+export async function runSourceDelete({
+  plan, confirm, checkFence, removeObjects, listExisting, checkStillEligible, withLockedBatch,
+  runner, checkpointPath, batchSize = PURGE_BATCH_SIZE, writeResult = async () => {},
+} = {}) {
+  let result = { status: 'ok', deleted: [], dropped: [], alreadyAbsent: [], stillPresent: [], batches: 0 };
+  if (!confirm) {
+    result.status = 'refused';
+    result.reason = 'confirm-not-set';
+    await writeResult(result);
+    return result;
+  }
+  let checkpoint;
+  try {
+    requireExecutionProof(plan, 'source-delete', withLockedBatch, runner, batchSize);
+    if (typeof checkFence !== 'function') throw new Error('A live fence check is required');
+    checkpoint = await executionCheckpoint(plan, 'source-delete', checkpointPath);
+    result = { ...result, ...checkpoint.state, status: 'ok', stillPresent: [] };
+    delete result.error;
+    const processed = new Set(result.deleted);
+    const keyOf = row => makeObjectKey(row.bucket, row.path);
+    const pending = plan.rows.filter(row => !processed.has(keyOf(row)));
+    for (const bucket of ALL_BUCKETS) {
+      for (const batch of chunk(pending.filter(row => row.bucket === bucket), batchSize)) {
+        await verifyDeletionBatch(plan, batch, runner);
+        result.batches += 1;
+        const outcome = await withLockedBatch(async () => {
+          if ((await checkFence()) !== true) return { status: 'error', error: 'Native source fence is not held' };
+          const paths = batch.map(row => row.path);
+          const existing = new Set(await listExisting(bucket, paths));
+          for (const row of batch) {
+            if (!existing.has(row.path)) {
+              result.deleted.push(keyOf(row));
+              result.alreadyAbsent.push(keyOf(row));
+            }
+          }
+          const liveRows = await checkStillEligible(bucket, paths.filter(value => existing.has(value)));
+          const liveByPath = new Map(liveRows.map(row => [row.path, row]));
+          const eligible = batch.filter(row => {
+            if (!existing.has(row.path)) return false;
+            const live = liveByPath.get(row.path);
+            const allowed = live && isSourceDeleteEligible(bucket, live);
+            if (!allowed) result.dropped.push(keyOf(row));
+            return allowed;
+          });
+          if (!eligible.length) return { status: 'ok' };
+          const targets = eligible.map(row => row.path);
+          let removeError;
+          try { await removeObjects(bucket, targets); }
+          catch (error) { removeError = error; }
+          const present = new Set(await listExisting(bucket, targets));
+          for (const row of eligible) {
+            if (!present.has(row.path)) result.deleted.push(keyOf(row));
+            else result.stillPresent.push(keyOf(row));
+          }
+          if (removeError || present.size) {
+            return { status: 'error', error: removeError ? errorMessage(removeError) : 'Objects remain after remove' };
+          }
+          return { status: 'ok' };
+        });
+        await saveExecutionCheckpoint(checkpoint.file, plan, result);
+        if (outcome?.status !== 'ok') throw new Error(outcome?.error ?? 'Locked batch did not confirm success');
+      }
+    }
+  } catch (error) {
+    result.status = checkpoint ? 'error' : 'refused';
+    result.error = errorMessage(error);
+  }
+  await writeResult(result);
+  return result;
+}
+
+/**
+ * Compare the live native rows with the frozen source proof. `added` objects
+ * need their own backup and R2 copy. `changed` objects cannot be copied again
+ * (R2 copies are immutable) and need an operator decision.
+ */
+export function classifySourceDelta({ proofObjects, liveRows }) {
+  const added = [];
+  const changed = [];
+  const seen = new Set();
+  for (const row of liveRows) {
+    const key = makeObjectKey(row.bucket_id, row.name);
+    seen.add(key);
+    const source = proofObjects.get(key);
+    if (!source) added.push(key);
+    else if (!sameNativeIdentity(row, source)) changed.push(key);
+  }
+  const gone = [...proofObjects.keys()].filter(key => !seen.has(key));
+  return { added: added.sort(), changed: changed.sort(), gone: gone.sort() };
 }
 
 const SAVED_IMAGE_FIELDS = ['id', 'user_id', 'original_filename', 'file_size_bytes', 'width',
@@ -1662,6 +1826,7 @@ export async function withDatabaseBatch(db, kind, callback) {
   // The fresh recheck reads auth.sessions.refreshed_at; lock it for expire only so a
   // concurrent refresh cannot commit between the recheck and the row delete.
   if (kind === 'expire') tables.push('auth.users', 'auth.sessions', 'public.profiles', 'public.subscriptions', 'public.credit_transactions');
+  else if (kind === 'source-delete') tables.push('public.blog_images', 'public.blog_posts');
   else if (kind !== 'purge') throw new Error('Unknown batch kind');
   await db.query('BEGIN ISOLATION LEVEL READ COMMITTED');
   try {
@@ -1678,28 +1843,35 @@ export async function withDatabaseBatch(db, kind, callback) {
   }
 }
 
-/** Pinned hosted contract: immutable input backup + exact native-version DELETE. */
+/** Same frozen native identity: object id, version, content eTag, size and exact timestamps. */
+function sameNativeIdentity(row, source) {
+  return row.id === source.id && row.version === source.version &&
+    row.metadata?.eTag === source.metadata.eTag && Number(row.metadata?.size) === Number(source.metadata.size) &&
+    sameExactTimestamp(row.created_at, source.created_at) && sameExactTimestamp(row.updated_at, source.updated_at);
+}
+
+/** Pinned hosted contract: immutable backup + exact native-version DELETE for the planned objects. */
 export async function makeNativeVersionStorageActions({ plan, db, config, fetchFn = fetch }) {
   requireSupabaseSourceStore(plan.identity);
   const proof = await loadSourceObjectProof(plan.identity.runDir);
   if (!proof) throw new Error('Native source proof is required');
-  const allowed = new Map(plan.rows.map(row => [row.path, row]));
-  if (plan.rows.some(row => row.bucket !== INPUT_BUCKET)) throw new Error('Native delete is proven only for the input bucket');
+  const allowed = new Map(plan.rows.map(row => [makeObjectKey(row.bucket, row.path), row]));
+  if (plan.rows.some(row => !ALL_BUCKETS.includes(row.bucket))) throw new Error('Native delete is proven only for the production buckets');
   const origin = new URL(config.supabaseUrl);
   if (origin.protocol !== 'https:' || origin.username || origin.password || origin.pathname !== '/') {
     throw new Error('Storage credentials require a trusted HTTPS origin');
   }
   const headers = { apikey: config.serviceRoleKey, Authorization: `Bearer ${config.serviceRoleKey}` };
   const assertTargets = (bucket, paths) => {
-    if (bucket !== INPUT_BUCKET || !Array.isArray(paths) || paths.length > PURGE_BATCH_SIZE ||
-        new Set(paths).size !== paths.length || paths.some(value => !allowed.has(value) || !validateObjectPath(value))) {
-      throw new Error('Native deletion requires a bounded set of planned input paths');
+    if (!Array.isArray(paths) || paths.length > PURGE_BATCH_SIZE || new Set(paths).size !== paths.length ||
+        paths.some(value => !allowed.has(makeObjectKey(bucket, value)) || !validateObjectPath(value))) {
+      throw new Error('Native deletion requires a bounded set of planned paths');
     }
   };
-  const guard = async () => {
+  const guard = async bucket => {
     const version = await fetchFn(`${origin.origin}/storage/v1/version`, { headers, signal: AbortSignal.timeout(30_000) });
     if (!version.ok || (await version.text()).trim() !== '1.80.2') throw new Error('Unproven Storage server version');
-    const state = (await db.query('SELECT versioning_status FROM storage.buckets WHERE id = $1', [INPUT_BUCKET])).rows;
+    const state = (await db.query('SELECT versioning_status FROM storage.buckets WHERE id = $1', [bucket])).rows;
     if (state.length !== 1 || state[0].versioning_status !== 'DISABLED') throw new Error('Unproven Storage version history contract');
   };
   return {
@@ -1709,19 +1881,17 @@ export async function makeNativeVersionStorageActions({ plan, db, config, fetchF
     },
     removeObjects: async (bucket, paths) => {
       assertTargets(bucket, paths);
-      await guard();
+      await guard(bucket);
       for (const objectPath of paths) {
-        const source = proof.objects.get(`${bucket}::${objectPath}`);
+        const source = proof.objects.get(makeObjectKey(bucket, objectPath));
         if (!source || !/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(source.version)) {
           throw new Error('Missing or invalid frozen native source version');
         }
         const current = (await db.query('SELECT to_jsonb(o) AS row FROM storage.objects o WHERE bucket_id = $1 AND name = $2', [bucket, objectPath])).rows;
         if (current.length === 0) continue;
         const row = current[0].row;
-        if (current.length !== 1 || row.id !== source.id || row.version !== source.version ||
-            row.archived_at !== null || row.is_versioned !== false || row.is_delete_marker !== false ||
-            row.metadata?.eTag !== source.metadata.eTag || Number(row.metadata?.size) !== Number(source.metadata.size) ||
-            !sameExactTimestamp(row.created_at, source.created_at) || !sameExactTimestamp(row.updated_at, source.updated_at)) {
+        if (current.length !== 1 || row.archived_at !== null || row.is_versioned !== false ||
+            row.is_delete_marker !== false || !sameNativeIdentity(row, source)) {
           throw new Error('Native source changed after backup proof');
         }
         const encodedPath = objectPath.split('/').map(encodeURIComponent).join('/');
@@ -1731,7 +1901,7 @@ export async function makeNativeVersionStorageActions({ plan, db, config, fetchF
         await response.body?.cancel();
         if (!response.ok) throw new Error(`Native source deletion refused: HTTP ${response.status}`);
       }
-      await guard();
+      await guard(bucket);
     },
   };
 }
@@ -1915,6 +2085,75 @@ async function cmdPurge(args) {
     log(`purge: ${result.status}, deleted ${result.deleted.length}, dropped ${result.dropped.length} -> ${resultPath}`);
     if (result.status !== 'ok') process.exitCode = 1;
   } finally { await db.end(); }
+}
+
+async function cmdDeleteSource(args) {
+  if (!args.confirm) throw new Error('delete-source requires --confirm');
+  const plan = await loadSourceDeletePlan({ backupRunDir: path.resolve(required(args.manifest, '--manifest <backup-run-dir>')) });
+  const { resolvePrimaryCheckoutRoot, verifyFreshDatabaseBackup } = await import('./database-backup-gate.mjs');
+  const repoRoot = await resolvePrimaryCheckoutRoot({ runner: defaultRunCommand });
+  const databaseBackup = await verifyFreshDatabaseBackup({ repoRoot, runner: defaultRunCommand });
+  log(`fresh database backup: ${JSON.stringify(databaseBackup)}`);
+  const config = loadConfig();
+  const db = await createDb(config);
+  const resultPath = path.join(plan.identity.runDir, 'source-delete-result.json');
+  try {
+    const result = await runSourceDelete({
+      plan, confirm: true, runner: defaultRunCommand,
+      ...await makeNativeVersionStorageActions({ plan, db, config }),
+      checkFence: async () => isNativeFenced(await readFenceMatrix(db)),
+      withLockedBatch: callback => withDatabaseBatch(db, 'source-delete', callback),
+      checkStillEligible: async (bucket, paths) => bucket === INPUT_BUCKET
+        ? (await db.query(INPUT_RECHECK_SQL, [bucket, paths])).rows
+        : (await db.query(SOURCE_RECHECK_SQL[bucket], bucket === BLOG_BUCKET ? [paths, R2_PUBLIC_BASE] : [paths])).rows,
+      writeResult: payload => writeAtomicJson(resultPath, { ...payload, database_backup: databaseBackup }),
+    });
+    log(`delete-source: ${result.status}, deleted ${result.deleted.length}, dropped ${result.dropped.length}, still present ${result.stillPresent.length} -> ${resultPath}`);
+    if (result.status !== 'ok') process.exitCode = 1;
+  } finally { await db.end(); }
+}
+
+/**
+ * Find native objects that are not in, or differ from, the frozen source proof.
+ * New objects get their own two-machine backup run (a normal `backup` run limited to
+ * those objects). Run `source-proof`, `migrate-r2 plan`/`copy` and `delete-source`
+ * on that new run directory. A changed object stops the command.
+ */
+async function cmdDelta(args) {
+  const identity = requireSupabaseSourceStore(await loadBackupIdentity(required(args.manifest, '--manifest <backup-run-dir>')));
+  const proof = await loadSourceObjectProof(identity.runDir);
+  if (!proof) throw new Error('A source object proof is required; run verify-r2-references.mjs source-proof first');
+  const config = loadConfig();
+  const db = await createDb(config);
+  let liveRows;
+  try {
+    liveRows = (await db.query('SELECT to_jsonb(o) AS row FROM storage.objects AS o WHERE o.bucket_id = ANY($1::text[])', [ALL_BUCKETS]))
+      .rows.map(entry => entry.row);
+  } finally {
+    await db.end();
+  }
+  const delta = classifySourceDelta({ proofObjects: proof.objects, liveRows });
+  log(`delta: ${delta.added.length} new, ${delta.changed.length} changed, ${delta.gone.length} gone`);
+  if (delta.changed.length) throw new Error(`Changed source objects need an operator decision: ${delta.changed.join(', ')}`);
+  if (!delta.added.length) return;
+  const added = new Set(delta.added);
+  requireFreeDisk();
+  const storage = await createStorage(config);
+  await preflightQuota(storage);
+  const { runDir, manifest } = await runBackup({
+    outputRoot: BACKUP_ROOT,
+    buckets: ALL_BUCKETS,
+    inventoryRetries: 2,
+    listObjects: async bucket => (await listAllObjects(storage, bucket)).filter(object => added.has(makeObjectKey(bucket, object.path))),
+    downloadObject: makeServiceRoleDownload({ supabaseUrl: config.supabaseUrl, serviceRoleKey: config.serviceRoleKey }),
+    runCommand: defaultRunCommand,
+    log,
+  });
+  const backedUp = manifest.map(row => makeObjectKey(row.bucket, row.path)).sort();
+  if (JSON.stringify(backedUp) !== JSON.stringify(delta.added)) {
+    throw new Error('Delta backup does not match the new native objects; rerun delta');
+  }
+  log(`delta backup run: ${runDir}`);
 }
 
 async function cmdPlanExpire(args) {
@@ -2114,6 +2353,8 @@ function usage() {
       '  plan-expire --manifest <backup-run-dir>',
       '  expire --manifest <expire-rows.jsonl> --confirm',
       '  verify-integrity',
+      '  delta --manifest <backup-run-dir>',
+      '  delete-source --manifest <backup-run-dir> --confirm',
     ].join('\n') + '\n'
   );
 }
@@ -2138,6 +2379,10 @@ async function main() {
       return cmdExpire(args);
     case 'verify-integrity':
       return cmdVerifyIntegrity();
+    case 'delta':
+      return cmdDelta(args);
+    case 'delete-source':
+      return cmdDeleteSource(args);
     default:
       usage();
       process.exitCode = 1;

@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
+import { execFileSync, spawnSync } from 'node:child_process';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -363,5 +364,98 @@ describe('storage-acl-fence: CLI', () => {
     await runFenceCli(['status'], { loadConfig: () => ({ dbConfig: {} }), createDb: async () => db, log: (l: string) => lines.push(l) });
     expect(db.endCalls).toBe(1);
     expect(lines.join('\n')).toContain('fenced=false');
+  });
+});
+
+/**
+ * Real PostgreSQL 17 proof of the SQL itself (aclexplode, has_table_privilege('public'),
+ * SET LOCAL ROLE per grantor, exact restore). Local disposable container only.
+ */
+const dockerAvailable = spawnSync('docker', ['info'], { stdio: 'ignore' }).status === 0;
+
+describe.runIf(dockerAvailable)('storage-acl-fence: real PostgreSQL 17', () => {
+  const containerName = `miu-acl-fence-${crypto.randomUUID()}`;
+  let client: any;
+  let root: string;
+
+  beforeAll(async () => {
+    const { Client } = await import('pg');
+    execFileSync('docker', ['run', '--rm', '-d', '--name', containerName, '-e', 'POSTGRES_PASSWORD=test', '-P', 'public.ecr.aws/supabase/postgres:17.6.1.052']);
+    for (let attempt = 0; attempt < 120; attempt += 1) {
+      const health = spawnSync('docker', ['inspect', '--format', '{{.State.Health.Status}}', containerName], { encoding: 'utf8' }).stdout.trim();
+      if (health === 'healthy') break;
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    const mapping = execFileSync('docker', ['port', containerName, '5432/tcp'], { encoding: 'utf8' }).trim();
+    const connectionString = `postgresql://supabase_admin:test@127.0.0.1:${mapping.split(':').at(-1)}/postgres`;
+    for (let attempt = 0; attempt < 60 && !client; attempt += 1) {
+      const candidate = new Client({ connectionString });
+      try { await candidate.connect(); client = candidate; } catch { await candidate.end().catch(() => undefined); await new Promise(resolve => setTimeout(resolve, 500)); }
+    }
+    if (!client) throw new Error('PostgreSQL test connection failed');
+    root = fs.mkdtempSync(path.join(os.tmpdir(), 'sqr-acl-pg-'));
+  }, 240_000);
+
+  afterAll(async () => {
+    await client?.end().catch(() => undefined);
+    spawnSync('docker', ['rm', '-f', containerName], { stdio: 'ignore' });
+    if (root) fs.rmSync(root, { recursive: true, force: true });
+  });
+
+  async function resetTable(extra = '') {
+    await client.query(`
+      CREATE SCHEMA IF NOT EXISTS storage;
+      DROP TABLE IF EXISTS storage.objects;
+      CREATE TABLE storage.objects (id uuid PRIMARY KEY, bucket_id text, name text);
+      ALTER TABLE storage.objects OWNER TO supabase_storage_admin;
+      GRANT ALL ON storage.objects TO postgres, anon, authenticated, service_role;
+      GRANT INSERT ON storage.objects TO PUBLIC;
+      ${extra}`);
+  }
+
+  it('freezes, opens DELETE for service_role only, and restores the exact raw ACL', async () => {
+    await resetTable();
+    const before = await captureSnapshot(client);
+    expect(before.matrix.PUBLIC.INSERT).toBe(true);
+    const file = path.join(root, 'case1.json');
+    await writeSnapshotFile(file, before);
+
+    const frozen = await runFreeze({ db: client, snapshotPath: file, confirm: true, freshBackup: async () => ({}) });
+    expect(frozen.fenced).toBe(true);
+    expect(frozen.matrix.PUBLIC.INSERT).toBe(false);
+    expect(frozen.matrix.service_role.UPDATE).toBe(false);
+    expect(frozen.matrix.anon.SELECT).toBe(true);
+
+    const open = await runAllowDelete({ db: client, confirm: true });
+    expect(open.delete_open).toBe(true);
+    expect(open.matrix.authenticated.DELETE).toBe(false);
+    expect(open.matrix.service_role.INSERT).toBe(false);
+
+    const restored = await runRestore({ db: client, snapshotPath: file, confirm: true });
+    expect(restored.relacl_text_equal).toBe(true);
+    const after = await captureSnapshot(client);
+    expect(after.relacl).toBe(before.relacl);
+    expect(after.acl).toEqual(before.acl);
+    expect(after.matrix).toEqual(before.matrix);
+  }, 60_000);
+
+  it('refuses to freeze when a column-level grant exists, because the REVOKE would drop it', async () => {
+    await resetTable('GRANT UPDATE (name) ON storage.objects TO authenticated;');
+    const before = await captureSnapshot(client);
+    expect(before.matrix.authenticated.UPDATE_ANY_COLUMN).toBe(true);
+    expect(before.columns.some((column: any) => column.acl !== null)).toBe(true);
+    const file = path.join(root, 'case2.json');
+    await writeSnapshotFile(file, before);
+    let backups = 0;
+    await expect(runFreeze({ db: client, snapshotPath: file, confirm: true, freshBackup: async () => { backups += 1; } })).rejects.toThrow(/Column-level ACLs/);
+    expect(backups).toBe(0);
+    const after = await captureSnapshot(client);
+    expect(after.relacl).toBe(before.relacl);
+    expect(after.columns).toEqual(before.columns);
+  }, 60_000);
+
+  it('reports a missing role as an unfenced, malformed matrix instead of throwing in SQL', async () => {
+    const { rows } = await client.query(`SELECT ${fence.FENCE_MATRIX_SQL.replace(/'anon', 'anon'/, "'no_such_role', 'anon'")} AS matrix`);
+    expect(isNativeFenced(rows[0].matrix)).toBe(false);
   });
 });

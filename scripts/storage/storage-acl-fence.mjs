@@ -303,6 +303,10 @@ export async function runFreeze({ db, snapshotPath, confirm, freshBackup, log = 
   if (!snapshotPath) throw new Error('freeze requires --snapshot <file>');
   const { snapshot, sha256 } = await loadSnapshotFile(snapshotPath);
   if (isNativeFenced(snapshot.matrix)) throw new Error('ACL snapshot is already fenced; take it before the freeze');
+  // A table-level REVOKE also drops column-level grants, and restore only re-grants table-level ones.
+  if (snapshot.columns.some(column => column.acl !== null)) {
+    throw new Error('Column-level ACLs exist on storage.objects; the freeze cannot restore them exactly');
+  }
 
   const backup = await freshBackup();
   log(`[fence] fresh database backup verified: ${JSON.stringify(backup ?? {})}`);
