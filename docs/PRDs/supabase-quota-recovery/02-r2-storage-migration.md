@@ -268,6 +268,49 @@ Independent read-only design review recommends avoiding custom managed-Storage t
 
 - Hosted gallery verification (2026-10-11): the production app passed the owned-fixture save/list/resize/foreign-access/delete flow above; the final invocation exited 0. Both fixture Auth users, profiles, preferences, sessions and inventoried dependent rows were verified absent, along with the image row/object. Fixtures began without email; preferences were disabled before admin-confirming a unique `.invalid` address, avoiding the immediate recovery-email eligibility window. Two earlier setup attempts stopped before gallery save: a stale fixture-only `credits_balance` select and disabled phone authentication; their fixtures were also fully removed. No customer content, credit balances, Stripe state, global Auth setting or cleanup schedule changed. Fresh database backup `2026-10-11_11-43-18` passed gzip and SHA verification on desktop and laptop before these writes: desktop `/home/joao/projects/myimageupscaler.com/backups/backup_2026-10-11_11-43-18.{schema,data}.sql.gz`, laptop `~/backups/miu-db/2026-10-11_11-43-18/`; schema SHA `16edbb4c45dbc3e499e204a98ed7955dd9ab76701741bdb045e6ceeda33617ae`, data SHA `562399741e20a40b3d256480c088256e615d0f01672974e23e391b52cb47a59f`. Proof and executable fixture journal remain in `/home/joao/.cache/miu-quota-temp/gallery-hosted-canary-lokwvv25/`; final journal `created-users-cdf5c116-88cc-45d3-8fa0-d760d61e2eef.jsonl`. A separate header-only validation exited 1 at its positive-integer-and-smaller Content-Length assertion; the image and both fixture accounts/dependents were fully removed (journal `created-users-f26cd621-bcbb-4cbc-811f-9ceea7dea7f6.jsonl`). It did not invalidate the earlier decoded resize/body proof. Cloudflare documents runtime-controlled Content-Length for streamed responses (https://developers.cloudflare.com/workers/runtime-apis/response/); the next diagnostic observed an absent Content-Length, chunked Transfer-Encoding and no Content-Encoding; both fixture accounts and their image/dependents were fully removed (journal `created-users-1a95a800-aaf4-4955-b3bd-508181bda6dd.jsonl`). This confirms the transport shape, but does not identify which runtime/adapter stage discarded the header. No application change was made to force a header or buffer private images. The header requirement, real provider canary and blog browser proof remain open; source cutover/purge and automatic expiry remain disabled.
 
+### ACL-freeze cutover runbook (approved 2026-10-12)
+
+João approved the short ACL freeze. The tools are `scripts/storage/storage-acl-fence.mjs` (snapshot, freeze, allow-delete, restore, status) and the `delta` and `delete-source` commands of `scripts/storage/backup-and-purge.mjs`. The fence state is now read live. `verify` reports `source_native_fenced` from `has_table_privilege`, `apply` reads it again before every commit, and `delete-source` reads it at the start of every batch. Every command below runs from the primary checkout. Do not use `bash -x`.
+
+```bash
+RUN=/home/joao/backups/miu-storage/2026-10-10T22-28-34-951Z
+ACL=/home/joao/backups/miu-storage-acl/storage-objects-acl-2026-10-12.json
+mkdir -p -m 700 "$(dirname "$ACL")"
+
+# 1. Prove the backup gate works. Freeze and apply each take their own fresh backup.
+node scripts/storage/database-backup-gate.mjs
+# 2. Record the exact ACL (read-only, mode 0600, never overwritten). Copy it to the laptop and compare the sha256.
+node scripts/storage/storage-acl-fence.mjs snapshot --out "$ACL"
+rsync -a --ignore-existing "$ACL" joao@192.168.1.126:backups/miu-storage-acl/ && sha256sum "$ACL"
+# 3. Fence. Takes a fresh dual backup, revokes INSERT/UPDATE/DELETE from PUBLIC/anon/authenticated/service_role, verifies all four roles.
+node scripts/storage/storage-acl-fence.mjs freeze --confirm --snapshot "$ACL"
+# 4. Expect fenced=true delete_open=false.
+node scripts/storage/storage-acl-fence.mjs status
+# 5. Delta. Expect "0 new, 0 changed". Any other result stops the cutover (see below).
+node scripts/storage/backup-and-purge.mjs delta --manifest "$RUN"
+# 6. Verify. Expect only the accepted missing blog image.
+node scripts/storage/backup-and-purge.mjs verify-integrity
+node scripts/storage/verify-r2-references.mjs verify --manifest "$RUN"
+# 7. Flip the references (own fresh backup, fence re-read before every commit).
+node scripts/storage/verify-r2-references.mjs apply --manifest "$RUN" --confirm
+# 8. Open DELETE for service_role only.
+node scripts/storage/storage-acl-fence.mjs allow-delete --confirm
+# 9. Delete from the frozen manifest (own fresh backup, batches of 50 or fewer, live fence check per batch).
+node scripts/storage/backup-and-purge.mjs delete-source --manifest "$RUN" --confirm
+# 10. Restore the exact original grants. Run this also after any failure from step 3 on.
+node scripts/storage/storage-acl-fence.mjs restore --confirm --snapshot "$ACL"
+# 11. Expect fenced=false and the original matrix.
+node scripts/storage/storage-acl-fence.mjs status
+# 12. Bucket size check. Expect less than 50 MB in total (AC-7).
+node --input-type=module -e "import {loadR2OperatorConfig as c} from './scripts/storage/r2-gallery-operator-adapters.mjs'; import {createDb} from './scripts/storage/backup-and-purge.mjs'; const db = await createDb(c().dbConfig); try { console.log(JSON.stringify((await db.query(\"SELECT bucket_id, count(*) AS objects, sum(coalesce((metadata->>'size')::bigint,0)) AS bytes FROM storage.objects GROUP BY bucket_id ORDER BY bytes DESC\")).rows)); } finally { await db.end(); }"
+```
+
+- Stop rules: any failed command from step 3 on stops the run. Restore first, then report. `freeze` and `restore` run in one transaction and roll back when verification fails. A failed `restore` leaves Storage frozen and needs a manual fix from the snapshot.
+- `freeze` refuses a snapshot that is stale, already fenced, or has column-level ACLs, because a table-level REVOKE drops column grants. The production column ACLs were all NULL on 2026-10-11.
+- `delete-source` deletes only objects that have a matching R2 read-back hash in `r2-migration-receipt.json`. It keeps (reports as `dropped`) any saved image still on the `supabase` backend, any blog image or post that still points at the source, and any input that is younger than 7 days or still referenced. It rechecks the exact native version and eTag right before each delete.
+- Delta: `delta` compares `storage.objects` with `source-object-proof.json`. For new objects it creates a second two-machine backup run limited to those objects and prints its directory (`$DELTA`). Then run `verify-r2-references.mjs source-proof --manifest "$DELTA"`, `migrate-r2.mjs plan --manifest "$DELTA"`, `migrate-r2.mjs copy --manifest "$DELTA" --confirm`, and `backup-and-purge.mjs delete-source --manifest "$DELTA" --confirm` after step 9. A reference to a delta object fails `verify` because the frozen manifest does not list it. Stop and ask João. A changed object stops `delta` because R2 copies are immutable.
+- Local evidence: unit tests only (`storage-acl-fence`, `source-delete`, `r2-reference-apply`, `r2-references`, `r2-operator-cli`), including a disposable PostgreSQL 17 container for the ACL SQL and the reference SQL. No production command has run.
+
 ### Remaining blog integration proof
 
 Complexity: 0 → LOW; risk override: none for local synthetic fixtures only. Integration: unchanged — verify the existing admin blog-image upload route, R2 persistence and rendered blog image through the built application; no production credentials or writes. First identify the smallest reusable release fixture, then add one collected integration test asserting returned asset URL, exact stored bytes and browser image decoding. Load only genuinely required real migrations/fixtures. Run the focused test and required checks proportionate to any implementation change; retain AC-3 as unproven until the actual upload and rendering consumer paths pass. No source cutover, purge or email change is authorized by this test lane.
