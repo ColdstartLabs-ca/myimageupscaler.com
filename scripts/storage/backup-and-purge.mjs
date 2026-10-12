@@ -2115,6 +2115,13 @@ async function cmdDeleteSource(args) {
   } finally { await db.end(); }
 }
 
+/** The delta is only meaningful while no native write is possible, so the fence comes first. */
+export async function loadFencedSourceRows(db) {
+  if (!isNativeFenced(await readFenceMatrix(db))) throw new Error('delta requires the live ACL fence; run freeze first');
+  return (await db.query('SELECT to_jsonb(o) AS row FROM storage.objects AS o WHERE o.bucket_id = ANY($1::text[])', [ALL_BUCKETS]))
+    .rows.map(entry => entry.row);
+}
+
 /**
  * Find native objects that are not in, or differ from, the frozen source proof.
  * New objects get their own two-machine backup run (a normal `backup` run limited to
@@ -2129,8 +2136,7 @@ async function cmdDelta(args) {
   const db = await createDb(config);
   let liveRows;
   try {
-    liveRows = (await db.query('SELECT to_jsonb(o) AS row FROM storage.objects AS o WHERE o.bucket_id = ANY($1::text[])', [ALL_BUCKETS]))
-      .rows.map(entry => entry.row);
+    liveRows = await loadFencedSourceRows(db);
   } finally {
     await db.end();
   }

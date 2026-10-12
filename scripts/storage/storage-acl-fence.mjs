@@ -60,6 +60,9 @@ const SNAPSHOT_SQL = `SELECT current_user AS connected_as,
       ORDER BY t.attnum)
     FROM pg_attribute AS t
     WHERE t.attrelid = c.oid AND t.attnum > 0 AND NOT t.attisdropped), '[]'::jsonb) AS columns,
+  (SELECT rolsuper FROM pg_roles WHERE rolname = current_user) AS is_superuser,
+  COALESCE((SELECT jsonb_agg(jsonb_build_object('role', g.role, 'member', pg_has_role(current_user, g.role, 'MEMBER')) ORDER BY g.role)
+    FROM (SELECT DISTINCT pg_get_userbyid(a.grantor) AS role FROM aclexplode(c.relacl) AS a) AS g), '[]'::jsonb) AS grantors,
   ${FENCE_MATRIX_SQL} AS matrix
 FROM pg_class AS c
 WHERE c.oid = 'storage.objects'::regclass`;
@@ -170,8 +173,15 @@ export async function captureSnapshot(db, { now = () => new Date() } = {}) {
     relacl: row.relacl,
     acl: sortedAcl(row.acl ?? []),
     columns: (row.columns ?? []).map(column => ({ attnum: column.attnum, name: column.name, acl: column.acl ?? null })),
+    is_superuser: row.is_superuser === true,
+    is_owner: row.connected_as === row.owner,
+    grantors: (row.grantors ?? []).map(entry => ({ role: entry.role, member: entry.member === true })),
     matrix: row.matrix,
   };
+  // Can the connected role act as every grantor of a fenced write grant? REVOKE and GRANT need it.
+  const writeGrantors = new Set(snapshot.acl.filter(isFencedWrite).map(entry => entry.grantor));
+  snapshot.grantor_reachable = snapshot.is_superuser || [...writeGrantors].every(role =>
+    role === snapshot.connected_as || snapshot.grantors.some(entry => entry.role === role && entry.member));
   validateSnapshot(snapshot);
   return snapshot;
 }
@@ -297,12 +307,15 @@ function assertSameAcl(live, snapshot, message) {
  * Freeze: a fresh verified dual database backup first, then one short
  * transaction that revokes and verifies the effective privileges before COMMIT.
  */
-export async function runFreeze({ db, snapshotPath, confirm, freshBackup, log = () => {} } = {}) {
+export async function runFreeze({ db, snapshotPath, snapshotSha256, confirm, freshBackup, log = () => {} } = {}) {
   requireConfirm(confirm, 'freeze');
   if (typeof freshBackup !== 'function') throw new Error('freeze requires the fresh database backup gate');
   if (!snapshotPath) throw new Error('freeze requires --snapshot <file>');
-  const { snapshot, sha256 } = await loadSnapshotFile(snapshotPath);
+  const { snapshot, sha256 } = await loadSnapshotFile(snapshotPath, snapshotSha256);
   if (isNativeFenced(snapshot.matrix)) throw new Error('ACL snapshot is already fenced; take it before the freeze');
+  if (snapshot.grantor_reachable === false) {
+    throw new Error('The connected role cannot act as every grantor in the snapshot; connect as a member of the grantor roles');
+  }
   // A table-level REVOKE also drops column-level grants, and restore only re-grants table-level ones.
   if (snapshot.columns.some(column => column.acl !== null)) {
     throw new Error('Column-level ACLs exist on storage.objects; the freeze cannot restore them exactly');
@@ -341,12 +354,16 @@ export async function runAllowDelete({ db, confirm } = {}) {
 }
 
 /** Restore the exact original grants and verify ACL, column ACLs and effective privileges. */
-export async function runRestore({ db, snapshotPath, confirm, log = () => {} } = {}) {
+export async function runRestore({ db, snapshotPath, snapshotSha256, confirm, log = () => {} } = {}) {
   requireConfirm(confirm, 'restore');
   if (!snapshotPath) throw new Error('restore requires --snapshot <file>');
-  const { snapshot, sha256 } = await loadSnapshotFile(snapshotPath);
+  const { snapshot, sha256 } = await loadSnapshotFile(snapshotPath, snapshotSha256);
+  // A fenced snapshot would "restore" the freeze itself.
+  if (isNativeFenced(snapshot.matrix)) throw new Error('Refuse to restore from a fenced snapshot');
   return inTransaction(db, async () => {
     const before = await captureSnapshot(db);
+    // A stale snapshot must not overwrite a newer ACL: restore only undoes our own freeze.
+    if (!isNativeFenced(before.matrix)) throw new Error('Refuse to restore: the live state is not fenced');
     for (const statement of buildRestoreStatements(before.acl, snapshot.acl, before.connected_as)) await db.query(statement);
     const after = await captureSnapshot(db);
     assertSameAcl(after, snapshot, 'Restored table ACL does not match the snapshot');
@@ -363,7 +380,7 @@ export async function runRestore({ db, snapshotPath, confirm, log = () => {} } =
 // CLI
 // =============================================================================
 
-const VALUE_FLAGS = { '--snapshot': 'snapshot', '--out': 'out' };
+const VALUE_FLAGS = { '--snapshot': 'snapshot', '--snapshot-sha256': 'snapshotSha256', '--out': 'out' };
 const MUTATING = new Set(['freeze', 'allow-delete', 'restore']);
 
 export function parseFenceFlags(args = []) {
@@ -393,9 +410,9 @@ function usage() {
   process.stdout.write([
     'Usage: node scripts/storage/storage-acl-fence.mjs <command>',
     '  snapshot --out <file>',
-    '  freeze --confirm --snapshot <file>',
+    '  freeze --confirm --snapshot <file> --snapshot-sha256 <sha256>',
     '  allow-delete --confirm',
-    '  restore --confirm --snapshot <file>',
+    '  restore --confirm --snapshot <file> --snapshot-sha256 <sha256>',
     '  status',
   ].join('\n') + '\n');
 }
@@ -435,6 +452,12 @@ export async function runFenceCli(argv, deps = {}) {
   if ((command === 'freeze' || command === 'restore') && !flags.snapshot) {
     throw new Error('missing required --snapshot <file>');
   }
+  if ((command === 'freeze' || command === 'restore') && !flags.snapshotSha256) {
+    throw new Error('missing required --snapshot-sha256 <sha256 printed by snapshot>');
+  }
+  if (flags.snapshotSha256 !== undefined && !/^[0-9a-f]{64}$/.test(flags.snapshotSha256)) {
+    throw new Error('--snapshot-sha256 must be 64 hex characters');
+  }
   if (command === 'snapshot' && !flags.out) throw new Error('missing required --out <file>');
 
   const log = deps.log ?? writeLog;
@@ -451,6 +474,8 @@ export async function runFenceCli(argv, deps = {}) {
     if (command === 'snapshot') {
       const result = await runSnapshot({ db, out: flags.out });
       log(`[fence] snapshot ${result.path} sha256=${result.sha256}`);
+      log(`[fence] superuser=${result.snapshot.is_superuser} owner=${result.snapshot.is_owner} grantor_reachable=${result.snapshot.grantor_reachable} ` +
+        `grantors=${result.snapshot.grantors.map(entry => `${entry.role}:${entry.member}`).join(',')}`);
       return result;
     }
     if (command === 'status') {
@@ -464,7 +489,7 @@ export async function runFenceCli(argv, deps = {}) {
         const repoRoot = await gate.resolvePrimaryCheckoutRoot({ runner: gateRunner });
         return gate.verifyFreshDatabaseBackup({ repoRoot, runner: gateRunner });
       });
-      const state = await runFreeze({ db, snapshotPath: flags.snapshot, confirm: true, freshBackup, log });
+      const state = await runFreeze({ db, snapshotPath: flags.snapshot, snapshotSha256: flags.snapshotSha256, confirm: true, freshBackup, log });
       log(formatMatrix(state));
       return state;
     }
@@ -473,7 +498,7 @@ export async function runFenceCli(argv, deps = {}) {
       log(formatMatrix(state));
       return state;
     }
-    const result = await runRestore({ db, snapshotPath: flags.snapshot, confirm: true, log });
+    const result = await runRestore({ db, snapshotPath: flags.snapshot, snapshotSha256: flags.snapshotSha256, confirm: true, log });
     log(`[fence] restored exact grants from snapshot sha256=${result.snapshot_sha256}`);
     return result;
   } finally {

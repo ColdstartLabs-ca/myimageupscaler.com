@@ -279,13 +279,15 @@ mkdir -p -m 700 "$(dirname "$ACL")"
 
 # 1. Prove the backup gate works. Freeze and apply each take their own fresh backup.
 node scripts/storage/database-backup-gate.mjs
-# 2. Record the exact ACL (read-only, mode 0600, never overwritten). Copy it to the laptop and compare the sha256.
+# 2. Record the exact ACL (read-only, mode 0600, never overwritten). Check grantor_reachable=true in the output.
+#    Copy the file to the laptop and compare the sha256. Put the printed sha256 in $SHA.
 node scripts/storage/storage-acl-fence.mjs snapshot --out "$ACL"
+SHA=<sha256 printed by the snapshot command>
 ssh joao@192.168.1.126 'mkdir -p -m 700 ~/backups/miu-storage-acl'
 rsync -a --ignore-existing "$ACL" joao@192.168.1.126:backups/miu-storage-acl/
 sha256sum "$ACL"; ssh joao@192.168.1.126 "sha256sum ~/backups/miu-storage-acl/$(basename "$ACL")"
 # 3. Fence. Takes a fresh dual backup, revokes INSERT/UPDATE/DELETE from PUBLIC/anon/authenticated/service_role, verifies all four roles.
-node scripts/storage/storage-acl-fence.mjs freeze --confirm --snapshot "$ACL"
+node scripts/storage/storage-acl-fence.mjs freeze --confirm --snapshot "$ACL" --snapshot-sha256 "$SHA"
 # 4. Expect fenced=true delete_open=false.
 node scripts/storage/storage-acl-fence.mjs status
 # 5. Delta. Expect "0 new, 0 changed". Any other result stops the cutover (see below).
@@ -299,15 +301,17 @@ node scripts/storage/verify-r2-references.mjs apply --manifest "$RUN" --confirm
 node scripts/storage/storage-acl-fence.mjs allow-delete --confirm
 # 9. Delete from the frozen manifest (own fresh backup, batches of 50 or fewer, live fence check per batch).
 node scripts/storage/backup-and-purge.mjs delete-source --manifest "$RUN" --confirm
-# 10. Restore the exact original grants. Run this also after any failure from step 3 on.
-node scripts/storage/storage-acl-fence.mjs restore --confirm --snapshot "$ACL"
+# 10. Restore the exact original grants (see the stop rules for the failure case).
+node scripts/storage/storage-acl-fence.mjs restore --confirm --snapshot "$ACL" --snapshot-sha256 "$SHA"
 # 11. Expect fenced=false and the original matrix.
 node scripts/storage/storage-acl-fence.mjs status
 # 12. Bucket size check. Expect less than 50 MB in total (AC-7).
 node --input-type=module -e "import {loadR2OperatorConfig as c} from './scripts/storage/r2-gallery-operator-adapters.mjs'; import {createDb} from './scripts/storage/backup-and-purge.mjs'; const db = await createDb(c().dbConfig); try { console.log(JSON.stringify((await db.query(\"SELECT bucket_id, count(*) AS objects, sum(coalesce((metadata->>'size')::bigint,0)) AS bytes FROM storage.objects GROUP BY bucket_id ORDER BY bytes DESC\")).rows)); } finally { await db.end(); }"
 ```
 
-- Stop rules: any failed command from step 3 on stops the run. Restore first, then report. `freeze` and `restore` run in one transaction and roll back when verification fails. A failed `restore` leaves Storage frozen and needs a manual fix from the snapshot.
+- Expected outage: from `freeze` to `restore`, all Supabase Storage writes in all three buckets fail with `permission denied` (REST, TUS, S3, multipart, signed URLs). Both fresh database backups (inside `freeze` and `apply`, plus one inside `delete-source`) run in this window, so plan for the combined backup time. The live app already writes new objects to R2, so only legacy Supabase write paths see the outage. Reads continue.
+- Stop rules: any failed command from step 3 on stops the run. Run `status`. If it shows `fenced=true`, run `restore` (step 10), then report. If it shows `fenced=false`, do not run `restore`: the freeze did not apply or was already undone. If `freeze` failed because the snapshot is stale, take a new snapshot instead of restoring. `restore` refuses a fenced snapshot, an unfenced live state and a wrong `--snapshot-sha256`, so a stale snapshot cannot overwrite a newer ACL. `freeze` and `restore` run in one transaction and roll back when verification fails. A failed `restore` leaves Storage frozen and needs a manual fix from the snapshot.
+- `delta` refuses to run unless the live fence is held.
 - `freeze` refuses a snapshot that is stale, already fenced, or has column-level ACLs, because a table-level REVOKE drops column grants. The production column ACLs were all NULL on 2026-10-11.
 - `delete-source` deletes only objects that have a matching R2 read-back hash in `r2-migration-receipt.json`. It keeps (reports as `dropped`) any saved image still on the `supabase` backend, any blog image or post that still points at the source, and any input that is younger than 7 days or still referenced. It rechecks the exact native version and eTag right before each delete.
 - Delta: `delta` compares `storage.objects` with `source-object-proof.json`. For new objects it creates a second two-machine backup run limited to those objects and prints its directory (`$DELTA`). Then run `verify-r2-references.mjs source-proof --manifest "$DELTA"`, `migrate-r2.mjs plan --manifest "$DELTA"`, `migrate-r2.mjs copy --manifest "$DELTA" --confirm`, and `backup-and-purge.mjs delete-source --manifest "$DELTA" --confirm` after step 9. A reference to a delta object fails `verify` because the frozen manifest does not list it. Stop and ask João. A changed object stops `delta` because R2 copies are immutable.

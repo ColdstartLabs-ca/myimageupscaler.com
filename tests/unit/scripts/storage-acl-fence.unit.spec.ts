@@ -46,7 +46,7 @@ function originalAcl(): Entry[] {
  * statements the fence tool is allowed to issue, so an unexpected statement fails.
  * A REVOKE removes only entries whose grantor is the acting role, like Postgres.
  */
-function makeDb(options: { currentUser?: string; columnAcl?: unknown } = {}) {
+function makeDb(options: { currentUser?: string; columnAcl?: unknown; unreachable?: string[]; superuser?: boolean } = {}) {
   const currentUser = options.currentUser ?? 'postgres';
   let entries = originalAcl();
   let actor = currentUser;
@@ -97,7 +97,11 @@ function makeDb(options: { currentUser?: string; columnAcl?: unknown } = {}) {
         return { rows: [] };
       }
       if (/FROM pg_class/.test(statement)) {
-        return { rows: [{ connected_as: currentUser, owner: OWNER, relacl: relacl(), acl: entries, columns: columns(), matrix: matrix() }] };
+        return { rows: [{
+          connected_as: currentUser, owner: OWNER, relacl: relacl(), acl: entries, columns: columns(), matrix: matrix(),
+          is_superuser: options.superuser ?? false,
+          grantors: [...new Set(entries.map(e => e.grantor))].map(role => ({ role, member: !(options.unreachable ?? []).includes(role) })),
+        }] };
       }
       if (/has_table_privilege/.test(statement)) return { rows: [{ matrix: matrix() }] };
       throw new Error(`unexpected SQL: ${statement}`);
@@ -310,10 +314,54 @@ describe('storage-acl-fence: freeze, allow-delete and restore', () => {
   it('restore fails loudly and rolls back when a column ACL differs from the snapshot', async () => {
     const db = makeDb();
     await snapshotOf(db);
+    await runFreeze({ db, snapshotPath: file, confirm: true, freshBackup: async () => ({}) });
     const drifted = makeDb({ columnAcl: '{anon=w/supabase_storage_admin}' });
     drifted.setEntries(db.entries());
     await expect(runRestore({ db: drifted, snapshotPath: file, confirm: true })).rejects.toThrow(/column/i);
     expect(drifted.sql).toContain('ROLLBACK');
+  });
+
+  it('restore refuses a snapshot that is itself fenced', async () => {
+    const db = makeDb();
+    await snapshotOf(db);
+    await runFreeze({ db, snapshotPath: file, confirm: true, freshBackup: async () => ({}) });
+    const fencedFile = path.join(root, 'fenced.json');
+    await writeSnapshotFile(fencedFile, await captureSnapshot(db));
+    await expect(runRestore({ db, snapshotPath: fencedFile, confirm: true })).rejects.toThrow(/fenced snapshot/);
+    expect(db.sql.some((text: string) => /^GRANT/.test(text))).toBe(false);
+  });
+
+  it('restore refuses unless the live state is currently fenced', async () => {
+    const db = makeDb();
+    await snapshotOf(db);
+    const before = db.sql.length;
+    await expect(runRestore({ db, snapshotPath: file, confirm: true })).rejects.toThrow(/live state is not fenced/);
+    expect(db.sql.slice(before).some((text: string) => /^(GRANT|REVOKE)/.test(text))).toBe(false);
+  });
+
+  it('freeze and restore bind the snapshot file to an expected sha256', async () => {
+    const db = makeDb();
+    const { sha256: digest } = await writeSnapshotFile(file, await captureSnapshot(db));
+    await expect(runFreeze({ db, snapshotPath: file, snapshotSha256: 'f'.repeat(64), confirm: true, freshBackup: async () => ({}) })).rejects.toThrow(/sha256/);
+    await runFreeze({ db, snapshotPath: file, snapshotSha256: digest, confirm: true, freshBackup: async () => ({}) });
+    await expect(runRestore({ db, snapshotPath: file, snapshotSha256: 'f'.repeat(64), confirm: true })).rejects.toThrow(/sha256/);
+    expect((await runRestore({ db, snapshotPath: file, snapshotSha256: digest, confirm: true })).restored).toBe(true);
+  });
+
+  it('records grantor reachability and refuses a freeze the connected role cannot perform', async () => {
+    const reachable = await captureSnapshot(makeDb());
+    expect(reachable.grantors).toContainEqual({ role: OWNER, member: true });
+    expect(reachable.grantor_reachable).toBe(true);
+    expect(reachable.is_owner).toBe(false);
+    expect(reachable.is_superuser).toBe(false);
+
+    const db = makeDb({ unreachable: [OWNER] });
+    await snapshotOf(db);
+    expect((await loadSnapshotFile(file)).snapshot.grantor_reachable).toBe(false);
+    let backups = 0;
+    await expect(runFreeze({ db, snapshotPath: file, confirm: true, freshBackup: async () => { backups += 1; } })).rejects.toThrow(/grantor/);
+    expect(backups).toBe(0);
+    expect((await captureSnapshot(makeDb({ unreachable: [OWNER], superuser: true }))).grantor_reachable).toBe(true);
   });
 
   it('restore fails when the restored ACL differs from the snapshot', async () => {
@@ -345,7 +393,7 @@ describe('storage-acl-fence: CLI', () => {
   it('refuses mutating commands without --confirm before reading credentials', async () => {
     let loaded = 0;
     const deps = { config: undefined, loadConfig: () => { loaded += 1; return {}; }, createDb: async () => makeDb() };
-    for (const argv of [['freeze', '--snapshot', 'x'], ['allow-delete'], ['restore', '--snapshot', 'x']]) {
+    for (const argv of [['freeze', '--snapshot', 'x', '--snapshot-sha256', 'a'], ['allow-delete'], ['restore', '--snapshot', 'x', '--snapshot-sha256', 'a']]) {
       await expect(runFenceCli(argv, deps)).rejects.toThrow(/--confirm/);
     }
     expect(loaded).toBe(0);
@@ -356,6 +404,10 @@ describe('storage-acl-fence: CLI', () => {
     await expect(runFenceCli(['status', '--bogus'], deps)).rejects.toThrow(/Unknown flag/);
     await expect(runFenceCli(['freeze', '--confirm', '--snapshot'], deps)).rejects.toThrow(/Missing value/);
     await expect(runFenceCli(['freeze', '--confirm'], deps)).rejects.toThrow(/--snapshot/);
+    for (const command of ['freeze', 'restore']) {
+      await expect(runFenceCli([command, '--confirm', '--snapshot', 'x'], deps)).rejects.toThrow(/--snapshot-sha256/);
+      await expect(runFenceCli([command, '--confirm', '--snapshot', 'x', '--snapshot-sha256', 'nothex'], deps)).rejects.toThrow(/64 hex/);
+    }
   });
 
   it('closes the database after a command', async () => {

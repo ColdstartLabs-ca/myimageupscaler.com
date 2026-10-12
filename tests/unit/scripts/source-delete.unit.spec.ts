@@ -13,6 +13,7 @@ const {
   loadSourceDeletePlan,
   isSourceDeleteEligible,
   classifySourceDelta,
+  loadFencedSourceRows,
   makeNativeVersionStorageActions,
   withDatabaseBatch,
   SOURCE_RECHECK_SQL,
@@ -363,6 +364,29 @@ describe('source-delete: delta classification', () => {
     for (const patch of [{ id: idFor(9) }, { version: idFor(9) }, { metadata: { size: 3, eTag: 'zzz' } }, { metadata: { size: 4, eTag: 'abc' } }, { updated_at: '2000-01-02T00:00:00.000Z' }, { created_at: '2000-01-02T00:00:00.000Z' }]) {
       expect(classifySourceDelta({ proofObjects, liveRows: [live(GALLERY_BUCKET, 'a.png', patch)] }).changed).toEqual([`${GALLERY_BUCKET}::a.png`]);
     }
+  });
+});
+
+describe('source-delete: delta needs the live fence', () => {
+  const matrix = (insert: boolean) => Object.fromEntries(['PUBLIC', 'anon', 'authenticated', 'service_role'].map(role => [role, {
+    INSERT: insert, UPDATE: false, DELETE: false, SELECT: true, INSERT_ANY_COLUMN: false, UPDATE_ANY_COLUMN: false,
+  }]));
+  const makeDb = (fenced: boolean) => {
+    const sql: string[] = [];
+    return { sql, query: async (text: string) => {
+      sql.push(text);
+      return /storage\.objects/.test(text) && !/has_table_privilege/.test(text) ? { rows: [{ row: { name: 'a' } }] } : { rows: [{ matrix: matrix(!fenced) }] };
+    } };
+  };
+
+  it('refuses to read the source snapshot while writes are possible', async () => {
+    const db = makeDb(false);
+    await expect(loadFencedSourceRows(db)).rejects.toThrow(/fence/i);
+    expect(db.sql.some(text => /^SELECT to_jsonb\(o\)/.test(text))).toBe(false);
+  });
+
+  it('reads the rows once the fence is held', async () => {
+    expect(await loadFencedSourceRows(makeDb(true))).toEqual([{ name: 'a' }]);
   });
 });
 
