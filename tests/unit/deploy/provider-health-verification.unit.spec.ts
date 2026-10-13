@@ -1,4 +1,12 @@
-import { chmodSync, mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import {
+  chmodSync,
+  mkdtempSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -12,6 +20,64 @@ const verifyScript = readFileSync(verifyScriptPath, 'utf8');
 const preflightScript = readFileSync(preflightScriptPath, 'utf8');
 const secretsScript = readFileSync(secretsScriptPath, 'utf8');
 const deployScript = readFileSync(deployScriptPath, 'utf8');
+
+test('rejects linked dependencies before building a production bundle', () => {
+  const fixtureRoot = mkdtempSync(path.join(tmpdir(), 'build-linked-dependencies-'));
+  symlinkSync(process.cwd() + '/node_modules', path.join(fixtureRoot, 'node_modules'));
+  const result = spawnSync(
+    'bash',
+    [
+      '-c',
+      `
+set -euo pipefail
+source "$BUILD_SCRIPT"
+log_step() { :; }
+log_info() { :; }
+log_error() { printf '%s\\n' "$1" >&2; exit 1; }
+npx() { exit 99; }
+step_build
+`,
+    ],
+    {
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        PROJECT_ROOT: fixtureRoot,
+        BUILD_SCRIPT: path.resolve('scripts/deploy/steps/02-build.sh'),
+      },
+    }
+  );
+
+  rmSync(fixtureRoot, { recursive: true, force: true });
+  expect(result.status).toBe(1);
+  expect(result.stderr).toContain('Production builds require a local node_modules directory');
+});
+
+test('fails deployment after repeated unhealthy application responses', () => {
+  const result = spawnSync(
+    'bash',
+    [
+      '-c',
+      `
+set -euo pipefail
+source "$VERIFY_SCRIPT"
+log_step() { :; }
+log_info() { :; }
+log_warn() { :; }
+log_error() { printf '%s\\n' "$1" >&2; exit 1; }
+sleep() { :; }
+curl() { printf 500; }
+_verify_cron_schedules() { :; }
+DOMAIN_NAME=example.com
+step_verify
+`,
+    ],
+    { encoding: 'utf8', env: { ...process.env, VERIFY_SCRIPT: verifyScriptPath } }
+  );
+
+  expect(result.status).not.toBe(0);
+  expect(result.stderr).toContain('Health check failed after 5 attempts');
+});
 
 function runProviderObservabilityPreflight(overrides: Partial<Record<string, string>> = {}) {
   return spawnSync(

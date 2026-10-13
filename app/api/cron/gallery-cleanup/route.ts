@@ -11,6 +11,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { serverEnv } from '@shared/config/env';
 import { runGalleryCleanup } from '@server/services/galleryCleanup.service';
+import { queueGalleryExpiryWarnings } from '@server/services/gallery-expiry-warning.service';
+import { recordCronJobSuccess } from '@server/services/cronHealth.service';
 
 /**
  * POST handler for gallery cleanup cron job
@@ -27,21 +29,32 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const startTime = Date.now();
 
   try {
+    const warnings = await queueGalleryExpiryWarnings();
+    if (warnings.failed > 0) throw new Error(`Failed to queue ${warnings.failed} gallery warnings`);
     // Run the cleanup job
     const result = await runGalleryCleanup();
+    await recordCronJobSuccess('gallery-cleanup', {
+      warned: warnings.warned,
+      deleted: result.imagesDeleted,
+      failed: result.failed,
+    });
 
     const duration = Date.now() - startTime;
     console.log(
-      `[CRON] Gallery cleanup complete: ${result.usersProcessed} users, ${result.imagesDeleted} images, ${result.upscaleInputsDeleted} stale upscale inputs deleted in ${duration}ms`
+      `[CRON] Gallery cleanup complete: ${result.imagesProcessed} processed, ${result.imagesDeleted} deleted, ${result.recovered} recovered, ${result.failed} failed in ${duration}ms`
     );
 
     return NextResponse.json({
       success: true,
-      cleaned: result.usersProcessed,
+      cleaned: result.imagesDeleted,
+      imagesProcessed: result.imagesProcessed,
       imagesDeleted: result.imagesDeleted,
-      upscaleInputsDeleted: result.upscaleInputsDeleted,
-      upscaleInputsFailed: result.upscaleInputsFailed,
+      recovered: result.recovered,
+      failed: result.failed,
+      warned: warnings.warned,
       timestamp: result.timestamp,
+      deletionDisabled: result.deletionDisabled,
+      reason: result.reason,
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';

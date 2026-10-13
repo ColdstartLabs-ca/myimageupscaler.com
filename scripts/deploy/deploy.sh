@@ -88,10 +88,10 @@ source "$PROJECT_ROOT/scripts/load-env.sh" --prod
 # configuration before any database mutation.
 source "$SCRIPT_DIR/steps/01-preflight.sh" && step_preflight
 
-# Capture a verified schema + data backup before every production deployment.
+# Verify fresh schema + data archives on both machines before migrations.
 echo -e "${CYAN}▸ Backing up production database...${NC}"
 cd "$PROJECT_ROOT"
-if ! yarn db:backup; then
+if ! node "$PROJECT_ROOT/scripts/storage/database-backup-gate.mjs"; then
     echo -e "${RED}✗ Production database backup failed. Deployment blocked.${NC}"
     exit 1
 fi

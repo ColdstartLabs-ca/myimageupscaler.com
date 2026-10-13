@@ -1,20 +1,25 @@
+import { readFileSync } from 'node:fs';
 import { NextRequest } from 'next/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
   from: vi.fn(),
-  storageFrom: vi.fn(),
-  createSignedUploadUrl: vi.fn(),
+  presignPut: vi.fn(),
+  buildInputKey: vi.fn((storagePath: string) => `inputs/${storagePath}`),
   serverEnv: { ENV: 'test', NODE_ENV: 'test' },
 }));
 
 vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: {
     from: mocks.from,
-    storage: { from: mocks.storageFrom },
   },
 }));
 vi.mock('@shared/config/env', () => ({ serverEnv: mocks.serverEnv }));
+vi.mock('@server/services/r2-storage.service', () => ({
+  presignPut: mocks.presignPut,
+  buildInputKey: mocks.buildInputKey,
+  R2_PRIVATE_BUCKET: 'miu-private',
+}));
 
 import { POST } from '@/app/api/upscale/upload/route';
 import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
@@ -67,14 +72,10 @@ describe('POST /api/upscale/upload', () => {
         }),
       }),
     });
-    mocks.storageFrom.mockReturnValue({ createSignedUploadUrl: mocks.createSignedUploadUrl });
-    mocks.createSignedUploadUrl.mockResolvedValue({
-      data: { path: 'user-1/job.png', token: 'signed-token' },
-      error: null,
-    });
+    mocks.presignPut.mockResolvedValue('https://r2.example/presigned-put');
   });
 
-  it('issues a user-scoped signed upload token for an allowed image', async () => {
+  it('returns a user-scoped R2 presigned PUT for an allowed image', async () => {
     const response = await POST(
       request({
         filename: 'photo.png',
@@ -87,13 +88,23 @@ describe('POST /api/upscale/upload', () => {
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({
       storagePath: 'user-1/11111111-1111-4111-8111-111111111111.png',
-      uploadToken: 'signed-token',
+      uploadUrl: 'https://r2.example/presigned-put',
     });
-    expect(mocks.createSignedUploadUrl).toHaveBeenCalledWith(
-      'user-1/11111111-1111-4111-8111-111111111111.png',
-      { upsert: false }
+    expect(mocks.buildInputKey).toHaveBeenCalledWith(
+      'user-1/11111111-1111-4111-8111-111111111111.png'
     );
-    expect(mocks.storageFrom).toHaveBeenCalledWith('upscale-inputs');
+    expect(mocks.presignPut).toHaveBeenCalledWith({
+      bucket: 'miu-private',
+      key: 'inputs/user-1/11111111-1111-4111-8111-111111111111.png',
+      sizeBytes: 1024,
+      contentType: 'image/png',
+    });
+  });
+
+  it('does not call Supabase Storage to prepare the upload', () => {
+    const source = readFileSync('app/api/upscale/upload/route.ts', 'utf8');
+    expect(source).not.toMatch(/createSignedUploadUrl/);
+    expect(source).not.toMatch(/storage\s*\.\s*from\(/);
   });
 
   it('rejects a declared file above the free-tier limit before granting upload', async () => {
@@ -107,7 +118,7 @@ describe('POST /api/upscale/upload', () => {
     );
 
     expect(response.status).toBe(413);
-    expect(mocks.createSignedUploadUrl).not.toHaveBeenCalled();
+    expect(mocks.presignPut).not.toHaveBeenCalled();
   });
 
   it('grants a paid upload for the reported 10.05 MiB JPEG regression', async () => {
@@ -145,7 +156,7 @@ describe('POST /api/upscale/upload', () => {
 
     expect(response.status).toBe(413);
     expect(mocks.from).not.toHaveBeenCalled();
-    expect(mocks.createSignedUploadUrl).not.toHaveBeenCalled();
+    expect(mocks.presignPut).not.toHaveBeenCalled();
   });
 
   it('rejects inline imageData instead of silently stripping it', async () => {
@@ -161,7 +172,7 @@ describe('POST /api/upscale/upload', () => {
 
     expect(response.status).toBe(400);
     expect(mocks.from).not.toHaveBeenCalled();
-    expect(mocks.createSignedUploadUrl).not.toHaveBeenCalled();
+    expect(mocks.presignPut).not.toHaveBeenCalled();
   });
 
   it('rejects UUID-shaped job IDs that are not UUIDv4', async () => {
@@ -176,7 +187,7 @@ describe('POST /api/upscale/upload', () => {
 
     expect(response.status).toBe(400);
     expect(mocks.from).not.toHaveBeenCalled();
-    expect(mocks.createSignedUploadUrl).not.toHaveBeenCalled();
+    expect(mocks.presignPut).not.toHaveBeenCalled();
   });
 
   it('serves test mock users without a database profile', async () => {
@@ -201,7 +212,7 @@ describe('POST /api/upscale/upload', () => {
     await expect(response.json()).resolves.toEqual({
       storagePath:
         'mock_user_12345678-1234-4234-8234-123456789012/11111111-1111-4111-8111-111111111111.png',
-      uploadToken: 'signed-token',
+      uploadUrl: 'https://r2.example/presigned-put',
     });
   });
 
@@ -224,7 +235,7 @@ describe('POST /api/upscale/upload', () => {
     );
 
     expect(response.status).toBe(200);
-    expect(mocks.createSignedUploadUrl).toHaveBeenCalled();
+    expect(mocks.presignPut).toHaveBeenCalled();
   });
 
   it('refuses the mock-user fallback outside the test environment', async () => {
@@ -247,7 +258,7 @@ describe('POST /api/upscale/upload', () => {
     );
 
     expect(response.status).toBe(503);
-    expect(mocks.createSignedUploadUrl).not.toHaveBeenCalled();
+    expect(mocks.presignPut).not.toHaveBeenCalled();
   });
 
   it('still requires a database profile for non-mock users when the lookup fails', async () => {
@@ -269,6 +280,6 @@ describe('POST /api/upscale/upload', () => {
     );
 
     expect(response.status).toBe(503);
-    expect(mocks.createSignedUploadUrl).not.toHaveBeenCalled();
+    expect(mocks.presignPut).not.toHaveBeenCalled();
   });
 });

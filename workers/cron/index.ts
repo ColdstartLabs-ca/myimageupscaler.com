@@ -46,6 +46,67 @@ interface ILifecycleDrainResponse {
 
 const LIFECYCLE_DRAINS_PER_SCHEDULE = 10;
 
+// Jobs that report progress counts must return these numeric fields. A 200
+// response with a missing count means the run did not report a measured result
+// and must be treated as a failure (PRD-SQR-03 AC-2).
+const JOB_REQUIRED_COUNTS: Record<string, readonly string[]> = {
+  '/api/cron/database-retention': ['totalDeleted'],
+  '/api/cron/quota-guard': ['alertCount'],
+};
+
+export interface ICronResultEvaluation {
+  failed: boolean;
+  reason?: string;
+}
+
+// A job count must be a measurable whole number. Reject strings, negatives,
+// fractions, NaN and Infinity instead of coercing them, so a malformed body
+// fails closed rather than reading as a successful zero (PRD-SQR-03 AC-2).
+function isMeasuredCount(value: unknown): value is number {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 0;
+}
+
+export function evaluateCronResult(
+  endpoint: string,
+  status: number,
+  ok: boolean,
+  data: unknown
+): ICronResultEvaluation {
+  if (!ok) {
+    return { failed: true, reason: `HTTP ${status}` };
+  }
+  if (typeof data !== 'object' || data === null) {
+    return { failed: true, reason: 'response body has no counts' };
+  }
+
+  const body = data as Record<string, unknown>;
+  if (body.success === false) {
+    return { failed: true, reason: 'success=false' };
+  }
+  if ('failed' in body) {
+    if (!isMeasuredCount(body.failed)) {
+      return { failed: true, reason: 'invalid failed count' };
+    }
+    if (body.failed > 0) {
+      return { failed: true, reason: `failed=${body.failed}` };
+    }
+  }
+
+  const requiredCounts = JOB_REQUIRED_COUNTS[endpoint.split('?')[0]];
+  if (requiredCounts && !requiredCounts.every(key => isMeasuredCount(body[key]))) {
+    return { failed: true, reason: 'missing counts' };
+  }
+
+  return { failed: false };
+}
+
+// Temporary guard: pause automatic legacy cleanup jobs until the verified-backup
+// retention rollout replaces them. Legacy cleanup deletes without two-copy protection.
+const PAUSED_CLEANUP_ENDPOINTS = new Set([
+  '/api/cron/gallery-cleanup',
+  '/api/cron/upscale-input-cleanup',
+]);
+
 function shouldStopLifecycleDrain(
   result: ILifecycleDrainResponse,
   consecutiveEligibilityStalls: number
@@ -141,12 +202,12 @@ export default {
     } else if (cronPattern === '0 0 * * *') {
       endpoint = '/api/cron/gallery-cleanup';
       jobName = 'Gallery Cleanup';
-    } else if (cronPattern === '20 * * * *') {
-      endpoint = '/api/cron/upscale-input-cleanup';
-      jobName = 'Temporary Upscale Input Cleanup';
     } else if (cronPattern === '25 * * * *') {
       endpoint = '/api/cron/database-retention';
       jobName = 'Database Retention';
+    } else if (cronPattern === '0 2 * * *') {
+      endpoint = '/api/cron/quota-guard';
+      jobName = 'Quota Guard';
     } else if (cronPattern === '15 1 * * *') {
       endpoint = '/api/cron/upscale-completion-health';
       jobName = 'Upscale Completion Health';
@@ -175,11 +236,21 @@ export default {
             await runLifecycleSequence(env, lifecycleIncludeEligibility);
             return;
           }
+          if (PAUSED_CLEANUP_ENDPOINTS.has(endpoint)) {
+            console.warn(`[CRON] ${jobName} paused: awaiting verified-backup retention rollout`, {
+              endpoint,
+            });
+            return;
+          }
           const { ok, status, data } = await postCron(env, endpoint);
-          if (ok) {
+          const evaluation = evaluateCronResult(endpoint, status, ok, data);
+          if (!evaluation.failed) {
             console.log(`[CRON] ${jobName} completed successfully:`, data);
           } else {
-            console.error(`[CRON] ${jobName} failed with status ${status}:`, data);
+            console.error(`[CRON] ${jobName} reported failure (${evaluation.reason}):`, {
+              status,
+              data,
+            });
           }
         } catch (error) {
           console.error(`[CRON] ${jobName} error:`, error);

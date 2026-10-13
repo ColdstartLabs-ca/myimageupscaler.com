@@ -128,5 +128,8 @@
     "subscription": {
       "status": "Stato"
     }
+  },
+  "gallery": {
+    "retentionNote": "Le immagini gratuite della galleria possono scadere dopo 30 giorni di inattività. Ti avvisiamo almeno 7 giorni prima e l'accesso le conserva. I piani a pagamento sono esenti."
   }
 }

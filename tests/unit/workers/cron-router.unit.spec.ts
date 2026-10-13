@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 // Import the worker default export
-import worker from '../../../workers/cron/index';
+import worker, { evaluateCronResult } from '../../../workers/cron/index';
 
 const mockEnv = {
   API_BASE_URL: 'https://myimageupscaler.com',
@@ -76,21 +76,21 @@ describe('Cron Worker Router', () => {
     );
   });
 
-  it('maps 20 * * * * to temporary upscale input cleanup', async () => {
-    const fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ success: true, deleted: 100, failed: 0 }),
-    });
+  it('pauses 0 0 * * * gallery cleanup without an outbound request', async () => {
+    const fetchMock = vi.fn();
     global.fetch = fetchMock;
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     const ctx = makeCtx();
-    await worker.scheduled({ cron: '20 * * * *', scheduledTime: Date.now() }, mockEnv, ctx);
+    await worker.scheduled({ cron: '0 0 * * *', scheduledTime: Date.now() }, mockEnv, ctx);
     await ctx.flush();
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      'https://myimageupscaler.com/api/cron/upscale-input-cleanup',
-      expect.any(Object)
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Gallery Cleanup paused'),
+      expect.objectContaining({ endpoint: '/api/cron/gallery-cleanup' })
     );
+    warnSpy.mockRestore();
   });
 
   it('maps 25 * * * * to bounded database retention', async () => {
@@ -106,6 +106,23 @@ describe('Cron Worker Router', () => {
 
     expect(fetchMock).toHaveBeenCalledWith(
       'https://myimageupscaler.com/api/cron/database-retention',
+      expect.any(Object)
+    );
+  });
+
+  it('maps 0 2 * * * to the daily quota guard endpoint', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ success: true, alertCount: 0 }),
+    });
+    global.fetch = fetchMock;
+
+    const ctx = makeCtx();
+    await worker.scheduled({ cron: '0 2 * * *', scheduledTime: Date.now() }, mockEnv, ctx);
+    await ctx.flush();
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://myimageupscaler.com/api/cron/quota-guard',
       expect.any(Object)
     );
   });
@@ -246,5 +263,154 @@ describe('Cron Worker Router', () => {
     await worker.scheduled({ cron: '0 0 1 1 *', scheduledTime: Date.now() }, mockEnv, ctx);
     await ctx.flush();
     expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Unknown cron pattern'));
+  });
+});
+
+describe('evaluateCronResult', () => {
+  it('treats a non-OK HTTP response as a failure', () => {
+    expect(evaluateCronResult('/api/cron/database-retention', 500, false, null)).toEqual({
+      failed: true,
+      reason: 'HTTP 500',
+    });
+  });
+
+  it('treats a body without counts as a failure', () => {
+    expect(
+      evaluateCronResult('/api/cron/database-retention', 200, true, { success: true })
+    ).toEqual({ failed: true, reason: 'missing counts' });
+    expect(evaluateCronResult('/api/cron/quota-guard', 200, true, {})).toEqual({
+      failed: true,
+      reason: 'missing counts',
+    });
+  });
+
+  it('treats success=false as a failure', () => {
+    expect(
+      evaluateCronResult('/api/cron/database-retention', 200, true, {
+        success: false,
+        totalDeleted: 0,
+      })
+    ).toEqual({ failed: true, reason: 'success=false' });
+  });
+
+  it('treats failed > 0 as a failure even with HTTP 200', () => {
+    expect(
+      evaluateCronResult('/api/cron/database-retention', 200, true, {
+        success: true,
+        totalDeleted: 10,
+        failed: 3,
+      })
+    ).toEqual({ failed: true, reason: 'failed=3' });
+  });
+
+  it('fails closed on a malformed failed count', () => {
+    expect(
+      evaluateCronResult('/api/cron/database-retention', 200, true, {
+        success: true,
+        totalDeleted: 1,
+        failed: '3',
+      })
+    ).toEqual({ failed: true, reason: 'invalid failed count' });
+    expect(
+      evaluateCronResult('/api/cron/database-retention', 200, true, {
+        success: true,
+        totalDeleted: 1,
+        failed: -1,
+      })
+    ).toEqual({ failed: true, reason: 'invalid failed count' });
+  });
+
+  it('fails closed on a malformed required count', () => {
+    expect(
+      evaluateCronResult('/api/cron/database-retention', 200, true, {
+        success: true,
+        totalDeleted: -1,
+      })
+    ).toEqual({ failed: true, reason: 'missing counts' });
+    expect(
+      evaluateCronResult('/api/cron/database-retention', 200, true, {
+        success: true,
+        totalDeleted: 1.5,
+      })
+    ).toEqual({ failed: true, reason: 'missing counts' });
+  });
+
+  it('requires the quota guard alert count', () => {
+    expect(evaluateCronResult('/api/cron/quota-guard', 200, true, { success: true })).toEqual({
+      failed: true,
+      reason: 'missing counts',
+    });
+    expect(
+      evaluateCronResult('/api/cron/quota-guard', 200, true, { success: true, alertCount: 0 })
+    ).toEqual({ failed: false });
+  });
+
+  it('passes a measured result with zero failures', () => {
+    expect(
+      evaluateCronResult('/api/cron/database-retention', 200, true, {
+        success: true,
+        totalDeleted: 0,
+      })
+    ).toEqual({ failed: false });
+    expect(
+      evaluateCronResult('/api/cron/quota-guard', 200, true, { success: true, alertCount: 0 })
+    ).toEqual({ failed: false });
+  });
+});
+
+describe('Cron Worker partial failure reporting', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('reports a job as failed when the body has failed > 0', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({ success: true, totalDeleted: 10, failed: 3 }),
+    } as unknown as Response);
+
+    const ctx = makeCtx();
+    await worker.scheduled({ cron: '25 * * * *', scheduledTime: Date.now() }, mockEnv, ctx);
+    await ctx.flush();
+
+    expect(consoleError).toHaveBeenCalledWith(
+      expect.stringContaining('Database Retention reported failure'),
+      expect.objectContaining({ data: expect.objectContaining({ failed: 3 }) })
+    );
+  });
+
+  it('reports a job as failed when the body has no counts', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({ success: true }),
+    } as unknown as Response);
+
+    const ctx = makeCtx();
+    await worker.scheduled({ cron: '25 * * * *', scheduledTime: Date.now() }, mockEnv, ctx);
+    await ctx.flush();
+
+    expect(consoleError).toHaveBeenCalledWith(
+      expect.stringContaining('Database Retention reported failure'),
+      expect.objectContaining({ data: expect.objectContaining({ success: true }) })
+    );
+  });
+
+  it('does not report a failure for a measured zero-failure result', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({ success: true, totalDeleted: 0 }),
+    } as unknown as Response);
+
+    const ctx = makeCtx();
+    await worker.scheduled({ cron: '25 * * * *', scheduledTime: Date.now() }, mockEnv, ctx);
+    await ctx.flush();
+
+    expect(consoleError).not.toHaveBeenCalled();
   });
 });

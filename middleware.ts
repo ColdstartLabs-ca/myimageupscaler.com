@@ -647,21 +647,40 @@ async function handleApiRoute(req: NextRequest, pathname: string): Promise<NextR
     return res;
   }
 
-  // Verify JWT for protected API routes
-  const authResult = await verifyApiAuth(req);
+  // Image elements send session cookies, so this read-only route verifies them.
+  let sessionResponse: NextResponse | undefined;
+  const cookieThumbnail =
+    req.method === 'GET' &&
+    /^\/api\/gallery\/thumb\/[^/]+\/?$/.test(pathname) &&
+    !req.headers.has('Authorization');
+  const authResult = cookieThumbnail
+    ? await (async () => {
+        const { user, response } = await handlePageAuth(req);
+        sessionResponse = response;
+        return user
+          ? { user }
+          : { error: NextResponse.json({ error: 'Authentication required' }, { status: 401 }) };
+      })()
+    : await verifyApiAuth(req);
+  const copySessionCookies = (target: NextResponse): NextResponse => {
+    for (const cookie of sessionResponse?.cookies.getAll() ?? []) target.cookies.set(cookie);
+    return target;
+  };
+
   if ('error' in authResult) {
-    return authResult.error;
+    return copySessionCookies(authResult.error);
   }
 
   // Create response with user context headers
   const res = addUserContextHeaders(req, authResult.user);
+  copySessionCookies(res);
   applySecurityHeaders(res);
   applyCorsHeaders(res, req.headers.get('origin') || undefined);
 
   // Apply user-based rate limiting
   const rateLimitResponse = await applyUserRateLimit(authResult.user.id, res, req);
   if (rateLimitResponse) {
-    return rateLimitResponse;
+    return copySessionCookies(rateLimitResponse);
   }
 
   return res;

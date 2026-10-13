@@ -131,7 +131,7 @@
         },
         {
           "question": "Werden meine Bilder auf Ihren Servern gespeichert?",
-          "answer": "Bilder werden automatisch innerhalb von 1 Stunde nach der Verarbeitung gelöscht. Wir verwenden Ihre Bilder nicht für das Training oder teilen sie mit Dritten."
+          "answer": "Temporäre Uploads werden zur automatischen Löschung nach zwei Tagen geplant; die Bereinigung kann länger dauern. Bilder, die Sie in Ihrer Galerie speichern, unterliegen einer separaten Aufbewahrungsrichtlinie. Wir verwenden Ihre Bilder nicht für das Training und teilen sie nicht mit Dritten."
         }
       ],
       "faq": [

@@ -323,6 +323,8 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
       'credit-wall-recovery': 'CreditWallRecoveryEmail',
       'auto-top-up-failure': 'AutoTopUpFailureEmail',
       'provider-incident': 'ProviderIncidentEmail',
+      'gallery-expiry-warning': 'GalleryExpiryWarningEmail',
+      'quota-guard-alert': 'QuotaGuardAlertEmail',
     };
 
     const exportName = templateExportNames[templateName];
@@ -349,6 +351,8 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
       'credit-wall-recovery': () => import('@/emails/templates/CreditWallRecoveryEmail'),
       'auto-top-up-failure': () => import('@/emails/templates/AutoTopUpFailureEmail'),
       'provider-incident': () => import('@/emails/templates/ProviderIncidentEmail'),
+      'gallery-expiry-warning': () => import('@/emails/templates/GalleryExpiryWarning'),
+      'quota-guard-alert': () => import('@/emails/templates/QuotaGuardAlertEmail'),
     };
     /* eslint-enable no-restricted-syntax */
 
@@ -390,6 +394,12 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
           : 'Finish more images with more credits',
       'auto-top-up-failure': 'Your auto top-up needs attention',
       'provider-incident': 'URGENT: image processing provider incident',
+      'gallery-expiry-warning': d =>
+        String(d.subject || 'Your saved gallery images may expire soon'),
+      'quota-guard-alert': d =>
+        Array.isArray(d.staleCronJobs) && d.staleCronJobs.length > 0
+          ? `ALERT: ${d.appName || 'MyImageUpscaler'} quota guard`
+          : `URGENT: ${d.appName || 'MyImageUpscaler'} quota at 80% of budget`,
       'password-reset': 'Reset your password',
       'support-request': d =>
         `[Support] [${String(d.category || 'GENERAL').toUpperCase()}] ${d.subject || 'Support Request'}`,

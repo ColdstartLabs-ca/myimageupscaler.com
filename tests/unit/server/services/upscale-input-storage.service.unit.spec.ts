@@ -1,45 +1,41 @@
+import { readFileSync } from 'node:fs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
-  storageFrom: vi.fn(),
-  list: vi.fn(),
-  upload: vi.fn(),
-  remove: vi.fn(),
-  createSignedUrl: vi.fn(),
+  head: vi.fn(),
+  presignGet: vi.fn(),
+  deleteObject: vi.fn(),
+  buildInputKey: vi.fn((storagePath: string) => `inputs/${storagePath}`),
 }));
 
-vi.mock('@server/supabase/supabaseAdmin', () => ({
-  supabaseAdmin: { storage: { from: mocks.storageFrom } },
+vi.mock('@server/services/r2-storage.service', () => ({
+  head: mocks.head,
+  presignGet: mocks.presignGet,
+  deleteObject: mocks.deleteObject,
+  buildInputKey: mocks.buildInputKey,
+  R2_PRIVATE_BUCKET: 'miu-private',
 }));
 
 import {
+  removeUpscaleInput,
   resolveUpscaleInput,
-  stageGeminiOutput,
 } from '@server/services/upscale-input-storage.service';
 import { IMAGE_VALIDATION } from '@shared/validation/upscale.schema';
+
+const OBJECT_NAME = '11111111-1111-4111-8111-111111111111.png';
+const STORAGE_PATH = `user-1/${OBJECT_NAME}`;
+
+function metadataResponse(headers: Record<string, string>, status = 200): Response {
+  return new Response(null, { status, headers });
+}
 
 describe('resolveUpscaleInput', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.storageFrom.mockReturnValue({
-      list: mocks.list,
-      upload: mocks.upload,
-      remove: mocks.remove,
-      createSignedUrl: mocks.createSignedUrl,
-    });
-    mocks.list.mockResolvedValue({
-      data: [
-        {
-          name: '11111111-1111-4111-8111-111111111111.png',
-          metadata: { size: 1024, mimetype: 'image/png' },
-        },
-      ],
-      error: null,
-    });
-    mocks.createSignedUrl.mockResolvedValue({
-      data: { signedUrl: 'https://storage.example/signed' },
-      error: null,
-    });
+    mocks.head.mockResolvedValue(
+      metadataResponse({ 'content-length': '1024', 'content-type': 'image/png' })
+    );
+    mocks.presignGet.mockResolvedValue('https://r2.example/signed');
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue(
@@ -51,25 +47,120 @@ describe('resolveUpscaleInput', () => {
     );
   });
 
-  it('returns a signed provider URL and bounded validation prefix for a user-owned object', async () => {
+  it('reads R2 metadata and returns a presigned provider URL with a bounded prefix', async () => {
     await expect(
       resolveUpscaleInput({
         userId: 'user-1',
-        storagePath: 'user-1/11111111-1111-4111-8111-111111111111.png',
+        storagePath: STORAGE_PATH,
         claimedMimeType: 'image/png',
         isPaidUser: false,
       })
     ).resolves.toMatchObject({
-      imageReference: 'https://storage.example/signed',
+      imageReference: 'https://r2.example/signed',
       validationImageData: 'iVBORw==',
       sizeBytes: 1024,
       mimeType: 'image/png',
     });
+
+    expect(mocks.buildInputKey).toHaveBeenCalledWith(STORAGE_PATH);
+    expect(mocks.head).toHaveBeenCalledWith('miu-private', `inputs/${STORAGE_PATH}`);
+    expect(mocks.presignGet).toHaveBeenCalledWith('miu-private', `inputs/${STORAGE_PATH}`, 600);
     expect(fetch).toHaveBeenCalledWith(
-      'https://storage.example/signed',
+      'https://r2.example/signed',
       expect.objectContaining({ headers: { Range: 'bytes=0-65535' } })
     );
-    expect(mocks.storageFrom).toHaveBeenCalledWith('upscale-inputs');
+  });
+
+  it('rejects an object outside the authenticated user prefix without reading R2', async () => {
+    await expect(
+      resolveUpscaleInput({
+        userId: 'user-1',
+        storagePath: `other-user/${OBJECT_NAME}`,
+        claimedMimeType: 'image/png',
+        isPaidUser: false,
+      })
+    ).rejects.toThrow(/owned by the authenticated user/i);
+    expect(mocks.head).not.toHaveBeenCalled();
+  });
+
+  it('rejects a legacy UUID-shaped input path after the UUIDv4 contract change', async () => {
+    await expect(
+      resolveUpscaleInput({
+        userId: 'user-1',
+        storagePath: 'user-1/77777777-7777-7777-7777-777777777777.png',
+        claimedMimeType: 'image/png',
+        isPaidUser: false,
+      })
+    ).rejects.toThrow(/owned by the authenticated user/i);
+    expect(mocks.head).not.toHaveBeenCalled();
+  });
+
+  it('rejects a missing object before presigning a read URL', async () => {
+    mocks.head.mockResolvedValue(metadataResponse({}, 404));
+
+    await expect(
+      resolveUpscaleInput({
+        userId: 'user-1',
+        storagePath: STORAGE_PATH,
+        claimedMimeType: 'image/png',
+        isPaidUser: false,
+      })
+    ).rejects.toThrow(/not found/i);
+    expect(mocks.presignGet).not.toHaveBeenCalled();
+  });
+
+  it('enforces actual R2 metadata size instead of the client declaration', async () => {
+    mocks.head.mockResolvedValue(
+      metadataResponse({
+        'content-length': String(IMAGE_VALIDATION.MAX_SIZE_FREE + 1),
+        'content-type': 'image/png',
+      })
+    );
+
+    await expect(
+      resolveUpscaleInput({
+        userId: 'user-1',
+        storagePath: STORAGE_PATH,
+        claimedMimeType: 'image/png',
+        isPaidUser: false,
+      })
+    ).rejects.toThrow(/upload limit/i);
+    expect(mocks.presignGet).not.toHaveBeenCalled();
+  });
+
+  it('rejects a content-encoded object before validation or the provider URL', async () => {
+    mocks.head.mockResolvedValue(
+      metadataResponse({
+        'content-length': '1024',
+        'content-type': 'image/png',
+        'content-encoding': 'gzip',
+      })
+    );
+
+    await expect(
+      resolveUpscaleInput({
+        userId: 'user-1',
+        storagePath: STORAGE_PATH,
+        claimedMimeType: 'image/png',
+        isPaidUser: false,
+      })
+    ).rejects.toThrow(/content-encoded/i);
+    expect(mocks.presignGet).not.toHaveBeenCalled();
+  });
+
+  it('rejects a stored MIME type that differs from the claimed type', async () => {
+    mocks.head.mockResolvedValue(
+      metadataResponse({ 'content-length': '1024', 'content-type': 'image/webp' })
+    );
+
+    await expect(
+      resolveUpscaleInput({
+        userId: 'user-1',
+        storagePath: STORAGE_PATH,
+        claimedMimeType: 'image/png',
+        isPaidUser: false,
+      })
+    ).rejects.toThrow(/MIME type/i);
   });
 
   it('rejects a ranged response before reading an oversized body', async () => {
@@ -86,134 +177,38 @@ describe('resolveUpscaleInput', () => {
     await expect(
       resolveUpscaleInput({
         userId: 'user-1',
-        storagePath: 'user-1/11111111-1111-4111-8111-111111111111.png',
+        storagePath: STORAGE_PATH,
         claimedMimeType: 'image/png',
         isPaidUser: false,
       })
     ).rejects.toThrow(/validation prefix is too large/i);
     expect(arrayBuffer).not.toHaveBeenCalled();
   });
+});
 
-  it('rejects an object outside the authenticated user prefix', async () => {
-    await expect(
-      resolveUpscaleInput({
-        userId: 'user-1',
-        storagePath: 'other-user/job.png',
-        claimedMimeType: 'image/png',
-        isPaidUser: false,
-      })
-    ).rejects.toThrow(/owned by the authenticated user/i);
-    expect(mocks.list).not.toHaveBeenCalled();
+describe('removeUpscaleInput', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.deleteObject.mockResolvedValue(undefined);
   });
 
-  it('rejects a legacy UUID-shaped input path after the UUIDv4 contract change', async () => {
-    await expect(
-      resolveUpscaleInput({
-        userId: 'user-1',
-        storagePath: 'user-1/77777777-7777-7777-7777-777777777777.png',
-        claimedMimeType: 'image/png',
-        isPaidUser: false,
-      })
-    ).rejects.toThrow(/owned by the authenticated user/i);
-    expect(mocks.list).not.toHaveBeenCalled();
+  it('deletes the prefixed R2 input object', async () => {
+    await removeUpscaleInput(STORAGE_PATH);
+    expect(mocks.deleteObject).toHaveBeenCalledWith('miu-private', `inputs/${STORAGE_PATH}`);
   });
 
-  it('enforces actual storage metadata instead of the client declaration', async () => {
-    mocks.list.mockResolvedValue({
-      data: [
-        {
-          name: '11111111-1111-4111-8111-111111111111.png',
-          metadata: { size: IMAGE_VALIDATION.MAX_SIZE_FREE + 1, mimetype: 'image/png' },
-        },
-      ],
-      error: null,
-    });
-
-    await expect(
-      resolveUpscaleInput({
-        userId: 'user-1',
-        storagePath: 'user-1/11111111-1111-4111-8111-111111111111.png',
-        claimedMimeType: 'image/png',
-        isPaidUser: false,
-      })
-    ).rejects.toThrow(/upload limit/i);
-    expect(mocks.createSignedUrl).not.toHaveBeenCalled();
+  it('refuses to delete a path that is not a user-owned input', async () => {
+    await expect(removeUpscaleInput('saved/other-user/image.png')).rejects.toThrow(
+      /owned by the authenticated user/i
+    );
+    expect(mocks.deleteObject).not.toHaveBeenCalled();
   });
 });
 
-describe('stageGeminiOutput', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.storageFrom.mockReturnValue({
-      list: mocks.list,
-      upload: mocks.upload,
-      remove: mocks.remove,
-      createSignedUrl: mocks.createSignedUrl,
-    });
-    mocks.upload.mockResolvedValue({ data: { path: 'user-1/outputs/job-1.png' }, error: null });
-    mocks.createSignedUrl.mockResolvedValue({
-      data: {
-        signedUrl:
-          'https://storage.example/object/sign/upscale-inputs/user-1/outputs/job-1.png?token=abc',
-      },
-      error: null,
-    });
-  });
-
-  it('validates and stages Gemini inline bytes under the authenticated user outputs prefix', async () => {
-    const staged = await stageGeminiOutput({
-      userId: 'user-1',
-      jobId: '11111111-1111-4111-8111-111111111111',
-      imageData: 'data:image/png;base64,iVBORw0KGgo=',
-    });
-
-    expect(staged).toEqual({
-      imageUrl:
-        'https://storage.example/object/sign/upscale-inputs/user-1/outputs/job-1.png?token=abc',
-      mimeType: 'image/png',
-      expiresAt: expect.any(Number),
-      storagePath: 'user-1/outputs/11111111-1111-4111-8111-111111111111.png',
-    });
-    expect(mocks.storageFrom).toHaveBeenCalledWith('upscale-inputs');
-    expect(mocks.upload).toHaveBeenCalledWith(
-      'user-1/outputs/11111111-1111-4111-8111-111111111111.png',
-      Buffer.from('89504e470d0a1a0a', 'hex'),
-      {
-        contentType: 'image/png',
-        upsert: true,
-      }
-    );
-    expect(mocks.createSignedUrl).toHaveBeenCalledWith(
-      'user-1/outputs/11111111-1111-4111-8111-111111111111.png',
-      expect.any(Number)
-    );
-  });
-
-  it('rejects empty, non-image, non-base64, or oversized Gemini output before upload', async () => {
-    await expect(
-      stageGeminiOutput({
-        userId: 'user-1',
-        jobId: 'job-1',
-        imageData: 'data:text/html;base64,PGgxPg==',
-      })
-    ).rejects.toThrow(/unsupported/i);
-    await expect(
-      stageGeminiOutput({ userId: 'user-1', jobId: 'job-1', imageData: 'data:image/png;base64,' })
-    ).rejects.toThrow(/empty/i);
-    await expect(
-      stageGeminiOutput({
-        userId: 'user-1',
-        jobId: 'job-1',
-        imageData: 'data:image/png;base64,abc',
-      })
-    ).rejects.toThrow(/base64/i);
-    await expect(
-      stageGeminiOutput({
-        userId: 'user-1',
-        jobId: 'job-1',
-        imageData: `data:image/png;base64,${Buffer.alloc(IMAGE_VALIDATION.MAX_SIZE_PAID + 1).toString('base64')}`,
-      })
-    ).rejects.toThrow(/too large/i);
-    expect(mocks.upload).not.toHaveBeenCalled();
+describe('input storage no longer uses Supabase Storage', () => {
+  it('does not reference the Supabase client', () => {
+    const source = readFileSync('server/services/upscale-input-storage.service.ts', 'utf8');
+    expect(source).not.toMatch(/supabase/i);
+    expect(source).not.toMatch(/storage\.from\(/);
   });
 });

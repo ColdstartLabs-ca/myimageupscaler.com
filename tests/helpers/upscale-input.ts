@@ -1,13 +1,10 @@
 import { randomUUID } from 'node:crypto';
 
 import { test } from '@playwright/test';
-import { createClient } from '@supabase/supabase-js';
 import { serverEnv } from '@shared/config/env';
 
 import { AuthenticatedApiClient, ApiResponse } from './api-client';
 import { assertRealTestDatabase, REAL_TEST_DATABASE_BLOCKED } from './test-env-isolation';
-
-const UPSCALE_INPUT_BUCKET = 'upscale-inputs';
 
 const extensionByMime: Record<string, string> = {
   'image/jpeg': 'jpg',
@@ -47,13 +44,10 @@ export async function uploadUpscaleInput(
   const supabaseUrl = serverEnv.NEXT_PUBLIC_SUPABASE_URL ?? serverEnv.SUPABASE_URL;
   const supabaseKey = serverEnv.SUPABASE_SERVICE_ROLE_KEY || serverEnv.SUPABASE_ANON_KEY;
   assertRealTestDatabase(supabaseUrl, [supabaseKey]);
-  if (!supabaseUrl || !supabaseKey) {
-    throw new Error('Supabase credentials are required to upload test upscale inputs');
-  }
 
   const grant = await api.post<{
     storagePath: string;
-    uploadToken: string;
+    uploadUrl: string;
   }>('/api/upscale/upload', {
     filename: `test-image.${extension}`,
     mimeType: image.mimeType,
@@ -67,21 +61,16 @@ export async function uploadUpscaleInput(
 
   const grantBody = await grant.json();
 
-  const { error } = await createClient(supabaseUrl, supabaseKey, {
-    auth: { persistSession: false },
-  })
-    .storage.from(UPSCALE_INPUT_BUCKET)
-    .uploadToSignedUrl(
-      grantBody.storagePath,
-      grantBody.uploadToken,
-      new Blob([bytes], { type: image.mimeType }),
-      {
-        contentType: image.mimeType,
-        upsert: false,
-      }
-    );
-  if (error) {
-    throw new Error(`Signed upload failed: ${error.message}`);
+  // Bytes go to the presigned R2 PUT URL. The signature binds the method,
+  // content type and immutable-write precondition, so all must match what the
+  // upload route signed.
+  const upload = await fetch(grantBody.uploadUrl, {
+    method: 'PUT',
+    headers: { 'content-type': image.mimeType, 'if-none-match': '*' },
+    body: bytes,
+  });
+  if (!upload.ok) {
+    throw new Error(`Signed upload failed: storage rejected the upload (${upload.status})`);
   }
 
   return { storagePath: grantBody.storagePath, jobId, mimeType: image.mimeType };

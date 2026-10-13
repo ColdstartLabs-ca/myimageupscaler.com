@@ -128,5 +128,8 @@
     "subscription": {
       "status": "Status"
     }
+  },
+  "gallery": {
+    "retentionNote": "As imagens gratuitas da galeria podem expirar após 30 dias de inatividade. Avisamos você pelo menos 7 dias antes, e entrar na conta as mantém. Os planos pagos são isentos."
   }
 }

@@ -842,8 +842,10 @@ describe('authenticated async upscale contract', () => {
     );
 
     expect(response.status).toBe(409);
-    expect(mocks.resolveInput, 'a conflicting retry must not resolve the input again').not
-      .toHaveBeenCalled();
+    expect(
+      mocks.resolveInput,
+      'a conflicting retry must not resolve the input again'
+    ).not.toHaveBeenCalled();
     expect(mocks.removeInput, 'the active job keeps its input').not.toHaveBeenCalled();
     expect(mocks.fetch).toHaveBeenCalledTimes(1);
     expect(reservationDebits).toBe(1);
@@ -863,8 +865,10 @@ describe('authenticated async upscale contract', () => {
     );
 
     expect(response.status, 'oversized input keeps its actionable response').toBe(422);
-    expect(mocks.removeInput, 'job ownership is unknown after a transient lookup failure').not
-      .toHaveBeenCalled();
+    expect(
+      mocks.removeInput,
+      'job ownership is unknown after a transient lookup failure'
+    ).not.toHaveBeenCalled();
   });
 
   it('rejects an open provider circuit before running billable analysis', async () => {
@@ -900,8 +904,10 @@ describe('authenticated async upscale contract', () => {
     );
 
     expect(response.status).toBe(503);
-    expect(mocks.analyze, 'an unresolved replay must not incur analyzer cost').not
-      .toHaveBeenCalled();
+    expect(
+      mocks.analyze,
+      'an unresolved replay must not incur analyzer cost'
+    ).not.toHaveBeenCalled();
     expect(mocks.removeInput).not.toHaveBeenCalled();
   });
 
@@ -1193,6 +1199,31 @@ describe('authenticated async upscale contract', () => {
     expect(mocks.recordCost).not.toHaveBeenCalled();
     expect(mocks.lifecycleCancel).not.toHaveBeenCalled();
     expect(terminalEvents()).toEqual([]);
+  });
+
+  it('retains the shared input after terminal success so a pending job stays deliverable', async () => {
+    expect((await startAndSucceed()).status).toBe(200);
+    expect(
+      mocks.removeInput,
+      'a shared input must survive a terminal success'
+    ).not.toHaveBeenCalled();
+    await route.GET(statusRequest());
+    expect(mocks.removeInput).not.toHaveBeenCalled();
+  });
+
+  it('retains the shared input after terminal failure so a pending job stays deliverable', async () => {
+    await route.POST(request());
+    if (reservation) delete reservation.result_context.recovery;
+    await vi.advanceTimersByTimeAsync(5000);
+    mocks.fetch.mockResolvedValueOnce(
+      providerResponse({ id: PREDICTION_ID, status: 'failed', error: 'provider timed out' })
+    );
+    const response = await route.GET(statusRequest());
+    expect(response.status).toBe(503);
+    expect(
+      mocks.removeInput,
+      'a shared input must survive a terminal failure'
+    ).not.toHaveBeenCalled();
   });
 
   it.each(['analytics', 'lifecycle', 'cost'])(

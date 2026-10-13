@@ -385,6 +385,10 @@ describe('POST /api/upscale free limit errors and synchronous provider regressio
       const response = await POST(request());
 
       expect(response.status).toBe(200);
+      expect(
+        mocks.removeUpscaleInput,
+        'a successful upscale retains its shared input'
+      ).not.toHaveBeenCalled();
       expect(mocks.getScalePreservingFallbackCandidates).toHaveBeenCalledWith(
         expectedPaidClassification
       );

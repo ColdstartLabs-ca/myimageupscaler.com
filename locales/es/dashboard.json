@@ -123,5 +123,8 @@
     "errorLoadingStats": "Error al cargar estadísticas"
   },
   "loading": "Cargando...",
-  "planUnavailable": "Plan no disponible"
+  "planUnavailable": "Plan no disponible",
+  "gallery": {
+    "retentionNote": "Las imágenes gratuitas de la galería pueden caducar tras 30 días de inactividad. Te avisamos al menos 7 días antes, e iniciar sesión las conserva. Los planes de pago están exentos."
+  }
 }

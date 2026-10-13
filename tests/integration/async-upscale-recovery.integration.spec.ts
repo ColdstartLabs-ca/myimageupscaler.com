@@ -403,19 +403,25 @@ test('should return a typed retryable response when another tab owns the deliver
     reservationJobId: job.id,
     deliveryToken: statusBody.processing.deliveryToken,
   };
-  const first = await runtime.request(job.user, '/api/upscale/output', capability);
-  expect(first.status).toBe(200);
-  expect((await reservation(job.id)).delivery_lease_expires_at).toBeTruthy();
-  const firstReader = first.body!.getReader();
-  await firstReader.read();
-  expect((await reservation(job.id)).delivery_lease_expires_at).toBeTruthy();
-  const second = await runtime.request(job.user, '/api/upscale/output', capability);
-  expect(second.status).toBe(503);
-  expect(second.headers.get('Retry-After')).toBeTruthy();
-  await expect(second.json()).resolves.toMatchObject({
-    error: { code: 'AI_UNAVAILABLE', details: { outputBusy: true, retryable: true } },
-  });
-  await firstReader.cancel();
+  const releaseOutput = runtime.holdOutputDelivery();
+  try {
+    const first = await runtime.request(job.user, '/api/upscale/output', capability);
+    expect(first.status).toBe(200);
+    expect((await reservation(job.id)).delivery_lease_expires_at).toBeTruthy();
+    const firstReader = first.body!.getReader();
+    await firstReader.read();
+    expect((await reservation(job.id)).delivery_lease_expires_at).toBeTruthy();
+    const second = await runtime.request(job.user, '/api/upscale/output', capability);
+    expect(second.status).toBe(503);
+    expect(second.headers.get('Retry-After')).toBeTruthy();
+    await expect(second.json()).resolves.toMatchObject({
+      error: { code: 'AI_UNAVAILABLE', details: { outputBusy: true, retryable: true } },
+    });
+    releaseOutput();
+    await firstReader.cancel();
+  } finally {
+    releaseOutput();
+  }
 });
 
 test('should refuse output when a refund wins the delivery claim', async () => {

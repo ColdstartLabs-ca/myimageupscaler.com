@@ -3,11 +3,7 @@
 step_preflight() {
     log_step 1 "Preflight checks"
 
-    # Required Cloudflare env vars
-    for var in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_ZONE_ID DOMAIN_NAME; do
-        [[ -z "${!var:-}" ]] && log_error "Missing $var in .env.api"
-    done
-    log_success "Cloudflare credentials"
+    _check_cloudflare_credentials
 
     # Required Stripe env vars
     for var in STRIPE_SECRET_KEY STRIPE_WEBHOOK_SECRET; do
@@ -38,6 +34,15 @@ step_preflight() {
 
     # Stripe products check (informational only)
     check_stripe_products
+}
+
+# The R2 keys use the same Cloudflare account endpoint, so a deploy without them
+# silently fails every upload grant with 503. Require them here.
+_check_cloudflare_credentials() {
+    for var in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_ZONE_ID DOMAIN_NAME R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY; do
+        [[ -z "${!var:-}" ]] && log_error "Missing $var in .env.api"
+    done
+    log_success "Cloudflare credentials"
 }
 
 _check_provider_observability() {

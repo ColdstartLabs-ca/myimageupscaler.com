@@ -42,17 +42,14 @@ const REQUIRED_AT_RUNTIME: { name: string; consumer: string }[] = [
   { name: 'OUTRANK_WEBHOOK_SECRET', consumer: 'app/api/webhooks/outrank/route.ts' },
   { name: 'OPENROUTER_API_KEY', consumer: 'server/services/openrouter.service.ts' },
   { name: 'CLOUDFLARE_API_TOKEN', consumer: 'server/services/cloudflareImages.service.ts' },
+  { name: 'R2_ACCESS_KEY_ID', consumer: 'server/services/r2-storage.service.ts' },
+  { name: 'R2_SECRET_ACCESS_KEY', consumer: 'server/services/r2-storage.service.ts' },
+  { name: 'GALLERY_EXPIRY_ENABLED', consumer: 'server/services/galleryCleanup.service.ts' },
   {
     name: 'STRIPE_ENGAGEMENT_DISCOUNT_COUPON_ID',
     consumer: 'server/services/engagement-discount.service.ts',
   },
 ];
-
-/**
- * Deploy-machine-only credentials. The Worker must never receive these, so they are
- * deliberately absent from the allowlist — see `.claude/skills/gcloud-secrets`.
- */
-const DEPLOY_ONLY = ['R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY'];
 
 function allowlistedNames(script: string): string[] {
   const block = script.match(/local secrets=\(([\s\S]*?)\)/);
@@ -79,10 +76,4 @@ describe('Worker secret allowlist', () => {
       expect(allowlisted).toContain(name);
     }
   );
-
-  it('never uploads deploy-machine-only credentials to the Worker', () => {
-    for (const name of DEPLOY_ONLY) {
-      expect(allowlisted).not.toContain(name);
-    }
-  });
 });

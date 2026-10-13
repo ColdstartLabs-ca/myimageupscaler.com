@@ -131,7 +131,7 @@
         },
         {
           "question": "¿Se almacenan mis imágenes en sus servidores?",
-          "answer": "Las imágenes se eliminan automáticamente dentro de 1 hora después del procesamiento. No usamos tus imágenes para entrenamiento ni las compartimos con terceros."
+          "answer": "Las subidas temporales están programadas para eliminarse automáticamente después de dos días; la limpieza puede tardar más. Las imágenes que guardas en tu galería siguen una política de retención aparte. No usamos tus imágenes para entrenamiento ni las compartimos con terceros."
         }
       ],
       "faq": [

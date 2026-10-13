@@ -98,7 +98,10 @@ describe('assertSafeTestDatabaseTarget', () => {
     expect(() => assertSafeTestDatabaseTarget(dbEnv(MOCK_SUPABASE_URL))).not.toThrow();
     expect(() =>
       assertSafeTestDatabaseTarget(
-        dbEnv(OWNED_LOCAL, { MIU_TEST_DB_URL: OWNED_LOCAL, SUPABASE_SERVICE_ROLE_KEY: LOCAL_DEMO_JWT })
+        dbEnv(OWNED_LOCAL, {
+          MIU_TEST_DB_URL: OWNED_LOCAL,
+          SUPABASE_SERVICE_ROLE_KEY: LOCAL_DEMO_JWT,
+        })
       )
     ).toThrow(/real-database tests are blocked/);
   });
@@ -304,7 +307,10 @@ describe('review blockers (2026-10-03)', () => {
         /Unsafe test environment|Real-database test helpers are disabled/
       );
       await expect(
-        uploadUpscaleInput(api as never, { dataUrl: 'data:image/png;base64,AA==', mimeType: 'image/png' })
+        uploadUpscaleInput(api as never, {
+          dataUrl: 'data:image/png;base64,AA==',
+          mimeType: 'image/png',
+        })
       ).rejects.toThrow(/Unsafe test environment|Real-database test helpers are disabled/);
       expect(api.post).not.toHaveBeenCalled();
       expect(mockCreateClient).not.toHaveBeenCalled();
@@ -316,9 +322,16 @@ describe('review blockers (2026-10-03)', () => {
       ...dbEnv(PROD_URL),
       SUPABASE_SERVICE_ROLE_KEY: PROD_SERVICE_JWT,
     });
-    const api = { post: vi.fn().mockResolvedValue({ status: 500, raw: { ok: () => false }, json: async () => ({}) }) };
+    const api = {
+      post: vi
+        .fn()
+        .mockResolvedValue({ status: 500, raw: { ok: () => false }, json: async () => ({}) }),
+    };
     await expect(
-      uploadUpscaleInput(api as never, { dataUrl: 'data:image/png;base64,AA==', mimeType: 'image/png' })
+      uploadUpscaleInput(api as never, {
+        dataUrl: 'data:image/png;base64,AA==',
+        mimeType: 'image/png',
+      })
     ).rejects.toThrow(/Unsafe test environment/);
     expect(api.post).not.toHaveBeenCalled();
   });
@@ -426,11 +439,15 @@ describe('review blockers (2026-10-03)', () => {
       expect(guard).toBeGreaterThan(-1);
       expect(guard).toBeLessThan(script.indexOf('rm -'));
       expect(script).toMatch(/^exec \$ISOLATE npx next dev /m);
+      expect(script).toMatch(/^exec \$ISOLATE npx next dev --webpack /m);
       expect(script.match(/next dev/g)).toHaveLength(1);
     });
 
     it('refuses before launch when a Next.js auto-loaded file such as .env.test.local exists', () => {
-      writeFileSync(path.join(dir, '.env.test.local'), 'REPLICATE_API_TOKEN=opaque-file-synthetic\n');
+      writeFileSync(
+        path.join(dir, '.env.test.local'),
+        'REPLICATE_API_TOKEN=opaque-file-synthetic\n'
+      );
       const run = launch({ NODE_ENV: 'test' });
       expect(run.status).toBe(1);
       expect(run.stderr).toMatch(/\.env\.test\.local would be auto-loaded/);
