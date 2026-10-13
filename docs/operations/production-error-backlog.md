@@ -487,3 +487,21 @@ available. Do not treat the pre-fix rates above as a post-deploy measurement.
 - **Assessment:** The API health endpoint returned 503 once, but homepage status is 200 and workers have 205/205 recent successes.
 - **Next action:** Investigate the API health dependency and monitor for repeated 503 responses.
 - **Status:** Open
+### 2026-10-12T14:35:42+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 13 in the sampled window
+- **Evidence:** `{"count_15m": 10, "count_3h": 13, "live_health": {"api_health": {"latency_ms": 823, "status": 200}, "homepage": {"latency_ms": 2808, "status": 200}}, "rate_15m": 0.06098, "rate_3h": 0.00549, "requests_15m": 164, "requests_3h": 2370}`
+- **Assessment:** 13/2370 requests exceeded memory in 3h (0.55%), including 10/164 in the last 15m (6.1%), while endpoints remain healthy.
+- **Next action:** Inspect recent jobs and worker memory limits/usage, then monitor whether the 15m error rate persists.
+- **Status:** Open
+
+### 2026-10-13T14:59:39+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 12 in the sampled window
+- **Evidence:** `{"count_15m": 0, "count_3h": 12, "live_health": {"api_health": {"latency_ms": 597, "status": 200}, "homepage": {"latency_ms": 1018, "status": 200}}, "rate_15m": 0.0, "rate_3h": 0.00417, "requests_15m": 288, "requests_3h": 2880}`
+- **Assessment:** 12 memory errors in 2,880 requests over 3h (0.42%), with 0 in the last 15m and healthy 200 endpoints.
+- **Next action:** Review affected request sizes and worker memory limits, then monitor recurrence.
+- **Status:** Open
+
