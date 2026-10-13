@@ -93,8 +93,9 @@ describe('2026-09-03 Three Kings refresh contract', () => {
 
       expect(rows, url).toHaveLength(1);
       if (url.endsWith('/blog/poster-size-dimensions-pixels')) {
-        expect(rows[0], url).toContain('[ ]');
-        expect(rows[0], url).toContain('2026-09-21 Three Kings rung-3');
+        // Resolved 2026-10-05 via URL Inspection API after the 2026-09-21 rung-3 write.
+        expect(rows[0], url).toContain('[x]');
+        expect(rows[0], url).toContain('API-resolved 2026-10-05');
       } else {
         expect(rows[0], url).toContain('[x]');
         expect(rows[0], url).toContain('2026-09-03 Three Kings refresh');

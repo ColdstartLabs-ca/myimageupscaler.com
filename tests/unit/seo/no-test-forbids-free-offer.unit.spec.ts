@@ -18,10 +18,7 @@ const SELF = 'tests/unit/seo/no-test-forbids-free-offer.unit.spec.ts';
 const TESTS_DIR = 'tests';
 
 /** Assertions that ban the word "free" from a value a visitor reads or a slug they hit. */
-const BANS_FREE_WORDING = [
-  /not\.toMatch\(\/(?:\\b)?free/i,
-  /not\.toContain\(['"`][^'"`]*free/i,
-];
+const BANS_FREE_WORDING = [/not\.toMatch\(\/(?:\\b)?free/i, /not\.toContain\(['"`][^'"`]*free/i];
 
 /** `file :: assertion` -> why forbidding free wording there is correct. Keyed on the
  * assertion text, not the line number, so unrelated edits don't break the guard. */
@@ -38,6 +35,8 @@ const ALLOWLIST = new Set<string>([
   "tests/unit/seo/pseo-duplicate-slugs.unit.spec.ts :: expect(mainImageUpscaler.slug).not.toContain('free-');",
   // forbids an inflated "10 free credits" grant
   "tests/unit/seo/three-kings-regression-repair.unit.spec.ts :: expect(repaired.content).not.toContain('10 free credits');",
+  // forbids the same inflated "10 free credits" grant in the 2026-10-12 rung-3 body
+  "tests/unit/seo/three-kings-2026-10-12.unit.spec.ts :: expect(result.content).not.toContain('10 free credits');",
 ]);
 
 const testFiles = (dir: string): string[] =>
@@ -63,7 +62,10 @@ describe('no test may forbid the free offer', () => {
     const hits = bannedAssertions();
 
     expect(
-      { unexpected: hits.filter(hit => !ALLOWLIST.has(hit)), stale: [...ALLOWLIST].filter(entry => !hits.includes(entry)) },
+      {
+        unexpected: hits.filter(hit => !ALLOWLIST.has(hit)),
+        stale: [...ALLOWLIST].filter(entry => !hits.includes(entry)),
+      },
       'tests that ban free wording must be fixed, or allowlisted file:line with a comment'
     ).toEqual({ unexpected: [], stale: [] });
   });

@@ -35,15 +35,16 @@ describe('Topaz free-trial snippet recovery contract', () => {
     );
   });
 
-  it('records the post-update indexing request as one pending row', () => {
+  it('records the post-update indexing request as one resolved row', () => {
     const backlog = readFileSync('docs/SEO/maintenance/gsc-request-indexing-backlog.md', 'utf8');
     const rowPattern =
       /- \[[ x]\] `https:\/\/myimageupscaler\.com\/blog\/topaz-labs-free-trial`[^\n]*/g;
     const rows = backlog.match(rowPattern) ?? [];
 
     expect(rows).toHaveLength(1);
-    expect(rows[0]).toContain('[ ]');
+    // Resolved 2026-10-05 via URL Inspection API after the 2026-09-21 rung-2 write.
+    expect(rows[0]).toContain('[x]');
+    expect(rows[0]).toContain('API-resolved 2026-10-05');
     expect(rows[0]).toContain('2026-09-21');
-    expect(rows[0]).toContain('Three Kings rung-2');
   });
 });
