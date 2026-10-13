@@ -7,7 +7,7 @@
       "url": "/blog/best-free-ai-image-upscaler-2026-tested-compared",
       "label": "/blog/best-free-ai-image-upscaler-2026-tested-compared",
       "rung": 3,
-      "lastEdit": "2026-09-10",
+      "lastEdit": "2026-10-13",
       "history": [
         {
           "date": "2026-05-24",
@@ -102,6 +102,13 @@
             "measuredThrough": "2026-09-24"
           },
           "previousValue": "Best Free AI Image Upscaler 2026: Only 3 Worked"
+        },
+        {
+          "date": "2026-10-13",
+          "rung": 3,
+          "field": "title + description + body positioning",
+          "note": "Recovery of the Sep 10 'Limits Compared' CTR collapse (9.6%->2.4% at flat pos 5-6). Title 'Best Free AI Image Upscaler Online 2026: 12 Compared'; description drops 'Published by MyImageUpscaler'; body drops self-negating lines, 'welcome credits' -> 'free credits'. Facts unchanged (account required, no benchmark). Backup backup_2026-10-13_16-09-52. Readback 2026-10-27: CTR >5% at pos <=6.",
+          "previousValue": "Best Free AI Image Upscalers 2026: Limits Compared"
         }
       ],
       "stopRule": null

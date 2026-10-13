@@ -122,3 +122,50 @@ Rule for every step: one change per page per measurement window. No bulk copy ed
 ## 6. Evidence files (session scratchpad, not committed)
 
 `gsc28.json` (GSC export), `r1-gsc.md`, `r2-changes.md`, `r3-live.md` (scout reports).
+
+## 7. Execution round, 2026-10-13
+
+Status: IN PROGRESS. Source: full re-investigation on 2026-10-13 (GSC daily, GA4, prod DB read-only, live HTML, CrUX via PSI).
+
+### 7.1 What the data says (4-week window Jun 29–Jul 26 vs Sep 14–Oct 11, -4,513 clicks)
+
+| Share | Loss                        | Cause                                                                                   | Fixable |
+| ----- | --------------------------- | --------------------------------------------------------------------------------------- | ------- |
+| 51%   | Brand queries (-2,300)      | Jul 20 summer spike ended. Sep 13 step: exact-brand impressions 45/day to 12/day, pos 1 | Partly  |
+| 31%   | Best-free flagship (-1,394) | July query demand drop, then Aug 17 and Sep 10 edits: CTR 12% to 2.4% at flat pos 5–6   | Yes     |
+| 14%   | GIF cluster (-650)          | Aug 8 301 consolidation never transferred rankings                                      | No      |
+| 6%    | `/tools/ai-image-upscaler`  | Pos 5 to 12 since mid-Sep; queries moved to `/scale/upscale-8x` and `/scale/*-8k`       | Watch   |
+
+Signups per GA4 Google session: 0.38 to 0.27 on Sep 12, flat after the Sep 25 and Oct 3 restores. Returning active users are flat (DB), so the lost brand searchers are new people. Purchases 13/wk to 6/wk.
+
+### 7.2 Holes the earlier rounds left
+
+1. Flagship title, description and body still carry the Sep 10 copy. The body tells readers and AI assistants "Not ours" and "Upscayl or Bigjpg are the better fit and ours is not".
+2. Homepage hero subtext is server-rendered on a force-static page: every visitor reads "3 free credits". Standard tier (45%) gets 5, paywalled (26%) gets 0.
+3. 72 comparison strings still read "Free credits for new accounts" (were "5 free credits").
+4. Every English pSEO detail page emits two canonical tags (`SeoMetaTags` plus metadata API). Hub pages and some detail pages render "| MyImageUpscaler | MyImageUpscaler".
+5. Homepage LCP hero preload has no `fetchpriority=high` and competes with the blurred "before" preload.
+6. Local `master` diverged from `origin` (fixed: merge `6375bff1`).
+
+### 7.3 Work items
+
+| ID  | Change                                                     | Verify                                                     | Readback (metric, date)                       |
+| --- | ---------------------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------- |
+| W1  | Flagship title, description, body positioning (DB)         | Backup gate; API readback; live HTML                       | Page CTR > 5% at pos ≤ 6, 2026-10-27          |
+| W2  | Hero credit subtext follows the visitor's real tier        | Unit test red then green; live check                       | Signups per Google session > 0.32, 2026-10-27 |
+| W3  | Comparison strings: "Up to 5 free credits"                 | Free-offer guard specs green                               | Same as W2                                    |
+| W4  | One canonical per page; no doubled brand in titles         | `tests/unit/seo/` spec red then green; live sitemap sample | Live sample: 0 duplicates                     |
+| W5  | Homepage hero preload priority                             | Live HTML shows one high-priority preload                  | PSI mobile `/` LCP                            |
+| W6  | Ship: `yarn verify`, `yarn test`, push, deploy, live check | All green; live checks pass                                | —                                             |
+
+### 7.4 Not fixable in code (owner actions)
+
+- Request indexing in GSC for the flagship and `/` after W1 and W2 are live.
+- Outrank: unschedule the "Improvements" rewrites of ranked pages.
+- Google OAuth consent screen: check brand verification. The screen names `xqysaylskffsfwunczbd.supabase.co` (88% of signups pass through it).
+- Enable the CrUX History API (`gcloud services enable chromeuxreport.googleapis.com --project 614615075079`) to get the weekly p75 series.
+- Field TTFB p75 is 2.85 s (58% poor). Fix needs edge HTML caching, which is out of scope here. See §7.5.
+
+### 7.5 Performance verdict (2026-10-13)
+
+Origin mobile p75 LCP 4,026 ms (26 ms over the "poor" line), INP 256 ms, TTFB 2,854 ms. GSC "100% poor" is a threshold effect: 25% of loads are poor. The Sep 8 and Sep 16 fixes are fully inside the window. The Oct 7 and Oct 10 fixes are 0–18% inside, so GSC cannot flip before about 2026-11-10. TTFB is the binding cause: `/pricing` is `private, no-store`, and cold OpenNext cache reads take 1–2 s. CWV did not cause the traffic decline (poor since July while clicks grew 10×).

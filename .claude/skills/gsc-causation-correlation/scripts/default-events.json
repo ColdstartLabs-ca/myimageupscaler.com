@@ -145,5 +145,31 @@
     "name": "Topaz free-trial alternative-led snippet (too new)",
     "pages": ["/blog/topaz-labs-free-trial"],
     "queries": ["topaz free"]
+  },
+  {
+    "date": "2026-09-10",
+    "name": "Product Truth pass: free wording removed; flagship title 'Limits Compared' and self-negating body",
+    "pages": ["/blog/best-free-ai-image-upscaler-2026-tested-compared"],
+    "queries": ["brand: myimageupscaler", "brand: my image upscaler"]
+  },
+  {
+    "date": "2026-09-25",
+    "name": "Free-offer copy restore (3143e88e)",
+    "queries": ["brand: myimageupscaler", "brand: my image upscaler"]
+  },
+  {
+    "date": "2026-10-03",
+    "name": "Homepage snippet, FAQ and llms.txt free offer restored (8a907ab0)",
+    "queries": ["brand: myimageupscaler", "brand: my image upscaler"]
+  },
+  {
+    "date": "2026-10-13",
+    "name": "Flagship recovery: title '12 Compared', factual description, body positioning",
+    "pages": ["/blog/best-free-ai-image-upscaler-2026-tested-compared"]
+  },
+  {
+    "date": "2026-10-13",
+    "name": "Hero offer follows real tier; one canonical/hreflang per pSEO page",
+    "queries": ["brand: myimageupscaler", "brand: my image upscaler"]
   }
 ]

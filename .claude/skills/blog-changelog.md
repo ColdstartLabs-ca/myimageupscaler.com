@@ -1,5 +1,18 @@
 # Blog Changelog
 
+## 2026-10-13
+
+### SEO: Best-free flagship recovery — title, description and body positioning
+
+**Affected:** best-free-ai-image-upscaler-2026-tested-compared
+**Why:** CTR fell from ~9.6% to 2.4% at a flat position of 5–6 after the 2026-09-10 title/description rewrite; the body also told readers our tool is "not the better fit".
+**Changes:**
+
+- `title`/`seo_title` → `Best Free AI Image Upscaler Online 2026: 12 Compared`; `description`/`seo_description` → factual 150-character snippet without "Published by MyImageUpscaler".
+- Body: removed self-negating lines, "welcome credits" → "free credits". Account requirement, no-benchmark disclosure and competitor facts unchanged.
+- Backup `backup_2026-10-13_16-09-52` verified with `gzip -t` before the write. Live HTML serves the new title/description.
+  **Readback:** 2026-10-27, CTR > 5% at position ≤ 6.
+
 ## 2026-10-12
 
 ### SEO: Best-image-upscaler rung-3 workflow evidence pass — final public copy pending
