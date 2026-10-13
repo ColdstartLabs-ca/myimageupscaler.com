@@ -64,6 +64,30 @@ describe('single head emitter', () => {
     }
   );
 
+  it('localized pSEO metadata leaves canonical, hreflang and og:locale to the body components', async () => {
+    const { resolveLocalePageMetadata } = await import('@/lib/seo/locale-page-metadata');
+    const page = {
+      slug: 'upscale-jpeg-images',
+      title: 'Upscale JPEG',
+      metaTitle: 'Upscale JPEG Images to 4K',
+      metaDescription: 'Upscale JPEG images.',
+      h1: 'Upscale JPEG',
+      intro: 'Intro',
+      primaryKeyword: 'upscale jpeg',
+      secondaryKeywords: [],
+      lastUpdated: '2026-10-13',
+      category: 'formats',
+    };
+    const metadata = await resolveLocalePageMetadata(
+      async () => ({ data: page as never, hasTranslation: true, isLocalizedCategory: true }),
+      'formats',
+      page.slug,
+      'de'
+    );
+    expect(metadata.alternates).toBeUndefined();
+    expect(metadata.openGraph?.locale).toBeUndefined();
+  });
+
   it('the localized homepage sets hreflang once', () => {
     const source = fs.readFileSync(path.resolve('app/[locale]/page.tsx'), 'utf8');
     expect(source).toMatch(/alternates:/);

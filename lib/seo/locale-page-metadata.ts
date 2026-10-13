@@ -29,11 +29,15 @@ export async function resolveLocalePageMetadata<T extends PSEOPage>(
   }
   if (!result.data) return {};
 
-  const { alternates: _alternates, ...metadata } = generatePageMetadata(
-    result.data,
-    category,
-    locale
-  );
+  // Localized pages render canonical, hreflang and og:locale from the body components
+  // (SeoMetaTags / HreflangLinks), so the factory's copies must not reach the head twice.
+  const {
+    alternates: _alternates,
+    openGraph,
+    ...metadata
+  } = generatePageMetadata(result.data, category, locale);
+  const { locale: _ogLocale, ...openGraphWithoutLocale } = openGraph ?? {};
+  const resolved = { ...metadata, openGraph: openGraphWithoutLocale } as Metadata;
 
-  return usedEnglishFallback ? { ...metadata, robots: { index: false, follow: true } } : metadata;
+  return usedEnglishFallback ? { ...resolved, robots: { index: false, follow: true } } : resolved;
 }
