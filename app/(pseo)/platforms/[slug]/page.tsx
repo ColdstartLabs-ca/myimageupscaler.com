@@ -5,8 +5,6 @@ import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-fac
 import { generatePSEOSchema } from '@/lib/seo/schema-generator';
 import { PlatformPageTemplate } from '@/app/(pseo)/_components/pseo/templates/PlatformPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
-import { HreflangLinks } from '@client/components/seo/HreflangLinks';
-import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 
 // Force static rendering for Cloudflare Workers 10ms CPU limit
 // Prevents SSR timeouts on Googlebot requests
@@ -42,14 +40,8 @@ export default async function PlatformPage({ params }: IPlatformPageProps) {
   // Generate rich schema markup with FAQPage and BreadcrumbList
   const schema = generatePSEOSchema(platform, 'platforms', 'en');
 
-  const path = `/platforms/${slug}`;
-
   return (
     <>
-      {/* SEO meta tags - canonical and og:locale */}
-      <SeoMetaTags path={path} locale="en" />
-      {/* Hreflang links - platforms is English-only, no locale variants */}
-      <HreflangLinks path={path} category="platforms" locale="en" />
       <SchemaMarkup schema={schema} />
       <PlatformPageTemplate data={platform} locale="en" />
     </>

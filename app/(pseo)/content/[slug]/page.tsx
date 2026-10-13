@@ -5,8 +5,6 @@ import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-fac
 import { generatePSEOSchema } from '@/lib/seo/schema-generator';
 import { GenericPSEOPageTemplate } from '@/app/(pseo)/_components/pseo/templates/GenericPSEOPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
-import { HreflangLinks } from '@client/components/seo/HreflangLinks';
-import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 
 // Force static rendering for Cloudflare Workers 10ms CPU limit
 // Prevents SSR timeouts on Googlebot requests
@@ -42,12 +40,8 @@ export default async function ContentPage({ params }: IContentPageProps) {
   // Generate schema markup
   const schema = generatePSEOSchema(page, 'article');
 
-  const path = `/content/${slug}`;
-
   return (
     <>
-      <SeoMetaTags path={path} locale="en" />
-      <HreflangLinks path={path} category="content" locale="en" />
       <SchemaMarkup schema={schema} />
       <GenericPSEOPageTemplate data={page} />
     </>

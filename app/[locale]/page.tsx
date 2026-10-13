@@ -5,7 +5,6 @@ import { HomePageClient } from '@client/components/pages/HomePageClient';
 import { HeroSection } from '@client/components/landing/HeroSection';
 import { LandingHeroShell } from '@client/components/landing/LandingHeroShell';
 import { JsonLd } from '@client/components/seo/JsonLd';
-import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 import { LandingBlogSection } from '@client/components/landing/LandingBlogSection';
 import { generateHomepageSchema } from '@lib/seo/schema-generator';
 import { getHomepageBlogPicks } from '@lib/seo/seo-equity';
@@ -104,8 +103,6 @@ export default async function LocaleHomePage({ params }: ILocaleHomePageProps) {
 
   return (
     <>
-      {/* Hreflang links for multi-language SEO */}
-      <HreflangLinks path="/" locale={locale} />
       <JsonLd data={homepageSchema} />
       <div className="flex-grow bg-main font-sans selection:bg-accent/20 selection:text-white">
         <LandingHeroShell>

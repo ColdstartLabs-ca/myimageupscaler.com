@@ -3,8 +3,6 @@ import type { Metadata } from 'next';
 import { getAllTools, getAllInteractiveTools } from '@/lib/seo/data-loader';
 import { INTERACTIVE_TOOL_PATHS } from '@/lib/seo/interactive-tool-routes';
 import { generateCategoryMetadata } from '@/lib/seo/metadata-factory';
-import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
-import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 import type { Locale } from '@/i18n/config';
 
 interface IToolsHubPageProps {
@@ -144,10 +142,6 @@ export default async function ToolsHubPage({ params }: IToolsHubPageProps) {
 
   return (
     <>
-      {/* SEO meta tags for canonical URL and og:locale */}
-      <SeoMetaTags path="/tools" locale={locale} />
-      {/* Hreflang links for multi-language SEO */}
-      <HreflangLinks path="/tools" category="tools" locale={locale} />
       <div className="container mx-auto px-4 py-12 bg-base min-h-screen">
         <h1 className="text-4xl font-bold mb-4 text-text-primary">Free Image Tools</h1>
         <p className="text-xl text-text-secondary mb-12 max-w-2xl">

@@ -6,8 +6,6 @@ import { generatePSEOSchema } from '@/lib/seo/schema-generator';
 import { getRelatedPages } from '@/lib/seo/related-pages';
 import { PlatformFormatPageTemplate } from '@/app/(pseo)/_components/pseo/templates/PlatformFormatPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
-import { HreflangLinks } from '@client/components/seo/HreflangLinks';
-import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 
 // Force static rendering for Cloudflare Workers 10ms CPU limit
 // Prevents SSR timeouts on Googlebot requests
@@ -46,14 +44,8 @@ export default async function PlatformFormatPage({ params }: IPlatformFormatPage
   // Generate rich schema markup with FAQPage and BreadcrumbList
   const schema = generatePSEOSchema(platformFormat, 'platform-format', 'en');
 
-  const path = `/platform-format/${slug}`;
-
   return (
     <>
-      {/* SEO meta tags - canonical and og:locale */}
-      <SeoMetaTags path={path} locale="en" />
-      {/* Hreflang links for multi-language SEO */}
-      <HreflangLinks path={path} category="platform-format" locale="en" />
       <SchemaMarkup schema={schema} />
       <PlatformFormatPageTemplate data={platformFormat} locale="en" relatedPages={relatedPages} />
     </>

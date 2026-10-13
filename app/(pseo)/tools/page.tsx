@@ -3,8 +3,6 @@ import type { Metadata } from 'next';
 import { getAllTools, getAllInteractiveTools } from '@/lib/seo/data-loader';
 import { INTERACTIVE_TOOL_PATHS } from '@/lib/seo/interactive-tool-routes';
 import { generateCategoryMetadata } from '@/lib/seo/metadata-factory';
-import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
-import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateCategoryMetadata('tools', 'en');
@@ -137,8 +135,6 @@ export default async function ToolsHubPage() {
 
   return (
     <>
-      <SeoMetaTags path="/tools" locale="en" />
-      <HreflangLinks path="/tools" category="tools" locale="en" />
       <div className="container mx-auto px-4 py-12 bg-base min-h-screen">
         <h1 className="text-4xl font-bold mb-4 text-text-primary">Free Image Tools</h1>
         <p className="text-xl text-text-secondary mb-12 max-w-2xl">

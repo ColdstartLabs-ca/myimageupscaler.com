@@ -5,8 +5,6 @@ import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-fac
 import { getRelatedPages } from '@/lib/seo/related-pages';
 import { FreePageTemplate } from '@/app/(pseo)/_components/pseo/templates/FreePageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
-import { HreflangLinks } from '@client/components/seo/HreflangLinks';
-import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 import { clientEnv } from '@shared/config/env';
 
 // Force static rendering for Cloudflare Workers 10ms CPU limit
@@ -107,14 +105,8 @@ export default async function FreePage({ params }: IFreePageProps) {
     '@graph': graphItems,
   };
 
-  const path = `/free/${slug}`;
-
   return (
     <>
-      {/* SEO meta tags - canonical and og:locale */}
-      <SeoMetaTags path={path} locale="en" />
-      {/* Hreflang links for multi-language SEO */}
-      <HreflangLinks path={path} />
       <SchemaMarkup schema={schema} />
       <FreePageTemplate data={freeTool} relatedPages={relatedPages} />
     </>

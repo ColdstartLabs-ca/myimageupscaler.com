@@ -1,8 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { generateCategoryMetadata } from '@/lib/seo/metadata-factory';
-import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
-import { HreflangLinks } from '@client/components/seo/HreflangLinks';
 
 export const dynamic = 'force-static';
 export const revalidate = 86400;
@@ -113,9 +111,6 @@ const FAQ = [
 export default function AIPhotoEditorHubPage() {
   return (
     <>
-      <SeoMetaTags path="/ai-photo-editor" locale="en" />
-      <HreflangLinks path="/ai-photo-editor" category="ai-photo-editor" locale="en" />
-
       <div className="container mx-auto px-4 py-12 bg-base min-h-screen">
         {/* Hero */}
         <div className="max-w-2xl mb-14">

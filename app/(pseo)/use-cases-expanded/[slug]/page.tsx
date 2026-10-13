@@ -6,8 +6,6 @@ import { generatePSEOSchema } from '@/lib/seo/schema-generator';
 import type { PSEOPage } from '@/lib/seo/pseo-types';
 import { GenericPSEOPageTemplate } from '@/app/(pseo)/_components/pseo/templates/GenericPSEOPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
-import { HreflangLinks } from '@client/components/seo/HreflangLinks';
-import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 
 export const dynamic = 'force-static';
 export const revalidate = 86400;
@@ -75,12 +73,8 @@ export default async function UseCasesExpandedPage({ params }: IUseCasesExpanded
     pageWithCategory as unknown as Parameters<typeof generatePSEOSchema>[0],
     'use-cases-expanded'
   );
-  const path = `/use-cases-expanded/${slug}`;
-
   return (
     <>
-      <SeoMetaTags path={path} locale="en" />
-      <HreflangLinks path={path} category="use-cases-expanded" locale="en" />
       <SchemaMarkup schema={schema} />
       <GenericPSEOPageTemplate data={pageWithCategory} />
     </>

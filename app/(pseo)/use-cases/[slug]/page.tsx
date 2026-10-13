@@ -6,8 +6,6 @@ import { getRelatedPages } from '@/lib/seo/related-pages';
 import { generateUseCaseSchema } from '@/lib/seo/schema-generator';
 import { UseCasePageTemplate } from '@/app/(pseo)/_components/pseo/templates/UseCasePageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
-import { HreflangLinks } from '@client/components/seo/HreflangLinks';
-import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 
 // Force static rendering for Cloudflare Workers 10ms CPU limit
 // Prevents SSR timeouts on Googlebot requests
@@ -46,14 +44,8 @@ export default async function UseCasePage({ params }: IUseCasePageProps) {
   // Generate rich schema markup with FAQPage and BreadcrumbList
   const schema = generateUseCaseSchema(useCase);
 
-  const path = `/use-cases/${slug}`;
-
   return (
     <>
-      {/* SEO meta tags - canonical and og:locale */}
-      <SeoMetaTags path={path} locale="en" />
-      {/* Hreflang links for multi-language SEO */}
-      <HreflangLinks path={path} category="use-cases" locale="en" />
       <SchemaMarkup schema={schema} />
       <UseCasePageTemplate data={useCase} locale="en" relatedPages={relatedPages} />
     </>

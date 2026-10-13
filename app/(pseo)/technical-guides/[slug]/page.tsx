@@ -6,8 +6,6 @@ import { generatePSEOSchema } from '@/lib/seo/schema-generator';
 import type { PSEOPage } from '@/lib/seo/pseo-types';
 import { GenericPSEOPageTemplate } from '@/app/(pseo)/_components/pseo/templates/GenericPSEOPageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
-import { HreflangLinks } from '@client/components/seo/HreflangLinks';
-import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 
 // Force static rendering for Cloudflare Workers 10ms CPU limit
 // Prevents SSR timeouts on Googlebot requests
@@ -46,12 +44,8 @@ export default async function TechnicalGuidesPage({ params }: ITechnicalGuidesPa
     'article'
   );
 
-  const path = `/technical-guides/${slug}`;
-
   return (
     <>
-      <SeoMetaTags path={path} locale="en" />
-      <HreflangLinks path={path} category="technical-guides" locale="en" />
       <SchemaMarkup schema={schema} />
       <GenericPSEOPageTemplate data={page as unknown as PSEOPage} />
     </>

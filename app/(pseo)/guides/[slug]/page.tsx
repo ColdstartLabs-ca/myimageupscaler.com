@@ -5,7 +5,6 @@ import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-fac
 import { generateGuideSchema } from '@/lib/seo/schema-generator';
 import { GuidePageTemplate } from '@/app/(pseo)/_components/pseo/templates/GuidePageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
-import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 
 // Force static rendering for Cloudflare Workers 10ms CPU limit
 // Prevents SSR timeouts on Googlebot requests
@@ -41,12 +40,8 @@ export default async function GuidePage({ params }: IGuidePageProps) {
   // Generate rich schema markup with HowTo, Article, FAQPage, and BreadcrumbList
   const schema = generateGuideSchema(guide);
 
-  const path = `/guides/${slug}`;
-
   return (
     <>
-      {/* SEO meta tags - canonical and og:locale */}
-      <SeoMetaTags path={path} locale="en" />
       <SchemaMarkup schema={schema} />
       <GuidePageTemplate data={guide} />
     </>

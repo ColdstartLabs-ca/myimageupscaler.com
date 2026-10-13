@@ -6,8 +6,6 @@ import { getRelatedPages } from '@/lib/seo/related-pages';
 import { generateAlternativeSchema } from '@/lib/seo/schema-generator';
 import { AlternativePageTemplate } from '@/app/(pseo)/_components/pseo/templates/AlternativePageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
-import { HreflangLinks } from '@client/components/seo/HreflangLinks';
-import { SeoMetaTags } from '@client/components/seo/SeoMetaTags';
 
 // Force static rendering for Cloudflare Workers 10ms CPU limit
 // Prevents SSR timeouts on Googlebot requests
@@ -46,14 +44,8 @@ export default async function AlternativePage({ params }: IAlternativePageProps)
   // Generate rich schema markup with FAQPage, ItemList, and BreadcrumbList
   const schema = generateAlternativeSchema(alternative);
 
-  const path = `/alternatives/${slug}`;
-
   return (
     <>
-      {/* SEO meta tags - canonical and og:locale */}
-      <SeoMetaTags path={path} locale="en" />
-      {/* Hreflang links for multi-language SEO */}
-      <HreflangLinks path={path} category="alternatives" locale="en" />
       <SchemaMarkup schema={schema} />
       <AlternativePageTemplate data={alternative} locale="en" relatedPages={relatedPages} />
     </>

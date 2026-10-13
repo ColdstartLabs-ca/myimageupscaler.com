@@ -26,7 +26,8 @@ describe('resolveLocalePageMetadata', () => {
       'es'
     );
 
-    expect(metadata.title).toBe(englishPage.metaTitle);
+    // The layout template appends the brand, so the factory drops a trailing one.
+    expect(metadata.title).toBe(englishPage.metaTitle.replace(/ \| MyImageUpscaler$/, ''));
     expect(metadata.robots).toMatchObject({ index: false, follow: true });
     expect(loader).toHaveBeenNthCalledWith(1, englishPage.slug, 'es');
     expect(loader).toHaveBeenNthCalledWith(2, englishPage.slug, 'en');
@@ -46,7 +47,8 @@ describe('resolveLocalePageMetadata', () => {
       'es'
     );
 
-    expect(metadata.title).toBe(englishPage.metaTitle);
+    // The layout template appends the brand, so the factory drops a trailing one.
+    expect(metadata.title).toBe(englishPage.metaTitle.replace(/ \| MyImageUpscaler$/, ''));
     expect(metadata.robots).toMatchObject({ follow: true });
     expect(loader).toHaveBeenCalledTimes(1);
   });

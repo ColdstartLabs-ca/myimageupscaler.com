@@ -22,6 +22,12 @@ import type { Locale } from '../../i18n/config';
 
 const BASE_URL = clientEnv.BASE_URL;
 const APP_NAME = clientEnv.APP_NAME;
+
+/** The layout title template appends ` | APP_NAME`, so a trailing brand would render twice. */
+function withoutBrandSuffix(title: string): string {
+  return title.replace(new RegExp(`\\s*[|\\-–—]\\s*${APP_NAME}\\s*$`), '');
+}
+
 const TWITTER_HANDLE = clientEnv.TWITTER_HANDLE;
 
 /**
@@ -55,11 +61,10 @@ export function generateMetadata(
   const path = `/${category}/${page.slug}`;
   const canonicalUrl = getCanonicalUrl(path, locale);
   const hreflangAlternates = generateHreflangAlternates(path, category);
-  // Note: og:locale is rendered via SeoMetaTags component to avoid duplicates
 
   // Enforce SEO best practice length limits
   const { title: truncatedTitle, description: truncatedDescription } = enforceMetaLengths(
-    page.metaTitle,
+    withoutBrandSuffix(page.metaTitle),
     page.metaDescription
   );
 
@@ -78,12 +83,11 @@ export function generateMetadata(
     description: truncatedDescription,
 
     // Open Graph
-    // Note: og:locale is rendered via SeoMetaTags component — do NOT set it here
-    // to avoid duplicate meta tags (Playwright strict mode + SEO penalty risk)
     openGraph: {
       title: truncatedTitle,
       description: truncatedDescription,
       type: 'website',
+      locale: getOpenGraphLocale(locale),
       url: canonicalUrl,
       siteName: APP_NAME,
       images: [
@@ -213,7 +217,7 @@ export function generateCategoryMetadata(category: PSEOCategory, locale: Locale 
   };
 
   return {
-    title: categoryTitles[category],
+    title: withoutBrandSuffix(categoryTitles[category]),
     description: categoryDescriptions[category],
 
     openGraph: {
