@@ -302,12 +302,13 @@ describe('product capability claims', () => {
   });
 
   it('wires the capability source into live landing and pSEO callers', () => {
-    const hero = readFileSync('client/components/landing/HeroSection.tsx', 'utf8');
+    // The homepage is force-static, so the hero offer reads the visitor's tier on the client.
+    const hero = readFileSync('client/components/landing/HeroCreditOffer.tsx', 'utf8');
     const signupCta = readFileSync('client/components/landing/SectionSignupCTA.tsx', 'utf8');
     const freeHub = readFileSync('app/(pseo)/free/page.tsx', 'utf8');
     const pseoCta = readFileSync('app/(pseo)/_components/pseo/sections/CTASection.tsx', 'utf8');
 
-    expect(hero).toContain('welcomeCreditsFor(country)');
+    expect(hero).toContain('welcomeCreditsForTier(tier)');
     expect(signupCta).toContain('welcomeCreditsForTier');
     expect(freeHub).not.toContain('DEFAULT_FREE_CREDITS');
     expect(pseoCta).toContain('PRODUCT_CAPABILITIES.guestAccess');

@@ -15,7 +15,7 @@ const LOCALES = { en, de, es, fr, it: itLocale, ja, pt } as const;
 
 /** Every homepage component that renders a `*Subtext` template. */
 const CALLER_FILES = [
-  'client/components/landing/HeroSection.tsx',
+  'client/components/landing/HeroCreditOffer.tsx',
   'client/components/landing/SectionSignupCTA.tsx',
   'client/components/pages/HomePageClient.tsx',
 ];

@@ -1,11 +1,10 @@
 import { ReferralBadge } from '@client/components/landing/ReferralBadge';
 import { HeroActions } from '@client/components/landing/HeroActions';
+import { HeroCreditSubtext, HeroFreeToStart } from '@client/components/landing/HeroCreditOffer';
 import { HeroBeforeAfter } from '@client/components/landing/HeroBeforeAfter';
 import { HeroTrustBar } from '@client/components/landing/HeroTrustBar';
 import { HERO_COMPARISON_IMAGES } from '@client/components/landing/heroAssets';
-import { welcomeCreditOfferKey, welcomeCreditsFor } from '@shared/config/product-capabilities';
 import { Check } from 'lucide-react';
-import { headers } from 'next/headers';
 import Image from 'next/image';
 import { getTranslations } from 'next-intl/server';
 
@@ -14,15 +13,10 @@ import { getTranslations } from 'next-intl/server';
  */
 export async function HeroSection(): Promise<JSX.Element> {
   const t = await getTranslations('homepage');
-  const headersList = await headers();
-  const country = headersList.get('CF-IPCountry') ?? headersList.get('cf-ipcountry') ?? '';
-  const freeCredits = welcomeCreditsFor(country);
-  const creditOffer = t(welcomeCreditOfferKey(freeCredits), { credits: freeCredits ?? 0 });
-
   const heroTrustItems = [
-    { label: freeCredits > 0 ? 'Free to start' : creditOffer, icon: <Check size={18} /> },
-    { label: 'No watermarks', icon: <Check size={18} /> },
-    { label: 'No credit card required', icon: <Check size={18} /> },
+    { key: 'free-to-start', label: <HeroFreeToStart />, icon: <Check size={18} /> },
+    { key: 'no-watermarks', label: 'No watermarks', icon: <Check size={18} /> },
+    { key: 'no-card', label: 'No credit card required', icon: <Check size={18} /> },
   ];
 
   const heroSlider = (
@@ -82,7 +76,7 @@ export async function HeroSection(): Promise<JSX.Element> {
 
               <p className="mt-3 flex items-center gap-2 text-xs text-text-muted-aa lg:mt-4 lg:text-sm">
                 <Check size={15} className="shrink-0 text-accent lg:h-[17px] lg:w-[17px]" />
-                {t('ctaSubtext', { creditOffer })}
+                <HeroCreditSubtext />
               </p>
 
               <p className="mt-4 max-w-xl text-sm font-light leading-relaxed text-text-secondary sm:text-xl lg:mt-7 lg:text-lg">
@@ -97,7 +91,7 @@ export async function HeroSection(): Promise<JSX.Element> {
 
               <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-text-secondary sm:text-base lg:mt-9 lg:gap-x-7 lg:gap-y-3 lg:text-sm">
                 {heroTrustItems.map(item => (
-                  <div key={item.label} className="flex items-center gap-2">
+                  <div key={item.key} className="flex items-center gap-2">
                     <span className="text-accent">{item.icon}</span>
                     <span>{item.label}</span>
                   </div>

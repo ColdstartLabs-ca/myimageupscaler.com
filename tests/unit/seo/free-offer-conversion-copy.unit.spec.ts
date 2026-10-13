@@ -103,7 +103,9 @@ describe('free-offer conversion copy', () => {
 
   it('HeroSection restores the "Free to start" and "No credit card required" badges', () => {
     const source = readFileSync('client/components/landing/HeroSection.tsx', 'utf8');
-    expect(source).toContain('Free to start');
+    const offer = readFileSync('client/components/landing/HeroCreditOffer.tsx', 'utf8');
+    expect(source).toContain('<HeroFreeToStart />');
+    expect(offer).toContain('Free to start');
     expect(source).toContain('No credit card required');
   });
 
