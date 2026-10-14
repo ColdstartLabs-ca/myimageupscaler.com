@@ -505,3 +505,12 @@ available. Do not treat the pre-fix rates above as a post-deploy measurement.
 - **Next action:** Review affected request sizes and worker memory limits, then monitor recurrence.
 - **Status:** Open
 
+### 2026-10-14T08:37:59+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 11 in the sampled window
+- **Evidence:** `{"count_15m": 1, "count_3h": 11, "live_health": {"api_health": {"latency_ms": 792, "status": 200}, "homepage": {"latency_ms": 1313, "status": 200}}, "rate_15m": 0.00362, "rate_3h": 0.00446, "requests_15m": 276, "requests_3h": 2464}`
+- **Assessment:** 11 exceeded-memory errors across 2464 requests in 3h (0.45%), with healthy 200 endpoints and no broad outage.
+- **Next action:** Inspect affected inputs and worker memory limits, then add targeted mitigation or alerting if the rate persists.
+- **Status:** Open
+
