@@ -6,7 +6,7 @@
  * that would cause the LCP element to shift back to client-rendered JS.
  */
 
-import { readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { describe, expect, it } from 'vitest';
 
@@ -288,13 +288,12 @@ describe('Homepage Performance — Phase 5', () => {
       expect(source).not.toMatch(/fonts\.gstatic\.com[^>]*preconnect/);
     });
 
-    it('should still use next/font for Inter and DM_Sans (self-hosted)', () => {
+    it('should use local Inter and DM Sans fonts (no build-time Google fetch)', () => {
       const layoutPath = join(ROOT, 'app/[locale]/layout.tsx');
       const source = readFileSync(layoutPath, 'utf-8');
 
-      expect(source).toContain("from 'next/font/google'");
-      expect(source).toContain('Inter');
-      expect(source).toContain('DM_Sans');
+      expect(source).not.toContain('next/font/google');
+      expect(source).toContain("import { inter, dmSans } from '@client/styles/fonts'");
     });
   });
 });
@@ -403,13 +402,12 @@ describe('Homepage Performance — Phase 6 (Render-Blocking CSS)', () => {
       expect(source).not.toMatch(/fonts\.gstatic\.com[^>]*preconnect/);
     });
 
-    it('should still use next/font for Inter and DM_Sans (self-hosted)', () => {
+    it('should use local Inter and DM Sans fonts (no build-time Google fetch)', () => {
       const layoutPath = join(ROOT, 'app/(pseo)/layout.tsx');
       const source = readFileSync(layoutPath, 'utf-8');
 
-      expect(source).toContain("from 'next/font/google'");
-      expect(source).toContain('Inter');
-      expect(source).toContain('DM_Sans');
+      expect(source).not.toContain('next/font/google');
+      expect(source).toContain("import { inter, dmSans } from '@client/styles/fonts'");
     });
   });
 
@@ -631,5 +629,18 @@ describe('Homepage Performance — CLS Prevention', () => {
       expect(source).toMatch(/horizontal-logo-full\.png/);
       expect(source).toMatch(/height=\{40\}/);
     });
+  });
+});
+
+describe('Self-hosted fonts', () => {
+  it('should load Inter and DM Sans from committed woff2 files', () => {
+    const source = readFileSync(join(ROOT, 'client/styles/fonts.ts'), 'utf-8');
+
+    expect(source).toContain("from 'next/font/local'");
+    expect(source).not.toContain("from 'next/font/google'");
+    for (const file of ['inter-latin-wght.woff2', 'dm-sans-latin-wght.woff2']) {
+      expect(source).toContain(`./fonts/${file}`);
+      expect(existsSync(join(ROOT, 'client/styles/fonts', file))).toBe(true);
+    }
   });
 });

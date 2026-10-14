@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { notFound } from 'next/navigation';
-import { Inter, DM_Sans } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { ClientProviders } from '@client/components/ClientProviders';
@@ -11,23 +10,10 @@ import { Layout } from '@client/components/layout/Layout';
 import { JsonLd } from '@client/components/seo/JsonLd';
 import { SUPPORTED_LOCALES, isValidLocale } from '@/i18n/config';
 import { serverEnv } from '@shared/config/env';
+import { inter, dmSans } from '@client/styles/fonts';
 import '@client/styles/index.css';
 
 const APP_NAME = serverEnv.APP_NAME;
-
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-inter',
-  display: 'swap',
-});
-
-const dmSans = DM_Sans({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-dm-sans',
-  display: 'swap',
-});
 
 export function generateStaticParams() {
   return SUPPORTED_LOCALES.map(locale => ({ locale }));

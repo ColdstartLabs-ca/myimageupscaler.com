@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
-import { Inter, DM_Sans } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { ClientProviders } from '@client/components/ClientProviders';
@@ -10,21 +9,8 @@ import { Layout } from '@client/components/layout/Layout';
 import { JsonLd } from '@client/components/seo/JsonLd';
 import { DEFAULT_LOCALE } from '@/i18n/config';
 import { clientEnv } from '@shared/config/env';
+import { inter, dmSans } from '@client/styles/fonts';
 import '@client/styles/index.css';
-
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-inter',
-  display: 'swap',
-});
-
-const dmSans = DM_Sans({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-dm-sans',
-  display: 'swap',
-});
 
 interface IPSEOLayoutProps {
   children: ReactNode;

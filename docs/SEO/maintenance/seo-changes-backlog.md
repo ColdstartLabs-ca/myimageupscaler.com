@@ -9,6 +9,12 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-10-14
+
+### Fonts self-hosted from committed files — perf-only, no copy change
+
+The release build failed in `next/font/google`: Google Fonts returned a font URL with no file extension, and the loader crashed (`Cannot read properties of null (reading '1')`). Inter and DM Sans now load through `next/font/local` from `client/styles/fonts/*.woff2` (`client/styles/fonts.ts`), shared by `app/[locale]/layout.tsx` and `app/(pseo)/layout.tsx`. Same Google latin variable files, same CSS variables and `display: swap`; weights now cover the full axis. Not shipped: non-latin subsets (latin-ext, cyrillic, greek, vietnamese) — no supported locale needs them, and missing glyphs fall back per character. Guarded by `tests/unit/seo/homepage-performance.unit.spec.ts`. **Readback after deploy:** PSI mobile on `/` shows one preloaded woff2 per family and no CLS change.
+
 ## 2026-10-13
 
 ### Traffic-decline recovery round — flagship recovery, tier-aware hero offer, single canonical/hreflang
