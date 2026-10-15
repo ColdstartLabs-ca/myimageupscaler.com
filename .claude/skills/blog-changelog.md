@@ -1,5 +1,12 @@
 # Blog Changelog
 
+## 2026-10-15
+
+### Verification: Best-image rung-3 final public copy confirmed
+
+**Affected:** best-image-upscaler
+**Changes:** No production blog edit or rollback. The normal rendered article now exposes both the evidence module and corrected closing CTA (200, self-canonical, index/follow); authenticated API body SHA256 remains `f3180ce35db4a0f7b910faa9a2bddae130d2fc66bb4a0efa74e8b84a555473a9`. Retained the final Oct 12 DB write, rung 3 and exact prior body; anchored measurement to first confirmed final-copy exposure Oct 15, not the earlier partial article. URL Inspection reports `Submitted and indexed`, indexing allowed, successful post-write crawl `2026-10-13T17:00:05Z` and matching canonicals; resolved the existing indexing row as API-resolved, not a manual request. Measure Oct 16–29; earliest final-data verdict Nov 2.
+
 ## 2026-10-13
 
 ### SEO: Best-free flagship recovery — title, description and body positioning

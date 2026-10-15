@@ -9,6 +9,16 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-10-15
+
+### Three Kings — best-image final-copy exposure reconciled; all production actions gated
+
+- Refreshed the correlator from live GSC with `dataState: final`: Jun 14–Oct 11, retaining the three-day holdback/excluded current day. Ledger check: **0 EDIT_NOW, 0 REGRESSION, 7 HOLD, 3 GATED, 1 STOP, 0 VERDICT/NO_DATA**. No eligible production blog write, rollback, new post, deployment or cache purge; no new backup gate needed. Existing demand/position/healthy-CTR/STOP gates retained.
+- `https://myimageupscaler.com/blog/best-image-upscaler`: normal public GET is 200, self-canonical and index/follow; the rendered article (excluding script/RSC) now exposes the workflow evidence module **and corrected closing CTA**. Authenticated API final body SHA256 matches `f3180ce35db4a0f7b910faa9a2bddae130d2fc66bb4a0efa74e8b84a555473a9`, `updated_at` remains `2026-10-12T16:46:09.796203+00:00`. Reconciled pending→verified, retaining `dbEditDate`, rung 3, exact prior body and backup records. Earlier final-copy exposure is unknown: measurement conservatively starts Oct 15; no new history rung or inferred outcome.
+- URL Inspection reports `Submitted and indexed`, indexing allowed, successful post-write crawl `2026-10-13T17:00:05Z` and matching Google/user canonicals. Updated the existing best-image indexing row in place as **API-resolved, not a manual request**, and appended exposure confirmation to the blog changelog. Pending unique URLs **69→68**, no duplicate rows; oldest pending group Aug 13. Native browser preflight initially timed out; CLI connectivity and the second native `list_pages` succeeded. No GSC request-indexing click or manual-submission claim. A separate read-only flagship inspection reports a successful Oct 15 crawl, but does not close its performance window or authorize another edit.
+- Verification: new exposure-state test RED before reconciliation, then **44/44 affected unit tests GREEN**; `yarn verify` passes (TypeScript, ICU, schema, indexation and 12 cache-config tests; 0 ESLint errors, 1,832 existing warnings). Required aggregate `yarn test <affected paths>` completed **228 API tests / 32 skipped**, then hit the explicit 180-second cap during E2E; full aggregate/E2E green is not claimed. `git diff --check` passes; no unrelated files changed. Bookkeeping/test changes are local-only, not pushed/deployed.
+- Next eligible final-data review: **2026-10-23** for the four Oct 5 exposure rows; YouTube **Oct 26**; flagship Oct 27 target requires final data through that date (earliest correlator export **Oct 31**). Best-image needs all 14 complete post-confirmation days **Oct 16–29**, earliest final-data verdict **2026-11-02**. Continue the existing indexing operator queue; do not re-edit HOLD pages or reapply diagnostic rollback losses.
+
 ## 2026-10-14
 
 ### Fonts self-hosted from committed files — perf-only, no copy change
