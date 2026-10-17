@@ -9,6 +9,14 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-10-17
+
+### GSC indexing requests after the Oct 15 deploy — remove-bg and homepage
+
+- Code deploy confirmed live 2026-10-15 03:19 UTC: single canonical/hreflang, tier-aware hero offer, no `/_next/` robots disallow, 46-child sitemap index, remove-bg title/H1.
+- Requested indexing in the GSC URL Inspection UI for `https://myimageupscaler.com/tools/remove-bg` and `https://myimageupscaler.com/`; both dialogs read "URL was added to a priority crawl queue". No content, metadata or DB change.
+- Fresh data through Oct 16 (not final): flagship CTR ~2.1% at position 6 (no lift yet); homepage CTR 2.4% → ~3.3% on Oct 15–16 (two days, noise-level); site ~150 clicks/day flat; weekly clicks down four weeks in a row (1,438 → 1,064). No new edit: readbacks stay Oct 23, Oct 26, Oct 30–31 (flagship + hero) and Nov 2.
+
 ## 2026-10-15
 
 ### Three Kings — best-image final-copy exposure reconciled; all production actions gated
