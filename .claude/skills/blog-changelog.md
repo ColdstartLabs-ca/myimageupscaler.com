@@ -1,5 +1,13 @@
 # Blog Changelog
 
+## 2026-10-19
+
+### SEO: TikTok PFP title-only CTR test
+
+**Affected:** tiktok-profile-picture-ideas
+**Why:** Fresh GSC Sep 19–Oct 16: 22 clicks / 8,607 impressions, position 7.97. Consecutive final 14-day windows have nearly identical impressions/position (4,305 at 7.98 → 4,257 at 7.97) and weak CTR (0.14% → 0.38%); the canonical owns the PFP queries but its old title omitted `PFP`. No edit since July 6 and no overlapping experiment. Existing eleven manager rows stay HOLD/GATED/STOP.
+**Changes:** Only `seo_title` → `TikTok Profile Picture Ideas: 8 PFP Styles (2026)` (49 chars). Title/H1, descriptions, body, CTAs, media, slug and status unchanged; API GET proves only `seo_title`/`updated_at` changed and body SHA256 remains `3f619d58bff5fc2f1aa1e19c7fc3385cb4823e5f271cd5eb7333b5e87067ab49`. Fresh verified backup `backup_2026-10-19_10-35-08.{schema,data}.sql.gz` preceded PATCH 200 at `2026-10-19T17:39:14.893624+00:00`; normal HTML and refreshed browser DOM expose the new title with 200/self-canonical/index-follow. Recorded reversible rung 1 and added recurring daily collection. Measurement Oct 20–Nov 2, earliest final-data verdict Nov 6; pending GSC request recorded once. No deployment required for the live API edit; repo changes stay local-only.
+
 ## 2026-10-15
 
 ### Verification: Best-image rung-3 final public copy confirmed

@@ -12,6 +12,10 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 
 ## Pending
 
+### TikTok PFP title-only test — public title verified 2026-10-19
+
+- [ ] `https://myimageupscaler.com/blog/tiktok-profile-picture-ideas` — 2026-10-19 changed only `seo_title` to `TikTok Profile Picture Ideas: 8 PFP Styles (2026)`; authenticated API and normal public HTML/browser verified (200, self-canonical, index/follow). Pre-edit successful crawl Oct 18 is not post-edit evidence. Request indexing once; measure 14 complete days Oct 20–Nov 2, earliest final-data verdict **2026-11-06**. No request has yet been confirmed.
+
 > **2026-08-13 deploy — daily quota reached.** GSC's URL Inspection "Request indexing"
 > button is capped at ~10 submissions per property per day. 10 were submitted and
 > 9 confirmed ("URL was added to a priority crawl queue"); the 11th returned
@@ -104,12 +108,12 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 - [ ] `https://myimageupscaler.com/blog/reduce-image-noise`
 - [ ] `https://myimageupscaler.com/blog/noise-reduction-in-image`
 - [ ] `https://myimageupscaler.com/blog/ai-photo-restoration`
-- [x] `https://myimageupscaler.com/blog/how-to-clear-up-a-photo` — indexing requested 2026-10-12 in the GSC URL Inspection UI, confirmed "URL was added to a priority crawl queue"; closes the 2026-08-13 PRD 06 pending request. Normal public GET: 200, self-canonical, index/follow, cache HIT. Fresh GSC Sep 12–Oct 9: 28 clicks / 4,009 impressions, position 13.8. Request acceptance is not a guarantee of a new crawl, revised Google copy, or traffic lift.
+- [x] `https://myimageupscaler.com/blog/how-to-clear-up-a-photo` — indexing requested 2026-10-12 in the GSC URL Inspection UI, confirmed "URL was added to a priority crawl queue"; closes the 2026-08-13 PRD 06 pending request. Normal public GET: 200, self-canonical, index/follow, cache HIT. Fresh GSC Sep 12–Oct 9: 28 clicks / 4,009 impressions, position 13.8. **2026-10-19 API follow-up:** `Submitted and indexed`, successful post-request crawl `2026-10-17T23:17:27Z`, indexing allowed and matching Google/user canonicals. No repeat request; no traffic-lift claim.
 - [ ] `https://myimageupscaler.com/blog/best-image-upscaling-tools-2026`
 
 - [x] `https://myimageupscaler.com/`
 
-- [x] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared` — indexing requested 2026-10-12 in the GSC URL Inspection UI, confirmed "URL was added to a priority crawl queue". Normal public GET: 200, self-canonical, index/follow, cache HIT; rendered article contains the corrected comparison heading and vendor facts from the 2026-09-16 factual repair. This closes that repair's pending request, not a new content experiment or proof of ranking recovery.
+- [x] `https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared` — indexing requested 2026-10-12 in the GSC URL Inspection UI, confirmed "URL was added to a priority crawl queue". Normal public GET: 200, self-canonical, index/follow, cache HIT; rendered article contains the corrected comparison heading and vendor facts from the 2026-09-16 factual repair. **2026-10-19 API follow-up:** `Submitted and indexed`, successful crawl `2026-10-19T07:04:00Z` after both the request and Oct 13 recovery write, indexing allowed and matching canonicals. No repeat request or ranking-recovery claim; retain the Oct 31 earliest final-data review for the Oct 13 experiment.
 - [x] `https://myimageupscaler.com/blog/best-free-ai-photo-enhancer-online`
 
 - [x] `https://myimageupscaler.com/blog/fix-blurry-photos-ai-methods-guide`

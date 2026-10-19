@@ -65,6 +65,7 @@ const PAGE_FILTERS = [
   ['blog/topaz-denoise-ai', '/blog/topaz-denoise-ai'],
   ['blog/best-ai-image-enhancer', '/blog/best-ai-image-enhancer'],
   ['blog/photoshop-upscale-image', '/blog/photoshop-upscale-image'],
+  ['https://myimageupscaler.com/blog/tiktok-profile-picture-ideas', '/blog/tiktok-profile-picture-ideas', 'equals'],
 ];
 const QUERY_FILTERS = [
   ['image upscaler', 'image upscaler (head term)'],
@@ -184,10 +185,10 @@ async function main() {
       : QUERY_FILTERS;
     data.daily = await query(token, args.site, { startDate: start, endDate: end, dimensions: ['date'], rowLimit: 25000, dataState: 'final' }, 'site daily');
     console.error(`site daily: ${data.daily.length} rows`);
-    for (const [expr, label] of pageFilters) {
+    for (const [expr, label, operator = 'contains'] of pageFilters) {
       data.pages[label] = await query(token, args.site, {
         startDate: start, endDate: end, dimensions: ['date', 'page'], rowLimit: 25000, dataState: 'final',
-        dimensionFilterGroups: [{ filters: [{ dimension: 'page', operator: 'contains', expression: expr }] }],
+        dimensionFilterGroups: [{ filters: [{ dimension: 'page', operator, expression: expr }] }],
       }, `page ${label}`);
       console.error(`page ${label}: ${data.pages[label].length} rows`);
     }

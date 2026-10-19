@@ -609,6 +609,33 @@
         }
       ],
       "stopRule": null
+    },
+    {
+      "url": "/blog/tiktok-profile-picture-ideas",
+      "label": "/blog/tiktok-profile-picture-ideas",
+      "rung": 1,
+      "lastEdit": "2026-10-19",
+      "history": [
+        {
+          "date": "2026-10-19",
+          "rung": 1,
+          "field": "seo_title",
+          "note": "Title-only PFP-intent test: 6/4305 -> 16/4257 clicks/impressions at unchanged position 7.98 -> 7.97 over consecutive final 14-day windows; title adds the missing PFP acronym and eight-style scope. API and normal public title verified; all other post fields preserved. Measure Oct 20-Nov 2; earliest final-data verdict Nov 6. Backup backup_2026-10-19_10-35-08 verified.",
+          "outcome": null,
+          "previousValue": "8 TikTok Profile Picture Ideas to Stand Out in 2026",
+          "dbEditDate": "2026-10-19",
+          "liveVerification": {
+            "status": "verified",
+            "field": "seo_title",
+            "checkedOn": "2026-10-19",
+            "apiUpdatedAt": "2026-10-19T17:39:14.893624+00:00",
+            "value": "TikTok Profile Picture Ideas: 8 PFP Styles (2026)",
+            "bodySHA256": "3f619d58bff5fc2f1aa1e19c7fc3385cb4823e5f271cd5eb7333b5e87067ab49",
+            "reason": "API GET proves only seo_title and updated_at changed; normal public HTML and refreshed browser DOM expose the new title, 200, self-canonical, index/follow. An initial browser read had the prior title; subsequent normal GET and browser reload/fetch show the new title. Measure from today's confirmed exposure, not from the API response alone."
+          }
+        }
+      ],
+      "stopRule": null
     }
   ]
 }
