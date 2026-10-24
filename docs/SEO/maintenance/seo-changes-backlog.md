@@ -9,6 +9,15 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-10-23
+
+### SEO lock approval gate
+
+- Added the generated `content/seo-lock.json` baseline for the 36 URLs above 20 GSC clicks in the 28-day web export (795 page rows; 17 code entries and 19 DB entries), with all eight rendered fields plus source and click metadata. Added shared extraction/diff logic, regeneration, R1 render drift checking, R2 SSH-signed approval checking, the blog PATCH 409 fence, deploy wiring, and locked-URL proposal instructions for the Three Kings and opportunity publishers.
+- Migrated the listed per-edit SEO pin tests into lock/general coverage and removed their four one-off apply scripts. The homepage protected-pages test now retains only its FAQ assertion.
+- Validation: targeted lock/API/protected-page tests **13/13 passed**, TypeScript passed, scoped ESLint passed, and `yarn verify` passed in **64.74s** (0 errors; 1,830 existing warnings). A production-configured remote build passed in 104s and generated 4,521 routes; lock regeneration wrote 36 entries.
+- Follow-up: the first João SSH-signed baseline commit is required before R2 can pass; the first shared GitHub Actions run remains pending. Full unit/SEO suites are not green because the pre-existing `pseo-hero-lcp.unit.spec.ts` expects removed `DM_Sans`/`display: 'swap'` source text (3 failures across the full suite, 2 in the SEO subset); those files are outside this lane.
+
 ## 2026-10-17
 
 ### GSC indexing requests after the Oct 15 deploy — remove-bg and homepage

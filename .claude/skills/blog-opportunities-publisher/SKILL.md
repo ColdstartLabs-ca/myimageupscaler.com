@@ -77,6 +77,8 @@ After completing an action, update the canonical state in the same run. Append t
      - `indexing backlog`
      - `defer-with-deadline`
 
+   - Before handing a maintenance action to `blog-edit`, read `content/seo-lock.json`. A locked URL becomes a proposal in the weekly digest: include the URL, locked field, proposed value, evidence, and the required João SSH-signed lock change. Keep the API/write handoff out of the run until that signed approval exists.
+
 5. **Decide whether to publish**
    - Publish nothing if no candidate passes the anti-cannibalization gate and scoring threshold.
    - Publish nothing if the best action is to refresh an existing blog post, tool page, or pSEO page.

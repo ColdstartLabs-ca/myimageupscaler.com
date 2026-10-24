@@ -8,6 +8,47 @@ import {
   type IBlogPost,
 } from '@shared/validation/blog.schema';
 import { createLogger } from '@server/monitoring/logger';
+import seoLockRaw from '@/content/seo-lock.json';
+import type { ISeoLockEntry } from '@lib/seo/seo-lock';
+
+const SEO_LOCK = seoLockRaw as Record<string, ISeoLockEntry>;
+
+const BLOG_LOCKED_FIELDS: Array<
+  [
+    bodyField: 'title' | 'description' | 'seo_title' | 'seo_description',
+    lockField: 'title' | 'description',
+  ]
+> = [
+  ['title', 'title'],
+  ['description', 'description'],
+  ['seo_title', 'title'],
+  ['seo_description', 'description'],
+];
+
+function getBlogLockEntries(slug: string): Array<{ path: string; entry: ISeoLockEntry }> {
+  const englishPath = `/blog/${slug}`;
+  const localizedPath = new RegExp(`^/[^/]+/blog/${slug.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`);
+  return Object.entries(SEO_LOCK)
+    .filter(([path]) => path === englishPath || localizedPath.test(path))
+    .map(([path, entry]) => ({ path, entry }));
+}
+
+function getBlogLockViolations(
+  slug: string,
+  body: Record<string, unknown>
+): Array<{ path: string; field: string; expected: string; actual: string }> {
+  const entries = getBlogLockEntries(slug);
+  if (entries.length === 0) return [];
+
+  return entries.flatMap(({ path, entry }) =>
+    BLOG_LOCKED_FIELDS.flatMap(([bodyField, lockField]) => {
+      if (!Object.prototype.hasOwnProperty.call(body, bodyField)) return [];
+      const actual = body[bodyField];
+      if (typeof actual !== 'string' || actual === entry[lockField]) return [];
+      return [{ path, field: bodyField, expected: entry[lockField], actual }];
+    })
+  );
+}
 
 /**
  * GET /api/blog/posts/[slug] - Get a single blog post by slug
@@ -78,6 +119,16 @@ export async function PATCH(
     // Parse and validate request body
     const body = await request.json();
     const validatedData = updateBlogPostSchema.parse(body);
+
+    const lockViolations = getBlogLockViolations(slug, validatedData);
+    if (lockViolations.length > 0) {
+      return blogApiErrorResponse(
+        'SEO_LOCKED',
+        `SEO lock prevents changing ${lockViolations.map(violation => violation.field).join(', ')} for ${slug}`,
+        409,
+        { violations: lockViolations }
+      );
+    }
 
     logger.info('Updating blog post', { slug });
 

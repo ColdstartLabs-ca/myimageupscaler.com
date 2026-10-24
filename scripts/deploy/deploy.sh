@@ -181,6 +181,16 @@ echo ""
 assert_clean_worktree
 
 source "$SCRIPT_DIR/steps/02-build.sh" && step_build
+
+echo -e "${CYAN}▸ Running SEO lock gate...${NC}"
+cd "$PROJECT_ROOT"
+if ! yarn seo:lock:gate; then
+    echo -e "${RED}✗ SEO lock gate failed. Deployment blocked.${NC}"
+    exit 1
+fi
+echo -e "${GREEN}✓ SEO lock gate passed${NC}"
+echo ""
+
 source "$SCRIPT_DIR/steps/03-deploy.sh" && step_deploy
 
 # Purge Cloudflare cache if requested
