@@ -29,9 +29,36 @@ export interface ISeoLockFields {
 export interface ISeoLockEntry extends ISeoLockFields {
   source: 'code' | 'db';
   clicks28d: number;
+  change?: {
+    approvedAt: string;
+    baselineClicks28d: number;
+    baselineEndDate: string;
+    readbackDate: string;
+    previousLockCommit: string;
+  };
 }
 
 export type ISeoLock = Record<string, ISeoLockEntry>;
+
+export function hasValidSeoChangeMetadata(change: ISeoLockEntry['change']): boolean {
+  if (!change) return false;
+  const dates = [change.approvedAt, change.baselineEndDate, change.readbackDate];
+  if (
+    !dates.every(value => {
+      if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+      const date = new Date(`${value}T12:00:00Z`);
+      return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value;
+    })
+  )
+    return false;
+  return (
+    change.baselineEndDate < change.approvedAt &&
+    Date.parse(change.readbackDate) - Date.parse(change.approvedAt) >= 14 * 86400000 &&
+    /^[a-f0-9]{40}$/i.test(change.previousLockCommit) &&
+    Number.isFinite(change.baselineClicks28d) &&
+    change.baselineClicks28d > 0
+  );
+}
 
 export async function loadEffectiveLock(
   signedLock: ISeoLock,

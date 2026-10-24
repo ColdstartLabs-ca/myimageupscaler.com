@@ -263,6 +263,7 @@ export async function createSyncRun(
     | 'webhook_recovery'
     | 'full_reconciliation'
     | 'three_kings_sitemap_refresh'
+    | 'seo_lock_digest'
 ): Promise<string> {
   const { data, error } = await supabaseAdmin
     .from('sync_runs')

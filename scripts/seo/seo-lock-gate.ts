@@ -2,11 +2,14 @@ import { execFileSync, spawn } from 'node:child_process';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
+import { isDeepStrictEqual } from 'node:util';
 import { join, relative } from 'node:path';
 import {
   diffLock,
+  SEO_LOCK_FIELDS,
   extractSeoFields,
   loadEffectiveLock,
+  hasValidSeoChangeMetadata,
   type ISeoLock,
   type ISeoLockDiff,
   type TSeoLockField,
@@ -170,7 +173,7 @@ function commitParent(repoRoot: string, commitSha: string): string | null {
   return parent || null;
 }
 
-function verifySshCommit(repoRoot: string, commitSha: string, allowedSignersFile: string): boolean {
+export function verifySshCommit(repoRoot: string, commitSha: string, allowedSignersFile: string): boolean {
   try {
     const commit = runGit(repoRoot, ['cat-file', 'commit', commitSha]);
     if (!commit.includes('BEGIN SSH SIGNATURE')) return false;
@@ -211,23 +214,13 @@ function lockDiffsBetween(oldLock: ISeoLock, newLock: ISeoLock): IApprovalViolat
       });
     }
 
-    if (oldEntry.source !== newEntry.source) {
-      violations.push({
-        commitSha: '',
-        path,
-        field: 'source',
-        expected: oldEntry.source,
-        actual: newEntry.source,
-      });
-    }
-    if (oldEntry.clicks28d !== newEntry.clicks28d) {
-      violations.push({
-        commitSha: '',
-        path,
-        field: 'clicks28d',
-        expected: oldEntry.clicks28d,
-        actual: newEntry.clicks28d,
-      });
+    for (const field of new Set([...Object.keys(oldEntry), ...Object.keys(newEntry)])) {
+      if (SEO_LOCK_FIELDS.some(lockedField => lockedField === field)) continue;
+      const expected = oldEntry[field as keyof typeof oldEntry];
+      const actual = newEntry[field as keyof typeof newEntry];
+      if (!isDeepStrictEqual(expected, actual)) {
+        violations.push({ commitSha: '', path, field, expected, actual });
+      }
     }
   }
   return violations;
@@ -244,7 +237,7 @@ function changedFields(oldLock: ISeoLock, newLock: ISeoLock): Map<string, unknow
   return result;
 }
 
-async function fetchAllowedSigners(
+export async function fetchAllowedSigners(
   username: string,
   apiUrl: string
 ): Promise<{ content: string; tempDir: string }> {
@@ -316,6 +309,19 @@ export async function checkLockApproval(
         violations: [],
         reason: `No SSH-signed approval commit found for ${relativePath}`,
       };
+    }
+
+    const approvedLock = readLockAtCommit(repoRoot, signedBaseline, lockPath);
+    const baselineParent = commitParent(repoRoot, signedBaseline);
+    const parentLock = baselineParent ? readLockAtCommit(repoRoot, baselineParent, lockPath) : {};
+    for (const [path, entry] of Object.entries(approvedLock)) {
+      if (!parentLock[path] || diffLock(parentLock[path], entry).length === 0) continue;
+      const previousSigned = history.slice(history.indexOf(signedBaseline) + 1)
+        .find(commitSha => verifySshCommit(repoRoot, commitSha, allowedSignersFile!));
+      if (!hasValidSeoChangeMetadata(entry.change) || !previousSigned || entry.change?.previousLockCommit !== previousSigned) {
+        return { ok: false, signedBaseline, changedDbFields, violations: [],
+          reason: `Signed value change at ${path} requires valid evaluation metadata referencing the previous SSH-signed lock commit` };
+      }
     }
 
     if (options.deployBase) {

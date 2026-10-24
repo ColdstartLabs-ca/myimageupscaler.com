@@ -52,6 +52,7 @@ const LIFECYCLE_DRAINS_PER_SCHEDULE = 10;
 const JOB_REQUIRED_COUNTS: Record<string, readonly string[]> = {
   '/api/cron/database-retention': ['totalDeleted'],
   '/api/cron/quota-guard': ['alertCount'],
+  '/api/cron/seo-lock-digest': ['checked', 'autoAdded', 'alertCount'],
 };
 
 export interface ICronResultEvaluation {
@@ -205,6 +206,9 @@ export default {
     } else if (cronPattern === '25 * * * *') {
       endpoint = '/api/cron/database-retention';
       jobName = 'Database Retention';
+    } else if (cronPattern === '0 7 * * 1') {
+      endpoint = '/api/cron/seo-lock-digest';
+      jobName = 'Weekly SEO Lock Digest';
     } else if (cronPattern === '0 2 * * *') {
       endpoint = '/api/cron/quota-guard';
       jobName = 'Quota Guard';

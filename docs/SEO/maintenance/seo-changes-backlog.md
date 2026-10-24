@@ -3316,3 +3316,7 @@ A real local built-Worker request to `/api/blog/images/upload` returned 500 duri
 - Added append-only auto-lock storage and connected it to deploy and blog PATCH enforcement, including localized blog URLs. An isolated PostgreSQL migration test verifies frozen values, conflict preservation, RLS and permissions; production remains unchanged. The new readers require the migration before rollout.
 - Added tested live-drift extraction and the weekly digest template. Weekly cron, GSC evaluation and actual delivery remain pending in the monitoring PRD.
 - Consolidated three historical blog test files into `blog-field-policy.unit.spec.ts`, retaining all 13 tests, assertions and page fixtures. No page content changed.
+
+### 2026-10-23 — Weekly SEO digest local implementation
+- Wired Monday cron and its authenticated manual trigger to live drift, relative stop-loss, unchanged-winner diagnosis, append-only winner capture, recent proposals and gate-file commits. Added signed evaluation metadata enforcement and a reviewable single-entry restore command that preserves staged/unstaged work.
+- Local proof: related route/gate/template/worker tests, actual PostgreSQL append-only and sync-type transactions, production-config Next build and real unauthenticated endpoint rejection. Read-only GSC and GitHub requests succeeded. Production rollout, signing setup, Worker limits and inbox delivery remain pending in the PRDs; production data was unchanged.

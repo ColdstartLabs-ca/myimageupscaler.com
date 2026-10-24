@@ -189,6 +189,60 @@ describe('SEO lock render gate', () => {
 });
 
 describe('SEO lock approval gate', () => {
+  it('rejects a signed value change without its evaluation baseline', async () => {
+    const fixture = makeSignedRepo();
+    try {
+      writeFileSync(
+        fixture.allowedSigners,
+        `test-signer ${readFileSync(`${fixture.privateKey}.pub`, 'utf8')}`
+      );
+      writeLock(fixture.repo, { '/blog/locked': { ...ENTRY, title: 'Approved new title' } });
+      git(fixture.repo, ['add', 'content/seo-lock.json']);
+      git(fixture.repo, ['commit', '-S', '-m', 'change without evaluation baseline']);
+      const result = await checkLockApproval({
+        repoRoot: fixture.repo,
+        allowedSignersFile: fixture.allowedSigners,
+      });
+      expect(result.ok).toBe(false);
+      expect(result.reason).toContain('evaluation metadata');
+    } finally {
+      rmSync(fixture.repo, { recursive: true, force: true });
+      rmSync(fixture.keyDir, { recursive: true, force: true });
+    }
+  });
+  it('requires a signature for evaluation metadata on an existing entry', async () => {
+    const fixture = makeSignedRepo();
+    try {
+      writeFileSync(
+        fixture.allowedSigners,
+        `test-signer ${readFileSync(`${fixture.privateKey}.pub`, 'utf8')}`
+      );
+      writeLock(fixture.repo, {
+        '/blog/locked': {
+          ...ENTRY,
+          change: {
+            approvedAt: '2026-10-01',
+            baselineClicks28d: 100,
+            baselineEndDate: '2026-09-28',
+            readbackDate: '2026-10-18',
+            previousLockCommit: 'a'.repeat(40),
+          },
+        },
+      });
+      git(fixture.repo, ['add', 'content/seo-lock.json']);
+      git(fixture.repo, ['commit', '-m', 'unsigned baseline manipulation']);
+      const result = await checkLockApproval({
+        repoRoot: fixture.repo,
+        allowedSignersFile: fixture.allowedSigners,
+      });
+      expect(result.ok).toBe(false);
+      expect(result.violations).toContainEqual(expect.objectContaining({ field: 'change' }));
+    } finally {
+      rmSync(fixture.repo, { recursive: true, force: true });
+      rmSync(fixture.keyDir, { recursive: true, force: true });
+    }
+  });
+
   it('allows pending DB drift only for approval commits in this deployment range', async () => {
     const fixture = makeSignedRepo();
     try {
@@ -197,7 +251,19 @@ describe('SEO lock approval gate', () => {
         fixture.allowedSigners,
         `test-signer ${readFileSync(`${fixture.privateKey}.pub`, 'utf8')}`
       );
-      writeLock(fixture.repo, { '/blog/locked': { ...ENTRY, title: 'Approved new title' } });
+      writeLock(fixture.repo, {
+        '/blog/locked': {
+          ...ENTRY,
+          title: 'Approved new title',
+          change: {
+            approvedAt: '2026-10-01',
+            baselineClicks28d: 100,
+            baselineEndDate: '2026-09-28',
+            readbackDate: '2026-10-18',
+            previousLockCommit: previousDeploy,
+          },
+        },
+      });
       git(fixture.repo, ['add', 'content/seo-lock.json']);
       git(fixture.repo, ['commit', '-S', '-m', 'approve new title']);
       const currentDeploy = git(fixture.repo, ['rev-parse', 'HEAD']).trim();
