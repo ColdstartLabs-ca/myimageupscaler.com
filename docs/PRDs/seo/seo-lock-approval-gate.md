@@ -120,3 +120,6 @@ Signing setup (owner): a dedicated ed25519 key with a passphrase, registered on 
 - Latest focused suite: 17 files / 136 tests passed. `yarn verify` passed after runtime fixes (55.88 s). Full SEO: 145 files / 1,559 tests passed; only the two unchanged-base font assertions in `pseo-hero-lcp.unit.spec.ts` fail.
 - Coverage audit proved several retired assertions cover body/source behavior or URLs outside the 36-entry lock. Restored 12 original test files, four helper scripts and the original scanner allowlist; their checks remain until equivalent general guards are established. AC-6 stays open.
 - Rendering used only public production config plus the Supabase service-role field fetched read-only from Secret Manager. No production secret version, schema, row, merge or deployment changed.
+
+### Pin migration progress
+- Migrated all 33 assertions from `interactive-tools-pr13-metadata.unit.spec.ts` into the general `tools-metadata.unit.spec.ts` contract. Preserved eight required slugs, title/description bounds, catalogue cross-references and OCR intent separation. Existing eight tool checks stay. Parent rerun: 41/41 passed; `yarn verify` passed (51.85 s). The old per-edit file is retired; the other 11 remain until covered.

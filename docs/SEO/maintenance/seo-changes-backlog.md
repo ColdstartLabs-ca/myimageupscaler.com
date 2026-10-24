@@ -3309,3 +3309,5 @@ A real local built-Worker request to `/api/blog/images/upload` returned 500 duri
 ### 2026-10-23 — Real local SEO lock verification
 - Fresh GSC + actual built app regeneration reproduces all 36 locked URLs and every stored field. Real R1 render passes; R2 remains blocked on João’s signing key/baseline. Fixed local hostname rewrite loops and async crawl server cleanup, with regression tests.
 - Retained body/source regression guards after finding they lacked lock coverage. Related checks: 136 pass; full SEO has only two existing font failures. Production rollout and weekly monitoring remain pending.
+
+- Pin cleanup: consolidated the 33 interactive-tool metadata assertions into the general tool contract (41 tests pass), without changing page content or dropping assertions. Other historical guards remain until their replacement coverage is established.
