@@ -1,7 +1,7 @@
 # PRD-seo-lock-approval-gate — SEO lock with signed-commit approval
 
-**Status:** IN PROGRESS — local checks running; owner signing and deployed CI evidence remain open
-**Priority:** P1 — local gate and monitoring checks are implemented. Shared deployment acceptance (AC-5) awaits the owner-signed baseline and rollout.
+**Status:** IN PROGRESS — local checks and actual owner-signed baseline verified; deployed CI evidence remains open
+**Priority:** P1 — local gate and monitoring checks are implemented. Shared deployment acceptance (AC-5) awaits authorized rollout.
 **Complexity:** 7 → HIGH; risk override: none (breakdown: 6 implementation files +2, new module +2, crosses the CI deploy boundary +2, GitHub API +1)
 **Owner:** SEO dev agent; João owns the signing key and every lock value change.
 **Depends on:** None. Followed by [PRD-seo-lock-monitoring](seo-lock-monitoring.md) and [PRD-pseo-split-testing](pseo-split-testing.md).
@@ -56,8 +56,8 @@ Signing setup (owner): a dedicated ed25519 key with a passphrase, registered on 
 - [x] AC-6 [local]: The per-edit pin tests in Phase 3 are deleted, and each deleted assertion is covered by a lock entry or moved to a general test. `yarn test:unit` passes. proof: `yarn vitest run tests/unit/seo` + `yarn verify` — Evidence: All 12 existing historical files retired; all 80 cases preserved in general suites, with three uncovered locale assertions restored. Full SEO: 1,597 pass / 143 files. Full unit command: 7,277 pass, 12 skipped / 547 files. `yarn verify` passed. Exact per-file mapping is recorded in Phase 3 and the PR body.
 
 ## Blocked on
-- A dedicated SSH signing key with a passphrase, registered on GitHub as a signing key and kept out of `ssh-agent` — unblocked by João. ⚠️ Use a passphrase that is not in any chat transcript, because agents can read `~/.claude/projects`.
-- The first signed baseline commit of `content/seo-lock.json` — unblocked by João (`git commit -S`).
+- Resolved 2026-10-24: the encrypted dedicated key matches João’s registered GitHub signing key. The owner signed baseline `d5b255551564d765cd441e31f28e4f3976d6c0bd` in the private desktop terminal, with `SSH_AUTH_SOCK` unset. ⚠️ Use a passphrase that is not in any chat transcript, because agents can read `~/.claude/projects`.
+- Remaining shared work: authorized deployment/CI acceptance. GitHub confirms the dedicated key is registered for signing only; the accidental authentication copy has been removed.
 
 ## Integration Ledger
 | Capability | Reachable consumer/trigger | Replaces / disposition | Evidence |
@@ -148,3 +148,8 @@ A further native-Git negative control proved a GPG commit with an SSH marker in 
 - Native Git regressions reproduced unsigned JSON promotion overriding a frozen auto entry, missing evaluation metadata on signed promotion, missing pending warnings on reversion, and uncommitted lock changes bypassing approval. The gate now reads one database snapshot for both enforcement stages and compares promotions against those frozen values. Identical promotions and genuinely new paths remain allowed; changed protected values need owner approval, including working-tree edits.
 - Signed promotion requires evaluation metadata referencing the previous signed lock commit. Deployment warnings cover only the previous effective values during that deployment range. Restoring a prior JSON absence removes only that override and returns authority to the frozen database entry; other entries and staged/unstaged work remain protected.
 - The related gate/restore/core/API group passes 34 tests. The full SEO suite passes 1,604 tests across 143 files (81.06 seconds). `yarn verify` passed (107.86 seconds). Shared signing/deployment checks remain open. GitHub's read-only signing-key endpoint returned zero keys for `jonit-dev` during this audit.
+
+### Actual owner signing verification — 2026-10-24
+- GitHub lists one SSH signing key, matching the generated dedicated public key. The private key is encrypted and mode 0600; signing took place interactively on the owner’s desktop, outside the agent transcript.
+- Commit `d5b255551564d765cd441e31f28e4f3976d6c0bd` touches the lock with one trailing blank line. Parsed JSON comparison proves every entry and field equals checkpoint `43e796b9`.
+- Actual `checkLockApproval()` against this repository and GitHub’s live signing-key endpoint returns `ok: true`, the owner-signed baseline SHA and zero violations. No fixture signer or local trust override was used. `yarn verify` passed again after owner setup (43.21 seconds). Shared AC-5 remains pending; no merge, production mutation or deployment occurred.

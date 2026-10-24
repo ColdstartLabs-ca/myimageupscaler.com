@@ -122,3 +122,6 @@ Facts checked on 2026-10-23:
 ### Frozen auto-entry approval follow-up
 - Native Git fixtures now cover unsigned JSON collisions with existing database locks, required metadata on signed promotions, deployment-scoped pending warnings and signed restoration of JSON absence. The actual gate entry point uses one database snapshot for R1 and R2. Working-tree edits receive the same protected-value check; identical auto imports and genuinely new unlocked paths remain allowed.
 - Gate/restore/core/API tests pass 34 cases; full SEO passes 1,604 cases / 143 files. `yarn verify` passes (107.86 seconds). These local checks do not establish AC-5 delivery, deployed CPU time or same-zone behavior.
+
+### Owner baseline prerequisite — 2026-10-24
+- The actual owner SSH-signed baseline `d5b255551564d765cd441e31f28e4f3976d6c0bd` now passes R2 using GitHub’s registered signing key; lock values are unchanged. Production secret/schema setup, deployed CI acceptance, Worker CPU/same-zone behavior and inbox receipt remain pending.

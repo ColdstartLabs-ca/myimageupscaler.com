@@ -3330,3 +3330,7 @@ A real local built-Worker request to `/api/blog/images/upload` returned 500 duri
 - Compare JSON promotions with frozen database values so unsigned additions cannot overwrite an already locked path. Require evaluation metadata for signed value changes and retain deployment-scoped warnings for signed promotion/reversion.
 - Restore a prior JSON absence by removing only the selected override, preserving other entries and returning authority to the frozen database lock. Check uncommitted lock edits before deployment too.
 - Native Git red/green controls; 34 related tests and 1,604 full SEO tests pass; `yarn verify` passes (107.86 seconds). Owner signing setup and shared deployment acceptance remain pending; no production write or deployment.
+
+### 2026-10-24 — Verify the actual owner-signed lock baseline
+- Owner baseline `d5b25555` adds only a trailing blank line; parsed lock values are identical. R2 verifies against the matching live GitHub SSH signing key and returns zero violations.
+- `yarn verify` passed (43.21 seconds). Shared production/deployment checks remain pending. No locked content, production data or deployment changed.
