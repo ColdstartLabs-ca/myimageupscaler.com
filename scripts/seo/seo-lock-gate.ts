@@ -6,7 +6,6 @@ import { join, relative } from 'node:path';
 import {
   diffLock,
   extractSeoFields,
-  SEO_LOCK_FIELDS,
   type ISeoLock,
   type ISeoLockDiff,
   type TSeoLockField,
@@ -33,12 +32,13 @@ export interface IApprovalViolation {
 export interface ILockApprovalResult {
   ok: boolean;
   signedBaseline?: string;
-  changedDbFields: Set<string>;
+  changedDbFields: Map<string, unknown>;
   violations: IApprovalViolation[];
   reason?: string;
 }
 
 export interface ILockApprovalOptions {
+  deployBase?: string;
   repoRoot?: string;
   lockPath?: string;
   allowedSignersFile?: string;
@@ -52,6 +52,7 @@ interface IRenderedPage {
 }
 
 interface IRunGateOptions {
+  deployBase?: string;
   repoRoot?: string;
   lockPath?: string;
   baseUrl?: string;
@@ -76,7 +77,7 @@ export function formatLockDiffs(diffs: IRenderedLockDiff[]): string {
 export async function checkRenderedLocks(
   lock: ISeoLock,
   fetchPage: (path: string) => Promise<IRenderedPage>,
-  approvedDbFields: Set<string> = new Set()
+  approvedDbFields: Map<string, unknown> = new Map()
 ): Promise<IRenderGateResult> {
   const failures: IRenderedLockDiff[] = [];
   const warnings: IRenderedLockDiff[] = [];
@@ -122,7 +123,7 @@ export async function checkRenderedLocks(
 
     for (const diff of diffLock(entry, rendered)) {
       const result = { url, ...diff };
-      if (entry.source === 'db' && approvedDbFields.has(`${url}:${diff.field}`)) {
+      if (entry.source === 'db' && approvedDbFields.has(`${url}:${diff.field}`) && JSON.stringify(approvedDbFields.get(`${url}:${diff.field}`)) === JSON.stringify(diff.actual)) {
         warnings.push(result);
       } else {
         failures.push(result);
@@ -231,16 +232,13 @@ function lockDiffsBetween(oldLock: ISeoLock, newLock: ISeoLock): IApprovalViolat
   return violations;
 }
 
-function changedFields(oldLock: ISeoLock, newLock: ISeoLock): Set<string> {
-  const result = new Set<string>();
+function changedFields(oldLock: ISeoLock, newLock: ISeoLock): Map<string, unknown> {
+  const result = new Map<string, unknown>();
   for (const path of Object.keys(newLock)) {
     const oldEntry = oldLock[path];
     const newEntry = newLock[path];
-    if (!oldEntry) {
-      SEO_LOCK_FIELDS.forEach(field => result.add(`${path}:${field}`));
-      continue;
-    }
-    for (const diff of diffLock(oldEntry, newEntry)) result.add(`${path}:${diff.field}`);
+    if (!oldEntry) continue;
+    for (const diff of diffLock(oldEntry, newEntry)) result.set(`${path}:${diff.field}`, diff.expected);
   }
   return result;
 }
@@ -253,7 +251,6 @@ async function fetchAllowedSigners(
     headers: {
       accept: 'application/vnd.github+json',
       'user-agent': 'myimageupscaler-seo-lock-gate',
-      ...(process.env.GITHUB_TOKEN ? { authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {}),
     },
   });
   if (!response.ok) {
@@ -279,7 +276,7 @@ export async function checkLockApproval(
   const repoRoot = options.repoRoot ?? process.cwd();
   const lockPath = options.lockPath ?? join(repoRoot, 'content/seo-lock.json');
   const relativePath = lockRelativePath(repoRoot, lockPath);
-  const changedDbFields = new Set<string>();
+  const changedDbFields = new Map<string, unknown>();
   let temporarySignerDir: string | undefined;
   let allowedSignersFile = options.allowedSignersFile;
 
@@ -320,10 +317,15 @@ export async function checkLockApproval(
       };
     }
 
-    const baselineParent = commitParent(repoRoot, signedBaseline);
-    const baselineLock = baselineParent ? readLockAtCommit(repoRoot, baselineParent, lockPath) : {};
-    const approvedLock = readLockAtCommit(repoRoot, signedBaseline, lockPath);
-    changedFields(baselineLock, approvedLock).forEach(field => changedDbFields.add(field));
+    if (options.deployBase) {
+      const deployBase = runGit(repoRoot, ['rev-parse', '--verify', '--end-of-options', `${options.deployBase}^{commit}`]);
+      execFileSync('git', ['merge-base', '--is-ancestor', deployBase, 'HEAD'], { cwd: repoRoot, stdio: 'ignore' });
+      const deploymentCommits = runGit(repoRoot, ['rev-list', `${deployBase}..HEAD`]).split('\n');
+      if (deploymentCommits.includes(signedBaseline)) {
+        changedFields(readLockAtCommit(repoRoot, deployBase, lockPath), readLockAtCommit(repoRoot, signedBaseline, lockPath))
+          .forEach((value, field) => changedDbFields.set(field, value));
+      }
+    }
 
     const laterCommits = runGit(
       repoRoot,
@@ -406,7 +408,7 @@ async function waitForServer(baseUrl: string, timeoutMs = 60_000): Promise<void>
 
 async function runRenderGate(
   lock: ISeoLock,
-  options: { repoRoot: string; baseUrl?: string; approvedDbFields: Set<string> }
+  options: { repoRoot: string; baseUrl?: string; approvedDbFields: Map<string, unknown> }
 ): Promise<IRenderGateResult> {
   if (Object.keys(lock).length === 0) return { ok: true, failures: [], warnings: [] };
 
@@ -425,9 +427,8 @@ async function runRenderGate(
 
   const port = await findFreePort();
   const baseUrl = `http://127.0.0.1:${port}`;
-  const child = spawn('yarn', ['start'], {
+  const child = spawn(process.execPath, [join(options.repoRoot, 'node_modules/next/dist/bin/next'), 'start', '--hostname', '127.0.0.1', '--port', String(port)], {
     cwd: options.repoRoot,
-    env: { ...process.env, HOSTNAME: '127.0.0.1', PORT: String(port) },
     stdio: 'inherit',
   });
 
@@ -453,11 +454,11 @@ export async function runSeoLockGate(options: IRunGateOptions = {}): Promise<{
   const repoRoot = options.repoRoot ?? process.cwd();
   const lockPath = options.lockPath ?? join(repoRoot, 'content/seo-lock.json');
   const lock = JSON.parse(readFileSync(lockPath, 'utf8')) as ISeoLock;
-  const approval = await checkLockApproval({ repoRoot, lockPath });
+  const approval = await checkLockApproval({ repoRoot, lockPath, deployBase: options.deployBase });
   const render = await runRenderGate(lock, {
     repoRoot,
-    baseUrl: options.baseUrl ?? process.env.SEO_LOCK_BASE_URL,
-    approvedDbFields: approval.ok ? approval.changedDbFields : new Set(),
+    baseUrl: options.baseUrl,
+    approvedDbFields: approval.ok ? approval.changedDbFields : new Map(),
   });
   return { approval, render };
 }
@@ -466,7 +467,8 @@ async function main(): Promise<void> {
   const baseUrl = process.argv
     .find(arg => arg.startsWith('--base-url='))
     ?.slice('--base-url='.length);
-  const result = await runSeoLockGate({ baseUrl });
+  const deployBase = process.argv.find(arg => arg.startsWith('--deploy-base='))?.slice('--deploy-base='.length);
+  const result = await runSeoLockGate({ baseUrl, deployBase });
 
   console.log(result.render.ok ? 'R1 render passed' : 'R1 render failed');
   if (result.render.failures.length) console.error(formatLockDiffs(result.render.failures));

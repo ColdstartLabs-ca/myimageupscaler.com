@@ -7,14 +7,16 @@ PROJECT_ROOT="$(dirname "$(dirname "$SCRIPT_DIR")")"
 export SKIP_TESTS="false"
 export SKIP_I18N="false"
 export PURGE_CACHE="false"
+SEO_LOCK_BASE=""
 for arg in "$@"; do
     case $arg in
         --skip-tests) SKIP_TESTS="true" ;;
         --skip-i18n) SKIP_I18N="true" ;;
         --purge) PURGE_CACHE="true" ;;
+        --seo-lock-base=*) SEO_LOCK_BASE="${arg#--seo-lock-base=}" ;;
         *)
             echo "Unsupported deploy option: $arg" >&2
-            echo "Only --skip-tests, --skip-i18n, and --purge are allowed." >&2
+            echo "Allowed: --skip-tests, --skip-i18n, --purge, --seo-lock-base=<previous-deploy-commit>." >&2
             exit 2
             ;;
     esac
@@ -184,7 +186,7 @@ source "$SCRIPT_DIR/steps/02-build.sh" && step_build
 
 echo -e "${CYAN}▸ Running SEO lock gate...${NC}"
 cd "$PROJECT_ROOT"
-if ! yarn seo:lock:gate; then
+if ! yarn seo:lock:gate --deploy-base="$SEO_LOCK_BASE"; then
     echo -e "${RED}✗ SEO lock gate failed. Deployment blocked.${NC}"
     exit 1
 fi

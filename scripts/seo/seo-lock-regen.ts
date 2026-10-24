@@ -181,9 +181,8 @@ async function withRenderedServer<T>(
 
   const port = await findFreePort();
   const localBaseUrl = `http://127.0.0.1:${port}`;
-  const child = spawn('yarn', ['start'], {
+  const child = spawn(process.execPath, [join(process.cwd(), 'node_modules/next/dist/bin/next'), 'start', '--hostname', '127.0.0.1', '--port', String(port)], {
     cwd: process.cwd(),
-    env: { ...process.env, HOSTNAME: '127.0.0.1', PORT: String(port) },
     stdio: 'inherit',
   });
 
@@ -202,7 +201,7 @@ async function main(): Promise<void> {
   const gscPath = parseArg('--gsc');
   const outputPath = parseArg('--output') ?? DEFAULT_OUTPUT;
   const site = parseArg('--site') ?? DEFAULT_SITE;
-  const baseUrl = parseArg('--base-url') ?? process.env.SEO_LOCK_BASE_URL;
+  const baseUrl = parseArg('--base-url');
   const threshold = Number(parseArg('--threshold') ?? 20);
   const keyPath = parseArg('--key');
   let temporaryGscPath: string | undefined;

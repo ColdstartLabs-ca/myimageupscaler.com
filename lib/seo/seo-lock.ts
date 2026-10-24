@@ -175,7 +175,7 @@ function extractJsonLdTypes(html: string): string[] {
   return [...types].sort((a, b) => a.localeCompare(b));
 }
 
-async function sha256(value: string): Promise<string> {
+export async function hashSeoText(value: string): Promise<string> {
   const digest = await globalThis.crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
   return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
 }
@@ -187,7 +187,7 @@ export async function extractSeoFields(html: string): Promise<ISeoLockFields> {
     title: firstTagText(html, 'title'),
     description: firstMetaContent(html, 'description'),
     h1: firstTagText(html, 'h1'),
-    introHash: await sha256(firstParagraph),
+    introHash: await hashSeoText(firstParagraph),
     canonical: extractCanonical(html),
     robots: firstMetaContent(html, 'robots').toLowerCase(),
     hreflang: extractHreflang(html),

@@ -67,6 +67,17 @@ function makeSignedRepo(): {
 }
 
 describe('SEO lock render gate', () => {
+  it('warns only for the previous approved DB value, and rejects unrelated drift', async () => {
+    const fields = await import('@lib/seo/seo-lock').then(m => m.extractSeoFields('<title>Approved title</title>'));
+    const lock: ISeoLock = { '/blog/locked': { ...fields, source: 'db', clicks28d: 21 } };
+    const pending = new Map([['/blog/locked:title', 'Previous title']]);
+    const previous = await checkRenderedLocks(lock, async () => ({ status: 200, html: '<title>Previous title</title>' }), pending);
+    expect(previous.ok).toBe(true);
+    expect(previous.warnings).toHaveLength(1);
+    const unrelated = await checkRenderedLocks(lock, async () => ({ status: 200, html: '<title>Unapproved third title</title>' }), pending);
+    expect(unrelated.ok).toBe(false);
+    expect(unrelated.warnings).toHaveLength(0);
+  });
   it('fails on a changed title and exposes the field diff', async () => {
     const result = await checkRenderedLocks(LOCK, async () => ({
       status: 200,
@@ -105,6 +116,26 @@ describe('SEO lock render gate', () => {
 });
 
 describe('SEO lock approval gate', () => {
+  it('allows pending DB drift only for approval commits in this deployment range', async () => {
+    const fixture = makeSignedRepo();
+    try {
+      const previousDeploy = git(fixture.repo, ['rev-parse', 'HEAD']).trim();
+      writeFileSync(fixture.allowedSigners, `test-signer ${readFileSync(`${fixture.privateKey}.pub`, 'utf8')}`);
+      writeLock(fixture.repo, { '/blog/locked': { ...ENTRY, title: 'Approved new title' } });
+      git(fixture.repo, ['add', 'content/seo-lock.json']);
+      git(fixture.repo, ['commit', '-S', '-m', 'approve new title']);
+      const currentDeploy = git(fixture.repo, ['rev-parse', 'HEAD']).trim();
+      const options = { repoRoot: fixture.repo, allowedSignersFile: fixture.allowedSigners };
+      expect((await checkLockApproval({ ...options, deployBase: previousDeploy })).changedDbFields)
+        .toEqual(new Map([['/blog/locked:title', ENTRY.title]]));
+      expect((await checkLockApproval({ ...options, deployBase: currentDeploy })).changedDbFields.size).toBe(0);
+      expect((await checkLockApproval(options)).changedDbFields.size).toBe(0);
+    } finally {
+      rmSync(fixture.repo, { recursive: true, force: true });
+      rmSync(fixture.keyDir, { recursive: true, force: true });
+    }
+  });
+
   it('rejects an unsigned value change and accepts an unsigned addition', async () => {
     const fixture = makeSignedRepo();
     try {

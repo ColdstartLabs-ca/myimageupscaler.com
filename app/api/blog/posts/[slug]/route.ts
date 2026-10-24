@@ -9,21 +9,10 @@ import {
 } from '@shared/validation/blog.schema';
 import { createLogger } from '@server/monitoring/logger';
 import seoLockRaw from '@/content/seo-lock.json';
-import type { ISeoLockEntry } from '@lib/seo/seo-lock';
+import { hashSeoText, normalize, type ISeoLockEntry } from '@lib/seo/seo-lock';
+import { clientEnv } from '@shared/config/env';
 
 const SEO_LOCK = seoLockRaw as Record<string, ISeoLockEntry>;
-
-const BLOG_LOCKED_FIELDS: Array<
-  [
-    bodyField: 'title' | 'description' | 'seo_title' | 'seo_description',
-    lockField: 'title' | 'description',
-  ]
-> = [
-  ['title', 'title'],
-  ['description', 'description'],
-  ['seo_title', 'title'],
-  ['seo_description', 'description'],
-];
 
 function getBlogLockEntries(slug: string): Array<{ path: string; entry: ISeoLockEntry }> {
   const englishPath = `/blog/${slug}`;
@@ -33,21 +22,28 @@ function getBlogLockEntries(slug: string): Array<{ path: string; entry: ISeoLock
     .map(([path, entry]) => ({ path, entry }));
 }
 
-function getBlogLockViolations(
+async function getBlogLockViolations(
   slug: string,
   body: Record<string, unknown>
-): Array<{ path: string; field: string; expected: string; actual: string }> {
+): Promise<Array<{ path: string; field: string; expected: string; actual: string }>> {
   const entries = getBlogLockEntries(slug);
-  if (entries.length === 0) return [];
-
-  return entries.flatMap(({ path, entry }) =>
-    BLOG_LOCKED_FIELDS.flatMap(([bodyField, lockField]) => {
-      if (!Object.prototype.hasOwnProperty.call(body, bodyField)) return [];
-      const actual = body[bodyField];
-      if (typeof actual !== 'string' || actual === entry[lockField]) return [];
-      return [{ path, field: bodyField, expected: entry[lockField], actual }];
-    })
-  );
+  if (entries.length === 0 || !['title', 'description', 'seo_title', 'seo_description'].some(field => field in body)) return [];
+  const current = await getBlogPostBySlug(slug);
+  if (!current) throw new Error('NOT_FOUND: Blog post not found');
+  const candidate = { ...current, ...body };
+  const changed: Partial<Record<'title' | 'description' | 'h1' | 'introHash', string>> = {};
+  if ('title' in body) changed.h1 = normalize(String(candidate.title));
+  if ('description' in body) changed.introHash = await hashSeoText(normalize(String(candidate.description)));
+  if ('seo_title' in body || ('title' in body && !candidate.seo_title)) {
+    changed.title = normalize(`${candidate.seo_title || candidate.title} | ${clientEnv.APP_NAME}`);
+  }
+  if ('seo_description' in body || ('description' in body && !candidate.seo_description)) {
+    changed.description = normalize(String(candidate.seo_description || candidate.description));
+  }
+  return entries.flatMap(({ path, entry }) => Object.entries(changed).flatMap(([field, actual]) => {
+    const expected = entry[field as keyof typeof changed];
+    return actual === expected ? [] : [{ path, field, expected, actual }];
+  }));
 }
 
 /**
@@ -120,7 +116,7 @@ export async function PATCH(
     const body = await request.json();
     const validatedData = updateBlogPostSchema.parse(body);
 
-    const lockViolations = getBlogLockViolations(slug, validatedData);
+    const lockViolations = await getBlogLockViolations(slug, validatedData);
     if (lockViolations.length > 0) {
       return blogApiErrorResponse(
         'SEO_LOCKED',

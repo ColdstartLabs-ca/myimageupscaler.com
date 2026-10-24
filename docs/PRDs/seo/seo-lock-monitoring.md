@@ -1,6 +1,6 @@
 # PRD-seo-lock-monitoring — Weekly SEO lock check, stop-loss and digest
 
-**Status:** PROPOSED
+**Status:** IN PROGRESS — local env phase verified; remaining phases pending
 **Priority:** P1 — the lock prevents unapproved edits, but drift with no commit (DB edit, dependency, cache), losing approved bets and ranking drops on unchanged winners stay invisible (AC-1 to AC-4 open).
 **Complexity:** 6 → MEDIUM; risk override: none (breakdown: 8 implementation files +2, new module +2, GSC API +1, DB migration +1)
 **Owner:** SEO dev agent; João reads the digest and signs every revert or fix.
@@ -39,7 +39,7 @@ Facts checked on 2026-10-23:
 - Same-zone fetch: the app Worker fetches its own hostname. If that subrequest fails or loops, move the HTML fetch into `workers/cron` (a separate Worker, the same pattern as today) and POST the results to the route.
 
 ## Acceptance Criteria
-- [ ] AC-1 [local]: `serverEnv.ADMIN_EMAIL` reads `ADMIN_EMAIL` and defaults to `admin@coldstartlabs.ca`. `05-secrets.sh` uploads it. proof: `yarn vitest run tests/unit/config/admin-email-env.unit.spec.ts tests/unit/deploy` — Evidence: pending.
+- [x] AC-1 [local]: `serverEnv.ADMIN_EMAIL` reads `ADMIN_EMAIL` and defaults to `admin@coldstartlabs.ca`. `05-secrets.sh` uploads it. proof: `yarn vitest run tests/unit/config/admin-email-env.unit.spec.ts tests/unit/deploy` — Evidence: `yarn vitest run tests/unit/config/admin-email-env.unit.spec.ts tests/unit/deploy`: red 2/2 before the change, green 106 tests / 13 files after. Server default and explicit override verified; Worker allowlist includes ADMIN_EMAIL.
 - [ ] AC-2 [local]: The drift check reports a row when a fixture "live" page differs from the lock, and zero rows when it matches. The stop-loss gives WIN, FLAT or LOSS from fixture GSC series, including a site-wide drop where the page holds against control (expected FLAT, not LOSS). proof: `yarn vitest run tests/unit/seo/seo-lock-digest.unit.spec.ts` — Evidence: pending.
 - [ ] AC-3 [local]: The digest renders only the sections that have rows, sends to `ADMIN_EMAIL`, and sends nothing when every section is empty. The route rejects a wrong `x-cron-secret` with 401. proof: same spec, through the route handler and the `seo-weekly-digest` template — Evidence: pending.
 - [ ] AC-4 [local]: The weekly run inserts a fixture new winner and skips a path that is already locked. `loadEffectiveLock()` merges both sources, and the JSON wins on the same path. The migration has the trigger that rejects UPDATE and DELETE. The deploy gate and the blog API gate reject a change to an auto-added field. proof: `yarn vitest run tests/unit/seo/seo-lock-digest.unit.spec.ts tests/unit/seo/seo-lock-gate.unit.spec.ts tests/unit/api/blog-posts-seo-lock.unit.spec.ts` + a migration spec under `tests/unit/migrations/` — Evidence: pending.
@@ -91,3 +91,7 @@ Facts checked on 2026-10-23:
 **Files:** `supabase/migrations/<timestamp>_seo_lock_auto_entries.sql` (table, RLS on with no policies, the UPDATE/DELETE trigger) · same route (insert) · `lib/seo/seo-lock.ts` (`loadEffectiveLock`) · `scripts/seo/seo-lock-gate.ts` and `app/api/blog/posts/[slug]/route.ts` (switch to `loadEffectiveLock`)
 **Implementation:** Before the prod migration, run `yarn db:backup` and confirm the archives with `yarn db:backups` and `gzip -t` (CLAUDE.md rule). The migration only adds a table.
 **Verification:** AC-4, AC-5.
+
+## Local execution decisions — 2026-10-23
+- No production secret/schema mutation or deployment is part of these local checks. Phase 0 code and allowlist are complete; the production secret update remains pending.
+- Stop-loss uses relative page/control lift `(pageAfter/pageBefore)/(controlAfter/controlBefore)-1` over matching windows, with minimum hold 14 days. LOSS ≤ −25%, WIN ≥ +25%, FLAT between; missing or zero control baseline yields no verdict. This defines the previously unspecified WIN boundary.

@@ -55,6 +55,7 @@ step_secrets() {
         GALLERY_EXPIRY_ENABLED
         EMAIL_FROM_ADDRESS
         PROVIDER_ALERT_EMAIL
+        ADMIN_EMAIL
         BREVO_API_KEY
         CRON_SECRET
         BLOG_API_KEY

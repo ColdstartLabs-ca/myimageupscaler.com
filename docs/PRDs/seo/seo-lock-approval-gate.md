@@ -1,6 +1,6 @@
 # PRD-seo-lock-approval-gate — SEO lock with signed-commit approval
 
-**Status:** PROPOSED
+**Status:** IN PROGRESS — local checks running; owner signing and deployed CI evidence remain open
 **Priority:** P1 — no gate exists today: any agent (Claude Code, Codex, Hermes cron) can change a page that earns traffic and update its test in the same commit (AC-1 to AC-6 open).
 **Complexity:** 7 → HIGH; risk override: none (breakdown: 6 implementation files +2, new module +2, crosses the CI deploy boundary +2, GitHub API +1)
 **Owner:** SEO dev agent; João owns the signing key and every lock value change.
@@ -50,8 +50,8 @@ Signing setup (owner): a dedicated ed25519 key with a passphrase, registered on 
 ## Acceptance Criteria
 - [ ] AC-1 [local]: `yarn seo:lock:regen` writes `content/seo-lock.json` with every URL that has more than 20 clicks in 28 days, and each entry has all 8 fields. proof: `yarn seo:lock:regen && yarn vitest run tests/unit/seo/seo-lock.unit.spec.ts` (schema + entry count equal to the GSC rows above the threshold) — Evidence: pending.
 - [ ] AC-2 [local]: A candidate build that changes a locked title fails the gate, and the gate output shows the diff. The unchanged build passes. proof: `yarn vitest run tests/unit/seo/seo-lock-gate.unit.spec.ts` (fixture HTML) plus one real run of `npx tsx scripts/seo/seo-lock-gate.ts` against `next start` on the local build — Evidence: pending.
-- [ ] AC-3 [local]: An unsigned commit that changes a lock value fails R2. A commit made through the GitHub contents API (web-flow GPG, `verified: true`) also fails R2. An unsigned additions-only commit passes R2. proof: `yarn vitest run tests/unit/seo/seo-lock-gate.unit.spec.ts` (temp git repo fixture with a test signing key) — Evidence: pending.
-- [ ] AC-4 [local]: A blog PATCH that changes the title of a locked slug returns 409. The same PATCH with the lock value returns 200. A PATCH to a slug that is not locked works as before. proof: `yarn vitest run tests/unit/api/blog-posts-seo-lock.unit.spec.ts` (through the route handler) — Evidence: pending.
+- [x] AC-3 [local]: An unsigned commit that changes a lock value fails R2. A commit made through the GitHub contents API (web-flow GPG, `verified: true`) also fails R2. An unsigned additions-only commit passes R2. proof: `yarn vitest run tests/unit/seo/seo-lock-gate.unit.spec.ts` (temp git repo fixture with a test signing key) — Evidence: `yarn vitest run tests/unit/seo/seo-lock-gate.unit.spec.ts`: 6 tests passed; real temporary SSH-signed Git fixture accepts additions and rejects unsigned/Web-flow-style GPG changes. New regressions observed red, then green: deployment-range approvals expire, and only the prior approved DB value receives a warning.
+- [x] AC-4 [local]: A blog PATCH that changes the title of a locked slug returns 409. The same PATCH with the lock value returns 200. A PATCH to a slug that is not locked works as before. proof: `yarn vitest run tests/unit/api/blog-posts-seo-lock.unit.spec.ts` (through the route handler) — Evidence: `yarn vitest run tests/unit/api/blog-posts-seo-lock.unit.spec.ts`: 5 tests passed through PATCH. Regression red→green covers layout brand suffix, H1 vs metadata title, and intro-hash enforcement when the description matches metadata.
 - [ ] AC-5 [shared]: The `deploy.yml` deploy job runs the gate after `next build`, and a gate failure stops the deploy step. proof: GitHub Actions run on the first push that contains the gate — Evidence: pending.
 - [ ] AC-6 [local]: The per-edit pin tests in Phase 3 are deleted, and each deleted assertion is covered by a lock entry or moved to a general test. `yarn test:unit` passes. proof: `yarn vitest run tests/unit/seo` + `yarn verify` — Evidence: pending.
 
@@ -105,3 +105,11 @@ Signing setup (owner): a dedicated ed25519 key with a passphrase, registered on 
 **Keep:** `free-offer-conversion-copy`, `no-test-forbids-free-offer`, `seo-safeguards`, `three-kings-manager`, `three-kings-sitemap-route`, all structural tests. `protected-pages.unit.spec.ts` keeps only its FAQ assertions, because the lock does not lock FAQ content. Update its reference in `CLAUDE.md` if the file name changes.
 **Implementation:** For each file, list each assertion → lock field, general test, or "obsolete (window closed)". An assertion that has no lock field and is still valid moves into a general test. It is not dropped. Record the mapping in the PR body.
 **Verification:** AC-6. Append one entry to `docs/SEO/maintenance/seo-changes-backlog.md`.
+
+## Local execution evidence — 2026-10-23
+- Checkpoint `6132ad4a` preserved and pushed after orchestration was stopped. Linchpin was removed; further execution uses bounded save-tokens arms and direct verification.
+- `yarn verify` passed after the gate/blog fixes (82.15 s). Related API/lock/config/deploy suite: 16 files, 121 tests passed.
+- `yarn vitest run tests/unit/seo`: 132 files passed, one failed; 1,463 passed, two existing font assertions failed in `pseo-hero-lcp.unit.spec.ts`. Both that test and `app/(pseo)/layout.tsx` match base `143e0daa`; no font change belongs to this PRD.
+- Initial real gate invocation failed because the interrupted build lacks `.next/prerender-manifest.json`; a clean build is running on the Debian laptop. This does not prove R1 runtime acceptance.
+- AC-1 regeneration/count and AC-6 assertion migration remain unverified. João’s actual SSH signing key/baseline, master deployment, production secrets/schema changes and inbox receipt remain separate from local verification.
+- Local deploy supports `--seo-lock-base=<previous-deployed-commit>` for pending approved DB changes; omission keeps drift blocking. CI supplies the push-before SHA.
