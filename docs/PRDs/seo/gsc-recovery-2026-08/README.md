@@ -27,14 +27,14 @@ Brand demand is a distribution problem (Reddit / directories / launches decayed 
 
 ## The six slices
 
-| #   | PRD                                                              | Fixes                                                                                                                    | Size       |
-| --- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ---------- |
-| 01  | [404 elimination](01-404-elimination.md)                         | 303 404s: locale route/sitemap slug drift, retired `/article/*` + `/personas/*` + `/comparisons/*`, casing, junk URLs    | MEDIUM (6) |
-| 02  | [Locale indexation integrity](02-locale-indexation-integrity.md) | 239 duplicate-canonical + 107 noindex-in-sitemap + 5 `/ja/` 5xx (stub locale data **and** the open Worker CPU 1102 503s) | HIGH (8)   |
-| 03  | [Index bloat pruning](03-index-bloat-pruning.md)                 | 790 crawled-not-indexed; sitemap gating; publish freeze until 85% indexation                                             | MEDIUM (6) |
-| 04  | [Taxonomy cannibalization](04-taxonomy-cannibalization.md)       | `/formats/` ÷ `/format-scale/` ÷ `/scale/` overlap; `/tools/photo-quality-enhancer` and `/free` collapse                 | MEDIUM (6) |
-| 05  | [LCP & page experience](05-lcp-page-experience.md)               | `images.unoptimized: true`, unresized Unsplash heroes, no preconnect → 95 poor URL groups                                | MEDIUM (5) |
-| 06  | [Blog indexation & zero-click](06-blog-indexation-zero-click.md) | 33–37 unindexed English posts; 156K impressions → 389 clicks; commercial-only CTR reporting                              | MEDIUM (5) |
+| #   | PRD                                                                                            | Fixes                                                                                                                    | Size       |
+| --- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| 01  | [404 elimination](01-404-elimination.md)                                                       | 303 404s: locale route/sitemap slug drift, retired `/article/*` + `/personas/*` + `/comparisons/*`, casing, junk URLs    | MEDIUM (6) |
+| 02  | [Locale indexation integrity](02-locale-indexation-integrity.md)                               | 239 duplicate-canonical + 107 noindex-in-sitemap + 5 `/ja/` 5xx (stub locale data **and** the open Worker CPU 1102 503s) | HIGH (8)   |
+| 03  | [Index bloat pruning](../../done/seo/gsc-recovery-2026-08/03-index-bloat-pruning.md)           | 790 crawled-not-indexed; sitemap gating; publish freeze until 85% indexation                                             | MEDIUM (6) |
+| 04  | [Taxonomy cannibalization](../../done/seo/gsc-recovery-2026-08/04-taxonomy-cannibalization.md) | `/formats/` ÷ `/format-scale/` ÷ `/scale/` overlap; `/tools/photo-quality-enhancer` and `/free` collapse                 | MEDIUM (6) |
+| 05  | [LCP & page experience](05-lcp-page-experience.md)                                             | `images.unoptimized: true`, unresized Unsplash heroes, no preconnect → 95 poor URL groups                                | MEDIUM (5) |
+| 06  | [Blog indexation & zero-click](06-blog-indexation-zero-click.md)                               | 33–37 unindexed English posts; 156K impressions → 389 clicks; commercial-only CTR reporting                              | MEDIUM (5) |
 
 **Order matters.** 01 and 02 stop crawl-budget waste; 03 is only measurable once 01/02
 land; 05 runs in parallel (independent code paths); 04 and 06 are growth work.

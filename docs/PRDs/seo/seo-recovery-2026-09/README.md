@@ -131,11 +131,11 @@ sequenceDiagram
 
 Each is independently shippable and carries its own complexity score, Integration Ledger, phases and acceptance criteria. This file is shared context only — it is not a PRD.
 
-| #   | PRD                                                                                                                                   | Phases | Week | Ships alone?  |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------- | ------ | ---- | ------------- |
-| 1   | [Product Truth](01-product-truth.md) — one accurate offer on every page                                                               | 2      | 1    | Yes           |
-| 2   | [Measurement & URL Hygiene](02-funnel-and-url-hygiene.md) — know what a landing page is worth; verify the GIF and filtered-URL policy | 2      | 1    | Yes           |
-| 3   | [Page Recovery](03-page-recovery.md) — homepage, flagship comparison, and the pages that already rank                                 | 3      | 2–4  | Needs 1 and 2 |
+| #   | PRD                                                                                                                                                                       | Phases | Week | Ships alone?  |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ---- | ------------- |
+| 1   | [Product Truth](../../done/seo/seo-recovery-2026-09/01-product-truth.md) — one accurate offer on every page                                                               | 2      | 1    | Yes           |
+| 2   | [Measurement & URL Hygiene](../../done/seo/seo-recovery-2026-09/02-funnel-and-url-hygiene.md) — know what a landing page is worth; verify the GIF and filtered-URL policy | 2      | 1    | Yes           |
+| 3   | [Page Recovery](03-page-recovery.md) — homepage, flagship comparison, and the pages that already rank                                                                     | 3      | 2–4  | Needs 1 and 2 |
 
 PRD 1 and PRD 2 can run in parallel. PRD 3 depends on PRD 1 for capability facts and PRD 2 for the funnel that judges whether the recovery worked.
 
@@ -200,8 +200,8 @@ Criteria are written about the **consumer**, never the artifact.
 
 **Portfolio done**
 
-- [x] [PRD 1](01-product-truth.md) done, all its integration gates checked
-- [x] [PRD 2](02-funnel-and-url-hygiene.md) done, all its integration gates checked
+- [x] [PRD 1](../../done/seo/seo-recovery-2026-09/01-product-truth.md) done, all its integration gates checked
+- [x] [PRD 2](../../done/seo/seo-recovery-2026-09/02-funnel-and-url-hygiene.md) done, all its integration gates checked
 - [ ] [PRD 3](03-page-recovery.md) done, all its integration gates checked
 
 ### The one thing still blocking this portfolio

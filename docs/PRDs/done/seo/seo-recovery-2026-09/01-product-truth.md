@@ -1,7 +1,7 @@
 # PRD 1 — Product Truth: one accurate offer on every page
 
 **Week 1 · ships alone · no dependency on PRD 2 or 3**
-Shared audit context: [README.md](README.md)
+Shared audit context: [README.md](../../../seo/seo-recovery-2026-09/README.md)
 
 `Planning Mode: Principal Architect`
 **Complexity: 6 → MEDIUM mode** (+3 touches 10+ files, +2 new capability module, +1 external-config integration)

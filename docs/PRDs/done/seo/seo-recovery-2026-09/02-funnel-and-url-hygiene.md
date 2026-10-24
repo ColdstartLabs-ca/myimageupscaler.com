@@ -1,7 +1,7 @@
 # PRD 2 — Measurement & URL Hygiene: know what a landing page is actually worth
 
 **Week 1 · ships alone · independent of PRD 1 and 3**
-Shared audit context: [README.md](README.md)
+Shared audit context: [README.md](../../../seo/seo-recovery-2026-09/README.md)
 
 `Planning Mode: Principal Architect`
 **Complexity: 7 → HIGH mode** (+2 touches 6–10 files, +2 new reporting module, +2 attribution state across request/client boundary, +1 GA4/GSC external APIs)

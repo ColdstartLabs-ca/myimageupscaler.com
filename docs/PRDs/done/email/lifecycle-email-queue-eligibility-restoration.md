@@ -4,8 +4,8 @@
 **Status:** Ready
 **Complexity:** 6 → MEDIUM mode
 **Owner:** Retention / Revenue Recovery
-**Source:** [Growth Diagnostic 2026-07-25](../../reports/growth-diagnostic-2026-07-25.md) — priority #1 (impact 8 ÷ effort 2 = 4.0)
-**Related:** [email-delivery-investigation-2026-07-24](../../reports/email-delivery-investigation-2026-07-24.md) (diagnosis), [lifecycle-recovery-email-delivery-restoration](../done/email/lifecycle-recovery-email-delivery-restoration.md) (prior restoration), [email-queue-recipient-value-pruning](./email-queue-recipient-value-pruning.md) (the policy this PRD amends)
+**Source:** [Growth Diagnostic 2026-07-25](../../../reports/growth-diagnostic-2026-07-25.md) — priority #1 (impact 8 ÷ effort 2 = 4.0)
+**Related:** [email-delivery-investigation-2026-07-24](../../../reports/email-delivery-investigation-2026-07-24.md) (diagnosis), [lifecycle-recovery-email-delivery-restoration](lifecycle-recovery-email-delivery-restoration.md) (prior restoration), [email-queue-recipient-value-pruning](../../email/email-queue-recipient-value-pruning.md) (the policy this PRD amends)
 
 ---
 

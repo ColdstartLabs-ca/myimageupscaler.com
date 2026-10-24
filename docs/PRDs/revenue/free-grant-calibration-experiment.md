@@ -72,7 +72,7 @@ server/services/revenue-feature-rollout.service.ts:12-19 # FNV-1a bucketing — 
 1. ~~Signup conversion recovered.~~ **Met as of 2026-07-25** — active-users-per-signup returned to baseline (0.654 vs 0.637) on Jul 19. Re-verify it still holds at launch; recompute arm sizing for the lower absolute signup volume (§1.2).
 2. **The credit wall is instrumented.** [credit-wall-monetization-surface](./credit-wall-monetization-surface.md) Phase 1 shipped and ≥7 days of `credit_wall_shown` data exists. Today we cannot measure how often users hit the wall, so we cannot measure whether a smaller grant increases it.
 3. **The full credits-consumed distribution is computed** (§3.1), not just the median.
-4. **Lifecycle email is sending again** ([lifecycle-email-queue-eligibility-restoration](../email/lifecycle-email-queue-eligibility-restoration.md)) — otherwise the `low-credits` / `zero-credits` recovery arm is inert and the experiment measures a deliberately hobbled funnel.
+4. **Lifecycle email is sending again** ([lifecycle-email-queue-eligibility-restoration](../done/email/lifecycle-email-queue-eligibility-restoration.md)) — otherwise the `low-credits` / `zero-credits` recovery arm is inert and the experiment measures a deliberately hobbled funnel.
 
 Criteria 2 and 4 are also _cheaper wins in the same funnel_. Do those first regardless.
 

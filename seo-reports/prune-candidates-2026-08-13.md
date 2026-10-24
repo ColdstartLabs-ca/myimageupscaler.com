@@ -1,6 +1,6 @@
 # pSEO prune candidate review — 2026-08-13
 
-Source: [PRD 03 — Index Bloat Pruning](../docs/PRDs/seo/gsc-recovery-2026-08/03-index-bloat-pruning.md)
+Source: [PRD 03 — Index Bloat Pruning](../docs/PRDs/done/seo/gsc-recovery-2026-08/03-index-bloat-pruning.md)
 
 ## Decision
 

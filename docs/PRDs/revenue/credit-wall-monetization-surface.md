@@ -146,7 +146,7 @@ Run as an arm on the existing `purchase_modal_default_selection` bandit (`Purcha
 
 ## 4. Dependency
 
-Phase 3 changes what a dismissal means, and the `credit-wall-dismissed-48h` recovery campaign is currently **undeliverable** — see [lifecycle-email-queue-eligibility-restoration](../email/lifecycle-email-queue-eligibility-restoration.md). Recovery email for this moment will not send until that ships. Sequence that PRD first, or accept that Phase 3's downstream recovery arm is inert.
+Phase 3 changes what a dismissal means, and the `credit-wall-dismissed-48h` recovery campaign is currently **undeliverable** — see [lifecycle-email-queue-eligibility-restoration](../done/email/lifecycle-email-queue-eligibility-restoration.md). Recovery email for this moment will not send until that ships. Sequence that PRD first, or accept that Phase 3's downstream recovery arm is inert.
 
 ---
 

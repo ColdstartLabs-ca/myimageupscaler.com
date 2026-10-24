@@ -4,7 +4,7 @@
 
 **Planning Mode: Principal Architect**
 **Source:** audit §03 and §07, `data/gsc-duplicate-canonical.csv`
-**Depends on:** the GIF-intent consolidation already shipped (`lib/seo/gif-intent.ts`, `middleware.ts:637`, [PRD](../gif-intent-recovery-live-signal-verification.md))
+**Depends on:** the GIF-intent consolidation already shipped (`lib/seo/gif-intent.ts`, `middleware.ts:637`, [PRD](../../../seo/gif-intent-recovery-live-signal-verification.md))
 
 ---
 

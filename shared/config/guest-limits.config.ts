@@ -2,7 +2,7 @@
  * Guest Upscaler Limits Configuration
  *
  * Multi-layer abuse prevention with cost guarantees.
- * See docs/PRDs/seo/guest-upscaler-pseo.md for rationale.
+ * See docs/PRDs/done/seo/guest-upscaler-pseo.md for rationale.
  */
 
 export const GUEST_LIMITS = {

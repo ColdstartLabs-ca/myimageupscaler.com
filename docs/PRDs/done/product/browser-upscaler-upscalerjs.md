@@ -444,7 +444,7 @@ sequenceDiagram
 ```
 Use Task tool with:
   subagent_type: "prd-work-reviewer"
-  prompt: "Review checkpoint for phase [N] of PRD at docs/PRDs/product/browser-upscaler-upscalerjs.md"
+  prompt: "Review checkpoint for phase [N] of PRD at docs/PRDs/done/product/browser-upscaler-upscalerjs.md"
 ```
 
 **Manual checkpoint additionally required for:** Phases 2, 3, 5, 6 (all have UI changes or external-asset hosting).
