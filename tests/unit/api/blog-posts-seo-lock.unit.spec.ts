@@ -1,13 +1,19 @@
 import { NextRequest } from 'next/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { updateBlogPost, getBlogPostBySlug } = vi.hoisted(() => ({ updateBlogPost: vi.fn(), getBlogPostBySlug: vi.fn() }));
+const { updateBlogPost, getBlogPostBySlug, loadAutoSeoLocks } = vi.hoisted(() => ({
+  updateBlogPost: vi.fn(),
+  getBlogPostBySlug: vi.fn(),
+  loadAutoSeoLocks: vi.fn(),
+}));
+vi.mock('@server/services/seo-lock.service', () => ({ loadAutoSeoLocks }));
 
 vi.mock('@/content/seo-lock.json', () => ({
   default: {
     '/blog/locked-post': {
       title: 'Locked search title for the article | MyImageUpscaler',
-      description: 'Approved metadata description for this locked article, with enough detail about image upscaling to satisfy the search snippet validation rules.',
+      description:
+        'Approved metadata description for this locked article, with enough detail about image upscaling to satisfy the search snippet validation rules.',
       h1: 'Locked title',
       introHash: 'a'.repeat(64),
       canonical: 'https://myimageupscaler.com/blog/locked-post',
@@ -48,7 +54,10 @@ vi.mock('@server/monitoring/logger', () => ({
   }),
 }));
 
-vi.mock('@shared/config/env', () => ({ serverEnv: { BLOG_API_KEY: 'test-key' }, clientEnv: { APP_NAME: 'MyImageUpscaler' } }));
+vi.mock('@shared/config/env', () => ({
+  serverEnv: { BLOG_API_KEY: 'test-key' },
+  clientEnv: { APP_NAME: 'MyImageUpscaler' },
+}));
 
 import { PATCH } from '@/app/api/blog/posts/[slug]/route';
 
@@ -65,12 +74,14 @@ function request(slug: string, body: Record<string, unknown>): NextRequest {
 describe('blog PATCH SEO lock gate', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    loadAutoSeoLocks.mockResolvedValue({});
     updateBlogPost.mockResolvedValue({ id: '1', slug: 'post', title: 'Updated' });
     getBlogPostBySlug.mockResolvedValue({
       title: 'Locked title',
       description: 'Original introduction for the article.',
       seo_title: 'Locked search title for the article',
-      seo_description: 'Approved metadata description for this locked article, with enough detail about image upscaling to satisfy the search snippet validation rules.',
+      seo_description:
+        'Approved metadata description for this locked article, with enough detail about image upscaling to satisfy the search snippet validation rules.',
     });
   });
 
@@ -81,6 +92,29 @@ describe('blog PATCH SEO lock gate', () => {
     );
 
     expect(response.status).toBe(409);
+    expect(updateBlogPost).not.toHaveBeenCalled();
+  });
+
+  it('rejects changes to an auto-added localized lock', async () => {
+    loadAutoSeoLocks.mockResolvedValue({ '/es/blog/auto-winner': { h1: 'Approved heading' } });
+    const response = await PATCH(
+      request('auto-winner', { title: 'Changed heading' }),
+      params('auto-winner')
+    );
+    expect(response.status).toBe(409);
+    expect(loadAutoSeoLocks).toHaveBeenCalledWith(
+      expect.arrayContaining(['/blog/auto-winner', '/es/blog/auto-winner'])
+    );
+    expect(updateBlogPost).not.toHaveBeenCalled();
+  });
+
+  it('fails closed when auto locks cannot be read', async () => {
+    loadAutoSeoLocks.mockRejectedValue(new Error('table unavailable'));
+    const response = await PATCH(
+      request('auto-winner', { title: 'Changed heading' }),
+      params('auto-winner')
+    );
+    expect(response.status).toBe(500);
     expect(updateBlogPost).not.toHaveBeenCalled();
   });
 
@@ -105,14 +139,21 @@ describe('blog PATCH SEO lock gate', () => {
   });
 
   it('allows the approved SEO title with the layout brand suffix', async () => {
-    const response = await PATCH(request('locked-post', { seo_title: 'Locked search title for the article' }), params('locked-post'));
+    const response = await PATCH(
+      request('locked-post', { seo_title: 'Locked search title for the article' }),
+      params('locked-post')
+    );
     expect(response.status).toBe(200);
   });
 
   it('rejects an intro change even when it equals the locked metadata description', async () => {
-    const response = await PATCH(request('locked-post', {
-      description: 'Approved metadata description for this locked article, with enough detail about image upscaling to satisfy the search snippet validation rules.',
-    }), params('locked-post'));
+    const response = await PATCH(
+      request('locked-post', {
+        description:
+          'Approved metadata description for this locked article, with enough detail about image upscaling to satisfy the search snippet validation rules.',
+      }),
+      params('locked-post')
+    );
     expect(response.status).toBe(409);
     expect(updateBlogPost).not.toHaveBeenCalled();
   });

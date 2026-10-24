@@ -11,8 +11,12 @@ import {
   checkRenderedLocks,
   formatLockDiffs,
   waitForServer,
+  runSeoLockGate,
 } from '@/scripts/seo/seo-lock-gate';
 import type { ISeoLock } from '@lib/seo/seo-lock';
+
+const { loadAutoSeoLocks } = vi.hoisted(() => ({ loadAutoSeoLocks: vi.fn() }));
+vi.mock('@server/services/seo-lock.service', () => ({ loadAutoSeoLocks }));
 
 const ENTRY = {
   title: 'Locked title',
@@ -70,6 +74,39 @@ function makeSignedRepo(): {
 }
 
 describe('SEO lock render gate', () => {
+  it('includes auto-added paths in the real gate entry point', async () => {
+    const repo = mkdtempSync(join(tmpdir(), 'seo-lock-effective-'));
+    mkdirSync(join(repo, 'content'));
+    writeLock(repo, {});
+    loadAutoSeoLocks.mockResolvedValue({ '/auto-winner': ENTRY });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url: string) =>
+        String(url).includes('api.github.com')
+          ? new Response('[]', { headers: { 'content-type': 'application/json' } })
+          : new Response(
+              '<html><head><title>Unapproved title</title></head><body><h1>Heading</h1><p>Intro</p></body></html>'
+            )
+      )
+    );
+    try {
+      const result = await runSeoLockGate({ repoRoot: repo, baseUrl: 'http://fixture' });
+      expect(loadAutoSeoLocks).toHaveBeenCalled();
+      expect(result.render.ok).toBe(false);
+      expect(result.render.failures).toContainEqual(
+        expect.objectContaining({
+          url: '/auto-winner',
+          field: 'title',
+          expected: ENTRY.title,
+          actual: 'Unapproved title',
+        })
+      );
+    } finally {
+      vi.unstubAllGlobals();
+      rmSync(repo, { recursive: true, force: true });
+    }
+  });
+
   it('accepts an HTTP redirect as readiness without following a redirect loop', async () => {
     vi.stubGlobal('fetch', nodeFetch);
     let requests = 0;
@@ -88,17 +125,29 @@ describe('SEO lock render gate', () => {
       expect(requests).toBe(1);
     } finally {
       vi.unstubAllGlobals();
-      await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
+      await new Promise<void>((resolve, reject) =>
+        server.close(error => (error ? reject(error) : resolve()))
+      );
     }
   });
   it('warns only for the previous approved DB value, and rejects unrelated drift', async () => {
-    const fields = await import('@lib/seo/seo-lock').then(m => m.extractSeoFields('<title>Approved title</title>'));
+    const fields = await import('@lib/seo/seo-lock').then(m =>
+      m.extractSeoFields('<title>Approved title</title>')
+    );
     const lock: ISeoLock = { '/blog/locked': { ...fields, source: 'db', clicks28d: 21 } };
     const pending = new Map([['/blog/locked:title', 'Previous title']]);
-    const previous = await checkRenderedLocks(lock, async () => ({ status: 200, html: '<title>Previous title</title>' }), pending);
+    const previous = await checkRenderedLocks(
+      lock,
+      async () => ({ status: 200, html: '<title>Previous title</title>' }),
+      pending
+    );
     expect(previous.ok).toBe(true);
     expect(previous.warnings).toHaveLength(1);
-    const unrelated = await checkRenderedLocks(lock, async () => ({ status: 200, html: '<title>Unapproved third title</title>' }), pending);
+    const unrelated = await checkRenderedLocks(
+      lock,
+      async () => ({ status: 200, html: '<title>Unapproved third title</title>' }),
+      pending
+    );
     expect(unrelated.ok).toBe(false);
     expect(unrelated.warnings).toHaveLength(0);
   });
@@ -144,15 +193,21 @@ describe('SEO lock approval gate', () => {
     const fixture = makeSignedRepo();
     try {
       const previousDeploy = git(fixture.repo, ['rev-parse', 'HEAD']).trim();
-      writeFileSync(fixture.allowedSigners, `test-signer ${readFileSync(`${fixture.privateKey}.pub`, 'utf8')}`);
+      writeFileSync(
+        fixture.allowedSigners,
+        `test-signer ${readFileSync(`${fixture.privateKey}.pub`, 'utf8')}`
+      );
       writeLock(fixture.repo, { '/blog/locked': { ...ENTRY, title: 'Approved new title' } });
       git(fixture.repo, ['add', 'content/seo-lock.json']);
       git(fixture.repo, ['commit', '-S', '-m', 'approve new title']);
       const currentDeploy = git(fixture.repo, ['rev-parse', 'HEAD']).trim();
       const options = { repoRoot: fixture.repo, allowedSignersFile: fixture.allowedSigners };
-      expect((await checkLockApproval({ ...options, deployBase: previousDeploy })).changedDbFields)
-        .toEqual(new Map([['/blog/locked:title', ENTRY.title]]));
-      expect((await checkLockApproval({ ...options, deployBase: currentDeploy })).changedDbFields.size).toBe(0);
+      expect(
+        (await checkLockApproval({ ...options, deployBase: previousDeploy })).changedDbFields
+      ).toEqual(new Map([['/blog/locked:title', ENTRY.title]]));
+      expect(
+        (await checkLockApproval({ ...options, deployBase: currentDeploy })).changedDbFields.size
+      ).toBe(0);
       expect((await checkLockApproval(options)).changedDbFields.size).toBe(0);
     } finally {
       rmSync(fixture.repo, { recursive: true, force: true });

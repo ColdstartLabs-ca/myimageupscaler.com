@@ -6,6 +6,7 @@ import { join, relative } from 'node:path';
 import {
   diffLock,
   extractSeoFields,
+  loadEffectiveLock,
   type ISeoLock,
   type ISeoLockDiff,
   type TSeoLockField,
@@ -454,7 +455,9 @@ export async function runSeoLockGate(options: IRunGateOptions = {}): Promise<{
 }> {
   const repoRoot = options.repoRoot ?? process.cwd();
   const lockPath = options.lockPath ?? join(repoRoot, 'content/seo-lock.json');
-  const lock = JSON.parse(readFileSync(lockPath, 'utf8')) as ISeoLock;
+  const signedLock = JSON.parse(readFileSync(lockPath, 'utf8')) as ISeoLock;
+  const { loadAutoSeoLocks } = await import('@server/services/seo-lock.service');
+  const lock = await loadEffectiveLock(signedLock, loadAutoSeoLocks);
   const approval = await checkLockApproval({ repoRoot, lockPath, deployBase: options.deployBase });
   const render = await runRenderGate(lock, {
     repoRoot,

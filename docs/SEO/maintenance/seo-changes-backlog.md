@@ -3311,3 +3311,8 @@ A real local built-Worker request to `/api/blog/images/upload` returned 500 duri
 - Retained body/source regression guards after finding they lacked lock coverage. Related checks: 136 pass; full SEO has only two existing font failures. Production rollout and weekly monitoring remain pending.
 
 - Pin cleanup: consolidated the 33 interactive-tool metadata assertions into the general tool contract (41 tests pass), without changing page content or dropping assertions. Other historical guards remain until their replacement coverage is established.
+
+### 2026-10-23 — SEO monitoring persistence checkpoint
+- Added append-only auto-lock storage and connected it to deploy and blog PATCH enforcement, including localized blog URLs. An isolated PostgreSQL migration test verifies frozen values, conflict preservation, RLS and permissions; production remains unchanged. The new readers require the migration before rollout.
+- Added tested live-drift extraction and the weekly digest template. Weekly cron, GSC evaluation and actual delivery remain pending in the monitoring PRD.
+- Consolidated three historical blog test files into `blog-field-policy.unit.spec.ts`, retaining all 13 tests, assertions and page fixtures. No page content changed.

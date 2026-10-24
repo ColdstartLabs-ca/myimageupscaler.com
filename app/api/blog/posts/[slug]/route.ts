@@ -9,15 +9,23 @@ import {
 } from '@shared/validation/blog.schema';
 import { createLogger } from '@server/monitoring/logger';
 import seoLockRaw from '@/content/seo-lock.json';
-import { hashSeoText, normalize, type ISeoLockEntry } from '@lib/seo/seo-lock';
+import { hashSeoText, loadEffectiveLock, normalize, type ISeoLockEntry } from '@lib/seo/seo-lock';
+import { loadAutoSeoLocks } from '@server/services/seo-lock.service';
+import { SUPPORTED_LOCALES } from '@/i18n/config';
 import { clientEnv } from '@shared/config/env';
 
 const SEO_LOCK = seoLockRaw as Record<string, ISeoLockEntry>;
 
-function getBlogLockEntries(slug: string): Array<{ path: string; entry: ISeoLockEntry }> {
+async function getBlogLockEntries(
+  slug: string
+): Promise<Array<{ path: string; entry: ISeoLockEntry }>> {
   const englishPath = `/blog/${slug}`;
+  const paths = SUPPORTED_LOCALES.map(locale =>
+    locale === 'en' ? englishPath : `/${locale}${englishPath}`
+  );
+  const lock = await loadEffectiveLock(SEO_LOCK, () => loadAutoSeoLocks(paths));
   const localizedPath = new RegExp(`^/[^/]+/blog/${slug.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`);
-  return Object.entries(SEO_LOCK)
+  return Object.entries(lock)
     .filter(([path]) => path === englishPath || localizedPath.test(path))
     .map(([path, entry]) => ({ path, entry }));
 }
@@ -26,24 +34,29 @@ async function getBlogLockViolations(
   slug: string,
   body: Record<string, unknown>
 ): Promise<Array<{ path: string; field: string; expected: string; actual: string }>> {
-  const entries = getBlogLockEntries(slug);
-  if (entries.length === 0 || !['title', 'description', 'seo_title', 'seo_description'].some(field => field in body)) return [];
+  if (!['title', 'description', 'seo_title', 'seo_description'].some(field => field in body))
+    return [];
+  const entries = await getBlogLockEntries(slug);
+  if (entries.length === 0) return [];
   const current = await getBlogPostBySlug(slug);
   if (!current) throw new Error('NOT_FOUND: Blog post not found');
   const candidate = { ...current, ...body };
   const changed: Partial<Record<'title' | 'description' | 'h1' | 'introHash', string>> = {};
   if ('title' in body) changed.h1 = normalize(String(candidate.title));
-  if ('description' in body) changed.introHash = await hashSeoText(normalize(String(candidate.description)));
+  if ('description' in body)
+    changed.introHash = await hashSeoText(normalize(String(candidate.description)));
   if ('seo_title' in body || ('title' in body && !candidate.seo_title)) {
     changed.title = normalize(`${candidate.seo_title || candidate.title} | ${clientEnv.APP_NAME}`);
   }
   if ('seo_description' in body || ('description' in body && !candidate.seo_description)) {
     changed.description = normalize(String(candidate.seo_description || candidate.description));
   }
-  return entries.flatMap(({ path, entry }) => Object.entries(changed).flatMap(([field, actual]) => {
-    const expected = entry[field as keyof typeof changed];
-    return actual === expected ? [] : [{ path, field, expected, actual }];
-  }));
+  return entries.flatMap(({ path, entry }) =>
+    Object.entries(changed).flatMap(([field, actual]) => {
+      const expected = entry[field as keyof typeof changed];
+      return actual === expected ? [] : [{ path, field, expected, actual }];
+    })
+  );
 }
 
 /**
