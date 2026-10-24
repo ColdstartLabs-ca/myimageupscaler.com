@@ -15,6 +15,7 @@
  *   node scripts/test-trigger.js database-retention
  *   node scripts/test-trigger.js quota-guard
  *   node scripts/test-trigger.js upscale-completion-health
+ *   node scripts/test-trigger.js seo-lock-digest
  *   node scripts/test-trigger.js email-lifecycle
  *   node scripts/test-trigger.js email-lifecycle-catch-up
  */
@@ -29,6 +30,7 @@ const JOBS = {
   'database-retention': '25 * * * *',
   'quota-guard': '0 2 * * *',
   'upscale-completion-health': '15 1 * * *',
+  'seo-lock-digest': '0 7 * * 1',
   'email-lifecycle': '10 * * * *',
   'email-lifecycle-catch-up': '40 * * * *',
 };

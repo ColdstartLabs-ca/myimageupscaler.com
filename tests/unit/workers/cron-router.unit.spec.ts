@@ -24,6 +24,60 @@ describe('Cron Worker Router', () => {
     vi.restoreAllMocks();
   });
 
+  it('maps Monday SEO monitoring to the authenticated digest route', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        checked: 36,
+        autoAdded: 0,
+        alertCount: 0,
+      }),
+    });
+    global.fetch = fetchMock;
+    const ctx = makeCtx();
+    await worker.scheduled({ cron: '0 7 * * 1', scheduledTime: Date.now() }, mockEnv, ctx);
+    await ctx.flush();
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://myimageupscaler.com/api/cron/seo-lock-digest',
+      expect.objectContaining({
+        method: 'POST',
+        headers: expect.objectContaining({ 'x-cron-secret': 'test-secret' }),
+      })
+    );
+    const config = readFileSync(resolve(process.cwd(), 'workers/cron/wrangler.toml'), 'utf8');
+    expect(config).toContain('"0 7 * * 1"');
+    expect(evaluateCronResult('/api/cron/seo-lock-digest', {})).toMatchObject({ failed: true });
+  });
+
+  it('supports an authenticated manual trigger for the Monday digest', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        checked: 36,
+        autoAdded: 0,
+        alertCount: 0,
+      }),
+    });
+    global.fetch = fetchMock;
+    const ctx = makeCtx();
+    const response = await worker.fetch(
+      new Request('https://cron.local/trigger?pattern=0%207%20*%20*%201', {
+        method: 'POST',
+        headers: { 'x-cron-secret': mockEnv.CRON_SECRET },
+      }),
+      mockEnv,
+      ctx
+    );
+    await ctx.flush();
+    expect(response.status).toBe(200);
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://myimageupscaler.com/api/cron/seo-lock-digest',
+      expect.objectContaining({ method: 'POST' })
+    );
+  });
+
   it('does not declare a production lifecycle drain feature flag', () => {
     const config = readFileSync(resolve(process.cwd(), 'workers/cron/wrangler.toml'), 'utf8');
     const productionVars = config.match(/\[vars\]([\s\S]*?)\[env\.development\]/)?.[1] ?? '';

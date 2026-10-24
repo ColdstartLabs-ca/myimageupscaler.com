@@ -30,7 +30,9 @@ crons = [
   # Email lifecycle retention drips - hourly at :10 UTC
   "10 * * * *",
   # Email lifecycle catch-up - hourly at :40 UTC
-  "40 * * * *"
+  "40 * * * *",
+  # Weekly SEO lock digest - Monday at 07:00 UTC
+  "0 7 * * 1"
 ]
 
 # Environment Variables (non-sensitive defaults)

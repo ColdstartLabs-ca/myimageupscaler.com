@@ -9,6 +9,15 @@ Maintenance rules:
 - If this file gets large, summarize older detailed entries into a monthly rollup and keep only recent operational detail.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-10-23
+
+### SEO lock approval gate
+
+- Added the generated `content/seo-lock.json` baseline for the 36 URLs above 20 GSC clicks in the 28-day web export (795 page rows; 17 code entries and 19 DB entries), with all eight rendered fields plus source and click metadata. Added shared extraction/diff logic, regeneration, R1 render drift checking, R2 SSH-signed approval checking, the blog PATCH 409 fence, deploy wiring, and locked-URL proposal instructions for the Three Kings and opportunity publishers.
+- Migrated the listed per-edit SEO pin tests into lock/general coverage and removed their four one-off apply scripts. The homepage protected-pages test now retains only its FAQ assertion.
+- Validation: targeted lock/API/protected-page tests **13/13 passed**, TypeScript passed, scoped ESLint passed, and `yarn verify` passed in **64.74s** (0 errors; 1,830 existing warnings). A production-configured remote build passed in 104s and generated 4,521 routes; lock regeneration wrote 36 entries.
+- Follow-up: the first João SSH-signed baseline commit is required before R2 can pass; the first shared GitHub Actions run remains pending. Full unit/SEO suites are not green because the pre-existing `pseo-hero-lcp.unit.spec.ts` expects removed `DM_Sans`/`display: 'swap'` source text (3 failures across the full suite, 2 in the SEO subset); those files are outside this lane.
+
 ## 2026-10-17
 
 ### GSC indexing requests after the Oct 15 deploy — remove-bg and homepage
@@ -3292,3 +3301,32 @@ Noted, not fixed: the commit message claims it removes "the unused AI PR review 
 ### Worker-compatible blog image uploads — 2026-10-11
 
 A real local built-Worker request to `/api/blog/images/upload` returned 500 during native `sharp` initialization, before auth or R2 access. The correction preserves the upload API and WebP output while moving conversion to Cloudflare transformations with scoped temporary R2 cleanup. Owning plan and verification: `docs/PRDs/supabase-quota-recovery/02-r2-storage-migration.md`. No blog content, image references, metadata/schema output, sitemap or indexing state changed. Affected unit tests (170), built-Worker release tests (21) and required verification passed. The initial rollout was reverted after a probe defect: its 52-character ownership tag exceeded the 50-character limit. The corrected probe passed against the hosted candidate at 0% normal traffic: upload 201, exact R2/public WebP bytes, correct metadata and verified fixture cleanup. The tested candidate is now promoted at 100%, BUILD_ID `pRwFsxSaN5IgYBMueHE_5`; database/home/auth guards passed and cron remained unchanged. Manual GSC backlog items remain unchecked.
+
+### 2026-10-23 — SEO lock local verification follow-up
+- Fixed blog PATCH checks to validate rendered H1/intro and metadata fallback/title suffix. Restricted pending-DB render warnings to a signed change inside the deployment range and its previous approved value.
+- Added server ADMIN_EMAIL default/Worker allowlist. No production mutation or deploy. Related suite passed 121 tests; yarn verify passed. Full SEO suite has two pre-existing font failures; real build/R1 and pin-migration audit remain pending in the PRD.
+
+### 2026-10-23 — Real local SEO lock verification
+- Fresh GSC + actual built app regeneration reproduces all 36 locked URLs and every stored field. Real R1 render passes; R2 remains blocked on João’s signing key/baseline. Fixed local hostname rewrite loops and async crawl server cleanup, with regression tests.
+- Retained body/source regression guards after finding they lacked lock coverage. Related checks: 136 pass; full SEO has only two existing font failures. Production rollout and weekly monitoring remain pending.
+
+- Pin cleanup: consolidated the 33 interactive-tool metadata assertions into the general tool contract (41 tests pass), without changing page content or dropping assertions. Other historical guards remain until their replacement coverage is established.
+
+### 2026-10-23 — SEO monitoring persistence checkpoint
+- Added append-only auto-lock storage and connected it to deploy and blog PATCH enforcement, including localized blog URLs. An isolated PostgreSQL migration test verifies frozen values, conflict preservation, RLS and permissions; production remains unchanged. The new readers require the migration before rollout.
+- Added tested live-drift extraction and the weekly digest template. Weekly cron, GSC evaluation and actual delivery remain pending in the monitoring PRD.
+- Consolidated three historical blog test files into `blog-field-policy.unit.spec.ts`, retaining all 13 tests, assertions and page fixtures. No page content changed.
+
+### 2026-10-23 — Weekly SEO digest local implementation
+- Wired Monday cron and its authenticated manual trigger to live drift, relative stop-loss, unchanged-winner diagnosis, append-only winner capture, recent proposals and gate-file commits. Added signed evaluation metadata enforcement and a reviewable single-entry restore command that preserves staged/unstaged work.
+- Local proof: related route/gate/template/worker tests, actual PostgreSQL append-only and sync-type transactions, production-config Next build and real unauthenticated endpoint rejection. Read-only GSC and GitHub requests succeeded. Production rollout, signing setup, Worker limits and inbox delivery remain pending in the PRDs; production data was unchanged.
+
+### 2026-10-23 — Historical SEO guard cleanup and approval hardening
+- Retired all 12 existing per-edit test files while retaining their 80 cases in general suites. Pure edit transforms now live in test fixtures; their production script paths and unused repair CLI are gone. Restored three uncovered locale-brand checks and kept the homepage FAQ guard.
+- Corrected stale font guards to inspect the shared local-font definitions. Full SEO suite: 1,597 tests / 143 files pass, including the new GPG-message spoof negative control. SSH approval now checks the actual signature header. Added the weekly digest to the manual cron CLI; 29 cron checks pass.
+- Final full unit: 7,277 pass, 12 skipped; final `yarn verify` passes. Evidence and the remaining approval-collision audit are in the gate PRD. No production content, fonts, schema or deployment changed during this cleanup.
+
+### 2026-10-23 — Close auto-lock approval and working-tree bypasses
+- Compare JSON promotions with frozen database values so unsigned additions cannot overwrite an already locked path. Require evaluation metadata for signed value changes and retain deployment-scoped warnings for signed promotion/reversion.
+- Restore a prior JSON absence by removing only the selected override, preserving other entries and returning authority to the frozen database lock. Check uncommitted lock edits before deployment too.
+- Native Git red/green controls; 34 related tests and 1,604 full SEO tests pass; `yarn verify` passes (107.86 seconds). Owner signing setup and shared deployment acceptance remain pending; no production write or deployment.

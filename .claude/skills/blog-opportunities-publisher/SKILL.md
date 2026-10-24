@@ -77,6 +77,9 @@ After completing an action, update the canonical state in the same run. Append t
      - `indexing backlog`
      - `defer-with-deadline`
 
+   - Before handing a maintenance action to `blog-edit`, read `content/seo-lock.json`. A locked URL becomes a proposal in the weekly digest: include the URL, locked field, proposed value, evidence, and the required João SSH-signed lock change. Keep the API/write handoff out of the run until that signed approval exists.
+   - Include `seo_lock_auto_entries` in that read-only check (use `gcloud-secrets` read-only if credentials are needed); signed JSON wins on duplicate paths. Append a row to `content/seo-lock-proposals.json`: `{ "path": "/blog/example", "source": "blog-opportunities-publisher", "proposedAt": "YYYY-MM-DD", "field": "description", "proposedValue": "Rendered proposed description", "evidence": "Query, window and metric supporting the change" }`. Use one of the eight rendered lock fields, not the API field name. The weekly digest includes rows from the last seven days. Commit the proposal for review while keeping the lock and production post unchanged.
+
 5. **Decide whether to publish**
    - Publish nothing if no candidate passes the anti-cannibalization gate and scoring threshold.
    - Publish nothing if the best action is to refresh an existing blog post, tool page, or pSEO page.

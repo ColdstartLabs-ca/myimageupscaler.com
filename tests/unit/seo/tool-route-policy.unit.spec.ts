@@ -28,7 +28,7 @@ vi.mock('@shared/config/env', () => ({
 
 const REMOVE_BG_URL = 'https://myimageupscaler.com/tools/remove-bg';
 
-describe('/tools/remove-bg keeps the prerequisites that captured the Sep 2026 spike', () => {
+describe('Tool routes preserve eligibility, indexing and conversion policy', () => {
   it('earns sitemap eligibility from measured impressions, not a grace period', () => {
     const tool = toolsData.pages.find(page => page.slug === 'remove-bg');
 

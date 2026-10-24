@@ -34,9 +34,9 @@ const ALLOWLIST = new Set<string>([
   // slug uniqueness, not copy
   "tests/unit/seo/pseo-duplicate-slugs.unit.spec.ts :: expect(mainImageUpscaler.slug).not.toContain('free-');",
   // forbids an inflated "10 free credits" grant
-  "tests/unit/seo/three-kings-regression-repair.unit.spec.ts :: expect(repaired.content).not.toContain('10 free credits');",
+  "tests/unit/seo/blog-content-policy.unit.spec.ts :: expect(repaired.content).not.toContain('10 free credits');",
   // forbids the same inflated "10 free credits" grant in the 2026-10-12 rung-3 body
-  "tests/unit/seo/three-kings-2026-10-12.unit.spec.ts :: expect(result.content).not.toContain('10 free credits');",
+  "tests/unit/seo/blog-content-policy.unit.spec.ts :: expect(result.content).not.toContain('10 free credits');",
 ]);
 
 const testFiles = (dir: string): string[] =>
