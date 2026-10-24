@@ -27,9 +27,10 @@ export function restoreSeoLockEntry(path: string, from: string, repoRoot = proce
       encoding: 'utf8',
     })
   ) as ISeoLock;
-  if (!Object.hasOwn(previous, path)) throw new Error(`No lock entry for ${path} at ${from}`);
   const current = JSON.parse(readFileSync(lockPath, 'utf8')) as ISeoLock;
-  current[path] = previous[path];
+  if (Object.hasOwn(previous, path)) current[path] = previous[path];
+  else if (Object.hasOwn(current, path)) delete current[path];
+  else throw new Error(`No lock entry for ${path} at ${from}`);
   const temporary = `${lockPath}.${process.pid}.tmp`;
   try {
     writeFileSync(temporary, `${JSON.stringify(current, null, 2)}\n`);

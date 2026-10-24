@@ -74,6 +74,36 @@ function makeSignedRepo(): {
 }
 
 describe('SEO lock render gate', () => {
+  it('passes database locks to R2 from the actual gate entry point', async () => {
+    const fixture = makeSignedRepo();
+    try {
+      const auto = { ...ENTRY, source: 'db' as const };
+      writeLock(fixture.repo, { ...LOCK, '/auto': { ...auto, title: 'Unapproved override' } });
+      git(fixture.repo, ['add', 'content/seo-lock.json']);
+      git(fixture.repo, ['commit', '-m', 'unsigned auto override']);
+      loadAutoSeoLocks.mockClear();
+      loadAutoSeoLocks.mockResolvedValue({ '/auto': auto });
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async (url: string) =>
+          String(url).includes('api.github.com')
+            ? Response.json([{ key: readFileSync(`${fixture.privateKey}.pub`, 'utf8').trim() }])
+            : new Response('<title>Unapproved override</title>')
+        )
+      );
+      const result = await runSeoLockGate({ repoRoot: fixture.repo, baseUrl: 'http://fixture' });
+      expect(result.approval.ok).toBe(false);
+      expect(result.approval.violations).toContainEqual(
+        expect.objectContaining({ path: '/auto', field: 'title' })
+      );
+      expect(loadAutoSeoLocks).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.unstubAllGlobals();
+      rmSync(fixture.repo, { recursive: true, force: true });
+      rmSync(fixture.keyDir, { recursive: true, force: true });
+    }
+  });
+
   it('includes auto-added paths in the real gate entry point', async () => {
     const repo = mkdtempSync(join(tmpdir(), 'seo-lock-effective-'));
     mkdirSync(join(repo, 'content'));
@@ -189,6 +219,157 @@ describe('SEO lock render gate', () => {
 });
 
 describe('SEO lock approval gate', () => {
+  it('checks working-tree values while allowing a genuinely new unlocked path', async () => {
+    const fixture = makeSignedRepo();
+    try {
+      writeFileSync(
+        fixture.allowedSigners,
+        `test-signer ${readFileSync(`${fixture.privateKey}.pub`, 'utf8')}`
+      );
+      const options = { repoRoot: fixture.repo, allowedSignersFile: fixture.allowedSigners };
+      writeLock(fixture.repo, { ...LOCK, '/new-winner': ENTRY });
+      expect((await checkLockApproval(options)).ok).toBe(true);
+      writeLock(fixture.repo, {
+        '/blog/locked': { ...ENTRY, title: 'Uncommitted unauthorized title' },
+      });
+      const result = await checkLockApproval(options);
+      expect(result.ok).toBe(false);
+      expect(result.violations).toContainEqual(
+        expect.objectContaining({ commitSha: 'WORKTREE', path: '/blog/locked', field: 'title' })
+      );
+    } finally {
+      rmSync(fixture.repo, { recursive: true, force: true });
+      rmSync(fixture.keyDir, { recursive: true, force: true });
+    }
+  });
+
+  it.each([
+    { title: ENTRY.title, allowed: true },
+    { title: 'Unsigned auto override', allowed: false },
+  ])(
+    'checks an unsigned JSON promotion against frozen auto values: $allowed',
+    async ({ title, allowed }) => {
+      const fixture = makeSignedRepo();
+      try {
+        writeFileSync(
+          fixture.allowedSigners,
+          `test-signer ${readFileSync(`${fixture.privateKey}.pub`, 'utf8')}`
+        );
+        const auto = { ...ENTRY, source: 'db' as const };
+        writeLock(fixture.repo, { ...LOCK, '/auto': { ...auto, title } });
+        expect(
+          (
+            await checkLockApproval({
+              repoRoot: fixture.repo,
+              allowedSignersFile: fixture.allowedSigners,
+              autoLock: { '/auto': auto },
+            })
+          ).ok
+        ).toBe(allowed);
+        git(fixture.repo, ['add', 'content/seo-lock.json']);
+        git(fixture.repo, ['commit', '-m', 'unsigned JSON addition over auto lock']);
+        const result = await checkLockApproval({
+          repoRoot: fixture.repo,
+          allowedSignersFile: fixture.allowedSigners,
+          autoLock: { '/auto': auto },
+        });
+        expect(result.ok).toBe(allowed);
+        if (!allowed)
+          expect(result.violations).toContainEqual(
+            expect.objectContaining({
+              path: '/auto',
+              field: 'title',
+              expected: auto.title,
+              actual: title,
+            })
+          );
+      } finally {
+        rmSync(fixture.repo, { recursive: true, force: true });
+        rmSync(fixture.keyDir, { recursive: true, force: true });
+      }
+    }
+  );
+
+  it('requires evaluation metadata for a signed change promoted from an auto lock', async () => {
+    const fixture = makeSignedRepo();
+    try {
+      writeFileSync(
+        fixture.allowedSigners,
+        `test-signer ${readFileSync(`${fixture.privateKey}.pub`, 'utf8')}`
+      );
+      writeLock(fixture.repo, {
+        ...LOCK,
+        '/auto': { ...ENTRY, source: 'db', title: 'Signed auto change' },
+      });
+      git(fixture.repo, ['add', 'content/seo-lock.json']);
+      git(fixture.repo, ['commit', '-S', '-m', 'promote changed auto value without baseline']);
+      const result = await checkLockApproval({
+        repoRoot: fixture.repo,
+        allowedSignersFile: fixture.allowedSigners,
+        autoLock: { '/auto': { ...ENTRY, source: 'db' } },
+      });
+      expect(result.ok).toBe(false);
+      expect(result.reason).toContain('evaluation metadata');
+    } finally {
+      rmSync(fixture.repo, { recursive: true, force: true });
+      rmSync(fixture.keyDir, { recursive: true, force: true });
+    }
+  });
+
+  it('allows a signed auto promotion and reports only its previous DB value as pending', async () => {
+    const fixture = makeSignedRepo();
+    try {
+      const base = git(fixture.repo, ['rev-parse', 'HEAD']).trim();
+      writeFileSync(
+        fixture.allowedSigners,
+        `test-signer ${readFileSync(`${fixture.privateKey}.pub`, 'utf8')}`
+      );
+      const auto = { ...ENTRY, source: 'db' as const };
+      writeLock(fixture.repo, {
+        ...LOCK,
+        '/auto': {
+          ...auto,
+          title: 'Signed new title',
+          change: {
+            approvedAt: '2026-10-01',
+            baselineClicks28d: 100,
+            baselineEndDate: '2026-09-28',
+            readbackDate: '2026-10-18',
+            previousLockCommit: base,
+          },
+        },
+      });
+      git(fixture.repo, ['add', 'content/seo-lock.json']);
+      git(fixture.repo, ['commit', '-S', '-m', 'approve auto promotion']);
+      const options = {
+        repoRoot: fixture.repo,
+        allowedSignersFile: fixture.allowedSigners,
+        autoLock: { '/auto': auto },
+      };
+      const result = await checkLockApproval({ ...options, deployBase: base });
+      expect(result.ok).toBe(true);
+      expect(result.changedDbFields).toEqual(new Map([['/auto:title', auto.title]]));
+      expect(
+        (
+          await checkLockApproval({
+            ...options,
+            deployBase: git(fixture.repo, ['rev-parse', 'HEAD']).trim(),
+          })
+        ).changedDbFields.size
+      ).toBe(0);
+      const promoted = git(fixture.repo, ['rev-parse', 'HEAD']).trim();
+      writeLock(fixture.repo, LOCK);
+      git(fixture.repo, ['add', 'content/seo-lock.json']);
+      git(fixture.repo, ['commit', '-S', '-m', 'revert JSON promotion to frozen auto values']);
+      const reverted = await checkLockApproval({ ...options, deployBase: promoted });
+      expect(reverted.ok).toBe(true);
+      expect(reverted.changedDbFields).toEqual(new Map([['/auto:title', 'Signed new title']]));
+    } finally {
+      rmSync(fixture.repo, { recursive: true, force: true });
+      rmSync(fixture.keyDir, { recursive: true, force: true });
+    }
+  });
+
   it('rejects a signed value change without its evaluation baseline', async () => {
     const fixture = makeSignedRepo();
     try {

@@ -42,6 +42,7 @@ export interface ILockApprovalResult {
 }
 
 export interface ILockApprovalOptions {
+  autoLock?: ISeoLock;
   deployBase?: string;
   repoRoot?: string;
   lockPath?: string;
@@ -190,6 +191,14 @@ export function verifySshCommit(repoRoot: string, commitSha: string, allowedSign
   }
 }
 
+function withAutoBaseline(oldLock: ISeoLock, newLock: ISeoLock, autoLock: ISeoLock): ISeoLock {
+  const baseline = { ...oldLock };
+  for (const [path, entry] of Object.entries(autoLock)) {
+    if (!Object.hasOwn(baseline, path) && Object.hasOwn(newLock, path)) baseline[path] = entry;
+  }
+  return baseline;
+}
+
 function lockDiffsBetween(oldLock: ISeoLock, newLock: ISeoLock): IApprovalViolation[] {
   const violations: IApprovalViolation[] = [];
   for (const path of Object.keys(oldLock).sort()) {
@@ -270,6 +279,7 @@ export async function checkLockApproval(
   options: ILockApprovalOptions = {}
 ): Promise<ILockApprovalResult> {
   const repoRoot = options.repoRoot ?? process.cwd();
+  const autoLock = options.autoLock ?? {};
   const lockPath = options.lockPath ?? join(repoRoot, 'content/seo-lock.json');
   const relativePath = lockRelativePath(repoRoot, lockPath);
   const changedDbFields = new Map<string, unknown>();
@@ -315,7 +325,9 @@ export async function checkLockApproval(
 
     const approvedLock = readLockAtCommit(repoRoot, signedBaseline, lockPath);
     const baselineParent = commitParent(repoRoot, signedBaseline);
-    const parentLock = baselineParent ? readLockAtCommit(repoRoot, baselineParent, lockPath) : {};
+    const parentLock = withAutoBaseline(
+      baselineParent ? readLockAtCommit(repoRoot, baselineParent, lockPath) : {}, approvedLock, autoLock
+    );
     for (const [path, entry] of Object.entries(approvedLock)) {
       if (!parentLock[path] || diffLock(parentLock[path], entry).length === 0) continue;
       const previousSigned = history.slice(history.indexOf(signedBaseline) + 1)
@@ -331,7 +343,7 @@ export async function checkLockApproval(
       execFileSync('git', ['merge-base', '--is-ancestor', deployBase, 'HEAD'], { cwd: repoRoot, stdio: 'ignore' });
       const deploymentCommits = runGit(repoRoot, ['rev-list', `${deployBase}..HEAD`]).split('\n');
       if (deploymentCommits.includes(signedBaseline)) {
-        changedFields(readLockAtCommit(repoRoot, deployBase, lockPath), readLockAtCommit(repoRoot, signedBaseline, lockPath))
+        changedFields({ ...autoLock, ...readLockAtCommit(repoRoot, deployBase, lockPath) }, { ...autoLock, ...approvedLock })
           .forEach((value, field) => changedDbFields.set(field, value));
       }
     }
@@ -347,12 +359,19 @@ export async function checkLockApproval(
     for (const commitSha of laterCommits) {
       const parent = commitParent(repoRoot, commitSha);
       if (!parent) continue;
+      const committedLock = readLockAtCommit(repoRoot, commitSha, lockPath);
       const commitViolations = lockDiffsBetween(
-        readLockAtCommit(repoRoot, parent, lockPath),
-        readLockAtCommit(repoRoot, commitSha, lockPath)
+        withAutoBaseline(readLockAtCommit(repoRoot, parent, lockPath), committedLock, autoLock), committedLock
       );
       violations.push(...commitViolations.map(violation => ({ ...violation, commitSha })));
     }
+
+    const workingLock = JSON.parse(readFileSync(lockPath, 'utf8')) as ISeoLock;
+    const workingViolations = lockDiffsBetween(
+      withAutoBaseline(readLockAtCommit(repoRoot, 'HEAD', lockPath), workingLock, autoLock),
+      workingLock
+    );
+    violations.push(...workingViolations.map(violation => ({ ...violation, commitSha: 'WORKTREE' })));
 
     return {
       ok: violations.length === 0,
@@ -360,7 +379,7 @@ export async function checkLockApproval(
       changedDbFields,
       violations,
       ...(violations.length
-        ? { reason: 'A later unsigned or non-SSH-approved commit changed an existing lock value' }
+        ? { reason: 'An unsigned, non-SSH-approved, or working-tree change modified an existing lock value' }
         : {}),
     };
   } catch (error) {
@@ -465,8 +484,9 @@ export async function runSeoLockGate(options: IRunGateOptions = {}): Promise<{
   const lockPath = options.lockPath ?? join(repoRoot, 'content/seo-lock.json');
   const signedLock = JSON.parse(readFileSync(lockPath, 'utf8')) as ISeoLock;
   const { loadAutoSeoLocks } = await import('@server/services/seo-lock.service');
-  const lock = await loadEffectiveLock(signedLock, loadAutoSeoLocks);
-  const approval = await checkLockApproval({ repoRoot, lockPath, deployBase: options.deployBase });
+  const autoLock = await loadAutoSeoLocks();
+  const lock = await loadEffectiveLock(signedLock, async () => autoLock);
+  const approval = await checkLockApproval({ repoRoot, lockPath, deployBase: options.deployBase, autoLock });
   const render = await runRenderGate(lock, {
     repoRoot,
     baseUrl: options.baseUrl,

@@ -1,7 +1,7 @@
 # PRD-seo-lock-approval-gate — SEO lock with signed-commit approval
 
 **Status:** IN PROGRESS — local checks running; owner signing and deployed CI evidence remain open
-**Priority:** P1 — no gate exists today: any agent (Claude Code, Codex, Hermes cron) can change a page that earns traffic and update its test in the same commit (AC-1 to AC-6 open).
+**Priority:** P1 — local gate and monitoring checks are implemented. Shared deployment acceptance (AC-5) awaits the owner-signed baseline and rollout.
 **Complexity:** 7 → HIGH; risk override: none (breakdown: 6 implementation files +2, new module +2, crosses the CI deploy boundary +2, GitHub API +1)
 **Owner:** SEO dev agent; João owns the signing key and every lock value change.
 **Depends on:** None. Followed by [PRD-seo-lock-monitoring](seo-lock-monitoring.md) and [PRD-pseo-split-testing](pseo-split-testing.md).
@@ -131,18 +131,20 @@ A further native-Git negative control proved a GPG commit with an SSH marker in 
 - `yarn verify` passed after the gate/blog fixes (82.15 s). Related API/lock/config/deploy suite: 16 files, 121 tests passed.
 - `yarn vitest run tests/unit/seo`: 132 files passed, one failed; 1,463 passed, two existing font assertions failed in `pseo-hero-lcp.unit.spec.ts`. Both that test and `app/(pseo)/layout.tsx` match base `143e0daa`; no font change belongs to this PRD.
 - Initial real gate invocation failed because the interrupted build lacks `.next/prerender-manifest.json`; a clean build is running on the Debian laptop. This does not prove R1 runtime acceptance.
-- AC-1 regeneration/count and AC-6 assertion migration remain unverified. João’s actual SSH signing key/baseline, master deployment, production secrets/schema changes and inbox receipt remain separate from local verification.
+- At this initial checkpoint, AC-1 regeneration/count and AC-6 assertion migration were unverified; the later runtime and Phase 3 evidence above supersedes that status. João’s actual SSH signing key/baseline, master deployment, production secrets/schema changes and inbox receipt remain separate from local verification.
 - Local deploy supports `--seo-lock-base=<previous-deployed-commit>` for pending approved DB changes; omission keeps drift blocking. CI supplies the push-before SHA.
 
 ### Runtime verification follow-up
 - Local Next normalizes loopback URLs to `localhost`; binding the owned render server to `127.0.0.1` caused locale rewrites to re-enter middleware and self-redirect. Both CLI servers now bind and crawl `localhost`. The unchanged real build passes R1.
 - Real regeneration reproduced early server termination (`fetch failed`). Awaiting the asynchronous crawl before cleanup fixes it; a real child-server lifecycle regression observed ECONNREFUSED red, then passed green. Readiness likewise has a real redirect-loop red/green test.
 - Latest focused suite: 17 files / 136 tests passed. `yarn verify` passed after runtime fixes (55.88 s). Full SEO: 145 files / 1,559 tests passed; only the two unchanged-base font assertions in `pseo-hero-lcp.unit.spec.ts` fail.
-- Coverage audit proved several retired assertions cover body/source behavior or URLs outside the 36-entry lock. Restored 12 original test files, four helper scripts and the original scanner allowlist; their checks remain until equivalent general guards are established. AC-6 stays open.
+- Coverage audit proved several retired assertions cover body/source behavior or URLs outside the 36-entry lock. Restored 12 original test files, four helper scripts and the original scanner allowlist; their checks remain until equivalent general guards are established. AC-6 was open at that checkpoint; the completed Phase 3 consolidation above supersedes it.
 - Rendering used only public production config plus the Supabase service-role field fetched read-only from Secret Manager. No production secret version, schema, row, merge or deployment changed.
 
 ### Pin migration progress
 - Migrated all 33 assertions from `interactive-tools-pr13-metadata.unit.spec.ts` into the general `tools-metadata.unit.spec.ts` contract. Preserved eight required slugs, title/description bounds, catalogue cross-references and OCR intent separation. Existing eight tool checks stay. Parent rerun: 41/41 passed; `yarn verify` passed (51.85 s). The old per-edit file is retired; the other 11 remain until covered.
 
-### Remaining approval audit
-- Before rollout, validate unsigned JSON additions that collide with a frozen database auto entry: JSON precedence must not let a new JSON path bypass owner approval for an already protected value. Existing auto-entry fixtures prove render enforcement, but do not yet prove that collision case. Validate pending-DB warnings and the restore path for a signed promotion too. Shared signing/deployment checks remain open.
+### Approval audit follow-up
+- Native Git regressions reproduced unsigned JSON promotion overriding a frozen auto entry, missing evaluation metadata on signed promotion, missing pending warnings on reversion, and uncommitted lock changes bypassing approval. The gate now reads one database snapshot for both enforcement stages and compares promotions against those frozen values. Identical promotions and genuinely new paths remain allowed; changed protected values need owner approval, including working-tree edits.
+- Signed promotion requires evaluation metadata referencing the previous signed lock commit. Deployment warnings cover only the previous effective values during that deployment range. Restoring a prior JSON absence removes only that override and returns authority to the frozen database entry; other entries and staged/unstaged work remain protected.
+- The related gate/restore/core/API group passes 34 tests. The full SEO suite passes 1,604 tests across 143 files (81.06 seconds). `yarn verify` passed (107.86 seconds). Shared signing/deployment checks remain open. GitHub's read-only signing-key endpoint returned zero keys for `jonit-dev` during this audit.

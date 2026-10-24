@@ -3325,3 +3325,8 @@ A real local built-Worker request to `/api/blog/images/upload` returned 500 duri
 - Retired all 12 existing per-edit test files while retaining their 80 cases in general suites. Pure edit transforms now live in test fixtures; their production script paths and unused repair CLI are gone. Restored three uncovered locale-brand checks and kept the homepage FAQ guard.
 - Corrected stale font guards to inspect the shared local-font definitions. Full SEO suite: 1,597 tests / 143 files pass, including the new GPG-message spoof negative control. SSH approval now checks the actual signature header. Added the weekly digest to the manual cron CLI; 29 cron checks pass.
 - Final full unit: 7,277 pass, 12 skipped; final `yarn verify` passes. Evidence and the remaining approval-collision audit are in the gate PRD. No production content, fonts, schema or deployment changed during this cleanup.
+
+### 2026-10-23 — Close auto-lock approval and working-tree bypasses
+- Compare JSON promotions with frozen database values so unsigned additions cannot overwrite an already locked path. Require evaluation metadata for signed value changes and retain deployment-scoped warnings for signed promotion/reversion.
+- Restore a prior JSON absence by removing only the selected override, preserving other entries and returning authority to the frozen database lock. Check uncommitted lock edits before deployment too.
+- Native Git red/green controls; 34 related tests and 1,604 full SEO tests pass; `yarn verify` passes (107.86 seconds). Owner signing setup and shared deployment acceptance remain pending; no production write or deployment.
