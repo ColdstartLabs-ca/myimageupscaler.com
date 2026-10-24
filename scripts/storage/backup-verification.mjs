@@ -8,7 +8,7 @@
  * uploads, or touches production. It only reads local files and runs an
  * injectable process runner for the mandatory remote proof.
  *
- * Safety contract (docs/PRDs/supabase-quota-recovery/README.md):
+ * Safety contract (docs/PRDs/platform/supabase-quota-recovery/README.md):
  *   - Local backup and raw manifests first, verified by SHA256.
  *   - Deletes come from a frozen manifest only, never a prefix or bucket sweep.
  *   - Every planned object must match its verified backup entry. Fail closed.

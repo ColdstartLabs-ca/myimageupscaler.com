@@ -9,7 +9,7 @@ This document is based on repository evidence only:
 
 - Canonical KPI metadata: `server/analytics/coreKpiDefinitions.ts`.
 - Event semantics and property names: PRD section 6 in
-  `docs/PRDs/revenue-conversion-retention-and-telemetry-trust.md`.
+  `docs/PRDs/revenue/revenue-conversion-retention-and-telemetry-trust.md`.
 - Property types, examples, and alternate-required rules: the local schema
   document exported by `scripts/validate-core-amplitude-schema.ts`.
 

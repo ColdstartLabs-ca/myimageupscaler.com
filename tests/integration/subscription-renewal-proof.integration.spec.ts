@@ -10,7 +10,7 @@
  * - Tests post-upgrade/downgrade renewal with correct plan credits
  * - Tests renewal credits allocated exactly once
  *
- * @see docs/PRDs/subscription-test-overhaul.md Phase 6
+ * @see docs/PRDs/revenue/subscription-test-overhaul.md Phase 6
  */
 
 import { test, expect } from '@playwright/test';
@@ -54,7 +54,11 @@ test.describe('Subscription Renewal Proof Suite', () => {
       const webhookClient = new WebhookClient(request);
 
       // Create Hobby user with 100 credits (below 400 cap)
-      const hobbyUser = await ctx.createUser({ subscription: 'active', tier: 'hobby', credits: 100 });
+      const hobbyUser = await ctx.createUser({
+        subscription: 'active',
+        tier: 'hobby',
+        credits: 100,
+      });
       await ctx.setupStripeCustomer(hobbyUser.id);
 
       const customerId = `cus_${hobbyUser.id}_renewal1`;
@@ -88,7 +92,11 @@ test.describe('Subscription Renewal Proof Suite', () => {
       const webhookClient = new WebhookClient(request);
 
       // Create Hobby user with 400 credits (at cap)
-      const hobbyUser = await ctx.createUser({ subscription: 'active', tier: 'hobby', credits: 400 });
+      const hobbyUser = await ctx.createUser({
+        subscription: 'active',
+        tier: 'hobby',
+        credits: 400,
+      });
       await ctx.setupStripeCustomer(hobbyUser.id);
 
       const customerId = `cus_${hobbyUser.id}_renewal2`;
@@ -121,7 +129,11 @@ test.describe('Subscription Renewal Proof Suite', () => {
       const webhookClient = new WebhookClient(request);
 
       // Create Hobby user with 350 credits (50 below cap)
-      const hobbyUser = await ctx.createUser({ subscription: 'active', tier: 'hobby', credits: 350 });
+      const hobbyUser = await ctx.createUser({
+        subscription: 'active',
+        tier: 'hobby',
+        credits: 350,
+      });
       await ctx.setupStripeCustomer(hobbyUser.id);
 
       const customerId = `cus_${hobbyUser.id}_renewal3`;
@@ -156,7 +168,11 @@ test.describe('Subscription Renewal Proof Suite', () => {
       const webhookClient = new WebhookClient(request);
 
       // Create Business user with 3000 credits
-      const businessUser = await ctx.createUser({ subscription: 'active', tier: 'business', credits: 3000 });
+      const businessUser = await ctx.createUser({
+        subscription: 'active',
+        tier: 'business',
+        credits: 3000,
+      });
       await ctx.setupStripeCustomer(businessUser.id);
 
       const customerId = `cus_${businessUser.id}_biz_renewal`;
@@ -167,11 +183,14 @@ test.describe('Subscription Renewal Proof Suite', () => {
       await setUserCredits(supabase, businessUser.id, 3000);
 
       // Fire renewal invoice
-      const renewalEvent = StripeWebhookMockFactory.createInvoicePaymentSucceededForPlan('business', {
-        userId: businessUser.id,
-        customerId,
-        subscriptionId,
-      });
+      const renewalEvent = StripeWebhookMockFactory.createInvoicePaymentSucceededForPlan(
+        'business',
+        {
+          userId: businessUser.id,
+          customerId,
+          subscriptionId,
+        }
+      );
 
       await webhookClient.send(renewalEvent);
 

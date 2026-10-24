@@ -10,7 +10,7 @@
  * frozen plan) and `apply` (`--confirm`, fresh DB backup first). No secret is read
  * at import; `help` alone runs without any credential or database work.
  *
- * Safety contract (docs/PRDs/supabase-quota-recovery/README.md):
+ * Safety contract (docs/PRDs/platform/supabase-quota-recovery/README.md):
  *   - The caller passes an identity; the real verified backup run is re-loaded and
  *     the caller identity must bind its manifest sha, run, count and byte total.
  *   - Local proof (`verifyFrozenArtifacts`), the mandatory remote laptop proof

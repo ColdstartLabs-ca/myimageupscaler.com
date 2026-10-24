@@ -144,6 +144,6 @@ Everything above is still **undeployed** as of this review; HEAD is the 07-30 ba
 ## Unrelated cleanup done 2026-07-31
 
 The 5s "Continue with the free plan?" confirmation gate was removed from `PurchaseModal` (P2 of
-`docs/PRDs/done/free-tier-abuse-prevention.md`). It gated on a localStorage counter, so the session-resetting
+`docs/PRDs/done/accounts/free-tier-abuse-prevention.md`). It gated on a localStorage counter, so the session-resetting
 abusers it targeted were unaffected while long-tenured free users were permanently penalized. `dismissCount`
 analytics retained. Not an SEO change; noted here only because it shipped in the same window.

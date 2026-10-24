@@ -5,7 +5,7 @@
  * in session storage. When 2/3 thresholds are met, checks eligibility
  * for the engagement-based first-purchase discount.
  *
- * @see docs/PRDs/engagement-based-first-purchase-discount.md
+ * @see docs/PRDs/revenue/engagement-based-first-purchase-discount.md
  */
 
 import { useCallback, useEffect, useRef } from 'react';

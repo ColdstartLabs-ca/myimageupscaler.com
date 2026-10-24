@@ -11,22 +11,27 @@ Create a skippable 3-step onboarding tour that highlights key UI elements for co
 ## Requirements
 
 ### 1. Tour Steps
+
 3 tooltips highlighting key areas:
+
 1. **Upload Zone** — "Drag and drop any image here, or click to browse"
 2. **Quality Selector** — "Choose your quality tier. Higher quality = better results"
 3. **Download Button** — "Click to download your upscaled image"
 
 ### 2. Trigger Behavior
+
 - Auto-trigger after 10 seconds of inactivity OR
 - Manual trigger via "Show me how" button
 - Only show to users with <1 upload (no `FIRST_UPLOAD_COMPLETED_KEY` flag)
 
 ### 3. User Controls
+
 - "Next" and "Previous" buttons for navigation
 - "Skip tour" button (X button) on each tooltip
 - Don't re-show after completion or skip
 
 ### 4. Visual Design
+
 - Highlight target element with overlay (darken rest of UI)
 - Position tooltips intelligently (top/bottom/left/right based on space)
 - Use portal/overlay for correct positioning
@@ -46,6 +51,7 @@ Create a skippable 3-step onboarding tour that highlights key UI elements for co
 ## Implementation Steps
 
 1. Create tour step interface:
+
 ```typescript
 interface ITourStep {
   id: string;
@@ -86,12 +92,12 @@ const TOUR_STEPS: ITourStep[] = [
 
 ## Analytics Events
 
-| Event | Properties | Location |
-|-------|------------|----------|
-| `onboarding_tour_started` | `trigger: 'auto' \| 'manual'` | OnboardingTour |
+| Event                         | Properties                     | Location       |
+| ----------------------------- | ------------------------------ | -------------- |
+| `onboarding_tour_started`     | `trigger: 'auto' \| 'manual'`  | OnboardingTour |
 | `onboarding_tour_step_viewed` | `step: 1 \| 2 \| 3`, `trigger` | OnboardingTour |
-| `onboarding_tour_completed` | `totalDurationMs`, `trigger` | OnboardingTour |
-| `onboarding_tour_skipped` | `step: 1 \| 2 \| 3`, `trigger` | OnboardingTour |
+| `onboarding_tour_completed`   | `totalDurationMs`, `trigger`   | OnboardingTour |
+| `onboarding_tour_skipped`     | `step: 1 \| 2 \| 3`, `trigger` | OnboardingTour |
 
 ## localStorage Keys
 
@@ -116,13 +122,13 @@ const TOUR_CURRENT_STEP_KEY = 'miu_onboarding_tour_current_step';
 
 ## Tests Required
 
-| Test Name | Assertion |
-|-----------|-----------|
-| `should render first step on tour start` | First tooltip with correct content |
-| `should advance to next step on Next click` | Second tooltip shown after Next click |
-| `should complete tour and set localStorage flag` | Tour completed, flag set in localStorage |
-| `should skip tour and set skip flag` | Tour skipped, skip flag set in localStorage |
-| `should not show tour to returning users` | Tour doesn't start when flag exists |
+| Test Name                                        | Assertion                                   |
+| ------------------------------------------------ | ------------------------------------------- |
+| `should render first step on tour start`         | First tooltip with correct content          |
+| `should advance to next step on Next click`      | Second tooltip shown after Next click       |
+| `should complete tour and set localStorage flag` | Tour completed, flag set in localStorage    |
+| `should skip tour and set skip flag`             | Tour skipped, skip flag set in localStorage |
+| `should not show tour to returning users`        | Tour doesn't start when flag exists         |
 
 ## Verification
 
@@ -134,4 +140,4 @@ const TOUR_CURRENT_STEP_KEY = 'miu_onboarding_tour_current_step';
 
 ## References
 
-- Main PRD: `/docs/PRDs/first-time-user-activation.md` — Phase 4 section
+- Main PRD: `/docs/PRDs/product/first-time-user-activation.md` — Phase 4 section

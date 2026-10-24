@@ -11,17 +11,20 @@ Redesign the homepage hero section to make the primary action (upload image) imm
 ## Requirements
 
 ### 1. Clear CTA Button
+
 - Text: "Upload your first image" (explicit, action-oriented)
 - Position: Top-right of hero, always visible without scrolling at 1366x768 viewport
 - Add pulsing animation to draw attention
 - Secondary CTA: "Try a sample" button (preparation for Phase 2)
 
 ### 2. Drag-and-Drop Zone Visibility
+
 - Ensure zone is visible on 1366x768 resolution without scrolling
 - Add visual cue: animated dashed border when no file is selected
 - Add pulsing effect to draw attention
 
 ### 3. Before/After Examples
+
 - Side-by-side comparison visible in hero section
 - Label: "Original" vs "Upscaled 4x" with arrow indicating transformation
 - Use real results from actual processing
@@ -57,10 +60,10 @@ Redesign the homepage hero section to make the primary action (upload image) imm
 
 ## Analytics Events
 
-| Event | Properties | Location |
-|-------|------------|----------|
-| `hero_upload_cta_clicked` | `ctaType: 'primary' \| 'secondary'` | HeroSection |
-| `hero_upload_zone_visible` | `viewportHeight`, `scrollDepth` | HeroSection |
+| Event                      | Properties                          | Location    |
+| -------------------------- | ----------------------------------- | ----------- |
+| `hero_upload_cta_clicked`  | `ctaType: 'primary' \| 'secondary'` | HeroSection |
+| `hero_upload_zone_visible` | `viewportHeight`, `scrollDepth`     | HeroSection |
 
 ## Acceptance Criteria
 
@@ -74,11 +77,11 @@ Redesign the homepage hero section to make the primary action (upload image) imm
 
 ## Tests Required
 
-| Test Name | Assertion |
-|-----------|-----------|
-| `should show upload CTA button in hero` | Button element with "Upload your first image" text exists |
-| `should show drag-drop zone above fold on 1366x768` | Zone visible without scroll at target viewport |
-| `should fire hero_upload_cta_clicked on CTA click` | analytics.track called with correct event |
+| Test Name                                           | Assertion                                                 |
+| --------------------------------------------------- | --------------------------------------------------------- |
+| `should show upload CTA button in hero`             | Button element with "Upload your first image" text exists |
+| `should show drag-drop zone above fold on 1366x768` | Zone visible without scroll at target viewport            |
+| `should fire hero_upload_cta_clicked on CTA click`  | analytics.track called with correct event                 |
 
 ## Verification
 
@@ -88,5 +91,5 @@ Redesign the homepage hero section to make the primary action (upload image) imm
 
 ## References
 
-- Main PRD: `/docs/PRDs/first-time-user-activation.md` — Phase 1 section
+- Main PRD: `/docs/PRDs/product/first-time-user-activation.md` — Phase 1 section
 - CLAUDE.md: Use Tailwind tokens only for colors/styling

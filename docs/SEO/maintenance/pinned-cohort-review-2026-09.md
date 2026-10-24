@@ -1,6 +1,6 @@
 # Pinned-cohort review — homepage non-brand (AC-3)
 
-**PRD:** [PRD-traffic-recovery-2026-09](../../PRDs/traffic-recovery-2026-09.md)
+**PRD:** [PRD-traffic-recovery-2026-09](../../PRDs/seo/traffic-recovery-2026-09.md)
 **Method source:** [search-traffic action plan](../reports/2026-09-16-search-traffic-action-plan.md) · [diagnosis](../reports/2026-09-16-search-traffic-diagnosis.md)
 
 ## Pinned method — do not redefine

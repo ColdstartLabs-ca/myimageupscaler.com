@@ -5,7 +5,7 @@
  * and that the helper functions behave correctly.
  *
  * @see shared/config/engagement-discount.ts
- * @see docs/PRDs/engagement-based-first-purchase-discount.md
+ * @see docs/PRDs/revenue/engagement-based-first-purchase-discount.md
  */
 
 import { describe, test, expect } from 'vitest';
@@ -75,7 +75,9 @@ describe('Engagement Discount Configuration', () => {
           (1 - ENGAGEMENT_DISCOUNT_CONFIG.discountPercent / 100)
       );
       // Allow for small rounding differences (within 2 cents)
-      expect(Math.abs(ENGAGEMENT_DISCOUNT_CONFIG.discountedPriceCents - expectedDiscounted)).toBeLessThanOrEqual(2);
+      expect(
+        Math.abs(ENGAGEMENT_DISCOUNT_CONFIG.discountedPriceCents - expectedDiscounted)
+      ).toBeLessThanOrEqual(2);
     });
 
     test('session storage keys are non-empty strings', () => {
@@ -283,10 +285,8 @@ describe('calculateOfferExpiry', () => {
     const expiry = calculateOfferExpiry();
     const after = Date.now();
 
-    const expectedMin =
-      before + ENGAGEMENT_DISCOUNT_CONFIG.offerValidityMinutes * 60 * 1000 - 100;
-    const expectedMax =
-      after + ENGAGEMENT_DISCOUNT_CONFIG.offerValidityMinutes * 60 * 1000 + 100;
+    const expectedMin = before + ENGAGEMENT_DISCOUNT_CONFIG.offerValidityMinutes * 60 * 1000 - 100;
+    const expectedMax = after + ENGAGEMENT_DISCOUNT_CONFIG.offerValidityMinutes * 60 * 1000 + 100;
 
     expect(expiry).toBeGreaterThanOrEqual(expectedMin);
     expect(expiry).toBeLessThanOrEqual(expectedMax);

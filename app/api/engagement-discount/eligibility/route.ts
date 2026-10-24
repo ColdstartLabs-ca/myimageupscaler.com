@@ -12,7 +12,7 @@
  * - User is on free tier (no active subscription)
  * - User has never been offered this discount before
  *
- * @see docs/PRDs/engagement-based-first-purchase-discount.md
+ * @see docs/PRDs/revenue/engagement-based-first-purchase-discount.md
  */
 
 import { NextRequest, NextResponse } from 'next/server';

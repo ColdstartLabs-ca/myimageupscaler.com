@@ -4,7 +4,7 @@ import { INTERACTIVE_TOOL_PATHS } from '../../lib/seo/interactive-tool-routes';
 
 const ROOT = process.cwd();
 const DATA_DIR = path.join(ROOT, 'app/seo/data');
-const GSC_404_PATH = path.join(ROOT, 'docs/PRDs/gsc-recovery-2026-08/data/gsc-404.csv');
+const GSC_404_PATH = path.join(ROOT, 'docs/PRDs/seo/gsc-recovery-2026-08/data/gsc-404.csv');
 const OUTPUT_PATH = path.join(ROOT, 'lib/seo/legacy-redirects.ts');
 const LOCALE_PATTERN = ':locale(en|fr|de|es|it|ja|pt)';
 const SUPPORTED_LOCALES = new Set(['en', 'fr', 'de', 'es', 'it', 'ja', 'pt']);

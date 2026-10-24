@@ -4,7 +4,7 @@
  * Zustand store for managing the engagement-based first-purchase discount state.
  * Tracks engagement signals, eligibility status, and toast visibility.
  *
- * @see docs/PRDs/engagement-based-first-purchase-discount.md
+ * @see docs/PRDs/revenue/engagement-based-first-purchase-discount.md
  */
 
 import { create } from 'zustand';

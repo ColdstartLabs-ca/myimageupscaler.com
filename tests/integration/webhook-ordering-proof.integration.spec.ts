@@ -10,7 +10,7 @@
  * - Tests concurrent duplicate handling
  * - Tests that credits are allocated exactly once
  *
- * @see docs/PRDs/subscription-test-overhaul.md Phase 3
+ * @see docs/PRDs/revenue/subscription-test-overhaul.md Phase 3
  */
 
 import { test, expect } from '@playwright/test';
@@ -122,7 +122,9 @@ test.describe('Webhook Ordering Proof Suite', () => {
      * Test ordering 2: subscription.created first
      * subscription.created -> checkout.session.completed -> invoice.payment_succeeded
      */
-    test('ordering 2: subscription.created first results in same final state', async ({ request }) => {
+    test('ordering 2: subscription.created first results in same final state', async ({
+      request,
+    }) => {
       const webhookClient = new WebhookClient(request);
 
       const freeUser = await ctx.createUser({ subscription: 'free' });
@@ -239,7 +241,9 @@ test.describe('Webhook Ordering Proof Suite', () => {
     /**
      * Test ordering 4: subscription.created -> invoice -> checkout
      */
-    test('ordering 4: subscription and invoice before checkout results in same final state', async ({ request }) => {
+    test('ordering 4: subscription and invoice before checkout results in same final state', async ({
+      request,
+    }) => {
       const webhookClient = new WebhookClient(request);
 
       const freeUser = await ctx.createUser({ subscription: 'free' });
@@ -297,7 +301,9 @@ test.describe('Webhook Ordering Proof Suite', () => {
      * Test: Fire each event twice in normal order
      * Credits should be allocated exactly once, no duplicates
      */
-    test('duplicate delivery: each event twice does not double-allocate credits', async ({ request }) => {
+    test('duplicate delivery: each event twice does not double-allocate credits', async ({
+      request,
+    }) => {
       const webhookClient = new WebhookClient(request);
 
       const freeUser = await ctx.createUser({ subscription: 'free' });
@@ -310,12 +316,13 @@ test.describe('Webhook Ordering Proof Suite', () => {
 
       // Fire all events twice
       for (let i = 0; i < 2; i++) {
-        const checkoutEvent = StripeWebhookMockFactory.createCheckoutSessionCompletedForSubscription({
-          userId: freeUser.id,
-          customerId,
-          subscriptionId,
-          sessionId,
-        });
+        const checkoutEvent =
+          StripeWebhookMockFactory.createCheckoutSessionCompletedForSubscription({
+            userId: freeUser.id,
+            customerId,
+            subscriptionId,
+            sessionId,
+          });
         (checkoutEvent.data.object as any).items = {
           data: [{ price: { id: PRICE_IDS.PRO } }],
         };
@@ -527,12 +534,13 @@ test.describe('Webhook Ordering Proof Suite', () => {
         const sessionId = `cs_${user.id}_allorder${ordering}`;
 
         // Create events
-        const checkoutEvent = StripeWebhookMockFactory.createCheckoutSessionCompletedForSubscription({
-          userId: user.id,
-          customerId,
-          subscriptionId,
-          sessionId,
-        });
+        const checkoutEvent =
+          StripeWebhookMockFactory.createCheckoutSessionCompletedForSubscription({
+            userId: user.id,
+            customerId,
+            subscriptionId,
+            sessionId,
+          });
         (checkoutEvent.data.object as any).items = {
           data: [{ price: { id: PRICE_IDS.PRO } }],
         };

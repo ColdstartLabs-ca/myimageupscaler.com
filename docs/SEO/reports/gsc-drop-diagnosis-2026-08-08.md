@@ -25,12 +25,12 @@ Note: `yarn amplitude:check:prod` fails locally because it expects a generated `
 
 ## Baseline: the site is not in general decline
 
-| Window | Clicks | Change |
-| --- | --- | --- |
-| GSC 28d (2026-07-09 → 2026-08-05) vs prior 28d | 8,928 vs 7,002 | **+27.5%** |
-| GSC last 14d (2026-07-23 → 2026-08-05) vs prior 14d | 3,924 vs 5,004 | **−21.6%**, CTR −31% |
-| GA4 organic sessions 28d | 9,893 | +6.0% |
-| Amplitude `purchase_confirmed` (Jun 20 → Aug 7) | ~2/day | flat, no revenue impact |
+| Window                                              | Clicks         | Change                  |
+| --------------------------------------------------- | -------------- | ----------------------- |
+| GSC 28d (2026-07-09 → 2026-08-05) vs prior 28d      | 8,928 vs 7,002 | **+27.5%**              |
+| GSC last 14d (2026-07-23 → 2026-08-05) vs prior 14d | 3,924 vs 5,004 | **−21.6%**, CTR −31%    |
+| GA4 organic sessions 28d                            | 9,893          | +6.0%                   |
+| Amplitude `purchase_confirmed` (Jun 20 → Aug 7)     | ~2/day         | flat, no revenue impact |
 
 Indexing is healthy: 10/10 inspected URLs `Submitted and indexed`, correct canonicals, no `blockedOrBrokenPages`, no canonical mismatches.
 
@@ -115,7 +115,7 @@ Estimate: 15 min to check, half a day if the fallback is needed.
 - Rerun mobile PageSpeed and start GSC LCP/INP validation for the GIF page, but only once field data reflects the 2026-08-05 deployment.
 - GSC **Validate fix** for the four Japanese social-resize 5xx examples.
 - Cloudflare Worker CPU: the 2026-07-30 crawl found `error code: 1102` on 63 of 1,927 URLs, concentrated in localized `platform-format`, `format-scale`, and `device-use` pages. A sample of 8 localized pSEO URLs on 2026-08-08 returned no 5xx, so this is intermittent rather than resolved. Serving 503s to Googlebot degrades rankings sitewide and is the most plausible shared cause behind the mid-July slippage.
-- Measure the [GSC SEO recovery PRD](../../PRDs/gsc-opportunity-recovery-2026-07-22.md): 28-day success-criteria evaluation due on or after 2026-08-19. Keep the PRD out of `done/` until recorded.
+- Measure the [GSC SEO recovery PRD](../../PRDs/seo/gsc-opportunity-recovery-2026-07-22.md): 28-day success-criteria evaluation due on or after 2026-08-19. Keep the PRD out of `done/` until recorded.
 
 ### Not SEO work
 

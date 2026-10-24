@@ -12,7 +12,7 @@
  * - Tests that upgrades preserve existing credits
  * - Tests that proration invoices don't cause duplicate credit allocations
  *
- * @see docs/PRDs/subscription-test-overhaul.md Phase 4
+ * @see docs/PRDs/revenue/subscription-test-overhaul.md Phase 4
  */
 
 import { test, expect } from '@playwright/test';

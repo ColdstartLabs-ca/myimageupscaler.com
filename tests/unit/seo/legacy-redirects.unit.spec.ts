@@ -6,7 +6,7 @@ import { LEGACY_REDIRECTS, UNMAPPED_LEGACY_PATHS } from '@/lib/seo/legacy-redire
 import { parseGscCsv } from '@/lib/seo/gsc-verification';
 
 const ROOT = path.resolve(__dirname, '../../..');
-const DATA_PATH = path.join(ROOT, 'docs/PRDs/gsc-recovery-2026-08/data/gsc-404.csv');
+const DATA_PATH = path.join(ROOT, 'docs/PRDs/seo/gsc-recovery-2026-08/data/gsc-404.csv');
 const RESOLUTION_PATH = path.join(ROOT, 'seo-reports/404-resolution-2026-09-08.json');
 const LOCALE_PATTERN = ':locale(en|fr|de|es|it|ja|pt)';
 

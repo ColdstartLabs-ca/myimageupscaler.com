@@ -5,7 +5,7 @@
  *
  * Re-fetches the URL lists Google Search Console exported and fails when a URL still violates the
  * issue it was reported for. This is the live gate behind the GSC recovery PRDs
- * (`docs/PRDs/gsc-recovery-2026-08/`) — unit tests cannot prove production stopped 404ing.
+ * (`docs/PRDs/seo/gsc-recovery-2026-08/`) — unit tests cannot prove production stopped 404ing.
  *
  * Usage:
  *   yarn seo:verify:gsc --set=404
@@ -45,7 +45,7 @@ import {
   type IUrlObservation,
 } from '../../lib/seo/gsc-verification';
 
-const DATA_DIR = path.join(process.cwd(), 'docs/PRDs/gsc-recovery-2026-08/data');
+const DATA_DIR = path.join(process.cwd(), 'docs/PRDs/seo/gsc-recovery-2026-08/data');
 const REPORT_DIR = path.join(process.cwd(), 'seo-reports');
 const REQUEST_TIMEOUT_MS = 15_000;
 const MAX_REDIRECT_HOPS = 4;

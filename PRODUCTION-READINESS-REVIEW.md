@@ -62,7 +62,7 @@ The terminal-error branch removes the persisted recovery entry but leaves `async
 
 ## Release evidence still required
 
-The implementation PRD itself leaves staging and phase 6 pending (`docs/PRDs/cloudflare-async-upscale-crash-fix.md:211`). Local evidence supports the architecture, but does not establish production crash resolution.
+The implementation PRD itself leaves staging and phase 6 pending (`docs/PRDs/platform/cloudflare-async-upscale-crash-fix.md:211`). Local evidence supports the architecture, but does not establish production crash resolution.
 
 1. Make the documented integration/E2E commands reproducible. The PRD records successful alternate-config runs, but the standard web-server commands encountered the worktree's `node_modules -> ../../node_modules` symlink. That symlink is still present.
 2. Exercise fresh real-provider staging cases for large paid Quick 2x/4x and fallback, including interruption/recovery. The inspected runtime matrix uses a fixture provider; JavaScript heap reductions do not prove total isolate headroom or enforced Cloudflare CPU limits.

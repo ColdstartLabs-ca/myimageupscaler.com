@@ -11,17 +11,20 @@ Create a sample image selector that allows users to experience upscaling without
 ## Requirements
 
 ### 1. Sample Image Assets
+
 - Create 3 optimized sample images (~50KB each, WebP format):
   - **Photo**: Portrait or product photo (shows general upscaling)
   - **Illustration**: Digital art or vector (shows detail preservation)
   - **Old Photo**: Scanned vintage photo (shows restoration capability)
 
 ### 2. Sample Image Selector Component
+
 - Display 3 sample cards with thumbnails
 - Each card shows: thumbnail, title, one-click "Try this" button
 - Only show to first-time users (no upload history in localStorage)
 
 ### 3. Processing Flow
+
 - On click: automatically upload and process with optimal settings
 - Show before/after comparison after processing
 - Store used sample images in localStorage for analytics
@@ -42,6 +45,7 @@ Create a sample image selector that allows users to experience upscaling without
 ## Implementation Steps
 
 1. Create sample image configuration:
+
 ```typescript
 // shared/config/sample-images.config.ts
 interface ISampleImage {
@@ -78,12 +82,12 @@ interface ISampleImage {
 
 ## Analytics Events
 
-| Event | Properties | Location |
-|-------|------------|----------|
-| `sample_image_selector_viewed` | `availableSamples: number` | SampleImageSelector |
-| `sample_image_selected` | `sampleType: 'photo' \| 'illustration' \| 'old_photo'` | SampleImageSelector |
-| `sample_image_processed` | `sampleType`, `durationMs`, `qualityTier` | SampleImageSelector (after processing) |
-| `first_upload_completed` | `source: 'sample' \| 'upload'` | Workspace (global tracker) |
+| Event                          | Properties                                             | Location                               |
+| ------------------------------ | ------------------------------------------------------ | -------------------------------------- |
+| `sample_image_selector_viewed` | `availableSamples: number`                             | SampleImageSelector                    |
+| `sample_image_selected`        | `sampleType: 'photo' \| 'illustration' \| 'old_photo'` | SampleImageSelector                    |
+| `sample_image_processed`       | `sampleType`, `durationMs`, `qualityTier`              | SampleImageSelector (after processing) |
+| `first_upload_completed`       | `source: 'sample' \| 'upload'`                         | Workspace (global tracker)             |
 
 ## localStorage Keys
 
@@ -105,12 +109,12 @@ const ONBOARDING_COMPLETED_KEY = 'miu_onboarding_completed';
 
 ## Tests Required
 
-| Test Name | Assertion |
-|-----------|-----------|
-| `should render 3 sample image cards` | 3 cards with correct metadata |
-| `should not show samples to returning users` | Component returns null when upload history exists |
+| Test Name                                         | Assertion                                                |
+| ------------------------------------------------- | -------------------------------------------------------- |
+| `should render 3 sample image cards`              | 3 cards with correct metadata                            |
+| `should not show samples to returning users`      | Component returns null when upload history exists        |
 | `should fire sample_image_selected on card click` | analytics.track called with correct event and sampleType |
-| `should store used samples in localStorage` | localStorage updated correctly after selection |
+| `should store used samples in localStorage`       | localStorage updated correctly after selection           |
 
 ## Verification
 
@@ -120,5 +124,5 @@ const ONBOARDING_COMPLETED_KEY = 'miu_onboarding_completed';
 
 ## References
 
-- Main PRD: `/docs/PRDs/first-time-user-activation.md` — Phase 2 section
-- Retention PRD: `/docs/PRDs/retention-and-reengagement.md` — Sample images reference implementation
+- Main PRD: `/docs/PRDs/product/first-time-user-activation.md` — Phase 2 section
+- Retention PRD: `/docs/PRDs/email/retention-and-reengagement.md` — Sample images reference implementation

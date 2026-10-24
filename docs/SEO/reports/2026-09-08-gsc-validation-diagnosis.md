@@ -49,7 +49,7 @@ Live checks used public HTTP GET requests on September 8, following and recordin
 | `dd78b04c` | August 31   | Revalidation queue outage repair, relevant to historical availability failures; not proof of the cause of every exported 5xx.                    |
 | `e4819767` | September 7 | Added noindex to filtered/paginated blog index variants. Exported crawls predate this change.                                                    |
 
-The [SEO backlog](../maintenance/seo-changes-backlog.md) explicitly states that the August recovery work retained a frozen August 8 GSC source. Both the redirect generator and resolution verifier refer to `docs/PRDs/gsc-recovery-2026-08/data/gsc-404.csv`.
+The [SEO backlog](../maintenance/seo-changes-backlog.md) explicitly states that the August recovery work retained a frozen August 8 GSC source. Both the redirect generator and resolution verifier refer to `docs/PRDs/seo/gsc-recovery-2026-08/data/gsc-404.csv`.
 
 The September 7 backlog entry says the blog change was not yet deployed at the time of that entry. Live checks now show its intended metadata in production; that historical deployment note is no longer a reliable description of current behavior.
 

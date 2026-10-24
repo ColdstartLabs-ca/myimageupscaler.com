@@ -127,5 +127,5 @@ Open `client/components/pages/HomePageClient.tsx` line 338 and confirm it passes
 
 ## Execution PRDs
 
-- Traffic: [PRD-traffic-recovery-2026-09](../../PRDs/traffic-recovery-2026-09.md) — GSC cohort windows, flagship corrections, optional Three Kings test, mobile origin/cache, field outcome.
-- Revenue: [PRD-revenue-growth-2026-09](../../PRDs/revenue-growth-2026-09.md) — homepage locale-contract fix, paid-funnel truth, founder-led repeat-use test, weekly metrics.
+- Traffic: [PRD-traffic-recovery-2026-09](../../PRDs/seo/traffic-recovery-2026-09.md) — GSC cohort windows, flagship corrections, optional Three Kings test, mobile origin/cache, field outcome.
+- Revenue: [PRD-revenue-growth-2026-09](../../PRDs/revenue/revenue-growth-2026-09.md) — homepage locale-contract fix, paid-funnel truth, founder-led repeat-use test, weekly metrics.

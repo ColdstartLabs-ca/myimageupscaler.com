@@ -605,7 +605,7 @@ async function readRequiredCsv(): Promise<{ urls: string[]; path: string }> {
     ? [resolve(explicitPath)]
     : [
         'data/gsc-crawled-not-indexed.csv',
-        'docs/PRDs/gsc-recovery-2026-08/data/gsc-crawled-not-indexed.csv',
+        'docs/PRDs/seo/gsc-recovery-2026-08/data/gsc-crawled-not-indexed.csv',
       ].map(candidate => resolve(candidate));
   const path = candidates.find(candidate => existsSync(candidate));
   if (!path) {

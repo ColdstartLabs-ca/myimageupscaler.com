@@ -11,7 +11,7 @@
  *       → eligibility API returns eligible
  *       → toast slides in with discount offer
  *
- * @see docs/PRDs/engagement-based-first-purchase-discount.md
+ * @see docs/PRDs/revenue/engagement-based-first-purchase-discount.md
  */
 
 import { test, expect } from '../test-fixtures';

@@ -18,6 +18,6 @@ export default defineCloudflareConfig({
   queue: doQueue,
   // Serve prerendered SSG/ISR responses from the incremental cache before the Next
   // server bundle loads. The queue above makes this safe; preview acceptance
-  // (`docs/PRDs/done/opennext-revalidation-queue.md` §5.5/§7) gates production.
+  // (`docs/PRDs/done/platform/opennext-revalidation-queue.md` §5.5/§7) gates production.
   enableCacheInterception: true,
 });

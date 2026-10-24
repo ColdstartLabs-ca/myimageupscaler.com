@@ -5,7 +5,7 @@
  * - Phase 3: French homepage meta optimization targeting "quality enhancer" keywords
  * - Phase 4: German transparent-background-maker meta optimization targeting German keywords
  *
- * Based on PRD: docs/PRDs/gsc-technical-seo-fixes.md
+ * Based on PRD: docs/PRDs/seo/gsc-technical-seo-fixes.md
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';

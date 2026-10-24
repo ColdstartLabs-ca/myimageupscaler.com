@@ -10,7 +10,7 @@
  * - Fires at most once per browser session (sessionStorage key).
  * - Cancelled immediately if `checkout_opened` fires before the timeout.
  *
- * @see docs/PRDs/click-to-checkout-conversion-fix.md — Phase 5
+ * @see docs/PRDs/revenue/click-to-checkout-conversion-fix.md — Phase 5
  */
 
 import { useEffect, useRef } from 'react';

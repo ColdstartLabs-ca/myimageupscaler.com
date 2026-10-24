@@ -11,7 +11,7 @@ dayjs.extend(utc);
 const DECIMAL_MB = 1_000_000;
 const DECIMAL_GB = 1_000_000_000;
 
-// Free-plan budgets from docs/PRDs/supabase-quota-recovery/README.md. Decimal
+// Free-plan budgets from docs/PRDs/platform/supabase-quota-recovery/README.md. Decimal
 // units, matching the audit evidence.
 export const MIU_QUOTA_BUDGETS = {
   databaseBytes: 450 * DECIMAL_MB,

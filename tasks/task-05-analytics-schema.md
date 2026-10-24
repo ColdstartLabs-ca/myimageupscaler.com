@@ -11,6 +11,7 @@ Add the new analytics event types and property interfaces required by the First-
 ## Requirements
 
 Add new event types and property interfaces to support:
+
 - Hero redesign tracking
 - Sample image selection and processing
 - Progress indicator and onboarding steps
@@ -23,6 +24,7 @@ Add new event types and property interfaces to support:
 ## Implementation Steps
 
 1. Add new event types to `IAnalyticsEventName` union:
+
 ```typescript
 export type IAnalyticsEventName =
   // ... existing events ...
@@ -42,6 +44,7 @@ export type IAnalyticsEventName =
 ```
 
 2. Add new property interfaces:
+
 ```typescript
 // Onboarding progress
 export interface IOnboardingStepViewedProperties {
@@ -116,5 +119,5 @@ No new unit tests required (schema changes only, usage tested in component tests
 
 ## References
 
-- Main PRD: `/docs/PRDs/first-time-user-activation.md` — Analytics Schema section
+- Main PRD: `/docs/PRDs/product/first-time-user-activation.md` — Analytics Schema section
 - Existing types: `/server/analytics/types.ts`

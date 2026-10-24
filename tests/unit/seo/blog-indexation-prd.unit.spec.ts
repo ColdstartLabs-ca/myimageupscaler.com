@@ -4,7 +4,7 @@ import { join } from 'node:path';
 
 const PRD_PATH = join(
   __dirname,
-  '../../../docs/PRDs/gsc-recovery-2026-08/06-blog-indexation-zero-click.md'
+  '../../../docs/PRDs/seo/gsc-recovery-2026-08/06-blog-indexation-zero-click.md'
 );
 const ROOT = join(__dirname, '../../..');
 const ROUNDUP_CHECKLIST_PATH = join(ROOT, '.claude/skills/blog-writing/roundup-checklist.md');

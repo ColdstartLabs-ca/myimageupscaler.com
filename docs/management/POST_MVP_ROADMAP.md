@@ -127,7 +127,7 @@ timeline
   - **Impact**: Reduces "use it or lose it" churn by 30-40%
   - **Effort**: 2-3 days (simple database logic)
   - **Status**: Core rollover logic implemented in `subscription.config.ts`
-  - **PRD**: `/docs/PRDs/done/starter-tier-rollover-prd.md`
+  - **PRD**: `/docs/PRDs/done/revenue/starter-tier-rollover-prd.md`
 
 **Annual Billing (P1 - QUICK WIN)** ⏳ **NOT STARTED**
 
@@ -218,7 +218,7 @@ timeline
   - **Impact**: Core e-commerce feature, critical for TAM
   - **Effort**: 7-10 days (queue system + S3 batch)
   - **Status**: Batch limits fully implemented, missing HEIC/TIFF format support
-  - **PRD**: `/docs/PRDs/done/batch-upload-paid-only.md`
+  - **PRD**: `/docs/PRDs/done/product/batch-upload-paid-only.md`
 - [ ] **Processing modes**
   - [x] Portrait mode enhancement (GFPGAN) - implemented as "Face Restore" quality tier
   - [x] Product/e-commerce mode - text preservation mode exists

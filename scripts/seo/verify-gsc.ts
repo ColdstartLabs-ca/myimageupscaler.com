@@ -9,7 +9,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-const DEFAULT_CNI_INPUT = 'docs/PRDs/gsc-recovery-2026-08/data/gsc-crawled-not-indexed.csv';
+const DEFAULT_CNI_INPUT = 'docs/PRDs/seo/gsc-recovery-2026-08/data/gsc-crawled-not-indexed.csv';
 
 export interface IVerifierArgs {
   set: 'cni';
@@ -105,8 +105,7 @@ function extractLocs(xml: string): string[] {
 
 // Production bot protection 503s requests with no User-Agent and intermittently
 // rate-limits rapid sequential fetches; send a browser-like UA and retry with backoff.
-const BROWSER_UA =
-  'Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0';
+const BROWSER_UA = 'Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0';
 const RETRYABLE_STATUSES = new Set([429, 503]);
 const MAX_ATTEMPTS = 4;
 const FETCH_DELAY_MS = 250;

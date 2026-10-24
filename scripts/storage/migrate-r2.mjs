@@ -8,7 +8,7 @@
  * row and never reads a secret at import. The `copy` subcommand requires
  * `--confirm` and a Supabase-source frozen plan before it reads a credential.
  *
- * Safety contract (docs/PRDs/supabase-quota-recovery/README.md):
+ * Safety contract (docs/PRDs/platform/supabase-quota-recovery/README.md):
  *   - The frozen manifest and its receipt come from `loadBackupIdentity`.
  *   - Every planned object keeps the exact source sha256 and byte count.
  *   - Local proof (`verifyFrozenArtifacts`) and remote laptop proof

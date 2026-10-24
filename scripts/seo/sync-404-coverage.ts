@@ -7,7 +7,7 @@ import { SUPPORTED_LOCALES } from '../../i18n/config';
 import { LEGACY_REDIRECTS } from '../../lib/seo/legacy-redirects';
 
 const REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308]);
-const DEFAULT_INPUT = resolve('docs/PRDs/gsc-recovery-2026-08/data/gsc-404.csv');
+const DEFAULT_INPUT = resolve('docs/PRDs/seo/gsc-recovery-2026-08/data/gsc-404.csv');
 const DEFAULT_OUTPUT = resolve('seo-reports/404-resolution-2026-09-08.json');
 const MAX_HOPS = 10;
 const MAX_ATTEMPTS = 3;

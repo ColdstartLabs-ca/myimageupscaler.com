@@ -10,7 +10,7 @@
  * - Tests failed event retry
  * - Tests max retry limits
  *
- * @see docs/PRDs/subscription-test-overhaul.md Phase 7
+ * @see docs/PRDs/revenue/subscription-test-overhaul.md Phase 7
  */
 
 import { test, expect } from '@playwright/test';
@@ -107,9 +107,11 @@ test.describe('Webhook Recovery Proof Suite', () => {
         sessionId,
       });
       (checkoutEvent.data.object as any).items = {
-        data: [{
-          price: { id: PRICE_IDS.HOBBY },
-        }],
+        data: [
+          {
+            price: { id: PRICE_IDS.HOBBY },
+          },
+        ],
       };
       await webhookClient.send(checkoutEvent);
 
@@ -209,7 +211,9 @@ test.describe('Webhook Recovery Proof Suite', () => {
   });
 
   test.describe('No Permanent Bad State', () => {
-    test('No "active plan, free credits" state after partial webhook delivery', async ({ request }) => {
+    test('No "active plan, free credits" state after partial webhook delivery', async ({
+      request,
+    }) => {
       const webhookClient = new WebhookClient(request);
 
       // Create free user

@@ -10,7 +10,7 @@
  * - Tests Credit Pack purchase (no subscription)
  * - Tests that signup webhook sequences allocate credits exactly once
  *
- * @see docs/PRDs/subscription-test-overhaul.md Phase 2
+ * @see docs/PRDs/revenue/subscription-test-overhaul.md Phase 2
  */
 
 import { test, expect } from '@playwright/test';
@@ -57,9 +57,11 @@ test.describe('Subscription Signup Proof Suite', () => {
       });
       // Update with Hobby price ID
       (checkoutEvent.data.object as any).items = {
-        data: [{
-          price: { id: PRICE_IDS.HOBBY },
-        }],
+        data: [
+          {
+            price: { id: PRICE_IDS.HOBBY },
+          },
+        ],
       };
       await webhookClient.send(checkoutEvent);
 
@@ -120,9 +122,11 @@ test.describe('Subscription Signup Proof Suite', () => {
         sessionId,
       });
       (checkoutEvent.data.object as any).items = {
-        data: [{
-          price: { id: PRICE_IDS.PRO },
-        }],
+        data: [
+          {
+            price: { id: PRICE_IDS.PRO },
+          },
+        ],
       };
       await webhookClient.send(checkoutEvent);
 
@@ -181,9 +185,11 @@ test.describe('Subscription Signup Proof Suite', () => {
         sessionId,
       });
       (checkoutEvent.data.object as any).items = {
-        data: [{
-          price: { id: PRICE_IDS.BUSINESS },
-        }],
+        data: [
+          {
+            price: { id: PRICE_IDS.BUSINESS },
+          },
+        ],
       };
       await webhookClient.send(checkoutEvent);
 
@@ -197,11 +203,14 @@ test.describe('Subscription Signup Proof Suite', () => {
       await webhookClient.send(subscriptionCreatedEvent);
 
       // Step 4: Fire invoice.payment_succeeded
-      const invoiceEvent = StripeWebhookMockFactory.createInvoicePaymentSucceededForPlan('business', {
-        userId: freeUser.id,
-        customerId,
-        subscriptionId,
-      });
+      const invoiceEvent = StripeWebhookMockFactory.createInvoicePaymentSucceededForPlan(
+        'business',
+        {
+          userId: freeUser.id,
+          customerId,
+          subscriptionId,
+        }
+      );
       (invoiceEvent.data.object as any).id = invoiceId;
       await webhookClient.send(invoiceEvent);
 
@@ -242,9 +251,11 @@ test.describe('Subscription Signup Proof Suite', () => {
         sessionId,
       });
       (checkoutEvent.data.object as any).items = {
-        data: [{
-          price: { id: PRICE_IDS.STARTER },
-        }],
+        data: [
+          {
+            price: { id: PRICE_IDS.STARTER },
+          },
+        ],
       };
       await webhookClient.send(checkoutEvent);
 
@@ -258,11 +269,14 @@ test.describe('Subscription Signup Proof Suite', () => {
       await webhookClient.send(subscriptionCreatedEvent);
 
       // Step 4: Fire invoice.payment_succeeded
-      const invoiceEvent = StripeWebhookMockFactory.createInvoicePaymentSucceededForPlan('starter', {
-        userId: freeUser.id,
-        customerId,
-        subscriptionId,
-      });
+      const invoiceEvent = StripeWebhookMockFactory.createInvoicePaymentSucceededForPlan(
+        'starter',
+        {
+          userId: freeUser.id,
+          customerId,
+          subscriptionId,
+        }
+      );
       (invoiceEvent.data.object as any).id = invoiceId;
       await webhookClient.send(invoiceEvent);
 
@@ -354,9 +368,11 @@ test.describe('Subscription Signup Proof Suite', () => {
         sessionId,
       });
       (checkoutEvent.data.object as any).items = {
-        data: [{
-          price: { id: PRICE_IDS.PRO },
-        }],
+        data: [
+          {
+            price: { id: PRICE_IDS.PRO },
+          },
+        ],
       };
       (checkoutEvent.data.object as any).invoice = invoiceId;
       await webhookClient.send(checkoutEvent);

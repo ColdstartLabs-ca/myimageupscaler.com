@@ -7,7 +7,7 @@
  * - Redeeming discount after successful purchase
  * - Validating discount is still within 30-min window
  *
- * @see docs/PRDs/engagement-based-first-purchase-discount.md
+ * @see docs/PRDs/revenue/engagement-based-first-purchase-discount.md
  */
 
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';

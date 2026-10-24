@@ -2,7 +2,7 @@
  * GSC Fix Verification — pure logic
  *
  * Backs `scripts/seo/verify-gsc-fixes.ts`. Re-checks the URL lists exported from Search Console
- * (`docs/PRDs/gsc-recovery-2026-08/data/*.csv`) against a live origin and decides, per set,
+ * (`docs/PRDs/seo/gsc-recovery-2026-08/data/*.csv`) against a live origin and decides, per set,
  * whether each URL still violates the issue it was reported for.
  *
  * GSC issue reports are historical: a URL listed as "Not found" in February may already return 200.

@@ -8,7 +8,7 @@
  * and a CTA to claim the discount. Stays visible for the entire session until
  * dismissed or the offer expires.
  *
- * @see docs/PRDs/engagement-based-first-purchase-discount.md
+ * @see docs/PRDs/revenue/engagement-based-first-purchase-discount.md
  */
 
 import React, { useEffect, useState, useCallback, useRef } from 'react';

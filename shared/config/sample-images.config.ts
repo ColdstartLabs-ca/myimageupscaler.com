@@ -4,7 +4,7 @@
  * Pre-configured sample images for first-time users to try the upscaler
  * without having their own image ready.
  *
- * @see docs/PRDs/first-time-user-activation.md - Phase 2: Sample Images
+ * @see docs/PRDs/product/first-time-user-activation.md - Phase 2: Sample Images
  */
 
 import { QualityTier } from '@shared/types/coreflow.types';

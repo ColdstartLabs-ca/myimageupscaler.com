@@ -7,7 +7,7 @@
  * Supabase adapters stay root-owned and reviewed separately. The engine never
  * deletes a DB row, never writes the source object, and never cleans an archive.
  *
- * Safety contract (docs/PRDs/supabase-quota-recovery/README.md):
+ * Safety contract (docs/PRDs/platform/supabase-quota-recovery/README.md):
  *   1. Reload the real backup identity from disk; never trust an injected receipt.
  *   2. Verify local bytes and the laptop copy for every selected object first.
  *   3. Re-read the source full hash and ETag before and after the archive write.

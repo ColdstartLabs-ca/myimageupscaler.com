@@ -3,7 +3,7 @@
  * PRD-SQR-01 operator script: full Storage backup, stale-input purge, inactive
  * free-gallery purge, and integrity verification.
  *
- * Safety contract (docs/PRDs/supabase-quota-recovery/README.md §Customer-data safety):
+ * Safety contract (docs/PRDs/platform/supabase-quota-recovery/README.md §Customer-data safety):
  *   1. Local backup first, verified with sha256 before any delete.
  *   2. Deletes come from a frozen manifest only. No prefix or bucket-wide delete.
  *   3. Batches of 50 or fewer. A failed batch stops the run.

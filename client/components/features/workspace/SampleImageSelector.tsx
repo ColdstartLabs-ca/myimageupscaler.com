@@ -6,7 +6,7 @@
  *
  * Only shows to first-time users (no upload history / queue is empty).
  *
- * @see docs/PRDs/first-time-user-activation.md - Phase 2: Sample Images
+ * @see docs/PRDs/product/first-time-user-activation.md - Phase 2: Sample Images
  */
 
 'use client';

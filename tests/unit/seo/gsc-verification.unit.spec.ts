@@ -1,7 +1,7 @@
 /**
  * GSC Fix Verification — expectation logic
  *
- * These tests guard the harness that PRDs 01-03 in docs/PRDs/gsc-recovery-2026-08/ rely on.
+ * These tests guard the harness that PRDs 01-03 in docs/PRDs/seo/gsc-recovery-2026-08/ rely on.
  * The harness only has value if it can report a violation, so every expectation is tested in both
  * directions: the passing state AND the state it must catch.
  */
@@ -25,7 +25,7 @@ import {
   type IUrlObservation,
 } from '@/lib/seo/gsc-verification';
 
-const DATA_DIR = path.join(process.cwd(), 'docs/PRDs/gsc-recovery-2026-08/data');
+const DATA_DIR = path.join(process.cwd(), 'docs/PRDs/seo/gsc-recovery-2026-08/data');
 
 function observation(overrides: Partial<IUrlObservation>): IUrlObservation {
   return { url: 'https://myimageupscaler.com/tools/ai-image-upscaler', status: 200, ...overrides };

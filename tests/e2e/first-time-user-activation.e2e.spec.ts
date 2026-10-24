@@ -7,7 +7,7 @@
  * - ProgressSteps visibility in tool page
  * - First-time user detection via localStorage
  *
- * @see docs/PRDs/first-time-user-activation.md
+ * @see docs/PRDs/product/first-time-user-activation.md
  */
 
 import { test, expect } from '../test-fixtures';

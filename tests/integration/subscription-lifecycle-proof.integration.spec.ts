@@ -11,7 +11,7 @@
  * - Tests payment failures
  * - Tests purchased credits survival on cancellation
  *
- * @see docs/PRDs/subscription-test-overhaul.md Phase 8
+ * @see docs/PRDs/revenue/subscription-test-overhaul.md Phase 8
  */
 
 import { test, expect } from '@playwright/test';

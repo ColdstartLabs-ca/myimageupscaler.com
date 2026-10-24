@@ -11,17 +11,20 @@ Create a visual progress indicator that guides first-time users through the uplo
 ## Requirements
 
 ### 1. Progress Steps Component
+
 - 3-step indicator: "Step 1: Upload" → "Step 2: Configure" → "Step 3: Download"
 - Active step: filled circle, bold text
 - Pending steps: outlined circles, muted text
 - Update automatically based on workspace state
 
 ### 2. Progress States
+
 - **Step 1 (Upload)**: Active when no image is selected
 - **Step 2 (Configure)**: Active when image uploaded, before processing
 - **Step 3 (Download)**: Active when processing complete
 
 ### 3. First Download Celebration
+
 - Show celebratory animation after first successful download
 - Message: "First upscale complete!"
 - CTAs: "Upload Another" / "See Premium Plans"
@@ -42,6 +45,7 @@ Create a visual progress indicator that guides first-time users through the uplo
 ## Implementation Steps
 
 1. Create progress state interface:
+
 ```typescript
 interface IProgressState {
   currentStep: 1 | 2 | 3;
@@ -72,12 +76,12 @@ const FIRST_UPLOAD_COMPLETED_KEY = 'miu_first_upload_completed';
 
 ## Analytics Events
 
-| Event | Properties | Location |
-|-------|------------|----------|
-| `onboarding_started` | `timestamp` | ProgressSteps (on first mount) |
-| `onboarding_step_viewed` | `step: 1 \| 2 \| 3`, `durationToStepMs` | ProgressSteps |
-| `onboarding_completed` | `totalDurationMs`, `source: 'sample' \| 'upload'` | FirstDownloadCelebration |
-| `first_upload_completed` | `source: 'sample' \| 'upload'`, `durationMs` | Workspace |
+| Event                    | Properties                                        | Location                       |
+| ------------------------ | ------------------------------------------------- | ------------------------------ |
+| `onboarding_started`     | `timestamp`                                       | ProgressSteps (on first mount) |
+| `onboarding_step_viewed` | `step: 1 \| 2 \| 3`, `durationToStepMs`           | ProgressSteps                  |
+| `onboarding_completed`   | `totalDurationMs`, `source: 'sample' \| 'upload'` | FirstDownloadCelebration       |
+| `first_upload_completed` | `source: 'sample' \| 'upload'`, `durationMs`      | Workspace                      |
 
 ## localStorage Keys
 
@@ -99,13 +103,13 @@ const ONBOARDING_STARTED_KEY = 'miu_onboarding_started_timestamp';
 
 ## Tests Required
 
-| Test Name | Assertion |
-|-----------|-----------|
-| `should show Step 1 active when no image` | Step 1 marked active, others pending |
-| `should advance to Step 2 after upload` | Step 2 active after image state changes |
-| `should advance to Step 3 after processing` | Step 3 active after upscale completes |
-| `should show celebration on first download` | Celebration component renders on first download |
-| `should not show progress to returning users` | ProgressSteps returns null when flag exists |
+| Test Name                                     | Assertion                                       |
+| --------------------------------------------- | ----------------------------------------------- |
+| `should show Step 1 active when no image`     | Step 1 marked active, others pending            |
+| `should advance to Step 2 after upload`       | Step 2 active after image state changes         |
+| `should advance to Step 3 after processing`   | Step 3 active after upscale completes           |
+| `should show celebration on first download`   | Celebration component renders on first download |
+| `should not show progress to returning users` | ProgressSteps returns null when flag exists     |
 
 ## Verification
 
@@ -115,4 +119,4 @@ const ONBOARDING_STARTED_KEY = 'miu_onboarding_started_timestamp';
 
 ## References
 
-- Main PRD: `/docs/PRDs/first-time-user-activation.md` — Phase 3 section
+- Main PRD: `/docs/PRDs/product/first-time-user-activation.md` — Phase 3 section

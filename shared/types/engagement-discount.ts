@@ -4,7 +4,7 @@
  * Type definitions for tracking user engagement and offering
  * first-purchase discounts to highly-engaged free users.
  *
- * @see docs/PRDs/engagement-based-first-purchase-discount.md
+ * @see docs/PRDs/revenue/engagement-based-first-purchase-discount.md
  */
 
 /**

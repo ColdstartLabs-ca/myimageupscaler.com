@@ -1,7 +1,7 @@
 /**
  * Engagement Discount Components
  *
- * @see docs/PRDs/engagement-based-first-purchase-discount.md
+ * @see docs/PRDs/revenue/engagement-based-first-purchase-discount.md
  */
 
 export { EngagementDiscountBanner } from './EngagementDiscountBanner';

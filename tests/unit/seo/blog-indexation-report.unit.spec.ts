@@ -17,7 +17,7 @@ import { clientEnv } from '@shared/config/env';
 const ROOT = join(__dirname, '../../..');
 const HISTORICAL_BASELINE_CSV = join(
   ROOT,
-  'docs/PRDs/gsc-recovery-2026-08/data/gsc-crawled-not-indexed.csv'
+  'docs/PRDs/seo/gsc-recovery-2026-08/data/gsc-crawled-not-indexed.csv'
 );
 const HISTORICAL_BASELINE_CSV_CONTENT = readFileSync(HISTORICAL_BASELINE_CSV, 'utf8');
 const CANONICAL_BASELINE_URLS = extractBlogUrlsFromCsv(HISTORICAL_BASELINE_CSV_CONTENT);

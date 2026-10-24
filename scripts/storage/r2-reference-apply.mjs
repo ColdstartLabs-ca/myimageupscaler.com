@@ -8,7 +8,7 @@
  * bodies/featured images move to the trusted assets domain. It never talks to
  * R2, never deletes a row or object, and never rewrites any other field.
  *
- * Safety contract (docs/PRDs/supabase-quota-recovery/README.md):
+ * Safety contract (docs/PRDs/platform/supabase-quota-recovery/README.md):
  *   - The backup identity is re-loaded from disk and the caller identity must
  *     bind it. A synthetic identity fails.
  *   - The plan and its REQUIRED raw digest are read from regular files inside

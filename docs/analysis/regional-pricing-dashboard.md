@@ -131,7 +131,7 @@ Create the following user segments in Amplitude for easy analysis:
 
 ## Related Documentation
 
-- PRD: `docs/PRDs/regional-dynamic-pricing.md`
+- PRD: `docs/PRDs/revenue/regional-dynamic-pricing.md`
 - Region Classifier: `lib/anti-freeloader/region-classifier.ts`
 - Pricing Regions Config: `shared/config/pricing-regions.ts`
 - Analytics Service: `server/analytics/analyticsService.ts`

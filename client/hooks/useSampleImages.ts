@@ -4,7 +4,7 @@
  * Manages sample image selection and processing for first-time users.
  * Tracks usage in localStorage and fires analytics events.
  *
- * @see docs/PRDs/first-time-user-activation.md - Phase 2: Sample Images
+ * @see docs/PRDs/product/first-time-user-activation.md - Phase 2: Sample Images
  */
 
 'use client';

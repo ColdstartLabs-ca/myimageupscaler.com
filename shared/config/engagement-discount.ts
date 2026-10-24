@@ -9,7 +9,7 @@
  * - 2+ downloads
  * - 1+ model switches
  *
- * @see docs/PRDs/engagement-based-first-purchase-discount.md
+ * @see docs/PRDs/revenue/engagement-based-first-purchase-discount.md
  */
 
 import type {

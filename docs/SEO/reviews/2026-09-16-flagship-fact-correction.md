@@ -1,6 +1,6 @@
 # Flagship fact correction — review package (AC-1)
 
-**PRD:** [PRD-traffic-recovery-2026-09](../../PRDs/traffic-recovery-2026-09.md) · **Status:** prepared locally, NOT published
+**PRD:** [PRD-traffic-recovery-2026-09](../../PRDs/seo/traffic-recovery-2026-09.md) · **Status:** prepared locally, NOT published
 **Page:** `/blog/best-free-ai-image-upscaler-2026-tested-compared`
 **Served source:** production DB record (blog API). The slug is not in `content/blog-data.json`.
 **Prepared:** 2026-09-16 · **Approver:** João

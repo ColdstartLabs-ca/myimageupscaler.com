@@ -49,7 +49,7 @@ Either traffic quality shifted (pSEO/AI-referral visitors with lower intent) or 
 - 81,539 queued emails (93.5%) skipped with `suppressed_frequency_cap`; only 2,192 ever sent.
 - 1,106 failed with "All email providers failed" — the system runs on free tiers (Brevo ~300/day, Cloudflare, Resend) and exhausts them.
 - Win-back campaigns are dead on arrival: `winback-credit-holder-21d` sent 68 of 30,840; `winback-never-uploaded-14d` sent 100 of 30,421; `winback-former-buyer-45d` sent **0 of 6,805** — this last one targets proven buyers.
-- The just-shipped revenue-recovery cohorts (`docs/PRDs/revenue-recovery-email-cohorts.md`) will hit the same wall.
+- The just-shipped revenue-recovery cohorts (`docs/PRDs/email/revenue-recovery-email-cohorts.md`) will hit the same wall.
 
 **Action:** Pay for a real email provider (Resend/Brevo paid tier, ~$20–90/mo for this volume) and rebalance the frequency cap so revenue-critical campaigns (checkout recovery, former-buyer win-back, low/zero credits) take priority over informational ones. This is days of work against tens of thousands of unsent revenue emails.
 
@@ -79,8 +79,8 @@ Evidence: 249 pack buyers vs 34 subscribers; 85% of subscribers cancel, most wit
 
 ## 4. Funnel improvements (ordered by expected impact / effort)
 
-1. **Diagnose the Feb→June conversion collapse** (§1). Segment buyer rate by traffic source (Amplitude/GA4), landing page, and region. Check whether pSEO/AI-search traffic growth diluted intent or whether a funnel change around March regressed conversion. Related PRD already exists: `docs/PRDs/click-to-checkout-conversion-fix.md`.
-2. **Pre-checkout email capture.** Auth is forced only at checkout, so abandoners who never authenticate are unrecoverable — no email, no recovery campaign. Capture email when a guest clicks any upgrade CTA (already flagged as TODO in `docs/PRDs/checkout-recovery-system.md`).
+1. **Diagnose the Feb→June conversion collapse** (§1). Segment buyer rate by traffic source (Amplitude/GA4), landing page, and region. Check whether pSEO/AI-search traffic growth diluted intent or whether a funnel change around March regressed conversion. Related PRD already exists: `docs/PRDs/revenue/click-to-checkout-conversion-fix.md`.
+2. **Pre-checkout email capture.** Auth is forced only at checkout, so abandoners who never authenticate are unrecoverable — no email, no recovery campaign. Capture email when a guest clicks any upgrade CTA (already flagged as TODO in `docs/PRDs/revenue/checkout-recovery-system.md`).
 3. **Post-first-success upsell.** The highest-intent moment (first successful upscale/download) has weak monetization. `FirstDownloadCelebration` exists — add a premium-model comparison teaser ("see this image with Clarity Pro") with a one-click small pack.
 4. **Enable trials.** Trial config is fully scaffolded in `shared/config/subscription.config.ts` but `enabled: false` everywhere. A 7-day trial on Hobby for heavy users is a low-risk experiment.
 5. **Annual plans.** Types support `interval: 'year'` but no yearly prices exist. Lower priority until subscription retention is fixed — an annual plan sold to users who churn in 13 days invites refund requests.

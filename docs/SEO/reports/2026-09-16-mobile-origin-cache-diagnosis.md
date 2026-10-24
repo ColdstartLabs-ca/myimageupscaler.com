@@ -1,6 +1,6 @@
 # Mobile origin / HTML cache diagnosis (AC-4)
 
-**PRD:** [PRD-traffic-recovery-2026-09](../../PRDs/traffic-recovery-2026-09.md) · **Date:** 2026-09-16
+**PRD:** [PRD-traffic-recovery-2026-09](../../PRDs/seo/traffic-recovery-2026-09.md) · **Date:** 2026-09-16
 **Method:** the [mobile LCP fix plan](./2026-09-08-mobile-lcp-fix-plan.md) §4 — cookie-free document requests, mobile UA, recording TTFB, connection reuse, `cf-cache-status`, `x-nextjs-cache`/`x-opennext-cache`, `Age`, `Cache-Control`, `Vary`, `cf-ray`. The three-run Lighthouse baseline was **not** rerun.
 **Verdict: variance REPRODUCES; cause NOT established.** AC-4 stays PARTIAL — the AC needs a reproduced _cause_ or a STOP, and neither holds yet.
 
