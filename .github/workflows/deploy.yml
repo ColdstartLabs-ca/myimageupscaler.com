@@ -70,6 +70,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -86,11 +88,10 @@ jobs:
           NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
 
-      - name: Build for Cloudflare Workers (OpenNext)
+      - name: Build Next.js application
         run: |
           npx tsx scripts/build-blog.ts
           npx next build --webpack
-          npx opennextjs-cloudflare build --skipNextBuild
         env:
           # Public environment variables (NEXT_PUBLIC_*)
           # See .env.example for full list
@@ -105,6 +106,44 @@ jobs:
           NEXT_PUBLIC_GA_MEASUREMENT_ID: ${{ vars.NEXT_PUBLIC_GA_MEASUREMENT_ID }}
           NEXT_PUBLIC_AHREFS_ANALYTICS_KEY: ${{ vars.NEXT_PUBLIC_AHREFS_ANALYTICS_KEY }}
           # Server-side environment variables
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          AMPLITUDE_API_KEY: ${{ vars.NEXT_PUBLIC_AMPLITUDE_API_KEY }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - name: Run SEO lock gate
+        run: yarn seo:lock:gate --deploy-base="${{ github.event.before }}"
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_BASE_URL: ${{ vars.NEXT_PUBLIC_BASE_URL }}
+          NEXT_PUBLIC_APP_NAME: ${{ vars.NEXT_PUBLIC_APP_NAME }}
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_BASELIME_KEY: ${{ vars.NEXT_PUBLIC_BASELIME_KEY }}
+          NEXT_PUBLIC_AMPLITUDE_API_KEY: ${{ vars.NEXT_PUBLIC_AMPLITUDE_API_KEY }}
+          NEXT_PUBLIC_GA_MEASUREMENT_ID: ${{ vars.NEXT_PUBLIC_GA_MEASUREMENT_ID }}
+          NEXT_PUBLIC_AHREFS_ANALYTICS_KEY: ${{ vars.NEXT_PUBLIC_AHREFS_ANALYTICS_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          AMPLITUDE_API_KEY: ${{ vars.NEXT_PUBLIC_AMPLITUDE_API_KEY }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - name: Build for Cloudflare Workers (OpenNext)
+        run: npx opennextjs-cloudflare build --skipNextBuild
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_BASE_URL: ${{ vars.NEXT_PUBLIC_BASE_URL }}
+          NEXT_PUBLIC_APP_NAME: ${{ vars.NEXT_PUBLIC_APP_NAME }}
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_BASELIME_KEY: ${{ vars.NEXT_PUBLIC_BASELIME_KEY }}
+          NEXT_PUBLIC_AMPLITUDE_API_KEY: ${{ vars.NEXT_PUBLIC_AMPLITUDE_API_KEY }}
+          NEXT_PUBLIC_GA_MEASUREMENT_ID: ${{ vars.NEXT_PUBLIC_GA_MEASUREMENT_ID }}
+          NEXT_PUBLIC_AHREFS_ANALYTICS_KEY: ${{ vars.NEXT_PUBLIC_AHREFS_ANALYTICS_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           AMPLITUDE_API_KEY: ${{ vars.NEXT_PUBLIC_AMPLITUDE_API_KEY }}
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}

@@ -1,6 +1,5 @@
 'use strict';
 
-const fs = require('node:fs');
 
 const BEST_FREE_CURRENT_H1 = '# Best Free AI Image Upscaler 2026: Only 3 Worked';
 const BEST_FREE_PRIOR_H1 = '# Best Free AI Image Upscaler Online 2026: 12 Tested';
@@ -65,31 +64,6 @@ function repairPost(post) {
   if (repaired.content.length < 100)
     throw new Error(`repaired content is unexpectedly short: ${post.slug}`);
   return repaired;
-}
-
-function main(argv) {
-  const [inputPath, outputPath] = argv;
-  if (!inputPath || !outputPath) {
-    throw new Error('usage: node three-kings-regression-repair.cjs <input.json> <output.json>');
-  }
-  const posts = JSON.parse(fs.readFileSync(inputPath, 'utf8'));
-  if (!Array.isArray(posts) || posts.length !== 3) {
-    throw new Error('expected exactly three production blog posts');
-  }
-  const repaired = posts.map(repairPost);
-  fs.writeFileSync(outputPath, JSON.stringify(repaired));
-  for (const post of repaired) {
-    console.log(`${post.slug}: repaired content length ${post.content.length}`);
-  }
-}
-
-if (require.main === module) {
-  try {
-    main(process.argv.slice(2));
-  } catch (error) {
-    console.error(error instanceof Error ? error.message : String(error));
-    process.exit(1);
-  }
 }
 
 module.exports = { repairPost, removeH2Section };

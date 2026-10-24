@@ -325,6 +325,7 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
       'provider-incident': 'ProviderIncidentEmail',
       'gallery-expiry-warning': 'GalleryExpiryWarningEmail',
       'quota-guard-alert': 'QuotaGuardAlertEmail',
+      'seo-weekly-digest': 'SeoWeeklyDigestEmail',
     };
 
     const exportName = templateExportNames[templateName];
@@ -353,6 +354,7 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
       'provider-incident': () => import('@/emails/templates/ProviderIncidentEmail'),
       'gallery-expiry-warning': () => import('@/emails/templates/GalleryExpiryWarning'),
       'quota-guard-alert': () => import('@/emails/templates/QuotaGuardAlertEmail'),
+      'seo-weekly-digest': () => import('@/emails/templates/SeoWeeklyDigestEmail'),
     };
     /* eslint-enable no-restricted-syntax */
 
@@ -401,6 +403,7 @@ export abstract class BaseEmailProviderAdapter implements IEmailProviderAdapter 
           ? `ALERT: ${d.appName || 'MyImageUpscaler'} quota guard`
           : `URGENT: ${d.appName || 'MyImageUpscaler'} quota at 80% of budget`,
       'password-reset': 'Reset your password',
+      'seo-weekly-digest': 'Weekly SEO lock digest',
       'support-request': d =>
         `[Support] [${String(d.category || 'GENERAL').toUpperCase()}] ${d.subject || 'Support Request'}`,
     };
