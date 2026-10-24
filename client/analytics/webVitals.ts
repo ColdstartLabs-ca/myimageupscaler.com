@@ -37,9 +37,7 @@ const bufferedVitals: IWebVitalsProperties[] = [];
  * `/es/scale/4x?utm_source=x` -> `/scale/[slug]`, `/es` -> `/`.
  */
 export function toPathTemplate(pathname: string): string {
-  const segments = (pathname.split(/[?#]/)[0] || '')
-    .split('/')
-    .filter(Boolean);
+  const segments = (pathname.split(/[?#]/)[0] || '').split('/').filter(Boolean);
 
   if (segments.length > 0 && (SUPPORTED_LOCALES as readonly string[]).includes(segments[0])) {
     segments.shift();

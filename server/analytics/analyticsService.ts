@@ -30,11 +30,7 @@ import type { IAnalyticsEvent } from '@server/analytics/types';
 import { supabaseAdmin } from '@server/supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
 import { TIMEOUTS } from '@shared/config/timeouts.config';
-import {
-  GA4_EVENT_MAP,
-  GA4_CONVERSION_EVENTS,
-  sanitizeGa4Params,
-} from '@shared/analytics/types';
+import { GA4_EVENT_MAP, GA4_CONVERSION_EVENTS, sanitizeGa4Params } from '@shared/analytics/types';
 
 // =============================================================================
 // Server-side HTTP API (for use in API routes)

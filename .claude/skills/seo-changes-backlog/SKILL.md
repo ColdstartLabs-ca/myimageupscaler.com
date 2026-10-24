@@ -28,7 +28,8 @@ Related operational backlog:
    - validation performed
    - follow-up or GSC/IndexNow actions
 4. If request-indexing is needed after deploy, add or update `gsc-request-indexing-backlog.md`.
-5. If the backlog is getting long, summarize older detailed entries into a monthly rollup and keep recent entries detailed.
+5. Insert the new entry at the TOP, under the newest date heading. Do not append at the end of the file: late-filed entries once piled up below the rollups and broke date order.
+6. If the file passes ~80 KB, run the rollup recipe below.
 
 ## Entry Template
 
@@ -51,6 +52,16 @@ Follow-up:
 
 - ...
 ```
+
+## Rollup Recipe
+
+Keep the last ~3 weeks in full. Replace each older month with one `## <Month> 2026 Rollup` section, newest month first, placed after the detailed entries and before older rollups. Target 3–6 KB per month.
+
+1. Record the last commit that holds the raw detail (`git log -1 --format=%h -- docs/SEO/maintenance/seo-changes-backlog.md`) in the file header, so `git show <hash>:<path>` recovers it.
+2. Group by theme, not by day: edits and measured outcomes (WIN/FLAT/LOSS), technical changes, product-copy changes, then `Carried forward`.
+3. Keep: URLs, dates, commit hashes, measured numbers, guard test names, lessons ("never repeat X"), and open follow-ups. Drop: backup file names, per-run validation counts, `yarn verify` output, repeated "no change" maintenance runs.
+4. Fold the old `Open Follow-Ups` list into the `Carried forward` bullets. Mark any item you did not re-verify as such.
+5. Move stray late-filed entries into their month, then check `grep -n '^## '` shows descending dates.
 
 ## Keep It Useful
 
