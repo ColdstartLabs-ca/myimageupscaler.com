@@ -1,0 +1,75 @@
+import { describe, expect, it } from 'vitest';
+import { createBlogPostSchema } from '@shared/validation/blog.schema';
+
+const RECOVERY_METADATA = [
+  {
+    slug: 'best-free-ai-image-upscaler-2026-tested-compared',
+    targetTerms: ['best', 'free', 'ai', 'image', 'upscaler', '2026'],
+    title: 'Best Free AI Image Upscaler 2026: Only 3 Worked',
+    description:
+      'Best free AI image upscaler 2026: we tested 12 tools for quality, speed, no signup, no watermark, and 4K/8K output. See winners and try free.',
+  },
+
+  {
+    slug: 'best-image-upscaler',
+    targetTerms: ['best', 'image', 'upscaling', 'software', '2026'],
+    title: 'Best Image Upscaling Software 2026: 12 Tools Compared',
+    description:
+      'Compare 12 image upscaling tools for 2026, including free web apps and pro software. See output limits, pricing tradeoffs, and the best fit for your workflow.',
+  },
+  {
+    slug: 'how-to-upscale-youtube-thumbnails',
+    targetTerms: ['youtube', 'thumbnail', 'blurry', 'low quality'],
+    title: 'Why Your YouTube Thumbnail Looks Blurry or Low Quality',
+    description:
+      'Fix blurry YouTube thumbnails and low quality uploads with the right size, export, and compression settings. Check 1280×720 and 2560×1440 before uploading.',
+  },
+  {
+    slug: 'fixing-pixelated-photos',
+    targetTerms: ['how', 'to', 'fix', 'pixelated', 'photos', 'online'],
+    title: 'How to Fix Pixelated Photos Online: 3 Fast AI Fixes',
+    description:
+      'Learn how to fix pixelated photos online in 3 steps: upscale, sharpen, or rescan blocky images, then try the free AI upscaler.',
+  },
+] as const;
+
+describe('Trending-down blog SERP recovery metadata', () => {
+  it('keeps each title and description within the enforced SERP ranges', () => {
+    for (const recovery of RECOVERY_METADATA) {
+      const result = createBlogPostSchema.safeParse({
+        slug: recovery.slug,
+        title: recovery.title,
+        description: recovery.description,
+        content: 'A'.repeat(200),
+        author: 'MyImageUpscaler Team',
+        category: 'Guides',
+        tags: ['SEO'],
+        seo_title: recovery.title,
+        seo_description: recovery.description,
+      });
+
+      expect(result.success, recovery.slug).toBe(true);
+      expect(recovery.title.length, recovery.slug).toBeGreaterThanOrEqual(30);
+      expect(recovery.title.length, recovery.slug).toBeLessThanOrEqual(60);
+      expect(recovery.description.length, recovery.slug).toBeGreaterThanOrEqual(120);
+      expect(recovery.description.length, recovery.slug).toBeLessThanOrEqual(160);
+    }
+  });
+
+  it('keeps the GSC-backed query language in the title and description', () => {
+    for (const recovery of RECOVERY_METADATA) {
+      const title = recovery.title.toLowerCase();
+      const description = recovery.description.toLowerCase();
+
+      for (const term of recovery.targetTerms) {
+        expect(title, `${recovery.slug} title missing ${term}`).toContain(term);
+        expect(description, `${recovery.slug} description missing ${term}`).toContain(term);
+      }
+    }
+  });
+  it('uses distinct titles for the two different search intents', () => {
+    expect(new Set(RECOVERY_METADATA.map(recovery => recovery.title)).size).toBe(
+      RECOVERY_METADATA.length
+    );
+  });
+});

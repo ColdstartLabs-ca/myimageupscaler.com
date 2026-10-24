@@ -33,6 +33,13 @@ export interface ISeoLockEntry extends ISeoLockFields {
 
 export type ISeoLock = Record<string, ISeoLockEntry>;
 
+export async function loadEffectiveLock(
+  signedLock: ISeoLock,
+  loadAutoEntries: () => Promise<ISeoLock>
+): Promise<ISeoLock> {
+  return { ...(await loadAutoEntries()), ...signedLock };
+}
+
 export interface ISeoLockDiff {
   field: TSeoLockField;
   expected: unknown;

@@ -69,7 +69,7 @@ Facts checked on 2026-10-23:
 
 ## Execution Phases
 #### Phase 0: `ADMIN_EMAIL` env and secret
-**Status:** NOT STARTED
+**Status:** LOCAL CODE VERIFIED — production secret update pending
 **Files:** `shared/config/env.ts` (server schema + `loadServerEnv`) · `.env.api.example` · `scripts/deploy/steps/05-secrets.sh` · prod secret `myimageupscaler-api-prod` (no file)
 **Implementation:** Clone the `PROVIDER_ALERT_EMAIL` pattern. Update the prod secret with the gcloud-secrets safe-update flow. Keep the previous secret version as the backup.
 **Verification:** AC-1. Red first: the env spec fails before the schema change.
@@ -95,3 +95,7 @@ Facts checked on 2026-10-23:
 ## Local execution decisions — 2026-10-23
 - No production secret/schema mutation or deployment is part of these local checks. Phase 0 code and allowlist are complete; the production secret update remains pending.
 - Stop-loss uses relative page/control lift `(pageAfter/pageBefore)/(controlAfter/controlBefore)-1` over matching windows, with minimum hold 14 days. LOSS ≤ −25%, WIN ≥ +25%, FLAT between; missing or zero control baseline yields no verdict. This defines the previously unspecified WIN boundary.
+
+### Verified foundations
+- `classifySeoChange` has 11 passing cases (red missing-module first), including site-wide proportional decline → FLAT, page-specific loss, gain, 14-day hold and insufficient control data. It is not wired to the digest yet.
+- `loadEffectiveLock` has passing merge/collision/fail-closed tests; JSON overrides auto entries. Persistence and the route/gate consumers are not wired yet, so AC-4 remains open.

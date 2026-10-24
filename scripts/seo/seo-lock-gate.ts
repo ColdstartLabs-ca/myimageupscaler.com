@@ -383,7 +383,7 @@ async function findFreePort(): Promise<number> {
   return new Promise((resolve, reject) => {
     const server = createServer();
     server.once('error', reject);
-    server.listen(0, '127.0.0.1', () => {
+    server.listen(0, 'localhost', () => {
       const address = server.address();
       const port = typeof address === 'object' && address ? address.port : 0;
       server.close(error => (error ? reject(error) : resolve(port)));
@@ -391,12 +391,12 @@ async function findFreePort(): Promise<number> {
   });
 }
 
-async function waitForServer(baseUrl: string, timeoutMs = 60_000): Promise<void> {
+export async function waitForServer(baseUrl: string, timeoutMs = 60_000): Promise<void> {
   const deadline = Date.now() + timeoutMs;
   let lastError = 'server did not respond';
   while (Date.now() < deadline) {
     try {
-      await fetch(`${baseUrl}/`);
+      await fetch(`${baseUrl}/`, { redirect: 'manual', signal: AbortSignal.timeout(1000) });
       return;
     } catch (error) {
       lastError = error instanceof Error ? error.message : String(error);
@@ -418,6 +418,7 @@ async function runRenderGate(
       async path => {
         const response = await fetch(new URL(path, `${options.baseUrl.replace(/\/$/, '')}/`), {
           redirect: 'manual',
+          signal: AbortSignal.timeout(15000),
         });
         return { status: response.status, html: await response.text() };
       },
@@ -426,8 +427,8 @@ async function runRenderGate(
   }
 
   const port = await findFreePort();
-  const baseUrl = `http://127.0.0.1:${port}`;
-  const child = spawn(process.execPath, [join(options.repoRoot, 'node_modules/next/dist/bin/next'), 'start', '--hostname', '127.0.0.1', '--port', String(port)], {
+  const baseUrl = `http://localhost:${port}`;
+  const child = spawn(process.execPath, [join(options.repoRoot, 'node_modules/next/dist/bin/next'), 'start', '--hostname', 'localhost', '--port', String(port)], {
     cwd: options.repoRoot,
     stdio: 'inherit',
   });
@@ -437,7 +438,7 @@ async function runRenderGate(
     return await checkRenderedLocks(
       lock,
       async path => {
-        const response = await fetch(new URL(path, `${baseUrl}/`), { redirect: 'manual' });
+        const response = await fetch(new URL(path, `${baseUrl}/`), { redirect: 'manual', signal: AbortSignal.timeout(15000) });
         return { status: response.status, html: await response.text() };
       },
       options.approvedDbFields

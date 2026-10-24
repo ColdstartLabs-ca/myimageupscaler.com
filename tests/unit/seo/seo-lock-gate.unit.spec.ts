@@ -3,13 +3,16 @@ import { createHash } from 'node:crypto';
 import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { createServer } from 'node:http';
+import { describe, expect, it, vi } from 'vitest';
+import { fetch as nodeFetch } from 'undici';
 import {
   checkLockApproval,
   checkRenderedLocks,
   formatLockDiffs,
-  type ISeoLock,
+  waitForServer,
 } from '@/scripts/seo/seo-lock-gate';
+import type { ISeoLock } from '@lib/seo/seo-lock';
 
 const ENTRY = {
   title: 'Locked title',
@@ -67,6 +70,27 @@ function makeSignedRepo(): {
 }
 
 describe('SEO lock render gate', () => {
+  it('accepts an HTTP redirect as readiness without following a redirect loop', async () => {
+    vi.stubGlobal('fetch', nodeFetch);
+    let requests = 0;
+    const server = createServer((_req, res) => {
+      requests++;
+      const address = server.address();
+      if (!address || typeof address === 'string') throw new Error('Missing test server address');
+      res.writeHead(301, { location: `http://127.0.0.1:${address.port}/` });
+      res.end();
+    });
+    await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+    try {
+      const address = server.address();
+      if (!address || typeof address === 'string') throw new Error('Missing test server address');
+      await expect(waitForServer(`http://127.0.0.1:${address.port}`, 30)).resolves.toBeUndefined();
+      expect(requests).toBe(1);
+    } finally {
+      vi.unstubAllGlobals();
+      await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
+    }
+  });
   it('warns only for the previous approved DB value, and rejects unrelated drift', async () => {
     const fields = await import('@lib/seo/seo-lock').then(m => m.extractSeoFields('<title>Approved title</title>'));
     const lock: ISeoLock = { '/blog/locked': { ...fields, source: 'db', clicks28d: 21 } };
