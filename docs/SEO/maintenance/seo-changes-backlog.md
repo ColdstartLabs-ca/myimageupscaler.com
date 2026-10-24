@@ -3320,3 +3320,8 @@ A real local built-Worker request to `/api/blog/images/upload` returned 500 duri
 ### 2026-10-23 — Weekly SEO digest local implementation
 - Wired Monday cron and its authenticated manual trigger to live drift, relative stop-loss, unchanged-winner diagnosis, append-only winner capture, recent proposals and gate-file commits. Added signed evaluation metadata enforcement and a reviewable single-entry restore command that preserves staged/unstaged work.
 - Local proof: related route/gate/template/worker tests, actual PostgreSQL append-only and sync-type transactions, production-config Next build and real unauthenticated endpoint rejection. Read-only GSC and GitHub requests succeeded. Production rollout, signing setup, Worker limits and inbox delivery remain pending in the PRDs; production data was unchanged.
+
+### 2026-10-23 — Historical SEO guard cleanup and approval hardening
+- Retired all 12 existing per-edit test files while retaining their 80 cases in general suites. Pure edit transforms now live in test fixtures; their production script paths and unused repair CLI are gone. Restored three uncovered locale-brand checks and kept the homepage FAQ guard.
+- Corrected stale font guards to inspect the shared local-font definitions. Full SEO suite: 1,597 tests / 143 files pass, including the new GPG-message spoof negative control. SSH approval now checks the actual signature header. Added the weekly digest to the manual cron CLI; 29 cron checks pass.
+- Final full unit: 7,277 pass, 12 skipped; final `yarn verify` passes. Evidence and the remaining approval-collision audit are in the gate PRD. No production content, fonts, schema or deployment changed during this cleanup.

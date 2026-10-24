@@ -176,7 +176,9 @@ function commitParent(repoRoot: string, commitSha: string): string | null {
 export function verifySshCommit(repoRoot: string, commitSha: string, allowedSignersFile: string): boolean {
   try {
     const commit = runGit(repoRoot, ['cat-file', 'commit', commitSha]);
-    if (!commit.includes('BEGIN SSH SIGNATURE')) return false;
+    const signatures = commit.split('\n\n', 1)[0].split('\n')
+      .filter(line => /^gpgsig(?:-sha256)? /.test(line));
+    if (signatures.length !== 1 || signatures[0] !== 'gpgsig -----BEGIN SSH SIGNATURE-----') return false;
     execFileSync(
       'git',
       ['-c', `gpg.ssh.allowedSignersFile=${allowedSignersFile}`, 'verify-commit', commitSha],

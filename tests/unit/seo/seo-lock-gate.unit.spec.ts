@@ -318,7 +318,7 @@ describe('SEO lock approval gate', () => {
     }
   });
 
-  it('does not treat an OpenPGP/web-flow-style commit as SSH approval', async () => {
+  it.each(['web-flow API update', 'web-flow API update\n\n-----BEGIN SSH SIGNATURE-----'])('does not treat an OpenPGP commit as SSH approval: %s', async message => {
     const fixture = makeSignedRepo();
     const gpgHome = mkdtempSync(join(tmpdir(), 'seo-lock-gpg-'));
     const batchFile = join(gpgHome, 'batch');
@@ -347,10 +347,13 @@ describe('SEO lock approval gate', () => {
       git(fixture.repo, ['config', 'gpg.program', gpgWrapper]);
       git(fixture.repo, ['config', 'user.signingKey', 'web-flow@example.com']);
       writeLock(fixture.repo, {
-        '/blog/locked': { ...ENTRY, title: 'Web-flow changed title' },
+        '/blog/locked': { ...ENTRY, title: 'Web-flow changed title', change: {
+          approvedAt: '2026-10-01', baselineClicks28d: 100, baselineEndDate: '2026-09-28',
+          readbackDate: '2026-10-18', previousLockCommit: git(fixture.repo, ['rev-parse', 'HEAD']).trim(),
+        } },
       });
       git(fixture.repo, ['add', 'content/seo-lock.json']);
-      git(fixture.repo, ['-c', 'commit.gpgsign=true', 'commit', '-m', 'web-flow API update']);
+      git(fixture.repo, ['-c', 'commit.gpgsign=true', 'commit', '-m', message]);
 
       writeFileSync(
         fixture.allowedSigners,

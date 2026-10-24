@@ -275,7 +275,9 @@ describe('Locale Homepage Meta — Keyword Targeting', () => {
       const description = deCommon.meta.homepage.description;
 
       const combined = title + ' ' + description;
-      expect(combined).toMatch(/Bildqualität.*verbessern|verbessern.*Bildqualität|qualität.*verbessern/i);
+      expect(combined).toMatch(
+        /Bildqualität.*verbessern|verbessern.*Bildqualität|qualität.*verbessern/i
+      );
     });
 
     it('should target "KI" (German for AI) users', () => {
@@ -333,5 +335,15 @@ describe('Locale Homepage Meta — Length Validation', () => {
 
   it('German title and description have optimal length', () => {
     testLocale('de');
+  });
+});
+
+// These locales are below the rendered-lock threshold; keep their existing brand guard.
+describe('Localized homepage brand contract', () => {
+  it.each(['it', 'ja', 'pt'])('keeps the established brand in the %s homepage title', locale => {
+    const common = JSON.parse(
+      fs.readFileSync(path.resolve(process.cwd(), 'locales', locale, 'common.json'), 'utf8')
+    );
+    expect(common.meta.homepage.title).toContain('MyImageUpscaler');
   });
 });

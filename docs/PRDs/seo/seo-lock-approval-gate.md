@@ -53,7 +53,7 @@ Signing setup (owner): a dedicated ed25519 key with a passphrase, registered on 
 - [x] AC-3 [local]: An unsigned commit that changes a lock value fails R2. A commit made through the GitHub contents API (web-flow GPG, `verified: true`) also fails R2. An unsigned additions-only commit passes R2. proof: `yarn vitest run tests/unit/seo/seo-lock-gate.unit.spec.ts` (temp git repo fixture with a test signing key) — Evidence: `yarn vitest run tests/unit/seo/seo-lock-gate.unit.spec.ts`: 6 tests passed; real temporary SSH-signed Git fixture accepts additions and rejects unsigned/Web-flow-style GPG changes. New regressions observed red, then green: deployment-range approvals expire, and only the prior approved DB value receives a warning.
 - [x] AC-4 [local]: A blog PATCH that changes the title of a locked slug returns 409. The same PATCH with the lock value returns 200. A PATCH to a slug that is not locked works as before. proof: `yarn vitest run tests/unit/api/blog-posts-seo-lock.unit.spec.ts` (through the route handler) — Evidence: `yarn vitest run tests/unit/api/blog-posts-seo-lock.unit.spec.ts`: 5 tests passed through PATCH. Regression red→green covers layout brand suffix, H1 vs metadata title, and intro-hash enforcement when the description matches metadata.
 - [ ] AC-5 [shared]: The `deploy.yml` deploy job runs the gate after `next build`, and a gate failure stops the deploy step. proof: GitHub Actions run on the first push that contains the gate — Evidence: pending.
-- [ ] AC-6 [local]: The per-edit pin tests in Phase 3 are deleted, and each deleted assertion is covered by a lock entry or moved to a general test. `yarn test:unit` passes. proof: `yarn vitest run tests/unit/seo` + `yarn verify` — Evidence: pending.
+- [x] AC-6 [local]: The per-edit pin tests in Phase 3 are deleted, and each deleted assertion is covered by a lock entry or moved to a general test. `yarn test:unit` passes. proof: `yarn vitest run tests/unit/seo` + `yarn verify` — Evidence: All 12 existing historical files retired; all 80 cases preserved in general suites, with three uncovered locale assertions restored. Full SEO: 1,597 pass / 143 files. Full unit command: 7,277 pass, 12 skipped / 547 files. `yarn verify` passed. Exact per-file mapping is recorded in Phase 3 and the PR body.
 
 ## Blocked on
 - A dedicated SSH signing key with a passphrase, registered on GitHub as a signing key and kept out of `ssh-agent` — unblocked by João. ⚠️ Use a passphrase that is not in any chat transcript, because agents can read `~/.claude/projects`.
@@ -100,11 +100,31 @@ Signing setup (owner): a dedicated ed25519 key with a passphrase, registered on 
 **Verification:** AC-3, AC-4, AC-5. A negative control for AC-3: a web-flow-signed fixture commit must fail.
 
 #### Phase 3: Cleanup of per-edit pins
-**Status:** IN PROGRESS — uncovered original guards restored before migration
+**Status:** LOCAL VERIFIED — all historical pins migrated; full unit suite passes
 **Files (delete when covered):** `tests/unit/seo/three-kings-2026-09-24.unit.spec.ts`, `three-kings-2026-10-05`, `three-kings-2026-10-12`, `three-kings-exposure-2026-10-15`, `three-kings-refresh-2026-09-03`, `three-kings-regression-repair`, `tiktok-pfp-title`, `topaz-free-trial-snippet`, `blog-ctr-fixes`, `remove-bg-demand-capture`, `trending-down-blog-recovery`, `interactive-tools-pr13-metadata`, `seo-next-steps-blog-refresh`. Then the one-off apply scripts that only those tests use (`scripts/seo/three-kings-*.cjs`, `scripts/seo/tiktok-pfp-title.cjs`), after a grep for other callers.
 **Keep:** `free-offer-conversion-copy`, `no-test-forbids-free-offer`, `seo-safeguards`, `three-kings-manager`, `three-kings-sitemap-route`, all structural tests. `protected-pages.unit.spec.ts` keeps only its FAQ assertions, because the lock does not lock FAQ content. Update its reference in `CLAUDE.md` if the file name changes.
 **Implementation:** For each file, list each assertion → lock field, general test, or "obsolete (window closed)". An assertion that has no lock field and is still valid moves into a general test. It is not dropped. Record the mapping in the PR body.
 **Verification:** AC-6. Append one entry to `docs/SEO/maintenance/seo-changes-backlog.md`.
+
+### Pin retirement evidence — 2026-10-23
+
+All 12 historical files that actually exist in base `143e0daa` are retired. The listed `tiktok-pfp-title` test/script do not exist in that base or the current tree; no TikTok assertion was deleted. Every existing case below remains covered, with no assertion omissions.
+
+| Retired files under `tests/unit/seo/` | Replacement | Preserved cases |
+| --- | --- | --- |
+| `interactive-tools-pr13-metadata` | `tools-metadata.unit.spec.ts` | 33 historical cases plus 8 existing general cases |
+| `blog-ctr-fixes`, `seo-next-steps-blog-refresh`, `trending-down-blog-recovery` | `blog-field-policy.unit.spec.ts` | All 13 cases and page fixtures |
+| `three-kings-2026-09-24`, `three-kings-2026-10-05`, `three-kings-2026-10-12`, `three-kings-regression-repair` | `blog-content-policy.unit.spec.ts` | All 22 cases, complete fixture bodies and assertion logic |
+| `three-kings-exposure-2026-10-15`, `three-kings-refresh-2026-09-03`, `topaz-free-trial-snippet` | `seo-edit-policy.unit.spec.ts` | All 8 cases; an AST comparison found all 47 original assertion statements |
+| `remove-bg-demand-capture` | `tool-route-policy.unit.spec.ts` | All 4 route, sitemap, eligibility and CTA cases |
+
+The four pure `three-kings-*.cjs` transforms moved from production scripts into `tests/fixtures/seo/`; the repair CLI's unused file IO/main entry point was removed. A caller scan found no remaining runtime consumers. Before formatting, source comparison proved the four complete test bodies and pure transform implementations were unchanged apart from import paths. The two false-credit meta-guard allowlist entries now name the general suite and retain their exact assertion text.
+
+`protected-pages` retains its FAQ test. The prior English homepage title/description, Spanish brand, AI-upscaler title/H1 and two scale-page title/H1 checks map to existing lock entries; each expected term was checked against those actual entries. Italian, Japanese and Portuguese homepage titles are outside the lock, so their three brand assertions moved into `locale-homepage-meta`. The CLAUDE.md reference now distinguishes FAQ, locale and rendered-lock coverage.
+
+Two existing font guards incorrectly searched the layout for configuration moved to `client/styles/fonts.ts`. Their red run had two failures; the corrected tests verify each actual font definition's `display: swap` plus layout consumption, and all 15 LCP tests pass. The complete SEO suite now passes 1,597 tests / 143 files. No production font/page content changed.
+
+A further native-Git negative control proved a GPG commit with an SSH marker in its message could pass the old signature helper. Verification now requires exactly one actual SSH signature header before cryptographic validation; ordinary and spoofed GPG commits fail. Gate/restore tests pass 13 cases. The full-unit run also exposed the missing Monday job in the manual cron CLI; its registry is corrected and the cron script/router group passes 29 cases. Final `yarn test:unit --maxWorkers=4` passed: 7,277 tests, 12 skipped, 545 files passed and two files skipped (209.30 seconds). Final `yarn verify` passed (62.13 seconds). AC-6 is locally verified.
 
 ## Local execution evidence — 2026-10-23
 - Checkpoint `6132ad4a` preserved and pushed after orchestration was stopped. Linchpin was removed; further execution uses bounded save-tokens arms and direct verification.
@@ -123,3 +143,6 @@ Signing setup (owner): a dedicated ed25519 key with a passphrase, registered on 
 
 ### Pin migration progress
 - Migrated all 33 assertions from `interactive-tools-pr13-metadata.unit.spec.ts` into the general `tools-metadata.unit.spec.ts` contract. Preserved eight required slugs, title/description bounds, catalogue cross-references and OCR intent separation. Existing eight tool checks stay. Parent rerun: 41/41 passed; `yarn verify` passed (51.85 s). The old per-edit file is retired; the other 11 remain until covered.
+
+### Remaining approval audit
+- Before rollout, validate unsigned JSON additions that collide with a frozen database auto entry: JSON precedence must not let a new JSON path bypass owner approval for an already protected value. Existing auto-entry fixtures prove render enforcement, but do not yet prove that collision case. Validate pending-DB warnings and the restore path for a signed promotion too. Shared signing/deployment checks remain open.
