@@ -1,5 +1,19 @@
 # Blog Changelog
 
+## 2026-10-26
+
+### Rollback: Three measured Three Kings losses
+
+**Affected:** topaz-labs-free-trial, best-ai-upscaler, how-to-upscale-youtube-thumbnails
+**Why:** Final GSC through Oct 22 closes the public-exposure windows: Topaz description 5.00→3.57 clicks/day (impressions −11%, position −1.3); best-ai body 0.86→0.64 (impressions +28%, position +1.9); YouTube body 15→12 clicks/14 days (exact 0.8 LOSS threshold; impressions −13%, position −0.1). No ≤−40% stable-position demand-collapse exception. These are policy stop-losses, not proof of causation.
+**Changes:**
+
+- `topaz-labs-free-trial` — restored exact recorded pre-rung-2 `seo_description`; body and other fields unchanged.
+- `best-ai-upscaler` — restored exact recorded pre-rung-3 `content`; metadata unchanged.
+- `how-to-upscale-youtube-thumbnails` — bounded rung-3 rollback removed the diagnostic proof module, retaining the corrected opening, official upload guidance, factual guest/DPI/fidelity corrections and subsequent R2 image migration. Full old-body restoration would reintroduce false claims and obsolete image URLs; no prior value guessed. The API recalculated `reading_time` as expected.
+- Fresh schema/data backups before EACH PATCH: `backup_2026-10-26_09-18-22`, `backup_2026-10-26_09-21-37`, `backup_2026-10-26_09-22-50` (`backups/*.{schema,data}.sql.gz`). Each passed extraction/byte comparison, `yarn db:backups` and `gzip -t`; earlier backups retained.
+- All three PATCHes returned 200. Authenticated GETs exactly match replacement fields/hashes; normal rendered public HTML confirms each rollback with 200, one self-canonical and index/follow. Ledger records three diagnostic rollback rows without advancing rungs; measurement Oct 27–Nov 9, earliest conservative final-data review Nov 13. Indexing rows reopened in place; current GSC crawls predate the rollbacks, browser connection timed out, no manual request claimed. TikTok row separately API-resolved from successful Oct 23 post-edit crawl; its Nov 6 gate unchanged.
+
 ## 2026-10-19
 
 ### SEO: TikTok PFP title-only CTR test

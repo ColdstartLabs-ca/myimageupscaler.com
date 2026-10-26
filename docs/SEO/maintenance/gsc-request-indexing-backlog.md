@@ -14,7 +14,7 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 
 ### TikTok PFP title-only test — public title verified 2026-10-19
 
-- [ ] `https://myimageupscaler.com/blog/tiktok-profile-picture-ideas` — 2026-10-19 changed only `seo_title` to `TikTok Profile Picture Ideas: 8 PFP Styles (2026)`; authenticated API and normal public HTML/browser verified (200, self-canonical, index/follow). Pre-edit successful crawl Oct 18 is not post-edit evidence. Request indexing once; measure 14 complete days Oct 20–Nov 2, earliest final-data verdict **2026-11-06**. No request has yet been confirmed.
+- [x] `https://myimageupscaler.com/blog/tiktok-profile-picture-ideas` — **API-resolved 2026-10-26, not a manual request:** `Submitted and indexed`, indexing allowed, successful post-title-change crawl `2026-10-23T19:16:16Z`, matching Google/user canonicals. The 2026-10-19 title-only test remains unchanged; measure Oct 20–Nov 2, earliest final-data verdict **2026-11-06**. No manual request claimed.
 
 > **2026-08-13 deploy — daily quota reached.** GSC's URL Inspection "Request indexing"
 > button is capped at ~10 submissions per property per day. 10 were submitted and
@@ -53,7 +53,8 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 
 ### Three Kings ladder actions — request after current live HTML is verified
 
-- [x] `https://myimageupscaler.com/blog/best-ai-upscaler` — **API-resolved 2026-10-05, not a manual request:** `Submitted and indexed`, successful crawl `2026-10-03T14:26:04Z` after the 2026-09-24 write, matching Google/user canonical. Normal public article now exposes the 12-tool evidence rubric; API body hash verified. Earlier public exposure is unknown: measurement conservatively starts 2026-10-05; earliest final-data verdict 2026-10-23.
+- [ ] `https://myimageupscaler.com/blog/topaz-labs-free-trial` — **Reopened 2026-10-26:** rung-2 LOSS; restored exact recorded alternative-led seo_description. API readback and normal public meta match (200, self-canonical, index/follow); body and other metadata retained. Prior 2026-09-21 write was API-resolved Oct 5; latest successful crawl `2026-10-22T10:21:32Z` predates this rollback. Browser connection unavailable, no request confirmed. Cooling-off Oct 27–Nov 9; earliest final-data verdict **2026-11-13**.
+- [ ] `https://myimageupscaler.com/blog/best-ai-upscaler` — **Reopened 2026-10-26:** rung-3 LOSS; restored the exact recorded pre-experiment body. API hash and normal rendered article verified (200, self-canonical, index/follow); only content/updated_at changed. The prior 2026-09-24 write was API-resolved Oct 5, but the latest successful crawl `2026-10-19T00:09:11Z` predates this rollback. Request indexing once after current live verification; browser connection unavailable, no request confirmed. Cooling-off Oct 27–Nov 9; earliest final-data verdict **2026-11-13**.
 - [x] `https://myimageupscaler.com/blog/topaz-video-upscaler` — **API-resolved 2026-10-05, not a manual request:** `Submitted and indexed`, successful crawl `2026-09-26T02:42:58Z` after the 2026-09-24 write, matching Google/user canonical. Normal public article now exposes the Topaz Video vs Pro module; API body hash verified. Earlier public exposure is unknown: measurement conservatively starts 2026-10-05; earliest final-data verdict 2026-10-23.
 - [x] `https://myimageupscaler.com/blog/best-image-upscaler` — **API-resolved 2026-10-15, not a manual request:** `Submitted and indexed`, indexing allowed, successful crawl `2026-10-13T17:00:05Z` after the final 2026-10-12 rung-3 write, matching Google/user canonicals. Normal public rendered article now exposes the software-workflow evidence module and corrected closing CTA (200, self-canonical, index/follow); authenticated API final SHA256 `f3180ce35db4a0f7b910faa9a2bddae130d2fc66bb4a0efa74e8b84a555473a9` matches. Earlier final-copy exposure is unknown: measurement conservatively starts 2026-10-15, with 14 complete days Oct 16–29 and earliest final-data verdict 2026-11-02. Original DB date, rung, prior body and 2026-09-24 description rollback retained; no new production write or manual indexing request.
 
@@ -121,7 +122,7 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 - [ ] `https://myimageupscaler.com/blog/fixing-pixelated-photos` — 2026-09-10 regression rollback restored the prior meta/opening and removed the failed proof module; request indexing after live HTML exposes the repair.
 - [x] `https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark`
 - [x] `https://myimageupscaler.com/blog/how-to-upscale-midjourney-images-for-print`
-- [x] `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails` — **API-resolved 2026-10-08, not a manual request:** `Submitted and indexed`, successful crawl `2026-10-07T04:57:12Z` after the 2026-10-05 rung-3 write; indexing allowed and matching Google/user canonicals. Normal public rendered article now exposes the diagnostic module (200, self-canonical, index/follow, cache HIT); authenticated API content hash matches the recorded write. Earlier public exposure is unknown: measurement conservatively starts 2026-10-08, with 14 complete days Oct 9–22 and earliest final-data verdict 2026-10-26. No new production write, deployment or cache purge.
+- [ ] `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails` — **Reopened 2026-10-26:** rung-3 LOSS; bounded rollback removed the diagnostic proof module while retaining the corrected opening, official upload guidance, factual guest/DPI/fidelity repairs and later R2 image migration. API hash and normal rendered article verified (200, self-canonical, index/follow); only content, derived reading_time and updated_at changed. Prior 2026-10-05 write was API-resolved Oct 8; latest successful crawl `2026-10-24T19:50:24Z` predates this rollback. Browser connection unavailable, no request confirmed. Cooling-off Oct 27–Nov 9; earliest final-data verdict **2026-11-13**.
 - [x] `https://myimageupscaler.com/blog/image-upscaler-8x`
 - [ ] `https://myimageupscaler.com/blog/photo-restoration-program` — 2026-09-10 regression rollback removed the failed comparison expansion while retaining truthful metadata and credit copy; request indexing after live HTML exposes the repair.
 
@@ -152,7 +153,6 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 - [x] `https://myimageupscaler.com/blog/mejorar-calidad-imagen-ia-gratis`
 - [x] `https://myimageupscaler.com/blog/pixelcut-ai-photo-editor`
 - [x] `https://myimageupscaler.com/blog/topaz-denoise-ai`
-- [x] `https://myimageupscaler.com/blog/topaz-labs-free-trial` — **API-resolved 2026-10-05, not a manual request:** `Submitted and indexed`, successful crawl `2026-09-29T20:50:32Z` after the 2026-09-21 write, matching Google/user canonical. Normal public meta description exactly matches the API value. Earlier public exposure is unknown: measurement conservatively starts 2026-10-05; earliest final-data verdict 2026-10-23.
 
 - [x] `https://myimageupscaler.com/blog/video-upscaling-software`
 - [x] `https://myimageupscaler.com/scale/upscale-16x`
