@@ -2,6 +2,12 @@
 
 ## 2026-10-26
 
+### Internal link: Print-resolution guide supports the format comparison
+
+**Affected:** what-resolution-for-print → best-high-resolution-image-format
+**Why:** Fresh GSC Sep 26–Oct 23: source 25 clicks / 7,984 impressions at position 5.88; destination 3 / 1,428 at 7.68. Both are self-canonical, indexed, topic-relevant 200s; the stronger print guide had zero contextual body links to the format comparison. Existing experiments remain HOLD/GATED/STOP; destination demand varied at stable rank, so no new snippet test or duplicate post.
+**Changes:** Added one sentence under `Tips for Print-Ready Photos`, linking **high-resolution image formats for print and archiving** to the existing canonical comparison. Only `content` and `updated_at` changed; title/H1, descriptions, original paragraphs, CTAs, media and destination content unchanged. API readback exactly matches body SHA256 `eb24994a1eed700ee2e3251e7d19e3692e0fba20649266b80c91baf32724ea35`; removing the added sentence reproduces the original body SHA256 `3b8bd6bd5267d4f6e274fb990299b263a6c5eb887932f13cdb53486e68e1e06a`. Fresh backup `backup_2026-10-26_10-39-59.{schema,data}.sql.gz` passed extraction/byte comparison, listing and gzip checks before PATCH 200 at `2026-10-26T17:41:12.987734+00:00`. Normal public rendered article exposes exactly one followed link; both pages remain 200 / one self-canonical / index-follow. Reopened the existing source indexing row (no duplication or manual-submission claim). Post-write crawl check Nov 2; 14 complete days Oct 27–Nov 9, earliest conservative final-data readback Nov 13. Live via API, no code deployment needed; no traffic lift claimed.
+
 ### Rollback: Three measured Three Kings losses
 
 **Affected:** topaz-labs-free-trial, best-ai-upscaler, how-to-upscale-youtube-thumbnails

@@ -12,6 +12,10 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 
 ## Pending
 
+### Print export format support link — live verified 2026-10-26
+
+- [ ] `https://myimageupscaler.com/blog/what-resolution-for-print` — **Reopened 2026-10-26:** added one contextual, crawlable body link to `/blog/best-high-resolution-image-format` in the print-tips section. API readback and normal public rendered article match; 200, one self-canonical, index/follow. Prior June 5 change was API-resolved Aug 3; current successful crawl `2026-10-19T19:20:13Z` predates today's link write. Native browser connection timed out twice; **no manual request claimed**. Inspect on **2026-11-02** for a successful post-write crawl with matching canonicals before resolving; do not repeat an accepted UI request. Link-effect window Oct 27–Nov 9; earliest final-data readback **2026-11-13**. Destination is already Submitted and indexed; no duplicate destination request.
+
 ### TikTok PFP title-only test — public title verified 2026-10-19
 
 - [x] `https://myimageupscaler.com/blog/tiktok-profile-picture-ideas` — **API-resolved 2026-10-26, not a manual request:** `Submitted and indexed`, indexing allowed, successful post-title-change crawl `2026-10-23T19:16:16Z`, matching Google/user canonicals. The 2026-10-19 title-only test remains unchanged; measure Oct 20–Nov 2, earliest final-data verdict **2026-11-06**. No manual request claimed.
@@ -134,7 +138,6 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 - [x] `https://myimageupscaler.com/blog/sharpen-a-video` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-07-23 after the 2026-06-21 change.
 - [x] `https://myimageupscaler.com/blog/text-image-enhancer` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-07-26 after the 2026-07-22 refresh.
 - [x] `https://myimageupscaler.com/blog/upscale-image-for-print-300-dpi-guide` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-08-02 after the 2026-05-26 change.
-- [x] `https://myimageupscaler.com/blog/what-resolution-for-print` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-08-01 after the 2026-06-05 change.
 - [x] `https://myimageupscaler.com/comparisons-expanded/ai-models-comparison` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-07-21 after the 2026-05-26 change.
 - [x] `https://myimageupscaler.com/es` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-08-01 after the 2026-06-29 change.
 - [x] `https://myimageupscaler.com/it` — API-resolved 2026-08-03: `Submitted and indexed`; last crawled 2026-07-27 after the 2026-06-29 change.
