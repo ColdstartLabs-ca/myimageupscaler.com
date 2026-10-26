@@ -12,6 +12,13 @@ Maintenance rules:
 
 ## 2026-10-26
 
+### Blog growth operator — contextual print-to-format support link live
+
+- **Evidence/state:** read Oct 19/12 cron outputs, canonical backlogs/changelog, reports and git history. Final GSC through Oct 22: **6 HOLD / 3 GATED / 1 STOP / 2 VERDICT**, no eligible repeat rung; today's rollbacks govern. Fresh Sep 26–Oct 23 GSC: `/blog/what-resolution-for-print` **25 clicks / 7,984 impressions / position 5.88**; `/blog/best-high-resolution-image-format` **3 / 1,428 / 7.68**. GA4 Sep 28–Oct 25: **28 / 6** organic sessions respectively. Source had no contextual body link to this indexed, relevant destination. No clear safe title gap; format/print/8K intents already have owners. Existing internal-link validation passes 28 files; five targeted routes return 200.
+- **Action D/live proof:** one contextual link added under print tips through blog-edit, PATCH 200 `2026-10-26T17:41:12.987734+00:00`. GET proves only `content`/`updated_at` changed; normal rendered article exposes one followed link. Both URLs remain 200 / single self-canonical / index-follow. Metadata, original copy, CTAs and media retained. Fresh backup `backups/backup_2026-10-26_10-39-59.{schema,data}.sql.gz` passed extraction/byte comparison, listing and gzip gates; exact old/new hashes and one-sentence rollback are in the blog changelog.
+- **State/verification:** changelog updated; source indexing row reopened once, preserving prior history; **70→71 unique pending URLs**, oldest Aug 13 (**user attention required**). Native browser timed out twice; no UI request claimed. Destination already indexed, no duplicate request. RED→GREEN; **47/47 unit tests**, `yarn verify` and `git diff --check` pass (0 lint errors / 1,832 existing warnings). Aggregate `yarn test` passed **228 API / 32 skipped**, then timed out at 180 seconds during E2E; not fully green. Helper/test/changelog/indexing files were captured by concurrent commit **`b129699d3dbf9abce42d122a8810544a69f27cc7`** (`Fixes`); its unrelated Reddit change was not touched or rewritten. Follow-up commit stages only this run's own files.
+- **Deploy/trigger:** live via API, no push/deploy/purge by this run. Source crawl check **Nov 2** (Oct 19 crawl predates the write); João may request indexing once. Measure **Oct 27–Nov 9**, final-data readback **Nov 13**, against final exact-page **Oct 9–22** (source **16 clicks / 4,093 impressions**, target **2 / 569**). Compare clicks, demand/rank and organic sessions separately; no causation/lift claimed. A ≥30% source click drop without comparable demand/rank shift triggers review of the one-sentence rollback. Existing Oct 31/Nov 2/Nov 6/Nov 13 ladder gates unchanged.
+
 ### Three Kings operator — three measured losses rolled back live
 
 - **Final evidence and control plane:** refreshed live GSC `dataState: final`, Jun 25–Oct 22, retaining the three-day holdback/excluded current day. Initial check: **3 REGRESSION / 0 EDIT_NOW / 3 HOLD / 3 GATED / 1 STOP / 2 VERDICT / 0 NO_DATA**. Recorded closed rung-3 outcomes for Topaz Video and poster as **FLAT**; no ladder restart. Final check after action: **0 REGRESSION / 0 EDIT_NOW / 6 HOLD / 3 GATED / 1 STOP / 2 VERDICT / 0 NO_DATA**. No duplicate post, title/H1 batch rewrite, unrelated product change, deployment or cache purge.
@@ -252,38 +259,14 @@ Follow-up:
 - Recheck normal public HTML before indexing. Once exposure is verified, retain the DB date, anchor the ledger's measurement date to the first confirmed public date, and require 14 complete post-exposure GSC days plus export holdback; do not treat the provisional 2026-10-19 DB-date window as a verdict deadline.
 - Earliest other closed-window review: 2026-10-09, when this exporter's three-day holdback plus excluded current day can include final data through 2026-10-05 for the Topaz free-trial and poster rows. The September 24 rows become reviewable from 2026-10-12.
 
-## 2026-10-04
+## Early October 2026 Rollup (Oct 3–4)
 
-### Sitemap duplicate check moved off production
+Full detail: `git show b129699d:docs/SEO/maintenance/seo-changes-backlog.md`; analysis and original baselines: [Oct 3 report](../reports/seo-report-2026-10-03.md).
 
-`tests/e2e/seo/sitemap-duplicates.e2e.spec.ts` fetched about 87 live sitemaps one by one, tested the deployed site instead of the build, and flaked on edge rate limiting. It is deleted. The `seo-guard` duplicate check now covers every `<loc>` in all child sitemaps of the local build (not only `/blog`) and also pins `/blog` → `sitemap-blog.xml` and `/platforms` → `sitemap-platforms.xml`. No sitemap output changed.
-
-## 2026-10-03
-
-### Traffic/signup decline root cause: Sep 12 step; homepage snippet + llms.txt free offer restored; sitemap/robots fixes
-
-Report: [seo-report-2026-10-03](../reports/seo-report-2026-10-03.md).
-
-Evidence:
-
-- All of these stepped down on 2026-09-12: signups (~100 → ~60/day, later 50), GA4 Google sessions (249 → 175/day), branded GSC clicks (~25 → ~5/day at position 1.0, CTR flat), and Gemini/ChatGPT referrals (−60%). The drop is uniform across every country, device and tier. Non-brand clicks rose 5–9%, and indexing, manual actions and core updates are clean.
-- Sep 12 is when the Sep 10 Product Truth copy reached users through the 24h homepage ISR. The 3143e88e restore missed `meta.homepage.description`, which still said "Create an account to see the free credit grant…", and it also missed the deleted FAQ "How to upscale images for free?".
-- Best-free flagship CTR fell from 7% to 2.2% at a flat position after the Sep 10 title rewrite (still live; DB edit parked for the owner).
-- Amplitude: signups per signup-intent fell from 0.75 to 0.52 from Sep 12 and did not recover after Sep 25. Every auth.users row completes, so abandonment happens before account creation (Google OAuth is 88%).
-
-Action (each change is a separate squash commit; deploy the homepage snippet on its own for a clean readback):
-
-- `locales/en/common.json`: homepage meta description now leads with "free online … free credits, no credit card needed" (no hardcoded count). Restored FAQ "How to upscale images for free?" in both the rendered FAQ and the FAQPage source, with a free-first answer.
-- `app/llms.txt` and `app/llms-full.txt`: replaced the false "No signup required" with "Free account with free credits — no credit card required".
-- `app/sitemap.xml/route.ts`: the index is derived from `ALL_CATEGORIES`. scale/free/guides had dropped out since d08a19da (2026-08-25). 43 → 46 child sitemaps.
-- `app/robots.ts`: removed the `/_next/` disallow, which blocked Googlebot from fetching the JS/CSS it renders with.
-- Guards: `free-offer-conversion-copy`, `llms-txt`, `sitemap-index`, `robots`, `pseo-category-coverage` unit specs.
-
-Follow-up:
-
-- After the deploy, request indexing for `/` in GSC and confirm the live `<meta name="description">`, since the homepage is 24h ISR.
-- Readback around 2026-10-12: branded clicks/wk (baseline 41–43), gemini sessions/day (3–4), signups/day (50), and the flagship CTR.
-- Not shipped and needing review: single canonical/hreflang emitter on branch `seo/canonical-single-emitter`. It fixes the duplicate canonical on `/scale/2k-upscaler` and the duplicated hreflang on `/` and `/es`, but removes `alternates` from metadata-factory site-wide.
+- **Oct 3 recovery:** Sep 12 coincided with the Product Truth exposure: signups ~100→60/day (later 50), Google sessions 249→175/day, branded clicks ~25→5/day at position 1, Gemini/ChatGPT referrals −60%; named non-brand clicks rose 5–9%. Flagship CTR 7%→2.2% at flat rank; signup-intent completion 0.75→0.52. These were diagnostic associations, not isolated causation proof.
+- Restored homepage free/no-card meta description and FAQ; corrected `llms.txt`/`llms-full.txt` signup wording. Derived sitemap index from `ALL_CATEGORIES` (43→46, scale/free/guides restored); removed the `/_next/` robots disallow. Guards: free-offer-conversion-copy, llms-txt, sitemap-index, robots, pseo-category-coverage.
+- **Oct 4 tests:** removed sequential production sitemap crawl; local-build seo-guard checks all child `<loc>` duplicates plus blog/platform sitemap registration. No sitemap output change.
+- **Follow-ups superseded:** Oct 13 records flagship/head-emitter recovery, Oct 15 confirms deployment, Oct 17 records homepage indexing. Do not revive the old pending-deploy or canonical-branch blockers. Historical readbacks were brand 41–43 clicks/week, Gemini 3–4 sessions/day, signups 50/day; current gates are in the later entries.
 
 ## September 2026 Rollup
 
