@@ -11,8 +11,10 @@ vi.mock('@server/supabase/supabaseAdmin', () => ({
 import {
   CRON_JOB_KEYS,
   CRON_JOB_STALENESS_MINUTES,
+  PAUSED_CRON_JOB_KEYS,
   getCronJobHealth,
 } from '@server/services/cronHealth.service';
+import { PAUSED_CLEANUP_ENDPOINTS } from '../../../../workers/cron/index';
 
 function healthRows(rows: Array<Record<string, unknown>>) {
   return { select: () => Promise.resolve({ data: rows, error: null }) };
@@ -32,7 +34,21 @@ describe('cron job health expected jobs', () => {
 
     const keys = jobs.map(job => job.jobKey);
     expect(keys).not.toContain('upscale-input-cleanup');
-    expect(keys).toEqual([CRON_JOB_KEYS.databaseRetention, CRON_JOB_KEYS.galleryCleanup]);
+    expect(keys).toEqual([CRON_JOB_KEYS.databaseRetention]);
+  });
+
+  it('does not expect a job the cron worker pauses', async () => {
+    const jobs = await getCronJobHealth(NOW);
+
+    expect(jobs.map(job => job.jobKey)).not.toContain(CRON_JOB_KEYS.galleryCleanup);
+  });
+
+  it('pauses exactly the health jobs whose endpoints the cron worker pauses', () => {
+    const pausedByWorker = Object.values(CRON_JOB_KEYS).filter(key =>
+      PAUSED_CLEANUP_ENDPOINTS.has(`/api/cron/${key}`)
+    );
+
+    expect([...PAUSED_CRON_JOB_KEYS].sort()).toEqual(pausedByWorker.sort());
   });
 
   it('ignores a stale row for a job that is no longer expected', async () => {
@@ -68,7 +84,7 @@ describe('cron job health staleness thresholds', () => {
       ])
     );
 
-    const fresh = await getCronJobHealth(NOW);
+    const fresh = await getCronJobHealth(NOW, [CRON_JOB_KEYS.galleryCleanup]);
     expect(fresh.find(job => job.jobKey === CRON_JOB_KEYS.galleryCleanup)?.stale).toBe(false);
 
     mocks.from.mockReturnValue(
@@ -81,7 +97,7 @@ describe('cron job health staleness thresholds', () => {
       ])
     );
 
-    const stale = await getCronJobHealth(NOW);
+    const stale = await getCronJobHealth(NOW, [CRON_JOB_KEYS.galleryCleanup]);
     expect(stale.find(job => job.jobKey === CRON_JOB_KEYS.galleryCleanup)?.stale).toBe(true);
   });
 
@@ -118,7 +134,7 @@ describe('cron job health staleness thresholds', () => {
 
     const jobs = await getCronJobHealth(NOW);
 
-    expect(jobs).toHaveLength(2);
+    expect(jobs).toHaveLength(1);
     expect(jobs.every(job => job.stale)).toBe(true);
   });
 });

@@ -2,7 +2,7 @@
  * ANCHOR TESTS for CheckoutModal
  *
  * These tests lock in the current behavior BEFORE the refactoring described in
- * docs/PRDs/checkout-modal-refactor.md. Every test here must remain green throughout
+ * docs/PRDs/done/revenue/checkout-modal-refactor.md. Every test here must remain green throughout
  * the refactor. If a test breaks, a behavioral regression occurred.
  *
  * Coverage:

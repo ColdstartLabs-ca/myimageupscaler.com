@@ -11,7 +11,7 @@ export type ExpirationMode = 'never' | 'end_of_cycle' | 'rolling_window';
 
 /**
  * Trial period configuration
- * TODO: Implementation planned - see docs/PRDs/subscription-config/trial-periods.md
+ * TODO: Implementation planned - see docs/PRDs/accounts/trial-periods-PRD.md
  */
 export interface ITrialConfig {
   /** Trial enabled for this plan */
@@ -30,7 +30,7 @@ export interface ITrialConfig {
 
 /**
  * Credits expiration configuration
- * TODO: Implementation planned - see docs/PRDs/subscription-config/credits-expiration.md
+ * TODO: Implementation planned - see docs/PRDs/done/revenue/credits-expiration-PRD.md
  */
 export interface ICreditsExpirationConfig {
   /** Expiration behavior: never (current default), end_of_cycle, rolling_window */

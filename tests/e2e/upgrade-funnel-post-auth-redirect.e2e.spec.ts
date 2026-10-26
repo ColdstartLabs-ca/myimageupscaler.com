@@ -43,7 +43,7 @@ async function pinModelGateDirectCheckoutArm(page: Page) {
  * Tests for the post-authentication checkout redirect functionality
  * and originating model tracking in the upgrade funnel.
  *
- * PRD: docs/PRDs/upgrade-funnel-ux-improvements.md
+ * PRD: docs/PRDs/revenue/upgrade-funnel-fix.md
  * Branch: night-watch/35-fix-upgrade-funnel-post-auth-redirect-checkout-path-optimization
  *
  * Key features tested:

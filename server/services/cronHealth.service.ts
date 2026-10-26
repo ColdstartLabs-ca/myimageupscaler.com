@@ -10,6 +10,16 @@ export const CRON_JOB_KEYS = {
 
 export type CronJobKey = (typeof CRON_JOB_KEYS)[keyof typeof CRON_JOB_KEYS];
 
+// Jobs the cron worker deliberately skips (PAUSED_CLEANUP_ENDPOINTS in
+// workers/cron/index.ts) until the verified-backup retention rollout. A paused
+// job never records success, so expecting it would keep health degraded and
+// fire a daily quota alert. A unit test keeps this list equal to the worker's.
+export const PAUSED_CRON_JOB_KEYS: readonly CronJobKey[] = [CRON_JOB_KEYS.galleryCleanup];
+
+const EXPECTED_CRON_JOB_KEYS: readonly CronJobKey[] = Object.values(CRON_JOB_KEYS).filter(
+  key => !PAUSED_CRON_JOB_KEYS.includes(key)
+);
+
 // Freshness budget per job, in minutes, matched to the cron schedule. Hourly
 // jobs go stale after two hours; the daily gallery cleanup gets 26 hours
 // (24 hours plus a two-hour slack window).
@@ -52,7 +62,7 @@ export async function recordCronJobSuccess(
  */
 export async function getCronJobHealth(
   now: Date = new Date(),
-  expectedKeys: readonly CronJobKey[] = Object.values(CRON_JOB_KEYS),
+  expectedKeys: readonly CronJobKey[] = EXPECTED_CRON_JOB_KEYS,
   maxAgeMinutesByJob: Partial<Record<CronJobKey, number>> = CRON_JOB_STALENESS_MINUTES
 ): Promise<ICronJobHealth[]> {
   const { data, error } = await supabaseAdmin

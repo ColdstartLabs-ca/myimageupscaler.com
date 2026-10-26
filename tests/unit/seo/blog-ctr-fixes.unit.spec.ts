@@ -34,7 +34,7 @@ function resolveMetaDescription(post: IPostMetaFields): string {
 }
 
 // ---------------------------------------------------------------------------
-// Fixtures — matches the SQL migration in docs/PRDs/migrations/seo-ctr-blog-updates.sql
+// Fixtures — match the blog CTR metadata update shipped in commit f2d8fc64.
 // ---------------------------------------------------------------------------
 
 const UPDATED_POSTS: IPostMetaFields[] = [

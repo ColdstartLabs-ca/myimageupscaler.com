@@ -3,7 +3,7 @@
  *
  * Tests for new analytics events and properties added in the upgrade funnel improvements.
  *
- * PRD: docs/PRDs/upgrade-funnel-ux-improvements.md
+ * PRD: docs/PRDs/revenue/upgrade-funnel-fix.md
  * Branch: night-watch/35-fix-upgrade-funnel-post-auth-redirect-checkout-path-optimization
  *
  * Key additions tested:

@@ -16,7 +16,7 @@ export interface IUserProfile {
   stripe_customer_id: string | null;
   // DEPRECATED: Use subscription_credits_balance + purchased_credits_balance instead
   credits_balance?: number;
-  // Separate credit pools (see docs/PRDs/separate-credit-pools.md)
+  // Separate credit pools (see docs/PRDs/done/revenue/separate-credit-pools.md)
   subscription_credits_balance: number; // Credits from subscription (expire at cycle end)
   purchased_credits_balance: number; // Credits from one-time purchases (never expire)
   subscription_status: SubscriptionStatus | null;

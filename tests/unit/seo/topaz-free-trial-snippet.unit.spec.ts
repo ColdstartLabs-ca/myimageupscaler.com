@@ -26,6 +26,7 @@ describe('Topaz free-trial snippet recovery contract', () => {
       seo_description: TOPAZ_FREE_TRIAL_SNIPPET.seoDescription,
     });
 
+    // Retired rung-2 variant, rolled back 2026-10-26 (see tests/unit/seo/three-kings-2026-10-26.unit.spec.ts).
     expect(result.success).toBe(true);
     expect(TOPAZ_FREE_TRIAL_SNIPPET.seoDescription).toHaveLength(147);
     expect(TOPAZ_FREE_TRIAL_SNIPPET.seoDescription).toMatch(/^Topaz Labs has no free trial/);
@@ -35,16 +36,19 @@ describe('Topaz free-trial snippet recovery contract', () => {
     );
   });
 
-  it('records the post-update indexing request as one resolved row', () => {
+  it('records the reopened indexing request as one unresolved row', () => {
     const backlog = readFileSync('docs/SEO/maintenance/gsc-request-indexing-backlog.md', 'utf8');
     const rowPattern =
       /- \[[ x]\] `https:\/\/myimageupscaler\.com\/blog\/topaz-labs-free-trial`[^\n]*/g;
     const rows = backlog.match(rowPattern) ?? [];
 
     expect(rows).toHaveLength(1);
-    // Resolved 2026-10-05 via URL Inspection API after the 2026-09-21 rung-2 write.
-    expect(rows[0]).toContain('[x]');
-    expect(rows[0]).toContain('API-resolved 2026-10-05');
+    // Reopened 2026-10-26 after the rung-2 LOSS rollback; the prior write was
+    // API-resolved on Oct 5.
+    expect(rows[0]).toContain('- [ ]');
+    expect(rows[0]).toContain('Reopened 2026-10-26');
+    expect(rows[0]).toContain('rung-2 LOSS');
     expect(rows[0]).toContain('2026-09-21');
+    expect(rows[0]).toContain('API-resolved Oct 5');
   });
 });

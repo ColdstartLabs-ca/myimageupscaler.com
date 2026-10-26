@@ -188,9 +188,14 @@ describe('applyIsolatedTestEnv', () => {
 
   // The same CLI scripts/dev-test.sh runs right before `next dev`.
   const runServerGuard = (env: Record<string, string>, cwd = dir) =>
+    // Run node by absolute path: the env under test sets PATH=/usr/bin, and CI has no
+    // node there, so tsx's `#!/usr/bin/env node` shebang would exit 127.
     spawnSync(
-      path.resolve('node_modules/.bin/tsx'),
-      [path.resolve('tests/helpers/test-env-isolation.ts')],
+      process.execPath,
+      [
+        path.resolve('node_modules/tsx/dist/cli.mjs'),
+        path.resolve('tests/helpers/test-env-isolation.ts'),
+      ],
       {
         cwd,
         env: { PATH: process.env.PATH ?? '', HOME: dir, ...env },

@@ -2,7 +2,7 @@
  * Analytics API Validation Tests
  *
  * Tests that pricingRegion is validated on pricing-related events.
- * PRD: docs/PRDs/geo-pricing-tracking-fix.md (Phase 4)
+ * PRD: docs/PRDs/done/revenue/geo-pricing-tracking-fix.md (Phase 4)
  */
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NextRequest } from 'next/server';

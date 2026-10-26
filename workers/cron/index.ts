@@ -102,7 +102,7 @@ export function evaluateCronResult(
 
 // Temporary guard: pause automatic legacy cleanup jobs until the verified-backup
 // retention rollout replaces them. Legacy cleanup deletes without two-copy protection.
-const PAUSED_CLEANUP_ENDPOINTS = new Set([
+export const PAUSED_CLEANUP_ENDPOINTS = new Set([
   '/api/cron/gallery-cleanup',
   '/api/cron/upscale-input-cleanup',
 ]);

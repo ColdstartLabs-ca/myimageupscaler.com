@@ -160,22 +160,26 @@ describe('pSEO Hero LCP — Phase 3 fix', () => {
     });
   });
 
-  describe('layout.tsx font-display optimization', () => {
-    it('pSEO layout should use display: swap for Inter font', () => {
-      const layoutSource = readFileSync(join(ROOT, 'app/(pseo)/layout.tsx'), 'utf-8');
+  describe('font-display optimization', () => {
+    it('client fonts should use display: swap for the inter export', () => {
+      const fontsSource = readFileSync(join(ROOT, 'client/styles/fonts.ts'), 'utf-8');
       // display: swap ensures text is visible with a fallback font while the web
       // font loads, which directly improves LCP by avoiding invisible text.
-      expect(layoutSource).toContain("display: 'swap'");
+      const interBlock = fontsSource.match(/export const inter = localFont\(\{[\s\S]*?\n\}\);/);
+      expect(interBlock).not.toBeNull();
+      expect(interBlock![0]).toContain("display: 'swap'");
     });
 
-    it('pSEO layout should use display: swap for DM_Sans font', () => {
+    it('client fonts should use display: swap for dmSans and the pSEO layout should import both fonts', () => {
+      const fontsSource = readFileSync(join(ROOT, 'client/styles/fonts.ts'), 'utf-8');
+      const dmSansBlock = fontsSource.match(/export const dmSans = localFont\(\{[\s\S]*?\n\}\);/);
+      expect(dmSansBlock).not.toBeNull();
+      expect(dmSansBlock![0]).toContain("display: 'swap'");
+
       const layoutSource = readFileSync(join(ROOT, 'app/(pseo)/layout.tsx'), 'utf-8');
-      // Both fonts used in the pSEO layout must use font-display: swap.
-      // We check the layout defines DM_Sans with swap — a single `display: 'swap'`
-      // is sufficient as both font definitions appear in the same file and both
-      // have the property.
-      expect(layoutSource).toContain('DM_Sans');
-      expect(layoutSource).toContain("display: 'swap'");
+      expect(layoutSource).toMatch(
+        /import\s*\{\s*inter,\s*dmSans\s*\}\s*from\s*'@client\/styles\/fonts'/
+      );
     });
   });
 });

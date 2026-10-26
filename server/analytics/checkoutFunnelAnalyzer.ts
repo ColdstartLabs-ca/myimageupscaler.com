@@ -4,7 +4,7 @@
  * Utility for analyzing checkout funnel metrics from Amplitude analytics.
  * Phase 2 of checkout friction investigation.
  *
- * @see docs/PRDs/checkout-friction-investigation.md
+ * @see docs/PRDs/done/revenue/checkout-friction-investigation.md
  */
 
 import { serverEnv } from '@shared/config/env';

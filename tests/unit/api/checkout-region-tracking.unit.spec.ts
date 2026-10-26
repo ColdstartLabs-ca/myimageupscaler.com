@@ -6,7 +6,7 @@
  * - checkout_completed (webhooks/stripe/handlers/payment.handler.ts)
  * - checkout_abandoned (pricing/PricingPageClient.tsx - client-side)
  *
- * PRD: docs/PRDs/geo-pricing-tracking-fix.md (Phase 6)
+ * PRD: docs/PRDs/done/revenue/geo-pricing-tracking-fix.md (Phase 6)
  */
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { PaymentHandler } from '../../../app/api/webhooks/stripe/handlers/payment.handler';

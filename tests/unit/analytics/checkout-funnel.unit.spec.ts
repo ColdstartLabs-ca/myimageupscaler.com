@@ -2,7 +2,7 @@
  * Checkout Funnel Tracking Unit Tests
  *
  * Tests for checkout analytics events as defined in:
- * - Phase 1 of docs/PRDs/checkout-friction-investigation.md
+ * - Phase 1 of docs/PRDs/done/revenue/checkout-friction-investigation.md
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
