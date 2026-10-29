@@ -1,5 +1,13 @@
 # Blog Changelog
 
+## 2026-10-29
+
+### SEO: Text-readability rung-2 meta description live
+
+**Affected:** text-image-enhancer
+**Why:** Final GSC through Oct 25 closes the July title window. Exact-canonical Sep 28–Oct 11 → Oct 12–25: 10/430 → 9/1,098 clicks/impressions, position 15.42 → 10.71, current CTR 0.82%. Increased impressions accompany a 4.71-position improvement, not stable-rank demand growth or junk-position bloat. Readability queries have one owner; preserve `/blog/enhance-text-in-image` for generic enhancer intent. The old meta promised perfect results; the existing article instead teaches source preparation and letter-shape review. Google returned an enable-JavaScript shell, so no verified top-three SERP/depth comparison or body expansion is claimed.
+**Changes:** Only `seo_description` → `Make text in images easier to read: crop, straighten, adjust contrast, and check letter shapes before OCR. Follow steps for screenshots, labels, and scans.` (155 chars). Fresh `backups/backup_2026-10-29_09-17-39.{schema,data}.sql.gz` passed `yarn db:backup` extraction/byte comparison, `yarn db:backups` and `gzip -t` before PATCH 200 at `2026-10-29T16:20:24.414992+00:00`. API GET proves only seo_description/updated_at changed; body hash remains `4c5bcb10e5f190b569636b57f2e3ef9019e58a01c0ae30e9bee6fca150fbe09a`. Normal public meta matches SHA256 `78521227d940e3f82b5bee461ee305503fa85a30c754c7003d61403accff6bcb`, 200 / one self-canonical / index-follow. Ledger records exact prior description, backup and verified exposure. Reopened the existing indexing row without duplication; current Oct 28 crawl predates this write, no manual request confirmed. Measure Oct 30–Nov 12; earliest final-data review Nov 16. No rollback, title/H1/body edit, deployment or cache purge.
+
 ## 2026-10-26
 
 ### Internal link: Print-resolution guide supports the format comparison

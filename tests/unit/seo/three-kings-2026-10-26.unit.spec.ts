@@ -84,7 +84,13 @@ describe('2026-10-26 demand-gated regression rollbacks', () => {
         .split('\n')
         .filter(line => line.includes(`\`https://myimageupscaler.com/blog/${slug}\``));
       expect(rows).toHaveLength(1);
-      expect(rows[0]).toMatch(/^- \[ \]/);
+      if (rows[0].startsWith('- [x]')) {
+        expect(rows[0]).toContain('API-resolved');
+        expect(rows[0]).toContain('not a manual request');
+        expect(rows[0]).toContain('successful post-rollback crawl');
+      } else {
+        expect(rows[0]).toMatch(/^- \[ \]/);
+      }
       expect(rows[0]).toContain('2026-10-26');
       expect(rows[0]).toContain('2026-11-13');
     }

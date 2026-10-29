@@ -639,8 +639,8 @@
     {
       "url": "/blog/text-image-enhancer",
       "label": "/blog/text-image-enhancer",
-      "rung": 1,
-      "lastEdit": "2026-07-22",
+      "rung": 2,
+      "lastEdit": "2026-10-29",
       "history": [
         {
           "date": "2026-07-22",
@@ -653,6 +653,28 @@
             "postCpd": 0.29,
             "posDelta": -5.3,
             "measuredThrough": "2026-08-04"
+          }
+        },
+        {
+          "date": "2026-10-29",
+          "rung": 2,
+          "field": "seo_description",
+          "note": "Rung 2: replaced vague perfect-results enhancer promise with the existing crop/straighten/contrast/letter-shape readability workflow before OCR. Only seo_description changed; preserve sibling tool intent.",
+          "outcome": null,
+          "previousValue": "Use our AI text image enhancer guide to make blurry text sharp and readable. Learn to prep files, optimize for OCR, and run batch workflows for perfect results.",
+          "dbEditDate": "2026-10-29",
+          "backup": {
+            "schema": "backups/backup_2026-10-29_09-17-39.schema.sql.gz",
+            "data": "backups/backup_2026-10-29_09-17-39.data.sql.gz",
+            "verified": "yarn db:backup extraction/byte comparison; yarn db:backups; gzip -t"
+          },
+          "liveVerification": {
+            "status": "verified",
+            "field": "seo_description",
+            "sha256": "78521227d940e3f82b5bee461ee305503fa85a30c754c7003d61403accff6bcb",
+            "checkedOn": "2026-10-29",
+            "apiUpdatedAt": "2026-10-29T16:20:24.414992+00:00",
+            "reason": "Normal public URL HTML meta exactly matches authenticated API; HTTP 200, one self-canonical, index/follow. Measure 14 complete post-exposure GSC days Oct 30-Nov 12; earliest conservative final-data review Nov 16. No manual indexing request claimed."
           }
         }
       ],
