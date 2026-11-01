@@ -201,7 +201,8 @@ async function fetchPageData(accessToken, siteUrl, startDate, endDate) {
         endDate,
         dimensions: ["page"],
         type: "web",
-        rowLimit: 1000,
+        rowLimit: 25000,
+        dataState: "final",
       }),
     }
   );

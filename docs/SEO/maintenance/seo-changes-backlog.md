@@ -10,6 +10,16 @@ Maintenance rules:
 - Full pre-rollup detail for 2026-05 → 2026-10-19 stays in git: `git show 3bdb8f1e:docs/SEO/maintenance/seo-changes-backlog.md`.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-11-01
+
+### GSC analysis tooling — UI-only reports, click decomposition, completeness gate
+
+- **Changed:** `gsc-fetch.cjs` adds retries, 16-month trend, freshness, click-change causes, position buckets, section/locale/device/country comparisons, anonymized traffic, sitemap coverage, `--inspect-sitemap`, `dataCompleteness` and `comparison.previousQuarantine`. New `gsc-ui-extract.cjs` reads UI-only reports from a signed-in GSC tab at `/u/1`. `ctr-tracker.cjs` no longer truncates at 1,000 rows. No site code, metadata or data changed.
+- **Validation:** GSC unit specs 98/98. Real fetch on 2026-11-01: `dataCompleteness.complete` true, 748 sitemap URLs. Tests: `tests/unit/seo/gsc-analysis-gaps.unit.spec.ts`, `gsc-phantom-quarantine.unit.spec.ts`.
+- **Baseline (Oct 2-29 vs Sep 4-Oct 1):** clicks 5,464→3,939. Impressions -17.3% raw, -10.9% without the Sep 24-26 `remove background` spike. Position ex-quarantine 10.76→11.65.
+- **Ruled out:** locale clicks moved 236→155 (-81 of -1,525), so locale de-indexing does not explain the click loss.
+- **Follow-ups, not fixed:** 8 URLs in live sitemaps serve `noindex` (`/compare/midjourney-vs-stable-diffusion`, `/es/alternatives/vs-imgupscaler`, 6 locale `vs-adobe-express` pages). GSC reports 139 mobile URLs Poor for LCP. 156 video pages are not indexed ("Video isn't on a watch page").
+
 ## 2026-10-29
 
 ### Three Kings — text-readability rung-2 description applied and verified live

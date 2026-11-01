@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 const require = createRequire(import.meta.url);
 const {
   quarantinePhantomQueries,
+  buildPreviousQuarantine,
 } = require('../../../.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs');
 
 const phantom = {
@@ -53,5 +54,20 @@ describe('GSC phantom query quarantine', () => {
     };
     const result = quarantinePhantomQueries([phantom, healthy], summary);
     expect(result.ctrExQuarantine).toBeGreaterThan(summary.ctr);
+  });
+
+  it('should expose a phantom spike that sits only in the previous window', () => {
+    const summary = {
+      clicks: phantom.clicks + healthy.clicks,
+      impressions: phantom.impressions + healthy.impressions,
+      ctr: (phantom.clicks + healthy.clicks) / (phantom.impressions + healthy.impressions),
+      position: 8,
+    };
+    const result = buildPreviousQuarantine([phantom, healthy], summary);
+    expect(result.quarantinedQueries.map((row: { query: string }) => row.query)).toEqual([
+      phantom.query,
+    ]);
+    expect(result.impressionsExQuarantine).toBe(healthy.impressions);
+    expect(result.positionExQuarantine).toBeCloseTo(6);
   });
 });

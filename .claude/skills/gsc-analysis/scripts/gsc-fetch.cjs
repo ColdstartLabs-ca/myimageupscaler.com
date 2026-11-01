@@ -7,8 +7,10 @@
  * - current vs previous period comparisons
  * - query/page/query+page exports
  * - device/country/search appearance breakdowns
- * - optional URL inspection for priority pages
- * - sitemap metadata
+ * - URL inspection for priority pages, or for every sitemap URL
+ * - sitemap metadata and sitemap-versus-traffic reconciliation
+ * - section, locale, host and position splits, click-change decomposition
+ * - 16-month trend, fresh hourly data, and an explicit completeness report
  *
  * Auth uses a service account JSON key and native Node.js fetch/crypto only.
  */
@@ -30,6 +32,45 @@ const SEARCH_APPEARANCE_TYPES = new Set(['web', 'image', 'video', 'news']);
 const PACIFIC_TIMEZONE = 'America/Los_Angeles';
 const PHANTOM_IMPRESSION_THRESHOLD = 5000;
 const PHANTOM_CTR_THRESHOLD = 0.0005;
+const HISTORY_DAYS = 486; // Search Console keeps 16 months.
+const RETRYABLE_STATUS = new Set([429, 500, 502, 503, 504]);
+const MAX_ATTEMPTS = 4;
+const RETRY_BASE_MS = 1000;
+const REQUEST_TIMEOUT_MS = 60000;
+const SITEMAP_CONCURRENCY = 4;
+const INSPECTION_CONCURRENCY = 10;
+const STALE_CRAWL_DAYS = 30;
+const MIN_SECOND_PAGE_SHARE = 0.1;
+const SEGMENT_ROW_LIMIT = 40;
+const LOCALE_PATTERN = /^(de|es|fr|it|ja|pt)$/;
+const POTENTIAL_CTR_TARGETS = [
+  { maxPosition: 3, targetCtr: 0.11 },
+  { maxPosition: 5, targetCtr: 0.08 },
+  { maxPosition: 10, targetCtr: 0.04 },
+  { maxPosition: 20, targetCtr: 0.025 },
+  { maxPosition: Infinity, targetCtr: 0.015 },
+];
+const POSITION_BUCKETS = [
+  { label: '1-3', maxPosition: 3 },
+  { label: '4-10', maxPosition: 10 },
+  { label: '11-20', maxPosition: 20 },
+  { label: '21-50', maxPosition: 50 },
+  { label: '51+', maxPosition: Infinity },
+];
+// The public API returns nothing for these. Capture them with gsc-ui-extract.cjs.
+const UI_ONLY_REPORTS = [
+  'Page indexing: reasons, trends and URL lists',
+  'Video indexing',
+  'Crawl stats',
+  'Core Web Vitals',
+  'Generative AI: impressions by page, country and day',
+  'Multimodal search type',
+  'Insights: query groups and Google branded share',
+  'Links',
+  'Shopping and enhancement reports',
+  'Manual actions, Security issues and Removals',
+];
+const fetchFailures = [];
 
 const KEY_FILE_PATHS = [
   process.env.GCP_KEY_FILE,
@@ -51,7 +92,8 @@ Options:
   --row-limit=25000            Batch size for Search Analytics pagination (max 25000)
   --search-types=web,image     Comma-separated Search Console types
   --primary-type=web           Type used for top-level compatibility fields
-  --inspect-top-pages=10       URL Inspection calls for top pages (0 disables)
+  --inspect-top-pages=25       URL Inspection calls for priority pages (0 disables)
+  --inspect-sitemap            Also inspect every sitemap URL (uses the 2,000/day quota)
   --appearance-limit=10        Number of search appearance buckets to inspect
   --lag-days=3                 Days to hold back from "today" for stable data
   --key=/path/to/key.json      Override service account key path
@@ -81,7 +123,8 @@ function parseArgs() {
     key: null,
     searchTypes: DEFAULT_SEARCH_TYPES.slice(),
     primaryType: 'web',
-    inspectTopPages: 10,
+    inspectTopPages: 25,
+    inspectSitemap: false,
     appearanceLimit: 10,
     lagDays: DEFAULT_LAG_DAYS,
   };
@@ -110,6 +153,8 @@ function parseArgs() {
       result.primaryType = arg.split('=')[1];
     } else if (arg.startsWith('--inspect-top-pages=')) {
       result.inspectTopPages = Math.max(0, parseInt(arg.split('=')[1], 10));
+    } else if (arg === '--inspect-sitemap') {
+      result.inspectSitemap = true;
     } else if (arg.startsWith('--appearance-limit=')) {
       result.appearanceLimit = Math.max(0, parseInt(arg.split('=')[1], 10));
     } else if (arg.startsWith('--lag-days=')) {
@@ -250,27 +295,43 @@ async function googleRequest({
   body = null,
   optional = false,
   label = 'request',
+  retryBaseMs = RETRY_BASE_MS,
 }) {
-  const response = await fetch(url, {
-    method,
-    headers: {
-      authorization: `Bearer ${accessToken}`,
-      ...(body ? { 'content-type': 'application/json' } : {}),
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  let status = null;
+  let message = '';
 
-  const bodyText = await response.text();
-  if (!response.ok) {
-    const message = `${label} failed (${response.status}): ${parseErrorPayload(bodyText)}`;
-    if (optional) {
-      console.error(`[GSC] ${message}`);
-      return null;
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+    try {
+      const response = await fetch(url, {
+        method,
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+          ...(body ? { 'content-type': 'application/json' } : {}),
+        },
+        body: body ? JSON.stringify(body) : undefined,
+        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      });
+      const bodyText = await response.text();
+      if (response.ok) {
+        return bodyText ? JSON.parse(bodyText) : {};
+      }
+      status = response.status;
+      message = parseErrorPayload(bodyText);
+      if (!RETRYABLE_STATUS.has(status)) break;
+    } catch (error) {
+      status = null;
+      message = error.message;
     }
-    throw new Error(message);
+    if (attempt < MAX_ATTEMPTS) {
+      await new Promise(resolve => setTimeout(resolve, retryBaseMs * 2 ** (attempt - 1)));
+    }
   }
 
-  return bodyText ? JSON.parse(bodyText) : {};
+  const failure = `${label} failed (${status ?? 'network'}): ${message}`;
+  if (!optional) throw new Error(failure);
+  console.error(`[GSC] ${failure}`);
+  fetchFailures.push({ label, status, message });
+  return null;
 }
 
 async function listSites(accessToken) {
@@ -499,6 +560,7 @@ function buildWeeklyBreakdown({ dailyTrend, dateQueryRows, datePageRows, endDate
         branded: { clicks: 0, impressions: 0 },
         nonBranded: { clicks: 0, impressions: 0 },
         unclassified: { clicks: 0, impressions: 0 },
+        days: 0,
       });
     }
     return weeks.get(startDate);
@@ -508,6 +570,7 @@ function buildWeeklyBreakdown({ dailyTrend, dateQueryRows, datePageRows, endDate
     const week = bucket(row.date);
     week.clicks += row.clicks;
     week.impressions += row.impressions;
+    week.days += 1;
   }
   for (const row of dateQueryRows) {
     const branded = isBrandedQuery(row.query, brandPatterns) || isDomainLikeQuery(row.query);
@@ -602,9 +665,19 @@ function quarantinePhantomQueries(queries, rawSummary, dimensionEvidence = {}) {
   return {
     queries: flaggedQueries,
     quarantinedQueries,
+    impressionsExQuarantine: impressions,
     ctrExQuarantine: impressions ? clicks / impressions : 0,
     positionExQuarantine: impressions ? weightedPosition / impressions : 0,
   };
+}
+
+// A spike in the previous window inflates every impression and position delta.
+function buildPreviousQuarantine(previousQueries, previousSummary) {
+  const { queries: _flagged, ...result } = quarantinePhantomQueries(
+    previousQueries,
+    previousSummary
+  );
+  return result;
 }
 
 async function fetchPhantomDimensionEvidence({
@@ -680,26 +753,9 @@ function addShares(rows, metricName) {
   }));
 }
 
-function estimatePotentialClicks(impressions, currentPosition) {
-  const targetCtrByPosition = [
-    { maxPosition: 3, targetCtr: 0.11 },
-    { maxPosition: 5, targetCtr: 0.08 },
-    { maxPosition: 10, targetCtr: 0.04 },
-    { maxPosition: 20, targetCtr: 0.025 },
-  ];
-
-  const currentCtrEstimate =
-    [
-      { maxPosition: 3, ctr: 0.09 },
-      { maxPosition: 5, ctr: 0.05 },
-      { maxPosition: 10, ctr: 0.025 },
-      { maxPosition: 20, ctr: 0.015 },
-      { maxPosition: Infinity, ctr: 0.008 },
-    ].find(bucket => currentPosition <= bucket.maxPosition)?.ctr || 0.008;
-
-  const targetCtr =
-    targetCtrByPosition.find(bucket => currentPosition <= bucket.maxPosition)?.targetCtr || 0.04;
-  return Math.max(0, Math.round(impressions * (targetCtr - currentCtrEstimate)));
+function estimatePotentialClicks(impressions, position, actualCtr) {
+  const { targetCtr } = POTENTIAL_CTR_TARGETS.find(tier => position <= tier.maxPosition);
+  return Math.max(0, Math.round(impressions * (targetCtr - actualCtr)));
 }
 
 function scoreOpportunity({ impressions, position, query }) {
@@ -720,6 +776,24 @@ function scoreOpportunity({ impressions, position, query }) {
     ? 8
     : 5;
   return Math.round(impressionScore * 0.4 + positionScore * 0.35 + intentScore * 0.25);
+}
+
+const stripFragment = url => String(url || '').split('#')[0];
+const isFragmentRow = row => String(row.page || '').includes('#');
+
+function classifyUrl(url) {
+  try {
+    const parsed = new URL(url);
+    const segments = parsed.pathname.split('/').filter(Boolean);
+    const hasLocale = LOCALE_PATTERN.test(segments[0] || '');
+    return {
+      host: parsed.hostname,
+      locale: hasLocale ? segments[0] : 'en',
+      section: (hasLocale ? segments[1] : segments[0]) || '(home)',
+    };
+  } catch {
+    return { host: 'unknown', locale: 'unknown', section: 'unknown' };
+  }
 }
 
 function normalizeText(value) {
@@ -856,12 +930,24 @@ function joinQueryPageData(queryRows, pageRows, queryPageRows, brandPatterns) {
       const pages = (pagesByQuery.get(item.query) || []).sort(
         (a, b) => b.clicks - a.clicks || b.impressions - a.impressions
       );
+      // Fragment rows are jump links to one document, so they do not compete with it.
+      const impressionsByDocument = new Map();
+      for (const entry of pages) {
+        const document = stripFragment(entry.page);
+        impressionsByDocument.set(
+          document,
+          (impressionsByDocument.get(document) || 0) + entry.impressions
+        );
+      }
+      const ranked = [...impressionsByDocument.values()].sort((a, b) => b - a);
+      const rankedTotal = ranked.reduce((sum, value) => sum + value, 0);
       return {
         ...item,
         isBranded: isBrandedQuery(item.query, brandPatterns),
         isDomainLike: isDomainLikeQuery(item.query),
-        pageCount: pages.length,
-        topPage: pages[0]?.page || null,
+        pageCount: ranked.length,
+        secondPageShare: ranked.length > 1 && rankedTotal ? ranked[1] / rankedTotal : 0,
+        topPage: pages[0] ? stripFragment(pages[0].page) : null,
         pages: pages.slice(0, 10),
       };
     })
@@ -873,8 +959,11 @@ function joinQueryPageData(queryRows, pageRows, queryPageRows, brandPatterns) {
       const queriesForPage = (queriesByPage.get(item.page) || []).sort(
         (a, b) => b.impressions - a.impressions || b.clicks - a.clicks
       );
+      const visibleQueryClicks = queriesForPage.reduce((sum, entry) => sum + entry.clicks, 0);
       return {
         ...item,
+        visibleQueryClicks,
+        hiddenQueryClicks: Math.max(0, item.clicks - visibleQueryClicks),
         queryCount: queriesForPage.length,
         topQueries: queriesForPage.slice(0, 10),
       };
@@ -887,10 +976,10 @@ function joinQueryPageData(queryRows, pageRows, queryPageRows, brandPatterns) {
 function buildLowHangingFruit(queries) {
   return queries
     .filter(query => !query.isBranded && !query.isDomainLike)
-    .filter(query => query.position >= 8 && query.position <= 25 && query.impressions >= 30)
+    .filter(query => query.position > 5.5 && query.position <= 25 && query.impressions >= 30)
     .map(query => ({
       ...query,
-      potentialClicks: estimatePotentialClicks(query.impressions, query.position),
+      potentialClicks: estimatePotentialClicks(query.impressions, query.position, query.ctr),
       difficulty: query.position <= 12 ? 'easy' : query.position <= 18 ? 'medium' : 'hard',
       opportunityScore: scoreOpportunity(query),
     }))
@@ -940,6 +1029,7 @@ function buildCannibalization(queries) {
   return queries
     .filter(query => !query.isBranded && !query.isDomainLike)
     .filter(query => query.pageCount >= 2 && query.impressions >= 20)
+    .filter(query => query.secondPageShare >= MIN_SECOND_PAGE_SHARE)
     .sort((a, b) => b.impressions - a.impressions)
     .slice(0, 30);
 }
@@ -962,7 +1052,7 @@ function buildContentOpportunities(queries) {
     .slice(0, 40);
 }
 
-function buildMovers(currentRows, previousRows, keyField) {
+function computeDeltas(currentRows, previousRows, keyField) {
   const previousByKey = new Map(previousRows.map(row => [row[keyField], row]));
   const currentByKey = new Map(currentRows.map(row => [row[keyField], row]));
   const allKeys = new Set([...previousByKey.keys(), ...currentByKey.keys()]);
@@ -994,7 +1084,11 @@ function buildMovers(currentRows, previousRows, keyField) {
       previousCtr: previous?.ctr || 0,
     });
   }
+  return deltas;
+}
 
+function buildMovers(currentRows, previousRows, keyField) {
+  const deltas = computeDeltas(currentRows, previousRows, keyField);
   return {
     winners: deltas
       .filter(item => item.impressionDelta > 0 || item.clickDelta > 0)
@@ -1004,6 +1098,360 @@ function buildMovers(currentRows, previousRows, keyField) {
       .filter(item => item.impressionDelta < 0 || item.clickDelta < 0)
       .sort((a, b) => a.impressionDelta - b.impressionDelta || a.clickDelta - b.clickDelta)
       .slice(0, 25),
+  };
+}
+
+function compareDimension(currentRows, previousRows, keyField, limit) {
+  return computeDeltas(currentRows, previousRows, keyField)
+    .sort((a, b) => Math.abs(b.clickDelta) - Math.abs(a.clickDelta))
+    .slice(0, limit);
+}
+
+/** Splits page rows by host, locale or section. Fragment rows inflate byPage sums. */
+function buildGroupComparison(currentPages, previousPages, groupKey) {
+  const groupRows = rows => {
+    const groups = new Map();
+    for (const row of rows.filter(entry => !isFragmentRow(entry))) {
+      const group = classifyUrl(row.page)[groupKey];
+      if (!groups.has(group)) groups.set(group, []);
+      groups.get(group).push(row);
+    }
+    return groups;
+  };
+  const current = groupRows(currentPages);
+  const previous = groupRows(previousPages);
+  const fragments = currentPages.filter(isFragmentRow);
+
+  const rows = [...new Set([...current.keys(), ...previous.keys()])].map(group => {
+    const now = aggregateMetrics(current.get(group) || []);
+    const before = aggregateMetrics(previous.get(group) || []);
+    return {
+      group,
+      pages: (current.get(group) || []).length,
+      previousPages: (previous.get(group) || []).length,
+      clicks: now.clicks,
+      previousClicks: before.clicks,
+      clickDelta: now.clicks - before.clicks,
+      clickDeltaPct: percentageDelta(now.clicks, before.clicks),
+      impressions: now.impressions,
+      previousImpressions: before.impressions,
+      impressionDeltaPct: percentageDelta(now.impressions, before.impressions),
+      ctr: now.ctr,
+      previousCtr: before.ctr,
+      position: now.position,
+      previousPosition: before.position,
+    };
+  });
+
+  return {
+    rows: rows
+      .sort((a, b) => b.clicks + b.previousClicks - (a.clicks + a.previousClicks))
+      .slice(0, SEGMENT_ROW_LIMIT),
+    excludedFragmentRows: {
+      rows: fragments.length,
+      clicks: fragments.reduce((sum, row) => sum + row.clicks, 0),
+      impressions: fragments.reduce((sum, row) => sum + row.impressions, 0),
+    },
+  };
+}
+
+function classifyClickChange({ positionChange, impressionChangePct, ctrChangePct }) {
+  if (positionChange >= 1) return 'ranking';
+  if (impressionChangePct <= -0.2) return 'demand';
+  if (ctrChangePct <= -0.2) return 'ctr';
+  return 'mixed';
+}
+
+/**
+ * Per-page identity: clicks1 - clicks0 = (imp1 - imp0) * ctr0 + (ctr1 - ctr0) * imp1.
+ * The cause labels are heuristics for triage, so confirm a page before an edit.
+ */
+function buildClickChangeDecomposition(currentPages, previousPages) {
+  const byPage = rows => new Map(rows.filter(row => !isFragmentRow(row)).map(r => [r.page, r]));
+  const current = byPage(currentPages);
+  const previous = byPage(previousPages);
+  const rows = [];
+  const clickDeltaByCause = { ranking: 0, demand: 0, ctr: 0, mixed: 0 };
+  let volumeEffect = 0;
+  let ctrEffect = 0;
+  let newPageClicks = 0;
+  let lostPageClicks = 0;
+
+  for (const [page, now] of current) {
+    const before = previous.get(page);
+    if (!before) {
+      newPageClicks += now.clicks;
+      rows.push({ page, clickDelta: now.clicks, cause: 'new_page' });
+      continue;
+    }
+    const ctrNow = now.impressions ? now.clicks / now.impressions : 0;
+    const ctrBefore = before.impressions ? before.clicks / before.impressions : 0;
+    const clickDelta = now.clicks - before.clicks;
+    const cause = classifyClickChange({
+      positionChange: now.position - before.position,
+      impressionChangePct: before.impressions
+        ? (now.impressions - before.impressions) / before.impressions
+        : 0,
+      ctrChangePct: ctrBefore ? (ctrNow - ctrBefore) / ctrBefore : 0,
+    });
+    volumeEffect += (now.impressions - before.impressions) * ctrBefore;
+    ctrEffect += (ctrNow - ctrBefore) * now.impressions;
+    clickDeltaByCause[cause] += clickDelta;
+    rows.push({
+      page,
+      clickDelta,
+      cause,
+      clicks: now.clicks,
+      previousClicks: before.clicks,
+      impressions: now.impressions,
+      previousImpressions: before.impressions,
+      ctr: ctrNow,
+      previousCtr: ctrBefore,
+      position: now.position,
+      previousPosition: before.position,
+    });
+  }
+  for (const [page, before] of previous) {
+    if (current.has(page)) continue;
+    lostPageClicks += before.clicks;
+    rows.push({ page, clickDelta: -before.clicks, cause: 'lost_page' });
+  }
+
+  return {
+    clickDelta: rows.reduce((sum, row) => sum + row.clickDelta, 0),
+    volumeEffect,
+    ctrEffect,
+    newPageClicks,
+    lostPageClicks,
+    clickDeltaByCause,
+    topLosses: rows
+      .filter(row => row.clickDelta < 0)
+      .sort((a, b) => a.clickDelta - b.clickDelta)
+      .slice(0, 20),
+    topGains: rows
+      .filter(row => row.clickDelta > 0)
+      .sort((a, b) => b.clickDelta - a.clickDelta)
+      .slice(0, 10),
+  };
+}
+
+function buildPositionBuckets(queries) {
+  const buckets = Object.fromEntries(
+    POSITION_BUCKETS.map(({ label }) => [label, { queries: 0, clicks: 0, impressions: 0 }])
+  );
+  for (const row of queries) {
+    const { label } = POSITION_BUCKETS.find(bucket => row.position <= bucket.maxPosition);
+    buckets[label].queries += 1;
+    buckets[label].clicks += row.clicks;
+    buckets[label].impressions += row.impressions;
+  }
+  return buckets;
+}
+
+function buildAnonymizedTraffic(pages) {
+  return pages
+    .filter(page => !isFragmentRow(page) && page.hiddenQueryClicks > 0)
+    .sort((a, b) => b.hiddenQueryClicks - a.hiddenQueryClicks)
+    .slice(0, 15)
+    .map(({ page, clicks, visibleQueryClicks, hiddenQueryClicks }) => ({
+      page,
+      clicks,
+      visibleQueryClicks,
+      hiddenQueryClicks,
+    }));
+}
+
+function buildLongTrend(dailyRows, endDate) {
+  const summarize = rows => {
+    const metrics = aggregateMetrics(rows);
+    return {
+      clicks: metrics.clicks,
+      impressions: metrics.impressions,
+      ctr: Number(metrics.ctr.toFixed(4)),
+      position: Number(metrics.position.toFixed(2)),
+      days: rows.length,
+    };
+  };
+  const rangeRows = (from, to) => dailyRows.filter(row => row.date >= from && row.date <= to);
+
+  const months = new Map();
+  for (const row of dailyRows) {
+    const month = row.date.slice(0, 7);
+    if (!months.has(month)) months.set(month, []);
+    months.get(month).push(row);
+  }
+
+  const weeks = [];
+  for (let index = 0; index < 26; index += 1) {
+    const to = shiftDateString(endDate, -7 * index);
+    const from = shiftDateString(to, -6);
+    const rows = rangeRows(from, to);
+    if (rows.length) weeks.unshift({ startDate: from, endDate: to, ...summarize(rows) });
+  }
+
+  const windowStart = shiftDateString(endDate, -27);
+  const lastYearRows = rangeRows(
+    shiftDateString(windowStart, -364),
+    shiftDateString(endDate, -364)
+  );
+  return {
+    months: [...months.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([month, rows]) => ({ month, ...summarize(rows) })),
+    weeks,
+    yearOverYear:
+      lastYearRows.length === 28
+        ? {
+            current: summarize(rangeRows(windowStart, endDate)),
+            previousYear: summarize(lastYearRows),
+          }
+        : null,
+  };
+}
+
+async function fetchLongTrend({ accessToken, siteUrl, type, endDate, rowLimit }) {
+  const rows = await queryAllSearchAnalyticsRows({
+    accessToken,
+    siteUrl,
+    requestBody: {
+      startDate: shiftDateString(endDate, -HISTORY_DAYS),
+      endDate,
+      dimensions: ['date'],
+      type,
+      dataState: 'final',
+    },
+    rowLimit,
+    optional: true,
+    label: `${type} long trend`,
+  });
+  return buildLongTrend(
+    rows.map(row => normalizeMetricRow(row, ['date'])).sort((a, b) => a.date.localeCompare(b.date)),
+    endDate
+  );
+}
+
+/** The final dataset holds back recent days. These rows are partial and can still change. */
+async function fetchFreshness({ accessToken, siteUrl, type, today }) {
+  const fetchRows = (startDate, dimension, dataState) =>
+    querySearchAnalytics({
+      accessToken,
+      siteUrl,
+      requestBody: { startDate, endDate: today, dimensions: [dimension], type, dataState },
+      optional: true,
+      label: `${type} freshness ${dimension}`,
+    });
+  const [daily, hourly] = await Promise.all([
+    fetchRows(shiftDateString(today, -6), 'date', 'all'),
+    fetchRows(shiftDateString(today, -2), 'hour', 'hourly_all'),
+  ]);
+  const hours = (hourly.rows || [])
+    .map(row => normalizeMetricRow(row, ['hour']))
+    .sort((a, b) => a.hour.localeCompare(b.hour));
+  return {
+    firstIncompleteDate: daily.metadata?.firstIncompleteDate || null,
+    firstIncompleteHour: hourly.metadata?.firstIncompleteHour || null,
+    days: (daily.rows || []).map(row => normalizeMetricRow(row, ['date'])),
+    last24Hours: aggregateMetrics(hours.slice(-24)),
+    previous24Hours: aggregateMetrics(hours.slice(-48, -24)),
+  };
+}
+
+function parseSitemapLocs(xml) {
+  return [...String(xml).matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)].map(match =>
+    match[1].replace(/&amp;/g, '&')
+  );
+}
+
+async function fetchSitemapXml(sitemapPath, retryBaseMs) {
+  let message = '';
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+    try {
+      const response = await fetch(sitemapPath, {
+        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      });
+      if (response.ok) return await response.text();
+      message = `HTTP ${response.status}`;
+    } catch (error) {
+      message = error.message;
+    }
+    if (attempt < MAX_ATTEMPTS) {
+      await new Promise(resolve => setTimeout(resolve, retryBaseMs * 2 ** (attempt - 1)));
+    }
+  }
+  fetchFailures.push({ label: `sitemap ${sitemapPath}`, status: null, message });
+  return null;
+}
+
+/** Low concurrency on purpose: a burst of 46 child sitemaps returned 503 from production. */
+async function fetchSitemapUrls(sitemapPaths, retryBaseMs = RETRY_BASE_MS) {
+  const urls = new Set();
+  const seen = new Set();
+  const queue = sitemapPaths.slice();
+
+  while (queue.length) {
+    const batch = queue.splice(0, SITEMAP_CONCURRENCY).filter(path => !seen.has(path));
+    batch.forEach(path => seen.add(path));
+    await Promise.all(
+      batch.map(async sitemapPath => {
+        const xml = await fetchSitemapXml(sitemapPath, retryBaseMs);
+        if (xml === null) return;
+        const locs = parseSitemapLocs(xml);
+        if (/<sitemapindex/.test(xml)) queue.push(...locs);
+        else locs.forEach(url => urls.add(url));
+      })
+    );
+  }
+  return [...urls];
+}
+
+function buildSitemapCoverage(sitemapUrls, pages) {
+  const normalize = url => stripFragment(url).replace(/\/$/, '');
+  const submitted = new Set(sitemapUrls.map(normalize));
+  const withTraffic = new Set(
+    pages.filter(page => page.impressions > 0).map(page => normalize(page.page))
+  );
+  const silent = sitemapUrls.filter(url => !withTraffic.has(normalize(url)));
+  const outside = pages
+    .filter(page => !isFragmentRow(page) && !submitted.has(normalize(page.page)))
+    .sort((a, b) => b.impressions - a.impressions);
+  const tally = values => {
+    const counts = {};
+    for (const value of values) counts[value] = (counts[value] || 0) + 1;
+    return Object.fromEntries(Object.entries(counts).sort((a, b) => b[1] - a[1]));
+  };
+
+  return {
+    submitted: sitemapUrls.length,
+    withImpressions: sitemapUrls.length - silent.length,
+    zeroImpressionCount: silent.length,
+    zeroImpressionBySection: tally(silent.map(url => classifyUrl(url).section)),
+    zeroImpressionUrls: silent,
+    outsideSitemapCount: outside.length,
+    outsideSitemap: outside.slice(0, 30).map(({ page, clicks, impressions, position }) => ({
+      page,
+      clicks,
+      impressions,
+      position,
+    })),
+  };
+}
+
+function buildDataCompleteness(primary) {
+  const total = primary?.summary?.current || { clicks: 0, impressions: 0 };
+  const queries = primary?.queries || [];
+  const visibleClicks = queries.reduce((sum, row) => sum + row.clicks, 0);
+  const visibleImpressions = queries.reduce((sum, row) => sum + row.impressions, 0);
+  const share = (part, whole) => (whole ? Number((part / whole).toFixed(4)) : null);
+  return {
+    complete: fetchFailures.length === 0,
+    fetchFailures: fetchFailures.slice(),
+    queryClickCoverage: share(visibleClicks, total.clicks),
+    queryImpressionCoverage: share(visibleImpressions, total.impressions),
+    anonymizedClicks: Math.max(0, total.clicks - visibleClicks),
+    anonymizedImpressions: Math.max(0, total.impressions - visibleImpressions),
+    queryRows: queries.length,
+    pageRows: primary?.pages?.length || 0,
+    apiBlindSpots: UI_ONLY_REPORTS,
   };
 }
 
@@ -1124,6 +1572,8 @@ async function fetchTypeDataset({ accessToken, siteUrl, type, ranges, rowLimit, 
     previousQueryRows,
     previousPageRows,
     searchAppearance,
+    previousDeviceRows,
+    previousCountryRows,
     dateQueryRows,
     datePageRows,
   ] = await Promise.all([
@@ -1259,6 +1709,22 @@ async function fetchTypeDataset({ accessToken, siteUrl, type, ranges, rowLimit, 
       rowLimit,
       appearanceLimit,
     }),
+    ...['device', 'country'].map(dimension =>
+      queryAllSearchAnalyticsRows({
+        accessToken,
+        siteUrl,
+        requestBody: {
+          startDate: ranges.previous.startDate,
+          endDate: ranges.previous.endDate,
+          dimensions: [dimension],
+          type,
+          dataState: 'final',
+        },
+        rowLimit,
+        optional: true,
+        label: `${type} previous ${dimension}`,
+      })
+    ),
     ...[
       ['date', 'query'],
       ['date', 'page'],
@@ -1330,6 +1796,7 @@ async function fetchTypeDataset({ accessToken, siteUrl, type, ranges, rowLimit, 
   );
   summaryComparison.ctrExQuarantine = quarantine.ctrExQuarantine;
   summaryComparison.positionExQuarantine = quarantine.positionExQuarantine;
+  summaryComparison.previousQuarantine = buildPreviousQuarantine(previousQueries, previousSummary);
   summaryComparison.stableCohortPosition = buildStableCohortPosition(pages, previousPages);
 
   const lowHangingFruit = buildLowHangingFruit(queries);
@@ -1346,6 +1813,7 @@ async function fetchTypeDataset({ accessToken, siteUrl, type, ranges, rowLimit, 
     endDate: ranges.current.endDate,
     site: siteUrl,
   });
+  const allCountries = countryRows.map(row => normalizeMetricRow(row, ['country']));
 
   return {
     type,
@@ -1368,6 +1836,27 @@ async function fetchTypeDataset({ accessToken, siteUrl, type, ranges, rowLimit, 
     pageMovers,
     weeklyBreakdown,
     searchAppearance,
+    deviceComparison: compareDimension(
+      devices,
+      previousDeviceRows.map(row => normalizeMetricRow(row, ['device'])),
+      'device',
+      3
+    ),
+    countryComparison: compareDimension(
+      allCountries,
+      previousCountryRows.map(row => normalizeMetricRow(row, ['country'])),
+      'country',
+      25
+    ),
+    sectionBreakdown: buildGroupComparison(pages, previousPages, 'section'),
+    localeBreakdown: buildGroupComparison(pages, previousPages, 'locale'),
+    hostBreakdown: buildGroupComparison(pages, previousPages, 'host'),
+    positionBuckets: {
+      current: buildPositionBuckets(queries),
+      previous: buildPositionBuckets(previousQueries),
+    },
+    clickChangeDecomposition: buildClickChangeDecomposition(pages, previousPages),
+    anonymizedTraffic: buildAnonymizedTraffic(pages),
   };
 }
 
@@ -1399,26 +1888,30 @@ function summarizeSitemaps(sitemaps) {
   };
 }
 
-function pickInspectionTargets(primaryDataset, maxTargets) {
+/** Round-robin across lists, so losers and silent URLs are inspected and not only winners. */
+function pickInspectionTargets(primaryDataset, maxTargets, silentUrls = []) {
   if (!primaryDataset || maxTargets <= 0) return [];
 
-  const ordered = [];
-  const seen = new Set();
+  const lists = [
+    (primaryDataset.pageMovers?.losers || []).map(item => item.page),
+    primaryDataset.lowHangingFruit.map(item => item.topPage),
+    primaryDataset.pageCtrOpportunities.map(item => item.page),
+    silentUrls,
+    primaryDataset.pages
+      .slice()
+      .sort((a, b) => b.impressions - a.impressions || b.clicks - a.clicks)
+      .map(item => item.page),
+  ].map(list => list.filter(Boolean).map(stripFragment));
 
-  const addTarget = url => {
-    if (!url || seen.has(url)) return;
-    seen.add(url);
-    ordered.push(url);
-  };
-
-  primaryDataset.lowHangingFruit.forEach(item => addTarget(item.topPage));
-  primaryDataset.pageCtrOpportunities.forEach(item => addTarget(item.page));
-  primaryDataset.pages
-    .slice()
-    .sort((a, b) => b.impressions - a.impressions || b.clicks - a.clicks)
-    .forEach(item => addTarget(item.page));
-
-  return ordered.slice(0, maxTargets);
+  const targets = new Set();
+  const longest = Math.max(...lists.map(list => list.length));
+  for (let index = 0; index < longest && targets.size < maxTargets; index += 1) {
+    for (const list of lists) {
+      if (targets.size >= maxTargets) break;
+      if (index < list.length) targets.add(list[index]);
+    }
+  }
+  return [...targets];
 }
 
 function mapInspectionResult(url, inspectionResult) {
@@ -1477,6 +1970,13 @@ function summarizeInspections(inspections) {
     verdictCounts: countBy(inspections, item => item.verdict),
     coverageCounts: countBy(inspections, item => item.coverageState),
     fetchStateCounts: countBy(inspections, item => item.pageFetchState),
+    staleCrawlPages: inspections
+      .filter(
+        item =>
+          item.lastCrawlTime &&
+          Date.now() - new Date(item.lastCrawlTime).getTime() > STALE_CRAWL_DAYS * 86400000
+      )
+      .map(item => ({ url: item.url, lastCrawlTime: item.lastCrawlTime })),
     canonicalMismatches: inspections.filter(item => item.canonicalMismatch).map(item => item.url),
     pagesMissingFromKnownSitemaps: inspections
       .filter(item => !item.sitemap.length)
@@ -1500,25 +2000,31 @@ function summarizeInspections(inspections) {
 
 async function inspectPriorityPages({ accessToken, siteUrl, urls }) {
   const inspections = [];
+  let next = 0;
 
-  for (const url of urls) {
-    const response = await googleRequest({
-      method: 'POST',
-      url: `${SEARCH_CONSOLE_BASE_URL}/urlInspection/index:inspect`,
-      accessToken,
-      body: {
-        inspectionUrl: url,
-        siteUrl,
-        languageCode: 'en-US',
-      },
-      optional: true,
-      label: `urlInspection ${url}`,
-    });
+  const worker = async () => {
+    while (next < urls.length) {
+      const url = urls[next];
+      next += 1;
+      const response = await googleRequest({
+        method: 'POST',
+        url: `${SEARCH_CONSOLE_BASE_URL}/urlInspection/index:inspect`,
+        accessToken,
+        body: {
+          inspectionUrl: url,
+          siteUrl,
+          languageCode: 'en-US',
+        },
+        optional: true,
+        label: `urlInspection ${url}`,
+      });
 
-    if (response?.inspectionResult) {
-      inspections.push(mapInspectionResult(url, response.inspectionResult));
+      if (response?.inspectionResult) {
+        inspections.push(mapInspectionResult(url, response.inspectionResult));
+      }
     }
-  }
+  };
+  await Promise.all(Array.from({ length: INSPECTION_CONCURRENCY }, worker));
 
   return {
     inspectedPages: inspections,
@@ -1624,13 +2130,38 @@ async function main() {
     ? args.primaryType
     : Object.keys(searchTypes)[0];
   const primaryDataset = searchTypes[primaryType];
-  const inspectionTargets = pickInspectionTargets(primaryDataset, args.inspectTopPages);
+
+  console.error('[GSC] Reconciling sitemap URLs with traffic...');
+  const sitemapUrls = await fetchSitemapUrls(sitemaps.map(sitemap => sitemap.path));
+  const sitemapCoverage = buildSitemapCoverage(sitemapUrls, primaryDataset?.pages || []);
+  const inspectionTargets = [
+    ...new Set([
+      ...pickInspectionTargets(
+        primaryDataset,
+        args.inspectTopPages,
+        sitemapCoverage.zeroImpressionUrls
+      ),
+      ...(args.inspectSitemap ? sitemapUrls : []),
+    ]),
+  ];
 
   let indexing = { inspectedPages: [], summary: { totalInspected: 0 } };
   if (inspectionTargets.length) {
     console.error(`[GSC] Inspecting ${inspectionTargets.length} priority URLs...`);
     indexing = await inspectPriorityPages({ accessToken, siteUrl, urls: inspectionTargets });
   }
+
+  console.error('[GSC] Fetching long trend and fresh data...');
+  const [longTrend, freshness] = await Promise.all([
+    fetchLongTrend({
+      accessToken,
+      siteUrl,
+      type: primaryType,
+      endDate: dateRanges.current.endDate,
+      rowLimit: args.rowLimit,
+    }),
+    fetchFreshness({ accessToken, siteUrl, type: primaryType, today: dateRanges.pacificToday }),
+  ]);
 
   const growthOverview = buildGrowthOverview(searchTypes, primaryType);
   const searchTypeSummary = buildSearchTypeSummary(searchTypes);
@@ -1649,6 +2180,7 @@ async function main() {
       appearanceLimit: args.appearanceLimit,
       apiMode: 'native-rest',
     },
+    dataCompleteness: buildDataCompleteness(primaryDataset),
     summary: {
       totalClicks: primaryDataset?.summary?.current?.clicks || 0,
       totalImpressions: primaryDataset?.summary?.current?.impressions || 0,
@@ -1673,6 +2205,16 @@ async function main() {
     growthOverview,
     dailyTrend: primaryDataset?.dailyTrend || [],
     weeklyBreakdown: primaryDataset?.weeklyBreakdown || null,
+    longTrend,
+    freshness,
+    clickChangeDecomposition: primaryDataset?.clickChangeDecomposition || null,
+    sectionBreakdown: primaryDataset?.sectionBreakdown || null,
+    localeBreakdown: primaryDataset?.localeBreakdown || null,
+    hostBreakdown: primaryDataset?.hostBreakdown || null,
+    positionBuckets: primaryDataset?.positionBuckets || null,
+    deviceComparison: primaryDataset?.deviceComparison || [],
+    countryComparison: primaryDataset?.countryComparison || [],
+    anonymizedTraffic: primaryDataset?.anonymizedTraffic || [],
     devices: primaryDataset?.devices || [],
     deviceBreakdown: primaryDataset?.devices || [],
     countries: primaryDataset?.countries || [],
@@ -1691,6 +2233,7 @@ async function main() {
     indexing,
     sitemaps,
     sitemapSummary: summarizeSitemaps(sitemaps),
+    sitemapCoverage,
   };
 
   const json = JSON.stringify(output, null, 2);
@@ -1703,6 +2246,11 @@ async function main() {
     process.stdout.write(json);
   }
 
+  if (fetchFailures.length) {
+    console.error(
+      `[GSC] INCOMPLETE: ${fetchFailures.length} request(s) failed. See dataCompleteness.`
+    );
+  }
   console.error('[GSC] Done!');
 }
 
@@ -1719,7 +2267,24 @@ module.exports = {
   aggregateMetrics,
   buildBrandPatterns,
   buildBrandSplit,
+  buildCannibalization,
+  buildClickChangeDecomposition,
+  buildDataCompleteness,
+  buildGroupComparison,
+  buildLongTrend,
+  buildLowHangingFruit,
+  buildPositionBuckets,
+  buildSitemapCoverage,
   buildStableCohortPosition,
   buildWeeklyBreakdown,
+  estimatePotentialClicks,
+  fetchFailures,
+  fetchSitemapUrls,
+  googleRequest,
+  joinQueryPageData,
+  parseSitemapLocs,
+  pickInspectionTargets,
   quarantinePhantomQueries,
+  buildPreviousQuarantine,
+  queryAllSearchAnalyticsRows,
 };

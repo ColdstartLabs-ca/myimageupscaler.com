@@ -21,11 +21,16 @@ The script:
 - talks to the Search Console APIs directly with native Node.js `fetch` and `crypto`
 - fetches current and previous period data
 - splits data by search type
-- includes indexing checks for priority pages
+- inspects priority URLs, including losers and URLs with zero impressions
+- reconciles sitemap URLs with traffic and reports its own completeness
 
 Logs go to stderr. JSON goes to stdout unless `--output` is passed.
 
 ## What To Analyze
+
+Check `dataCompleteness` first and report failed requests and query click coverage. For a complete
+analysis, also capture the UI-only reports in `SKILL.md`. The API has no data for Page indexing,
+Crawl stats, Core Web Vitals, Generative AI, Multimodal, Insights, Links, or enhancements.
 
 Read `/tmp/gsc-DOMAIN.json` and prioritize:
 
@@ -52,6 +57,11 @@ Read `/tmp/gsc-DOMAIN.json` and prioritize:
 10. `searchAppearance`
 
 - rich result or SERP feature signals
+
+11. `clickChangeDecomposition`, `sectionBreakdown`, `localeBreakdown`, `countryComparison`, `deviceComparison`
+    - which cause and which segment moved the clicks
+12. `sitemapCoverage`, `longTrend`, `positionBuckets`, `freshness`
+    - silent URLs, trend past the window, distribution shift, partial recent days
 
 ## Blog SEO Audit (Title/Meta + Intent)
 
@@ -91,7 +101,7 @@ is a demand change, not a ranking decline.
 
 Use `growthOverview.quickWins` first:
 
-- `easy`: position 8-12
+- `easy`: position 5.5-12
 - `medium`: position 13-18
 - `hard`: position 19-25
 
@@ -166,4 +176,5 @@ Present findings as a compact markdown report:
 
 - GSC lags by about 2-3 days
 - Search Console metrics are averages, not exact per-user rankings
-- URL Inspection should be treated as a spot check on priority pages, not a full-site crawl
+- URL Inspection is a spot check unless the run uses `--inspect-sitemap`
+- The query dimension hides privacy-filtered queries, so query rows do not sum to the total
