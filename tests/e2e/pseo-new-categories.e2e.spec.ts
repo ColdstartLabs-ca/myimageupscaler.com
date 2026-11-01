@@ -505,6 +505,12 @@ test.describe('pSEO Fixes - Performance', () => {
       '/content',
     ];
 
+    // Warm each route so this guard measures page load time rather than the
+    // first-request cost of compiling a Next.js route in the test server.
+    for (const hub of hubs) {
+      await page.goto(hub);
+    }
+
     for (const hub of hubs) {
       const startTime = Date.now();
       const response = await page.goto(hub);
