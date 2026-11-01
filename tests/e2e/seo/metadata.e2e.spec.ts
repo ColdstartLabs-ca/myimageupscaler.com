@@ -80,19 +80,21 @@ test.describe('SEO Metadata', () => {
   test('should have correct hreflang on category page', async ({ page }) => {
     await page.goto('/tools');
 
-    // Wait for at least one alternate link to be attached before collecting all
-    const firstAlternate = page.locator('head link[rel="alternate"]').first();
+    // Next streams metadata into <body> for browsers on this dynamic route, so match the
+    // whole document. Wait for at least one alternate link to be attached before collecting all
+    const firstAlternate = page.locator('link[rel="alternate"]').first();
     await firstAlternate.waitFor({ state: 'attached', timeout: 5000 });
 
     // Get all alternate links from head and check them
-    const alternates = await page.locator('head link[rel="alternate"]').all();
+    const alternates = await page.locator('link[rel="alternate"]').all();
 
-    // Should have at least 3 alternates (en, es, x-default)
+    // Should have at least 3 alternates (en, pt, x-default). Locales whose measured
+    // coverage has English mirrors (es, it, ja for /tools) are intentionally omitted.
     expect(alternates.length).toBeGreaterThanOrEqual(3);
 
     // Find the specific alternates we need
     let enHref: string | null = null;
-    let esHref: string | null = null;
+    let ptHref: string | null = null;
     let xDefaultHref: string | null = null;
 
     for (const link of alternates) {
@@ -100,13 +102,13 @@ test.describe('SEO Metadata', () => {
       const href = await link.getAttribute('href');
 
       if (hreflang === 'en') enHref = href;
-      if (hreflang === 'es') esHref = href;
+      if (hreflang === 'pt') ptHref = href;
       if (hreflang === 'x-default') xDefaultHref = href;
     }
 
     // Metadata API generates URLs without trailing slashes
     expect(enHref).toBe('https://myimageupscaler.com/tools');
-    expect(esHref).toBe('https://myimageupscaler.com/es/tools');
+    expect(ptHref).toBe('https://myimageupscaler.com/pt/tools');
     expect(xDefaultHref).toBe('https://myimageupscaler.com/tools');
   });
 

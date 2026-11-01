@@ -187,12 +187,12 @@ async function setupUploadMocks(page: import('@playwright/test').Page): Promise<
       contentType: 'application/json',
       body: JSON.stringify({
         storagePath: 'test-user-id/test-job.jpg',
-        uploadToken: 'test-upload-token',
+        uploadUrl: '/__mock-storage/test-user-id/test-job.jpg',
       }),
     });
   });
 
-  await page.route('**/storage/v1/**', async route => {
+  await page.route('**/__mock-storage/**', async route => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
