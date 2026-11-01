@@ -369,7 +369,10 @@ test.describe('pSEO Fixes - Internal Link Validation', () => {
     for (const hub of hubsToTest) {
       console.log(`Testing hub: ${hub}`);
       const response = await page.goto(hub, { timeout: 30000 });
-      expect(response?.status()).toBeLessThan(500);
+      // goto resolves to null when a competing navigation interrupts it under load;
+      // read the hub status directly in that case instead of failing on undefined.
+      const hubStatus = response?.status() ?? (await request.get(hub)).status();
+      expect(hubStatus).toBeLessThan(500);
 
       // Get all internal links on the hub page
       const links = await page.locator('a[href^="/"]').all();
