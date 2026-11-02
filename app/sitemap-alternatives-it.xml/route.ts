@@ -7,6 +7,6 @@ import { getAllAlternatives } from '@/lib/seo/data-loader';
 import { generateLocaleCategorySitemapResponse } from '@/lib/seo/locale-sitemap-handler';
 
 export async function GET() {
-  const pages = await getAllAlternatives();
+  const pages = await getAllAlternatives('it');
   return generateLocaleCategorySitemapResponse('it', 'alternatives', 'alternatives', pages, 0.75);
 }

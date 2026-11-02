@@ -215,12 +215,19 @@ export const getAlternativeData = cache(async (slug: string): Promise<IAlternati
   return alternative || null;
 });
 
-export const getAllAlternatives = cache(async (): Promise<IAlternativePage[]> => {
-  return alternativesData.pages.map(page => ({
-    ...page,
-    category: 'alternatives' as const,
-  }));
-});
+export const getAllAlternatives = cache(
+  async (locale: Locale = 'en'): Promise<IAlternativePage[]> => {
+    if (locale !== 'en' && !isCategoryLocalized('alternatives', locale)) return [];
+
+    // Use the same translated records (including dates/noindex) as page metadata.
+    const data = await loadLocalizedPSEOData<IAlternativePage>(
+      'alternatives',
+      locale,
+      alternativesData
+    );
+    return data.pages.map(page => ({ ...page, category: 'alternatives' as const }));
+  }
+);
 
 // Scale Pages
 export const getAllScaleSlugs = cache(async (): Promise<string[]> => {

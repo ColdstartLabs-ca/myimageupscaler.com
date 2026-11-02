@@ -24,6 +24,7 @@ const BASE_URL = `https://${clientEnv.PRIMARY_DOMAIN}`;
 export interface ILocaleSitemapPage {
   slug: string;
   lastUpdated: string;
+  noindex?: boolean;
   title?: string;
   ogImage?: string;
   /** Override default /{category}/{slug} path for this page */

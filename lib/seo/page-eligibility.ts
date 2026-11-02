@@ -234,13 +234,19 @@ export function shouldSubmitPath(
   return shouldSubmit(identity.category, identity.slug, locale || identity.locale, lastUpdated);
 }
 
-export function filterEligiblePages<T extends { slug: string; lastUpdated?: string }>(
+export function filterEligiblePages<
+  T extends { slug: string; lastUpdated?: string; noindex?: boolean },
+>(
   pages: readonly T[],
   category: string,
   locale: Locale | string = 'en'
 ): { pages: T[]; skipped: number; reasons: Record<string, number> } {
   const reasons: Record<string, number> = {};
   const eligiblePages = pages.filter(page => {
+    if (page.noindex === true) {
+      reasons.noindex = (reasons.noindex ?? 0) + 1;
+      return false;
+    }
     if (shouldSubmit(category, page.slug, locale, page.lastUpdated)) return true;
     const reason = getEligibilityReason(category, page.slug, locale, page.lastUpdated);
     reasons[reason] = (reasons[reason] ?? 0) + 1;
@@ -255,15 +261,16 @@ export function filterEligiblePages<T extends { slug: string; lastUpdated?: stri
  * by the shared sitemap generators. The path callback covers custom tool
  * routes such as /tools/resize/{slug} while preserving the page identity.
  */
-export function filterEligibleSitemapEntries<T>(
+export function filterEligibleSitemapEntries<T extends { slug: string; noindex?: boolean }>(
   entries: readonly T[],
   category: string,
   locale: Locale | string,
   getPath: (entry: T) => string,
   getLastUpdated: (entry: T) => string | undefined
 ): T[] {
-  const eligibleEntries = entries.filter(entry =>
-    shouldSubmitPath(getPath(entry), getLastUpdated(entry), locale)
+  const eligibleEntries = entries.filter(
+    entry =>
+      entry.noindex !== true && shouldSubmitPath(getPath(entry), getLastUpdated(entry), locale)
   );
   logSitemapEligibility(category, locale, entries.length, entries.length - eligibleEntries.length);
   return eligibleEntries;
