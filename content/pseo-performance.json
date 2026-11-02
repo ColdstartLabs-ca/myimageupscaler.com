@@ -1,22 +1,22 @@
 {
-  "generatedAt": "2026-09-28T18:05:31.206Z",
+  "generatedAt": "2026-11-02T21:31:18.950Z",
   "period": {
-    "startDate": "2026-05-12",
-    "endDate": "2026-09-25",
-    "days": 137
+    "startDate": "2026-08-02",
+    "endDate": "2026-10-30",
+    "days": 90
   },
   "siteUrl": "sc-domain:myimageupscaler.com",
   "submittedUrls": 472,
-  "indexedUrls": 359,
-  "indexationRate": 76.06,
+  "indexedUrls": 316,
+  "indexationRate": 66.95,
   "pages": [
     {
       "category": "ai-features",
       "slug": "ai-artifact-removal-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/ai-features/ai-artifact-removal-upscaler",
-      "impressions": 907,
-      "clicks": 43,
+      "impressions": 2228,
+      "clicks": 117,
       "lastUpdated": "2026-02-11T00:00:00Z"
     },
     {
@@ -24,7 +24,7 @@
       "slug": "ai-clarity-enhancement-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/ai-features/ai-clarity-enhancement-upscaler",
-      "impressions": 1,
+      "impressions": 50,
       "clicks": 0,
       "lastUpdated": "2026-02-11T00:00:00Z"
     },
@@ -33,8 +33,8 @@
       "slug": "ai-color-correction-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/ai-features/ai-color-correction-upscaler",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 224,
+      "clicks": 7,
       "lastUpdated": "2026-02-11T00:00:00Z"
     },
     {
@@ -42,8 +42,8 @@
       "slug": "ai-compression-repair-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/ai-features/ai-compression-repair-upscaler",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 149,
+      "clicks": 10,
       "lastUpdated": "2026-02-11T00:00:00Z"
     },
     {
@@ -51,7 +51,7 @@
       "slug": "ai-detail-enhancement-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/ai-features/ai-detail-enhancement-upscaler",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-02-11T00:00:00Z"
     },
@@ -60,8 +60,8 @@
       "slug": "ai-face-enhancement-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/ai-features/ai-face-enhancement-upscaler",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 396,
+      "clicks": 6,
       "lastUpdated": "2026-02-11T00:00:00Z"
     },
     {
@@ -69,8 +69,8 @@
       "slug": "ai-low-light-enhancement-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/ai-features/ai-low-light-enhancement-upscaler",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 183,
+      "clicks": 16,
       "lastUpdated": "2026-02-11T00:00:00Z"
     },
     {
@@ -78,8 +78,8 @@
       "slug": "ai-noise-reduction-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/ai-features/ai-noise-reduction-upscaler",
-      "impressions": 700,
-      "clicks": 22,
+      "impressions": 471,
+      "clicks": 13,
       "lastUpdated": "2026-02-11T00:00:00Z"
     },
     {
@@ -87,8 +87,8 @@
       "slug": "ai-old-photo-restoration-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/ai-features/ai-old-photo-restoration-upscaler",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 127,
+      "clicks": 3,
       "lastUpdated": "2026-02-11T00:00:00Z"
     },
     {
@@ -96,8 +96,8 @@
       "slug": "ai-portrait-enhancement-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/ai-features/ai-portrait-enhancement-upscaler",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 156,
+      "clicks": 1,
       "lastUpdated": "2026-02-11T00:00:00Z"
     },
     {
@@ -105,7 +105,7 @@
       "slug": "ai-sharpness-enhancement-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/ai-features/ai-sharpness-enhancement-upscaler",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-02-11T00:00:00Z"
     },
@@ -114,7 +114,7 @@
       "slug": "ai-texture-enhancement-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/ai-features/ai-texture-enhancement-upscaler",
-      "impressions": 1,
+      "impressions": 32,
       "clicks": 0,
       "lastUpdated": "2026-02-11T00:00:00Z"
     },
@@ -123,7 +123,7 @@
       "slug": "vs-adobe-express",
       "locale": "de",
       "url": "https://myimageupscaler.com/de/alternatives/vs-adobe-express",
-      "impressions": 0,
+      "impressions": 2,
       "clicks": 0,
       "lastUpdated": "2026-09-03T00:00:00Z"
     },
@@ -132,8 +132,8 @@
       "slug": "vs-adobe-express",
       "locale": "en",
       "url": "https://myimageupscaler.com/alternatives/vs-adobe-express",
-      "impressions": 7148,
-      "clicks": 23,
+      "impressions": 5137,
+      "clicks": 18,
       "lastUpdated": "2026-09-03T00:00:00Z"
     },
     {
@@ -141,7 +141,7 @@
       "slug": "vs-adobe-express",
       "locale": "es",
       "url": "https://myimageupscaler.com/es/alternatives/vs-adobe-express",
-      "impressions": 0,
+      "impressions": 9,
       "clicks": 0,
       "lastUpdated": "2026-09-03T00:00:00Z"
     },
@@ -159,8 +159,8 @@
       "slug": "vs-adobe-express",
       "locale": "it",
       "url": "https://myimageupscaler.com/it/alternatives/vs-adobe-express",
-      "impressions": 0,
-      "clicks": 0,
+      "impressions": 5,
+      "clicks": 1,
       "lastUpdated": "2026-09-03T00:00:00Z"
     },
     {
@@ -168,7 +168,7 @@
       "slug": "vs-adobe-express",
       "locale": "ja",
       "url": "https://myimageupscaler.com/ja/alternatives/vs-adobe-express",
-      "impressions": 0,
+      "impressions": 1,
       "clicks": 0,
       "lastUpdated": "2026-09-03T00:00:00Z"
     },
@@ -177,7 +177,7 @@
       "slug": "vs-adobe-express",
       "locale": "pt",
       "url": "https://myimageupscaler.com/pt/alternatives/vs-adobe-express",
-      "impressions": 0,
+      "impressions": 1,
       "clicks": 0,
       "lastUpdated": "2026-09-03T00:00:00Z"
     },
@@ -195,8 +195,8 @@
       "slug": "vs-benvista",
       "locale": "en",
       "url": "https://myimageupscaler.com/alternatives/vs-benvista",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 43,
+      "clicks": 2,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -222,7 +222,7 @@
       "slug": "vs-benvista",
       "locale": "it",
       "url": "https://myimageupscaler.com/it/alternatives/vs-benvista",
-      "impressions": 0,
+      "impressions": 5,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -258,8 +258,8 @@
       "slug": "vs-bigjpg",
       "locale": "en",
       "url": "https://myimageupscaler.com/alternatives/vs-bigjpg",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 501,
+      "clicks": 22,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -276,7 +276,7 @@
       "slug": "vs-bigjpg",
       "locale": "fr",
       "url": "https://myimageupscaler.com/fr/alternatives/vs-bigjpg",
-      "impressions": 0,
+      "impressions": 2,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -285,7 +285,7 @@
       "slug": "vs-bigjpg",
       "locale": "it",
       "url": "https://myimageupscaler.com/it/alternatives/vs-bigjpg",
-      "impressions": 0,
+      "impressions": 3,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -321,7 +321,7 @@
       "slug": "vs-canva",
       "locale": "en",
       "url": "https://myimageupscaler.com/alternatives/vs-canva",
-      "impressions": 1,
+      "impressions": 28,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -330,7 +330,7 @@
       "slug": "vs-canva",
       "locale": "es",
       "url": "https://myimageupscaler.com/es/alternatives/vs-canva",
-      "impressions": 0,
+      "impressions": 4,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -339,7 +339,7 @@
       "slug": "vs-canva",
       "locale": "fr",
       "url": "https://myimageupscaler.com/fr/alternatives/vs-canva",
-      "impressions": 0,
+      "impressions": 19,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -366,7 +366,7 @@
       "slug": "vs-canva",
       "locale": "pt",
       "url": "https://myimageupscaler.com/pt/alternatives/vs-canva",
-      "impressions": 0,
+      "impressions": 12,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -384,7 +384,7 @@
       "slug": "vs-fotor",
       "locale": "en",
       "url": "https://myimageupscaler.com/alternatives/vs-fotor",
-      "impressions": 1,
+      "impressions": 67,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -438,7 +438,7 @@
       "slug": "vs-gigapixel",
       "locale": "de",
       "url": "https://myimageupscaler.com/de/alternatives/vs-gigapixel",
-      "impressions": 0,
+      "impressions": 1,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -447,7 +447,7 @@
       "slug": "vs-gigapixel",
       "locale": "en",
       "url": "https://myimageupscaler.com/alternatives/vs-gigapixel",
-      "impressions": 1,
+      "impressions": 3,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -456,8 +456,8 @@
       "slug": "vs-gigapixel",
       "locale": "es",
       "url": "https://myimageupscaler.com/es/alternatives/vs-gigapixel",
-      "impressions": 0,
-      "clicks": 0,
+      "impressions": 9,
+      "clicks": 2,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -465,7 +465,7 @@
       "slug": "vs-gigapixel",
       "locale": "fr",
       "url": "https://myimageupscaler.com/fr/alternatives/vs-gigapixel",
-      "impressions": 0,
+      "impressions": 4,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -510,7 +510,7 @@
       "slug": "vs-icons8",
       "locale": "en",
       "url": "https://myimageupscaler.com/alternatives/vs-icons8",
-      "impressions": 1,
+      "impressions": 58,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -564,7 +564,7 @@
       "slug": "vs-iloveimg",
       "locale": "de",
       "url": "https://myimageupscaler.com/de/alternatives/vs-iloveimg",
-      "impressions": 0,
+      "impressions": 57,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -573,8 +573,8 @@
       "slug": "vs-iloveimg",
       "locale": "en",
       "url": "https://myimageupscaler.com/alternatives/vs-iloveimg",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 152,
+      "clicks": 4,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -582,7 +582,7 @@
       "slug": "vs-iloveimg",
       "locale": "es",
       "url": "https://myimageupscaler.com/es/alternatives/vs-iloveimg",
-      "impressions": 0,
+      "impressions": 3,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -600,8 +600,8 @@
       "slug": "vs-iloveimg",
       "locale": "it",
       "url": "https://myimageupscaler.com/it/alternatives/vs-iloveimg",
-      "impressions": 0,
-      "clicks": 0,
+      "impressions": 831,
+      "clicks": 2,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -609,7 +609,7 @@
       "slug": "vs-iloveimg",
       "locale": "ja",
       "url": "https://myimageupscaler.com/ja/alternatives/vs-iloveimg",
-      "impressions": 0,
+      "impressions": 1,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -636,7 +636,7 @@
       "slug": "vs-imgupscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/alternatives/vs-imgupscaler",
-      "impressions": 1,
+      "impressions": 11,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -645,8 +645,8 @@
       "slug": "vs-imgupscaler",
       "locale": "es",
       "url": "https://myimageupscaler.com/es/alternatives/vs-imgupscaler",
-      "impressions": 6518,
-      "clicks": 29,
+      "impressions": 3455,
+      "clicks": 11,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -663,7 +663,7 @@
       "slug": "vs-imgupscaler",
       "locale": "it",
       "url": "https://myimageupscaler.com/it/alternatives/vs-imgupscaler",
-      "impressions": 0,
+      "impressions": 18,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -681,8 +681,8 @@
       "slug": "vs-imgupscaler",
       "locale": "pt",
       "url": "https://myimageupscaler.com/pt/alternatives/vs-imgupscaler",
-      "impressions": 0,
-      "clicks": 0,
+      "impressions": 1,
+      "clicks": 1,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -690,7 +690,7 @@
       "slug": "vs-letsenhance",
       "locale": "de",
       "url": "https://myimageupscaler.com/de/alternatives/vs-letsenhance",
-      "impressions": 0,
+      "impressions": 1,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -699,7 +699,7 @@
       "slug": "vs-letsenhance",
       "locale": "en",
       "url": "https://myimageupscaler.com/alternatives/vs-letsenhance",
-      "impressions": 1,
+      "impressions": 7,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -708,7 +708,7 @@
       "slug": "vs-letsenhance",
       "locale": "es",
       "url": "https://myimageupscaler.com/es/alternatives/vs-letsenhance",
-      "impressions": 0,
+      "impressions": 12,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -762,8 +762,8 @@
       "slug": "vs-on1-resize",
       "locale": "en",
       "url": "https://myimageupscaler.com/alternatives/vs-on1-resize",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 21,
+      "clicks": 2,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -771,7 +771,7 @@
       "slug": "vs-on1-resize",
       "locale": "es",
       "url": "https://myimageupscaler.com/es/alternatives/vs-on1-resize",
-      "impressions": 0,
+      "impressions": 4,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -780,7 +780,7 @@
       "slug": "vs-on1-resize",
       "locale": "fr",
       "url": "https://myimageupscaler.com/fr/alternatives/vs-on1-resize",
-      "impressions": 0,
+      "impressions": 3,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -789,7 +789,7 @@
       "slug": "vs-on1-resize",
       "locale": "it",
       "url": "https://myimageupscaler.com/it/alternatives/vs-on1-resize",
-      "impressions": 0,
+      "impressions": 3,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -825,7 +825,7 @@
       "slug": "vs-photozoom",
       "locale": "en",
       "url": "https://myimageupscaler.com/alternatives/vs-photozoom",
-      "impressions": 1,
+      "impressions": 23,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -888,7 +888,7 @@
       "slug": "vs-pixelcut",
       "locale": "en",
       "url": "https://myimageupscaler.com/alternatives/vs-pixelcut",
-      "impressions": 1,
+      "impressions": 5,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -897,7 +897,7 @@
       "slug": "vs-pixelcut",
       "locale": "es",
       "url": "https://myimageupscaler.com/es/alternatives/vs-pixelcut",
-      "impressions": 0,
+      "impressions": 4,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -951,8 +951,8 @@
       "slug": "vs-remini",
       "locale": "en",
       "url": "https://myimageupscaler.com/alternatives/vs-remini",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 6,
+      "clicks": 1,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -996,7 +996,7 @@
       "slug": "vs-remini",
       "locale": "pt",
       "url": "https://myimageupscaler.com/pt/alternatives/vs-remini",
-      "impressions": 0,
+      "impressions": 1,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1005,7 +1005,7 @@
       "slug": "vs-topaz",
       "locale": "de",
       "url": "https://myimageupscaler.com/de/alternatives/vs-topaz",
-      "impressions": 0,
+      "impressions": 13,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1014,7 +1014,7 @@
       "slug": "vs-topaz",
       "locale": "en",
       "url": "https://myimageupscaler.com/alternatives/vs-topaz",
-      "impressions": 1,
+      "impressions": 39,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1023,7 +1023,7 @@
       "slug": "vs-topaz",
       "locale": "es",
       "url": "https://myimageupscaler.com/es/alternatives/vs-topaz",
-      "impressions": 0,
+      "impressions": 3,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1032,7 +1032,7 @@
       "slug": "vs-topaz",
       "locale": "fr",
       "url": "https://myimageupscaler.com/fr/alternatives/vs-topaz",
-      "impressions": 0,
+      "impressions": 12,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1041,7 +1041,7 @@
       "slug": "vs-topaz",
       "locale": "it",
       "url": "https://myimageupscaler.com/it/alternatives/vs-topaz",
-      "impressions": 0,
+      "impressions": 1,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1050,7 +1050,7 @@
       "slug": "vs-topaz",
       "locale": "ja",
       "url": "https://myimageupscaler.com/ja/alternatives/vs-topaz",
-      "impressions": 0,
+      "impressions": 3,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1059,8 +1059,8 @@
       "slug": "vs-topaz",
       "locale": "pt",
       "url": "https://myimageupscaler.com/pt/alternatives/vs-topaz",
-      "impressions": 0,
-      "clicks": 0,
+      "impressions": 2,
+      "clicks": 1,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -1068,7 +1068,7 @@
       "slug": "vs-upscayl",
       "locale": "de",
       "url": "https://myimageupscaler.com/de/alternatives/vs-upscayl",
-      "impressions": 0,
+      "impressions": 11,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1077,7 +1077,7 @@
       "slug": "vs-upscayl",
       "locale": "en",
       "url": "https://myimageupscaler.com/alternatives/vs-upscayl",
-      "impressions": 1,
+      "impressions": 16,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1104,7 +1104,7 @@
       "slug": "vs-upscayl",
       "locale": "it",
       "url": "https://myimageupscaler.com/it/alternatives/vs-upscayl",
-      "impressions": 0,
+      "impressions": 11,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1122,7 +1122,7 @@
       "slug": "vs-upscayl",
       "locale": "pt",
       "url": "https://myimageupscaler.com/pt/alternatives/vs-upscayl",
-      "impressions": 0,
+      "impressions": 22,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1131,7 +1131,7 @@
       "slug": "vs-vanceai",
       "locale": "de",
       "url": "https://myimageupscaler.com/de/alternatives/vs-vanceai",
-      "impressions": 0,
+      "impressions": 5,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1140,7 +1140,7 @@
       "slug": "vs-vanceai",
       "locale": "en",
       "url": "https://myimageupscaler.com/alternatives/vs-vanceai",
-      "impressions": 1,
+      "impressions": 7,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1158,7 +1158,7 @@
       "slug": "vs-vanceai",
       "locale": "fr",
       "url": "https://myimageupscaler.com/fr/alternatives/vs-vanceai",
-      "impressions": 0,
+      "impressions": 7,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1203,8 +1203,8 @@
       "slug": "vs-waifu2x",
       "locale": "en",
       "url": "https://myimageupscaler.com/alternatives/vs-waifu2x",
-      "impressions": 1015,
-      "clicks": 22,
+      "impressions": 1044,
+      "clicks": 16,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -1212,8 +1212,8 @@
       "slug": "vs-waifu2x",
       "locale": "es",
       "url": "https://myimageupscaler.com/es/alternatives/vs-waifu2x",
-      "impressions": 0,
-      "clicks": 0,
+      "impressions": 25,
+      "clicks": 3,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -1239,7 +1239,7 @@
       "slug": "vs-waifu2x",
       "locale": "ja",
       "url": "https://myimageupscaler.com/ja/alternatives/vs-waifu2x",
-      "impressions": 0,
+      "impressions": 2,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1248,7 +1248,7 @@
       "slug": "vs-waifu2x",
       "locale": "pt",
       "url": "https://myimageupscaler.com/pt/alternatives/vs-waifu2x",
-      "impressions": 0,
+      "impressions": 7,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1266,8 +1266,8 @@
       "slug": "vs-waifu2x-cafe",
       "locale": "en",
       "url": "https://myimageupscaler.com/alternatives/vs-waifu2x-cafe",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 92,
+      "clicks": 2,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -1320,7 +1320,7 @@
       "slug": "bulk-image-compressor",
       "locale": "en",
       "url": "https://myimageupscaler.com/bulk-tools/bulk-image-compressor",
-      "impressions": 1,
+      "impressions": 10,
       "clicks": 0,
       "lastUpdated": "2025-12-26T00:00:00Z"
     },
@@ -1329,8 +1329,8 @@
       "slug": "bulk-image-resizer",
       "locale": "en",
       "url": "https://myimageupscaler.com/bulk-tools/bulk-image-resizer",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 178,
+      "clicks": 4,
       "lastUpdated": "2025-12-26T00:00:00Z"
     },
     {
@@ -1338,8 +1338,8 @@
       "slug": "upscale-arw-images",
       "locale": "en",
       "url": "https://myimageupscaler.com/camera-raw/upscale-arw-images",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 22,
+      "clicks": 1,
       "lastUpdated": "2025-01-19"
     },
     {
@@ -1347,8 +1347,8 @@
       "slug": "upscale-cr2-images",
       "locale": "en",
       "url": "https://myimageupscaler.com/camera-raw/upscale-cr2-images",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 133,
+      "clicks": 7,
       "lastUpdated": "2025-01-19"
     },
     {
@@ -1356,7 +1356,7 @@
       "slug": "upscale-fuji-raf-images",
       "locale": "en",
       "url": "https://myimageupscaler.com/camera-raw/upscale-fuji-raf-images",
-      "impressions": 1,
+      "impressions": 2,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -1365,7 +1365,7 @@
       "slug": "upscale-hasselblad-3fr-images",
       "locale": "en",
       "url": "https://myimageupscaler.com/camera-raw/upscale-hasselblad-3fr-images",
-      "impressions": 1,
+      "impressions": 31,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -1374,7 +1374,7 @@
       "slug": "upscale-leica-dng-images",
       "locale": "en",
       "url": "https://myimageupscaler.com/camera-raw/upscale-leica-dng-images",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -1383,8 +1383,8 @@
       "slug": "upscale-nef-images",
       "locale": "en",
       "url": "https://myimageupscaler.com/camera-raw/upscale-nef-images",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 43,
+      "clicks": 5,
       "lastUpdated": "2025-01-19"
     },
     {
@@ -1392,7 +1392,7 @@
       "slug": "upscale-olympus-orf-images",
       "locale": "en",
       "url": "https://myimageupscaler.com/camera-raw/upscale-olympus-orf-images",
-      "impressions": 1,
+      "impressions": 4,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -1401,8 +1401,8 @@
       "slug": "upscale-panasonic-rw2-images",
       "locale": "en",
       "url": "https://myimageupscaler.com/camera-raw/upscale-panasonic-rw2-images",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 36,
+      "clicks": 2,
       "lastUpdated": "2025-01-19"
     },
     {
@@ -1410,7 +1410,7 @@
       "slug": "ai-upscaler-reviews-2025",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/ai-upscaler-reviews-2025",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1419,7 +1419,7 @@
       "slug": "best-ai-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/best-ai-upscaler",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1428,7 +1428,7 @@
       "slug": "best-ai-upscalers",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/best-ai-upscalers",
-      "impressions": 1,
+      "impressions": 81,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1437,7 +1437,7 @@
       "slug": "best-free-ai-photo-enhancer",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/best-free-ai-photo-enhancer",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1446,7 +1446,7 @@
       "slug": "best-free-ai-upscalers-2025",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/best-free-ai-upscalers-2025",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1455,7 +1455,7 @@
       "slug": "midjourney-vs-stable-diffusion",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/midjourney-vs-stable-diffusion",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1464,8 +1464,8 @@
       "slug": "midjourney-vs-stable-diffusion-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/midjourney-vs-stable-diffusion-upscaler",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 33,
+      "clicks": 1,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -1473,7 +1473,7 @@
       "slug": "myimageupscaler-vs-adobe-photoshop",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-adobe-photoshop",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1482,7 +1482,7 @@
       "slug": "myimageupscaler-vs-bigjpg",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-bigjpg",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1491,7 +1491,7 @@
       "slug": "myimageupscaler-vs-canva",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-canva",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1500,7 +1500,7 @@
       "slug": "myimageupscaler-vs-clipdrop",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-clipdrop",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1509,7 +1509,7 @@
       "slug": "myimageupscaler-vs-fotor",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-fotor",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1518,7 +1518,7 @@
       "slug": "myimageupscaler-vs-icons8",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-icons8",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1527,7 +1527,7 @@
       "slug": "myimageupscaler-vs-letsenhance",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-letsenhance",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1536,7 +1536,7 @@
       "slug": "myimageupscaler-vs-photoenhancer",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-photoenhancer",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1545,7 +1545,7 @@
       "slug": "myimageupscaler-vs-photoshop-express",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-photoshop-express",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1554,7 +1554,7 @@
       "slug": "myimageupscaler-vs-pixlr",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-pixlr",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1563,7 +1563,7 @@
       "slug": "myimageupscaler-vs-realesrgan",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-realesrgan",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1572,7 +1572,7 @@
       "slug": "myimageupscaler-vs-remini",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-remini",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1581,7 +1581,7 @@
       "slug": "myimageupscaler-vs-smartmagnify",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-smartmagnify",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1590,7 +1590,7 @@
       "slug": "myimageupscaler-vs-topaz",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-topaz",
-      "impressions": 1,
+      "impressions": 26,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1599,7 +1599,7 @@
       "slug": "myimageupscaler-vs-topaz-gigapixel",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-topaz-gigapixel",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1608,7 +1608,7 @@
       "slug": "myimageupscaler-vs-upscale-media",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-upscale-media",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1617,7 +1617,7 @@
       "slug": "myimageupscaler-vs-upscay",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-upscay",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1626,7 +1626,7 @@
       "slug": "myimageupscaler-vs-vanceai",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-vanceai",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1635,7 +1635,7 @@
       "slug": "myimageupscaler-vs-waifu2x",
       "locale": "en",
       "url": "https://myimageupscaler.com/compare/myimageupscaler-vs-waifu2x",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19T00:00:00Z"
     },
@@ -1644,7 +1644,7 @@
       "slug": "ai-models-comparison",
       "locale": "en",
       "url": "https://myimageupscaler.com/comparisons-expanded/ai-models-comparison",
-      "impressions": 15509,
+      "impressions": 7869,
       "clicks": 67,
       "lastUpdated": "2026-05-26T00:00:00Z"
     },
@@ -1653,7 +1653,7 @@
       "slug": "ai-vs-traditional-upscaling",
       "locale": "en",
       "url": "https://myimageupscaler.com/comparisons-expanded/ai-vs-traditional-upscaling",
-      "impressions": 1,
+      "impressions": 99,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1662,7 +1662,7 @@
       "slug": "batch-processing-workflows",
       "locale": "en",
       "url": "https://myimageupscaler.com/comparisons-expanded/batch-processing-workflows",
-      "impressions": 1,
+      "impressions": 40,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1671,7 +1671,7 @@
       "slug": "free-vs-paid-upscaling-solutions",
       "locale": "en",
       "url": "https://myimageupscaler.com/comparisons-expanded/free-vs-paid-upscaling-solutions",
-      "impressions": 1,
+      "impressions": 12,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1680,7 +1680,7 @@
       "slug": "online-vs-desktop-upscalers",
       "locale": "en",
       "url": "https://myimageupscaler.com/comparisons-expanded/online-vs-desktop-upscalers",
-      "impressions": 1,
+      "impressions": 7,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1689,8 +1689,8 @@
       "slug": "privacy-security-upscaling",
       "locale": "en",
       "url": "https://myimageupscaler.com/comparisons-expanded/privacy-security-upscaling",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 113,
+      "clicks": 1,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -1698,7 +1698,7 @@
       "slug": "speed-vs-quality-tradeoffs",
       "locale": "en",
       "url": "https://myimageupscaler.com/comparisons-expanded/speed-vs-quality-tradeoffs",
-      "impressions": 1,
+      "impressions": 19,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1707,8 +1707,8 @@
       "slug": "upscale-anime",
       "locale": "en",
       "url": "https://myimageupscaler.com/content/upscale-anime",
-      "impressions": 772,
-      "clicks": 25,
+      "impressions": 633,
+      "clicks": 23,
       "lastUpdated": "2026-01-14T00:00:00Z"
     },
     {
@@ -1716,8 +1716,8 @@
       "slug": "upscale-digital-art",
       "locale": "en",
       "url": "https://myimageupscaler.com/content/upscale-digital-art",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 63,
+      "clicks": 4,
       "lastUpdated": "2026-01-14T00:00:00Z"
     },
     {
@@ -1725,8 +1725,8 @@
       "slug": "upscale-logos",
       "locale": "en",
       "url": "https://myimageupscaler.com/content/upscale-logos",
-      "impressions": 1446,
-      "clicks": 26,
+      "impressions": 1362,
+      "clicks": 25,
       "lastUpdated": "2026-01-14T00:00:00Z"
     },
     {
@@ -1734,7 +1734,7 @@
       "slug": "upscale-old-family-photos",
       "locale": "en",
       "url": "https://myimageupscaler.com/content/upscale-old-family-photos",
-      "impressions": 1,
+      "impressions": 11,
       "clicks": 0,
       "lastUpdated": "2026-01-14T00:00:00Z"
     },
@@ -1743,7 +1743,7 @@
       "slug": "upscale-portraits",
       "locale": "en",
       "url": "https://myimageupscaler.com/content/upscale-portraits",
-      "impressions": 1,
+      "impressions": 9,
       "clicks": 0,
       "lastUpdated": "2026-01-14T00:00:00Z"
     },
@@ -1752,7 +1752,7 @@
       "slug": "upscale-product-photos",
       "locale": "en",
       "url": "https://myimageupscaler.com/content/upscale-product-photos",
-      "impressions": 1,
+      "impressions": 64,
       "clicks": 0,
       "lastUpdated": "2026-01-14T00:00:00Z"
     },
@@ -1761,8 +1761,8 @@
       "slug": "upscale-screenshots",
       "locale": "en",
       "url": "https://myimageupscaler.com/content/upscale-screenshots",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 208,
+      "clicks": 1,
       "lastUpdated": "2026-01-14T00:00:00Z"
     },
     {
@@ -1770,8 +1770,8 @@
       "slug": "upscale-vintage-photos",
       "locale": "en",
       "url": "https://myimageupscaler.com/content/upscale-vintage-photos",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 20,
+      "clicks": 3,
       "lastUpdated": "2026-01-14T00:00:00Z"
     },
     {
@@ -1779,7 +1779,7 @@
       "slug": "desktop-image-optimization",
       "locale": "en",
       "url": "https://myimageupscaler.com/device-optimization/desktop-image-optimization",
-      "impressions": 1,
+      "impressions": 36,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1788,8 +1788,8 @@
       "slug": "mobile-device-image-optimization",
       "locale": "en",
       "url": "https://myimageupscaler.com/device-optimization/mobile-device-image-optimization",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 33,
+      "clicks": 3,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -1797,8 +1797,8 @@
       "slug": "smart-tv-image-optimization",
       "locale": "en",
       "url": "https://myimageupscaler.com/device-optimization/smart-tv-image-optimization",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 222,
+      "clicks": 1,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -1806,7 +1806,7 @@
       "slug": "tablet-image-optimization",
       "locale": "en",
       "url": "https://myimageupscaler.com/device-optimization/tablet-image-optimization",
-      "impressions": 1,
+      "impressions": 79,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1815,7 +1815,7 @@
       "slug": "wearable-device-image-optimization",
       "locale": "en",
       "url": "https://myimageupscaler.com/device-optimization/wearable-device-image-optimization",
-      "impressions": 1,
+      "impressions": 3,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -1824,7 +1824,7 @@
       "slug": "desktop-ecommerce-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/device-use/desktop-ecommerce-upscaler",
-      "impressions": 1,
+      "impressions": 2,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -1833,7 +1833,7 @@
       "slug": "desktop-graphic-design-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/device-use/desktop-graphic-design-upscaler",
-      "impressions": 1,
+      "impressions": 2,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -1842,7 +1842,7 @@
       "slug": "desktop-photo-editing-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/device-use/desktop-photo-editing-upscaler",
-      "impressions": 1,
+      "impressions": 174,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -1860,7 +1860,7 @@
       "slug": "desktop-professional-printing-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/device-use/desktop-professional-printing-upscaler",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -1869,7 +1869,7 @@
       "slug": "desktop-social-media-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/device-use/desktop-social-media-upscaler",
-      "impressions": 1,
+      "impressions": 29,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -1878,7 +1878,7 @@
       "slug": "desktop-video-thumbnails-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/device-use/desktop-video-thumbnails-upscaler",
-      "impressions": 1,
+      "impressions": 14,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -1887,7 +1887,7 @@
       "slug": "mobile-content-creation-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/device-use/mobile-content-creation-upscaler",
-      "impressions": 1,
+      "impressions": 12,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -1896,7 +1896,7 @@
       "slug": "mobile-ecommerce-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/device-use/mobile-ecommerce-upscaler",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -1905,7 +1905,7 @@
       "slug": "mobile-messaging-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/device-use/mobile-messaging-upscaler",
-      "impressions": 1,
+      "impressions": 3,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -1914,7 +1914,7 @@
       "slug": "mobile-social-media-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/device-use/mobile-social-media-upscaler",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -1923,7 +1923,7 @@
       "slug": "mobile-web-graphics-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/device-use/mobile-web-graphics-upscaler",
-      "impressions": 1,
+      "impressions": 16,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -1932,8 +1932,8 @@
       "slug": "tablet-content-creation-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/device-use/tablet-content-creation-upscaler",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 26,
+      "clicks": 1,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -1941,7 +1941,7 @@
       "slug": "tablet-digital-art-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/device-use/tablet-digital-art-upscaler",
-      "impressions": 1,
+      "impressions": 21,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -1950,7 +1950,7 @@
       "slug": "tablet-ecommerce-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/device-use/tablet-ecommerce-upscaler",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -1959,7 +1959,7 @@
       "slug": "tablet-photo-editing-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/device-use/tablet-photo-editing-upscaler",
-      "impressions": 1,
+      "impressions": 11,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -1968,7 +1968,7 @@
       "slug": "tablet-social-media-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/device-use/tablet-social-media-upscaler",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -1977,7 +1977,7 @@
       "slug": "avif-upscale-16x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/avif-upscale-16x",
-      "impressions": 1,
+      "impressions": 7,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -1986,7 +1986,7 @@
       "slug": "avif-upscale-2x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/avif-upscale-2x",
-      "impressions": 1,
+      "impressions": 20,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -1995,7 +1995,7 @@
       "slug": "avif-upscale-4x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/avif-upscale-4x",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2004,7 +2004,7 @@
       "slug": "avif-upscale-8x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/avif-upscale-8x",
-      "impressions": 1,
+      "impressions": 4,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2013,7 +2013,7 @@
       "slug": "bmp-upscale-16x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/bmp-upscale-16x",
-      "impressions": 1,
+      "impressions": 3,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2022,8 +2022,8 @@
       "slug": "bmp-upscale-2x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/bmp-upscale-2x",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 29,
+      "clicks": 1,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2040,8 +2040,8 @@
       "slug": "bmp-upscale-8x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/bmp-upscale-8x",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 24,
+      "clicks": 1,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2049,8 +2049,8 @@
       "slug": "gif-upscale-16x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/gif-upscale-16x",
-      "impressions": 3506,
-      "clicks": 217,
+      "impressions": 774,
+      "clicks": 47,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2058,7 +2058,7 @@
       "slug": "gif-upscale-2x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/gif-upscale-2x",
-      "impressions": 1,
+      "impressions": 12,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2067,8 +2067,8 @@
       "slug": "gif-upscale-4x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/gif-upscale-4x",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 110,
+      "clicks": 7,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2076,8 +2076,8 @@
       "slug": "gif-upscale-8x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/gif-upscale-8x",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 41,
+      "clicks": 1,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2085,7 +2085,7 @@
       "slug": "heic-upscale-16x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/heic-upscale-16x",
-      "impressions": 1,
+      "impressions": 22,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2094,8 +2094,8 @@
       "slug": "heic-upscale-2x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/heic-upscale-2x",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 24,
+      "clicks": 1,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2103,8 +2103,8 @@
       "slug": "heic-upscale-4x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/heic-upscale-4x",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 35,
+      "clicks": 2,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2112,8 +2112,8 @@
       "slug": "heic-upscale-8x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/heic-upscale-8x",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 21,
+      "clicks": 1,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2121,8 +2121,8 @@
       "slug": "jpeg-upscale-16x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/jpeg-upscale-16x",
-      "impressions": 679,
-      "clicks": 61,
+      "impressions": 1001,
+      "clicks": 85,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2130,8 +2130,8 @@
       "slug": "jpeg-upscale-2x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/jpeg-upscale-2x",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 128,
+      "clicks": 3,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2139,8 +2139,8 @@
       "slug": "jpeg-upscale-4x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/jpeg-upscale-4x",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 142,
+      "clicks": 3,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2148,8 +2148,8 @@
       "slug": "jpeg-upscale-8x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/jpeg-upscale-8x",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 67,
+      "clicks": 1,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2157,8 +2157,8 @@
       "slug": "png-upscale-16x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/png-upscale-16x",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 11,
+      "clicks": 3,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2166,8 +2166,8 @@
       "slug": "png-upscale-2x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/png-upscale-2x",
-      "impressions": 1426,
-      "clicks": 72,
+      "impressions": 2062,
+      "clicks": 117,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2175,8 +2175,8 @@
       "slug": "png-upscale-4x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/png-upscale-4x",
-      "impressions": 3750,
-      "clicks": 120,
+      "impressions": 3158,
+      "clicks": 104,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2184,8 +2184,8 @@
       "slug": "png-upscale-8x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/png-upscale-8x",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 610,
+      "clicks": 19,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2193,8 +2193,8 @@
       "slug": "raw-upscale-16x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/raw-upscale-16x",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 17,
+      "clicks": 2,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2202,7 +2202,7 @@
       "slug": "raw-upscale-2x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/raw-upscale-2x",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2211,8 +2211,8 @@
       "slug": "raw-upscale-4x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/raw-upscale-4x",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 163,
+      "clicks": 7,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2220,7 +2220,7 @@
       "slug": "raw-upscale-8x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/raw-upscale-8x",
-      "impressions": 1,
+      "impressions": 71,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2229,7 +2229,7 @@
       "slug": "tiff-upscale-16x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/tiff-upscale-16x",
-      "impressions": 1,
+      "impressions": 10,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2238,7 +2238,7 @@
       "slug": "tiff-upscale-2x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/tiff-upscale-2x",
-      "impressions": 1,
+      "impressions": 6,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2247,7 +2247,7 @@
       "slug": "tiff-upscale-4x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/tiff-upscale-4x",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2256,8 +2256,8 @@
       "slug": "tiff-upscale-8x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/tiff-upscale-8x",
-      "impressions": 427,
-      "clicks": 34,
+      "impressions": 428,
+      "clicks": 32,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2265,7 +2265,7 @@
       "slug": "webp-upscale-16x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/webp-upscale-16x",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2274,8 +2274,8 @@
       "slug": "webp-upscale-2x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/webp-upscale-2x",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 700,
+      "clicks": 2,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2283,8 +2283,8 @@
       "slug": "webp-upscale-4x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/webp-upscale-4x",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 60,
+      "clicks": 2,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2292,8 +2292,8 @@
       "slug": "webp-upscale-8x",
       "locale": "en",
       "url": "https://myimageupscaler.com/format-scale/webp-upscale-8x",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 17,
+      "clicks": 2,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2301,8 +2301,8 @@
       "slug": "upscale-avif-images",
       "locale": "en",
       "url": "https://myimageupscaler.com/formats/upscale-avif-images",
-      "impressions": 257,
-      "clicks": 56,
+      "impressions": 241,
+      "clicks": 54,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -2310,8 +2310,8 @@
       "slug": "upscale-bmp-images",
       "locale": "en",
       "url": "https://myimageupscaler.com/formats/upscale-bmp-images",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 133,
+      "clicks": 14,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -2319,8 +2319,8 @@
       "slug": "upscale-gif-images",
       "locale": "en",
       "url": "https://myimageupscaler.com/formats/upscale-gif-images",
-      "impressions": 11007,
-      "clicks": 623,
+      "impressions": 3639,
+      "clicks": 102,
       "lastUpdated": "2026-08-03T00:00:00Z"
     },
     {
@@ -2328,8 +2328,8 @@
       "slug": "upscale-heic-images",
       "locale": "en",
       "url": "https://myimageupscaler.com/formats/upscale-heic-images",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 63,
+      "clicks": 4,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -2337,8 +2337,8 @@
       "slug": "upscale-jpeg-images",
       "locale": "en",
       "url": "https://myimageupscaler.com/formats/upscale-jpeg-images",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 2,
+      "clicks": 1,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -2346,8 +2346,8 @@
       "slug": "upscale-png-images",
       "locale": "en",
       "url": "https://myimageupscaler.com/formats/upscale-png-images",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 70,
+      "clicks": 1,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -2355,8 +2355,8 @@
       "slug": "upscale-raw-images",
       "locale": "en",
       "url": "https://myimageupscaler.com/formats/upscale-raw-images",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 76,
+      "clicks": 9,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -2364,8 +2364,8 @@
       "slug": "upscale-svg-images",
       "locale": "en",
       "url": "https://myimageupscaler.com/formats/upscale-svg-images",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 305,
+      "clicks": 13,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -2373,8 +2373,8 @@
       "slug": "upscale-tiff-images",
       "locale": "en",
       "url": "https://myimageupscaler.com/formats/upscale-tiff-images",
-      "impressions": 109,
-      "clicks": 12,
+      "impressions": 277,
+      "clicks": 32,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -2382,8 +2382,8 @@
       "slug": "upscale-webp-images",
       "locale": "en",
       "url": "https://myimageupscaler.com/formats/upscale-webp-images",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 147,
+      "clicks": 7,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -2391,7 +2391,7 @@
       "slug": "free-ai-photo-enhancer",
       "locale": "en",
       "url": "https://myimageupscaler.com/free/free-ai-photo-enhancer",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-12-10T00:00:00Z"
     },
@@ -2400,8 +2400,8 @@
       "slug": "free-ai-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/free/free-ai-upscaler",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 533,
+      "clicks": 6,
       "lastUpdated": "2025-12-10T00:00:00Z"
     },
     {
@@ -2409,7 +2409,7 @@
       "slug": "free-background-remover",
       "locale": "en",
       "url": "https://myimageupscaler.com/free/free-background-remover",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-01-06T00:00:00Z"
     },
@@ -2418,7 +2418,7 @@
       "slug": "free-image-enhancer",
       "locale": "en",
       "url": "https://myimageupscaler.com/free/free-image-enhancer",
-      "impressions": 1,
+      "impressions": 5,
       "clicks": 0,
       "lastUpdated": "2025-12-10T00:00:00Z"
     },
@@ -2427,8 +2427,8 @@
       "slug": "free-image-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/free/free-image-upscaler",
-      "impressions": 2808,
-      "clicks": 18,
+      "impressions": 1924,
+      "clicks": 12,
       "lastUpdated": "2025-12-10T00:00:00Z"
     },
     {
@@ -2436,8 +2436,8 @@
       "slug": "free-photo-enhancer",
       "locale": "en",
       "url": "https://myimageupscaler.com/free/free-photo-enhancer",
-      "impressions": 3922,
-      "clicks": 30,
+      "impressions": 4272,
+      "clicks": 34,
       "lastUpdated": "2025-12-10T00:00:00Z"
     },
     {
@@ -2445,7 +2445,7 @@
       "slug": "avif-next-gen-format",
       "locale": "en",
       "url": "https://myimageupscaler.com/guides/avif-next-gen-format",
-      "impressions": 1,
+      "impressions": 46,
       "clicks": 0,
       "lastUpdated": "2025-12-26T00:00:00Z"
     },
@@ -2454,7 +2454,7 @@
       "slug": "bmp-format-guide",
       "locale": "en",
       "url": "https://myimageupscaler.com/guides/bmp-format-guide",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-12-26T00:00:00Z"
     },
@@ -2463,7 +2463,7 @@
       "slug": "gif-animation-guide",
       "locale": "en",
       "url": "https://myimageupscaler.com/guides/gif-animation-guide",
-      "impressions": 1,
+      "impressions": 29,
       "clicks": 0,
       "lastUpdated": "2025-12-26T00:00:00Z"
     },
@@ -2472,7 +2472,7 @@
       "slug": "heic-format-guide",
       "locale": "en",
       "url": "https://myimageupscaler.com/guides/heic-format-guide",
-      "impressions": 1,
+      "impressions": 22,
       "clicks": 0,
       "lastUpdated": "2025-12-26T00:00:00Z"
     },
@@ -2481,8 +2481,8 @@
       "slug": "how-to-upscale-images",
       "locale": "en",
       "url": "https://myimageupscaler.com/guides/how-to-upscale-images",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 553,
+      "clicks": 4,
       "lastUpdated": "2025-12-10T00:00:00Z"
     },
     {
@@ -2490,7 +2490,7 @@
       "slug": "raw-photography-guide",
       "locale": "en",
       "url": "https://myimageupscaler.com/guides/raw-photography-guide",
-      "impressions": 1,
+      "impressions": 49,
       "clicks": 0,
       "lastUpdated": "2025-12-26T00:00:00Z"
     },
@@ -2499,8 +2499,8 @@
       "slug": "svg-vector-guide",
       "locale": "en",
       "url": "https://myimageupscaler.com/guides/svg-vector-guide",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 151,
+      "clicks": 1,
       "lastUpdated": "2025-12-26T00:00:00Z"
     },
     {
@@ -2508,7 +2508,7 @@
       "slug": "tiff-format-guide",
       "locale": "en",
       "url": "https://myimageupscaler.com/guides/tiff-format-guide",
-      "impressions": 1,
+      "impressions": 41,
       "clicks": 0,
       "lastUpdated": "2025-12-26T00:00:00Z"
     },
@@ -2517,8 +2517,8 @@
       "slug": "webp-format-guide",
       "locale": "en",
       "url": "https://myimageupscaler.com/guides/webp-format-guide",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 9,
+      "clicks": 1,
       "lastUpdated": "2025-12-26T00:00:00Z"
     },
     {
@@ -2526,7 +2526,7 @@
       "slug": "architecture-visualization-enhancement",
       "locale": "en",
       "url": "https://myimageupscaler.com/industry-insights/architecture-visualization-enhancement",
-      "impressions": 1,
+      "impressions": 71,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -2535,7 +2535,7 @@
       "slug": "ecommerce-product-photo-enhancement",
       "locale": "en",
       "url": "https://myimageupscaler.com/industry-insights/ecommerce-product-photo-enhancement",
-      "impressions": 1,
+      "impressions": 190,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -2544,8 +2544,8 @@
       "slug": "education-content-enhancement",
       "locale": "en",
       "url": "https://myimageupscaler.com/industry-insights/education-content-enhancement",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 11,
+      "clicks": 1,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -2553,7 +2553,7 @@
       "slug": "graphic-design-workflow-enhancement",
       "locale": "en",
       "url": "https://myimageupscaler.com/industry-insights/graphic-design-workflow-enhancement",
-      "impressions": 1,
+      "impressions": 34,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -2562,7 +2562,7 @@
       "slug": "legal-documentation-enhancement",
       "locale": "en",
       "url": "https://myimageupscaler.com/industry-insights/legal-documentation-enhancement",
-      "impressions": 1,
+      "impressions": 4,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -2571,7 +2571,7 @@
       "slug": "manufacturing-industrial-enhancement",
       "locale": "en",
       "url": "https://myimageupscaler.com/industry-insights/manufacturing-industrial-enhancement",
-      "impressions": 1,
+      "impressions": 15,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -2580,8 +2580,8 @@
       "slug": "medical-imaging-enhancement",
       "locale": "en",
       "url": "https://myimageupscaler.com/industry-insights/medical-imaging-enhancement",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 62,
+      "clicks": 4,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -2589,7 +2589,7 @@
       "slug": "nonprofit-visual-enhancement",
       "locale": "en",
       "url": "https://myimageupscaler.com/industry-insights/nonprofit-visual-enhancement",
-      "impressions": 1,
+      "impressions": 11,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -2598,7 +2598,7 @@
       "slug": "photography-business-enhancement",
       "locale": "en",
       "url": "https://myimageupscaler.com/industry-insights/photography-business-enhancement",
-      "impressions": 1,
+      "impressions": 29,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -2607,7 +2607,7 @@
       "slug": "print-media-enhancement",
       "locale": "en",
       "url": "https://myimageupscaler.com/industry-insights/print-media-enhancement",
-      "impressions": 1,
+      "impressions": 225,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -2616,7 +2616,7 @@
       "slug": "social-media-marketing-enhancement",
       "locale": "en",
       "url": "https://myimageupscaler.com/industry-insights/social-media-marketing-enhancement",
-      "impressions": 1,
+      "impressions": 95,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -2625,7 +2625,7 @@
       "slug": "sports-fitness-enhancement",
       "locale": "en",
       "url": "https://myimageupscaler.com/industry-insights/sports-fitness-enhancement",
-      "impressions": 1,
+      "impressions": 15,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -2634,7 +2634,7 @@
       "slug": "travel-tourism-enhancement",
       "locale": "en",
       "url": "https://myimageupscaler.com/industry-insights/travel-tourism-enhancement",
-      "impressions": 1,
+      "impressions": 18,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -2652,7 +2652,7 @@
       "slug": "ecommerce-sellers",
       "locale": "en",
       "url": "https://myimageupscaler.com/personas-expanded/ecommerce-sellers",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -2661,7 +2661,7 @@
       "slug": "game-developers",
       "locale": "en",
       "url": "https://myimageupscaler.com/personas-expanded/game-developers",
-      "impressions": 1,
+      "impressions": 4,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -2670,7 +2670,7 @@
       "slug": "graphic-designers",
       "locale": "en",
       "url": "https://myimageupscaler.com/personas-expanded/graphic-designers",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -2679,7 +2679,7 @@
       "slug": "marketing-teams",
       "locale": "en",
       "url": "https://myimageupscaler.com/personas-expanded/marketing-teams",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -2688,7 +2688,7 @@
       "slug": "photographers",
       "locale": "en",
       "url": "https://myimageupscaler.com/personas-expanded/photographers",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -2715,7 +2715,7 @@
       "slug": "small-business",
       "locale": "en",
       "url": "https://myimageupscaler.com/personas-expanded/small-business",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -2724,7 +2724,7 @@
       "slug": "web-developers",
       "locale": "en",
       "url": "https://myimageupscaler.com/personas-expanded/web-developers",
-      "impressions": 1,
+      "impressions": 3,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -2733,7 +2733,7 @@
       "slug": "damaged-photo-repair",
       "locale": "en",
       "url": "https://myimageupscaler.com/photo-restoration/damaged-photo-repair",
-      "impressions": 1,
+      "impressions": 37,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -2742,7 +2742,7 @@
       "slug": "family-photo-preservation",
       "locale": "en",
       "url": "https://myimageupscaler.com/photo-restoration/family-photo-preservation",
-      "impressions": 1,
+      "impressions": 17,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -2751,7 +2751,7 @@
       "slug": "old-photo-restoration-guide",
       "locale": "en",
       "url": "https://myimageupscaler.com/photo-restoration/old-photo-restoration-guide",
-      "impressions": 1,
+      "impressions": 7,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -2760,7 +2760,7 @@
       "slug": "photo-conservation-methods",
       "locale": "en",
       "url": "https://myimageupscaler.com/photo-restoration/photo-conservation-methods",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -2769,7 +2769,7 @@
       "slug": "vintage-photo-colorization",
       "locale": "en",
       "url": "https://myimageupscaler.com/photo-restoration/vintage-photo-colorization",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -2778,8 +2778,8 @@
       "slug": "canva-upscaler-avif",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/canva-upscaler-avif",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 217,
+      "clicks": 1,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2787,8 +2787,8 @@
       "slug": "canva-upscaler-bmp",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/canva-upscaler-bmp",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 126,
+      "clicks": 4,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2796,7 +2796,7 @@
       "slug": "canva-upscaler-heic",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/canva-upscaler-heic",
-      "impressions": 1,
+      "impressions": 81,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2805,7 +2805,7 @@
       "slug": "canva-upscaler-jpg",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/canva-upscaler-jpg",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2814,7 +2814,7 @@
       "slug": "canva-upscaler-png",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/canva-upscaler-png",
-      "impressions": 1,
+      "impressions": 11,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2823,8 +2823,8 @@
       "slug": "canva-upscaler-raw",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/canva-upscaler-raw",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 438,
+      "clicks": 2,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2832,8 +2832,8 @@
       "slug": "canva-upscaler-tiff",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/canva-upscaler-tiff",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 98,
+      "clicks": 1,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2841,8 +2841,8 @@
       "slug": "canva-upscaler-webp",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/canva-upscaler-webp",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 474,
+      "clicks": 3,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2859,7 +2859,7 @@
       "slug": "dalle-upscaler-bmp",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/dalle-upscaler-bmp",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2886,7 +2886,7 @@
       "slug": "dalle-upscaler-png",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/dalle-upscaler-png",
-      "impressions": 1,
+      "impressions": 14,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2895,7 +2895,7 @@
       "slug": "dalle-upscaler-raw",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/dalle-upscaler-raw",
-      "impressions": 1,
+      "impressions": 2,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2904,7 +2904,7 @@
       "slug": "dalle-upscaler-tiff",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/dalle-upscaler-tiff",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2913,7 +2913,7 @@
       "slug": "dalle-upscaler-webp",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/dalle-upscaler-webp",
-      "impressions": 1,
+      "impressions": 2,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2922,7 +2922,7 @@
       "slug": "lightroom-upscaler-avif",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/lightroom-upscaler-avif",
-      "impressions": 1,
+      "impressions": 33,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2931,8 +2931,8 @@
       "slug": "lightroom-upscaler-bmp",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/lightroom-upscaler-bmp",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 88,
+      "clicks": 1,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -2940,7 +2940,7 @@
       "slug": "lightroom-upscaler-raw",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/lightroom-upscaler-raw",
-      "impressions": 1,
+      "impressions": 9,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2949,7 +2949,7 @@
       "slug": "midjourney-upscaler-avif",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/midjourney-upscaler-avif",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2958,7 +2958,7 @@
       "slug": "midjourney-upscaler-bmp",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/midjourney-upscaler-bmp",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2967,7 +2967,7 @@
       "slug": "midjourney-upscaler-heic",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/midjourney-upscaler-heic",
-      "impressions": 1,
+      "impressions": 27,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2985,7 +2985,7 @@
       "slug": "midjourney-upscaler-png",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/midjourney-upscaler-png",
-      "impressions": 1,
+      "impressions": 23,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -2994,7 +2994,7 @@
       "slug": "midjourney-upscaler-raw",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/midjourney-upscaler-raw",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -3003,7 +3003,7 @@
       "slug": "midjourney-upscaler-tiff",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/midjourney-upscaler-tiff",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -3012,7 +3012,7 @@
       "slug": "midjourney-upscaler-webp",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/midjourney-upscaler-webp",
-      "impressions": 1,
+      "impressions": 6,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -3021,7 +3021,7 @@
       "slug": "photoshop-upscaler-avif",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/photoshop-upscaler-avif",
-      "impressions": 1,
+      "impressions": 4,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -3030,7 +3030,7 @@
       "slug": "photoshop-upscaler-bmp",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/photoshop-upscaler-bmp",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -3039,7 +3039,7 @@
       "slug": "photoshop-upscaler-heic",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/photoshop-upscaler-heic",
-      "impressions": 1,
+      "impressions": 6,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -3048,7 +3048,7 @@
       "slug": "photoshop-upscaler-jpg",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/photoshop-upscaler-jpg",
-      "impressions": 1,
+      "impressions": 8,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -3057,7 +3057,7 @@
       "slug": "photoshop-upscaler-png",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/photoshop-upscaler-png",
-      "impressions": 1,
+      "impressions": 8,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -3066,7 +3066,7 @@
       "slug": "photoshop-upscaler-raw",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/photoshop-upscaler-raw",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -3075,7 +3075,7 @@
       "slug": "photoshop-upscaler-tiff",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/photoshop-upscaler-tiff",
-      "impressions": 1,
+      "impressions": 16,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -3084,7 +3084,7 @@
       "slug": "photoshop-upscaler-webp",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/photoshop-upscaler-webp",
-      "impressions": 1,
+      "impressions": 2,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -3093,7 +3093,7 @@
       "slug": "stable-diffusion-upscaler-avif",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/stable-diffusion-upscaler-avif",
-      "impressions": 1,
+      "impressions": 10,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -3102,7 +3102,7 @@
       "slug": "stable-diffusion-upscaler-bmp",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/stable-diffusion-upscaler-bmp",
-      "impressions": 1,
+      "impressions": 4,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -3111,7 +3111,7 @@
       "slug": "stable-diffusion-upscaler-heic",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/stable-diffusion-upscaler-heic",
-      "impressions": 1,
+      "impressions": 2,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -3120,7 +3120,7 @@
       "slug": "stable-diffusion-upscaler-jpg",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/stable-diffusion-upscaler-jpg",
-      "impressions": 1,
+      "impressions": 3,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -3129,8 +3129,8 @@
       "slug": "stable-diffusion-upscaler-png",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/stable-diffusion-upscaler-png",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 30,
+      "clicks": 1,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -3138,7 +3138,7 @@
       "slug": "stable-diffusion-upscaler-raw",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/stable-diffusion-upscaler-raw",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -3147,7 +3147,7 @@
       "slug": "stable-diffusion-upscaler-tiff",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/stable-diffusion-upscaler-tiff",
-      "impressions": 1,
+      "impressions": 11,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -3156,7 +3156,7 @@
       "slug": "stable-diffusion-upscaler-webp",
       "locale": "en",
       "url": "https://myimageupscaler.com/platform-format/stable-diffusion-upscaler-webp",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -3165,8 +3165,8 @@
       "slug": "canva-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/platforms/canva-upscaler",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 985,
+      "clicks": 15,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -3174,7 +3174,7 @@
       "slug": "dalle-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/platforms/dalle-upscaler",
-      "impressions": 1,
+      "impressions": 26,
       "clicks": 0,
       "lastUpdated": "2026-01-06"
     },
@@ -3183,8 +3183,8 @@
       "slug": "midjourney-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/platforms/midjourney-upscaler",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 207,
+      "clicks": 1,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -3192,8 +3192,8 @@
       "slug": "photoshop-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/platforms/photoshop-upscaler",
-      "impressions": 461,
-      "clicks": 32,
+      "impressions": 1019,
+      "clicks": 55,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -3201,8 +3201,8 @@
       "slug": "stable-diffusion-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/platforms/stable-diffusion-upscaler",
-      "impressions": 1207,
-      "clicks": 36,
+      "impressions": 1246,
+      "clicks": 37,
       "lastUpdated": "2026-01-06"
     },
     {
@@ -3210,8 +3210,8 @@
       "slug": "2k-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/scale/2k-upscaler",
-      "impressions": 4727,
-      "clicks": 356,
+      "impressions": 4890,
+      "clicks": 368,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -3219,8 +3219,8 @@
       "slug": "4k-image-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/scale/4k-image-upscaler",
-      "impressions": 5221,
-      "clicks": 90,
+      "impressions": 4832,
+      "clicks": 91,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -3228,8 +3228,8 @@
       "slug": "ai-upscaler-2x",
       "locale": "en",
       "url": "https://myimageupscaler.com/scale/ai-upscaler-2x",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 237,
+      "clicks": 4,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -3237,7 +3237,7 @@
       "slug": "ai-upscaler-4x",
       "locale": "en",
       "url": "https://myimageupscaler.com/scale/ai-upscaler-4x",
-      "impressions": 789,
+      "impressions": 808,
       "clicks": 17,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -3246,7 +3246,7 @@
       "slug": "android-wallpaper-sizes",
       "locale": "en",
       "url": "https://myimageupscaler.com/scale/android-wallpaper-sizes",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -3255,7 +3255,7 @@
       "slug": "desktop-wallpaper-sizes",
       "locale": "en",
       "url": "https://myimageupscaler.com/scale/desktop-wallpaper-sizes",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -3264,8 +3264,8 @@
       "slug": "hd-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/scale/hd-upscaler",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 159,
+      "clicks": 4,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -3273,8 +3273,8 @@
       "slug": "image-upscaler-4k",
       "locale": "en",
       "url": "https://myimageupscaler.com/scale/image-upscaler-4k",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 59,
+      "clicks": 2,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -3282,8 +3282,8 @@
       "slug": "image-upscaler-8k",
       "locale": "en",
       "url": "https://myimageupscaler.com/scale/image-upscaler-8k",
-      "impressions": 1315,
-      "clicks": 92,
+      "impressions": 2514,
+      "clicks": 178,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -3291,7 +3291,7 @@
       "slug": "iphone-wallpaper-sizes",
       "locale": "en",
       "url": "https://myimageupscaler.com/scale/iphone-wallpaper-sizes",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -3300,8 +3300,8 @@
       "slug": "photo-enhancer-hd",
       "locale": "en",
       "url": "https://myimageupscaler.com/scale/photo-enhancer-hd",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 1134,
+      "clicks": 10,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -3309,7 +3309,7 @@
       "slug": "pixel-boost-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/scale/pixel-boost-upscaler",
-      "impressions": 1,
+      "impressions": 9,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -3318,7 +3318,7 @@
       "slug": "resolution-enhancer",
       "locale": "en",
       "url": "https://myimageupscaler.com/scale/resolution-enhancer",
-      "impressions": 1,
+      "impressions": 243,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -3327,8 +3327,8 @@
       "slug": "ultra-hd-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/scale/ultra-hd-upscaler",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 353,
+      "clicks": 9,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -3336,8 +3336,8 @@
       "slug": "upscale-16x",
       "locale": "en",
       "url": "https://myimageupscaler.com/scale/upscale-16x",
-      "impressions": 10822,
-      "clicks": 681,
+      "impressions": 7452,
+      "clicks": 461,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -3345,8 +3345,8 @@
       "slug": "upscale-8x",
       "locale": "en",
       "url": "https://myimageupscaler.com/scale/upscale-8x",
-      "impressions": 579,
-      "clicks": 49,
+      "impressions": 1315,
+      "clicks": 114,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -3354,8 +3354,8 @@
       "slug": "upscale-to-1080p",
       "locale": "en",
       "url": "https://myimageupscaler.com/scale/upscale-to-1080p",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 527,
+      "clicks": 20,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -3363,8 +3363,8 @@
       "slug": "upscale-to-4k",
       "locale": "en",
       "url": "https://myimageupscaler.com/scale/upscale-to-4k",
-      "impressions": 3437,
-      "clicks": 12,
+      "impressions": 1203,
+      "clicks": 4,
       "lastUpdated": "2025-12-10T00:00:00Z"
     },
     {
@@ -3372,8 +3372,8 @@
       "slug": "upscale-to-8k",
       "locale": "en",
       "url": "https://myimageupscaler.com/scale/upscale-to-8k",
-      "impressions": 4531,
-      "clicks": 188,
+      "impressions": 5302,
+      "clicks": 242,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -3381,7 +3381,7 @@
       "slug": "upscale-to-hd",
       "locale": "en",
       "url": "https://myimageupscaler.com/scale/upscale-to-hd",
-      "impressions": 1,
+      "impressions": 5,
       "clicks": 0,
       "lastUpdated": "2025-12-10T00:00:00Z"
     },
@@ -3390,7 +3390,7 @@
       "slug": "ai-upscaling-technical-guide",
       "locale": "en",
       "url": "https://myimageupscaler.com/technical-guides/ai-upscaling-technical-guide",
-      "impressions": 1,
+      "impressions": 64,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -3399,7 +3399,7 @@
       "slug": "batch-image-processing-guide",
       "locale": "en",
       "url": "https://myimageupscaler.com/technical-guides/batch-image-processing-guide",
-      "impressions": 1,
+      "impressions": 75,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -3417,7 +3417,7 @@
       "slug": "image-compression-techniques",
       "locale": "en",
       "url": "https://myimageupscaler.com/technical-guides/image-compression-techniques",
-      "impressions": 1,
+      "impressions": 11,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -3426,7 +3426,7 @@
       "slug": "image-formats-comparison",
       "locale": "en",
       "url": "https://myimageupscaler.com/technical-guides/image-formats-comparison",
-      "impressions": 1,
+      "impressions": 210,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -3444,8 +3444,8 @@
       "slug": "image-scaling-algorithms",
       "locale": "en",
       "url": "https://myimageupscaler.com/technical-guides/image-scaling-algorithms",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 54,
+      "clicks": 1,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -3453,7 +3453,7 @@
       "slug": "neural-networks-image-processing",
       "locale": "en",
       "url": "https://myimageupscaler.com/technical-guides/neural-networks-image-processing",
-      "impressions": 1,
+      "impressions": 74,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -3462,7 +3462,7 @@
       "slug": "professional-photo-editing-workflows",
       "locale": "en",
       "url": "https://myimageupscaler.com/technical-guides/professional-photo-editing-workflows",
-      "impressions": 1,
+      "impressions": 5,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -3471,7 +3471,7 @@
       "slug": "web-optimization-images",
       "locale": "en",
       "url": "https://myimageupscaler.com/technical-guides/web-optimization-images",
-      "impressions": 1,
+      "impressions": 4,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -3480,8 +3480,8 @@
       "slug": "ai-background-remover",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/ai-background-remover",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 316,
+      "clicks": 16,
       "lastUpdated": "2026-01-06T00:00:00Z"
     },
     {
@@ -3489,8 +3489,8 @@
       "slug": "ai-image-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/ai-image-upscaler",
-      "impressions": 19761,
-      "clicks": 1236,
+      "impressions": 11810,
+      "clicks": 844,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -3498,8 +3498,8 @@
       "slug": "ai-photo-enhancer",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/ai-photo-enhancer",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 303,
+      "clicks": 11,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
     {
@@ -3507,7 +3507,7 @@
       "slug": "avif-to-jpg",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/avif-to-jpg",
-      "impressions": 1,
+      "impressions": 2,
       "clicks": 0,
       "lastUpdated": "2026-03-04T00:00:00Z"
     },
@@ -3516,8 +3516,8 @@
       "slug": "background-changer",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/background-changer",
-      "impressions": 3390,
-      "clicks": 13,
+      "impressions": 4657,
+      "clicks": 22,
       "lastUpdated": "2026-03-04T00:00:00Z"
     },
     {
@@ -3525,8 +3525,8 @@
       "slug": "bmp-to-jpg",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/bmp-to-jpg",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 4,
+      "clicks": 1,
       "lastUpdated": "2026-03-04T00:00:00Z"
     },
     {
@@ -3534,7 +3534,7 @@
       "slug": "bmp-to-png",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/convert/bmp-to-png",
-      "impressions": 1,
+      "impressions": 6,
       "clicks": 0,
       "lastUpdated": "2026-04-23T00:00:00Z"
     },
@@ -3543,7 +3543,7 @@
       "slug": "bmp-to-webp",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/convert/bmp-to-webp",
-      "impressions": 1,
+      "impressions": 2,
       "clicks": 0,
       "lastUpdated": "2026-04-23T00:00:00Z"
     },
@@ -3552,7 +3552,7 @@
       "slug": "convert-bmp-to-jpeg",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/convert-bmp-to-jpeg",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -3561,7 +3561,7 @@
       "slug": "convert-gif-to-jpeg",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/convert-gif-to-jpeg",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -3570,7 +3570,7 @@
       "slug": "convert-jpeg-to-png",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/convert-jpeg-to-png",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -3579,7 +3579,7 @@
       "slug": "convert-jpeg-to-webp",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/convert-jpeg-to-webp",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -3588,7 +3588,7 @@
       "slug": "convert-png-to-jpeg",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/convert-png-to-jpeg",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -3597,7 +3597,7 @@
       "slug": "convert-png-to-webp",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/convert-png-to-webp",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -3606,7 +3606,7 @@
       "slug": "convert-svg-to-jpeg",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/convert-svg-to-jpeg",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -3615,7 +3615,7 @@
       "slug": "convert-svg-to-png",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/convert-svg-to-png",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -3624,7 +3624,7 @@
       "slug": "convert-webp-to-jpeg",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/convert-webp-to-jpeg",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -3633,7 +3633,7 @@
       "slug": "convert-webp-to-png",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/convert-webp-to-png",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -3642,8 +3642,8 @@
       "slug": "crop-image-for-instagram",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/crop-image-for-instagram",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 334,
+      "clicks": 5,
       "lastUpdated": "2026-04-23T00:00:00Z"
     },
     {
@@ -3651,8 +3651,8 @@
       "slug": "crop-image-for-youtube-thumbnail",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/crop-image-for-youtube-thumbnail",
-      "impressions": 327,
-      "clicks": 13,
+      "impressions": 535,
+      "clicks": 22,
       "lastUpdated": "2026-04-23T00:00:00Z"
     },
     {
@@ -3660,7 +3660,7 @@
       "slug": "crop-image-online-free",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/crop-image-online-free",
-      "impressions": 1,
+      "impressions": 5,
       "clicks": 0,
       "lastUpdated": "2026-04-23T00:00:00Z"
     },
@@ -3669,7 +3669,7 @@
       "slug": "crop-image-to-circle",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/crop-image-to-circle",
-      "impressions": 1,
+      "impressions": 202,
       "clicks": 0,
       "lastUpdated": "2026-04-23T00:00:00Z"
     },
@@ -3678,7 +3678,7 @@
       "slug": "exif-remover",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/exif-remover",
-      "impressions": 1,
+      "impressions": 7,
       "clicks": 0,
       "lastUpdated": "2026-04-23T00:00:00Z"
     },
@@ -3687,7 +3687,7 @@
       "slug": "gif-to-jpg",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/gif-to-jpg",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-03-04T00:00:00Z"
     },
@@ -3696,7 +3696,7 @@
       "slug": "gif-to-png",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/convert/gif-to-png",
-      "impressions": 1,
+      "impressions": 3,
       "clicks": 0,
       "lastUpdated": "2026-04-23T00:00:00Z"
     },
@@ -3705,7 +3705,7 @@
       "slug": "gif-to-webp",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/convert/gif-to-webp",
-      "impressions": 1,
+      "impressions": 8,
       "clicks": 0,
       "lastUpdated": "2026-04-23T00:00:00Z"
     },
@@ -3714,7 +3714,7 @@
       "slug": "heic-to-jpg",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/heic-to-jpg",
-      "impressions": 1,
+      "impressions": 3,
       "clicks": 0,
       "lastUpdated": "2026-03-04T00:00:00Z"
     },
@@ -3723,7 +3723,7 @@
       "slug": "heic-to-png",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/heic-to-png",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2026-03-04T00:00:00Z"
     },
@@ -3732,7 +3732,7 @@
       "slug": "image-compressor",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/compress/image-compressor",
-      "impressions": 1,
+      "impressions": 2,
       "clicks": 0,
       "lastUpdated": "2025-12-10T00:00:00Z"
     },
@@ -3741,7 +3741,7 @@
       "slug": "image-cropper",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/image-cropper",
-      "impressions": 1,
+      "impressions": 3,
       "clicks": 0,
       "lastUpdated": "2026-04-23T00:00:00Z"
     },
@@ -3750,8 +3750,8 @@
       "slug": "image-cutout-tool",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/image-cutout-tool",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 403,
+      "clicks": 18,
       "lastUpdated": "2026-01-06T00:00:00Z"
     },
     {
@@ -3759,7 +3759,7 @@
       "slug": "image-resizer",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/resize/image-resizer",
-      "impressions": 1,
+      "impressions": 4,
       "clicks": 0,
       "lastUpdated": "2025-12-10T00:00:00Z"
     },
@@ -3768,8 +3768,8 @@
       "slug": "image-to-pdf",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/image-to-pdf",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 32,
+      "clicks": 1,
       "lastUpdated": "2026-03-04T00:00:00Z"
     },
     {
@@ -3777,7 +3777,7 @@
       "slug": "image-to-text",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/image-to-text",
-      "impressions": 1,
+      "impressions": 51,
       "clicks": 0,
       "lastUpdated": "2026-03-04T00:00:00Z"
     },
@@ -3786,8 +3786,8 @@
       "slug": "jpg-to-pdf",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/jpg-to-pdf",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 2017,
+      "clicks": 1,
       "lastUpdated": "2026-03-04T00:00:00Z"
     },
     {
@@ -3795,8 +3795,8 @@
       "slug": "jpg-to-png",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/convert/jpg-to-png",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 5,
+      "clicks": 1,
       "lastUpdated": "2025-12-10T00:00:00Z"
     },
     {
@@ -3804,8 +3804,8 @@
       "slug": "jpg-to-webp",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/convert/jpg-to-webp",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 8,
+      "clicks": 1,
       "lastUpdated": "2025-12-10T00:00:00Z"
     },
     {
@@ -3813,8 +3813,8 @@
       "slug": "make-image-transparent",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/make-image-transparent",
-      "impressions": 16840,
-      "clicks": 122,
+      "impressions": 19443,
+      "clicks": 175,
       "lastUpdated": "2026-03-04T00:00:00Z"
     },
     {
@@ -3822,8 +3822,8 @@
       "slug": "ocr-online",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/ocr-online",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 1797,
+      "clicks": 13,
       "lastUpdated": "2026-03-04T00:00:00Z"
     },
     {
@@ -3831,7 +3831,7 @@
       "slug": "pdf-to-jpg",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/pdf-to-jpg",
-      "impressions": 1,
+      "impressions": 17,
       "clicks": 0,
       "lastUpdated": "2026-03-04T00:00:00Z"
     },
@@ -3849,8 +3849,8 @@
       "slug": "photo-quality-enhancer",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/photo-quality-enhancer",
-      "impressions": 3602,
-      "clicks": 33,
+      "impressions": 2818,
+      "clicks": 29,
       "lastUpdated": "2026-03-04T00:00:00Z"
     },
     {
@@ -3858,7 +3858,7 @@
       "slug": "png-to-jpg",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/convert/png-to-jpg",
-      "impressions": 1,
+      "impressions": 3,
       "clicks": 0,
       "lastUpdated": "2025-12-10T00:00:00Z"
     },
@@ -3867,7 +3867,7 @@
       "slug": "png-to-pdf",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/png-to-pdf",
-      "impressions": 1,
+      "impressions": 6,
       "clicks": 0,
       "lastUpdated": "2026-04-23T00:00:00Z"
     },
@@ -3876,7 +3876,7 @@
       "slug": "png-to-webp",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/convert/png-to-webp",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-12-10T00:00:00Z"
     },
@@ -3885,8 +3885,8 @@
       "slug": "remove-bg",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/remove-bg",
-      "impressions": 34742,
-      "clicks": 46,
+      "impressions": 39381,
+      "clicks": 56,
       "lastUpdated": "2026-01-06T00:00:00Z"
     },
     {
@@ -3894,8 +3894,8 @@
       "slug": "remove-gps-from-photo",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/remove-gps-from-photo",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 58,
+      "clicks": 3,
       "lastUpdated": "2026-04-23T00:00:00Z"
     },
     {
@@ -3903,7 +3903,7 @@
       "slug": "remove-metadata-from-photo",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/remove-metadata-from-photo",
-      "impressions": 1,
+      "impressions": 11,
       "clicks": 0,
       "lastUpdated": "2026-04-23T00:00:00Z"
     },
@@ -3912,8 +3912,8 @@
       "slug": "resize-image-for-discord",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/resize/resize-image-for-discord",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 327,
+      "clicks": 7,
       "lastUpdated": "2025-01-19"
     },
     {
@@ -3921,8 +3921,8 @@
       "slug": "resize-image-for-facebook",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/resize/resize-image-for-facebook",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 1223,
+      "clicks": 1,
       "lastUpdated": "2025-01-19"
     },
     {
@@ -3930,7 +3930,7 @@
       "slug": "resize-image-for-instagram",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/resize/resize-image-for-instagram",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -3939,8 +3939,8 @@
       "slug": "resize-image-for-linkedin",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/resize/resize-image-for-linkedin",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 1269,
+      "clicks": 1,
       "lastUpdated": "2025-01-19"
     },
     {
@@ -3948,7 +3948,7 @@
       "slug": "resize-image-for-pinterest",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/resize/resize-image-for-pinterest",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -3957,8 +3957,8 @@
       "slug": "resize-image-for-reddit",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/resize/resize-image-for-reddit",
-      "impressions": 401,
-      "clicks": 13,
+      "impressions": 879,
+      "clicks": 23,
       "lastUpdated": "2025-01-19"
     },
     {
@@ -3966,8 +3966,8 @@
       "slug": "resize-image-for-telegram",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/resize/resize-image-for-telegram",
-      "impressions": 1972,
-      "clicks": 53,
+      "impressions": 2729,
+      "clicks": 73,
       "lastUpdated": "2025-01-19"
     },
     {
@@ -3975,8 +3975,8 @@
       "slug": "resize-image-for-tiktok",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/resize/resize-image-for-tiktok",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 7,
+      "clicks": 1,
       "lastUpdated": "2025-01-19"
     },
     {
@@ -3984,8 +3984,8 @@
       "slug": "resize-image-for-twitter",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/resize/resize-image-for-twitter",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 513,
+      "clicks": 6,
       "lastUpdated": "2025-01-19"
     },
     {
@@ -3993,7 +3993,7 @@
       "slug": "resize-image-for-youtube",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/resize/resize-image-for-youtube",
-      "impressions": 1,
+      "impressions": 46,
       "clicks": 0,
       "lastUpdated": "2025-01-19"
     },
@@ -4002,8 +4002,8 @@
       "slug": "smart-ai-enhancement",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/smart-ai-enhancement",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 261,
+      "clicks": 2,
       "lastUpdated": "2026-01-20T00:00:00Z"
     },
     {
@@ -4011,8 +4011,8 @@
       "slug": "strip-exif-data-online",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/strip-exif-data-online",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 119,
+      "clicks": 2,
       "lastUpdated": "2026-04-23T00:00:00Z"
     },
     {
@@ -4020,7 +4020,7 @@
       "slug": "svg-to-jpg",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/svg-to-jpg",
-      "impressions": 1,
+      "impressions": 3,
       "clicks": 0,
       "lastUpdated": "2026-03-04T00:00:00Z"
     },
@@ -4029,8 +4029,8 @@
       "slug": "transparent-background-maker",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/transparent-background-maker",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 86,
+      "clicks": 2,
       "lastUpdated": "2026-01-06T00:00:00Z"
     },
     {
@@ -4047,7 +4047,7 @@
       "slug": "webp-to-pdf",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/webp-to-pdf",
-      "impressions": 1,
+      "impressions": 86,
       "clicks": 0,
       "lastUpdated": "2026-04-23T00:00:00Z"
     },
@@ -4056,8 +4056,8 @@
       "slug": "webp-to-png",
       "locale": "en",
       "url": "https://myimageupscaler.com/tools/convert/webp-to-png",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 10,
+      "clicks": 1,
       "lastUpdated": "2025-12-10T00:00:00Z"
     },
     {
@@ -4065,8 +4065,8 @@
       "slug": "amazon-product-photos",
       "locale": "en",
       "url": "https://myimageupscaler.com/use-cases/amazon-product-photos",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 19,
+      "clicks": 2,
       "lastUpdated": "2025-12-26T00:00:00Z"
     },
     {
@@ -4074,8 +4074,8 @@
       "slug": "anime-image-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/use-cases/anime-image-upscaler",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 832,
+      "clicks": 42,
       "lastUpdated": "2025-12-26T00:00:00Z"
     },
     {
@@ -4083,8 +4083,8 @@
       "slug": "cartoon-image-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/use-cases/cartoon-image-upscaler",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 33,
+      "clicks": 3,
       "lastUpdated": "2025-12-26T00:00:00Z"
     },
     {
@@ -4092,7 +4092,7 @@
       "slug": "ecommerce-product-photos",
       "locale": "en",
       "url": "https://myimageupscaler.com/use-cases/ecommerce-product-photos",
-      "impressions": 1,
+      "impressions": 13,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -4101,7 +4101,7 @@
       "slug": "old-photo-restoration",
       "locale": "en",
       "url": "https://myimageupscaler.com/use-cases/old-photo-restoration",
-      "impressions": 1,
+      "impressions": 12,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -4119,8 +4119,8 @@
       "slug": "portrait-photo-upscaler",
       "locale": "en",
       "url": "https://myimageupscaler.com/use-cases/portrait-photo-upscaler",
-      "impressions": 1,
-      "clicks": 0,
+      "impressions": 104,
+      "clicks": 2,
       "lastUpdated": "2025-12-26T00:00:00Z"
     },
     {
@@ -4128,7 +4128,7 @@
       "slug": "print-preparation",
       "locale": "en",
       "url": "https://myimageupscaler.com/use-cases/print-preparation",
-      "impressions": 1,
+      "impressions": 2,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -4137,7 +4137,7 @@
       "slug": "product-photo-background-removal",
       "locale": "en",
       "url": "https://myimageupscaler.com/use-cases/product-photo-background-removal",
-      "impressions": 1,
+      "impressions": 543,
       "clicks": 0,
       "lastUpdated": "2026-01-06T00:00:00Z"
     },
@@ -4146,7 +4146,7 @@
       "slug": "real-estate-listings",
       "locale": "en",
       "url": "https://myimageupscaler.com/use-cases/real-estate-listings",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -4155,7 +4155,7 @@
       "slug": "real-estate-photo-enhancement",
       "locale": "en",
       "url": "https://myimageupscaler.com/use-cases/real-estate-photo-enhancement",
-      "impressions": 1,
+      "impressions": 8,
       "clicks": 0,
       "lastUpdated": "2025-12-26T00:00:00Z"
     },
@@ -4164,7 +4164,7 @@
       "slug": "social-media-images",
       "locale": "en",
       "url": "https://myimageupscaler.com/use-cases/social-media-images",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2025-12-19T00:00:00Z"
     },
@@ -4173,7 +4173,7 @@
       "slug": "ai-generated-optimization",
       "locale": "en",
       "url": "https://myimageupscaler.com/use-cases-expanded/ai-generated-optimization",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2024-12-19T10:00:00Z"
     },
@@ -4182,7 +4182,7 @@
       "slug": "architecture-construction",
       "locale": "en",
       "url": "https://myimageupscaler.com/use-cases-expanded/architecture-construction",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2024-12-19T10:00:00Z"
     },
@@ -4191,7 +4191,7 @@
       "slug": "digital-marketing-materials",
       "locale": "en",
       "url": "https://myimageupscaler.com/use-cases-expanded/digital-marketing-materials",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2024-12-19T10:00:00Z"
     },
@@ -4200,7 +4200,7 @@
       "slug": "medical-scientific-imaging",
       "locale": "en",
       "url": "https://myimageupscaler.com/use-cases-expanded/medical-scientific-imaging",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2024-12-19T10:00:00Z"
     },
@@ -4209,7 +4209,7 @@
       "slug": "print-publishing-workflows",
       "locale": "en",
       "url": "https://myimageupscaler.com/use-cases-expanded/print-publishing-workflows",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2024-12-19T10:00:00Z"
     },
@@ -4218,7 +4218,7 @@
       "slug": "product-photography-enhancement",
       "locale": "en",
       "url": "https://myimageupscaler.com/use-cases-expanded/product-photography-enhancement",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2024-12-19T10:00:00Z"
     },
@@ -4227,7 +4227,7 @@
       "slug": "real-estate-photography",
       "locale": "en",
       "url": "https://myimageupscaler.com/use-cases-expanded/real-estate-photography",
-      "impressions": 1,
+      "impressions": 18,
       "clicks": 0,
       "lastUpdated": "2024-12-19T10:00:00Z"
     },
@@ -4236,7 +4236,7 @@
       "slug": "restoration-preservation",
       "locale": "en",
       "url": "https://myimageupscaler.com/use-cases-expanded/restoration-preservation",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2024-12-19T10:00:00Z"
     },
@@ -4245,7 +4245,7 @@
       "slug": "social-media-content-creation",
       "locale": "en",
       "url": "https://myimageupscaler.com/use-cases-expanded/social-media-content-creation",
-      "impressions": 1,
+      "impressions": 0,
       "clicks": 0,
       "lastUpdated": "2024-12-19T10:00:00Z"
     },
@@ -4254,7 +4254,7 @@
       "slug": "web-design-development",
       "locale": "en",
       "url": "https://myimageupscaler.com/use-cases-expanded/web-design-development",
-      "impressions": 1,
+      "impressions": 20,
       "clicks": 0,
       "lastUpdated": "2024-12-19T10:00:00Z"
     }

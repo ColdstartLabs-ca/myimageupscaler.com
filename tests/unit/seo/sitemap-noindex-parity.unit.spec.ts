@@ -62,16 +62,15 @@ describe('sitemap and rendered noindex parity', () => {
       const xml = await (await (await loadRoute()).GET()).text();
       const urls = locs(xml);
       expect(urls).toContain(`https://myimageupscaler.com/${locale}/alternatives`);
-      expect(urls).not.toContain(
-        `https://myimageupscaler.com/${locale}/alternatives/vs-adobe-express`
-      );
-      const adobeMetadata = await resolveLocalePageMetadata(
+      // Pruned control: zero impressions in every locale of the committed snapshot.
+      expect(urls).not.toContain(`https://myimageupscaler.com/${locale}/alternatives/vs-fotor`);
+      const prunedMetadata = await resolveLocalePageMetadata(
         getAlternativeDataWithLocale,
         'alternatives',
-        'vs-adobe-express',
+        'vs-fotor',
         locale
       );
-      expect(adobeMetadata.robots).toMatchObject({ index: false });
+      expect(prunedMetadata.robots).toMatchObject({ index: false });
       if (locale === 'es') {
         expect(urls).not.toContain('https://myimageupscaler.com/es/alternatives/vs-imgupscaler');
       }

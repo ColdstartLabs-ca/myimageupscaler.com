@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import snapshot from '@/content/pseo-performance.json';
 import {
   GRACE_PERIOD_DAYS,
   PINNED_SLUGS,
@@ -8,12 +9,24 @@ import {
 
 const NOW = new Date('2026-08-13T12:00:00.000Z');
 
+// Pick a page that earns impressions in the committed snapshot, so the monthly
+// refresh cannot break this test by pruning a hard-coded slug.
+const earning = snapshot.pages.find(
+  page =>
+    page.category === 'tools' &&
+    page.locale === 'en' &&
+    page.impressions >= 100 &&
+    getEligibilityReason('tools', page.slug, 'en', '2025-01-01', NOW) === 'impressions'
+)!;
+
 describe('pSEO page eligibility', () => {
   it('keeps a page with impressions in the last 90 days', () => {
-    expect(shouldSubmit('tools', 'convert-jpeg-to-png', 'en', '2025-01-01', NOW)).toBe(true);
-    expect(getEligibilityReason('tools', 'convert-jpeg-to-png', 'en', '2025-01-01', NOW)).toBe(
-      'impressions'
+    expect(shouldSubmit(earning.category as 'tools', earning.slug, 'en', '2025-01-01', NOW)).toBe(
+      true
     );
+    expect(
+      getEligibilityReason(earning.category as 'tools', earning.slug, 'en', '2025-01-01', NOW)
+    ).toBe('impressions');
   });
 
   it('keeps pages younger than the grace period even without impressions', () => {

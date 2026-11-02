@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import snapshot from '@/content/pseo-performance.json';
 import { generateMetadata } from '@/lib/seo/metadata-factory';
 
 vi.mock('@shared/config/env', () => ({
@@ -33,7 +34,15 @@ describe('pruned page signals', () => {
   });
 
   it('keeps a click-producing page indexable', () => {
-    const metadata = generateMetadata(page('convert-jpeg-to-png'), 'tools', 'en');
+    // Derived from the committed snapshot so the monthly refresh cannot prune the fixture.
+    const earning = snapshot.pages.find(
+      p =>
+        p.category === 'tools' &&
+        p.locale === 'en' &&
+        p.clicks > 0 &&
+        p.slug !== 'ai-image-upscaler'
+    )!;
+    const metadata = generateMetadata(page(earning.slug), 'tools', 'en');
 
     expect(metadata.robots).toMatchObject({ index: true, follow: true });
   });

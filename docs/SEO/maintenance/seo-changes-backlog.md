@@ -12,6 +12,15 @@ Maintenance rules:
 
 ## 2026-11-02
 
+### pSEO performance snapshot refreshed — unblocks deploy gate; 37 net pages pruned
+
+- **Why:** `yarn seo:indexation:gate` blocked deploy: the report and `content/pseo-performance.json` passed the 35-day limit (Sep 28 → Nov 2). Refreshed with `yarn seo:sync:performance` (GSC 90-day window **2026-08-02 → 2026-10-30**, 472 pages, indexation **66.95%**, `seo-reports/indexation-2026-10-30.md`). The gate passes because the diff adds no pSEO rows.
+- **Effect:** pruned pages (noindex,follow + sitemap removal) **107 → 144** (73 newly pruned, 36 restored). Decision (Opus 5.5 review, João delegated): accept the real 90-day verdict, pin nothing. All 73 were English with a carried-over `impressions: 1` flag (not real counts); 57 have 0 impressions in 180 days; only 4 had 1–2 clicks. Groups: compare 23, tools 13, platform-format 11, use-cases-expanded 8. A longer window changes the count but keeps the same 0–5 impression tail.
+- **Do not read as a decline:** the 76.06% → 66.95% drop mostly removes the inflated flag baseline. The refresh lost 23.4% of earning pages (guard limit 25%).
+- **Tests:** 8 tests that hard-coded pruned pages now pick fixtures from the snapshot (`page-eligibility`, `pruned-page-signals`, `sitemap-noindex-parity` uses `vs-fotor` as pruned control); the duplicate-row merge test uses a mocked snapshot.
+- **Rollback:** `git revert` the commit and deploy. **Readback 2026-11-30:** recheck the 4 click-earning pruned pages (`ai-sharpness-enhancement-upscaler`, `tiff-upscale-4x`, `free-ai-photo-enhancer`, `free-background-remover`) and total organic clicks. Pruning is one-way, since a noindexed page cannot earn impressions.
+- **Note:** prod `myimageupscaler-api-prod` and local `.env.api` GSC keys fail with `invalid_grant`; the refresh used the `gsc-analysis` service-account key. Rotate before the next monthly refresh.
+
 ### Blog growth operator — eight sitemap/noindex conflicts fixed; deployment pending
 
 - **Governing state:** read the Oct 26/19 cron outputs, canonical backlogs/changelog, Nov 1 GSC report and affected-file history. Today's newer Three Kings entry governs: 0 EDIT_NOW / 0 REGRESSION / 5 HOLD / 2 GATED / 1 STOP / 4 VERDICT. Preserve Nov 6/13/16 experiment gates; the print source is already API-resolved, so the older cron's manual-indexing recommendation is superseded. Class A's additional enlarger candidate has 8 clicks / 1,724 impressions / position 10.08 but API `updated_at` Oct 22, so no overlapping rewrite; its earliest 14-complete-day final-data review is Nov 9. No new distinct-intent post or repeated link experiment was justified. Selected the concrete class B issue already recorded Nov 1.

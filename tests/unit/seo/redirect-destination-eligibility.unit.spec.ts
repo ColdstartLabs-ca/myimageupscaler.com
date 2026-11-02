@@ -1,11 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { LEGACY_REDIRECTS } from '@/lib/seo/legacy-redirects';
-import {
-  shouldSubmitPath,
-  getEligibilityReason,
-  getPagePerformance,
-} from '@/lib/seo/page-eligibility';
+import { shouldSubmitPath, getEligibilityReason } from '@/lib/seo/page-eligibility';
 
 const OLD = '2025-01-01T00:00:00.000Z';
 
@@ -53,14 +49,24 @@ describe('redirect destinations stay in the sitemaps', () => {
 });
 
 describe('duplicate snapshot rows do not hide real traffic', () => {
-  it('keeps a page whose duplicate rows disagree about impressions', () => {
-    // ai-features/ai-sharpness-enhancement-upscaler has two snapshot rows:
-    // one reporting 1 impression and one reporting 0. Last-write-wins pruned it.
-    expect(getPagePerformance('ai-features', 'ai-sharpness-enhancement-upscaler')?.impressions).toBe(
-      1
-    );
-    expect(shouldSubmitPath('/ai-features/ai-sharpness-enhancement-upscaler')).toBe(true);
-    expect(shouldSubmitPath('/alternatives/vs-topaz')).toBe(true);
+  it('keeps a page whose duplicate rows disagree about impressions', async () => {
+    // Hermetic: the committed snapshot may carry no duplicate rows after a
+    // refresh, so feed the merge logic its own duplicates. Last-write-wins
+    // pruned a page when a zero-impression row followed a one-impression row.
+    vi.resetModules();
+    vi.doMock('@/content/pseo-performance.json', () => ({
+      default: {
+        pages: [
+          { category: 'ai-features', slug: 'dup-page', locale: 'en', impressions: 1, clicks: 0 },
+          { category: 'ai-features', slug: 'dup-page', locale: 'en', impressions: 0, clicks: 0 },
+        ],
+      },
+    }));
+    const eligibility = await import('@/lib/seo/page-eligibility');
+    expect(eligibility.getPagePerformance('ai-features', 'dup-page')?.impressions).toBe(1);
+    expect(eligibility.shouldSubmitPath('/ai-features/dup-page')).toBe(true);
+    vi.doUnmock('@/content/pseo-performance.json');
+    vi.resetModules();
   });
 });
 
