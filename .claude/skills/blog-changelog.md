@@ -1,5 +1,12 @@
 # Blog Changelog
 
+## 2026-11-02
+
+### Verification: Two closed Three Kings windows; two post-change crawls resolved
+
+**Affected:** best-free-ai-image-upscaler-2026-tested-compared, best-image-upscaler, best-ai-upscaler, what-resolution-for-print
+**Changes:** No production edit or rollback. Final GSC through Oct 29 judges the Oct 13 flagship recovery **FLAT** (103→78 clicks/14d; site-adjusted ratio 0.93, position flat, impressions +7%) and Oct 15 software-body exposure **WIN** (9→10 clicks/14d; site-adjusted ratio 1.38, position improved 1.7, impressions +7%). The latter is a low-volume policy result, not proof of causation. Recorded both outcomes without advancing/restarting rung 3. Authenticated API and normal rendered HTML remain correct for six inspected pages (200, one self-canonical, index/follow); best-image body hash and previous rollback bodies match ledger anchors. API-resolved existing best-ai and print-link indexing rows from successful post-Oct-26 crawls Nov 1 and Oct 27 respectively, with Submitted and indexed / indexing allowed / matching canonicals; no manual request claimed. Text and YouTube crawl timestamps still predate their writes and remain pending. Native browser timed out twice despite a successful CLI connectivity test; no isolated-browser bypass. Backlog 71→69 unique pending URLs. No backup required because no production write; no deployment, new post or experiment reset. Next final-data gate Nov 6 (TikTok), Nov 13 (Oct 26 rollbacks/link), Nov 16 (text); next pending-crawl check Nov 5.
+
 ## 2026-10-29
 
 ### SEO: Text-readability rung-2 meta description live

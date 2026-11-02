@@ -29,6 +29,46 @@ describe('indexing backlog state', () => {
     }
   });
 
+  it('resolves only the November 2 verified post-change crawls without inventing UI requests', () => {
+    for (const [slug, crawl] of [
+      ['best-ai-upscaler', '2026-11-01T12:58:39Z'],
+      ['what-resolution-for-print', '2026-10-27T16:07:15Z'],
+    ]) {
+      const matches = rowFor(slug);
+      expect(matches, slug).toHaveLength(1);
+      expect(matches[0], slug).toMatch(/^- \[x\]/);
+      expect(matches[0], slug).toContain('API-resolved 2026-11-02, not a manual request');
+      expect(matches[0], slug).toContain('Submitted and indexed');
+      expect(matches[0], slug).toContain('indexing allowed');
+      expect(matches[0], slug).toContain('matching Google/user canonicals');
+      expect(matches[0], slug).toContain(crawl);
+      expect(matches[0], slug).toContain('2026-10-26');
+      expect(matches[0], slug).toContain('2026-11-13');
+    }
+  });
+
+  it('records closed flagship and software windows without restarting either ladder', () => {
+    const ledger = JSON.parse(
+      fs.readFileSync('docs/SEO/maintenance/three-kings-ledger.json', 'utf8')
+    );
+    for (const [url, date, verdict, measuredThrough, adjRatio] of [
+      [
+        '/blog/best-free-ai-image-upscaler-2026-tested-compared',
+        '2026-10-13',
+        'FLAT',
+        '2026-10-27',
+        0.93,
+      ],
+      ['/blog/best-image-upscaler', '2026-10-15', 'WIN', '2026-10-29', 1.38],
+    ]) {
+      const entry = ledger.entries.find((item: { url: string }) => item.url === url);
+      const edit = entry.history.find((item: { date: string }) => item.date === date);
+      expect(edit.outcome).toMatchObject({ verdict, measuredThrough, adjRatio });
+      expect(edit.rung).toBe(3);
+      expect(edit.previousValue).toBeTruthy();
+    }
+  });
+
   it('does not submit best-image while its final public copy remains pending', () => {
     const ledger = JSON.parse(
       fs.readFileSync(
