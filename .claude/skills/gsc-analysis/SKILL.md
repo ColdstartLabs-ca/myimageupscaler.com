@@ -170,6 +170,9 @@ Focus on:
     check a recent deploy, and do not compare them with complete days.
 12. `anonymizedTraffic` for pages whose clicks come mostly from hidden queries.
 
+Quick wins with `suspectPhantom: true` have 250 or more impressions, position 10 or better and no
+click. They rank last. Check country and device before you edit for one.
+
 Queries with more than 5,000 impressions and CTR below 0.05% are named in
 `quarantinedQueries`, remain flagged in the raw query array, and are excluded only from the clean
 CTR/position siblings. Review the named rows before reinstating one; never silently delete them.

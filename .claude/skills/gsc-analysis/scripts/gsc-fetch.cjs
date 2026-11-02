@@ -32,6 +32,10 @@ const SEARCH_APPEARANCE_TYPES = new Set(['web', 'image', 'video', 'news']);
 const PACIFIC_TIMEZONE = 'America/Los_Angeles';
 const PHANTOM_IMPRESSION_THRESHOLD = 5000;
 const PHANTOM_CTR_THRESHOLD = 0.0005;
+// Page-one rows with this many impressions and no click are rarely real demand. They stay
+// listed, flagged and ranked last, because a smaller query can still be genuine.
+const SUSPECT_PHANTOM_MIN_IMPRESSIONS = 250;
+const SUSPECT_PHANTOM_MAX_POSITION = 10;
 const HISTORY_DAYS = 486; // Search Console keeps 16 months.
 const RETRYABLE_STATUS = new Set([429, 500, 502, 503, 504]);
 const MAX_ATTEMPTS = 4;
@@ -973,6 +977,22 @@ function joinQueryPageData(queryRows, pageRows, queryPageRows, brandPatterns) {
   return { queries, pages };
 }
 
+function isSuspectPhantom(query) {
+  return (
+    query.clicks === 0 &&
+    query.position <= SUSPECT_PHANTOM_MAX_POSITION &&
+    query.impressions >= SUSPECT_PHANTOM_MIN_IMPRESSIONS
+  );
+}
+
+function compareQuickWins(a, b) {
+  return (
+    Number(Boolean(a.suspectPhantom)) - Number(Boolean(b.suspectPhantom)) ||
+    b.potentialClicks - a.potentialClicks ||
+    b.impressions - a.impressions
+  );
+}
+
 function buildLowHangingFruit(queries) {
   return queries
     .filter(query => !query.isBranded && !query.isDomainLike)
@@ -982,9 +1002,11 @@ function buildLowHangingFruit(queries) {
       potentialClicks: estimatePotentialClicks(query.impressions, query.position, query.ctr),
       difficulty: query.position <= 12 ? 'easy' : query.position <= 18 ? 'medium' : 'hard',
       opportunityScore: scoreOpportunity(query),
+      suspectPhantom: isSuspectPhantom(query),
     }))
     .sort((a, b) => b.potentialClicks - a.potentialClicks || b.impressions - a.impressions)
-    .slice(0, 50);
+    .slice(0, 50)
+    .sort(compareQuickWins);
 }
 
 function buildCtrOpportunities(queries) {
@@ -1978,7 +2000,8 @@ function summarizeInspections(inspections) {
       )
       .map(item => ({ url: item.url, lastCrawlTime: item.lastCrawlTime })),
     canonicalMismatches: inspections.filter(item => item.canonicalMismatch).map(item => item.url),
-    pagesMissingFromKnownSitemaps: inspections
+    // Google's own record, which is not sitemap membership. See sitemapCoverage for that.
+    pagesGoogleLinksToNoSitemap: inspections
       .filter(item => !item.sitemap.length)
       .map(item => item.url),
     blockedOrBrokenPages: inspections
@@ -2070,9 +2093,7 @@ function buildGrowthOverview(searchTypes, primaryType) {
 
   return {
     primaryType,
-    quickWins: quickWins
-      .sort((a, b) => b.potentialClicks - a.potentialClicks || b.impressions - a.impressions)
-      .slice(0, 30),
+    quickWins: quickWins.sort(compareQuickWins).slice(0, 30),
     contentCreation: contentCreation
       .sort((a, b) => b.opportunityScore - a.opportunityScore || b.impressions - a.impressions)
       .slice(0, 30),
@@ -2273,6 +2294,7 @@ module.exports = {
   buildGroupComparison,
   buildLongTrend,
   buildLowHangingFruit,
+  summarizeInspections,
   buildPositionBuckets,
   buildSitemapCoverage,
   buildStableCohortPosition,

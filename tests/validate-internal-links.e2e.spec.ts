@@ -67,10 +67,12 @@ const results: ILinkValidationResult[] = [];
 
 test.describe('Internal Link Validation', () => {
   // Test static tool pages exist
-  test('Static tool pages should be accessible', async ({ page }) => {
+  test('Static tool pages should be accessible', async ({ request }) => {
     for (const slug of VALID_STATIC_TOOLS) {
       const url = `/tools/${slug}`;
-      const response = await page.goto(url);
+      // request.get, not page.goto: these loops only assert the HTTP status, and a full
+      // browser navigation makes the dev server compile and serve every asset per page.
+      const response = await request.get(url);
 
       results.push({
         url,
@@ -85,11 +87,11 @@ test.describe('Internal Link Validation', () => {
   });
 
   // Test interactive tool pages exist at correct paths
-  test('Interactive tool pages should be accessible at correct paths', async ({ page }) => {
+  test('Interactive tool pages should be accessible at correct paths', async ({ request }) => {
     test.setTimeout(60000); // Increase timeout to 60 seconds for all 15 tools
     for (const tool of VALID_INTERACTIVE_TOOLS) {
       const url = tool.path;
-      const response = await page.goto(url);
+      const response = await request.get(url);
 
       results.push({
         url,
@@ -104,10 +106,10 @@ test.describe('Internal Link Validation', () => {
   });
 
   // Test valid guide pages exist
-  test('Valid guide pages should be accessible', async ({ page }) => {
+  test('Valid guide pages should be accessible', async ({ request }) => {
     for (const slug of VALID_GUIDES) {
       const url = `/guides/${slug}`;
-      const response = await page.goto(url);
+      const response = await request.get(url);
 
       results.push({
         url,
@@ -122,8 +124,8 @@ test.describe('Internal Link Validation', () => {
   });
 
   // Test related pages section on a sample page
-  test('Related pages should contain valid links', async ({ page }) => {
-    test.setTimeout(120000); // Each related link is a dev-server navigation; 8 links x 2 gotos exceeds 60s under load
+  test('Related pages should contain valid links', async ({ page, request }) => {
+    test.setTimeout(120000); // Hub page is a dev-server navigation; the links themselves are HTTP-only
     const url = '/tools/ai-image-upscaler';
     await page.goto(url);
 
@@ -138,24 +140,21 @@ test.describe('Internal Link Validation', () => {
       const href = await link.getAttribute('href');
 
       if (href) {
-        // Navigate to each related link and verify it's accessible
-        const linkUrl = href.startsWith('http') ? href : href;
-        const response = await page.goto(linkUrl);
+        // request.get instead of a full navigation: the loop only needs the status, and
+        // navigating away plus back doubles dev-server work per link.
+        const response = await request.get(href);
 
         results.push({
-          url: linkUrl,
-          linkType: linkUrl.includes('/tools/') ? 'tool' : 'guide',
-          status: response?.status() || 0,
-          isValid: response?.ok() || false,
-          issue: response?.ok() ? undefined : `HTTP ${response?.status()}`,
+          url: href,
+          linkType: href.includes('/tools/') ? 'tool' : 'guide',
+          status: response.status(),
+          isValid: response.ok(),
+          issue: response.ok() ? undefined : `HTTP ${response.status()}`,
         });
 
-        if (!response?.ok()) {
-          console.log(`  ❌ Broken link found: ${href} (HTTP ${response?.status()})`);
+        if (!response.ok()) {
+          console.log(`  ❌ Broken link found: ${href} (HTTP ${response.status()})`);
         }
-
-        // Navigate back to continue checking
-        await page.goto(url);
       }
     }
   });

@@ -14,7 +14,8 @@ const tkm = require(
   judgeEdits: (
     entry: { history: Array<Record<string, unknown>> },
     rows: unknown[],
-    dataEnd: string
+    dataEnd: string,
+    siteRows?: unknown[]
   ) => { judged: number; latestOutcome: string | null };
   windowClose: (date: string, days?: number) => string;
   cmdRecordEdit: (args: Record<string, string>) => void;
@@ -295,6 +296,79 @@ describe('three-kings-manager edit outcomes', () => {
     );
     const { judged } = tkm.judgeEdits(entry, rows, '2026-09-03');
     expect(judged).toBe(0);
+  });
+
+  describe('site-trend control', () => {
+    const EDIT_DATE = '2026-08-01';
+    const DATA_END = '2026-08-15';
+    const preDays = Array.from(
+      { length: 14 },
+      (_, i) => `2026-07-${String(18 + i).padStart(2, '0')}`
+    );
+    const postDays = Array.from(
+      { length: 14 },
+      (_, i) => `2026-08-${String(2 + i).padStart(2, '0')}`
+    );
+
+    // Clicks per day in the pre and post windows, for the page and for all other pages.
+    const judge = (
+      page: { pre: number; post: number; prePos?: number; postPos?: number },
+      others: { pre: number; post: number }
+    ) => {
+      const entry = {
+        history: [
+          { date: EDIT_DATE, rung: 3, field: 'title', outcome: null } as Record<string, unknown>,
+        ],
+      };
+      const pageRows = mkRows([
+        ...preDays.map(
+          d => [d, page.pre, 1000, page.prePos ?? 6] as [string, number, number, number]
+        ),
+        ...postDays.map(
+          d => [d, page.post, 1000, page.postPos ?? 6] as [string, number, number, number]
+        ),
+      ]);
+      const siteRows = mkRows([
+        ...preDays.map(
+          d => [d, page.pre + others.pre, 10000, 10] as [string, number, number, number]
+        ),
+        ...postDays.map(
+          d => [d, page.post + others.post, 10000, 10] as [string, number, number, number]
+        ),
+      ]);
+      const { latestOutcome } = tkm.judgeEdits(entry, pageRows, DATA_END, siteRows);
+      return { latestOutcome, latest: entry.history[0] };
+    };
+
+    it('does not judge LOSS when a page only tracks a site-wide decline', () => {
+      const { latestOutcome, latest } = judge({ pre: 10, post: 7.6 }, { pre: 100, post: 83 });
+
+      expect(latestOutcome).toBe('FLAT');
+      expect(latest.outcome).toMatchObject({ marketRatio: 0.83, adjRatio: 0.92 });
+      expect(tkm.isActionableRegression(latest)).toBe(false);
+    });
+
+    it('still judges LOSS when a page falls more than the rest of the site', () => {
+      const { latestOutcome, latest } = judge({ pre: 10, post: 5 }, { pre: 100, post: 83 });
+
+      expect(latestOutcome).toBe('LOSS');
+      expect(tkm.isActionableRegression(latest)).toBe(true);
+    });
+
+    it('does not judge WIN when a page only tracks a site-wide rise', () => {
+      const { latestOutcome } = judge({ pre: 10, post: 15 }, { pre: 100, post: 150 });
+
+      expect(latestOutcome).toBe('FLAT');
+    });
+
+    it('still judges LOSS on a real ranking drop in a falling market', () => {
+      const { latestOutcome } = judge(
+        { pre: 10, post: 9, prePos: 6, postPos: 9 },
+        { pre: 100, post: 83 }
+      );
+
+      expect(latestOutcome).toBe('LOSS');
+    });
   });
 });
 

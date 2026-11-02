@@ -149,13 +149,12 @@ test.describe('Subscription Signup Proof Tests', () => {
       // so we need to wait for the loading state to complete
       await page.waitForLoadState('domcontentloaded');
 
-      // Wait for the success heading to appear (indicates loading is done)
+      // The heading only renders once the credit poll settles, and the page polls up to
+      // 10 times at 1s intervals (MAX_POLL_ATTEMPTS x POLL_INTERVAL_MS in
+      // app/[locale]/success/page.tsx). Anything under that budget races the page.
       await expect(page.locator('h1:has-text("Subscription Activated!")')).toBeVisible({
-        timeout: 15000,
+        timeout: 30000,
       });
-
-      // The success page polls for credits, which takes time. Wait a bit more.
-      await page.waitForTimeout(2000);
 
       // Assert: Success page shows credits balance (may be 0 if polling hasn't completed)
       // Just check that credits section is visible, not exact value
@@ -192,13 +191,12 @@ test.describe('Subscription Signup Proof Tests', () => {
       // Wait for the page to load - the success page polls for credits
       await page.waitForLoadState('domcontentloaded');
 
-      // Wait for the success heading to appear
+      // The heading only renders once the credit poll settles, and the page polls up to
+      // 10 times at 1s intervals (MAX_POLL_ATTEMPTS x POLL_INTERVAL_MS in
+      // app/[locale]/success/page.tsx). Anything under that budget races the page.
       await expect(page.locator('h1:has-text("Credits Purchased!")')).toBeVisible({
-        timeout: 15000,
+        timeout: 30000,
       });
-
-      // The success page polls for credits, which takes time. Wait a bit more.
-      await page.waitForTimeout(2000);
 
       // Assert: Credits section is visible
       const creditsSection = page

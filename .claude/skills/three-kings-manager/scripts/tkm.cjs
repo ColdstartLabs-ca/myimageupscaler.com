@@ -102,9 +102,21 @@ function windowStats(rows, end, days) {
   return { impressions: imps, clicks, position: pos };
 }
 
+// Click ratio of all other pages across the same windows. Null without a usable site series.
+function marketRatio(siteRows, preEnd, postEnd, days, pre, post) {
+  const sitePre = windowStats(siteRows, preEnd, days);
+  const sitePost = windowStats(siteRows, postEnd, days);
+  if (!sitePre || !sitePost) return null;
+  const otherPre = sitePre.clicks - pre.clicks;
+  const otherPost = sitePost.clicks - post.clicks;
+  return otherPre > 0 && otherPost > 0 ? otherPost / otherPre : null;
+}
+
 // Judge every completed edit window once: WIN / FLAT / LOSS, written back to the ledger.
-// A LOSS on the most recent edit raises the REGRESSION flag (rollback recommendation).
-function judgeEdits(entry, rows, dataEnd) {
+// Click thresholds compare the page with the rest of the site, so a site-wide move is
+// not credited to the edit. A LOSS on the most recent edit raises the REGRESSION flag
+// (rollback recommendation).
+function judgeEdits(entry, rows, dataEnd, siteRows) {
   const wd = entry.windowDays || WINDOW_DAYS;
   for (const h of entry.history) {
     if (h.outcome || h.liveVerification?.status === 'pending') continue;
@@ -117,14 +129,17 @@ function judgeEdits(entry, rows, dataEnd) {
     if (!pre || !post) continue;
     const preCpd = pre.clicks / wd;
     const postCpd = post.clicks / wd;
+    const market = marketRatio(siteRows, shift(h.date, -1), postEnd, wd, pre, post);
+    const expectedCpd = preCpd * (market ?? 1);
     let verdict = 'FLAT';
     if (preCpd === 0 && postCpd > 0) verdict = 'WIN';
-    else if (preCpd > 0 && postCpd >= preCpd * WIN_THRESHOLD) verdict = 'WIN';
-    else if (preCpd > 0 && postCpd <= preCpd * LOSS_THRESHOLD) verdict = 'LOSS';
+    else if (preCpd > 0 && postCpd >= expectedCpd * WIN_THRESHOLD) verdict = 'WIN';
+    else if (preCpd > 0 && postCpd <= expectedCpd * LOSS_THRESHOLD) verdict = 'LOSS';
     const posDeg = post.position - pre.position;
     const impDelta = pre.impressions ? (post.impressions / pre.impressions - 1) * 100 : null;
     if (verdict !== 'LOSS' && posDeg > POS_DEGRADE_LIMIT && postCpd <= preCpd) verdict = 'LOSS';
-    h.outcome = { verdict, preCpd: +preCpd.toFixed(2), postCpd: +postCpd.toFixed(2), posDelta: +posDeg.toFixed(1), impDelta: impDelta === null ? null : +impDelta.toFixed(0), measuredThrough: postEnd };
+    const control = market !== null && preCpd > 0 ? { marketRatio: +market.toFixed(2), adjRatio: +(postCpd / expectedCpd).toFixed(2) } : {};
+    h.outcome = { verdict, preCpd: +preCpd.toFixed(2), postCpd: +postCpd.toFixed(2), ...control, posDelta: +posDeg.toFixed(1), impDelta: impDelta === null ? null : +impDelta.toFixed(0), measuredThrough: postEnd };
   }
   const judged = entry.history.filter((h) => h.outcome);
   const latest = entry.history[entry.history.length - 1];
@@ -161,7 +176,7 @@ function cmdCheck(args) {
   for (const entry of ledger.entries) {
     const rows = data.pages[entry.label];
     if (!rows || !rows.length) { report.push({ url: entry.url, verdict: 'NO_DATA', reason: 'no series in export' }); continue; }
-    const { judged } = judgeEdits(entry, rows, data.end);
+    const { judged } = judgeEdits(entry, rows, data.end, data.daily);
     if (judged) ledgerDirty = true;
     const current = windowStats(rows, data.end, 14);
     const prior = windowStats(rows, shift(data.end, -14), 14);
@@ -171,7 +186,7 @@ function cmdCheck(args) {
     const latest = entry.history[entry.history.length - 1];
     if (isActionableRegression(latest)) {
       row.verdict = 'REGRESSION';
-      row.reason = `latest edit ${latest.date} (${latest.field}) judged LOSS: ${latest.outcome.preCpd.toFixed(2)}→${latest.outcome.postCpd.toFixed(2)} clicks/d, pos ${latest.outcome.posDelta > 0 ? '+' : ''}${latest.outcome.posDelta}. Rollback: restore the prior ${latest.field} (from backups/blog API), then run record-revert. Do not re-edit for 14 days.`;
+      row.reason = `latest edit ${latest.date} (${latest.field}) judged LOSS: ${latest.outcome.preCpd.toFixed(2)}→${latest.outcome.postCpd.toFixed(2)} clicks/d${latest.outcome.adjRatio === undefined ? '' : ` (site ratio ${latest.outcome.marketRatio}, adjusted ${latest.outcome.adjRatio})`}, pos ${latest.outcome.posDelta > 0 ? '+' : ''}${latest.outcome.posDelta}. Rollback: restore the prior ${latest.field} (from backups/blog API), then run record-revert. Do not re-edit for 14 days.`;
     }
     report.push(row);
   }

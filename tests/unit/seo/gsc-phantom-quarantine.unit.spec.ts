@@ -5,6 +5,8 @@ const require = createRequire(import.meta.url);
 const {
   quarantinePhantomQueries,
   buildPreviousQuarantine,
+  buildLowHangingFruit,
+  summarizeInspections,
 } = require('../../../.claude/skills/gsc-analysis/scripts/gsc-fetch.cjs');
 
 const phantom = {
@@ -69,5 +71,38 @@ describe('GSC phantom query quarantine', () => {
     ]);
     expect(result.impressionsExQuarantine).toBe(healthy.impressions);
     expect(result.positionExQuarantine).toBeCloseTo(6);
+  });
+});
+
+describe('GSC suspect phantom quick wins', () => {
+  const row = (query: string, impressions: number, clicks: number, position: number) => ({
+    query,
+    impressions,
+    clicks,
+    position,
+    ctr: clicks / impressions,
+  });
+
+  it('should flag a page-one query with no clicks and rank it last, without removing it', () => {
+    const wins = buildLowHangingFruit([
+      row('jpg to pdf', 1036, 0, 5.6),
+      row('image enlarger free', 378, 1, 9.8),
+      row('clear photo online', 100, 0, 8),
+      row('png upscaling algorithm', 2818, 0, 12),
+    ]);
+
+    expect(wins.at(-1)).toMatchObject({ query: 'jpg to pdf', suspectPhantom: true });
+    expect(
+      wins.filter((win: { suspectPhantom: boolean }) => win.suspectPhantom)
+    ).toHaveLength(1);
+  });
+});
+
+describe('GSC inspection summary', () => {
+  it('should not report an empty Google sitemap record as missing from our sitemaps', () => {
+    const summary = summarizeInspections([{ url: 'https://example.com/a', sitemap: [] }]);
+
+    expect(summary).not.toHaveProperty('pagesMissingFromKnownSitemaps');
+    expect(summary.pagesGoogleLinksToNoSitemap).toEqual(['https://example.com/a']);
   });
 });
