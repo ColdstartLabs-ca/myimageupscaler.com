@@ -12,6 +12,10 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 
 ## Pending
 
+### Sitemap/noindex submission cleanup — code ready 2026-11-02; awaiting deployment
+
+Commit `af9cc7f0` removes eight intentionally noindex URLs from submitted `<loc>` entries: `/compare/midjourney-vs-stable-diffusion`, `/es/alternatives/vs-imgupscaler`, and `/{es,pt,de,fr,it,ja}/alternatives/vs-adobe-express`. Normal public GETs confirmed all eight are currently 200/self-canonical/noindex and still submitted; real local route GETs omit them after the fix while preserving category hubs and the indexable English Adobe Express page. **Do not add these URLs to the request-indexing queue or change their robots directives.** No release, sitemap resubmission or manual indexing request was performed. Check release inclusion **2026-11-05**, then verify the seven live sitemaps after the next authorized deploy. Existing **69 unique pending URLs**, oldest group **2026-08-13**, remain unchanged; no URL rows added or duplicated. Blog experiment/indexing gates below are unaffected.
+
 ### Print export format support link — live verified 2026-10-26
 
 - [x] `https://myimageupscaler.com/blog/what-resolution-for-print` — **API-resolved 2026-11-02, not a manual request:** `Submitted and indexed`, indexing allowed, successful post-link-write crawl `2026-10-27T16:07:15Z`, matching Google/user canonicals. **Reopened 2026-10-26:** one contextual body link to `/blog/best-high-resolution-image-format`; authenticated content hash remains `eb24994a1eed700ee2e3251e7d19e3692e0fba20649266b80c91baf32724ea35`, and normal public rendered article exposes exactly one followed link (200, one self-canonical, index/follow). Prior June 5 change was API-resolved Aug 3. Native browser connection timed out twice; **no manual request claimed**. Link-effect window Oct 27–Nov 9; earliest final-data readback **2026-11-13**. Destination already indexed; no duplicate request or experiment reset.

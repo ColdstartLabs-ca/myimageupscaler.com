@@ -12,6 +12,14 @@ Maintenance rules:
 
 ## 2026-11-02
 
+### Blog growth operator — eight sitemap/noindex conflicts fixed; deployment pending
+
+- **Governing state:** read the Oct 26/19 cron outputs, canonical backlogs/changelog, Nov 1 GSC report and affected-file history. Today's newer Three Kings entry governs: 0 EDIT_NOW / 0 REGRESSION / 5 HOLD / 2 GATED / 1 STOP / 4 VERDICT. Preserve Nov 6/13/16 experiment gates; the print source is already API-resolved, so the older cron's manual-indexing recommendation is superseded. Class A's additional enlarger candidate has 8 clicks / 1,724 impressions / position 10.08 but API `updated_at` Oct 22, so no overlapping rewrite; its earliest 14-complete-day final-data review is Nov 9. No new distinct-intent post or repeated link experiment was justified. Selected the concrete class B issue already recorded Nov 1.
+- **Fresh evidence:** GSC Oct 3–30 vs Sep 5–Oct 2 export is complete (zero failed requests; query click coverage 50.48%): named non-brand clicks 2,545→1,813, branded 353→152, privacy-hidden 2,543→1,928. GA4 Organic Search Oct 5–Nov 1 vs Sep 7–Oct 4 sessions 6,362→4,321 (−32.08%); these are not signup counts. Normal public GETs prove all eight affected pages return 200 / self-canonical / noindex while present as submitted `<loc>` entries in seven live sitemaps. These eight URLs have no exact-page clicks/impressions in this export; the cleanup is not claimed to explain or reverse the traffic decline.
+- **Action/code:** commit `af9cc7f062335146e14314f8ca80a52ae6674068` (`fix(seo): exclude eight noindex sitemap submissions`). Shared direct/locale eligibility now rejects explicit `noindex` even for pinned/fresh pages. The six alternatives locale routes load their actual translated records, not English dates/slug inventory. Real route GETs remove `/compare/midjourney-vs-stable-diffusion`, `/es/alternatives/vs-imgupscaler`, and `/{es,pt,de,fr,it,ja}/alternatives/vs-adobe-express` from submitted `<loc>` output; all category hubs and the indexable English Adobe Express owner remain. Files: `lib/seo/{data-loader,page-eligibility,locale-sitemap-handler}.ts`, six `app/sitemap-alternatives-*.xml/route.ts`, new `tests/unit/seo/sitemap-noindex-parity.unit.spec.ts`. No robots/canonical/content/product-offer changes, production DB write or new backup needed.
+- **Verification:** new regression suite RED (9 failures), then GREEN; final 48/48 focused tests pass, including indexing-state guards. Entire SEO unit directory: 1,622 passed / 2 failed; both failures are pre-existing stale indexing-backlog assertions (`topaz-free-trial-snippet` still requires an unresolved row; `three-kings-2026-09-24` rejects the newer “successful post-rollback crawl” wording). Both test files and their backlog input were byte-identical to HEAD before this run's backlog annotation; do not undo evidence-backed indexing resolutions to appease them. `yarn verify` passes (0 lint errors / 1,832 existing warnings). Required aggregate `yarn test <affected paths>` passed 228 API tests / 32 skipped, then exceeded the 300-second cap in E2E; full-suite green is not claimed. Scoped diff check passes; concurrent Reddit log preserved.
+- **Canonical state/deploy/trigger:** indexing backlog annotated in place with this non-indexing cleanup; 69 unique pending URLs remain (oldest Aug 13), no duplicate rows or manual requests. Blog changelog unchanged because no post changed. **Local-only code; no push/deploy/cache purge. The eight live conflicts still exist until an authorized release includes this commit.** On the next authorized deploy, verify all seven affected sitemap GETs omit these eight `<loc>` URLs, retain the English owner/hubs, and confirm unchanged noindex pages; do not request indexing for these intentionally excluded URLs. Operational follow-up **Nov 5, 2026**: check deployment inclusion; if undeployed, carry this exact commit forward, not a new content experiment. Sitemap cleanup is not a traffic experiment; retain the independent blog gates above.
+
 ### Three Kings — closed-window outcomes recorded; two indexing rows API-resolved
 
 - **Final evidence/verdicts:** refreshed final GSC Jul 2–Oct 29, retaining the three-day holdback/excluded current day. **0 EDIT_NOW / 0 REGRESSION / 5 HOLD / 2 GATED / 1 STOP / 4 VERDICT / 0 NO_DATA** across all 12 ledger URLs. No eligible production edit or rollback; no rung restart. No production write means no new backup required or claimed. No deployment, cache purge, new post, deletion or unrelated product change.
@@ -140,158 +148,18 @@ Evidence (GSC final data, 4-week window Jun 29–Jul 26 vs Sep 14–Oct 11, −4
 - Verification: RED/GREEN content tests and affected manager/rollback suites pass **38/38**. Final `yarn verify` passes (TypeScript, ICU, schema, indexation and 12 cache-config tests; 0 ESLint errors, 1,680 existing warnings). A malformed generated `.next/dev/types/routes.d.ts` initially blocked final TypeScript verification: it contained a dangling route fragment after a closed declaration. Preserved the generated directory under scratch, regenerated real route types with `yarn next typegen`, and reran the full verify successfully; no product source/config changes. The required aggregate `yarn test <affected paths>` was attempted but its API Playwright web server timed out after 120 seconds before running tests; no full aggregate/API/E2E green claim. Corrected the existing Sep 24 bookkeeping test to accept evidence-backed resolved indexing rows instead of requiring them to stay permanently unchecked.
 - Next eligible program review: Oct 23 for four Oct 5 exposure rows; YouTube Oct 26. Best-image remains pending: reconcile normal public final-copy exposure first, retain `dbEditDate`, then anchor its measurement date to first confirmation and require 14 complete GSC days plus exporter holdback. No fixed best-image verdict date is valid yet. Retain all HOLD/GATED/STOP controls. Bookkeeping/code is local-only; not pushed or deployed; unrelated dirty files preserved.
 
-## 2026-10-11
+## Early October 2026 Rollup (Oct 3–11)
 
-### Worker-compatible blog image uploads
+Full detail through Oct 11: `git show cf5af57c:docs/SEO/maintenance/seo-changes-backlog.md`; older detail: `git show b129699d:docs/SEO/maintenance/seo-changes-backlog.md`; analysis and original baselines: [Oct 3 report](../reports/seo-report-2026-10-03.md).
 
-A built-Worker request to `/api/blog/images/upload` returned 500 during native `sharp` initialization, before auth or R2 access. The upload API and WebP output stay the same; conversion now uses Cloudflare transformations with scoped temporary R2 cleanup. Plan: `docs/PRDs/supabase-quota-recovery/02-r2-storage-migration.md`. No blog content, image references, metadata, schema, sitemap or indexing state changed. The first rollout was reverted because the probe's 52-character ownership tag exceeded the 50-character limit. The corrected probe passed on the hosted candidate at 0% traffic (upload 201, exact R2/public WebP bytes, fixture cleanup), and the candidate is now at 100% (BUILD_ID `pRwFsxSaN5IgYBMueHE_5`). Verified: 170 affected unit tests, 21 built-Worker release tests, database/home/auth guards. Manual GSC backlog items remain unchecked.
+- **Oct 10–11 R2/blog delivery:** `server/services/blogImageStorage.service.ts` writes WebP to `miu-public`/`assets.myimageupscaler.com` with relative storage paths and legacy Supabase compatibility (`r2-blog-images.unit.spec.ts`). The upload route's native `sharp` initialization failed in a built Worker; replaced conversion with Cloudflare transformations and scoped temporary R2 cleanup. First rollout was reverted for the probe's overlength ownership tag; corrected upload returned 201 with exact R2/public bytes and fixture cleanup, then went to 100% (BUILD_ID `pRwFsxSaN5IgYBMueHE_5`). No blog content/indexing change. Historical phase-3 follow-up: fresh backup, copy/hash verification before DB URL rewrite or Supabase deletion; the old `best-image-upscaling-tools-2026` asset `1769887240667-tools-inline-1.webp` was absent, and `1769887231945` is not a proven substitute. Later Oct 12 image-migration/Nov 1 redirect evidence supersedes stale blanket deploy blockers; unresolved asset identity and generic upload-error mapping were not re-verified in this rollup.
+- **Oct 10 retention copy:** all seven dashboard/terms locales disclose 30-day free-gallery inactivity expiry, at least seven days warning, sign-in preservation and paid exemption. `GalleryExpiryWarning.tsx` and adapter registration added; root-owned campaign seed/eligibility/send integration remained evidence-pending (PRD-SQR-04 AC-5; status not re-verified here). Privacy FAQ in `app/seo/data/tools.json` and all seven tool locales states temporary-upload deletion scheduled after two days, potentially later cleanup, separate saved-gallery policy; free-offer copy retained. Never delete shared temporary input objects on a single job's terminal event: two jobs can share `input_storage_path`; R2 lifecycle owns expiry. Guards: `gallery-retention-copy`, `multilocale-retention-copy`, `tools-input-retention-copy`, async-upscale/upscale-failure-recording and gallery-expiry-warning email specs.
+- **Oct 7 hero performance:** removed hydration-hidden opacity from pSEO intro and localized H1, preserving copy/CTAs. Throttled runs changed LCP ~6.8s (1/5) to FCP-aligned 3.4–4.4s (5/5); not field proof. Guards: `pseo-hero-lcp.unit.spec.ts`, `web-vitals-fixes.e2e.spec.ts`. Historical post-deploy PSI follow-up on `/tools/ai-image-upscaler` and one localized tool remains unverified in this rollup.
+- **Oct 8 YouTube exposure:** verified the Oct 5 body hash in normal HTML; successful post-write crawl `2026-10-07T04:57:12Z`, Submitted and indexed, matching canonicals; API-resolved, not manually requested. Anchored first confirmed exposure Oct 8 (Oct 9–22 measurement, Oct 26 final-data review). Later Oct 26 bounded rollback and Nov 13 cooling-off gate govern current action.
 
-## 2026-10-10
-
-### Free-gallery retention disclosure in dashboard and terms
-
-Source: [PRD-SQR-04 — Free-gallery 30-day inactivity expiry](../../PRDs/supabase-quota-recovery/04-free-gallery-30d-expiry.md) (Phase 2, AC-5).
-
-Changes:
-
-- The English dashboard gallery (`client/components/dashboard/Gallery.tsx`) shows a retention note: free gallery images may expire after 30 days of inactivity, the user gets at least 7 days warning, signing in keeps them, and paid plans are exempt. Copy lives at `dashboard.gallery.retentionNote` in `locales/en/dashboard.json`; other locales fall back through the i18n deep merge.
-- All seven `locales/*/terms.json` append one retention sentence to `credits.free.description`. Existing free-offer wording in that string is preserved.
-- New lifecycle email template `emails/templates/GalleryExpiryWarning.tsx` (identifier `gallery-expiry-warning`, campaign key `gallery_expiry_warning`), registered in `server/services/email-providers/base-email-provider-adapter.ts` template, import and subject maps. CTA links to `/dashboard/gallery`. The queue, campaign seed migration and eligibility remain root-owned and are not wired here.
-
-Validation:
-
-- New `tests/unit/emails/gallery-expiry-warning-email.unit.spec.tsx` (4 tests) covers the copy, the CTA, the negative claims and the adapter registration.
-- New `tests/unit/seo/gallery-retention-copy.unit.spec.ts` (4 tests) covers the English gallery note and the retention disclosure in all seven terms locales.
-- `tests/unit/seo/free-offer-conversion-copy.unit.spec.ts` and `tests/unit/seo/protected-pages.unit.spec.ts` pass unchanged. Full `yarn verify` not run while other R2/queue editors are active.
-
-Follow-up:
-
-- Root wires the `gallery_expiry_warning` campaign seed and the warning send path. AC-5 stays evidence-pending until that send path exists.
-
-### Blog images now write to Cloudflare R2 (public custom domain)
-
-Source: [PRD-SQR-02 — Move all MIU file storage from Supabase to Cloudflare R2](../../PRDs/supabase-quota-recovery/02-r2-storage-migration.md) (Phase 2, AC-3).
-
-Changes:
-
-- `server/services/blogImageStorage.service.ts` now uses the shared R2 module (`put`/`deleteObject`, `R2_PUBLIC_BUCKET`, `R2_PUBLIC_BASE_URL`) instead of Supabase Storage. New uploads land in `miu-public`, whose object key equals the relative `storage_path` (no `blog/` prefix, because the public bucket holds blog images only), and return `https://assets.myimageupscaler.com/<YYYY/MM/<timestamp>-<name>.webp>`.
-- The database `storage_path` stays relative (`YYYY/MM/<timestamp>-<name>.webp`), so the phase-3 DB URL rewrite can be rolled back. **No DB URL rewrite is applied in this change.**
-- `next.config.js` allow-lists `assets.myimageupscaler.com` in `images.remotePatterns`; `client/utils/image-loader.ts` routes the R2 public domain through the site's Cloudflare image resizing.
-- Legacy Supabase blog URLs still work (loader rewrites them to the Supabase render endpoint) and the Supabase remotePattern, CSP entry and layout preconnect stay, so no old blog image breaks. `app/[locale]/layout.tsx` adds a preconnect for the new assets domain.
-
-Validation:
-
-- New `tests/unit/seo/r2-blog-images.unit.spec.ts` (12 tests) covers the R2 upload/delete path, custom-domain URL, legacy Supabase compatibility, signed private R2 URLs passing through unchanged and private URLs not leaking into the public domain.
-- `tests/unit/blog` (98 tests), `tests/unit/seo/image-optimization` and `tests/unit/seo/blog-lcp-hints` pass. `tsc --noEmit` and ESLint are clean on the owned files. Full `yarn verify` not run while another R2 editor is active.
-
-Follow-up:
-
-- Validation is pending post-deploy (AC-3 remains evidence-pending until a real blog upload renders on production).
-- Phase 3: copy/verify R2 hashes with a fresh backup before any DB URL rewrite or Supabase delete. Until then both stores serve.
-- Known-broken baseline: `best-image-upscaling-tools-2026` references `2026/01/1769887240667-tools-inline-1.webp`, which is absent. The similarly named `1769887231945` exists but is **not** proven to be the same asset. Do not silently replace or whitelist this reference; resolve it with hash evidence during phase-3 verification.
-- `app/api/blog/images/upload/route.ts` still maps only the old Supabase error strings; an R2 failure falls through to the generic 500. Harmless, but worth aligning in a later pass.
-
-### Temporary upscale inputs kept; retention relies on the R2 lifecycle rule
-
-Source: [PRD-SQR-02 — Move all MIU file storage from Supabase to Cloudflare R2](../../PRDs/supabase-quota-recovery/02-r2-storage-migration.md).
-
-Decision (corrects the earlier "clean up on terminal result" entry):
-
-- No code deletes a temporary input at a job terminal state or at a sync route exit. Two jobs can share the same `input_storage_path` (the reservation has no unique constraint), so an early delete can break another pending job. The existing `inputs/` R2 lifecycle rule is the single owner of input expiry. Removed the async terminal cleanup and the sync route `finally` cleanup; `IReservation` dropped the optional `input_storage_path`; the orphaned `temporaryStoragePath` variable and `removeUpscaleInput` import were removed. `removeUpscaleInput` stays exported in `upscale-input-storage.service.ts` for operator and test use.
-- Privacy FAQ copy corrected in `locales/en/tools.json` and `app/seo/data/tools.json`: the old answer claimed deletion "within 1 hour of processing", then "removed after processing". The answer now says temporary uploads are scheduled for automatic deletion after two days, cleanup may take longer, and saved-gallery retention is a separate policy. It no longer promises deletion after processing. Free-offer copy is unchanged.
-
-Validation:
-
-- `tests/unit/seo/tools-input-retention-copy.unit.spec.ts` (12 tests) pins the honest copy in both datasets, forbids a hard deletion deadline, and preserves the free-offer answer.
-- `tests/unit/api/async-upscale.unit.spec.ts` covers shared-input retention on terminal success and failure; `tests/unit/api/upscale-failure-recording.unit.spec.ts` covers route-failure retention. Verified red on the shared-input guard before green.
-
-Follow-up:
-
-- None required. Full `yarn verify` not run while other R2 editors are active on this lane.
-
-### Six localized dashboard gallery notes and privacy FAQ retention copy
-
-Source: [PRD-SQR-04 — Free-gallery 30-day inactivity expiry](../../PRDs/supabase-quota-recovery/04-free-gallery-30d-expiry.md) (AC-5) and the R2 input-retention copy.
-
-Changes:
-
-- Added `gallery.retentionNote` to `locales/{de,es,fr,it,ja,pt}/dashboard.json`. The six strings translate the English note's exact meaning: 30-day inactivity expiry, at least 7-day warning, signing in keeps images, paid plans exempt. No English fallback; each uses the locale's own words (for example `ausgenommen`, `exentos`, `対象外`, `isentos`).
-- Updated the ai-image-upscaler privacy FAQ answer in the same six `locales/*/tools.json` files (`pages[0].commonQuestions[4].answer`). The old copy promised deletion "within 1 hour of processing". The new answer matches the corrected English meaning: temporary uploads scheduled for automatic deletion after two days, cleanup may take longer, saved-gallery images follow a separate retention policy, and no training or third-party sharing.
-- Both updates used `scripts/translation-helper.ts apply-inline` (UTF-8 safe); the incidental short-array reformatting was reverted so only the intended lines changed.
-
-Validation:
-
-- New `tests/unit/seo/multilocale-retention-copy.unit.spec.ts` (7 tests) checks all seven dashboard notes are present and non-empty, each states the 30/7-day rules and the paid exemption, and the seven privacy answers drop the 1-hour claim, promise no hard deadline, state the two-day schedule, and separate gallery retention. JSON parse and ICU brace checks included.
-- Full `yarn verify` not run while other R2/queue editors are active.
-
-Follow-up:
-
-- None. English `tools.json` / `app/seo/data/tools.json` copy stays owned by the R2 lane.
-
-## 2026-10-08
-
-### Three Kings — YouTube exposure reconciled; no production edits eligible
-
-- Refreshed final GSC daily evidence through Oct 4. Ledger check: 0 EDIT_NOW/REGRESSION/VERDICT/NO_DATA, 6 HOLD, 4 GATED, 1 STOP. No new rung, rollback, publication, production DB write, deployment or purge; backup gate was not needed.
-- Normal public `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails` returns 200, self-canonical, index/follow, cache HIT and exposes the diagnostic module in the rendered article. Authenticated API hash exactly matches the Oct 5 write (`1e8e067b7bc53313c50e9802a16bcd92e9e3f825213d353c2f736b1a785f7fc9`). Reconciled its pending ledger row to verified with first confirmed exposure Oct 8 while preserving `dbEditDate`, rung 3 and exact prior body; no assumption about earlier exposure.
-- URL Inspection reports Submitted and indexed, indexing allowed, successful crawl `2026-10-07T04:57:12Z` after the Oct 5 write and matching Google/user canonicals. Resolved its existing indexing row in place as **API-resolved, not a manual request**; unique pending rows 72 → 71 (oldest pending group Aug 13). Native desktop `list_pages` timed out; no manual request is claimed.
-- Updated the blog changelog with exposure confirmation only. After reconciliation, focused manager/YouTube tests pass 30/30 and full `yarn verify` passes (TypeScript, ICU, schema, indexation and 12 cache-config tests; 0 ESLint errors, 1,680 existing warnings). No API/E2E suite claim. Unrelated dirty files remain hash-verified unchanged; pre-existing SEO backlog edits preserved. Bookkeeping is a local-only commit, not pushed or deployed.
-- Next eligible review: best-image rollback Oct 12 (final data through Oct 8); four Oct 5 exposure rows Oct 23; YouTube Oct 26 (14 complete post-exposure days Oct 9–22 plus exporter holdback). Existing HOLD/GATED/STOP gates remain mandatory.
-
-## 2026-10-07
-
-### pSEO hero intro no longer hidden until hydration (perf only)
-
-No copy, title, H1 or metadata change. The English pSEO `HeroSection` kept the intro `<p>` at inline `opacity:0` inside a framer-motion container until hydration. On a throttled live tool page (Slow-4G, 4x CPU) the intro became the LCP element in 1 of 5 runs at about 6.8 s; with the intro visible, LCP equaled FCP (about 3.4–4.4 s) in 5 of 5. The intro is now a plain `<p>`; badge and CTA keep their entrance animation and the visual order is unchanged. The localized `HeroSection` also gated the H1, and now renders H1 and intro as plain elements. Guards: `tests/unit/seo/pseo-hero-lcp.unit.spec.ts`, `tests/e2e/performance/web-vitals-fixes.e2e.spec.ts`. **Readback after deploy:** PSI mobile on `/tools/ai-image-upscaler` (baseline score 71–74, LCP 5.5–7.1 s) and one localized tool URL.
-
-## 2026-10-05
-
-### Blog growth operator — persistent invalidation fix; four indexing blockers resolved
-
-Evidence and decision:
-
-- Read the Sep 21/Sep 28 cron outputs, current blog changelog, indexing backlog, Oct 3 report and newer Oct 5 YouTube rung-3 entry before choosing work. The newer pending-public-exposure gate supersedes the older reports' edit deadlines; no repeated content experiment or near-duplicate post was published.
-- Fresh GSC web export (Sep 5–Oct 2 vs Aug 8–Sep 4): 6,365 → 5,441 clicks (−14.52%), 334,670 → 338,692 impressions (+1.20%). GA4 Organic Search (Sep 7–Oct 4 vs Aug 10–Sep 6): 7,397 → 6,262 sessions (−15.34%); GA conversions are not treated as signups. YouTube alone has 6,548 impressions / 25 clicks, position 6.51. These trends motivate removing a delivery blocker, not a causal attribution or a claimed lift.
-- Normal public GET and authenticated API checks confirm YouTube's Oct 5 diagnostic module remains absent from rendered `<article>` despite matching API hash; HTTP 200, self-canonical, index/follow, cache HIT. The checked-in OpenNext configuration omits the tag cache; the real installed adapter defaults to dummy tags, and its real cache interceptor reproduces a HIT after an invalidation write. This is a confirmed local invalidation defect; sole causation of production staleness is not established without deployed-bundle/preview proof.
-
-Concrete action and verification:
-
-- **Code commit `7240bd83d3a996b985b1e0c75146aaff27e25974` (`fix(seo): persist blog cache invalidation tags`):** configured the adapter's persistent sharded tag cache and ensured warm regional-cache hits still check tags. Added `NEXT_TAG_CACHE_DO_SHARDED` and additive `v2-tag-cache` migrations to production/preview Wrangler configs while preserving the durable queue and its v1 migration. Files: `open-next.config.ts`, `wrangler.json`, `wrangler.preview.json`, `tests/unit/seo/opennext-on-demand-revalidation.unit.spec.ts`. No production schema/data/cache writes, no broad purge.
-- 62/62 affected unit tests pass across six suites via `yarn test:unit`; tests cover the old no-op, new page-scoped invalidation, unaffected unrelated pages, both bundles/bindings, warm regional hits and the measurement HOLD guard. Separate actual workerd + adapter SQLite Durable Object exercise passes: old entries invalidate, newer entries do not, unrelated tags do not, and persisted tags survive a runtime restart. `yarn verify` passes (TypeScript, ICU, schema, indexation and cache-config gates; 0 ESLint errors, 1,674 existing warnings). The aggregate `yarn test <paths>` expands to all API/E2E first: 228 API tests passed / 32 skipped, then timed out at 180 seconds during E2E; **full aggregate suite is not claimed green**. Targeted suites were then explicitly run and passed. `git diff --check` passed.
-- Resolved existing indexing rows **in place, through read-only evidence, not manual requests** for `/blog/poster-size-dimensions-pixels`, `/blog/best-ai-upscaler`, `/blog/topaz-video-upscaler`, `/blog/topaz-labs-free-trial`: normal public articles expose their saved modules (Topaz trial meta exactly matches API); API hashes/updated_at verified; URL Inspection reports Submitted and indexed, successful post-DB-write crawls and matching Google/user canonicals. Crawl dates: Sep 27, Oct 3, Sep 26 and Sep 29 respectively. This verifies URL indexing, **not that Google has processed the revised copy**. Pending unique indexing rows decrease 76 → 72; oldest pending group remains Aug 13.
-- In `three-kings-ledger.json`, retained each original write as `dbEditDate`, recorded live/API evidence, and anchored the four current experiment dates to first confirmed public exposure Oct 5 (earlier exposure unknown). No new rungs, inferred outcomes or rewritten rollback values. YouTube remains pending/HOLD; inspection's Oct 2 crawl predates its Oct 5 write. Blog changelog remains unchanged because this run did not edit blog content or metadata. Pre-existing dirty `content/blog-data.json` and `docs/seo/reddit-post-log.md` remained byte-identical to this run's saved hashes; unrelated untracked files preserved.
-
-Deployment and exact next triggers:
-
-- **Local commits only; not pushed or deployed.** Production freshness is not repaired yet. The next executable gate is an authorized preview release: verify compiled server/middleware tag adapter and DO export/binding, measure warm-hit CPU against the 10ms budget, then demonstrate one scoped invalidation and fresh normal-URL article without a broad purge. Only after this acceptance should a separately authorized production release proceed. Existing YouTube invalidation predates the tag store; use an approved scoped revalidation after release, not another body rewrite.
-- On **2026-10-12**, inspect YouTube's normal rendered article and deployment state first. Until the diagnostic module is actually exposed, retain HOLD and do not request indexing or judge the rung. Once exposed, request indexing only through the actual GSC UI (or owner confirmation), record it, and measure from the first confirmed exposure date.
-- For the four now-confirmed public pages, the 14 complete post-exposure days run Oct 6–19; earliest conservative final-data export/verdict is **2026-10-23**, replacing the earlier Oct 9/12 review assumptions below. Act if a measured LOSS requires exact rollback, or if a closed window remains below 0.2% CTR at position 3–10 / zero clicks or loses ≥30% clicks; follow each page's existing ladder/STOP gates rather than restarting an exhausted rung. No SEO lift is claimed before that readback.
-
-### Three Kings YouTube rung 3 — API applied, public HTML pending
-
-Evidence:
-
-- Refreshed final GSC daily evidence through 2026-10-01 and the current 28-day query/page export. Initial ledger check: 1 EDIT_NOW, 5 HOLD, 4 GATED, 1 STOP, 0 REGRESSION/VERDICT/NO_DATA. YouTube rung 2 closed FLAT over all 14 complete post-edit GSC days (1.00→0.93 clicks/day; impressions +4%, position −0.2); latest 14 days: 13 clicks / 3,854 impressions at position 6.5. No competing canonical page was found for the blur/low-quality intent; fragment sitelinks are the same owner.
-- Current official YouTube Help was fetched directly and confirms 3840×2160, 16:9, JPG/PNG, 2 MB mobile / 50 MB desktop video-thumbnail guidance. The Google search fetch returned a JS redirect shell, so an exact top-three competitive-depth comparison was not available; no whole-article expansion or benchmark claim was added.
-
-Action and verification:
-
-- Changed only `content` on `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails`: direct answer, an original/export/YouTube diagnostic proof module, pixel-count proof and linked upload guidance; corrected related contradictory DPI, guest-access and upload statements. Title, SEO title/description, slug, status, existing media and canonical remained unchanged. No new posts, deletion or unrelated production change.
-- Fresh verified backup: `backups/backup_2026-10-05_09-27-17.schema.sql.gz` and `backups/backup_2026-10-05_09-27-17.data.sql.gz`. `yarn db:backup` succeeded with test extraction/byte comparison, both archives appeared in `yarn db:backups`, and both passed `gzip -t` before PATCH. Existing backup sets were retained.
-- PATCH applied at `2026-10-05T16:33:09.439607+00:00`; authenticated GET exactly matches body SHA256 `1e8e067b7bc53313c50e9802a16bcd92e9e3f825213d353c2f736b1a785f7fc9`. Exact prior body SHA256 `467031956c2145dc245d6cb61196570bab592667716fba2c9ade1dcd394dd16d` is preserved in the ledger for rollback.
-- **End-to-end action remains incomplete:** repeated normal public-URL checks return 200, self-canonical, `index, follow`, cache HIT, but the rendered article does not contain the new module. Revalidation/cache cause is not established; the target is absent from the local static blog inventory, so static precedence is not proven. No broad cache purge or unrelated deploy was attempted.
-- Added a pending-public-exposure HOLD guard to the manager/skill so an API-only change cannot be judged as a search experiment or emit a premature regression. The final check is 0 EDIT_NOW, 6 HOLD, 4 GATED, 1 STOP, 0 REGRESSION/VERDICT/NO_DATA.
-- Recorded the rung/prior value and pending exposure in the Three Kings ledger; updated the existing indexing row in place and the blog changelog. Indexing backlog remains 76 unique pending URLs (oldest pending group: 2026-08-13). Native browser `list_pages` timed out twice; CLI MCP connectivity passed but page control did not, so **no indexing request is claimed**.
-- RED/GREEN verified for the new content transformation and pending-exposure guards; affected SEO suites pass 35/35. Full `yarn verify` passed after the changes (TypeScript, ICU, schema, indexation and 12 cache-config tests; 0 ESLint errors, 1,674 existing warnings). `git diff --check` passed. Unrelated dirty `content/blog-data.json` is byte-preserved (SHA256 `23ce65096417ee751d8959fce313037f9880cc24e7cd83c95d31333f516cc24e`).
-
-Follow-up:
-
-- Recheck normal public HTML before indexing. Once exposure is verified, retain the DB date, anchor the ledger's measurement date to the first confirmed public date, and require 14 complete post-exposure GSC days plus export holdback; do not treat the provisional 2026-10-19 DB-date window as a verdict deadline.
-- Earliest other closed-window review: 2026-10-09, when this exporter's three-day holdback plus excluded current day can include final data through 2026-10-05 for the Topaz free-trial and poster rows. The September 24 rows become reviewable from 2026-10-12.
-
-## Early October 2026 Rollup (Oct 3–4)
-
-Full detail: `git show b129699d:docs/SEO/maintenance/seo-changes-backlog.md`; analysis and original baselines: [Oct 3 report](../reports/seo-report-2026-10-03.md).
+- **Oct 5 cache delivery:** `7240bd83` configured persistent sharded tags (`NEXT_TAG_CACHE_DO_SHARDED`, additive `v2-tag-cache`) and tag checks on warm regional hits in `open-next.config.ts` and both Wrangler configs. Actual adapter/workerd checks proved scoped invalidation, unrelated-tag isolation and restart persistence; `opennext-on-demand-revalidation.unit.spec.ts` guards the defect. Local-only at that time; the next authorized preview still needed compiled binding/DO export, warm CPU ≤10ms and live freshness acceptance before production. Do not infer later deployment from this historical entry.
+- **Oct 5 YouTube rung 3:** changed `/blog/how-to-upscale-youtube-thumbnails` body only (original/export/YouTube diagnostics, pixel-count proof, linked upload guidance and factual guest/DPI repairs). Rung 2 was FLAT (1.00→0.93 clicks/day, impressions +4%, position −0.2). API hash/prior body retained in ledger after verified backup; public HTML was initially stale, so added the pending-exposure HOLD guard. Oct 8 verified public exposure and post-write crawl; Oct 26 subsequently rolled back only the failed diagnostic module. Those newer entries supersede the original pending-exposure/review dates; never restore obsolete factual claims or restart this rung.
+- **Oct 5 indexing reconciliation:** poster, best-ai, Topaz Video and Topaz trial were API-resolved from successful post-write crawls (Sep 27, Oct 3, Sep 26, Sep 29); no manual requests. Preserved original `dbEditDate` and anchored conservative measurement to confirmed Oct 5 exposure (Oct 6–19, earliest final export Oct 23). Later outcomes/reopenings/resolutions govern current state; the historical 76→72 pending count is not today's queue. GSC Sep 5–Oct 2 clicks 6,365→5,441 (−14.52%), GA4 organic Sep 7–Oct 4 sessions 7,397→6,262 (−15.34%); no causal or signup inference.
 
 - **Oct 3 recovery:** Sep 12 coincided with the Product Truth exposure: signups ~100→60/day (later 50), Google sessions 249→175/day, branded clicks ~25→5/day at position 1, Gemini/ChatGPT referrals −60%; named non-brand clicks rose 5–9%. Flagship CTR 7%→2.2% at flat rank; signup-intent completion 0.75→0.52. These were diagnostic associations, not isolated causation proof.
 - Restored homepage free/no-card meta description and FAQ; corrected `llms.txt`/`llms-full.txt` signup wording. Derived sitemap index from `ALL_CATEGORIES` (43→46, scale/free/guides restored); removed the `/_next/` robots disallow. Guards: free-offer-conversion-copy, llms-txt, sitemap-index, robots, pseo-category-coverage.
