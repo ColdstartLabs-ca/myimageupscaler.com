@@ -36,19 +36,18 @@ describe('Topaz free-trial snippet recovery contract', () => {
     );
   });
 
-  it('records the reopened indexing request as one unresolved row', () => {
+  it('records the reopened indexing request as one API-resolved row', () => {
     const backlog = readFileSync('docs/SEO/maintenance/gsc-request-indexing-backlog.md', 'utf8');
     const rowPattern =
       /- \[[ x]\] `https:\/\/myimageupscaler\.com\/blog\/topaz-labs-free-trial`[^\n]*/g;
     const rows = backlog.match(rowPattern) ?? [];
 
     expect(rows).toHaveLength(1);
-    // Reopened 2026-10-26 after the rung-2 LOSS rollback; the prior write was
-    // API-resolved on Oct 5.
-    expect(rows[0]).toContain('- [ ]');
-    expect(rows[0]).toContain('Reopened 2026-10-26');
+    // Reopened 2026-10-26 after the rung-2 LOSS rollback, then API-resolved on Oct 29.
+    expect(rows[0]).toContain('- [x]');
+    expect(rows[0]).toContain('API-resolved 2026-10-29');
+    expect(rows[0]).toContain('2026-10-26 reopening');
     expect(rows[0]).toContain('rung-2 LOSS');
-    expect(rows[0]).toContain('2026-09-21');
     expect(rows[0]).toContain('API-resolved Oct 5');
   });
 });

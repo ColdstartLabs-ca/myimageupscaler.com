@@ -81,10 +81,10 @@ describe('2026-09-24 Three Kings actions', () => {
       expect(rows[0], url).toMatch(/^- \[( |x)\]/);
       if (rows[0].startsWith('- [x]')) {
         expect(rows[0], url).toMatch(
-          /API-resolved.*successful crawl|indexing requested.*confirmed/
+          /API-resolved.*successful (?:post-rollback )?crawl|indexing requested.*confirmed/
         );
       }
-      expect(rows[0], url).toContain('2026-09-24');
+      expect(rows[0], url).toMatch(/2026-09-24|Sep 24/);
     }
   });
 });
