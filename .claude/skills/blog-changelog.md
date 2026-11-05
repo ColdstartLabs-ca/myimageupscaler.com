@@ -1,5 +1,12 @@
 # Blog Changelog
 
+## 2026-11-05
+
+### Verification: Text and YouTube post-change crawls API-resolved
+
+**Affected:** text-image-enhancer, how-to-upscale-youtube-thumbnails; tiktok-profile-picture-ideas verified unchanged
+**Changes:** No production edit or rollback. Refreshed final GSC Jul 5–Nov 1; all 12 ledger rows checked: 0 EDIT_NOW / 0 REGRESSION / 5 HOLD / 2 GATED / 1 STOP / 4 VERDICT / 0 NO_DATA. No new complete edit window or ladder restart; ledger dates, rungs, outcomes and rollback anchors unchanged. Authenticated API hashes/updated_at and normal rendered HTML match recorded text-description, YouTube rollback and TikTok title states (200, one self-canonical, index/follow); YouTube diagnostic module remains absent and factual repairs retained. Existing text/YouTube indexing rows API-resolved from successful post-write crawls `2026-11-04T11:13:45Z` / `2026-11-03T09:37:41Z`, both Submitted and indexed, indexing allowed, matching Google/user canonicals. No manual request: native browser preflight timed out twice; no bypass. Pending unique URLs 69→67, oldest Aug 13; no duplicate rows. No backup required or claimed because no production write. RED (two evidence assertions)→GREEN; 61/61 affected tests, all 1,626 SEO tests and `yarn verify` pass (0 lint errors / 1,832 existing warnings). Aggregate `yarn test` passed 228 API / 32 skipped, then timed out after 300 seconds during E2E; not full-suite green. No deploy, push, new post, purge or experiment reset. Next eligible final-data reviews Nov 6 (TikTok), Nov 13 (Oct 26 rollbacks/link), Nov 16 (text).
+
 ## 2026-11-02
 
 ### Verification: Two closed Three Kings windows; two post-change crawls resolved

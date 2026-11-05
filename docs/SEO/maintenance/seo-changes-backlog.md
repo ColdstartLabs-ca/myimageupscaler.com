@@ -10,6 +10,15 @@ Maintenance rules:
 - Full pre-rollup detail for 2026-05 → 2026-10-19 stays in git: `git show 3bdb8f1e:docs/SEO/maintenance/seo-changes-backlog.md`.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-11-05
+
+### Three Kings — no eligible rung; text/YouTube post-change crawls API-resolved
+
+- **Final evidence/control plane:** refreshed final GSC **Jul 5–Nov 1**, retaining the three-day holdback/excluded current day. All 12 rows: **0 EDIT_NOW / 0 REGRESSION / 5 HOLD / 2 GATED / 1 STOP / 4 VERDICT / 0 NO_DATA**. No newly closed experiment window; ledger remains byte-identical, preserving dates/rungs/outcomes/rollback anchors. Completed ladders stay closed without new evidence. No production blog write, rollback, new post, deletion, deployment or cache purge; no new backup required or claimed.
+- **Live/indexing evidence:** authenticated API field/body hashes and original updated_at match the ledger for text, YouTube and TikTok; normal public HTML is **200 / one self-canonical / index-follow**, matching title/meta. Rendered YouTube article retains the bounded rollback and factual repairs, not script/RSC-only evidence. Existing text row **API-resolved**, successful post-Oct-29 description crawl **2026-11-04T11:13:45Z**; YouTube row **API-resolved**, successful post-Oct-26 rollback crawl **2026-11-03T09:37:41Z**. Both Submitted and indexed, indexing allowed, matching Google/user canonicals. Native browser preflight timed out twice; no fallback bypass or manual request claimed. **User attention required: 67 unique pending URLs (69−2), oldest group Aug 13**; all 143 checkbox URL rows remain unique. Changelog and indexing rows updated in place; no measurement reset.
+- **Verification/persistence:** new evidence assertions RED (two pending rows)→GREEN; historical text-state guard now accepts only explicit qualifying post-write crawl evidence. **61/61 affected unit tests; 1,626/1,626 SEO tests** pass. `yarn verify` passes (TypeScript, ICU, schema, indexation, 12 cache-config tests; 0 lint errors / 1,832 existing warnings). Required aggregate `yarn test <affected paths>` passed **228 API / 32 skipped**, then hit the **300-second cap during E2E**; full-suite/E2E green is not claimed. Scoped diff check passes. Unrelated dirty production-error/Reddit logs preserved byte-for-byte; bookkeeping stays local, no push of the 23 pre-existing local commits.
+- **Next gates:** **Nov 6, 2026** TikTok title review once all Oct 20–Nov 2 days enter the final export; **Nov 13** Oct 26 rollbacks/link (Oct 27–Nov 9); **Nov 16** text (Oct 30–Nov 12). Post-change indexing evidence does not shorten these windows. Remaining manual queue stays with the existing indexing operator; the separate Nov 2 sitemap-release follow-up is not a Three Kings content-edit authorization.
+
 ## 2026-11-02
 
 ### pSEO performance snapshot refreshed — unblocks deploy gate; 37 net pages pruned

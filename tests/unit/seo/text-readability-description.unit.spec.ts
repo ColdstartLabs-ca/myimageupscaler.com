@@ -66,7 +66,16 @@ describe('text readability rung-2 single-variable description', () => {
       .split('\n')
       .filter(line => line.includes('`https://myimageupscaler.com/blog/text-image-enhancer`'));
     expect(indexing).toHaveLength(1);
-    expect(indexing[0]).toMatch(/^- \[ \]/);
+    if (indexing[0].startsWith('- [x]')) {
+      expect(indexing[0]).toContain('API-resolved 2026-11-05, not a manual request');
+      expect(indexing[0]).toContain('Submitted and indexed');
+      expect(indexing[0]).toContain('indexing allowed');
+      expect(indexing[0]).toContain('successful post-description-write crawl');
+      expect(indexing[0]).toContain('matching Google/user canonicals');
+      expect(indexing[0]).toContain('2026-11-04T11:13:45Z');
+    } else {
+      expect(indexing[0]).toMatch(/^- \[ \]/);
+    }
     expect(indexing[0]).toContain('2026-10-29');
     expect(indexing[0]).toContain('2026-11-16');
   });

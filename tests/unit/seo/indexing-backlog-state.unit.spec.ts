@@ -47,6 +47,33 @@ describe('indexing backlog state', () => {
     }
   });
 
+  it.each([
+    ['text-image-enhancer', '2026-11-04T11:13:45Z', '2026-10-29', '2026-11-16'],
+    ['how-to-upscale-youtube-thumbnails', '2026-11-03T09:37:41Z', '2026-10-26', '2026-11-13'],
+  ])(
+    'resolves the November 5 post-change crawl for %s without resetting its experiment',
+    (slug, crawl, changedOn, reviewOn) => {
+      const matches = rowFor(slug);
+      expect(matches).toHaveLength(1);
+      expect(matches[0]).toMatch(/^- \[x\]/);
+      expect(matches[0]).toContain('API-resolved 2026-11-05, not a manual request');
+      expect(matches[0]).toContain('Submitted and indexed');
+      expect(matches[0]).toContain('indexing allowed');
+      expect(matches[0]).toContain('matching Google/user canonicals');
+      expect(matches[0]).toContain(crawl);
+      expect(matches[0]).toContain(changedOn);
+      expect(matches[0]).toContain(reviewOn);
+      expect(matches[0]).not.toContain('indexing requested 2026-11-05');
+      const ledger = JSON.parse(
+        fs.readFileSync('docs/SEO/maintenance/three-kings-ledger.json', 'utf8')
+      );
+      const entry = ledger.entries.find((item: { url: string }) => item.url === `/blog/${slug}`);
+      expect(entry.lastEdit).toBe(changedOn);
+      expect(entry.history.at(-1).date).toBe(changedOn);
+      expect(entry.history.at(-1).outcome).toBeNull();
+    }
+  );
+
   it('records closed flagship and software windows without restarting either ladder', () => {
     const ledger = JSON.parse(
       fs.readFileSync('docs/SEO/maintenance/three-kings-ledger.json', 'utf8')
