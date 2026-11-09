@@ -1,5 +1,13 @@
 # Blog Changelog
 
+## 2026-11-09
+
+### SEO: TikTok PFP rung-2 description verified live
+
+**Affected:** tiktok-profile-picture-ideas
+**Why:** Final GSC through Nov 5 closes the Oct 19 title window as FLAT (14→10 clicks/14d, site-adjusted ratio 0.80208, position flat, impressions −37%). Latest exact-page windows have 9/3,731→9/2,730 clicks/impressions at position 7.98→8.00, CTR 0.33%; demand/phantom/position gates do not fire. Four PFP/ideas queries have this sole canonical owner. The previous description promised branding/click gains rather than naming the article's eight styles. Google returned a JS shell; no verified competitive top-three/depth claim or body expansion.
+**Changes:** Only `seo_description` → `Explore 8 TikTok PFP ideas: headshots, anime avatars, neon designs, logos, and more. Choose a style and use crop and clarity tips to prepare your photo.` (152 chars). Fresh `backups/backup_2026-11-09_09-17-02.{schema,data}.sql.gz` passed extraction/byte comparison, `yarn db:backups`, and `gzip -t` before PATCH 200 at `2026-11-09T16:19:55.531234+00:00`. Authenticated GET proves only seo_description/updated_at changed; normal public meta matches SHA256 `e2746a9f380b3eb77c089a135a21758a702a6e6e1751954feef1c527274c35e1`, 200 / one self-canonical / index-follow. Title/H1, body, CTAs, media and other fields retained; body SHA256 unchanged `3f619d58bff5fc2f1aa1e19c7fc3385cb4823e5f271cd5eb7333b5e87067ab49`. Ledger records exact prior description, rung 2, backup and verified exposure; original title history retained. Existing indexing row reopened once: 67→68 unique pending URLs, oldest Aug 13; Nov 4 crawl predates today's write. Native browser timed out twice; no manual request claimed. Payload/state tests RED→GREEN; all 1,631 SEO unit tests and `yarn verify` pass (0 lint errors / 1,832 existing warnings); aggregate `yarn test` passed 228 API / 32 skipped then timed out after 300 seconds during E2E, not full-suite green. Final verdicts 0 EDIT_NOW / 0 REGRESSION / 5 HOLD / 2 GATED / 1 STOP / 4 VERDICT / 0 NO_DATA. No rollback, deploy, purge, new post or unrelated product change. Crawl check Nov 12; measure Nov 10–23, earliest conservative final-data verdict **Nov 27**. Other program gates remain Nov 13/16; repository bookkeeping local-only.
+
 ## 2026-11-05
 
 ### Verification: Text and YouTube post-change crawls API-resolved

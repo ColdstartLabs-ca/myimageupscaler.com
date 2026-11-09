@@ -99,7 +99,32 @@ describe('2026-10-26 demand-gated regression rollbacks', () => {
       .find(line =>
         line.includes('`https://myimageupscaler.com/blog/tiktok-profile-picture-ideas`')
       );
-    expect(tiktok).toMatch(/^- \[x\]/);
+    const tiktokEntry = ledger.entries.find(
+      (e: { url: string }) => e.url === '/blog/tiktok-profile-picture-ideas'
+    );
+    const latestTikTok = tiktokEntry.history.at(-1);
+    if (latestTikTok.date > '2026-10-26') {
+      if (tiktok!.startsWith('- [x]')) {
+        const crawl = tiktok!.match(/successful post-description-write crawl `([^`]+)`/);
+        expect(crawl).not.toBeNull();
+        expect(new Date(crawl![1]).getTime()).toBeGreaterThan(
+          new Date(latestTikTok.liveVerification.apiUpdatedAt).getTime()
+        );
+        expect(tiktok).toContain('API-resolved');
+        expect(tiktok).toContain('indexing allowed');
+        expect(tiktok).toContain('matching Google/user canonicals');
+      } else {
+        expect(tiktok).toMatch(/^- \[ \]/);
+      }
+      expect(tiktok).toContain(`Reopened ${latestTikTok.dbEditDate}`);
+      expect(latestTikTok.liveVerification.status).toBe('verified');
+      expect(tiktok).toContain(latestTikTok.liveVerification.sha256);
+      expect(tiktok).toContain('no manual request claimed');
+      expect(tiktokEntry.history[0].date).toBe('2026-10-19');
+      expect(tiktokEntry.history[0].liveVerification.checkedOn).toBe('2026-10-19');
+    } else {
+      expect(tiktok).toMatch(/^- \[x\]/);
+    }
     expect(tiktok).toContain('API-resolved 2026-10-26, not a manual request');
     expect(tiktok).toContain('2026-10-23T19:16:16Z');
   });

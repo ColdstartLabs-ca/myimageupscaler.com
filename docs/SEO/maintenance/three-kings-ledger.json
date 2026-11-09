@@ -761,15 +761,24 @@
     {
       "url": "/blog/tiktok-profile-picture-ideas",
       "label": "/blog/tiktok-profile-picture-ideas",
-      "rung": 1,
-      "lastEdit": "2026-10-19",
+      "rung": 2,
+      "lastEdit": "2026-11-09",
       "history": [
         {
           "date": "2026-10-19",
           "rung": 1,
           "field": "seo_title",
           "note": "Title-only PFP-intent test: 6/4305 -> 16/4257 clicks/impressions at unchanged position 7.98 -> 7.97 over consecutive final 14-day windows; title adds the missing PFP acronym and eight-style scope. API and normal public title verified; all other post fields preserved. Measure Oct 20-Nov 2; earliest final-data verdict Nov 6. Backup backup_2026-10-19_10-35-08 verified.",
-          "outcome": null,
+          "outcome": {
+            "verdict": "FLAT",
+            "preCpd": 1,
+            "postCpd": 0.71,
+            "marketRatio": 0.89,
+            "adjRatio": 0.8,
+            "posDelta": 0,
+            "impDelta": -37,
+            "measuredThrough": "2026-11-02"
+          },
           "previousValue": "8 TikTok Profile Picture Ideas to Stand Out in 2026",
           "dbEditDate": "2026-10-19",
           "liveVerification": {
@@ -780,6 +789,29 @@
             "value": "TikTok Profile Picture Ideas: 8 PFP Styles (2026)",
             "bodySHA256": "3f619d58bff5fc2f1aa1e19c7fc3385cb4823e5f271cd5eb7333b5e87067ab49",
             "reason": "API GET proves only seo_title and updated_at changed; normal public HTML and refreshed browser DOM expose the new title, 200, self-canonical, index/follow. An initial browser read had the prior title; subsequent normal GET and browser reload/fetch show the new title. Measure from today's confirmed exposure, not from the API response alone."
+          }
+        },
+        {
+          "date": "2026-11-09",
+          "rung": 2,
+          "field": "seo_description",
+          "note": "Rung 2: replaced vague brand/click promise with the existing eight-style PFP choices and crop/clarity preparation. Only seo_description changed; preserve title/body and sole query ownership.",
+          "outcome": null,
+          "previousValue": "Level up your brand with these 8 TikTok profile picture ideas for 2026. Learn how to create crisp, high-res PFPs that get noticed and drive clicks.",
+          "dbEditDate": "2026-11-09",
+          "backup": {
+            "schema": "backups/backup_2026-11-09_09-17-02.schema.sql.gz",
+            "data": "backups/backup_2026-11-09_09-17-02.data.sql.gz",
+            "verified": "yarn db:backup extraction/byte comparison; yarn db:backups; gzip -t"
+          },
+          "liveVerification": {
+            "status": "verified",
+            "field": "seo_description",
+            "sha256": "e2746a9f380b3eb77c089a135a21758a702a6e6e1751954feef1c527274c35e1",
+            "bodySHA256": "3f619d58bff5fc2f1aa1e19c7fc3385cb4823e5f271cd5eb7333b5e87067ab49",
+            "checkedOn": "2026-11-09",
+            "apiUpdatedAt": "2026-11-09T16:19:55.531234+00:00",
+            "reason": "Authenticated GET proves only seo_description and updated_at changed; normal public HTML meta exactly matches, HTTP 200, one self-canonical, index/follow. Title and body unchanged. Measure 14 complete post-exposure GSC days Nov 10-23; earliest conservative final-data review Nov 27. Nov 4 crawl predates this write; native browser timed out twice, no manual request claimed."
           }
         }
       ],
