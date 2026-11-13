@@ -8,7 +8,13 @@ import doShardedTagCache from '@opennextjs/cloudflare/overrides/tag-cache/do-sha
 const nonBlockingDoQueue: typeof doQueue = {
   name: 'durable-queue-non-blocking',
   send: async msg => {
-    getCloudflareContext().ctx.waitUntil(
+    const { env, ctx } = getCloudflareContext();
+    // Missing binding must still throw, so the interceptor falls back to a live render
+    // instead of serving a stale page that never revalidates (2026-08-31 outage class).
+    if (!env.NEXT_CACHE_DO_QUEUE) {
+      throw new Error('[isr-queue] NEXT_CACHE_DO_QUEUE binding is missing');
+    }
+    ctx.waitUntil(
       doQueue.send(msg).catch(error => console.error('[isr-queue] revalidation send failed', error))
     );
   },

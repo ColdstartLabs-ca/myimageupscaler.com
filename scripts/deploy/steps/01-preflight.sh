@@ -50,14 +50,16 @@ _check_cloudflare_credentials() {
 _check_cache_purge() {
     # Defaults to CLOUDFLARE_API_TOKEN, which needs the Zone > Cache Purge permission.
     local token="${CACHE_PURGE_API_TOKEN:-${CLOUDFLARE_API_TOKEN:-}}"
+    local zone="${CACHE_PURGE_ZONE_ID:-${CLOUDFLARE_ZONE_ID:-}}"
     local result
-    result=$(curl -s -X POST "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache" \
+    # `|| true`: under set -e a network failure must reach the log_error below, not exit silently.
+    result=$(curl -s -X POST "https://api.cloudflare.com/client/v4/zones/${zone}/purge_cache" \
         -H "Authorization: Bearer $token" -H "Content-Type: application/json" \
-        -d '{"tags":["miu-deploy-purge-probe"]}')
+        -d '{"tags":["miu-deploy-purge-probe"]}' || true)
     if echo "$result" | grep -q '"success":true'; then
         log_success "Cache purge token"
     else
-        log_error "Cache purge token cannot purge by tag on zone $CLOUDFLARE_ZONE_ID (add Zone > Cache Purge)"
+        log_error "Cache purge token cannot purge by tag on zone $zone (add Zone > Cache Purge)"
     fi
 }
 

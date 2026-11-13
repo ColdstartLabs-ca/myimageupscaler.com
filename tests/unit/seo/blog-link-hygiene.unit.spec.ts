@@ -28,6 +28,14 @@ describe('Blog link hygiene', () => {
     }
   });
 
+  it('blog pagination links do not prefetch the uncached paginated index', () => {
+    const matches = read(BLOG_INDEX).match(/<Link\b[^>]*\?page=[^>]*>/g) ?? [];
+    expect(matches.length).toBe(3);
+    for (const match of matches) {
+      expect(match).toContain('prefetch={false}');
+    }
+  });
+
   it('blog pagination links do not use the /${locale}/blog?page= redirecting prefix', () => {
     const source = read(BLOG_INDEX);
     expect(source).not.toContain('/${locale}/blog?page=');

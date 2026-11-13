@@ -6,13 +6,16 @@ import packageJson from '../../../package.json';
 import wranglerConfig from '../../../wrangler.json';
 import previewConfig from '../../../wrangler.preview.json';
 
-const { waitUntilMock } = vi.hoisted(() => ({ waitUntilMock: vi.fn() }));
+const { waitUntilMock, mockEnv } = vi.hoisted(() => ({
+  waitUntilMock: vi.fn(),
+  mockEnv: { NEXT_CACHE_DO_QUEUE: {} } as Record<string, unknown>,
+}));
 
 vi.mock('@opennextjs/cloudflare', async importOriginal => {
   const actual = await importOriginal<typeof import('@opennextjs/cloudflare')>();
   return {
     ...actual,
-    getCloudflareContext: () => ({ env: {}, ctx: { waitUntil: waitUntilMock } }),
+    getCloudflareContext: () => ({ env: mockEnv, ctx: { waitUntil: waitUntilMock } }),
   };
 });
 
@@ -90,6 +93,20 @@ describe('OpenNext incremental cache configuration', () => {
     const queue = resolveQueueOverride(cloudflareConfig.default?.override?.queue);
     expect(queue.name).toBe('durable-queue-non-blocking');
     await expectNonBlockingDelegation(cloudflareConfig.default?.override?.queue);
+  });
+
+  it('should throw (live-render fallback) when the durable queue binding is missing', async () => {
+    const queue = resolveQueueOverride(cloudflareConfig.default?.override?.queue);
+    const sendSpy = vi.spyOn(doQueue, 'send');
+    const binding = mockEnv.NEXT_CACHE_DO_QUEUE;
+    delete mockEnv.NEXT_CACHE_DO_QUEUE;
+    try {
+      await expect(queue.send(MESSAGE)).rejects.toThrow('NEXT_CACHE_DO_QUEUE');
+      expect(sendSpy).not.toHaveBeenCalled();
+      expect(waitUntilMock).not.toHaveBeenCalled();
+    } finally {
+      mockEnv.NEXT_CACHE_DO_QUEUE = binding;
+    }
   });
 
   it('should serve cached ISR/SSG HTML before the server bundle by enabling interception', () => {

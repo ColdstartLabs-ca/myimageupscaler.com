@@ -509,6 +509,7 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
                     <Link
                       href={`${getLocalizedPath('/blog', locale)}?page=${currentPage - 1}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
                       scroll={false}
+                      prefetch={false}
                       className="inline-flex items-center gap-2 px-4 py-2 bg-surface border border-border rounded-lg hover:border-accent/50 hover:bg-accent/5 transition-all"
                     >
                       <ChevronLeft className="w-4 h-4" />
@@ -529,6 +530,7 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
                           key={item}
                           href={`${getLocalizedPath('/blog', locale)}?page=${item}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
                           scroll={false}
+                          prefetch={false}
                           className={`flex h-10 min-w-[2.5rem] items-center justify-center rounded-lg font-medium transition-all ${
                             currentPage === item
                               ? 'bg-accent text-white shadow-md'
@@ -553,6 +555,7 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
                     <Link
                       href={`${getLocalizedPath('/blog', locale)}?page=${currentPage + 1}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
                       scroll={false}
+                      prefetch={false}
                       className="inline-flex items-center gap-2 px-4 py-2 bg-surface border border-border rounded-lg hover:border-accent/50 hover:bg-accent/5 transition-all"
                     >
                       {t('listing.next')}
