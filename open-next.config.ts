@@ -19,6 +19,9 @@ export default defineCloudflareConfig({
     mode: 'long-lived',
     // Regional hits skip the tag DO; revalidatePath purges them by cache-tag via cachePurge below.
     bypassTagCacheOnCacheHit: true,
+    // cachePurge flips this default to false; keep refreshing each region from R2 on hits
+    // so timed ISR revalidation reaches every data center, not only the one that rendered.
+    shouldLazilyUpdateOnCacheHit: true,
   }),
   // Required by bypassTagCacheOnCacheHit; needs CACHE_PURGE_API_TOKEN + CACHE_PURGE_ZONE_ID Worker secrets.
   cachePurge: purgeCache({ type: 'direct' }),

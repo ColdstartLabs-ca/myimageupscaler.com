@@ -171,6 +171,24 @@ describe('OpenNext incremental cache configuration', () => {
     expect(cache.opts.bypassTagCacheOnCacheHit).toBe(true);
   });
 
+  it('should keep refreshing regional HTML from R2 on hits while cache purge is on', async () => {
+    // The adapter picks this default from globalThis.openNextConfig when the cache is built.
+    // Build the config with purge already visible (worst-case runtime order).
+    const globals = globalThis as { openNextConfig?: unknown };
+    const previous = globals.openNextConfig;
+    globals.openNextConfig = cloudflareConfig;
+    try {
+      vi.resetModules();
+      const fresh = (await import('../../../open-next.config')).default;
+      const incrementalCache = fresh.default?.override?.incrementalCache as unknown as () => {
+        opts: { shouldLazilyUpdateOnCacheHit?: boolean };
+      };
+      expect(incrementalCache().opts.shouldLazilyUpdateOnCacheHit).toBe(true);
+    } finally {
+      globals.openNextConfig = previous;
+    }
+  });
+
   it('should never bypass the tag cache without cache purge', () => {
     const incrementalCache = cloudflareConfig.default?.override
       ?.incrementalCache as unknown as () => {
