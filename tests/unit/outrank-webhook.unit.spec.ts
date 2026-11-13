@@ -466,6 +466,9 @@ describe('POST /api/webhooks/outrank route handler', () => {
 
     expect(blogService.createBlogPost).toHaveBeenCalledOnce();
     expect(blogService.publishBlogPost).toHaveBeenCalledWith('test-article-from-outrank');
+
+    expect(revalidatePath).toHaveBeenCalledWith('/en/blog/test-article-from-outrank');
+    expect(revalidatePath).not.toHaveBeenCalledWith('/blog/test-article-from-outrank');
   });
 
   it('should update an existing article for an update_article event', async () => {
@@ -496,8 +499,8 @@ describe('POST /api/webhooks/outrank route handler', () => {
       })
     );
     expect(blogService.slugExists).not.toHaveBeenCalled();
-    expect(revalidatePath).toHaveBeenCalledWith('/blog');
-    expect(revalidatePath).toHaveBeenCalledWith('/blog/test-article-from-outrank');
+    expect(revalidatePath).toHaveBeenCalledWith('/en/blog/test-article-from-outrank');
+    expect(revalidatePath).not.toHaveBeenCalledWith('/blog/test-article-from-outrank');
     expect(blogService.createBlogPost).not.toHaveBeenCalled();
     expect(blogService.publishBlogPost).not.toHaveBeenCalled();
   });

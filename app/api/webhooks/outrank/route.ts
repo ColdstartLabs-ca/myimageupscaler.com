@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
 import { serverEnv } from '@shared/config/env';
 import {
   outrankWebhookPayloadSchema,
@@ -12,6 +11,7 @@ import {
   updateBlogPost,
 } from '@server/services/blog.service';
 import { createLogger } from '@server/monitoring/logger';
+import { revalidateBlogPaths } from '@lib/blog/revalidate-blog-paths';
 
 /**
  * POST /api/webhooks/outrank
@@ -85,8 +85,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         logger.info('Blog post updated', { slug });
 
         try {
-          revalidatePath('/blog');
-          revalidatePath(`/blog/${slug}`);
+          revalidateBlogPaths(slug);
           logger.info('Revalidated blog paths', { slug });
         } catch (revalidateError) {
           logger.warn('Failed to revalidate blog paths', { slug, error: revalidateError });
@@ -139,8 +138,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       // Trigger on-demand revalidation so the post is visible immediately
       try {
-        revalidatePath('/blog');
-        revalidatePath(`/blog/${slug}`);
+        revalidateBlogPaths(slug);
         logger.info('Revalidated blog paths', { slug });
       } catch (revalidateError) {
         logger.warn('Failed to revalidate blog paths', { slug, error: revalidateError });
