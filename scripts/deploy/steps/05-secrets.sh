@@ -40,6 +40,7 @@ step_secrets() {
     # Guarded by tests/unit/deploy/worker-secret-allowlist.unit.spec.ts.
     # OpenNext cache purge (open-next.config.ts cachePurge) reads these names.
     local CACHE_PURGE_ZONE_ID="${CACHE_PURGE_ZONE_ID:-${CLOUDFLARE_ZONE_ID:-}}"
+    local CACHE_PURGE_API_TOKEN="${CACHE_PURGE_API_TOKEN:-${CLOUDFLARE_API_TOKEN:-}}"
     local secrets=(
         SUPABASE_SERVICE_ROLE_KEY
         STRIPE_SECRET_KEY

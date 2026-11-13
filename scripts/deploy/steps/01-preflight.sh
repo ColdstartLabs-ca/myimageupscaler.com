@@ -48,18 +48,16 @@ _check_cloudflare_credentials() {
 
 # bypassTagCacheOnCacheHit serves stale HTML after revalidatePath unless purge works.
 _check_cache_purge() {
-    if [[ -z "${CACHE_PURGE_API_TOKEN:-}" ]]; then
-        log_error "Missing CACHE_PURGE_API_TOKEN in .env.api (Zone > Cache Purge token)"
-        return
-    fi
+    # Defaults to CLOUDFLARE_API_TOKEN, which needs the Zone > Cache Purge permission.
+    local token="${CACHE_PURGE_API_TOKEN:-${CLOUDFLARE_API_TOKEN:-}}"
     local result
     result=$(curl -s -X POST "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache" \
-        -H "Authorization: Bearer $CACHE_PURGE_API_TOKEN" -H "Content-Type: application/json" \
+        -H "Authorization: Bearer $token" -H "Content-Type: application/json" \
         -d '{"tags":["miu-deploy-purge-probe"]}')
     if echo "$result" | grep -q '"success":true'; then
         log_success "Cache purge token"
     else
-        log_error "CACHE_PURGE_API_TOKEN cannot purge by tag on zone $CLOUDFLARE_ZONE_ID"
+        log_error "Cache purge token cannot purge by tag on zone $CLOUDFLARE_ZONE_ID (add Zone > Cache Purge)"
     fi
 }
 
