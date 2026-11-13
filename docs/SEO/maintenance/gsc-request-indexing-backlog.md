@@ -12,6 +12,8 @@ Note: On 2026-06-12, `https://myimageupscaler.com/sitemap.xml` and `https://myim
 
 ## Pending
 
+> **2026-11-13:** daily Request-indexing quota reached after 11 accepted; continue with the unchecked rows on the next day.
+
 ### Sitemap/noindex submission cleanup — code ready 2026-11-02; awaiting deployment
 
 Commit `af9cc7f0` removes eight intentionally noindex URLs from submitted `<loc>` entries: `/compare/midjourney-vs-stable-diffusion`, `/es/alternatives/vs-imgupscaler`, and `/{es,pt,de,fr,it,ja}/alternatives/vs-adobe-express`. Normal public GETs confirmed all eight are currently 200/self-canonical/noindex and still submitted; real local route GETs omit them after the fix while preserving category hubs and the indexable English Adobe Express page. **Do not add these URLs to the request-indexing queue or change their robots directives.** No release, sitemap resubmission or manual indexing request was performed. Check release inclusion **2026-11-05**, then verify the seven live sitemaps after the next authorized deploy. Existing **69 unique pending URLs**, oldest group **2026-08-13**, remain unchanged; no URL rows added or duplicated. Blog experiment/indexing gates below are unaffected.
@@ -118,7 +120,7 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 - [x] `https://myimageupscaler.com/blog/how-to-make-png-background-transparent-free` — indexing requested 2026-08-28, confirmed "added to a priority crawl queue"
 - [x] `https://myimageupscaler.com/blog/reduce-image-noise` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-12T09:55:42Z.
 - [x] `https://myimageupscaler.com/blog/noise-reduction-in-image` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-15T06:49:47Z.
-- [ ] `https://myimageupscaler.com/blog/ai-photo-restoration`
+- [x] `https://myimageupscaler.com/blog/ai-photo-restoration` — **Manual request 2026-11-13:** Request indexing accepted in the GSC UI (priority crawl queue).
 - [x] `https://myimageupscaler.com/blog/how-to-clear-up-a-photo` — indexing requested 2026-10-12 in the GSC URL Inspection UI, confirmed "URL was added to a priority crawl queue"; closes the 2026-08-13 PRD 06 pending request. Normal public GET: 200, self-canonical, index/follow, cache HIT. Fresh GSC Sep 12–Oct 9: 28 clicks / 4,009 impressions, position 13.8. **2026-10-19 API follow-up:** `Submitted and indexed`, successful post-request crawl `2026-10-17T23:17:27Z`, indexing allowed and matching Google/user canonicals. No repeat request; no traffic-lift claim.
 - [x] `https://myimageupscaler.com/blog/best-image-upscaling-tools-2026` — **Closed 2026-11-13, not indexable:** 308 → https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared. Do not request indexing.
 
@@ -176,7 +178,7 @@ Request these first (named in the source audit or highest traffic):
 - [x] `https://myimageupscaler.com/formats/upscale-heic-images` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-05T21:53:57Z.
 - [x] `https://myimageupscaler.com/formats/upscale-raw-images` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-28T22:01:32Z.
 - [x] `https://myimageupscaler.com/formats/upscale-svg-images` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-04T21:46:16Z.
-- [ ] `https://myimageupscaler.com/scale/pixel-boost-upscaler`
+- [x] `https://myimageupscaler.com/scale/pixel-boost-upscaler` — **Manual request 2026-11-13:** Request indexing accepted in the GSC UI (priority crawl queue).
 - [x] `https://myimageupscaler.com/scale/ultra-hd-upscaler` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-20T16:54:45Z.
 - [x] `https://myimageupscaler.com/scale/upscale-8x` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-03T14:05:47Z.
 - [x] `https://myimageupscaler.com/scale/upscale-to-4k` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-30T08:13:02Z.
@@ -189,18 +191,18 @@ Then the remaining 49 as quota allows — or simply let the sitemap `lastmod` ca
 
 - [x] `https://myimageupscaler.com/camera-raw/upscale-nef-images` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-30T00:15:28Z.
 - [x] `https://myimageupscaler.com/device-use/desktop-ecommerce-upscaler` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-16T20:58:01Z.
-- [ ] `https://myimageupscaler.com/device-use/desktop-graphic-design-upscaler`
+- [x] `https://myimageupscaler.com/device-use/desktop-graphic-design-upscaler` — **Manual request 2026-11-13:** Request indexing accepted in the GSC UI (priority crawl queue).
 - [x] `https://myimageupscaler.com/device-use/desktop-photo-editing-upscaler` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-13T08:40:14Z.
-- [ ] `https://myimageupscaler.com/device-use/desktop-presentations-upscaler`
+- [x] `https://myimageupscaler.com/device-use/desktop-presentations-upscaler` — **Manual request 2026-11-13:** Request indexing accepted in the GSC UI (priority crawl queue).
 - [x] `https://myimageupscaler.com/device-use/desktop-professional-printing-upscaler` — **Closed 2026-11-13, not indexable:** meta robots noindex, follow. Do not request indexing.
-- [ ] `https://myimageupscaler.com/device-use/desktop-video-thumbnails-upscaler`
-- [ ] `https://myimageupscaler.com/device-use/mobile-content-creation-upscaler`
-- [ ] `https://myimageupscaler.com/device-use/mobile-ecommerce-upscaler`
-- [ ] `https://myimageupscaler.com/device-use/mobile-messaging-upscaler`
+- [x] `https://myimageupscaler.com/device-use/desktop-video-thumbnails-upscaler` — **Manual request 2026-11-13:** Request indexing accepted in the GSC UI (priority crawl queue).
+- [x] `https://myimageupscaler.com/device-use/mobile-content-creation-upscaler` — **Manual request 2026-11-13:** Request indexing accepted in the GSC UI (priority crawl queue).
+- [x] `https://myimageupscaler.com/device-use/mobile-ecommerce-upscaler` — **Manual request 2026-11-13:** Request indexing accepted in the GSC UI (priority crawl queue).
+- [x] `https://myimageupscaler.com/device-use/mobile-messaging-upscaler` — **Manual request 2026-11-13:** Request indexing accepted in the GSC UI (priority crawl queue).
 - [x] `https://myimageupscaler.com/device-use/tablet-content-creation-upscaler` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-02T05:06:41Z.
 - [x] `https://myimageupscaler.com/device-use/tablet-digital-art-upscaler` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-19T21:55:33Z.
 - [x] `https://myimageupscaler.com/device-use/tablet-ecommerce-upscaler` — **Closed 2026-11-13, not indexable:** meta robots noindex, follow. Do not request indexing.
-- [ ] `https://myimageupscaler.com/device-use/tablet-photo-editing-upscaler`
+- [x] `https://myimageupscaler.com/device-use/tablet-photo-editing-upscaler` — **Manual request 2026-11-13:** Request indexing accepted in the GSC UI (priority crawl queue).
 - [x] `https://myimageupscaler.com/device-use/tablet-social-media-upscaler` — **Closed 2026-11-13, not indexable:** meta robots noindex, follow. Do not request indexing.
 - [x] `https://myimageupscaler.com/format-scale/avif-upscale-16x` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-24T21:05:28Z.
 - [x] `https://myimageupscaler.com/format-scale/avif-upscale-2x` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-13T20:04:47Z.
@@ -211,8 +213,8 @@ Then the remaining 49 as quota allows — or simply let the sitemap `lastmod` ca
 - [x] `https://myimageupscaler.com/format-scale/gif-upscale-16x` — **Closed 2026-11-13, not indexable:** 301 → https://myimageupscaler.com/formats/upscale-gif-images. Do not request indexing.
 - [x] `https://myimageupscaler.com/format-scale/gif-upscale-2x` — **Closed 2026-11-13, not indexable:** 301 → https://myimageupscaler.com/formats/upscale-gif-images. Do not request indexing.
 - [x] `https://myimageupscaler.com/format-scale/gif-upscale-8x` — **Closed 2026-11-13, not indexable:** 301 → https://myimageupscaler.com/formats/upscale-gif-images. Do not request indexing.
-- [ ] `https://myimageupscaler.com/format-scale/heic-upscale-16x`
-- [ ] `https://myimageupscaler.com/format-scale/heic-upscale-2x`
+- [x] `https://myimageupscaler.com/format-scale/heic-upscale-16x` — **Manual request 2026-11-13:** Request indexing accepted in the GSC UI (priority crawl queue).
+- [x] `https://myimageupscaler.com/format-scale/heic-upscale-2x` — **Manual request 2026-11-13:** Request indexing accepted in the GSC UI (priority crawl queue).
 - [ ] `https://myimageupscaler.com/format-scale/heic-upscale-8x`
 - [x] `https://myimageupscaler.com/format-scale/jpeg-upscale-16x` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-04T21:44:52Z.
 - [x] `https://myimageupscaler.com/format-scale/jpeg-upscale-8x` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-06T17:57:59Z.
