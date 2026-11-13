@@ -85,12 +85,14 @@ async function openSignInModal(page: PlaywrightPage): Promise<void> {
   // Wait for Sign In button to be available
   const signInBtn = page.locator('button:has-text("Sign In")').first();
   await signInBtn.waitFor({ state: 'visible', timeout: 15000 });
-  await signInBtn.click();
-
   // Wait for the modal to open — check for modal container or email input
   // Using separate locators to avoid CSS selector issues with special characters
   const modalContainer = page.locator('[data-testid="modal"], [role="dialog"]').first();
-  await modalContainer.waitFor({ state: 'visible', timeout: 10000 });
+  // A click that lands before React hydrates the header is dropped; click again until it opens.
+  await expect(async () => {
+    await signInBtn.click();
+    await modalContainer.waitFor({ state: 'visible', timeout: 3000 });
+  }).toPass({ timeout: 30000 });
 }
 
 /**

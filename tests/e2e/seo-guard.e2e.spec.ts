@@ -197,10 +197,18 @@ test.describe('SEO Guard - Deploy Blocker', () => {
       ];
 
       for (const sitemapPath of sampleSitemaps) {
-        const response = await request.get(sitemapPath);
-        expect(response.status(), `${sitemapPath} should return 200`).toBe(200);
-
-        const text = await response.text();
+        // next dev can answer 404 while it compiles the route on first hit; a real 404 still fails.
+        let text = '';
+        await expect
+          .poll(
+            async () => {
+              const response = await request.get(sitemapPath);
+              text = await response.text();
+              return response.status();
+            },
+            { message: `${sitemapPath} should return 200`, timeout: 30000 }
+          )
+          .toBe(200);
 
         // Should be valid XML with urlset
         expect(text, `${sitemapPath} should have urlset`).toContain('<urlset');

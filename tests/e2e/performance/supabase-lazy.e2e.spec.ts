@@ -34,6 +34,8 @@ async function settle(page: Page): Promise<void> {
 
 test.describe('Supabase client stays out of anonymous payloads', () => {
   test('a. anonymous tool page never downloads the Supabase SDK', async ({ page }) => {
+    // Warm the route first: a cold next dev compile can serve a partial chunk ("Invalid or unexpected token").
+    await page.request.get('/tools/ai-image-upscaler');
     const probe = probeScripts(page);
     await page.goto('/tools/ai-image-upscaler', { waitUntil: 'load' });
     await settle(page);
