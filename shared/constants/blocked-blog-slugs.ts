@@ -11,4 +11,7 @@ export const BLOCKED_BLOG_SLUGS = new Set([
   'upscale-image-online-free',
   'ai-vs-traditional-image-upscaling',
   'how-ai-image-upscaling-works-explained',
+  // Redirected in next.config.js redirects() (blog cannibalization consolidation)
+  'best-ai-image-quality-enhancer',
+  'best-image-upscaling-tools-2026',
 ]);

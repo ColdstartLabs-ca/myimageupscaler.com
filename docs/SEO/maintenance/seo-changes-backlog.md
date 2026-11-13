@@ -12,6 +12,12 @@ Maintenance rules:
 
 ## 2026-11-13
 
+### Blog sitemap — redirected slugs excluded, drift guard added
+
+- **Signal (measured):** HEAD on all 316 `sitemap-blog.xml` URLs: 315 × 200, 1 × 308 (`/blog/best-ai-image-quality-enhancer` → `/blog/best-ai-image-enhancer`).
+- **Root cause:** `next.config.js` blog redirects and `BLOCKED_BLOG_SLUGS` are separate lists. Added `best-ai-image-quality-enhancer` + `best-image-upscaling-tools-2026` to `shared/constants/blocked-blog-slugs.ts`.
+- **Guard:** `tests/unit/seo/blog-redirects-blocked-from-sitemap.unit.spec.ts` parses every `source: '/blog/<slug>'` in `next.config.js` and requires it in the blocked set (RED without the fix → GREEN).
+
 ### CWV mobile LCP > 4s — stale ISR hits stop waiting on the revalidation Durable Object
 
 - **Signal:** GSC CWV export 2026-11-13: 174 mobile URLs, "LCP longer than 4s", group LCP 4.5s (`/blog/poster-size-dimensions-pixels`). CrUX origin p75: **TTFB 3.3s**, FCP 4.2s, LCP 4.4s. The LCP image (preloaded) loads in ~0.5s, so server wait is the cause.
