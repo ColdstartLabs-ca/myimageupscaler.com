@@ -277,12 +277,25 @@ describe('blog indexation report', () => {
     expect(reconciliation.notCurrentlyPublishedSlugs).toEqual([
       ...HISTORICAL_BASELINE_NOT_CURRENTLY_PUBLISHED_SLUGS,
     ]);
-    expect(reconciliation.notCurrentlyPublishedSlugs).toHaveLength(28);
+    expect(reconciliation.notCurrentlyPublishedSlugs).toHaveLength(27);
     expect(reconciliation.notCurrentlyPublishedUrls).toEqual(
       HISTORICAL_BASELINE_NOT_CURRENTLY_PUBLISHED_SLUGS.map(
         slug => `https://myimageupscaler.com/blog/${slug}`
       )
     );
+  });
+
+  it('accounts for a redirected (blocked) baseline URL without listing it as not published', () => {
+    // best-image-upscaling-tools-2026 301s in next.config.js, so it is in BLOCKED_BLOG_SLUGS.
+    const redirected = 'best-image-upscaling-tools-2026';
+    const declared = new Set<string>(HISTORICAL_BASELINE_NOT_CURRENTLY_PUBLISHED_SLUGS);
+    const inventoryWithoutRedirected = BLOG_INDEXATION_BASELINE_URLS.map(url =>
+      url.replace(/^https:\/\/myimageupscaler\.com\/blog\//, '')
+    ).filter(slug => !declared.has(slug) && slug !== redirected);
+
+    const reconciliation = reconcileHistoricalBaselineSlugs(inventoryWithoutRedirected);
+
+    expect(reconciliation.notCurrentlyPublishedSlugs).not.toContain(redirected);
   });
 
   it('fails when an explicitly reconciled baseline URL appears in the current inventory', () => {

@@ -87,7 +87,6 @@ export const HISTORICAL_BASELINE_NOT_CURRENTLY_PUBLISHED_SLUGS = [
   'noise-reduction-in-image',
   'ai-photo-restoration',
   'how-to-clear-up-a-photo',
-  'best-image-upscaling-tools-2026',
 ] as const;
 
 export type BlogIndexationCause =
@@ -248,8 +247,9 @@ export function reconcileHistoricalBaselineSlugs(
   );
   const currentBaselineSlugs = baselineSlugs.filter(slug => current.has(slug));
   const missingBaselineSlugs = baselineSlugs.filter(slug => !current.has(slug));
+  // A blocked baseline slug is a 301 redirect, so the redirect accounts for it.
   const unexpectedMissingSlugs = missingBaselineSlugs.filter(
-    slug => !declaredNotCurrentlyPublished.has(slug)
+    slug => !declaredNotCurrentlyPublished.has(slug) && !BLOCKED_BLOG_SLUGS.has(slug)
   );
   const declaredButCurrentSlugs = [...declaredNotCurrentlyPublished].filter(slug =>
     current.has(slug)
@@ -453,7 +453,11 @@ function reconcileUnindexedUrls(
 
   return {
     missingFromReport: missingEntries
-      .filter(entry => !entry.slug || !historicalBaselineSlugs.has(entry.slug))
+      .filter(
+        entry =>
+          !entry.slug ||
+          (!historicalBaselineSlugs.has(entry.slug) && !BLOCKED_BLOG_SLUGS.has(entry.slug))
+      )
       .map(entry => entry.url)
       .sort(),
     unexpectedInReport: [...currentKnownUnindexed]
