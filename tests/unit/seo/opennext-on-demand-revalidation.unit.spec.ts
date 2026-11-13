@@ -147,7 +147,15 @@ describe('OpenNext blog on-demand revalidation', () => {
     );
   });
 
-  it('checks invalidation even on a warm regional HTML cache hit', async () => {
+  it('purges warm regional HTML by tag when a blog edit writes its tag', async () => {
+    // Regional hits skip the tag DO (bypassTagCacheOnCacheHit), so an edit reaches
+    // readers only through the Cloudflare purge-by-tag call made by writeTags.
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(new Response(JSON.stringify({ success: true }), { status: 200 }));
+    const context = globals[contextSymbol] as { env: Record<string, unknown> };
+    context.env.CACHE_PURGE_ZONE_ID = 'zone-test';
+    context.env.CACHE_PURGE_API_TOKEN = 'token-test';
     const tagCache = configuredTagCache();
     globals.tagCache = tagCache;
     const override = cloudflareConfig.default?.override?.incrementalCache;
@@ -161,12 +169,13 @@ describe('OpenNext blog on-demand revalidation', () => {
     vi.spyOn(regional, 'getCacheInstance').mockResolvedValue({
       match: vi.fn(async () => ({ json: async () => cachedEntry() })),
     });
-    globals.incrementalCache = regional;
+    expect(await regional.get(PATH)).toHaveProperty('shouldBypassTagCache', true);
+
     await tagCache.writeTags([TAG]);
-    const entry = await regional.get(PATH);
-    expect(entry).toHaveProperty('shouldBypassTagCache', false);
-    const { cacheInterceptor } = await import('@opennextjs/aws/core/routing/cacheInterceptor.js');
-    const event = eventFor();
-    expect(await cacheInterceptor(event)).toBe(event);
+
+    expect(fetchSpy).toHaveBeenCalledWith(
+      'https://api.cloudflare.com/client/v4/zones/zone-test/purge_cache',
+      expect.objectContaining({ method: 'POST', body: JSON.stringify({ tags: [TAG] }) })
+    );
   });
 });
