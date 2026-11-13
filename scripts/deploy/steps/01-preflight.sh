@@ -4,6 +4,7 @@ step_preflight() {
     log_step 1 "Preflight checks"
 
     _check_cloudflare_credentials
+    _check_cache_purge
 
     # Required Stripe env vars
     for var in STRIPE_SECRET_KEY STRIPE_WEBHOOK_SECRET; do
@@ -43,6 +44,23 @@ _check_cloudflare_credentials() {
         [[ -z "${!var:-}" ]] && log_error "Missing $var in .env.api"
     done
     log_success "Cloudflare credentials"
+}
+
+# bypassTagCacheOnCacheHit serves stale HTML after revalidatePath unless purge works.
+_check_cache_purge() {
+    if [[ -z "${CACHE_PURGE_API_TOKEN:-}" ]]; then
+        log_error "Missing CACHE_PURGE_API_TOKEN in .env.api (Zone > Cache Purge token)"
+        return
+    fi
+    local result
+    result=$(curl -s -X POST "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache" \
+        -H "Authorization: Bearer $CACHE_PURGE_API_TOKEN" -H "Content-Type: application/json" \
+        -d '{"tags":["miu-deploy-purge-probe"]}')
+    if echo "$result" | grep -q '"success":true'; then
+        log_success "Cache purge token"
+    else
+        log_error "CACHE_PURGE_API_TOKEN cannot purge by tag on zone $CLOUDFLARE_ZONE_ID"
+    fi
 }
 
 _check_provider_observability() {

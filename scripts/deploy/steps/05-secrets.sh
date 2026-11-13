@@ -38,6 +38,8 @@ step_secrets() {
     # NEXT_PUBLIC_* at build time, so anything server-only that is missing here resolves
     # to its zod default ('') in production and fails SILENTLY.
     # Guarded by tests/unit/deploy/worker-secret-allowlist.unit.spec.ts.
+    # OpenNext cache purge (open-next.config.ts cachePurge) reads these names.
+    local CACHE_PURGE_ZONE_ID="${CACHE_PURGE_ZONE_ID:-${CLOUDFLARE_ZONE_ID:-}}"
     local secrets=(
         SUPABASE_SERVICE_ROLE_KEY
         STRIPE_SECRET_KEY
@@ -65,6 +67,8 @@ step_secrets() {
         GSC_SERVICE_ACCOUNT_EMAIL
         GSC_SITE_URL
         OUTRANK_WEBHOOK_SECRET
+        CACHE_PURGE_API_TOKEN
+        CACHE_PURGE_ZONE_ID
     )
 
     for secret in "${secrets[@]}"; do

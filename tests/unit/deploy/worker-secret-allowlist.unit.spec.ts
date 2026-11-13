@@ -49,6 +49,8 @@ const REQUIRED_AT_RUNTIME: { name: string; consumer: string }[] = [
     name: 'STRIPE_ENGAGEMENT_DISCOUNT_COUPON_ID',
     consumer: 'server/services/engagement-discount.service.ts',
   },
+  { name: 'CACHE_PURGE_API_TOKEN', consumer: 'open-next.config.ts cachePurge' },
+  { name: 'CACHE_PURGE_ZONE_ID', consumer: 'open-next.config.ts cachePurge' },
 ];
 
 function allowlistedNames(script: string): string[] {

@@ -151,4 +151,37 @@ describe('OpenNext incremental cache configuration', () => {
   it('should use Webpack for the Cloudflare production bundle', () => {
     expect(packageJson.scripts.build).toBe('next build --webpack');
   });
+
+  it('should purge regional HTML by tag on revalidation', () => {
+    const cdnInvalidation = cloudflareConfig.default?.override?.cdnInvalidation;
+    expect(cdnInvalidation).toBeDefined();
+    const handler =
+      typeof cdnInvalidation === 'function'
+        ? (cdnInvalidation as unknown as () => { name: string })()
+        : (cdnInvalidation as unknown as { name: string });
+    expect(handler.name).toBe('cloudflare');
+  });
+
+  it('should bypass the tag cache on regional hits', () => {
+    const incrementalCache = cloudflareConfig.default?.override?.incrementalCache;
+    expect(incrementalCache).toBeTypeOf('function');
+    const cache = (
+      incrementalCache as unknown as () => { opts: { bypassTagCacheOnCacheHit?: boolean } }
+    )();
+    expect(cache.opts.bypassTagCacheOnCacheHit).toBe(true);
+  });
+
+  it('should never bypass the tag cache without cache purge', () => {
+    const incrementalCache = cloudflareConfig.default?.override
+      ?.incrementalCache as unknown as () => {
+      opts: { bypassTagCacheOnCacheHit?: boolean };
+    };
+    const bypass = incrementalCache().opts.bypassTagCacheOnCacheHit === true;
+    const cdnInvalidation = cloudflareConfig.default?.override?.cdnInvalidation;
+
+    if (bypass) {
+      expect(cdnInvalidation).toBeDefined();
+      expect(cdnInvalidation).not.toBe('dummy');
+    }
+  });
 });
