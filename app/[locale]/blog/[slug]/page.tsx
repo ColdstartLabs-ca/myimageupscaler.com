@@ -382,12 +382,13 @@ export default async function BlogPostPage({ params }: IPageProps) {
               aria-label="Breadcrumb"
               className="mb-4 flex items-center gap-1.5 text-xs text-text-muted"
             >
-              <Link href="/blog" className="transition-colors hover:text-accent">
+              <Link href="/blog" prefetch={false} className="transition-colors hover:text-accent">
                 Blog
               </Link>
               <ChevronRight className="h-3 w-3 shrink-0" aria-hidden="true" />
               <Link
                 href={`/blog?q=${encodeURIComponent(post.category)}`}
+                prefetch={false}
                 className="transition-colors hover:text-accent"
               >
                 {post.category}

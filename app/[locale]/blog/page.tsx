@@ -19,7 +19,11 @@ import { BlogSearch } from '@client/components/blog/BlogSearch';
 import { BlogQueryLink } from '@client/components/blog/BlogQueryLink';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Locale } from '@/i18n/config';
-import { getOpenGraphMetadata, getCanonicalUrl } from '@lib/seo/hreflang-generator';
+import {
+  getOpenGraphMetadata,
+  getCanonicalUrl,
+  getLocalizedPath,
+} from '@lib/seo/hreflang-generator';
 import { buildBlogIndexJsonLd, buildBlogItemListJsonLd } from '@lib/seo/blog-template-signals';
 import { BLOG_SPECIALIST_PROFILE } from '@lib/blog/specialist-profile';
 import { getBlogIndexFeatured, getBlogStartHere } from '@lib/seo/seo-equity';
@@ -503,7 +507,7 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
                   {/* Previous Button */}
                   {currentPage > 1 ? (
                     <Link
-                      href={`/${locale}/blog?page=${currentPage - 1}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
+                      href={`${getLocalizedPath('/blog', locale)}?page=${currentPage - 1}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
                       scroll={false}
                       className="inline-flex items-center gap-2 px-4 py-2 bg-surface border border-border rounded-lg hover:border-accent/50 hover:bg-accent/5 transition-all"
                     >
@@ -523,7 +527,7 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
                       typeof item === 'number' ? (
                         <Link
                           key={item}
-                          href={`/${locale}/blog?page=${item}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
+                          href={`${getLocalizedPath('/blog', locale)}?page=${item}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
                           scroll={false}
                           className={`flex h-10 min-w-[2.5rem] items-center justify-center rounded-lg font-medium transition-all ${
                             currentPage === item
@@ -547,7 +551,7 @@ export default async function BlogPage({ params, searchParams }: IBlogPageProps)
                   {/* Next Button */}
                   {currentPage < totalPages ? (
                     <Link
-                      href={`/${locale}/blog?page=${currentPage + 1}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
+                      href={`${getLocalizedPath('/blog', locale)}?page=${currentPage + 1}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
                       scroll={false}
                       className="inline-flex items-center gap-2 px-4 py-2 bg-surface border border-border rounded-lg hover:border-accent/50 hover:bg-accent/5 transition-all"
                     >

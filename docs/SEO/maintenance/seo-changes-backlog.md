@@ -12,6 +12,12 @@ Maintenance rules:
 
 ## 2026-11-13
 
+### Blog — stop prefetching uncached /blog pages; pagination links skip the /en 301
+
+- **Signal (measured, Lighthouse on a blog post):** 12 RSC prefetches per view, including `/blog` and `/blog?q=<tag|category>` at 0.8–1.8s Worker time each; `/blog` is `private, no-store`. `/en/blog?page=2` → 301 → `/blog?page=2`.
+- **Change:** `prefetch={false}` on the post breadcrumb `/blog`, category and tag links (`app/[locale]/blog/[slug]/page.tsx`, `client/components/blog/BlogPostTags.tsx`); pagination hrefs use `getLocalizedPath('/blog', locale)` (`app/[locale]/blog/page.tsx`). Links stay crawlable `<a href>`.
+- **Test:** `tests/unit/seo/blog-link-hygiene.unit.spec.ts` (RED 4 → GREEN).
+
 ### Blog sitemap — redirected slugs excluded, drift guard added
 
 - **Signal (measured):** HEAD on all 316 `sitemap-blog.xml` URLs: 315 × 200, 1 × 308 (`/blog/best-ai-image-quality-enhancer` → `/blog/best-ai-image-enhancer`).

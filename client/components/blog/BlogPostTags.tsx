@@ -39,7 +39,11 @@ export function BlogPostTags({
                 ·
               </span>
             )}
-            <Link href={`/blog?q=${encodeURIComponent(tag)}`} className={blogTagLinkClass}>
+            <Link
+              href={`/blog?q=${encodeURIComponent(tag)}`}
+              prefetch={false}
+              className={blogTagLinkClass}
+            >
               {tag}
             </Link>
           </span>
