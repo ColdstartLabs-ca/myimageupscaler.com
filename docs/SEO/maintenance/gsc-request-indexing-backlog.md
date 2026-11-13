@@ -22,7 +22,7 @@ Commit `af9cc7f0` removes eight intentionally noindex URLs from submitted `<loc>
 
 ### TikTok PFP rung-2 description — live verified 2026-11-09
 
-- [ ] `https://myimageupscaler.com/blog/tiktok-profile-picture-ideas` — **Reopened 2026-11-09:** seo_description-only rung 2 replaces the vague brand/click promise with the eight existing PFP styles and crop/clarity preparation. Authenticated GET and normal public HTML match SHA256 `e2746a9f380b3eb77c089a135a21758a702a6e6e1751954feef1c527274c35e1`, HTTP 200 / one self-canonical / index-follow; title/body unchanged. API updated_at `2026-11-09T16:19:55.531234+00:00`. Nov 9 inspection reports Submitted and indexed, indexing allowed, matching Google/user canonicals, but last crawl `2026-11-04T21:13:35Z` predates this new write and cannot resolve it. Native browser preflight timed out twice; **no manual request claimed**. Inspect for a successful post-write crawl Nov 12; measure Nov 10–23, earliest conservative final-data verdict **2026-11-27**. Prior title rung: **API-resolved 2026-10-26, not a manual request**, successful post-title-change crawl `2026-10-23T19:16:16Z`; original 2026-10-19 title test measured Oct 20–Nov 2, earliest final-data verdict **2026-11-06**, now judged FLAT without resetting its dates. Do not repeat a rung inside the open window.
+- [x] `https://myimageupscaler.com/blog/tiktok-profile-picture-ideas` — **Reopened 2026-11-09:** seo_description-only rung 2 replaces the vague brand/click promise with the eight existing PFP styles and crop/clarity preparation. Authenticated GET and normal public HTML match SHA256 `e2746a9f380b3eb77c089a135a21758a702a6e6e1751954feef1c527274c35e1`, HTTP 200 / one self-canonical / index-follow; title/body unchanged. API updated_at `2026-11-09T16:19:55.531234+00:00`. Nov 9 inspection reports Submitted and indexed, indexing allowed, matching Google/user canonicals, but last crawl `2026-11-04T21:13:35Z` predates this new write and cannot resolve it. Native browser preflight timed out twice; **no manual request claimed**. Inspect for a successful post-write crawl Nov 12; measure Nov 10–23, earliest conservative final-data verdict **2026-11-27**. Prior title rung: **API-resolved 2026-10-26, not a manual request**, successful post-title-change crawl `2026-10-23T19:16:16Z`; original 2026-10-19 title test measured Oct 20–Nov 2, earliest final-data verdict **2026-11-06**, now judged FLAT without resetting its dates. Do not repeat a rung inside the open window. — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-13T18:11:19Z.
 
 > **2026-08-13 deploy — daily quota reached.** GSC's URL Inspection "Request indexing"
 > button is capped at ~10 submissions per property per day. 10 were submitted and
@@ -112,15 +112,15 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 - [x] `https://myimageupscaler.com/blog/how-to-enhance-a-picture-in-photoshop` — indexing requested 2026-09-11, confirmed "added to a priority crawl queue"
 - [x] `https://myimageupscaler.com/blog/what-is-denoising` — indexing requested 2026-09-11, confirmed "added to a priority crawl queue"
 - [x] `https://myimageupscaler.com/blog/image-out-of-focus` — indexing requested 2026-09-11, confirmed "added to a priority crawl queue"
-- [ ] `https://myimageupscaler.com/blog/enhance-picture-quality-ai`
-- [ ] `https://myimageupscaler.com/blog/how-to-preserve-old-photographs`
-- [ ] `https://myimageupscaler.com/blog/heic-iphone-photo-upscaling-guide`
+- [x] `https://myimageupscaler.com/blog/enhance-picture-quality-ai` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-28T09:47:13Z.
+- [x] `https://myimageupscaler.com/blog/how-to-preserve-old-photographs` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-12T23:19:05Z.
+- [x] `https://myimageupscaler.com/blog/heic-iphone-photo-upscaling-guide` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-06T21:22:55Z.
 - [x] `https://myimageupscaler.com/blog/how-to-make-png-background-transparent-free` — indexing requested 2026-08-28, confirmed "added to a priority crawl queue"
-- [ ] `https://myimageupscaler.com/blog/reduce-image-noise`
-- [ ] `https://myimageupscaler.com/blog/noise-reduction-in-image`
+- [x] `https://myimageupscaler.com/blog/reduce-image-noise` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-12T09:55:42Z.
+- [x] `https://myimageupscaler.com/blog/noise-reduction-in-image` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-15T06:49:47Z.
 - [ ] `https://myimageupscaler.com/blog/ai-photo-restoration`
 - [x] `https://myimageupscaler.com/blog/how-to-clear-up-a-photo` — indexing requested 2026-10-12 in the GSC URL Inspection UI, confirmed "URL was added to a priority crawl queue"; closes the 2026-08-13 PRD 06 pending request. Normal public GET: 200, self-canonical, index/follow, cache HIT. Fresh GSC Sep 12–Oct 9: 28 clicks / 4,009 impressions, position 13.8. **2026-10-19 API follow-up:** `Submitted and indexed`, successful post-request crawl `2026-10-17T23:17:27Z`, indexing allowed and matching Google/user canonicals. No repeat request; no traffic-lift claim.
-- [ ] `https://myimageupscaler.com/blog/best-image-upscaling-tools-2026`
+- [x] `https://myimageupscaler.com/blog/best-image-upscaling-tools-2026` — **Closed 2026-11-13, not indexable:** 308 → https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared. Do not request indexing.
 
 - [x] `https://myimageupscaler.com/`
 
@@ -129,12 +129,12 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 
 - [x] `https://myimageupscaler.com/blog/fix-blurry-photos-ai-methods-guide`
 - [x] `https://myimageupscaler.com/blog/fix-pixelated-image`
-- [ ] `https://myimageupscaler.com/blog/fixing-pixelated-photos` — 2026-09-10 regression rollback restored the prior meta/opening and removed the failed proof module; request indexing after live HTML exposes the repair.
+- [x] `https://myimageupscaler.com/blog/fixing-pixelated-photos` — 2026-09-10 regression rollback restored the prior meta/opening and removed the failed proof module; request indexing after live HTML exposes the repair. — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-08T13:23:03Z.
 - [x] `https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark`
 - [x] `https://myimageupscaler.com/blog/how-to-upscale-midjourney-images-for-print`
 - [x] `https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails` — **API-resolved 2026-11-05, not a manual request:** `Submitted and indexed`, indexing allowed, successful post-rollback crawl `2026-11-03T09:37:41Z`, matching Google/user canonicals. Resolves the **Reopened 2026-10-26** rung-3 LOSS rollback: normal rendered article still omits the diagnostic proof module and retains the corrected opening, official upload guidance, guest/DPI/fidelity repairs and R2 image migration (200, one self-canonical, index/follow). Authenticated API content hash remains `05d4b6fc56e336a85ac7d9e93e450c6cbf9d21f61499aaea77e25cdcbd3177fe`, updated_at `2026-10-26T16:23:25.345793+00:00`. Prior Oct 5 write was API-resolved Oct 8; the Oct 24 crawl previously reported was pre-rollback. Native browser timed out twice; no manual request claimed, new edit or experiment reset. Cooling-off Oct 27–Nov 9; earliest final-data verdict **2026-11-13**.
 - [x] `https://myimageupscaler.com/blog/image-upscaler-8x`
-- [ ] `https://myimageupscaler.com/blog/photo-restoration-program` — 2026-09-10 regression rollback removed the failed comparison expansion while retaining truthful metadata and credit copy; request indexing after live HTML exposes the repair.
+- [x] `https://myimageupscaler.com/blog/photo-restoration-program` — 2026-09-10 regression rollback removed the failed comparison expansion while retaining truthful metadata and credit copy; request indexing after live HTML exposes the repair. — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-06T05:02:24Z.
 
 ## Completed
 
@@ -172,69 +172,69 @@ Keep all 33 requests unchecked until URL Inspection confirms the post-change cra
 
 Request these first (named in the source audit or highest traffic):
 
-- [ ] `https://myimageupscaler.com/formats/upscale-avif-images`
-- [ ] `https://myimageupscaler.com/formats/upscale-heic-images`
-- [ ] `https://myimageupscaler.com/formats/upscale-raw-images`
-- [ ] `https://myimageupscaler.com/formats/upscale-svg-images`
+- [x] `https://myimageupscaler.com/formats/upscale-avif-images` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-06T14:25:51Z.
+- [x] `https://myimageupscaler.com/formats/upscale-heic-images` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-05T21:53:57Z.
+- [x] `https://myimageupscaler.com/formats/upscale-raw-images` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-28T22:01:32Z.
+- [x] `https://myimageupscaler.com/formats/upscale-svg-images` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-04T21:46:16Z.
 - [ ] `https://myimageupscaler.com/scale/pixel-boost-upscaler`
-- [ ] `https://myimageupscaler.com/scale/ultra-hd-upscaler`
-- [ ] `https://myimageupscaler.com/scale/upscale-8x`
-- [ ] `https://myimageupscaler.com/scale/upscale-to-4k`
-- [ ] `https://myimageupscaler.com/scale/upscale-to-hd`
+- [x] `https://myimageupscaler.com/scale/ultra-hd-upscaler` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-20T16:54:45Z.
+- [x] `https://myimageupscaler.com/scale/upscale-8x` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-03T14:05:47Z.
+- [x] `https://myimageupscaler.com/scale/upscale-to-4k` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-30T08:13:02Z.
+- [x] `https://myimageupscaler.com/scale/upscale-to-hd` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-03T11:08:19Z.
 
 Then the remaining 49 as quota allows — or simply let the sitemap `lastmod` carry them:
 
 <details>
 <summary>Remaining changed URLs</summary>
 
-- [ ] `https://myimageupscaler.com/camera-raw/upscale-nef-images`
-- [ ] `https://myimageupscaler.com/device-use/desktop-ecommerce-upscaler`
+- [x] `https://myimageupscaler.com/camera-raw/upscale-nef-images` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-30T00:15:28Z.
+- [x] `https://myimageupscaler.com/device-use/desktop-ecommerce-upscaler` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-16T20:58:01Z.
 - [ ] `https://myimageupscaler.com/device-use/desktop-graphic-design-upscaler`
-- [ ] `https://myimageupscaler.com/device-use/desktop-photo-editing-upscaler`
+- [x] `https://myimageupscaler.com/device-use/desktop-photo-editing-upscaler` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-13T08:40:14Z.
 - [ ] `https://myimageupscaler.com/device-use/desktop-presentations-upscaler`
-- [ ] `https://myimageupscaler.com/device-use/desktop-professional-printing-upscaler`
+- [x] `https://myimageupscaler.com/device-use/desktop-professional-printing-upscaler` — **Closed 2026-11-13, not indexable:** meta robots noindex, follow. Do not request indexing.
 - [ ] `https://myimageupscaler.com/device-use/desktop-video-thumbnails-upscaler`
 - [ ] `https://myimageupscaler.com/device-use/mobile-content-creation-upscaler`
 - [ ] `https://myimageupscaler.com/device-use/mobile-ecommerce-upscaler`
 - [ ] `https://myimageupscaler.com/device-use/mobile-messaging-upscaler`
-- [ ] `https://myimageupscaler.com/device-use/tablet-content-creation-upscaler`
-- [ ] `https://myimageupscaler.com/device-use/tablet-digital-art-upscaler`
-- [ ] `https://myimageupscaler.com/device-use/tablet-ecommerce-upscaler`
+- [x] `https://myimageupscaler.com/device-use/tablet-content-creation-upscaler` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-02T05:06:41Z.
+- [x] `https://myimageupscaler.com/device-use/tablet-digital-art-upscaler` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-19T21:55:33Z.
+- [x] `https://myimageupscaler.com/device-use/tablet-ecommerce-upscaler` — **Closed 2026-11-13, not indexable:** meta robots noindex, follow. Do not request indexing.
 - [ ] `https://myimageupscaler.com/device-use/tablet-photo-editing-upscaler`
-- [ ] `https://myimageupscaler.com/device-use/tablet-social-media-upscaler`
-- [ ] `https://myimageupscaler.com/format-scale/avif-upscale-16x`
-- [ ] `https://myimageupscaler.com/format-scale/avif-upscale-2x`
-- [ ] `https://myimageupscaler.com/format-scale/avif-upscale-4x`
-- [ ] `https://myimageupscaler.com/format-scale/avif-upscale-8x`
-- [ ] `https://myimageupscaler.com/format-scale/bmp-upscale-16x`
-- [ ] `https://myimageupscaler.com/format-scale/bmp-upscale-8x`
-- [ ] `https://myimageupscaler.com/format-scale/gif-upscale-16x`
-- [ ] `https://myimageupscaler.com/format-scale/gif-upscale-2x`
-- [ ] `https://myimageupscaler.com/format-scale/gif-upscale-8x`
+- [x] `https://myimageupscaler.com/device-use/tablet-social-media-upscaler` — **Closed 2026-11-13, not indexable:** meta robots noindex, follow. Do not request indexing.
+- [x] `https://myimageupscaler.com/format-scale/avif-upscale-16x` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-24T21:05:28Z.
+- [x] `https://myimageupscaler.com/format-scale/avif-upscale-2x` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-13T20:04:47Z.
+- [x] `https://myimageupscaler.com/format-scale/avif-upscale-4x` — **Closed 2026-11-13, not indexable:** meta robots noindex, follow. Do not request indexing.
+- [x] `https://myimageupscaler.com/format-scale/avif-upscale-8x` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-09-21T06:24:28Z.
+- [x] `https://myimageupscaler.com/format-scale/bmp-upscale-16x` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-09-21T02:53:37Z.
+- [x] `https://myimageupscaler.com/format-scale/bmp-upscale-8x` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-27T07:49:32Z.
+- [x] `https://myimageupscaler.com/format-scale/gif-upscale-16x` — **Closed 2026-11-13, not indexable:** 301 → https://myimageupscaler.com/formats/upscale-gif-images. Do not request indexing.
+- [x] `https://myimageupscaler.com/format-scale/gif-upscale-2x` — **Closed 2026-11-13, not indexable:** 301 → https://myimageupscaler.com/formats/upscale-gif-images. Do not request indexing.
+- [x] `https://myimageupscaler.com/format-scale/gif-upscale-8x` — **Closed 2026-11-13, not indexable:** 301 → https://myimageupscaler.com/formats/upscale-gif-images. Do not request indexing.
 - [ ] `https://myimageupscaler.com/format-scale/heic-upscale-16x`
 - [ ] `https://myimageupscaler.com/format-scale/heic-upscale-2x`
 - [ ] `https://myimageupscaler.com/format-scale/heic-upscale-8x`
-- [ ] `https://myimageupscaler.com/format-scale/jpeg-upscale-16x`
-- [ ] `https://myimageupscaler.com/format-scale/jpeg-upscale-8x`
-- [ ] `https://myimageupscaler.com/format-scale/png-upscale-4x`
-- [ ] `https://myimageupscaler.com/format-scale/png-upscale-8x`
-- [ ] `https://myimageupscaler.com/format-scale/raw-upscale-2x`
-- [ ] `https://myimageupscaler.com/format-scale/webp-upscale-16x`
+- [x] `https://myimageupscaler.com/format-scale/jpeg-upscale-16x` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-04T21:44:52Z.
+- [x] `https://myimageupscaler.com/format-scale/jpeg-upscale-8x` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-06T17:57:59Z.
+- [x] `https://myimageupscaler.com/format-scale/png-upscale-4x` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-03T12:11:05Z.
+- [x] `https://myimageupscaler.com/format-scale/png-upscale-8x` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-06T14:54:37Z.
+- [x] `https://myimageupscaler.com/format-scale/raw-upscale-2x` — **Closed 2026-11-13, not indexable:** meta robots noindex, follow. Do not request indexing.
+- [x] `https://myimageupscaler.com/format-scale/webp-upscale-16x` — **Closed 2026-11-13, not indexable:** meta robots noindex, follow. Do not request indexing.
 - [ ] `https://myimageupscaler.com/industry-insights/travel-tourism-enhancement`
-- [ ] `https://myimageupscaler.com/interactive-tools/photo-quality-enhancer`
-- [ ] `https://myimageupscaler.com/platform-format/canva-upscaler-avif`
+- [x] `https://myimageupscaler.com/interactive-tools/photo-quality-enhancer` — **Closed 2026-11-13, not indexable:** 404 not found. Do not request indexing.
+- [x] `https://myimageupscaler.com/platform-format/canva-upscaler-avif` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-17T11:32:50Z.
 - [ ] `https://myimageupscaler.com/platform-format/canva-upscaler-bmp`
-- [ ] `https://myimageupscaler.com/platform-format/canva-upscaler-heic`
-- [ ] `https://myimageupscaler.com/platform-format/canva-upscaler-jpg`
-- [ ] `https://myimageupscaler.com/platform-format/canva-upscaler-raw`
-- [ ] `https://myimageupscaler.com/platform-format/canva-upscaler-tiff`
-- [ ] `https://myimageupscaler.com/platform-format/canva-upscaler-webp`
+- [x] `https://myimageupscaler.com/platform-format/canva-upscaler-heic` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-20T20:33:37Z.
+- [x] `https://myimageupscaler.com/platform-format/canva-upscaler-jpg` — **Closed 2026-11-13, not indexable:** meta robots noindex, follow. Do not request indexing.
+- [x] `https://myimageupscaler.com/platform-format/canva-upscaler-raw` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-29T00:45:49Z.
+- [x] `https://myimageupscaler.com/platform-format/canva-upscaler-tiff` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-06T20:28:25Z.
+- [x] `https://myimageupscaler.com/platform-format/canva-upscaler-webp` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-09-25T21:42:58Z.
 - [ ] `https://myimageupscaler.com/platform-format/midjourney-upscaler-webp`
-- [ ] `https://myimageupscaler.com/platform-format/photoshop-upscaler-png`
+- [x] `https://myimageupscaler.com/platform-format/photoshop-upscaler-png` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-09T23:23:47Z.
 - [ ] `https://myimageupscaler.com/platform-format/photoshop-upscaler-webp`
-- [ ] `https://myimageupscaler.com/platform-format/stable-diffusion-upscaler-png`
-- [ ] `https://myimageupscaler.com/platforms/canva-upscaler`
+- [x] `https://myimageupscaler.com/platform-format/stable-diffusion-upscaler-png` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-10-06T02:05:06Z.
+- [x] `https://myimageupscaler.com/platforms/canva-upscaler` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-04T21:22:00Z.
 - [ ] `https://myimageupscaler.com/use-cases/cartoon-image-upscaler`
-- [ ] `https://myimageupscaler.com/use-cases/portrait-photo-upscaler`
+- [x] `https://myimageupscaler.com/use-cases/portrait-photo-upscaler` — **API-resolved 2026-11-13, not a manual request:** Submitted and indexed, last crawl 2026-11-13T15:05:11Z.
 
 </details>
