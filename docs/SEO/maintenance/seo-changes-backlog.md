@@ -10,6 +10,16 @@ Maintenance rules:
 - Full pre-rollup detail for 2026-05 → 2026-10-19 stays in git: `git show 3bdb8f1e:docs/SEO/maintenance/seo-changes-backlog.md`.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-11-13
+
+### CWV mobile LCP > 4s — stale ISR hits stop waiting on the revalidation Durable Object
+
+- **Signal:** GSC CWV export 2026-11-13: 174 mobile URLs, "LCP longer than 4s", group LCP 4.5s (`/blog/poster-size-dimensions-pixels`). CrUX origin p75: **TTFB 3.3s**, FCP 4.2s, LCP 4.4s. The LCP image (preloaded) loads in ~0.5s, so server wait is the cause.
+- **Root cause found:** OpenNext `cacheInterceptor` does `await queue.send()` on every STALE hit, and `doQueue.send` awaits a cross-region DO RPC. With `revalidate = 86400` and low per-page traffic, 11/30 random blog first visits were STALE: **0.97s vs 0.48s** TTFB for HIT.
+- **Change:** `open-next.config.ts` wraps `doQueue` so `send` runs in `ctx.waitUntil` (fire-and-forget). Revalidation still runs; the response no longer waits for it. Test: `tests/unit/seo/opennext-cache-config.unit.spec.ts` (RED 3 fails on old config → GREEN 19/19 with interception suite).
+- **Open (owner decision):** each cache hit also makes 1–2 `DOShardedTagCache` RPCs (183 tag calls / 108 page GETs in a 4-min tail; Asia cache-served wall p75 658ms at ~30ms CPU). Tag `regionalCache` does not remove the RPC on the not-revalidated path. The real fix is `bypassTagCacheOnCacheHit: true` plus an OpenNext cache-purge override, which needs a Cloudflare purge API token.
+- **Readback:** after deploy, sample 30 blog first visits (STALE TTFB should match HIT); CWV field data needs ~28 days (check ~2026-12-15).
+
 ## 2026-11-09
 
 ### Three Kings — TikTok rung-2 description applied and verified live
