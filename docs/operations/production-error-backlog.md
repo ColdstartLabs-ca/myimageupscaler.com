@@ -487,6 +487,7 @@ available. Do not treat the pre-fix rates above as a post-deploy measurement.
 - **Assessment:** The API health endpoint returned 503 once, but homepage status is 200 and workers have 205/205 recent successes.
 - **Next action:** Investigate the API health dependency and monitor for repeated 503 responses.
 - **Status:** Open
+
 ### 2026-10-12T14:35:42+00:00 — `miu-228e9c035d1ccf8f` — relevant
 
 - **Signature:** `worker-myimageupscaler-status-exceededMemory`
@@ -514,3 +515,11 @@ available. Do not treat the pre-fix rates above as a post-deploy measurement.
 - **Next action:** Inspect affected inputs and worker memory limits, then add targeted mitigation or alerting if the rate persists.
 - **Status:** Open
 
+### 2026-11-05T02:22:19+00:00 — `miu-228e9c035d1ccf8f` — relevant
+
+- **Signature:** `worker-myimageupscaler-status-exceededMemory`
+- **Count/window:** 24 in the sampled window
+- **Evidence:** `{"count_15m": 0, "count_3h": 24, "live_health": {"api_health": {"latency_ms": 671, "status": 200}, "homepage": {"latency_ms": 1106, "status": 200}}, "rate_15m": 0.0, "rate_3h": 0.00863, "requests_15m": 121, "requests_3h": 2782}`
+- **Assessment:** 24 exceededMemory failures occurred at a 0.86% rate, while endpoints are healthy and the last 15 minutes had none.
+- **Next action:** Investigate memory usage and failing workloads; monitor the error rate for escalation.
+- **Status:** Open
