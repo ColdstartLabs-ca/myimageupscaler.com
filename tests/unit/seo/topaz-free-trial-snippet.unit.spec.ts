@@ -44,7 +44,21 @@ describe('Topaz free-trial snippet recovery contract', () => {
 
     expect(rows).toHaveLength(1);
     // Reopened 2026-10-26 after the rung-2 LOSS rollback, then API-resolved on Oct 29.
-    expect(rows[0]).toContain('- [x]');
+    const ledger = JSON.parse(readFileSync('docs/SEO/maintenance/three-kings-ledger.json', 'utf8'));
+    const entry = ledger.entries.find(
+      (e: { url: string }) => e.url === '/blog/topaz-labs-free-trial'
+    );
+    const current = entry.history.at(-1);
+    if (current.dbEditDate > '2026-10-26') {
+      expect(rows[0]).toContain(`Reopened ${current.dbEditDate}`);
+      expect(rows[0]).toContain(current.liveVerification.sha256);
+      if (current.liveVerification.status === 'pending') {
+        expect(rows[0]).toContain('HOLD measurement and indexing');
+        expect(rows[0]).toMatch(/^- \[ \]/);
+      }
+    } else {
+      expect(rows[0]).toContain('- [x]');
+    }
     expect(rows[0]).toContain('API-resolved 2026-10-29');
     expect(rows[0]).toContain('2026-10-26 reopening');
     expect(rows[0]).toContain('rung-2 LOSS');

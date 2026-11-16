@@ -73,10 +73,13 @@ describe('2026-10-26 demand-gated regression rollbacks', () => {
       'how-to-upscale-youtube-thumbnails',
     ]) {
       const entry = ledger.entries.find((e: { url: string }) => e.url === `/blog/${slug}`);
-      const latest = entry.history.at(-1);
+      const latest = entry.history.find(
+        (h: { date: string; field: string }) => h.date === '2026-10-26' && h.field === 'rollback'
+      );
       expect(latest.field).toBe('rollback');
       expect(latest.date).toBe('2026-10-26');
-      expect(latest.rung).toBe(entry.rung);
+      expect(latest.rung).toBe(slug === 'topaz-labs-free-trial' ? 2 : 3);
+      expect(entry.rung).toBeGreaterThanOrEqual(latest.rung);
       expect(latest.previousValue).toBeTruthy();
       expect(latest.backup.verified).toContain('gzip -t');
       expect(latest.liveVerification.status).toBe('verified');

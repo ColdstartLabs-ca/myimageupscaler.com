@@ -93,7 +93,18 @@ describe('TikTok PFP rung-2 description', () => {
           line.includes('`https://myimageupscaler.com/blog/tiktok-profile-picture-ideas`')
       );
     expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatch(/^- \[ \]/);
+    if (rows[0].startsWith('- [x]')) {
+      const crawl = rows[0].match(/successful post-description-write crawl `([^`]+)`/);
+      expect(crawl).not.toBeNull();
+      expect(new Date(crawl![1]).getTime()).toBeGreaterThan(
+        new Date('2026-11-09T16:19:55.531234+00:00').getTime()
+      );
+      expect(rows[0]).toContain('API-resolved');
+      expect(rows[0]).toContain('indexing allowed');
+      expect(rows[0]).toContain('matching Google/user canonicals');
+    } else {
+      expect(rows[0]).toMatch(/^- \[ \]/);
+    }
     expect(rows[0]).toContain('Reopened 2026-11-09');
     expect(rows[0]).toContain('2026-11-27');
     expect(rows[0]).toContain('2026-11-06');

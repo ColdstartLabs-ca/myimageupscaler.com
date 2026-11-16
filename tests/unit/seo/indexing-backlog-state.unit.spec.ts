@@ -70,7 +70,13 @@ describe('indexing backlog state', () => {
       const entry = ledger.entries.find((item: { url: string }) => item.url === `/blog/${slug}`);
       expect(entry.lastEdit).toBe(changedOn);
       expect(entry.history.at(-1).date).toBe(changedOn);
-      expect(entry.history.at(-1).outcome).toBeNull();
+      const experiment = entry.history.at(-1);
+      if (experiment.outcome) {
+        expect(experiment.outcome.measuredThrough >= changedOn).toBe(true);
+        expect(['WIN', 'FLAT', 'LOSS']).toContain(experiment.outcome.verdict);
+      } else {
+        expect(experiment.outcome).toBeNull();
+      }
     }
   );
 

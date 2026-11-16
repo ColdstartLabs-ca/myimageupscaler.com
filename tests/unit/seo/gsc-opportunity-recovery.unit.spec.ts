@@ -106,6 +106,18 @@ describe('GSC opportunity recovery contract', () => {
     expect(backlog).toContain(
       '- [x] `https://myimageupscaler.com/blog/poster-size-dimensions-pixels` — **API-resolved 2026-10-05'
     );
-    expect(backlog).toContain('- [ ] `https://myimageupscaler.com/blog/photo-restoration-program`');
+    const restoration = backlog
+      .split('\n')
+      .find((line: string) =>
+        line.includes('`https://myimageupscaler.com/blog/photo-restoration-program`')
+      );
+    if (restoration?.startsWith('- [x]')) {
+      expect(restoration).toContain('API-resolved 2026-11-13, not a manual request');
+      expect(restoration).toContain('Submitted and indexed');
+      expect(restoration).toContain('2026-11-06T05:02:24Z');
+      expect(restoration).toContain('2026-09-10');
+    } else {
+      expect(restoration).toMatch(/^- \[ \]/);
+    }
   });
 });

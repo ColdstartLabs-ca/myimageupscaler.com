@@ -1,5 +1,13 @@
 # Blog Changelog
 
+## 2026-11-16
+
+### SEO: Topaz trial rung-3 body saved; public exposure pending
+
+**Affected:** topaz-labs-free-trial
+**Why:** Final GSC Jul 16–Nov 12 closes the Oct 26 rollback as FLAT (44→37 clicks/14d, adjusted 0.85); latest exact-canonical windows 37/4,189→31/3,445, position 5.33→5.29, CTR 0.90%, no demand-collapse gate. Trial queries have one canonical owner; fragment sitelinks are not competitors. Google returned a JS shell, so no verified top-three/depth claim or broad expansion. Current Photo/Video/refund primary-source pages were fetched successfully and confirm the small evidence gap.
+**Changes:** Rung 3 changes only content: direct Photo/Video desktop answer plus three linked official product/account/refund checks above the existing article. Metadata, remainder/media/CTAs and ownership retained. Fresh `backups/backup_2026-11-16_09-18-37.{schema,data}.sql.gz` passed extraction/byte comparison, `yarn db:backups`, and `gzip -t` before PATCH 200 at `2026-11-16T16:21:29.640128+00:00`. GET exactly matches content SHA256 `a9fa46705fe9ea9c4c7c9c4301ab1b76f1bddead8b30149d6eedd685c6df199b`; only content, automatic reading_time (13 min read) and updated_at differ. Exact prior body SHA256 `0dc14432e92264121caee750b033d097af5af64aa119489b39dbe262e8f6b2eb` retained in ledger. **Incomplete live delivery:** three normal public GETs remain old HTML (200/self-canonical/index-follow/cache HIT); ledger explicitly pending/HOLD. Reopened the unique indexing row as deferred, not submitted. No extra write, cache purge or deployment to force exposure. Browser timed out twice; no manual request claimed. Nov 7 crawl predates the write. Existing TikTok Nov 13 API-resolution evidence strengthened after fresh inspection, without a request or date reset. Four newly closed outcomes recorded: Topaz rollback FLAT, best-ai/YouTube diagnostic rollback LOSS (never undo-loop), text description FLAT. Final control plane: 0 EDIT_NOW / 0 REGRESSION / 2 HOLD / 4 GATED / 1 STOP / 5 VERDICT / 0 NO_DATA. Seven unique pending URLs (6+1), no duplicate rows. Verification results recorded in the canonical SEO entry. **Next:** Nov 19 normal-HTML reconciliation; Topaz's 14-complete-day measurement starts only after verified exposure, no fixed verdict date yet. TikTok final-data review Nov 27. Local bookkeeping only; unrelated Reddit log preserved.
+
 ## 2026-11-09
 
 ### SEO: TikTok PFP rung-2 description verified live

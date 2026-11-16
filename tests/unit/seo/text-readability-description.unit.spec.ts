@@ -85,7 +85,23 @@ describe('text readability rung-2 single-variable description', () => {
     const row = backlog
       .split('\n')
       .find(line => line.includes('`https://myimageupscaler.com/blog/topaz-labs-free-trial`'))!;
-    expect(row).toMatch(/^- \[x\]/);
+    if (row.startsWith('- [ ]')) {
+      const ledger = JSON.parse(
+        readFileSync('docs/SEO/maintenance/three-kings-ledger.json', 'utf8')
+      );
+      const entry = ledger.entries.find(
+        (e: { url: string }) => e.url === '/blog/topaz-labs-free-trial'
+      );
+      const latest = entry.history.at(-1);
+      expect(latest.dbEditDate > '2026-10-26').toBe(true);
+      expect(row).toContain(`Reopened ${latest.dbEditDate}`);
+      expect(row).toContain(latest.liveVerification.sha256);
+      if (latest.liveVerification.status === 'pending') {
+        expect(row).toContain('HOLD measurement and indexing');
+      }
+    } else {
+      expect(row).toMatch(/^- \[x\]/);
+    }
     expect(row).toContain('API-resolved 2026-10-29, not a manual request');
     expect(row).toContain('2026-10-28T09:11:25Z');
     expect(row).toContain('2026-10-26');
