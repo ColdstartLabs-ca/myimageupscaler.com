@@ -96,6 +96,21 @@ describe('2026-09-03 Three Kings refresh contract', () => {
         // Resolved 2026-10-05 via URL Inspection API after the 2026-09-21 rung-3 write.
         expect(rows[0], url).toContain('[x]');
         expect(rows[0], url).toContain('API-resolved 2026-10-05');
+      } else if (url.endsWith('/blog/photoshop-upscale-image')) {
+        // The Sep 4 request remains accepted; a later repair can reopen the same row.
+        expect(rows[0], url).toContain('2026-09-04');
+        expect(rows[0], url).toContain('visibly accepted in the priority crawl queue');
+        if (rows[0].startsWith('- [ ]')) {
+          expect(rows[0], url).toContain('Reopened 2026-11-16: HOLD indexing');
+          expect(rows[0], url).toContain('normal public HTML');
+          expect(rows[0], url).toContain('2026-11-19');
+          expect(rows[0], url).toContain(
+            '9d9b92103fc566f838b221d065ac527a30825f0e2212a762ad88d6a0fa0132d2'
+          );
+          expect(rows[0], url).toMatch(/no .*manual indexing request/i);
+        } else {
+          expect(rows[0], url).toContain('[x]');
+        }
       } else {
         expect(rows[0], url).toContain('[x]');
         expect(rows[0], url).toContain('2026-09-03 Three Kings refresh');

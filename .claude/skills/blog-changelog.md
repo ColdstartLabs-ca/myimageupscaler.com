@@ -2,6 +2,12 @@
 
 ## 2026-11-16
 
+### Repair: Photoshop method jump targets saved; public delivery pending
+
+**Affected:** photoshop-upscale-image
+**Why:** Normal public HTML confirmed three of five first-screen method links point to nonexistent IDs. This mature guide was last API-updated Sep 4, not inside an open content experiment. Fresh complete GSC Oct 17–Nov 13: 30 clicks / 6,956 impressions, position 6.29 (previous 22 / 4,558 / 6.86); GA4 Oct 19–Nov 15: 37 organic sessions (previous 27). This is a concrete navigation repair, not a CTR rewrite or explanation of the traffic decline.
+**Changes:** Only the Neural Filters, batch and print jump-link fragment strings now match the existing headings. No heading/visible link label/metadata/CTA/media/other prose changes. Fresh `backups/backup_2026-11-16_10-34-45.{schema,data}.sql.gz` passed test extraction/byte comparison, listing and `gzip -t` before PATCH 200 at `2026-11-16T17:37:03.466358+00:00`. Authenticated GET verifies content SHA256 `9d9b92103fc566f838b221d065ac527a30825f0e2212a762ad88d6a0fa0132d2`; previous `c8eff25b547c78fe2f3e5af8f54e75941f1d98e5b421a177555b63e4fb761d32`. Only content, automatic reading_time (14→15 min) and updated_at differ. `scripts/seo/photoshop-jump-links.cjs` retains exact forward/inverse fragment pairs, refuses concurrent/unreviewed/partial edits, and is idempotent. API-body jumps checked against real unchanged rendered heading IDs improve 2/5→5/5. **Incomplete public delivery:** four ordinary GETs still serve old targets, 200 / self-canonical / index-follow. No retry PATCH, broad purge, deploy or claimed live/navigation/traffic win. Existing indexing row reopened once, retaining the Sep 4 accepted request; HOLD until normal HTML matches, check **Nov 19**. Topaz/TikTok gates unaffected. Five repair tests and all 1,651 SEO tests pass; `yarn verify` passes; aggregate `yarn test` passes 228 API / 32 skipped then times out in E2E after 300 seconds. Artifact/tests commit `538a4738`; bookkeeping local-only, unrelated Reddit log preserved.
+
 ### SEO: Topaz trial rung-3 body saved; public exposure pending
 
 **Affected:** topaz-labs-free-trial
