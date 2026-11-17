@@ -46,5 +46,7 @@ describe('blog post featured image placement', () => {
     expect(heroSource).toContain('BlogFeaturedImage');
     expect(imageSource).toContain('border-white/20');
     expect(imageSource).toContain('shadow-2xl shadow-accent/10');
+    // PSI lcp-discovery: Next 16 `priority` no longer implies fetchpriority="high".
+    expect(imageSource).toMatch(/priority\s+fetchPriority="high"/);
   });
 });

@@ -79,10 +79,11 @@ export const NavBar = (): JSX.Element => {
             <picture>
               <source
                 media="(max-width: 474px)"
-                srcSet={getCdnImageUrl('/logo/horizontal-logo-compact.png', 100)}
+                srcSet={`${getCdnImageUrl('/logo/horizontal-logo-compact.png', 100)} 1x, ${getCdnImageUrl('/logo/horizontal-logo-compact.png', 200)} 2x`}
               />
               <img
                 src={getCdnImageUrl('/logo/horizontal-logo-full.png', 200)}
+                srcSet={`${getCdnImageUrl('/logo/horizontal-logo-full.png', 200)} 1x, ${getCdnImageUrl('/logo/horizontal-logo-full.png', 400)} 2x`}
                 alt={clientEnv.APP_NAME}
                 width={200}
                 height={40}

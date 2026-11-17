@@ -32,6 +32,7 @@ export async function HeroSection(): Promise<JSX.Element> {
           fill
           sizes="(max-width: 1023px) 100vw, 50vw"
           priority
+          fetchPriority="high"
           decoding="async"
           className="h-full w-full object-cover"
         />

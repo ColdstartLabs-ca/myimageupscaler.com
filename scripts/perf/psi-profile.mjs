@@ -24,7 +24,11 @@ const AUDITS = [
 ];
 
 async function run(url, strategy) {
-  const q = new URLSearchParams({ url, strategy, category: 'performance' });
+  // Best-practices is requested too because `image-size-responsive` (unoptimised logo/img
+  // candidates) lives there and is part of the homepage mobile acceptance criteria.
+  const q = new URLSearchParams({ url, strategy });
+  q.append('category', 'performance');
+  q.append('category', 'best-practices');
   if (key) q.set('key', key);
   for (let attempt = 1; attempt <= 3; attempt++) {
     const res = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?${q}`);
@@ -73,7 +77,15 @@ function summarize(j) {
         ])
       )
     : null;
-  return { score: Math.round(lh.categories.performance.score * 100), metrics, field, issues };
+  return {
+    score: Math.round(lh.categories.performance.score * 100),
+    bestPractices: lh.categories['best-practices']
+      ? Math.round(lh.categories['best-practices'].score * 100)
+      : null,
+    metrics,
+    field,
+    issues,
+  };
 }
 
 mkdirSync(outDir, { recursive: true });
@@ -85,7 +97,7 @@ for (const url of targets) {
       const s = summarize(j);
       report[`${strategy} ${url}`] = s;
       console.log(
-        `${strategy.padEnd(7)} ${String(s.score).padStart(3)}  ${url}  ` +
+        `${strategy.padEnd(7)} ${String(s.score).padStart(3)} BP ${String(s.bestPractices).padStart(3)}  ${url}  ` +
           `LCP ${s.metrics['largest-contentful-paint']} TBT ${s.metrics['total-blocking-time']} CLS ${s.metrics['cumulative-layout-shift']}`
       );
     } catch (e) {

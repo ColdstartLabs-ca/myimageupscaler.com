@@ -5,6 +5,8 @@ import { getCdnImageUrl } from '@client/utils/image-loader';
 // load it can come into lazy-load range, so matching on the filename alone is flaky.
 const NAVBAR_FULL_LOGO = getCdnImageUrl('/logo/horizontal-logo-full.png', 200);
 const NAVBAR_COMPACT_LOGO = getCdnImageUrl('/logo/horizontal-logo-compact.png', 100);
+const NAVBAR_FULL_LOGO_2X = getCdnImageUrl('/logo/horizontal-logo-full.png', 400);
+const NAVBAR_COMPACT_LOGO_2X = getCdnImageUrl('/logo/horizontal-logo-compact.png', 200);
 
 test.describe('Homepage loading contracts', () => {
   test('loads both visible hero images eagerly without loading Stripe', async ({ page }) => {
@@ -27,6 +29,12 @@ test.describe('Homepage loading contracts', () => {
     );
     expect(initialHtml).toMatch(
       /<link[^>]+rel="preload"[^>]+as="image"[^>]+imageSrcSet="[^"]*hero-image-blurred\.webp/
+    );
+    // PSI lcp-discovery: Next 16 `priority` no longer implies fetchpriority="high".
+    expect(eagerAfterImage).toMatch(/fetchPriority="high"/i);
+    expect(eagerBeforeImage).not.toMatch(/fetchPriority="high"/i);
+    expect(initialHtml).toMatch(
+      /<link[^>]+rel="preload"[^>]+imageSrcSet="[^"]*hero-image-regular\.webp[^>]+fetchPriority="high"/i
     );
     expect(initialHtml).not.toMatch(
       /<link[^>]+rel="preload"[^>]+as="image"[^>]+[^>]*horizontal-logo-(compact|full)\.png/
@@ -106,5 +114,26 @@ test.describe('Homepage loading contracts', () => {
       logoRequests.filter(url => url.includes('horizontal-logo-full.png')).length
     ).toBeGreaterThan(0);
     expect(logoRequests.some(url => url.endsWith(NAVBAR_COMPACT_LOGO))).toBe(false);
+  });
+});
+
+// PSI mobile (DPR 1.75) flagged image-size-responsive: the logo only had a 1x candidate.
+test.describe('Homepage navbar logo at high device pixel ratio', () => {
+  test.use({ deviceScaleFactor: 2 });
+
+  test('serves the 2x CDN candidate for the visible logo variant', async ({ page }) => {
+    await page.setViewportSize({ width: 412, height: 823 });
+    await page.goto('/');
+
+    const mobileLogo = await page.locator('header picture img').evaluate(image => image.currentSrc);
+    expect(mobileLogo).toContain(NAVBAR_COMPACT_LOGO_2X);
+
+    await page.setViewportSize({ width: 800, height: 823 });
+    await page.goto('/');
+
+    const desktopLogo = await page
+      .locator('header picture img')
+      .evaluate(image => image.currentSrc);
+    expect(desktopLogo).toContain(NAVBAR_FULL_LOGO_2X);
   });
 });

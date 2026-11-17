@@ -12,6 +12,14 @@ Maintenance rules:
 
 ## 2026-11-16
 
+### Homepage mobile CWV — LCP fetch priority + navbar logo 2x candidate
+
+- **Signal:** PSI mobile `https://myimageupscaler.com/` (2026-11-16): Performance 84, LCP 3.8s with **2,403ms resource load delay**; `lcp-discovery-insight` (no `fetchpriority`) and `image-size-responsive` (Best Practices 96) failing.
+- **Root cause:** Next 16.0.11 `priority` only emits a preload link, it no longer sets `fetchpriority="high"` (`next/dist/shared/lib/get-img-props.js`). The hero "after" image therefore loaded at Low priority behind CSS/fonts/scripts. The mobile navbar `<picture>` served a single 100px compact candidate (91×32 CSS px at DPR 1.75) with no 2x.
+- **Change:** `fetchPriority="high"` next to `priority` in `client/components/landing/HeroSection.tsx` and `client/components/blog/BlogFeaturedImage.tsx`; the hero "before" image stays preload-only so the LCP image wins. `client/components/navigation/NavBar.tsx` now serves `1x/2x` CDN candidates (compact 100/200, full 200/400) via `srcSet`.
+- **Tests:** new `tests/unit/seo/mobile-psi-lcp-hints.unit.spec.ts` (RED 3 → GREEN); `tests/e2e/homepage-performance.e2e.spec.ts` asserts the fetchpriority preload/`<img>` and, at DPR 2, the 2x logo candidate (RED without the `srcSet` → GREEN 3/3); `tests/unit/blog/blog-featured-image.unit.spec.ts` extended. `yarn verify` passes.
+- **Follow-up:** AC-5 is post-deploy — re-run `node scripts/perf/psi-profile.mjs https://myimageupscaler.com/` and confirm LCP ≤ 2.5s plus those two insights passing. Legacy-JS chunk `3794` is recorded won't-fix in `docs/PRDs/platform/homepage-mobile-pagespeed-fixes.md` (Next's own polyfill module).
+
 ### Blog growth operator — seven live sitemap resubmissions completed; Photoshop jump repair API-saved, public HOLD
 
 - **Governing state/evidence:** read Nov 2/Oct 26 cron outputs, canonical backlogs/changelog, Nov 1 report and affected git history before acting. Today's newer Three Kings state (0 EDIT_NOW / 0 REGRESSION; Topaz public-exposure HOLD and TikTok Nov 27 gate) governs, not the old cron's pending counts/indexing advice. Fresh GSC Oct 17–Nov 13 vs Sep 19–Oct 16 is complete (zero failed requests; query click coverage 50.82%): named non-brand clicks 2,387→1,655, branded 176→133, privacy-hidden 2,176→1,730. GA4 Organic Search Oct 19–Nov 15 vs Sep 21–Oct 18 sessions 5,350→4,065; not signup counts. No forced CTR experiment or duplicate-intent post. Photoshop guide has 22→30 clicks / 4,558→6,956 impressions, position 6.86→6.29; GA4 27→37 organic sessions. Chosen class B is confirmed broken navigation, not an invented explanation of traffic loss.

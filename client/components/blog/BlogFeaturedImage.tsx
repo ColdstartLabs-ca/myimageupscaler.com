@@ -34,6 +34,7 @@ export function BlogFeaturedImage({
             className={isPhoto ? 'object-cover' : 'object-cover object-top'}
             sizes="(max-width: 1024px) 100vw, 540px"
             priority
+            fetchPriority="high"
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-main/40 via-transparent to-transparent" />
         </div>
