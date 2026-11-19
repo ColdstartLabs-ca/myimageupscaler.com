@@ -1,5 +1,12 @@
 # Blog Changelog
 
+## 2026-11-19
+
+### Verification: Topaz rung-3 and Photoshop jump repairs now exposed publicly
+
+**Affected:** topaz-labs-free-trial, photoshop-upscale-image
+**Changes:** No new production edit or rollback. Authenticated API body hashes and Nov 16 timestamps remain unchanged. Normal public rendered articles now expose Topaz's direct answer/full official-source evidence module and Photoshop's 5/5 working method jumps; both 200 / one self-canonical / index-follow. Topaz retains original DB date Nov 16, rung 3, prior body and backup; first confirmed public exposure conservatively moves ledger date/lastEdit to Nov 19. Measure 14 complete days Nov 20–Dec 3; earliest final-data verdict **Dec 7**. Its Nov 7 crawl still predates the write, so indexing remains pending; native browser timed out twice, no manual request claimed. Photoshop API-resolved from successful post-repair crawl **2026-11-19T12:24:21Z**, Submitted and indexed / allowed / matching canonicals, retaining the Sep 4 accepted-request history. Existing indexing rows updated once: **8→7 pending / 143 unique rows**, no duplicates. Seven sitemap processing follow-ups verified downloaded, not pending, zero errors/warnings; no resubmission. Final GSC Jul 19–Nov 15 control plane: **0 EDIT_NOW / 0 REGRESSION / 2 HOLD / 4 GATED / 1 STOP / 5 VERDICT / 0 NO_DATA**. Completed ladders stay closed; TikTok Nov 27 gate unchanged. Original Nov 16 Topaz/Photoshop schema/data backup pairs remain listed and pass `gzip -t`; no new backup needed because no production write. Four new state guards proven RED before reconciliation; final test/verification results are recorded in the canonical SEO backlog. No deploy, cache purge, new post or unrelated product change. Next Topaz crawl follow-up Nov 23; next eligible experiment review Nov 27 (TikTok).
+
 ## 2026-11-16
 
 ### Repair: Photoshop method jump targets saved; public delivery pending

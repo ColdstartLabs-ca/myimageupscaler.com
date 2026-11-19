@@ -206,7 +206,7 @@
       "url": "/blog/topaz-labs-free-trial",
       "label": "/blog/topaz-labs-free-trial",
       "rung": 3,
-      "lastEdit": "2026-11-16",
+      "lastEdit": "2026-11-19",
       "history": [
         {
           "date": "2026-08-31",
@@ -279,7 +279,7 @@
           }
         },
         {
-          "date": "2026-11-16",
+          "date": "2026-11-19",
           "rung": 3,
           "field": "proof-led body pass",
           "note": "Rung 3: source-led current Photo/Video desktop direct answer and official product/account/refund evidence module above the fold. Body only; exact prior opening/body, restored metadata, media, CTAs and trial-intent ownership retained. No fabricated testing or competitive ranking claim.",
@@ -292,11 +292,11 @@
             "verified": "yarn db:backup extraction/byte comparison; yarn db:backups; gzip -t"
           },
           "liveVerification": {
-            "status": "pending",
+            "status": "verified",
             "field": "content",
             "sha256": "a9fa46705fe9ea9c4c7c9c4301ab1b76f1bddead8b30149d6eedd685c6df199b",
-            "checkedOn": "2026-11-16",
-            "reason": "Authenticated API exact body/hash readback succeeds, but three normal public GETs still render the prior article (HTTP 200, one self-canonical, index/follow, cache HIT). New answer/evidence/links absent outside scripts/RSC. HOLD measurement and indexing; do not use the DB date as confirmed exposure. Recheck normal public article Nov 19; when it matches, retain dbEditDate and start 14 complete GSC days from first confirmed exposure, conservatively that day. No cache-buster, deployment, purge or manual request. Nov 7 GSC crawl predates this write.",
+            "checkedOn": "2026-11-19",
+            "reason": "Authenticated API exact body/hash and unchanged Nov 16 updated_at verified. Normal public rendered article now exposes the complete direct answer, evidence module, official links and refund guidance outside scripts/RSC; HTTP 200, one self-canonical, index/follow. Earlier public exposure is unknown; conservatively anchor first confirmed exposure Nov 19, preserving dbEditDate, rung, exact prior body and original backup. Measure 14 complete GSC days Nov 20-Dec 3; earliest conservative final-data review Dec 7, 2026. GSC last crawl 2026-11-07T19:47:30Z predates the write, so indexing stays pending. Native browser timed out twice; no manual request claimed. No production write, purge or deployment.",
             "apiUpdatedAt": "2026-11-16T16:21:29.640128+00:00"
           }
         }
