@@ -25,6 +25,10 @@
     "faq3Answer": "Create a free account — new accounts get free credits and no credit card is required. Upload a supported image (JPEG, PNG, WebP or HEIC), choose a processing mode, and download the result without a watermark. Credit cost depends on the processing option you choose.",
     "faq4Question": "Is AI upscaling better than traditional upscaling?",
     "faq4Answer": "AI upscaling can reconstruct details that interpolation-based resizing cannot, but results vary by image and model. Compare the output at the size you plan to use and keep the original file available for reference.",
+    "faq5Question": "What scale factors and file formats are supported?",
+    "faq5Answer": "You can upscale to 2x or 4x on every account. Paid plans add up to 8x per pass. Supported upload formats are JPEG, PNG, WebP, and HEIC.",
+    "faq6Question": "Is there a free option?",
+    "faq6Answer": "Yes. New accounts get free credits to start and no credit card is required. The number of free credits depends on your region.",
     "faqItems": [
       {
         "question": "How do I upscale an image without losing quality?",
@@ -43,8 +47,12 @@
         "answer": "AI upscaling can reconstruct details that interpolation-based resizing cannot, but results vary by image and model. Compare the output at the size you plan to use and keep the original file available for reference."
       },
       {
-        "question": "What image formats are supported?",
-        "answer": "MyImageUpscaler accepts JPEG, PNG, WebP, and HEIC uploads. Available scale factors depend on the processing model and support up to 8x per pass."
+        "question": "What scale factors and file formats are supported?",
+        "answer": "You can upscale to 2x or 4x on every account. Paid plans add up to 8x per pass. Supported upload formats are JPEG, PNG, WebP, and HEIC."
+      },
+      {
+        "question": "Is there a free option?",
+        "answer": "Yes. New accounts get free credits to start and no credit card is required. The number of free credits depends on your region."
       },
       {
         "question": "How long does image upscaling take?",

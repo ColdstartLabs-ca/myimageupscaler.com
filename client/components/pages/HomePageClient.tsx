@@ -221,6 +221,14 @@ export function HomePageClient(): JSX.Element {
       question: t('faq4Question'),
       answer: t('faq4Answer'),
     },
+    {
+      question: t('faq5Question'),
+      answer: t('faq5Answer'),
+    },
+    {
+      question: t('faq6Question'),
+      answer: t('faq6Answer'),
+    },
   ];
 
   // Check for auth prompts from URL params
