@@ -52,4 +52,19 @@ describe('parseGa4CookieContext', () => {
   test('does not treat _ga itself as a session cookie and never throws on garbage', () => {
     expect(parseGa4CookieContext(';;;_ga=broken;; = ;other=1')).toEqual({});
   });
+
+  test('extracts a GS2 session id when s<id> is the last field', () => {
+    expect(parseGa4CookieContext('_ga_ABC123=GS2.1.s1700000009')).toEqual({
+      gaSessionId: '1700000009',
+    });
+  });
+
+  test("prefers the site's own measurement stream over another _ga_* cookie", () => {
+    const header = '_ga_OTHER1=GS2.1.s111$o1; _ga=GA1.1.555.666; _ga_SITE42=GS2.1.s222$o1';
+    expect(parseGa4CookieContext(header, 'G-SITE42')).toEqual({
+      gaClientId: '555.666',
+      gaSessionId: '222',
+    });
+    expect(parseGa4CookieContext(header)).toEqual({ gaClientId: '555.666', gaSessionId: '111' });
+  });
 });

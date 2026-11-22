@@ -779,7 +779,10 @@ export async function POST(request: NextRequest) {
       lineItems = [{ price: validatedPriceId, quantity: 1 }];
     }
 
-    const ga4Context = parseGa4CookieContext(request.headers.get('cookie'));
+    const ga4Context = parseGa4CookieContext(
+      request.headers.get('cookie'),
+      serverEnv.GA_MEASUREMENT_ID
+    );
     const checkoutMetadata: Record<string, string> = {
       ...customMetadata,
       ...validatedExperimentMetadata,

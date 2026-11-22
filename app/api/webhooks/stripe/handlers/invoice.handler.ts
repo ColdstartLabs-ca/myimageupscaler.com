@@ -318,6 +318,7 @@ export class InvoiceHandler {
               sourceObjectId: initialSourceObjectId,
               lifecycleAction: 'purchase_initial',
               deduplicate: true,
+              ...gaContext,
             }
           );
         }

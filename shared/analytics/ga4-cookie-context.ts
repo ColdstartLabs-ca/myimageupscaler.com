@@ -1,7 +1,7 @@
 const GA_CLIENT_ID_PATTERN = /^\d+\.\d+$/;
 const GA_SESSION_ID_PATTERN = /^\d+$/;
 const GA_COOKIE_CLIENT_ID_PATTERN = /^GA\d+\.\d+\.(.+)$/;
-const GA_COOKIE_SESSION_GS2_PATTERN = /s(\d+)\$/;
+const GA_COOKIE_SESSION_GS2_PATTERN = /\.s(\d+)(?:\$|$)/;
 const GA_COOKIE_SESSION_GS1_PREFIX_PATTERN = /^GS\d+$/;
 
 export interface IGa4CookieContext {
@@ -31,9 +31,15 @@ function parseSessionId(value: string): string | undefined {
  * Reads the GA4 client_id and session_id from first-party Google Analytics cookies
  * so server-side Measurement Protocol events join the browser's own session.
  */
-export function parseGa4CookieContext(cookieHeader: string | null | undefined): IGa4CookieContext {
+export function parseGa4CookieContext(
+  cookieHeader: string | null | undefined,
+  measurementId?: string
+): IGa4CookieContext {
   const context: IGa4CookieContext = {};
   if (!cookieHeader) return context;
+  // The site's own stream cookie wins when another GA property also set a _ga_* cookie.
+  const ownStreamCookie = measurementId ? `_ga_${measurementId.replace(/^G-/, '')}` : undefined;
+  let ownStreamSessionId: string | undefined;
 
   for (const part of cookieHeader.split(';')) {
     const separator = part.indexOf('=');
@@ -47,11 +53,14 @@ export function parseGa4CookieContext(cookieHeader: string | null | undefined): 
       if (match && GA_CLIENT_ID_PATTERN.test(match[1])) {
         context.gaClientId = match[1];
       }
+    } else if (name === ownStreamCookie) {
+      ownStreamSessionId = parseSessionId(value);
     } else if (name.startsWith('_ga_') && !context.gaSessionId) {
       const sessionId = parseSessionId(value);
       if (sessionId) context.gaSessionId = sessionId;
     }
   }
 
+  if (ownStreamSessionId) context.gaSessionId = ownStreamSessionId;
   return context;
 }

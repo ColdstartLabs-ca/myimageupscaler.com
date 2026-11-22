@@ -248,7 +248,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   let processingProvider: string | undefined;
   let coreTerminalEventEmitted = false;
   const requestId = req.headers.get('x-request-id') || req.headers.get('cf-ray') || undefined;
-  const ga4Context = parseGa4CookieContext(req.headers.get('cookie'));
+  const ga4Context = parseGa4CookieContext(req.headers.get('cookie'), serverEnv.GA_MEASUREMENT_ID);
   const ga4EventContext = {
     ...(ga4Context.gaClientId ? { gaClientId: ga4Context.gaClientId } : {}),
     ...(ga4Context.gaSessionId ? { gaSessionId: ga4Context.gaSessionId } : {}),

@@ -348,6 +348,48 @@ describe('InvoiceHandler - Test Mode Graceful Handling', () => {
     );
   });
 
+  test('keeps GA4 client and session ids on initial revenue when credits were already granted', async () => {
+    const invoice = {
+      id: mockInvoiceId,
+      customer: mockCustomerId,
+      subscription: mockSubscriptionId,
+      billing_reason: 'subscription_create',
+      paid: true,
+      status: 'paid',
+      amount_paid: 2900,
+      currency: 'usd',
+      payment_intent: 'pi_initial_123',
+      subscription_details: {
+        metadata: { ga_client_id: '1234567890.1700000000', ga_session_id: '1700000001' },
+      },
+      lines: { data: [{ price: { id: mockPriceId }, type: 'subscription', amount: 2900 }] },
+    } as unknown as Stripe.Invoice;
+
+    MockedSupabaseAdmin.from.mockImplementation((table: string) => {
+      if (table === 'subscription_retention_events')
+        return { select: vi.fn(() => makeQuery(null)) };
+      if (table === 'credit_transactions')
+        return { select: vi.fn(() => makeQuery({ id: 'credit_tx_existing' })) };
+      if (table === 'profiles') {
+        return {
+          select: vi.fn(() => makeQuery({ id: 'user_123', subscription_tier: 'pro' })),
+        };
+      }
+      return {};
+    });
+
+    await InvoiceHandler.handleInvoicePaymentSucceeded(invoice);
+
+    expect(MockedTrackRevenue).toHaveBeenCalledWith(
+      expect.objectContaining({ lifecycleAction: 'purchase_initial' }),
+      expect.objectContaining({
+        lifecycleAction: 'purchase_initial',
+        gaClientId: '1234567890.1700000000',
+        gaSessionId: '1700000001',
+      })
+    );
+  });
+
   test('should not emit renewal or revenue for zero or unpaid invoices', async () => {
     const baseInvoice = {
       id: mockInvoiceId,
