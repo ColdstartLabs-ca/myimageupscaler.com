@@ -125,6 +125,15 @@ function isWithinGracePeriod(lastUpdated: string | undefined, now: Date): boolea
 }
 
 /**
+ * English pages stay indexable on impressions. Translated twins must earn clicks
+ * (PRD-TR-2026-11-02): zero-click locale templates only spend crawl budget.
+ */
+function hasDemand(performance: IPagePerformance, locale: string): boolean {
+  if (performance.clicks > 0) return true;
+  return locale === 'en' && performance.impressions > 0;
+}
+
+/**
  * Decide whether a pSEO page should be present in a sitemap.
  *
  * `lastUpdated` is optional for callers that only have the identity. Sitemap
@@ -157,7 +166,7 @@ export function shouldSubmit(
   // Genuinely new pages still receive the same bounded grace period.
   if (!performance) return isWithinGracePeriod(effectiveLastUpdated, effectiveNow);
 
-  if (performance && (performance.impressions > 0 || performance.clicks > 0)) return true;
+  if (hasDemand(performance, normalizedLocale)) return true;
 
   return isWithinGracePeriod(effectiveLastUpdated, effectiveNow);
 }
@@ -186,7 +195,7 @@ export function getEligibilityReason(
     return isWithinGracePeriod(lastUpdated, now) ? 'grace-period' : 'untracked';
   }
 
-  if (performance && (performance.impressions > 0 || performance.clicks > 0)) {
+  if (hasDemand(performance, locale || 'en')) {
     return 'impressions';
   }
 
