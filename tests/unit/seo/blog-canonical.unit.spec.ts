@@ -12,9 +12,8 @@ describe('blog canonical contract', () => {
     expect(source).toContain('canonical: canonicalUrl');
   });
 
-  it('keeps published blog posts indexable', () => {
-    expect(source).toContain('index: true');
+  it('keeps published blog posts indexable unless the consolidation noindexes them', () => {
+    expect(source).toContain('index: !isNoindexBlogSlug(slug)');
     expect(source).toContain('follow: true');
-    expect(source).not.toContain('index: false');
   });
 });

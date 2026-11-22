@@ -4,6 +4,7 @@ const path = require('node:path');
 const BASE_URL = 'https://myimageupscaler.com';
 const DEFAULT_RECENT_CUTOFF = '2026-10-07';
 const MANIFEST_RELATIVE_PATH = 'docs/SEO/reports/2026-11-21-index-bloat-manifest.json';
+const CONSOLIDATION_RELATIVE_PATH = 'shared/constants/blog-consolidation.json';
 const INPUT_DIR = 'docs/SEO/reports/inputs/2026-11-21-index-bloat';
 
 const OWNER_RULES = [
@@ -154,6 +155,27 @@ function buildManifest(inputs, opts = {}) {
   };
 }
 
+function buildConsolidation(manifest) {
+  const redirects = {};
+  for (const row of manifest.blog) {
+    if (row.disposition !== 'MERGE_301') continue;
+    redirects[row.slug] = row.target;
+  }
+
+  return {
+    source: MANIFEST_RELATIVE_PATH,
+    redirects: Object.fromEntries(
+      Object.keys(redirects)
+        .sort()
+        .map((slug) => [slug, redirects[slug]])
+    ),
+    noindex: manifest.blog
+      .filter((row) => row.disposition === 'NOINDEX_UNPUBLISH')
+      .map((row) => row.slug)
+      .sort(),
+  };
+}
+
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', relativePath), 'utf8'));
 }
@@ -176,6 +198,15 @@ if (require.main === module) {
   fs.writeFileSync(outputPath, `${JSON.stringify(manifest, null, 2)}\n`);
   console.log(`blog ${formatSummary(manifest.summary.blog)}`);
   console.log(`pseo ${formatSummary(manifest.summary.pseo)}`);
+
+  if (process.argv.includes('--emit-consolidation')) {
+    const consolidationPath = path.join(__dirname, '..', '..', CONSOLIDATION_RELATIVE_PATH);
+    fs.writeFileSync(
+      consolidationPath,
+      `${JSON.stringify(buildConsolidation(manifest), null, 2)}\n`
+    );
+    console.log(`consolidation ${CONSOLIDATION_RELATIVE_PATH}`);
+  }
 }
 
 module.exports = {
@@ -183,6 +214,7 @@ module.exports = {
   classifyBlogPost,
   classifyPseoPage,
   buildManifest,
+  buildConsolidation,
   GUARDED_SLUGS,
   OWNER_RULES,
   OFF_TOPIC_SLUGS,

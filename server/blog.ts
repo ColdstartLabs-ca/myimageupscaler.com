@@ -1,4 +1,5 @@
 import blogDataRaw from '@/content/blog-data.json';
+import { BLOCKED_BLOG_SLUGS } from '@shared/constants/blocked-blog-slugs';
 
 const blogData = blogDataRaw as { posts: IBlogPost[] };
 
@@ -96,7 +97,7 @@ export function getAllTags(): string[] {
 export function getPostsBySlugs(slugs: string[]): IBlogPostMeta[] {
   return slugs
     .map(slug => blogData.posts.find(p => p.slug === slug))
-    .filter((post): post is IBlogPost => post !== undefined)
+    .filter((post): post is IBlogPost => post !== undefined && !BLOCKED_BLOG_SLUGS.has(post.slug))
     .map(post => ({
       slug: post.slug,
       title: post.title,

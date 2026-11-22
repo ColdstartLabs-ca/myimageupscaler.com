@@ -481,11 +481,11 @@ describe('SEO Safeguards — Blog', () => {
       expect(source).not.toContain("'@type': 'Article'");
     });
 
-    it('must set explicit robots index:true directive', () => {
+    it('must set an explicit robots index directive that respects consolidation noindex', () => {
       const slugPagePath = path.join(appDir, '[locale]', 'blog', '[slug]', 'page.tsx');
       const source = fs.readFileSync(slugPagePath, 'utf-8');
 
-      expect(source).toMatch(/robots\s*:\s*\{[\s\S]*?index\s*:\s*true/);
+      expect(source).toMatch(/robots\s*:\s*\{[\s\S]*?index\s*:\s*!isNoindexBlogSlug\(slug\)/);
     });
 
     it('must set canonical to /blog/{slug} without locale prefix', () => {

@@ -12,6 +12,14 @@ Maintenance rules:
 
 ## 2026-11-21
 
+### Index-bloat consolidation — 66 blog 301s, 14 noindex, list filtering
+
+- **Why:** Execute the Phase 2 dispositions in the 2026-11-21 index-bloat manifest so duplicate-intent posts stop competing and zero-demand posts leave the index.
+- **Changes:** Generated `shared/constants/blog-consolidation.json` from the manifest (reproducible with `node scripts/seo/audit-index-bloat.cjs --emit-consolidation`); appended plain and locale-prefixed 301s in `next.config.js`; unioned redirect and noindex slugs into `BLOCKED_BLOG_SLUGS`; noindexed the 14 consolidation slugs in blog post metadata (follow stays true); filtered blocked slugs from `getAllPublishedPosts` and `server/blog.getPostsBySlugs`, keeping single-post reads available.
+- **Files:** `shared/constants/blog-consolidation.json`, `shared/constants/blocked-blog-slugs.ts`, `next.config.js`, `app/[locale]/blog/[slug]/page.tsx`, `server/services/blog.service.ts`, `server/blog.ts`, `scripts/seo/audit-index-bloat.cjs`, `scripts/seo/blog-indexation-report.ts`.
+- **Validation:** new RED-first assertions for redirect parity, no chains, guarded targets, blocked sets, noindex helper and list filtering; `tests/unit/seo/` 1,710/1,710 pass; `tsc --noEmit` clean.
+- **Follow-up:** After deploy, confirm 301 responses for the 66 sources and `noindex` on the 14 rendered posts in GSC URL Inspection.
+
 ### SERP snippet repair for 5 pSEO pages and plain-link llms.txt
 
 - **Why:** Remove broken English and false promises from high-impression snippets, and align llms.txt with real product facts.

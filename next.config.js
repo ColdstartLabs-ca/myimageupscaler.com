@@ -7,6 +7,18 @@ const require = createRequire(import.meta.url);
 require('tsx/cjs');
 const { LEGACY_REDIRECTS } = require('./lib/seo/legacy-redirects.ts');
 const { getCdnCgiDevRewrites } = require('./lib/dev/cdn-cgi-rewrite.ts');
+const { redirects: BLOG_CONSOLIDATION_REDIRECTS } = require(
+  './shared/constants/blog-consolidation.json'
+);
+
+const LOCALE_PREFIX = '/:locale(en|fr|de|es|it|ja|pt)';
+
+function buildBlogConsolidationRedirects() {
+  return Object.entries(BLOG_CONSOLIDATION_REDIRECTS).flatMap(([slug, destination]) => [
+    { source: `/blog/${slug}`, destination, permanent: true },
+    { source: `${LOCALE_PREFIX}/blog/${slug}`, destination, permanent: true },
+  ]);
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -171,6 +183,8 @@ const nextConfig = {
         destination: '/blog/best-ai-image-enhancer',
         permanent: true,
       },
+      // 2026-11-21 index-bloat consolidation (PRD-TR-2026-11-02 Phase 2)
+      ...buildBlogConsolidationRedirects(),
     ];
   },
   // Headers handled by middleware (lib/middleware/securityHeaders.ts)

@@ -14,6 +14,7 @@ import {
 } from '@server/services/blog.service';
 import { Lightbulb, Info, AlertTriangle, ChevronRight } from 'lucide-react';
 import { clientEnv } from '@shared/config/env';
+import { isNoindexBlogSlug } from '@shared/constants/blocked-blog-slugs';
 import { ReadingProgress } from '@client/components/blog/ReadingProgress';
 import { BlogGuideSidebar } from '@client/components/blog/BlogGuideSidebar';
 import { BlogPostHeroSection } from '@client/components/blog/BlogPostHeroSection';
@@ -252,7 +253,7 @@ export async function generateMetadata({ params }: IPageProps): Promise<Metadata
     description: post.seo_description || post.description,
     authors: [{ name: post.author }],
     robots: {
-      index: true,
+      index: !isNoindexBlogSlug(slug),
       follow: true,
     },
     alternates: {

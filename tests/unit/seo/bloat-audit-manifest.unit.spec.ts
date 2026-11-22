@@ -9,6 +9,7 @@ const {
   classifyBlogPost,
   classifyPseoPage,
   buildManifest,
+  buildConsolidation,
   GUARDED_SLUGS,
   OWNER_RULES,
 } = require('../../../scripts/seo/audit-index-bloat.cjs');
@@ -257,6 +258,15 @@ describe('committed index-bloat manifest', () => {
       if (!guarded.has(row.slug)) continue;
       expect(['MERGE_301', 'NOINDEX_UNPUBLISH']).not.toContain(row.disposition);
     }
+  });
+
+  it('matches the committed blog consolidation file', () => {
+    const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+    const consolidation = JSON.parse(
+      readFileSync(resolve(process.cwd(), 'shared/constants/blog-consolidation.json'), 'utf8')
+    );
+
+    expect(consolidation).toEqual(buildConsolidation(manifest));
   });
 
   it('builds pSEO urls from category and slug', () => {
