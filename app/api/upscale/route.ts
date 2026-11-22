@@ -1219,6 +1219,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         resolvedTier,
         userTier: userTier || 'free',
         creditCost,
+        ga4: ga4EventContext,
         resultContext: {
           modelDisplayName: selectedModel.displayName || resolvedModelId,
           ...(isInternalScaleFallback ? { dimensionPreservingFallback: true } : {}),

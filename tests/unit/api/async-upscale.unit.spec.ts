@@ -1193,6 +1193,30 @@ describe('authenticated async upscale contract', () => {
     expect(refunds).toBe(0);
   });
 
+  it('carries the GA4 client and session ids from admission to the async completion events', async () => {
+    const withCookies = new NextRequest('http://localhost/api/upscale', {
+      method: 'POST',
+      headers: {
+        'X-User-Id': OWNER,
+        'Content-Type': 'application/json',
+        Cookie: '_ga=GA1.1.123456789.1700000000; _ga_TEST123=GS1.1.1700000001.1.1.1700000100.0.0.0',
+      },
+      body: JSON.stringify(payload()),
+    });
+    expect((await route.POST(withCookies)).status).toBe(202);
+    await vi.advanceTimersByTimeAsync(5000);
+    mocks.fetch.mockResolvedValueOnce(providerResponse(succeeded()));
+    await route.GET(statusRequest());
+
+    const events = terminalEvents();
+    expect(events.map(([event]) => event).sort()).toEqual(['image_upscaled', 'upscale_completed']);
+    for (const call of events) {
+      expect(call[2]).toEqual(
+        expect.objectContaining({ gaClientId: '123456789.1700000000', gaSessionId: '1700000001' })
+      );
+    }
+  });
+
   it('does not run remote completion helpers when another observer already claimed them', async () => {
     terminalEffectsClaimed = true;
     expect((await startAndSucceed()).status).toBe(200);

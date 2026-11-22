@@ -95,6 +95,8 @@ interface IStartInput {
   workerRayId?: string;
   requestId?: string;
   startedAt?: number;
+  /** GA4 browser ids from the admission request, so completion events join the web session. */
+  ga4?: { gaClientId?: string; gaSessionId?: string };
 }
 
 interface IStoredContext {
@@ -107,6 +109,7 @@ interface IStoredContext {
   requestedQualityTier: QualityTier;
   scale: number;
   userTier: SubscriptionTier;
+  ga4?: { gaClientId?: string; gaSessionId?: string };
 }
 
 interface IReservation {
@@ -675,7 +678,11 @@ async function terminalEffects(result: IJobResult): Promise<void> {
       jobId: job.job_id,
     });
     const success = job.provider_phase === 'succeeded';
-    const eventOptions = { apiKey: serverEnv.AMPLITUDE_API_KEY, userId: job.user_id };
+    const eventOptions = {
+      apiKey: serverEnv.AMPLITUDE_API_KEY,
+      userId: job.user_id,
+      ...context.ga4,
+    };
     const dimensions = context.response.dimensions;
     const effects: Array<() => Promise<unknown>> = [];
     if (success) {
@@ -808,6 +815,7 @@ export const asyncUpscaleService = {
       requestedQualityTier: input.request.config.qualityTier,
       scale: input.request.config.scale,
       userTier: input.userTier,
+      ...(input.ga4?.gaClientId || input.ga4?.gaSessionId ? { ga4: input.ga4 } : {}),
       ...(isScalePreservingRecoveryEligible({
         modelId: input.modelId,
         qualityTier: input.resolvedTier,
