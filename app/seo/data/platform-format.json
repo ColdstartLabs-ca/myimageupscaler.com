@@ -120,7 +120,8 @@
         "For NFT preparation, 4x upscaling typically provides sufficient resolution for most platform requirements",
         "Midjourney Niji (anime) PNGs upscale particularly well, with line quality and cel-shading preserved"
       ],
-      "comparisonNotes": "Our Midjourney PNG upscaler differs from Midjourney JPEG upscaling primarily in the quality preservation and output characteristics. PNG format provides lossless quality from Midjourney, meaning our upscaler works with the cleanest possible source material. This results in superior final quality compared to upscaling from JPEG exports, which already contain compression artifacts. The difference is particularly noticeable in fine details, smooth gradients, and areas of solid color—all of which can suffer from JPEG compression artifacts.\n\nCompared to upscalers not specifically trained on AI-generated content, our tool understands Midjourney's unique artistic characteristics and enhances detail that feels consistent with the AI generation style rather than introducing photographic realism or other inappropriate characteristics. For professional applications where quality matters, the PNG format combined with our specialized upscaler provides the best possible results from Midjourney output."
+      "comparisonNotes": "Our Midjourney PNG upscaler differs from Midjourney JPEG upscaling primarily in the quality preservation and output characteristics. PNG format provides lossless quality from Midjourney, meaning our upscaler works with the cleanest possible source material. This results in superior final quality compared to upscaling from JPEG exports, which already contain compression artifacts. The difference is particularly noticeable in fine details, smooth gradients, and areas of solid color—all of which can suffer from JPEG compression artifacts.\n\nCompared to upscalers not specifically trained on AI-generated content, our tool understands Midjourney's unique artistic characteristics and enhances detail that feels consistent with the AI generation style rather than introducing photographic realism or other inappropriate characteristics. For professional applications where quality matters, the PNG format combined with our specialized upscaler provides the best possible results from Midjourney output.",
+      "noindex": true
     },
     {
       "slug": "midjourney-upscaler-webp",
@@ -224,7 +225,8 @@
         }
       ],
       "relatedPlatforms": ["stable-diffusion-upscaler-webp", "dalle-upscaler-webp"],
-      "relatedFormats": ["midjourney-upscaler-png"]
+      "relatedFormats": ["midjourney-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "midjourney-upscaler-jpg",
@@ -328,7 +330,8 @@
         }
       ],
       "relatedPlatforms": ["stable-diffusion-upscaler-jpg", "dalle-upscaler-jpg"],
-      "relatedFormats": ["midjourney-upscaler-png"]
+      "relatedFormats": ["midjourney-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "stable-diffusion-upscaler-png",
@@ -536,7 +539,8 @@
         }
       ],
       "relatedPlatforms": ["midjourney-upscaler-webp", "dalle-upscaler-webp"],
-      "relatedFormats": ["stable-diffusion-upscaler-png"]
+      "relatedFormats": ["stable-diffusion-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "stable-diffusion-upscaler-jpg",
@@ -640,7 +644,8 @@
         }
       ],
       "relatedPlatforms": ["midjourney-upscaler-jpg", "dalle-upscaler-jpg"],
-      "relatedFormats": ["stable-diffusion-upscaler-png"]
+      "relatedFormats": ["stable-diffusion-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "dalle-upscaler-png",
@@ -743,7 +748,8 @@
         }
       ],
       "relatedPlatforms": ["midjourney-upscaler-png", "stable-diffusion-upscaler-png"],
-      "relatedFormats": ["dalle-upscaler-jpg"]
+      "relatedFormats": ["dalle-upscaler-jpg"],
+      "noindex": true
     },
     {
       "slug": "dalle-upscaler-webp",
@@ -847,7 +853,8 @@
         }
       ],
       "relatedPlatforms": ["midjourney-upscaler-webp", "stable-diffusion-upscaler-webp"],
-      "relatedFormats": ["dalle-upscaler-png"]
+      "relatedFormats": ["dalle-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "dalle-upscaler-jpg",
@@ -950,7 +957,8 @@
         }
       ],
       "relatedPlatforms": ["midjourney-upscaler-jpg", "stable-diffusion-upscaler-jpg"],
-      "relatedFormats": ["dalle-upscaler-png"]
+      "relatedFormats": ["dalle-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "canva-upscaler-png",
@@ -1053,7 +1061,8 @@
         }
       ],
       "relatedPlatforms": ["photoshop-upscaler-png"],
-      "relatedFormats": ["canva-upscaler-jpg"]
+      "relatedFormats": ["canva-upscaler-jpg"],
+      "noindex": true
     },
     {
       "slug": "canva-upscaler-webp",
@@ -1260,7 +1269,8 @@
         }
       ],
       "relatedPlatforms": ["photoshop-upscaler-jpg"],
-      "relatedFormats": ["canva-upscaler-png"]
+      "relatedFormats": ["canva-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "photoshop-upscaler-png",
@@ -1364,7 +1374,8 @@
         }
       ],
       "relatedPlatforms": ["canva-upscaler-png"],
-      "relatedFormats": ["photoshop-upscaler-tiff"]
+      "relatedFormats": ["photoshop-upscaler-tiff"],
+      "noindex": true
     },
     {
       "slug": "photoshop-upscaler-webp",
@@ -1468,7 +1479,8 @@
         }
       ],
       "relatedPlatforms": ["canva-upscaler-webp"],
-      "relatedFormats": ["photoshop-upscaler-png"]
+      "relatedFormats": ["photoshop-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "photoshop-upscaler-jpg",
@@ -1571,7 +1583,8 @@
         }
       ],
       "relatedPlatforms": ["canva-upscaler-jpg"],
-      "relatedFormats": ["photoshop-upscaler-png"]
+      "relatedFormats": ["photoshop-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "midjourney-upscaler-heic",
@@ -1665,7 +1678,8 @@
         }
       ],
       "relatedPlatforms": ["stable-diffusion-upscaler-heic", "dalle-upscaler-heic"],
-      "relatedFormats": ["midjourney-upscaler-png"]
+      "relatedFormats": ["midjourney-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "midjourney-upscaler-tiff",
@@ -1759,7 +1773,8 @@
         }
       ],
       "relatedPlatforms": ["stable-diffusion-upscaler-tiff", "dalle-upscaler-tiff"],
-      "relatedFormats": ["midjourney-upscaler-png"]
+      "relatedFormats": ["midjourney-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "stable-diffusion-upscaler-heic",
@@ -1848,7 +1863,8 @@
         }
       ],
       "relatedPlatforms": ["midjourney-upscaler-heic", "dalle-upscaler-heic"],
-      "relatedFormats": ["stable-diffusion-upscaler-png"]
+      "relatedFormats": ["stable-diffusion-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "stable-diffusion-upscaler-tiff",
@@ -1943,7 +1959,8 @@
         }
       ],
       "relatedPlatforms": ["midjourney-upscaler-tiff", "dalle-upscaler-tiff"],
-      "relatedFormats": ["stable-diffusion-upscaler-png"]
+      "relatedFormats": ["stable-diffusion-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "dalle-upscaler-heic",
@@ -2032,7 +2049,8 @@
         }
       ],
       "relatedPlatforms": ["midjourney-upscaler-heic", "stable-diffusion-upscaler-heic"],
-      "relatedFormats": ["dalle-upscaler-png"]
+      "relatedFormats": ["dalle-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "dalle-upscaler-tiff",
@@ -2126,7 +2144,8 @@
         }
       ],
       "relatedPlatforms": ["midjourney-upscaler-tiff", "stable-diffusion-upscaler-tiff"],
-      "relatedFormats": ["dalle-upscaler-png"]
+      "relatedFormats": ["dalle-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "canva-upscaler-heic",
@@ -2215,7 +2234,8 @@
         }
       ],
       "relatedPlatforms": ["photoshop-upscaler-heic"],
-      "relatedFormats": ["canva-upscaler-png"]
+      "relatedFormats": ["canva-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "canva-upscaler-tiff",
@@ -2398,7 +2418,8 @@
         }
       ],
       "relatedPlatforms": ["canva-upscaler-heic"],
-      "relatedFormats": ["photoshop-upscaler-png"]
+      "relatedFormats": ["photoshop-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "photoshop-upscaler-tiff",
@@ -2502,7 +2523,8 @@
         }
       ],
       "relatedPlatforms": ["canva-upscaler-tiff"],
-      "relatedFormats": ["photoshop-upscaler-png"]
+      "relatedFormats": ["photoshop-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "midjourney-upscaler-raw",
@@ -2601,7 +2623,8 @@
         }
       ],
       "relatedPlatforms": ["stable-diffusion-upscaler-raw", "dalle-upscaler-raw"],
-      "relatedFormats": ["midjourney-upscaler-png"]
+      "relatedFormats": ["midjourney-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "midjourney-upscaler-bmp",
@@ -2700,7 +2723,8 @@
         }
       ],
       "relatedPlatforms": ["stable-diffusion-upscaler-bmp", "dalle-upscaler-bmp"],
-      "relatedFormats": ["midjourney-upscaler-png"]
+      "relatedFormats": ["midjourney-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "midjourney-upscaler-avif",
@@ -2799,7 +2823,8 @@
         }
       ],
       "relatedPlatforms": ["stable-diffusion-upscaler-avif", "dalle-upscaler-avif"],
-      "relatedFormats": ["midjourney-upscaler-webp"]
+      "relatedFormats": ["midjourney-upscaler-webp"],
+      "noindex": true
     },
     {
       "slug": "stable-diffusion-upscaler-raw",
@@ -2898,7 +2923,8 @@
         }
       ],
       "relatedPlatforms": ["midjourney-upscaler-raw", "dalle-upscaler-raw"],
-      "relatedFormats": ["stable-diffusion-upscaler-png"]
+      "relatedFormats": ["stable-diffusion-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "stable-diffusion-upscaler-bmp",
@@ -3096,7 +3122,8 @@
         }
       ],
       "relatedPlatforms": ["midjourney-upscaler-avif", "dalle-upscaler-avif"],
-      "relatedFormats": ["stable-diffusion-upscaler-webp"]
+      "relatedFormats": ["stable-diffusion-upscaler-webp"],
+      "noindex": true
     },
     {
       "slug": "dalle-upscaler-raw",
@@ -3195,7 +3222,8 @@
         }
       ],
       "relatedPlatforms": ["midjourney-upscaler-raw", "stable-diffusion-upscaler-raw"],
-      "relatedFormats": ["dalle-upscaler-png"]
+      "relatedFormats": ["dalle-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "dalle-upscaler-bmp",
@@ -3294,7 +3322,8 @@
         }
       ],
       "relatedPlatforms": ["midjourney-upscaler-bmp", "stable-diffusion-upscaler-bmp"],
-      "relatedFormats": ["dalle-upscaler-png"]
+      "relatedFormats": ["dalle-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "dalle-upscaler-avif",
@@ -3393,7 +3422,8 @@
         }
       ],
       "relatedPlatforms": ["midjourney-upscaler-avif", "stable-diffusion-upscaler-avif"],
-      "relatedFormats": ["dalle-upscaler-webp"]
+      "relatedFormats": ["dalle-upscaler-webp"],
+      "noindex": true
     },
     {
       "slug": "canva-upscaler-raw",
@@ -3789,7 +3819,8 @@
         }
       ],
       "relatedPlatforms": ["canva-upscaler-raw", "lightroom-upscaler-raw"],
-      "relatedFormats": ["photoshop-upscaler-png"]
+      "relatedFormats": ["photoshop-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "photoshop-upscaler-bmp",
@@ -3888,7 +3919,8 @@
         }
       ],
       "relatedPlatforms": ["canva-upscaler-bmp", "lightroom-upscaler-bmp"],
-      "relatedFormats": ["photoshop-upscaler-png"]
+      "relatedFormats": ["photoshop-upscaler-png"],
+      "noindex": true
     },
     {
       "slug": "photoshop-upscaler-avif",
@@ -3987,7 +4019,8 @@
         }
       ],
       "relatedPlatforms": ["canva-upscaler-avif", "lightroom-upscaler-avif"],
-      "relatedFormats": ["photoshop-upscaler-webp"]
+      "relatedFormats": ["photoshop-upscaler-webp"],
+      "noindex": true
     },
     {
       "slug": "lightroom-upscaler-raw",
@@ -4089,7 +4122,8 @@
           "answer": "We support RAW formats from major camera manufacturers including Canon, Nikon, Sony, Fuji, and others compatible with Lightroom."
         }
       ],
-      "relatedPlatforms": ["photoshop-upscaler-raw", "canva-upscaler-raw"]
+      "relatedPlatforms": ["photoshop-upscaler-raw", "canva-upscaler-raw"],
+      "noindex": true
     },
     {
       "slug": "lightroom-upscaler-bmp",
@@ -4293,7 +4327,8 @@
           "answer": "Yes! Our upscaler works with photos exported from both Lightroom Classic and Lightroom CC."
         }
       ],
-      "relatedPlatforms": ["photoshop-upscaler-avif", "canva-upscaler-avif"]
+      "relatedPlatforms": ["photoshop-upscaler-avif", "canva-upscaler-avif"],
+      "noindex": true
     }
   ]
 }

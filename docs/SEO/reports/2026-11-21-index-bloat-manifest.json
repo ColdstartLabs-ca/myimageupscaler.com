@@ -1,0 +1,3132 @@
+{
+  "generatedFrom": {
+    "gscRange": {
+      "startDate": "2026-05-23",
+      "endDate": "2026-11-18"
+    },
+    "sitemapFetchedAt": "2026-11-21"
+  },
+  "rules": {
+    "recentCutoff": "2026-10-07",
+    "ownerRules": [
+      {
+        "pattern": "background|transparent|cutout|masking",
+        "target": "/tools/remove-bg"
+      },
+      {
+        "pattern": "nois|grain|denois",
+        "target": "/blog/noise-reduction-in-photos"
+      },
+      {
+        "pattern": "restor|old-photo|old-pictures|damaged|coloriz|black-and-white|preserv|digitiz|photographs",
+        "target": "/blog/best-free-photo-restoration-services-online"
+      },
+      {
+        "pattern": "blur|sharpen|focus|clear-up",
+        "target": "/blog/best-app-for-unblurring-photos"
+      },
+      {
+        "pattern": "print|dpi|poster",
+        "target": "/blog/upscale-image-for-print-300-dpi-guide"
+      },
+      {
+        "pattern": "enhanc|retouch|quality|photo-edit",
+        "target": "/blog/best-free-ai-photo-enhancer-online"
+      },
+      {
+        "pattern": "upscal|resolution|enlarg|bigger|pixels|hd|4k|8k",
+        "target": "/blog/best-image-upscaler"
+      }
+    ]
+  },
+  "summary": {
+    "blog": {
+      "KEEP": 200,
+      "DEFER_GUARDED": 11,
+      "DEFER_RECENT": 30,
+      "MERGE_301": 66,
+      "NOINDEX_UNPUBLISH": 14
+    },
+    "pseo": {
+      "KEEP": 12,
+      "DEFER_GUARDED": 4,
+      "NOINDEX_UNPUBLISH": 46
+    }
+  },
+  "blog": [
+    {
+      "slug": "16x-upscaling-does-it-work",
+      "url": "https://myimageupscaler.com/blog/16x-upscaling-does-it-work",
+      "clicks180": 1,
+      "impressions180": 124,
+      "lastmod": "2026-05-12",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "4-k-format-video",
+      "url": "https://myimageupscaler.com/blog/4-k-format-video",
+      "clicks180": 2,
+      "impressions180": 892,
+      "lastmod": "2026-07-16",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "4-k-picture-resolution",
+      "url": "https://myimageupscaler.com/blog/4-k-picture-resolution",
+      "clicks180": 3,
+      "impressions180": 1393,
+      "lastmod": "2026-09-05",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "4-k-video-upscaler",
+      "url": "https://myimageupscaler.com/blog/4-k-video-upscaler",
+      "clicks180": 20,
+      "impressions180": 3014,
+      "lastmod": "2026-05-15",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "4-k-youtube-to-mp-4",
+      "url": "https://myimageupscaler.com/blog/4-k-youtube-to-mp-4",
+      "clicks180": 142,
+      "impressions180": 3232,
+      "lastmod": "2026-06-09",
+      "disposition": "KEEP",
+      "offTopic": true
+    },
+    {
+      "slug": "4k-ai-image-upscaler-guide",
+      "url": "https://myimageupscaler.com/blog/4k-ai-image-upscaler-guide",
+      "clicks180": 5,
+      "impressions180": 154,
+      "lastmod": "2026-02-18",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "4k-upscaling-pc",
+      "url": "https://myimageupscaler.com/blog/4k-upscaling-pc",
+      "clicks180": 0,
+      "impressions180": 228,
+      "lastmod": "2026-10-26",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "5-signs-your-images-need-upscaling",
+      "url": "https://myimageupscaler.com/blog/5-signs-your-images-need-upscaling",
+      "clicks180": 4,
+      "impressions180": 345,
+      "lastmod": "2026-02-13",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "ai-enhance-photo",
+      "url": "https://myimageupscaler.com/blog/ai-enhance-photo",
+      "clicks180": 2,
+      "impressions180": 5447,
+      "lastmod": "2026-05-01",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "ai-frame-interpolation",
+      "url": "https://myimageupscaler.com/blog/ai-frame-interpolation",
+      "clicks180": 171,
+      "impressions180": 10663,
+      "lastmod": "2026-04-11",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "ai-image-enhancement-ecommerce-guide",
+      "url": "https://myimageupscaler.com/blog/ai-image-enhancement-ecommerce-guide",
+      "clicks180": 0,
+      "impressions180": 90,
+      "lastmod": "2025-11-20",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-ai-photo-enhancer-online"
+    },
+    {
+      "slug": "ai-image-extender",
+      "url": "https://myimageupscaler.com/blog/ai-image-extender",
+      "clicks180": 9,
+      "impressions180": 60,
+      "lastmod": "2026-02-14",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "ai-image-upscaler-for-etsy-sellers",
+      "url": "https://myimageupscaler.com/blog/ai-image-upscaler-for-etsy-sellers",
+      "clicks180": 11,
+      "impressions180": 506,
+      "lastmod": "2026-02-17",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "ai-image-upscaling-vs-sharpening-explained",
+      "url": "https://myimageupscaler.com/blog/ai-image-upscaling-vs-sharpening-explained",
+      "clicks180": 30,
+      "impressions180": 7609,
+      "lastmod": "2026-03-01",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "ai-improve-picture-quality",
+      "url": "https://myimageupscaler.com/blog/ai-improve-picture-quality",
+      "clicks180": 0,
+      "impressions180": 0,
+      "lastmod": "2026-11-18",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "ai-increase-photo-resolution",
+      "url": "https://myimageupscaler.com/blog/ai-increase-photo-resolution",
+      "clicks180": 1,
+      "impressions180": 888,
+      "lastmod": "2026-05-24",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "ai-model-comparison",
+      "url": "https://myimageupscaler.com/blog/ai-model-comparison",
+      "clicks180": 3,
+      "impressions180": 343,
+      "lastmod": "2026-09-10",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "ai-noise-reduction",
+      "url": "https://myimageupscaler.com/blog/ai-noise-reduction",
+      "clicks180": 4,
+      "impressions180": 650,
+      "lastmod": "2026-07-10",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "ai-photo-editor-for-free",
+      "url": "https://myimageupscaler.com/blog/ai-photo-editor-for-free",
+      "clicks180": 47,
+      "impressions180": 3171,
+      "lastmod": "2026-08-05",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "ai-photo-editor-online",
+      "url": "https://myimageupscaler.com/blog/ai-photo-editor-online",
+      "clicks180": 0,
+      "impressions180": 153,
+      "lastmod": "2026-08-06",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-ai-photo-enhancer-online"
+    },
+    {
+      "slug": "ai-photo-enhancer-reddit",
+      "url": "https://myimageupscaler.com/blog/ai-photo-enhancer-reddit",
+      "clicks180": 3,
+      "impressions180": 466,
+      "lastmod": "2026-08-18",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "ai-photo-restoration",
+      "url": "https://myimageupscaler.com/blog/ai-photo-restoration",
+      "clicks180": 0,
+      "impressions180": 9,
+      "lastmod": "2026-03-04",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-photo-restoration-services-online"
+    },
+    {
+      "slug": "ai-photo-restoration-online-free",
+      "url": "https://myimageupscaler.com/blog/ai-photo-restoration-online-free",
+      "clicks180": 0,
+      "impressions180": 0,
+      "lastmod": "2026-11-02",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "ai-photo-retouch",
+      "url": "https://myimageupscaler.com/blog/ai-photo-retouch",
+      "clicks180": 2,
+      "impressions180": 881,
+      "lastmod": "2026-05-28",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "ai-portrait-enhancer-online",
+      "url": "https://myimageupscaler.com/blog/ai-portrait-enhancer-online",
+      "clicks180": 0,
+      "impressions180": 26,
+      "lastmod": "2026-10-24",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "ai-prompts-for-image-generation",
+      "url": "https://myimageupscaler.com/blog/ai-prompts-for-image-generation",
+      "clicks180": 7,
+      "impressions180": 4143,
+      "lastmod": "2026-06-03",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "ai-quality-enhancer",
+      "url": "https://myimageupscaler.com/blog/ai-quality-enhancer",
+      "clicks180": 2,
+      "impressions180": 1820,
+      "lastmod": "2026-04-30",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "ai-resolution-enhancer",
+      "url": "https://myimageupscaler.com/blog/ai-resolution-enhancer",
+      "clicks180": 2,
+      "impressions180": 440,
+      "lastmod": "2026-04-29",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "ai-upscaler-muryou-osusume",
+      "url": "https://myimageupscaler.com/blog/ai-upscaler-muryou-osusume",
+      "clicks180": 125,
+      "impressions180": 3608,
+      "lastmod": "2026-02-17",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "animation-maker-for-minecraft",
+      "url": "https://myimageupscaler.com/blog/animation-maker-for-minecraft",
+      "clicks180": 288,
+      "impressions180": 21990,
+      "lastmod": "2026-06-02",
+      "disposition": "KEEP",
+      "offTopic": true
+    },
+    {
+      "slug": "anime-upscaling-4k-art-guide",
+      "url": "https://myimageupscaler.com/blog/anime-upscaling-4k-art-guide",
+      "clicks180": 16,
+      "impressions180": 3234,
+      "lastmod": "2025-01-05",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "artificial-intelligence-and-image-processing",
+      "url": "https://myimageupscaler.com/blog/artificial-intelligence-and-image-processing",
+      "clicks180": 1,
+      "impressions180": 2236,
+      "lastmod": "2026-05-10",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "avif-vs-webp-vs-jpeg-which-upscales-best",
+      "url": "https://myimageupscaler.com/blog/avif-vs-webp-vs-jpeg-which-upscales-best",
+      "clicks180": 0,
+      "impressions180": 172,
+      "lastmod": "2026-02-17",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-image-upscaler"
+    },
+    {
+      "slug": "background-removal-ai",
+      "url": "https://myimageupscaler.com/blog/background-removal-ai",
+      "clicks180": 0,
+      "impressions180": 107,
+      "lastmod": "2026-10-07",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "background-removal-photo",
+      "url": "https://myimageupscaler.com/blog/background-removal-photo",
+      "clicks180": 0,
+      "impressions180": 76,
+      "lastmod": "2026-09-14",
+      "disposition": "MERGE_301",
+      "target": "/tools/remove-bg"
+    },
+    {
+      "slug": "background-removal-tool",
+      "url": "https://myimageupscaler.com/blog/background-removal-tool",
+      "clicks180": 0,
+      "impressions180": 50,
+      "lastmod": "2026-10-28",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "background-removal-website",
+      "url": "https://myimageupscaler.com/blog/background-removal-website",
+      "clicks180": 1,
+      "impressions180": 2772,
+      "lastmod": "2026-08-31",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "batch-edit-photos",
+      "url": "https://myimageupscaler.com/blog/batch-edit-photos",
+      "clicks180": 1,
+      "impressions180": 94,
+      "lastmod": "2026-06-12",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "batch-image-processing-mac",
+      "url": "https://myimageupscaler.com/blog/batch-image-processing-mac",
+      "clicks180": 2,
+      "impressions180": 208,
+      "lastmod": "2026-06-16",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "batch-image-upscaler-ai",
+      "url": "https://myimageupscaler.com/blog/batch-image-upscaler-ai",
+      "clicks180": 0,
+      "impressions180": 291,
+      "lastmod": "2026-08-20",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-image-upscaler"
+    },
+    {
+      "slug": "batch-photo-editor-online-free",
+      "url": "https://myimageupscaler.com/blog/batch-photo-editor-online-free",
+      "clicks180": 46,
+      "impressions180": 3716,
+      "lastmod": "2026-08-18",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "best-ai-image-enhancer",
+      "url": "https://myimageupscaler.com/blog/best-ai-image-enhancer",
+      "clicks180": 16,
+      "impressions180": 7092,
+      "lastmod": "2026-04-23",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "best-ai-image-quality-enhancer-free",
+      "url": "https://myimageupscaler.com/blog/best-ai-image-quality-enhancer-free",
+      "clicks180": 238,
+      "impressions180": 11544,
+      "lastmod": "2026-02-12",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "best-ai-photo-enhancer",
+      "url": "https://myimageupscaler.com/blog/best-ai-photo-enhancer",
+      "clicks180": 19,
+      "impressions180": 6913,
+      "lastmod": "2026-04-27",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "best-ai-photo-enhancer-reddit",
+      "url": "https://myimageupscaler.com/blog/best-ai-photo-enhancer-reddit",
+      "clicks180": 155,
+      "impressions180": 17684,
+      "lastmod": "2026-06-22",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "best-ai-tools-for-photo-editing",
+      "url": "https://myimageupscaler.com/blog/best-ai-tools-for-photo-editing",
+      "clicks180": 0,
+      "impressions180": 1444,
+      "lastmod": "2026-04-12",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-ai-photo-enhancer-online"
+    },
+    {
+      "slug": "best-ai-upscaler",
+      "url": "https://myimageupscaler.com/blog/best-ai-upscaler",
+      "clicks180": 132,
+      "impressions180": 28261,
+      "lastmod": "2026-03-05",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "best-app-for-unblurring-photos",
+      "url": "https://myimageupscaler.com/blog/best-app-for-unblurring-photos",
+      "clicks180": 249,
+      "impressions180": 23169,
+      "lastmod": "2026-05-29",
+      "disposition": "DEFER_GUARDED"
+    },
+    {
+      "slug": "best-app-to-remove-photo-background",
+      "url": "https://myimageupscaler.com/blog/best-app-to-remove-photo-background",
+      "clicks180": 2,
+      "impressions180": 3815,
+      "lastmod": "2026-06-29",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "best-app-to-restore-old-photos",
+      "url": "https://myimageupscaler.com/blog/best-app-to-restore-old-photos",
+      "clicks180": 11,
+      "impressions180": 3256,
+      "lastmod": "2026-04-09",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "best-background-removal-software",
+      "url": "https://myimageupscaler.com/blog/best-background-removal-software",
+      "clicks180": 0,
+      "impressions180": 748,
+      "lastmod": "2026-11-10",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "best-batch-photo-editing-software",
+      "url": "https://myimageupscaler.com/blog/best-batch-photo-editing-software",
+      "clicks180": 5,
+      "impressions180": 5846,
+      "lastmod": "2026-05-21",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "best-bulk-image-upscalers-2026",
+      "url": "https://myimageupscaler.com/blog/best-bulk-image-upscalers-2026",
+      "clicks180": 19,
+      "impressions180": 709,
+      "lastmod": "2026-08-13",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "best-file-type-for-printing-photos",
+      "url": "https://myimageupscaler.com/blog/best-file-type-for-printing-photos",
+      "clicks180": 0,
+      "impressions180": 175,
+      "lastmod": "2026-09-10",
+      "disposition": "MERGE_301",
+      "target": "/blog/upscale-image-for-print-300-dpi-guide"
+    },
+    {
+      "slug": "best-free-ai-image-upscaler-2026-tested-compared",
+      "url": "https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared",
+      "clicks180": 4569,
+      "impressions180": 172807,
+      "lastmod": "2026-03-25",
+      "disposition": "DEFER_GUARDED"
+    },
+    {
+      "slug": "best-free-ai-photo-enhancer-online",
+      "url": "https://myimageupscaler.com/blog/best-free-ai-photo-enhancer-online",
+      "clicks180": 244,
+      "impressions180": 16318,
+      "lastmod": "2026-04-25",
+      "disposition": "DEFER_GUARDED"
+    },
+    {
+      "slug": "best-free-photo-restoration-services-online",
+      "url": "https://myimageupscaler.com/blog/best-free-photo-restoration-services-online",
+      "clicks180": 64,
+      "impressions180": 3474,
+      "lastmod": "2026-04-25",
+      "disposition": "DEFER_GUARDED"
+    },
+    {
+      "slug": "best-high-resolution-image-format",
+      "url": "https://myimageupscaler.com/blog/best-high-resolution-image-format",
+      "clicks180": 6,
+      "impressions180": 3277,
+      "lastmod": "2026-09-18",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "best-image-format-for-printing",
+      "url": "https://myimageupscaler.com/blog/best-image-format-for-printing",
+      "clicks180": 0,
+      "impressions180": 0,
+      "lastmod": "2026-11-16",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "best-image-formats-for-web",
+      "url": "https://myimageupscaler.com/blog/best-image-formats-for-web",
+      "clicks180": 1,
+      "impressions180": 1591,
+      "lastmod": "2026-09-04",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "best-image-upscaler",
+      "url": "https://myimageupscaler.com/blog/best-image-upscaler",
+      "clicks180": 188,
+      "impressions180": 42650,
+      "lastmod": "2026-04-01",
+      "disposition": "DEFER_GUARDED"
+    },
+    {
+      "slug": "best-photo-restoration-software",
+      "url": "https://myimageupscaler.com/blog/best-photo-restoration-software",
+      "clicks180": 0,
+      "impressions180": 2556,
+      "lastmod": "2026-03-02",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-photo-restoration-services-online"
+    },
+    {
+      "slug": "best-video-upscaler",
+      "url": "https://myimageupscaler.com/blog/best-video-upscaler",
+      "clicks180": 2,
+      "impressions180": 308,
+      "lastmod": "2026-04-21",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "better-landscape-photos",
+      "url": "https://myimageupscaler.com/blog/better-landscape-photos",
+      "clicks180": 0,
+      "impressions180": 0,
+      "lastmod": "2026-09-26",
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "slug": "black-and-white-photo-restoration",
+      "url": "https://myimageupscaler.com/blog/black-and-white-photo-restoration",
+      "clicks180": 1,
+      "impressions180": 41,
+      "lastmod": "2026-07-08",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "blow-up-images-to-poster-size",
+      "url": "https://myimageupscaler.com/blog/blow-up-images-to-poster-size",
+      "clicks180": 0,
+      "impressions180": 15,
+      "lastmod": "2026-09-10",
+      "disposition": "MERGE_301",
+      "target": "/blog/upscale-image-for-print-300-dpi-guide"
+    },
+    {
+      "slug": "blur-photo-editing-background",
+      "url": "https://myimageupscaler.com/blog/blur-photo-editing-background",
+      "clicks180": 0,
+      "impressions180": 0,
+      "lastmod": "2026-10-13",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "blur-reduction-software",
+      "url": "https://myimageupscaler.com/blog/blur-reduction-software",
+      "clicks180": 0,
+      "impressions180": 22,
+      "lastmod": "2026-06-21",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-app-for-unblurring-photos"
+    },
+    {
+      "slug": "blur-remover-online",
+      "url": "https://myimageupscaler.com/blog/blur-remover-online",
+      "clicks180": 1,
+      "impressions180": 88,
+      "lastmod": "2026-10-03",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "blurry-photo-fix-online-free",
+      "url": "https://myimageupscaler.com/blog/blurry-photo-fix-online-free",
+      "clicks180": 3,
+      "impressions180": 612,
+      "lastmod": "2026-10-14",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "bring-old-photos-to-life",
+      "url": "https://myimageupscaler.com/blog/bring-old-photos-to-life",
+      "clicks180": 0,
+      "impressions180": 2,
+      "lastmod": "2026-06-08",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-photo-restoration-services-online"
+    },
+    {
+      "slug": "bulk-background-remover",
+      "url": "https://myimageupscaler.com/blog/bulk-background-remover",
+      "clicks180": 0,
+      "impressions180": 96,
+      "lastmod": "2026-08-03",
+      "disposition": "MERGE_301",
+      "target": "/tools/remove-bg"
+    },
+    {
+      "slug": "can-you-make-money-selling-photos-online",
+      "url": "https://myimageupscaler.com/blog/can-you-make-money-selling-photos-online",
+      "clicks180": 0,
+      "impressions180": 167,
+      "lastmod": "2026-07-29",
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "slug": "cartoon-to-realistic-ai",
+      "url": "https://myimageupscaler.com/blog/cartoon-to-realistic-ai",
+      "clicks180": 143,
+      "impressions180": 3424,
+      "lastmod": "2026-04-25",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "change-frame-rate-video",
+      "url": "https://myimageupscaler.com/blog/change-frame-rate-video",
+      "clicks180": 8,
+      "impressions180": 1828,
+      "lastmod": "2026-05-05",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "colorize-black-and-white-photos",
+      "url": "https://myimageupscaler.com/blog/colorize-black-and-white-photos",
+      "clicks180": 0,
+      "impressions180": 191,
+      "lastmod": "2026-05-09",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-photo-restoration-services-online"
+    },
+    {
+      "slug": "colorize-with-photoshop",
+      "url": "https://myimageupscaler.com/blog/colorize-with-photoshop",
+      "clicks180": 2,
+      "impressions180": 372,
+      "lastmod": "2026-07-11",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "combining-png-files",
+      "url": "https://myimageupscaler.com/blog/combining-png-files",
+      "clicks180": 21,
+      "impressions180": 2118,
+      "lastmod": "2026-05-18",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "como-quitar-fondo-imagen-gratis-online",
+      "url": "https://myimageupscaler.com/blog/como-quitar-fondo-imagen-gratis-online",
+      "clicks180": 2,
+      "impressions180": 27,
+      "lastmod": "2026-04-25",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "content-creator-software",
+      "url": "https://myimageupscaler.com/blog/content-creator-software",
+      "clicks180": 0,
+      "impressions180": 514,
+      "lastmod": "2026-07-26",
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "slug": "convert-photo-to-pencil-sketch",
+      "url": "https://myimageupscaler.com/blog/convert-photo-to-pencil-sketch",
+      "clicks180": 1,
+      "impressions180": 21,
+      "lastmod": "2026-08-11",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "convert-picture-to-outline",
+      "url": "https://myimageupscaler.com/blog/convert-picture-to-outline",
+      "clicks180": 15,
+      "impressions180": 2074,
+      "lastmod": "2026-05-25",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "convert-video-to-4-k",
+      "url": "https://myimageupscaler.com/blog/convert-video-to-4-k",
+      "clicks180": 3,
+      "impressions180": 141,
+      "lastmod": "2026-04-20",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "convert-video-to-hd-1080-p-online-free",
+      "url": "https://myimageupscaler.com/blog/convert-video-to-hd-1080-p-online-free",
+      "clicks180": 51,
+      "impressions180": 1166,
+      "lastmod": "2026-08-12",
+      "disposition": "KEEP",
+      "offTopic": true
+    },
+    {
+      "slug": "credit-based-pricing",
+      "url": "https://myimageupscaler.com/blog/credit-based-pricing",
+      "clicks180": 0,
+      "impressions180": 2,
+      "lastmod": "2026-11-17",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "dalle-3-image-enhancement-guide",
+      "url": "https://myimageupscaler.com/blog/dalle-3-image-enhancement-guide",
+      "clicks180": 5,
+      "impressions180": 802,
+      "lastmod": "2025-01-05",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "damaged-old-photographs",
+      "url": "https://myimageupscaler.com/blog/damaged-old-photographs",
+      "clicks180": 0,
+      "impressions180": 1225,
+      "lastmod": "2026-05-22",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-photo-restoration-services-online"
+    },
+    {
+      "slug": "denoise-a-photo",
+      "url": "https://myimageupscaler.com/blog/denoise-a-photo",
+      "clicks180": 0,
+      "impressions180": 55,
+      "lastmod": "2026-09-19",
+      "disposition": "MERGE_301",
+      "target": "/blog/noise-reduction-in-photos"
+    },
+    {
+      "slug": "denoiser-in-premiere",
+      "url": "https://myimageupscaler.com/blog/denoiser-in-premiere",
+      "clicks180": 6,
+      "impressions180": 3191,
+      "lastmod": "2026-06-25",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "does-upscaling-improve-picture-quality",
+      "url": "https://myimageupscaler.com/blog/does-upscaling-improve-picture-quality",
+      "clicks180": 1,
+      "impressions180": 650,
+      "lastmod": "2026-08-19",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "dpi-converter-online",
+      "url": "https://myimageupscaler.com/blog/dpi-converter-online",
+      "clicks180": 0,
+      "impressions180": 83,
+      "lastmod": "2026-04-13",
+      "disposition": "MERGE_301",
+      "target": "/blog/upscale-image-for-print-300-dpi-guide"
+    },
+    {
+      "slug": "dpi-of-image",
+      "url": "https://myimageupscaler.com/blog/dpi-of-image",
+      "clicks180": 0,
+      "impressions180": 820,
+      "lastmod": "2026-05-23",
+      "disposition": "MERGE_301",
+      "target": "/blog/upscale-image-for-print-300-dpi-guide"
+    },
+    {
+      "slug": "enhance-picture-quality-ai",
+      "url": "https://myimageupscaler.com/blog/enhance-picture-quality-ai",
+      "clicks180": 3,
+      "impressions180": 121,
+      "lastmod": "2026-02-16",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "enhance-pictures-in-photoshop",
+      "url": "https://myimageupscaler.com/blog/enhance-pictures-in-photoshop",
+      "clicks180": 1,
+      "impressions180": 250,
+      "lastmod": "2026-04-16",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "enhance-text-in-image",
+      "url": "https://myimageupscaler.com/blog/enhance-text-in-image",
+      "clicks180": 110,
+      "impressions180": 4906,
+      "lastmod": "2026-06-11",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "face-reconstruction-before-and-after",
+      "url": "https://myimageupscaler.com/blog/face-reconstruction-before-and-after",
+      "clicks180": 0,
+      "impressions180": 0,
+      "lastmod": "2026-11-04",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "fix-blurry-photos-ai",
+      "url": "https://myimageupscaler.com/blog/fix-blurry-photos-ai",
+      "clicks180": 0,
+      "impressions180": 12,
+      "lastmod": "2026-10-21",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "fix-blurry-photos-ai-methods-guide",
+      "url": "https://myimageupscaler.com/blog/fix-blurry-photos-ai-methods-guide",
+      "clicks180": 8,
+      "impressions180": 3590,
+      "lastmod": "2025-01-05",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "fix-blurry-photos-iphone",
+      "url": "https://myimageupscaler.com/blog/fix-blurry-photos-iphone",
+      "clicks180": 0,
+      "impressions180": 365,
+      "lastmod": "2026-06-04",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-app-for-unblurring-photos"
+    },
+    {
+      "slug": "fix-blurry-photos-online",
+      "url": "https://myimageupscaler.com/blog/fix-blurry-photos-online",
+      "clicks180": 1,
+      "impressions180": 192,
+      "lastmod": "2026-03-12",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "fix-overexposed-photo",
+      "url": "https://myimageupscaler.com/blog/fix-overexposed-photo",
+      "clicks180": 0,
+      "impressions180": 757,
+      "lastmod": "2026-07-02",
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "slug": "fix-pixelated-image",
+      "url": "https://myimageupscaler.com/blog/fix-pixelated-image",
+      "clicks180": 5,
+      "impressions180": 1437,
+      "lastmod": "2026-02-27",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "fix-underexposed-photo",
+      "url": "https://myimageupscaler.com/blog/fix-underexposed-photo",
+      "clicks180": 4,
+      "impressions180": 251,
+      "lastmod": "2026-08-25",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "fixing-pixelated-photos",
+      "url": "https://myimageupscaler.com/blog/fixing-pixelated-photos",
+      "clicks180": 35,
+      "impressions180": 177678,
+      "lastmod": "2026-03-19",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "frame-rate-increaser",
+      "url": "https://myimageupscaler.com/blog/frame-rate-increaser",
+      "clicks180": 18,
+      "impressions180": 1475,
+      "lastmod": "2026-07-31",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "free-ai-image-enlarger",
+      "url": "https://myimageupscaler.com/blog/free-ai-image-enlarger",
+      "clicks180": 2,
+      "impressions180": 145,
+      "lastmod": "2026-06-27",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "free-ai-upscaler-no-watermark",
+      "url": "https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark",
+      "clicks180": 313,
+      "impressions180": 15786,
+      "lastmod": "2026-03-16",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "free-background-removal-tool",
+      "url": "https://myimageupscaler.com/blog/free-background-removal-tool",
+      "clicks180": 1,
+      "impressions180": 1346,
+      "lastmod": "2026-03-13",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "free-online-image-enlarger",
+      "url": "https://myimageupscaler.com/blog/free-online-image-enlarger",
+      "clicks180": 43,
+      "impressions180": 9880,
+      "lastmod": "2026-05-31",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "free-photo-enhancer-no-signup",
+      "url": "https://myimageupscaler.com/blog/free-photo-enhancer-no-signup",
+      "clicks180": 318,
+      "impressions180": 3942,
+      "lastmod": "2026-03-14",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "free-photo-restoration-app",
+      "url": "https://myimageupscaler.com/blog/free-photo-restoration-app",
+      "clicks180": 27,
+      "impressions180": 2622,
+      "lastmod": "2026-04-19",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "gif-upscaler",
+      "url": "https://myimageupscaler.com/blog/gif-upscaler",
+      "clicks180": 228,
+      "impressions180": 12101,
+      "lastmod": "2026-03-10",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "graphic-design-tips",
+      "url": "https://myimageupscaler.com/blog/graphic-design-tips",
+      "clicks180": 0,
+      "impressions180": 323,
+      "lastmod": "2026-07-03",
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "slug": "heic-iphone-photo-upscaling-guide",
+      "url": "https://myimageupscaler.com/blog/heic-iphone-photo-upscaling-guide",
+      "clicks180": 3,
+      "impressions180": 829,
+      "lastmod": "2025-01-05",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "high-resolution-gif",
+      "url": "https://myimageupscaler.com/blog/high-resolution-gif",
+      "clicks180": 10,
+      "impressions180": 942,
+      "lastmod": "2026-08-18",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "high-resolution-image-for-printing",
+      "url": "https://myimageupscaler.com/blog/high-resolution-image-for-printing",
+      "clicks180": 2,
+      "impressions180": 683,
+      "lastmod": "2026-08-06",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-ai-image-upscaling-works-guide",
+      "url": "https://myimageupscaler.com/blog/how-ai-image-upscaling-works-guide",
+      "clicks180": 0,
+      "impressions180": 883,
+      "lastmod": "2025-01-05",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-image-upscaler"
+    },
+    {
+      "slug": "how-to-change-the-resolution-of-a-video",
+      "url": "https://myimageupscaler.com/blog/how-to-change-the-resolution-of-a-video",
+      "clicks180": 20,
+      "impressions180": 4991,
+      "lastmod": "2026-04-06",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-clean-old-photographs",
+      "url": "https://myimageupscaler.com/blog/how-to-clean-old-photographs",
+      "clicks180": 0,
+      "impressions180": 129,
+      "lastmod": "2026-09-30",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-photo-restoration-services-online"
+    },
+    {
+      "slug": "how-to-clear-up-a-photo",
+      "url": "https://myimageupscaler.com/blog/how-to-clear-up-a-photo",
+      "clicks180": 58,
+      "impressions180": 8975,
+      "lastmod": "2026-03-11",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-clear-up-blurry-pictures",
+      "url": "https://myimageupscaler.com/blog/how-to-clear-up-blurry-pictures",
+      "clicks180": 0,
+      "impressions180": 106,
+      "lastmod": "2026-09-16",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-app-for-unblurring-photos"
+    },
+    {
+      "slug": "how-to-convert-images-to-hd",
+      "url": "https://myimageupscaler.com/blog/how-to-convert-images-to-hd",
+      "clicks180": 0,
+      "impressions180": 95,
+      "lastmod": "2026-02-24",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-image-upscaler"
+    },
+    {
+      "slug": "how-to-convert-png-to-4k",
+      "url": "https://myimageupscaler.com/blog/how-to-convert-png-to-4k",
+      "clicks180": 141,
+      "impressions180": 3480,
+      "lastmod": "2026-02-21",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-digitize-photos",
+      "url": "https://myimageupscaler.com/blog/how-to-digitize-photos",
+      "clicks180": 3,
+      "impressions180": 3274,
+      "lastmod": "2026-02-26",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-enhance-a-picture-in-photoshop",
+      "url": "https://myimageupscaler.com/blog/how-to-enhance-a-picture-in-photoshop",
+      "clicks180": 1,
+      "impressions180": 181,
+      "lastmod": "2026-04-17",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-enhance-image-quality-with-ai",
+      "url": "https://myimageupscaler.com/blog/how-to-enhance-image-quality-with-ai",
+      "clicks180": 3,
+      "impressions180": 1117,
+      "lastmod": "2026-02-17",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-enhance-photo-quality-online",
+      "url": "https://myimageupscaler.com/blog/how-to-enhance-photo-quality-online",
+      "clicks180": 1,
+      "impressions180": 905,
+      "lastmod": "2026-09-29",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-enhance-picture-quality-with-ai",
+      "url": "https://myimageupscaler.com/blog/how-to-enhance-picture-quality-with-ai",
+      "clicks180": 0,
+      "impressions180": 157,
+      "lastmod": "2026-02-15",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-ai-photo-enhancer-online"
+    },
+    {
+      "slug": "how-to-enlarge-old-photographs",
+      "url": "https://myimageupscaler.com/blog/how-to-enlarge-old-photographs",
+      "clicks180": 1,
+      "impressions180": 626,
+      "lastmod": "2026-07-21",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-enlarge-photo-without-losing-quality",
+      "url": "https://myimageupscaler.com/blog/how-to-enlarge-photo-without-losing-quality",
+      "clicks180": 5,
+      "impressions180": 5019,
+      "lastmod": "2026-03-30",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-enlarge-photos-for-printing",
+      "url": "https://myimageupscaler.com/blog/how-to-enlarge-photos-for-printing",
+      "clicks180": 1,
+      "impressions180": 1520,
+      "lastmod": "2026-08-18",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-fix-a-grainy-photo",
+      "url": "https://myimageupscaler.com/blog/how-to-fix-a-grainy-photo",
+      "clicks180": 0,
+      "impressions180": 458,
+      "lastmod": "2026-03-30",
+      "disposition": "MERGE_301",
+      "target": "/blog/noise-reduction-in-photos"
+    },
+    {
+      "slug": "how-to-fix-blurry-digital-photos",
+      "url": "https://myimageupscaler.com/blog/how-to-fix-blurry-digital-photos",
+      "clicks180": 0,
+      "impressions180": 290,
+      "lastmod": "2026-10-06",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-app-for-unblurring-photos"
+    },
+    {
+      "slug": "how-to-fix-blurry-photos-in-lightroom",
+      "url": "https://myimageupscaler.com/blog/how-to-fix-blurry-photos-in-lightroom",
+      "clicks180": 2,
+      "impressions180": 601,
+      "lastmod": "2026-08-01",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-fix-blurry-photos-on-android",
+      "url": "https://myimageupscaler.com/blog/how-to-fix-blurry-photos-on-android",
+      "clicks180": 4,
+      "impressions180": 2216,
+      "lastmod": "2026-08-07",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-fix-blurry-photos-with-ai",
+      "url": "https://myimageupscaler.com/blog/how-to-fix-blurry-photos-with-ai",
+      "clicks180": 5,
+      "impressions180": 1325,
+      "lastmod": "2026-02-17",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-fix-resolution",
+      "url": "https://myimageupscaler.com/blog/how-to-fix-resolution",
+      "clicks180": 1,
+      "impressions180": 189,
+      "lastmod": "2026-05-02",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-improve-photo-resolution-free",
+      "url": "https://myimageupscaler.com/blog/how-to-improve-photo-resolution-free",
+      "clicks180": 0,
+      "impressions180": 157,
+      "lastmod": "2026-02-19",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-image-upscaler"
+    },
+    {
+      "slug": "how-to-increase-dpi-of-image",
+      "url": "https://myimageupscaler.com/blog/how-to-increase-dpi-of-image",
+      "clicks180": 9,
+      "impressions180": 2083,
+      "lastmod": "2026-03-08",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-increase-picture-pixels",
+      "url": "https://myimageupscaler.com/blog/how-to-increase-picture-pixels",
+      "clicks180": 0,
+      "impressions180": 313,
+      "lastmod": "2026-08-18",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-image-upscaler"
+    },
+    {
+      "slug": "how-to-make-high-quality-animated-gifs",
+      "url": "https://myimageupscaler.com/blog/how-to-make-high-quality-animated-gifs",
+      "clicks180": 8,
+      "impressions180": 2283,
+      "lastmod": "2026-07-18",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-make-low-resolution-photo-high-resolution",
+      "url": "https://myimageupscaler.com/blog/how-to-make-low-resolution-photo-high-resolution",
+      "clicks180": 4,
+      "impressions180": 2697,
+      "lastmod": "2026-03-09",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-make-photos-look-professional",
+      "url": "https://myimageupscaler.com/blog/how-to-make-photos-look-professional",
+      "clicks180": 1,
+      "impressions180": 1269,
+      "lastmod": "2026-05-08",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-make-png-background-transparent-free",
+      "url": "https://myimageupscaler.com/blog/how-to-make-png-background-transparent-free",
+      "clicks180": 0,
+      "impressions180": 0,
+      "lastmod": "2026-03-25",
+      "disposition": "MERGE_301",
+      "target": "/tools/remove-bg"
+    },
+    {
+      "slug": "how-to-optimize-images-for-web",
+      "url": "https://myimageupscaler.com/blog/how-to-optimize-images-for-web",
+      "clicks180": 1,
+      "impressions180": 1741,
+      "lastmod": "2026-07-22",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-photograph-milky-way",
+      "url": "https://myimageupscaler.com/blog/how-to-photograph-milky-way",
+      "clicks180": 0,
+      "impressions180": 19,
+      "lastmod": "2026-07-01",
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "slug": "how-to-prepare-images-for-printing",
+      "url": "https://myimageupscaler.com/blog/how-to-prepare-images-for-printing",
+      "clicks180": 0,
+      "impressions180": 34,
+      "lastmod": "2026-11-06",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "how-to-preserve-old-photographs",
+      "url": "https://myimageupscaler.com/blog/how-to-preserve-old-photographs",
+      "clicks180": 1,
+      "impressions180": 1204,
+      "lastmod": "2026-04-08",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-remove-background-from-photo",
+      "url": "https://myimageupscaler.com/blog/how-to-remove-background-from-photo",
+      "clicks180": 0,
+      "impressions180": 673,
+      "lastmod": "2026-04-24",
+      "disposition": "MERGE_301",
+      "target": "/tools/remove-bg"
+    },
+    {
+      "slug": "how-to-restore-old-photos",
+      "url": "https://myimageupscaler.com/blog/how-to-restore-old-photos",
+      "clicks180": 0,
+      "impressions180": 209,
+      "lastmod": "2026-09-06",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-photo-restoration-services-online"
+    },
+    {
+      "slug": "how-to-restore-old-photos-on-iphone",
+      "url": "https://myimageupscaler.com/blog/how-to-restore-old-photos-on-iphone",
+      "clicks180": 2,
+      "impressions180": 269,
+      "lastmod": "2026-06-17",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-restore-photos",
+      "url": "https://myimageupscaler.com/blog/how-to-restore-photos",
+      "clicks180": 0,
+      "impressions180": 36,
+      "lastmod": "2026-03-01",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-photo-restoration-services-online"
+    },
+    {
+      "slug": "how-to-sharpen-an-image",
+      "url": "https://myimageupscaler.com/blog/how-to-sharpen-an-image",
+      "clicks180": 0,
+      "impressions180": 260,
+      "lastmod": "2026-07-09",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-app-for-unblurring-photos"
+    },
+    {
+      "slug": "how-to-sharpen-blurry-images",
+      "url": "https://myimageupscaler.com/blog/how-to-sharpen-blurry-images",
+      "clicks180": 0,
+      "impressions180": 82,
+      "lastmod": "2026-04-02",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-app-for-unblurring-photos"
+    },
+    {
+      "slug": "how-to-upscale-4k-to-8k-images-with-ai",
+      "url": "https://myimageupscaler.com/blog/how-to-upscale-4k-to-8k-images-with-ai",
+      "clicks180": 4,
+      "impressions180": 392,
+      "lastmod": "2026-02-20",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-upscale-a-logo-without-losing-quality",
+      "url": "https://myimageupscaler.com/blog/how-to-upscale-a-logo-without-losing-quality",
+      "clicks180": 14,
+      "impressions180": 3178,
+      "lastmod": "2026-03-02",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-upscale-anime-images-with-ai",
+      "url": "https://myimageupscaler.com/blog/how-to-upscale-anime-images-with-ai",
+      "clicks180": 51,
+      "impressions180": 5618,
+      "lastmod": "2026-02-28",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-upscale-avif-images-without-losing-quality",
+      "url": "https://myimageupscaler.com/blog/how-to-upscale-avif-images-without-losing-quality",
+      "clicks180": 32,
+      "impressions180": 1170,
+      "lastmod": "2026-02-17",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-upscale-avif-tiff-bmp-image-formats",
+      "url": "https://myimageupscaler.com/blog/how-to-upscale-avif-tiff-bmp-image-formats",
+      "clicks180": 2,
+      "impressions180": 77,
+      "lastmod": "2026-02-14",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-upscale-dalle-images",
+      "url": "https://myimageupscaler.com/blog/how-to-upscale-dalle-images",
+      "clicks180": 26,
+      "impressions180": 2161,
+      "lastmod": "2026-03-11",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-upscale-heic-images-iphone",
+      "url": "https://myimageupscaler.com/blog/how-to-upscale-heic-images-iphone",
+      "clicks180": 38,
+      "impressions180": 1977,
+      "lastmod": "2026-03-07",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-upscale-images",
+      "url": "https://myimageupscaler.com/blog/how-to-upscale-images",
+      "clicks180": 1,
+      "impressions180": 924,
+      "lastmod": "2026-02-14",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-upscale-images-for-canva",
+      "url": "https://myimageupscaler.com/blog/how-to-upscale-images-for-canva",
+      "clicks180": 19,
+      "impressions180": 3371,
+      "lastmod": "2026-03-04",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-upscale-images-for-ecommerce",
+      "url": "https://myimageupscaler.com/blog/how-to-upscale-images-for-ecommerce",
+      "clicks180": 0,
+      "impressions180": 275,
+      "lastmod": "2026-02-25",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-image-upscaler"
+    },
+    {
+      "slug": "how-to-upscale-images-for-instagram",
+      "url": "https://myimageupscaler.com/blog/how-to-upscale-images-for-instagram",
+      "clicks180": 69,
+      "impressions180": 4219,
+      "lastmod": "2026-01-31",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-upscale-images-without-losing-quality",
+      "url": "https://myimageupscaler.com/blog/how-to-upscale-images-without-losing-quality",
+      "clicks180": 10,
+      "impressions180": 2288,
+      "lastmod": "2025-11-21",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-upscale-midjourney-images-for-print",
+      "url": "https://myimageupscaler.com/blog/how-to-upscale-midjourney-images-for-print",
+      "clicks180": 49,
+      "impressions180": 8876,
+      "lastmod": "2026-02-26",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-upscale-old-photos-with-ai",
+      "url": "https://myimageupscaler.com/blog/how-to-upscale-old-photos-with-ai",
+      "clicks180": 2,
+      "impressions180": 84,
+      "lastmod": "2026-02-17",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-upscale-passport-photos-with-ai",
+      "url": "https://myimageupscaler.com/blog/how-to-upscale-passport-photos-with-ai",
+      "clicks180": 28,
+      "impressions180": 1237,
+      "lastmod": "2026-03-13",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-upscale-real-estate-photos-with-ai",
+      "url": "https://myimageupscaler.com/blog/how-to-upscale-real-estate-photos-with-ai",
+      "clicks180": 3,
+      "impressions180": 912,
+      "lastmod": "2026-03-03",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-upscale-webp-images",
+      "url": "https://myimageupscaler.com/blog/how-to-upscale-webp-images",
+      "clicks180": 20,
+      "impressions180": 902,
+      "lastmod": "2026-03-06",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "how-to-upscale-youtube-thumbnails",
+      "url": "https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails",
+      "clicks180": 258,
+      "impressions180": 58027,
+      "lastmod": "2026-02-17",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "ideas-for-vlogs",
+      "url": "https://myimageupscaler.com/blog/ideas-for-vlogs",
+      "clicks180": 2,
+      "impressions180": 357,
+      "lastmod": "2026-07-04",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "image-enhancement-techniques",
+      "url": "https://myimageupscaler.com/blog/image-enhancement-techniques",
+      "clicks180": 0,
+      "impressions180": 2200,
+      "lastmod": "2026-09-28",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-ai-photo-enhancer-online"
+    },
+    {
+      "slug": "image-enlarger-vs-image-upscaler",
+      "url": "https://myimageupscaler.com/blog/image-enlarger-vs-image-upscaler",
+      "clicks180": 2,
+      "impressions180": 274,
+      "lastmod": "2026-02-14",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "image-is-too-large",
+      "url": "https://myimageupscaler.com/blog/image-is-too-large",
+      "clicks180": 23,
+      "impressions180": 2819,
+      "lastmod": "2026-07-19",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "image-line-art",
+      "url": "https://myimageupscaler.com/blog/image-line-art",
+      "clicks180": 0,
+      "impressions180": 0,
+      "lastmod": "2026-09-22",
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "slug": "image-noise-reduction-software",
+      "url": "https://myimageupscaler.com/blog/image-noise-reduction-software",
+      "clicks180": 2,
+      "impressions180": 224,
+      "lastmod": "2026-10-31",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "image-out-of-focus",
+      "url": "https://myimageupscaler.com/blog/image-out-of-focus",
+      "clicks180": 11,
+      "impressions180": 1296,
+      "lastmod": "2026-03-30",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "image-resolution-for-printing-complete-guide",
+      "url": "https://myimageupscaler.com/blog/image-resolution-for-printing-complete-guide",
+      "clicks180": 6,
+      "impressions180": 10051,
+      "lastmod": "2025-12-20",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "image-resolution-guide-everything-you-need-to-know",
+      "url": "https://myimageupscaler.com/blog/image-resolution-guide-everything-you-need-to-know",
+      "clicks180": 8,
+      "impressions180": 5825,
+      "lastmod": "2026-01-31",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "image-sharpening-software",
+      "url": "https://myimageupscaler.com/blog/image-sharpening-software",
+      "clicks180": 0,
+      "impressions180": 140,
+      "lastmod": "2026-08-06",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-app-for-unblurring-photos"
+    },
+    {
+      "slug": "image-size-for-web",
+      "url": "https://myimageupscaler.com/blog/image-size-for-web",
+      "clicks180": 5,
+      "impressions180": 3596,
+      "lastmod": "2026-06-05",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "image-to-line-art",
+      "url": "https://myimageupscaler.com/blog/image-to-line-art",
+      "clicks180": 28,
+      "impressions180": 2345,
+      "lastmod": "2026-05-07",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "image-upscaler-8x",
+      "url": "https://myimageupscaler.com/blog/image-upscaler-8x",
+      "clicks180": 27,
+      "impressions180": 1875,
+      "lastmod": "2026-03-12",
+      "disposition": "DEFER_GUARDED"
+    },
+    {
+      "slug": "images-for-masking",
+      "url": "https://myimageupscaler.com/blog/images-for-masking",
+      "clicks180": 0,
+      "impressions180": 47,
+      "lastmod": "2026-11-15",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "improve-image-quality-ai",
+      "url": "https://myimageupscaler.com/blog/improve-image-quality-ai",
+      "clicks180": 1,
+      "impressions180": 2062,
+      "lastmod": "2026-03-14",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "improve-old-photo-quality",
+      "url": "https://myimageupscaler.com/blog/improve-old-photo-quality",
+      "clicks180": 2,
+      "impressions180": 407,
+      "lastmod": "2026-05-17",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "improve-scan-quality",
+      "url": "https://myimageupscaler.com/blog/improve-scan-quality",
+      "clicks180": 13,
+      "impressions180": 1891,
+      "lastmod": "2026-06-26",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "increase-dpi-in-photoshop",
+      "url": "https://myimageupscaler.com/blog/increase-dpi-in-photoshop",
+      "clicks180": 3,
+      "impressions180": 472,
+      "lastmod": "2026-04-10",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "is-4-k-upscaling-worth-it",
+      "url": "https://myimageupscaler.com/blog/is-4-k-upscaling-worth-it",
+      "clicks180": 0,
+      "impressions180": 77,
+      "lastmod": "2026-09-17",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-image-upscaler"
+    },
+    {
+      "slug": "is-ai-upscaling-worth-it",
+      "url": "https://myimageupscaler.com/blog/is-ai-upscaling-worth-it",
+      "clicks180": 0,
+      "impressions180": 75,
+      "lastmod": "2026-09-11",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-image-upscaler"
+    },
+    {
+      "slug": "is-jpeg-or-png-better",
+      "url": "https://myimageupscaler.com/blog/is-jpeg-or-png-better",
+      "clicks180": 1,
+      "impressions180": 412,
+      "lastmod": "2026-06-13",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "jpeg-artifacts-removal",
+      "url": "https://myimageupscaler.com/blog/jpeg-artifacts-removal",
+      "clicks180": 2,
+      "impressions180": 349,
+      "lastmod": "2026-07-07",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "jpg-vs-png-quality",
+      "url": "https://myimageupscaler.com/blog/jpg-vs-png-quality",
+      "clicks180": 2,
+      "impressions180": 4072,
+      "lastmod": "2026-05-13",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "keep-text-sharp-when-upscaling-product-photos",
+      "url": "https://myimageupscaler.com/blog/keep-text-sharp-when-upscaling-product-photos",
+      "clicks180": 6,
+      "impressions180": 847,
+      "lastmod": "2025-11-18",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "landscape-images-high-resolution",
+      "url": "https://myimageupscaler.com/blog/landscape-images-high-resolution",
+      "clicks180": 0,
+      "impressions180": 330,
+      "lastmod": "2026-09-10",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-image-upscaler"
+    },
+    {
+      "slug": "landscape-photography-editing",
+      "url": "https://myimageupscaler.com/blog/landscape-photography-editing",
+      "clicks180": 0,
+      "impressions180": 12,
+      "lastmod": "2026-10-27",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "large-format-printing",
+      "url": "https://myimageupscaler.com/blog/large-format-printing",
+      "clicks180": 1,
+      "impressions180": 378,
+      "lastmod": "2026-07-20",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "layer-pictures-app",
+      "url": "https://myimageupscaler.com/blog/layer-pictures-app",
+      "clicks180": 7,
+      "impressions180": 3035,
+      "lastmod": "2026-08-02",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "lens-distortion-correction",
+      "url": "https://myimageupscaler.com/blog/lens-distortion-correction",
+      "clicks180": 12,
+      "impressions180": 3365,
+      "lastmod": "2026-07-13",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "lightroom-super-resolution",
+      "url": "https://myimageupscaler.com/blog/lightroom-super-resolution",
+      "clicks180": 3,
+      "impressions180": 1003,
+      "lastmod": "2026-05-12",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "lossless-image-enlargement",
+      "url": "https://myimageupscaler.com/blog/lossless-image-enlargement",
+      "clicks180": 3,
+      "impressions180": 77,
+      "lastmod": "2026-07-28",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "low-resolution-photos-to-high-resolution",
+      "url": "https://myimageupscaler.com/blog/low-resolution-photos-to-high-resolution",
+      "clicks180": 2,
+      "impressions180": 606,
+      "lastmod": "2026-09-10",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "low-to-high-resolution-photo",
+      "url": "https://myimageupscaler.com/blog/low-to-high-resolution-photo",
+      "clicks180": 0,
+      "impressions180": 81,
+      "lastmod": "2026-10-30",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "make-cartoon-of-self",
+      "url": "https://myimageupscaler.com/blog/make-cartoon-of-self",
+      "clicks180": 0,
+      "impressions180": 89,
+      "lastmod": "2026-06-19",
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "slug": "make-image-bigger",
+      "url": "https://myimageupscaler.com/blog/make-image-bigger",
+      "clicks180": 0,
+      "impressions180": 177,
+      "lastmod": "2026-03-03",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-image-upscaler"
+    },
+    {
+      "slug": "masking-in-photography",
+      "url": "https://myimageupscaler.com/blog/masking-in-photography",
+      "clicks180": 1,
+      "impressions180": 313,
+      "lastmod": "2026-08-25",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "mejorar-calidad-imagen-ia-gratis",
+      "url": "https://myimageupscaler.com/blog/mejorar-calidad-imagen-ia-gratis",
+      "clicks180": 184,
+      "impressions180": 2617,
+      "lastmod": "2026-02-17",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "noise-reducer-photoshop",
+      "url": "https://myimageupscaler.com/blog/noise-reducer-photoshop",
+      "clicks180": 7,
+      "impressions180": 880,
+      "lastmod": "2026-07-12",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "noise-reduction-for-photos",
+      "url": "https://myimageupscaler.com/blog/noise-reduction-for-photos",
+      "clicks180": 0,
+      "impressions180": 1960,
+      "lastmod": "2026-03-20",
+      "disposition": "MERGE_301",
+      "target": "/blog/noise-reduction-in-photos"
+    },
+    {
+      "slug": "noise-reduction-for-video",
+      "url": "https://myimageupscaler.com/blog/noise-reduction-for-video",
+      "clicks180": 1,
+      "impressions180": 289,
+      "lastmod": "2026-07-05",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "noise-reduction-in-image",
+      "url": "https://myimageupscaler.com/blog/noise-reduction-in-image",
+      "clicks180": 4,
+      "impressions180": 3382,
+      "lastmod": "2026-03-17",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "noise-reduction-in-images",
+      "url": "https://myimageupscaler.com/blog/noise-reduction-in-images",
+      "clicks180": 2,
+      "impressions180": 2222,
+      "lastmod": "2026-03-16",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "noise-reduction-in-photos",
+      "url": "https://myimageupscaler.com/blog/noise-reduction-in-photos",
+      "clicks180": 14,
+      "impressions180": 5766,
+      "lastmod": "2026-02-28",
+      "disposition": "DEFER_GUARDED"
+    },
+    {
+      "slug": "old-damaged-photos",
+      "url": "https://myimageupscaler.com/blog/old-damaged-photos",
+      "clicks180": 4,
+      "impressions180": 1873,
+      "lastmod": "2026-03-30",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "old-photo-face-restoration",
+      "url": "https://myimageupscaler.com/blog/old-photo-face-restoration",
+      "clicks180": 4,
+      "impressions180": 551,
+      "lastmod": "2026-08-25",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "old-photo-restoration-ai",
+      "url": "https://myimageupscaler.com/blog/old-photo-restoration-ai",
+      "clicks180": 0,
+      "impressions180": 0,
+      "lastmod": "2026-09-10",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-photo-restoration-services-online"
+    },
+    {
+      "slug": "old-photo-restoration-app",
+      "url": "https://myimageupscaler.com/blog/old-photo-restoration-app",
+      "clicks180": 0,
+      "impressions180": 104,
+      "lastmod": "2026-09-25",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-photo-restoration-services-online"
+    },
+    {
+      "slug": "online-photo-restoration",
+      "url": "https://myimageupscaler.com/blog/online-photo-restoration",
+      "clicks180": 1,
+      "impressions180": 119,
+      "lastmod": "2026-03-08",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "outline-image-online",
+      "url": "https://myimageupscaler.com/blog/outline-image-online",
+      "clicks180": 8,
+      "impressions180": 1528,
+      "lastmod": "2026-06-10",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "photo-background-remove-job",
+      "url": "https://myimageupscaler.com/blog/photo-background-remove-job",
+      "clicks180": 0,
+      "impressions180": 46,
+      "lastmod": "2026-07-27",
+      "disposition": "MERGE_301",
+      "target": "/tools/remove-bg"
+    },
+    {
+      "slug": "photo-editing-ai",
+      "url": "https://myimageupscaler.com/blog/photo-editing-ai",
+      "clicks180": 0,
+      "impressions180": 1,
+      "lastmod": "2026-10-16",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "photo-enhancement-software",
+      "url": "https://myimageupscaler.com/blog/photo-enhancement-software",
+      "clicks180": 0,
+      "impressions180": 137,
+      "lastmod": "2026-10-19",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "photo-enhancement-tips",
+      "url": "https://myimageupscaler.com/blog/photo-enhancement-tips",
+      "clicks180": 0,
+      "impressions180": 241,
+      "lastmod": "2026-08-26",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-ai-photo-enhancer-online"
+    },
+    {
+      "slug": "photo-enhancement-website",
+      "url": "https://myimageupscaler.com/blog/photo-enhancement-website",
+      "clicks180": 1,
+      "impressions180": 1095,
+      "lastmod": "2026-10-12",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "photo-enhancements-photoshop",
+      "url": "https://myimageupscaler.com/blog/photo-enhancements-photoshop",
+      "clicks180": 1,
+      "impressions180": 116,
+      "lastmod": "2026-08-18",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "photo-into-sketch",
+      "url": "https://myimageupscaler.com/blog/photo-into-sketch",
+      "clicks180": 0,
+      "impressions180": 245,
+      "lastmod": "2026-05-06",
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "slug": "photo-noise-reduce",
+      "url": "https://myimageupscaler.com/blog/photo-noise-reduce",
+      "clicks180": 1,
+      "impressions180": 540,
+      "lastmod": "2026-03-21",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "photo-noise-removal-software",
+      "url": "https://myimageupscaler.com/blog/photo-noise-removal-software",
+      "clicks180": 7,
+      "impressions180": 1375,
+      "lastmod": "2026-10-05",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "photo-restoration-examples",
+      "url": "https://myimageupscaler.com/blog/photo-restoration-examples",
+      "clicks180": 0,
+      "impressions180": 0,
+      "lastmod": "2026-11-03",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "photo-restoration-near-me",
+      "url": "https://myimageupscaler.com/blog/photo-restoration-near-me",
+      "clicks180": 0,
+      "impressions180": 108,
+      "lastmod": "2026-05-20",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-photo-restoration-services-online"
+    },
+    {
+      "slug": "photo-restoration-program",
+      "url": "https://myimageupscaler.com/blog/photo-restoration-program",
+      "clicks180": 10,
+      "impressions180": 19057,
+      "lastmod": "2026-03-24",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "photo-restoration-programs",
+      "url": "https://myimageupscaler.com/blog/photo-restoration-programs",
+      "clicks180": 0,
+      "impressions180": 228,
+      "lastmod": "2026-03-22",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-photo-restoration-services-online"
+    },
+    {
+      "slug": "photo-restoration-software",
+      "url": "https://myimageupscaler.com/blog/photo-restoration-software",
+      "clicks180": 4,
+      "impressions180": 2521,
+      "lastmod": "2026-03-07",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "photo-upscaling-online",
+      "url": "https://myimageupscaler.com/blog/photo-upscaling-online",
+      "clicks180": 0,
+      "impressions180": 22,
+      "lastmod": "2026-11-07",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "photoshop-upscale-image",
+      "url": "https://myimageupscaler.com/blog/photoshop-upscale-image",
+      "clicks180": 130,
+      "impressions180": 32227,
+      "lastmod": "2026-03-06",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "photoshop-upscaler-vs-ai-tools",
+      "url": "https://myimageupscaler.com/blog/photoshop-upscaler-vs-ai-tools",
+      "clicks180": 5,
+      "impressions180": 1436,
+      "lastmod": "2026-03-05",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "picture-noise-reduction-software",
+      "url": "https://myimageupscaler.com/blog/picture-noise-reduction-software",
+      "clicks180": 0,
+      "impressions180": 0,
+      "lastmod": "2026-11-21",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "picture-restoration-software",
+      "url": "https://myimageupscaler.com/blog/picture-restoration-software",
+      "clicks180": 0,
+      "impressions180": 616,
+      "lastmod": "2026-03-23",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-photo-restoration-services-online"
+    },
+    {
+      "slug": "picture-to-oil-painting-convert",
+      "url": "https://myimageupscaler.com/blog/picture-to-oil-painting-convert",
+      "clicks180": 4,
+      "impressions180": 624,
+      "lastmod": "2026-05-14",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "pictures-to-stencils",
+      "url": "https://myimageupscaler.com/blog/pictures-to-stencils",
+      "clicks180": 0,
+      "impressions180": 3,
+      "lastmod": "2026-11-14",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "pictures-with-300-dpi",
+      "url": "https://myimageupscaler.com/blog/pictures-with-300-dpi",
+      "clicks180": 1,
+      "impressions180": 1037,
+      "lastmod": "2026-10-27",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "pixelcut-ai-photo-editor",
+      "url": "https://myimageupscaler.com/blog/pixelcut-ai-photo-editor",
+      "clicks180": 23,
+      "impressions180": 7356,
+      "lastmod": "2026-05-03",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "png-hintergrund-transparent-machen-kostenlos",
+      "url": "https://myimageupscaler.com/blog/png-hintergrund-transparent-machen-kostenlos",
+      "clicks180": 4,
+      "impressions180": 52,
+      "lastmod": "2026-02-17",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "poster-size-dimensions-pixels",
+      "url": "https://myimageupscaler.com/blog/poster-size-dimensions-pixels",
+      "clicks180": 382,
+      "impressions180": 204297,
+      "lastmod": "2026-03-31",
+      "disposition": "DEFER_GUARDED"
+    },
+    {
+      "slug": "product-photography-tips",
+      "url": "https://myimageupscaler.com/blog/product-photography-tips",
+      "clicks180": 0,
+      "impressions180": 43,
+      "lastmod": "2026-08-25",
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "slug": "professional-photo-enhancement",
+      "url": "https://myimageupscaler.com/blog/professional-photo-enhancement",
+      "clicks180": 0,
+      "impressions180": 106,
+      "lastmod": "2026-06-23",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-ai-photo-enhancer-online"
+    },
+    {
+      "slug": "professional-photo-enlargement-software",
+      "url": "https://myimageupscaler.com/blog/professional-photo-enlargement-software",
+      "clicks180": 0,
+      "impressions180": 1214,
+      "lastmod": "2026-06-24",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-image-upscaler"
+    },
+    {
+      "slug": "quality-control-images",
+      "url": "https://myimageupscaler.com/blog/quality-control-images",
+      "clicks180": 3,
+      "impressions180": 861,
+      "lastmod": "2026-06-15",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "real-estate-photo-enhancement-guide",
+      "url": "https://myimageupscaler.com/blog/real-estate-photo-enhancement-guide",
+      "clicks180": 0,
+      "impressions180": 192,
+      "lastmod": "2025-01-05",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-ai-photo-enhancer-online"
+    },
+    {
+      "slug": "real-time-artifact-free-image-upscaling",
+      "url": "https://myimageupscaler.com/blog/real-time-artifact-free-image-upscaling",
+      "clicks180": 0,
+      "impressions180": 129,
+      "lastmod": "2026-08-30",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-image-upscaler"
+    },
+    {
+      "slug": "reduce-image-noise",
+      "url": "https://myimageupscaler.com/blog/reduce-image-noise",
+      "clicks180": 5,
+      "impressions180": 740,
+      "lastmod": "2026-03-15",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "reduce-noise-in-photos",
+      "url": "https://myimageupscaler.com/blog/reduce-noise-in-photos",
+      "clicks180": 0,
+      "impressions180": 1505,
+      "lastmod": "2026-03-18",
+      "disposition": "MERGE_301",
+      "target": "/blog/noise-reduction-in-photos"
+    },
+    {
+      "slug": "remove-background-from-logo",
+      "url": "https://myimageupscaler.com/blog/remove-background-from-logo",
+      "clicks180": 1,
+      "impressions180": 92,
+      "lastmod": "2026-04-04",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "remove-background-of-image",
+      "url": "https://myimageupscaler.com/blog/remove-background-of-image",
+      "clicks180": 0,
+      "impressions180": 0,
+      "lastmod": "2026-10-17",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "remove-background-svg-online-free",
+      "url": "https://myimageupscaler.com/blog/remove-background-svg-online-free",
+      "clicks180": 2,
+      "impressions180": 144,
+      "lastmod": "2026-05-27",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "remove-blur-from-image",
+      "url": "https://myimageupscaler.com/blog/remove-blur-from-image",
+      "clicks180": 4,
+      "impressions180": 487,
+      "lastmod": "2026-08-21",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "remove-image-background-ai",
+      "url": "https://myimageupscaler.com/blog/remove-image-background-ai",
+      "clicks180": 0,
+      "impressions180": 8,
+      "lastmod": "2026-11-13",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "remove-image-background-google-slides",
+      "url": "https://myimageupscaler.com/blog/remove-image-background-google-slides",
+      "clicks180": 0,
+      "impressions180": 559,
+      "lastmod": "2026-07-30",
+      "disposition": "MERGE_301",
+      "target": "/tools/remove-bg"
+    },
+    {
+      "slug": "remove-image-background-online",
+      "url": "https://myimageupscaler.com/blog/remove-image-background-online",
+      "clicks180": 0,
+      "impressions180": 0,
+      "lastmod": "2026-10-20",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "remove-noise-from-a-photo",
+      "url": "https://myimageupscaler.com/blog/remove-noise-from-a-photo",
+      "clicks180": 0,
+      "impressions180": 211,
+      "lastmod": "2026-10-02",
+      "disposition": "MERGE_301",
+      "target": "/blog/noise-reduction-in-photos"
+    },
+    {
+      "slug": "remove-noise-in-photoshop",
+      "url": "https://myimageupscaler.com/blog/remove-noise-in-photoshop",
+      "clicks180": 3,
+      "impressions180": 883,
+      "lastmod": "2026-05-11",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "remove-photo-background-for-free",
+      "url": "https://myimageupscaler.com/blog/remove-photo-background-for-free",
+      "clicks180": 0,
+      "impressions180": 0,
+      "lastmod": "2026-10-09",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "removing-background",
+      "url": "https://myimageupscaler.com/blog/removing-background",
+      "clicks180": 0,
+      "impressions180": 951,
+      "lastmod": "2026-08-06",
+      "disposition": "MERGE_301",
+      "target": "/tools/remove-bg"
+    },
+    {
+      "slug": "removing-motion-blur",
+      "url": "https://myimageupscaler.com/blog/removing-motion-blur",
+      "clicks180": 0,
+      "impressions180": 0,
+      "lastmod": "2026-11-20",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "restoration-of-old-pictures",
+      "url": "https://myimageupscaler.com/blog/restoration-of-old-pictures",
+      "clicks180": 0,
+      "impressions180": 9,
+      "lastmod": "2026-10-23",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "restore-black-and-white-photo",
+      "url": "https://myimageupscaler.com/blog/restore-black-and-white-photo",
+      "clicks180": 0,
+      "impressions180": 38,
+      "lastmod": "2026-06-20",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-photo-restoration-services-online"
+    },
+    {
+      "slug": "restore-old-damaged-photos",
+      "url": "https://myimageupscaler.com/blog/restore-old-damaged-photos",
+      "clicks180": 0,
+      "impressions180": 53,
+      "lastmod": "2026-09-15",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-photo-restoration-services-online"
+    },
+    {
+      "slug": "restore-old-damaged-photos-online-free",
+      "url": "https://myimageupscaler.com/blog/restore-old-damaged-photos-online-free",
+      "clicks180": 6,
+      "impressions180": 134,
+      "lastmod": "2026-06-30",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "restore-old-photos-ai",
+      "url": "https://myimageupscaler.com/blog/restore-old-photos-ai",
+      "clicks180": 0,
+      "impressions180": 353,
+      "lastmod": "2026-03-09",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-photo-restoration-services-online"
+    },
+    {
+      "slug": "restore-old-photos-ai-enhancement-guide",
+      "url": "https://myimageupscaler.com/blog/restore-old-photos-ai-enhancement-guide",
+      "clicks180": 1,
+      "impressions180": 268,
+      "lastmod": "2025-12-15",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "restore-old-photos-for-free",
+      "url": "https://myimageupscaler.com/blog/restore-old-photos-for-free",
+      "clicks180": 6,
+      "impressions180": 172,
+      "lastmod": "2026-05-26",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "restore-old-photos-in-photoshop",
+      "url": "https://myimageupscaler.com/blog/restore-old-photos-in-photoshop",
+      "clicks180": 3,
+      "impressions180": 978,
+      "lastmod": "2026-04-14",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "restore-old-photos-near-me",
+      "url": "https://myimageupscaler.com/blog/restore-old-photos-near-me",
+      "clicks180": 0,
+      "impressions180": 51,
+      "lastmod": "2026-07-15",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-photo-restoration-services-online"
+    },
+    {
+      "slug": "restore-old-photos-service",
+      "url": "https://myimageupscaler.com/blog/restore-old-photos-service",
+      "clicks180": 1,
+      "impressions180": 70,
+      "lastmod": "2026-05-30",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "restore-old-photos-software",
+      "url": "https://myimageupscaler.com/blog/restore-old-photos-software",
+      "clicks180": 0,
+      "impressions180": 205,
+      "lastmod": "2026-11-09",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "retouch-a-photo-online-free",
+      "url": "https://myimageupscaler.com/blog/retouch-a-photo-online-free",
+      "clicks180": 5,
+      "impressions180": 579,
+      "lastmod": "2026-07-14",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "retrieve-old-myspace-photos",
+      "url": "https://myimageupscaler.com/blog/retrieve-old-myspace-photos",
+      "clicks180": 7,
+      "impressions180": 760,
+      "lastmod": "2026-08-18",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "screenshot-upscaling-rescue-low-resolution-captures",
+      "url": "https://myimageupscaler.com/blog/screenshot-upscaling-rescue-low-resolution-captures",
+      "clicks180": 2,
+      "impressions180": 678,
+      "lastmod": "2025-01-05",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "sharpen-a-video",
+      "url": "https://myimageupscaler.com/blog/sharpen-a-video",
+      "clicks180": 5,
+      "impressions180": 607,
+      "lastmod": "2026-04-07",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "social-media-image-sizes-guide-2025",
+      "url": "https://myimageupscaler.com/blog/social-media-image-sizes-guide-2025",
+      "clicks180": 0,
+      "impressions180": 1153,
+      "lastmod": "2025-12-18",
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "slug": "stable-diffusion-upscaler",
+      "url": "https://myimageupscaler.com/blog/stable-diffusion-upscaler",
+      "clicks180": 0,
+      "impressions180": 184,
+      "lastmod": "2026-02-27",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-image-upscaler"
+    },
+    {
+      "slug": "stable-diffusion-upscaling-complete-guide",
+      "url": "https://myimageupscaler.com/blog/stable-diffusion-upscaling-complete-guide",
+      "clicks180": 5,
+      "impressions180": 5494,
+      "lastmod": "2025-01-05",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "star-photography-settings",
+      "url": "https://myimageupscaler.com/blog/star-photography-settings",
+      "clicks180": 0,
+      "impressions180": 454,
+      "lastmod": "2026-09-21",
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "slug": "sunset-camera-settings",
+      "url": "https://myimageupscaler.com/blog/sunset-camera-settings",
+      "clicks180": 0,
+      "impressions180": 1449,
+      "lastmod": "2026-04-22",
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "slug": "text-image-enhancer",
+      "url": "https://myimageupscaler.com/blog/text-image-enhancer",
+      "clicks180": 71,
+      "impressions180": 8304,
+      "lastmod": "2026-04-26",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "tiktok-profile-picture-ideas",
+      "url": "https://myimageupscaler.com/blog/tiktok-profile-picture-ideas",
+      "clicks180": 69,
+      "impressions180": 28399,
+      "lastmod": "2026-07-06",
+      "disposition": "DEFER_GUARDED"
+    },
+    {
+      "slug": "topaz-denoise-ai",
+      "url": "https://myimageupscaler.com/blog/topaz-denoise-ai",
+      "clicks180": 9,
+      "impressions180": 6472,
+      "lastmod": "2026-05-04",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "topaz-labs-free-trial",
+      "url": "https://myimageupscaler.com/blog/topaz-labs-free-trial",
+      "clicks180": 815,
+      "impressions180": 103415,
+      "lastmod": "2026-05-19",
+      "disposition": "DEFER_GUARDED"
+    },
+    {
+      "slug": "topaz-video-upscaler",
+      "url": "https://myimageupscaler.com/blog/topaz-video-upscaler",
+      "clicks180": 37,
+      "impressions180": 33892,
+      "lastmod": "2026-04-15",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "turn-image-into-illustration",
+      "url": "https://myimageupscaler.com/blog/turn-image-into-illustration",
+      "clicks180": 5,
+      "impressions180": 722,
+      "lastmod": "2026-05-16",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "turn-my-photo-into-a-drawing",
+      "url": "https://myimageupscaler.com/blog/turn-my-photo-into-a-drawing",
+      "clicks180": 1,
+      "impressions180": 207,
+      "lastmod": "2026-06-06",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "types-of-batch-processing",
+      "url": "https://myimageupscaler.com/blog/types-of-batch-processing",
+      "clicks180": 0,
+      "impressions180": 142,
+      "lastmod": "2026-09-10",
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "slug": "unblur-image-ai",
+      "url": "https://myimageupscaler.com/blog/unblur-image-ai",
+      "clicks180": 4,
+      "impressions180": 222,
+      "lastmod": "2026-06-28",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "unpixelate-image-free",
+      "url": "https://myimageupscaler.com/blog/unpixelate-image-free",
+      "clicks180": 16,
+      "impressions180": 1228,
+      "lastmod": "2026-08-13",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "upscale-image-for-print-300-dpi-guide",
+      "url": "https://myimageupscaler.com/blog/upscale-image-for-print-300-dpi-guide",
+      "clicks180": 226,
+      "impressions180": 18914,
+      "lastmod": "2026-02-17",
+      "disposition": "DEFER_GUARDED"
+    },
+    {
+      "slug": "upscale-images-for-print-complete-guide",
+      "url": "https://myimageupscaler.com/blog/upscale-images-for-print-complete-guide",
+      "clicks180": 2,
+      "impressions180": 238,
+      "lastmod": "2026-01-31",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "upscale-logo",
+      "url": "https://myimageupscaler.com/blog/upscale-logo",
+      "clicks180": 8,
+      "impressions180": 1140,
+      "lastmod": "2026-06-14",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "upscale-midjourney-images-4k-8k-print-guide",
+      "url": "https://myimageupscaler.com/blog/upscale-midjourney-images-4k-8k-print-guide",
+      "clicks180": 14,
+      "impressions180": 4012,
+      "lastmod": "2025-01-05",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "upscale-product-photos-amazon-etsy-guide",
+      "url": "https://myimageupscaler.com/blog/upscale-product-photos-amazon-etsy-guide",
+      "clicks180": 4,
+      "impressions180": 431,
+      "lastmod": "2025-01-05",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "upscale-product-photos-for-ecommerce",
+      "url": "https://myimageupscaler.com/blog/upscale-product-photos-for-ecommerce",
+      "clicks180": 1,
+      "impressions180": 889,
+      "lastmod": "2026-02-01",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "upscaling-methods",
+      "url": "https://myimageupscaler.com/blog/upscaling-methods",
+      "clicks180": 4,
+      "impressions180": 550,
+      "lastmod": "2026-09-12",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "video-4-k-resolution",
+      "url": "https://myimageupscaler.com/blog/video-4-k-resolution",
+      "clicks180": 4,
+      "impressions180": 655,
+      "lastmod": "2026-06-01",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "video-enhancer-free",
+      "url": "https://myimageupscaler.com/blog/video-enhancer-free",
+      "clicks180": 4,
+      "impressions180": 1119,
+      "lastmod": "2026-03-30",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "video-upscaling-software",
+      "url": "https://myimageupscaler.com/blog/video-upscaling-software",
+      "clicks180": 8,
+      "impressions180": 4298,
+      "lastmod": "2026-04-05",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "videos-in-full-hd",
+      "url": "https://myimageupscaler.com/blog/videos-in-full-hd",
+      "clicks180": 4,
+      "impressions180": 534,
+      "lastmod": "2026-06-18",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "water-damaged-photos",
+      "url": "https://myimageupscaler.com/blog/water-damaged-photos",
+      "clicks180": 0,
+      "impressions180": 0,
+      "lastmod": "2026-09-23",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-photo-restoration-services-online"
+    },
+    {
+      "slug": "web-based-photo-editor",
+      "url": "https://myimageupscaler.com/blog/web-based-photo-editor",
+      "clicks180": 0,
+      "impressions180": 45,
+      "lastmod": "2026-09-13",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-free-ai-photo-enhancer-online"
+    },
+    {
+      "slug": "what-is-8k-image-resolution",
+      "url": "https://myimageupscaler.com/blog/what-is-8k-image-resolution",
+      "clicks180": 23,
+      "impressions180": 6131,
+      "lastmod": "2026-02-23",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "what-is-denoising",
+      "url": "https://myimageupscaler.com/blog/what-is-denoising",
+      "clicks180": 2,
+      "impressions180": 2982,
+      "lastmod": "2026-04-18",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "what-is-hd-upscaling",
+      "url": "https://myimageupscaler.com/blog/what-is-hd-upscaling",
+      "clicks180": 0,
+      "impressions180": 77,
+      "lastmod": "2026-11-11",
+      "disposition": "DEFER_RECENT"
+    },
+    {
+      "slug": "what-is-noise-in-photos",
+      "url": "https://myimageupscaler.com/blog/what-is-noise-in-photos",
+      "clicks180": 0,
+      "impressions180": 261,
+      "lastmod": "2026-04-03",
+      "disposition": "MERGE_301",
+      "target": "/blog/noise-reduction-in-photos"
+    },
+    {
+      "slug": "what-is-photo-retouching",
+      "url": "https://myimageupscaler.com/blog/what-is-photo-retouching",
+      "clicks180": 1,
+      "impressions180": 3318,
+      "lastmod": "2026-08-04",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "what-is-pixelization",
+      "url": "https://myimageupscaler.com/blog/what-is-pixelization",
+      "clicks180": 9,
+      "impressions180": 1701,
+      "lastmod": "2026-07-22",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "what-resolution-for-print",
+      "url": "https://myimageupscaler.com/blog/what-resolution-for-print",
+      "clicks180": 132,
+      "impressions180": 42298,
+      "lastmod": "2026-03-15",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "why-are-my-photos-blurry",
+      "url": "https://myimageupscaler.com/blog/why-are-my-photos-blurry",
+      "clicks180": 0,
+      "impressions180": 1171,
+      "lastmod": "2026-02-25",
+      "disposition": "MERGE_301",
+      "target": "/blog/best-app-for-unblurring-photos"
+    },
+    {
+      "slug": "why-photos-blurry-when-printed",
+      "url": "https://myimageupscaler.com/blog/why-photos-blurry-when-printed",
+      "clicks180": 5,
+      "impressions180": 1021,
+      "lastmod": "2026-02-25",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "why-upscaled-text-looks-blurry-how-to-fix",
+      "url": "https://myimageupscaler.com/blog/why-upscaled-text-looks-blurry-how-to-fix",
+      "clicks180": 15,
+      "impressions180": 971,
+      "lastmod": "2025-01-05",
+      "disposition": "KEEP"
+    },
+    {
+      "slug": "windows-11-snap-layouts",
+      "url": "https://myimageupscaler.com/blog/windows-11-snap-layouts",
+      "clicks180": 1,
+      "impressions180": 843,
+      "lastmod": "2026-06-07",
+      "disposition": "KEEP",
+      "offTopic": true
+    },
+    {
+      "slug": "zoom-in-on-video",
+      "url": "https://myimageupscaler.com/blog/zoom-in-on-video",
+      "clicks180": 13,
+      "impressions180": 520,
+      "lastmod": "2026-08-18",
+      "disposition": "KEEP"
+    }
+  ],
+  "pseo": [
+    {
+      "category": "platform-format",
+      "slug": "canva-upscaler-avif",
+      "url": "https://myimageupscaler.com/platform-format/canva-upscaler-avif",
+      "clicks180": 2,
+      "disposition": "KEEP"
+    },
+    {
+      "category": "platform-format",
+      "slug": "canva-upscaler-bmp",
+      "url": "https://myimageupscaler.com/platform-format/canva-upscaler-bmp",
+      "clicks180": 4,
+      "disposition": "KEEP"
+    },
+    {
+      "category": "platform-format",
+      "slug": "canva-upscaler-heic",
+      "url": "https://myimageupscaler.com/platform-format/canva-upscaler-heic",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "canva-upscaler-jpg",
+      "url": "https://myimageupscaler.com/platform-format/canva-upscaler-jpg",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "canva-upscaler-png",
+      "url": "https://myimageupscaler.com/platform-format/canva-upscaler-png",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "canva-upscaler-raw",
+      "url": "https://myimageupscaler.com/platform-format/canva-upscaler-raw",
+      "clicks180": 3,
+      "disposition": "KEEP"
+    },
+    {
+      "category": "platform-format",
+      "slug": "canva-upscaler-tiff",
+      "url": "https://myimageupscaler.com/platform-format/canva-upscaler-tiff",
+      "clicks180": 1,
+      "disposition": "KEEP"
+    },
+    {
+      "category": "platform-format",
+      "slug": "canva-upscaler-webp",
+      "url": "https://myimageupscaler.com/platform-format/canva-upscaler-webp",
+      "clicks180": 3,
+      "disposition": "KEEP"
+    },
+    {
+      "category": "platform-format",
+      "slug": "dalle-upscaler-avif",
+      "url": "https://myimageupscaler.com/platform-format/dalle-upscaler-avif",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "dalle-upscaler-bmp",
+      "url": "https://myimageupscaler.com/platform-format/dalle-upscaler-bmp",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "dalle-upscaler-heic",
+      "url": "https://myimageupscaler.com/platform-format/dalle-upscaler-heic",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "dalle-upscaler-jpg",
+      "url": "https://myimageupscaler.com/platform-format/dalle-upscaler-jpg",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "dalle-upscaler-png",
+      "url": "https://myimageupscaler.com/platform-format/dalle-upscaler-png",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "dalle-upscaler-raw",
+      "url": "https://myimageupscaler.com/platform-format/dalle-upscaler-raw",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "dalle-upscaler-tiff",
+      "url": "https://myimageupscaler.com/platform-format/dalle-upscaler-tiff",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "dalle-upscaler-webp",
+      "url": "https://myimageupscaler.com/platform-format/dalle-upscaler-webp",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "lightroom-upscaler-avif",
+      "url": "https://myimageupscaler.com/platform-format/lightroom-upscaler-avif",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "lightroom-upscaler-bmp",
+      "url": "https://myimageupscaler.com/platform-format/lightroom-upscaler-bmp",
+      "clicks180": 2,
+      "disposition": "KEEP"
+    },
+    {
+      "category": "platform-format",
+      "slug": "lightroom-upscaler-raw",
+      "url": "https://myimageupscaler.com/platform-format/lightroom-upscaler-raw",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "midjourney-upscaler-avif",
+      "url": "https://myimageupscaler.com/platform-format/midjourney-upscaler-avif",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "midjourney-upscaler-bmp",
+      "url": "https://myimageupscaler.com/platform-format/midjourney-upscaler-bmp",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "midjourney-upscaler-heic",
+      "url": "https://myimageupscaler.com/platform-format/midjourney-upscaler-heic",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "midjourney-upscaler-jpg",
+      "url": "https://myimageupscaler.com/platform-format/midjourney-upscaler-jpg",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "midjourney-upscaler-png",
+      "url": "https://myimageupscaler.com/platform-format/midjourney-upscaler-png",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "midjourney-upscaler-raw",
+      "url": "https://myimageupscaler.com/platform-format/midjourney-upscaler-raw",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "midjourney-upscaler-tiff",
+      "url": "https://myimageupscaler.com/platform-format/midjourney-upscaler-tiff",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "midjourney-upscaler-webp",
+      "url": "https://myimageupscaler.com/platform-format/midjourney-upscaler-webp",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "photoshop-upscaler-avif",
+      "url": "https://myimageupscaler.com/platform-format/photoshop-upscaler-avif",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "photoshop-upscaler-bmp",
+      "url": "https://myimageupscaler.com/platform-format/photoshop-upscaler-bmp",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "photoshop-upscaler-heic",
+      "url": "https://myimageupscaler.com/platform-format/photoshop-upscaler-heic",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "photoshop-upscaler-jpg",
+      "url": "https://myimageupscaler.com/platform-format/photoshop-upscaler-jpg",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "photoshop-upscaler-png",
+      "url": "https://myimageupscaler.com/platform-format/photoshop-upscaler-png",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "photoshop-upscaler-raw",
+      "url": "https://myimageupscaler.com/platform-format/photoshop-upscaler-raw",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "photoshop-upscaler-tiff",
+      "url": "https://myimageupscaler.com/platform-format/photoshop-upscaler-tiff",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "photoshop-upscaler-webp",
+      "url": "https://myimageupscaler.com/platform-format/photoshop-upscaler-webp",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "stable-diffusion-upscaler-avif",
+      "url": "https://myimageupscaler.com/platform-format/stable-diffusion-upscaler-avif",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "stable-diffusion-upscaler-bmp",
+      "url": "https://myimageupscaler.com/platform-format/stable-diffusion-upscaler-bmp",
+      "clicks180": 1,
+      "disposition": "KEEP"
+    },
+    {
+      "category": "platform-format",
+      "slug": "stable-diffusion-upscaler-heic",
+      "url": "https://myimageupscaler.com/platform-format/stable-diffusion-upscaler-heic",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "stable-diffusion-upscaler-jpg",
+      "url": "https://myimageupscaler.com/platform-format/stable-diffusion-upscaler-jpg",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "stable-diffusion-upscaler-png",
+      "url": "https://myimageupscaler.com/platform-format/stable-diffusion-upscaler-png",
+      "clicks180": 1,
+      "disposition": "KEEP"
+    },
+    {
+      "category": "platform-format",
+      "slug": "stable-diffusion-upscaler-raw",
+      "url": "https://myimageupscaler.com/platform-format/stable-diffusion-upscaler-raw",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "stable-diffusion-upscaler-tiff",
+      "url": "https://myimageupscaler.com/platform-format/stable-diffusion-upscaler-tiff",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "platform-format",
+      "slug": "stable-diffusion-upscaler-webp",
+      "url": "https://myimageupscaler.com/platform-format/stable-diffusion-upscaler-webp",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "alternatives",
+      "slug": "vs-adobe-express",
+      "url": "https://myimageupscaler.com/alternatives/vs-adobe-express",
+      "clicks180": 35,
+      "disposition": "DEFER_GUARDED"
+    },
+    {
+      "category": "alternatives",
+      "slug": "vs-benvista",
+      "url": "https://myimageupscaler.com/alternatives/vs-benvista",
+      "clicks180": 2,
+      "disposition": "KEEP"
+    },
+    {
+      "category": "alternatives",
+      "slug": "vs-bigjpg",
+      "url": "https://myimageupscaler.com/alternatives/vs-bigjpg",
+      "clicks180": 35,
+      "disposition": "DEFER_GUARDED"
+    },
+    {
+      "category": "alternatives",
+      "slug": "vs-canva",
+      "url": "https://myimageupscaler.com/alternatives/vs-canva",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "alternatives",
+      "slug": "vs-fotor",
+      "url": "https://myimageupscaler.com/alternatives/vs-fotor",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "alternatives",
+      "slug": "vs-gigapixel",
+      "url": "https://myimageupscaler.com/alternatives/vs-gigapixel",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "alternatives",
+      "slug": "vs-icons8",
+      "url": "https://myimageupscaler.com/alternatives/vs-icons8",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "alternatives",
+      "slug": "vs-iloveimg",
+      "url": "https://myimageupscaler.com/alternatives/vs-iloveimg",
+      "clicks180": 12,
+      "disposition": "DEFER_GUARDED"
+    },
+    {
+      "category": "alternatives",
+      "slug": "vs-imgupscaler",
+      "url": "https://myimageupscaler.com/alternatives/vs-imgupscaler",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "alternatives",
+      "slug": "vs-letsenhance",
+      "url": "https://myimageupscaler.com/alternatives/vs-letsenhance",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "alternatives",
+      "slug": "vs-on1-resize",
+      "url": "https://myimageupscaler.com/alternatives/vs-on1-resize",
+      "clicks180": 2,
+      "disposition": "KEEP"
+    },
+    {
+      "category": "alternatives",
+      "slug": "vs-photozoom",
+      "url": "https://myimageupscaler.com/alternatives/vs-photozoom",
+      "clicks180": 1,
+      "disposition": "KEEP"
+    },
+    {
+      "category": "alternatives",
+      "slug": "vs-pixelcut",
+      "url": "https://myimageupscaler.com/alternatives/vs-pixelcut",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "alternatives",
+      "slug": "vs-remini",
+      "url": "https://myimageupscaler.com/alternatives/vs-remini",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "alternatives",
+      "slug": "vs-topaz",
+      "url": "https://myimageupscaler.com/alternatives/vs-topaz",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "alternatives",
+      "slug": "vs-upscayl",
+      "url": "https://myimageupscaler.com/alternatives/vs-upscayl",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "alternatives",
+      "slug": "vs-vanceai",
+      "url": "https://myimageupscaler.com/alternatives/vs-vanceai",
+      "clicks180": 0,
+      "disposition": "NOINDEX_UNPUBLISH"
+    },
+    {
+      "category": "alternatives",
+      "slug": "vs-waifu2x",
+      "url": "https://myimageupscaler.com/alternatives/vs-waifu2x",
+      "clicks180": 27,
+      "disposition": "DEFER_GUARDED"
+    },
+    {
+      "category": "alternatives",
+      "slug": "vs-waifu2x-cafe",
+      "url": "https://myimageupscaler.com/alternatives/vs-waifu2x-cafe",
+      "clicks180": 2,
+      "disposition": "KEEP"
+    }
+  ]
+}
