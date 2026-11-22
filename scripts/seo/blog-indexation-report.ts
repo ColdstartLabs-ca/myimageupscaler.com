@@ -63,7 +63,6 @@ export const HISTORICAL_BASELINE_NOT_CURRENTLY_PUBLISHED_SLUGS = [
   'enhance-pictures-in-photoshop',
   'jpg-vs-png-quality',
   'how-to-upscale-avif-tiff-bmp-image-formats',
-  'windows-11-snap-layouts',
   'image-enlarger-vs-image-upscaler',
   'how-to-fix-resolution',
   'picture-to-oil-painting-convert',

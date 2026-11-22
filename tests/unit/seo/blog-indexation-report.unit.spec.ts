@@ -277,7 +277,7 @@ describe('blog indexation report', () => {
     expect(reconciliation.notCurrentlyPublishedSlugs).toEqual([
       ...HISTORICAL_BASELINE_NOT_CURRENTLY_PUBLISHED_SLUGS,
     ]);
-    expect(reconciliation.notCurrentlyPublishedSlugs).toHaveLength(21);
+    expect(reconciliation.notCurrentlyPublishedSlugs).toHaveLength(20);
     expect(reconciliation.notCurrentlyPublishedUrls).toEqual(
       HISTORICAL_BASELINE_NOT_CURRENTLY_PUBLISHED_SLUGS.map(
         slug => `https://myimageupscaler.com/blog/${slug}`
