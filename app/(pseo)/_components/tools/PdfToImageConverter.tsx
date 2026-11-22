@@ -19,6 +19,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { PostToolUpsell } from './PostToolUpsell';
 
 type OutputFormat = 'jpeg' | 'png';
 type DpiOption = 72 | 150 | 300;
@@ -369,7 +370,7 @@ export function PdfToImageConverter({
                 {isDragging ? 'Drop your PDF here' : 'Drop your PDF here or click to browse'}
               </p>
               <p className="text-sm text-muted-foreground mb-4">Supports PDF files up to 50MB</p>
-              <div className="inline-block px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors">
+              <div className="inline-block px-6 py-3 gradient-cta shine-effect text-white font-semibold rounded-xl">
                 Choose PDF File
               </div>
             </div>
@@ -498,7 +499,7 @@ export function PdfToImageConverter({
               <button
                 onClick={convertPages}
                 disabled={isConverting}
-                className="flex-1 px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                className="flex-1 px-6 py-3 gradient-cta shine-effect text-white font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {isConverting ? (
                   <>
@@ -624,6 +625,15 @@ export function PdfToImageConverter({
         )}
       </div>
 
+      {convertedPages.length > 0 && (
+        <div className="mt-4">
+          <PostToolUpsell
+            blob={convertedPages[0].blob}
+            fileName={`pdf-page-${convertedPages[0].pageNumber}.${convertedPages[0].blob.type === 'image/png' ? 'png' : 'jpg'}`}
+            toolId="pdf-to-image"
+          />
+        </div>
+      )}
       {/* Info Footer */}
       <div className="mt-4 text-center text-sm text-muted-foreground">
         <p>All processing happens in your browser. Your PDF is never uploaded to our servers.</p>

@@ -10,6 +10,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Upload, Loader2, Download, RefreshCw, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { PostToolUpsell } from './PostToolUpsell';
 
 type BgType = 'transparent' | 'solid' | 'gradient-linear' | 'gradient-radial';
 
@@ -336,7 +337,7 @@ export function BackgroundChanger(): React.ReactElement {
               <p className="text-sm text-muted-foreground mb-4">
                 Supports JPEG, PNG, WebP up to 10MB
               </p>
-              <div className="inline-block px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors">
+              <div className="inline-block px-6 py-3 gradient-cta shine-effect text-white font-semibold rounded-xl">
                 Choose File
               </div>
             </div>
@@ -605,7 +606,7 @@ export function BackgroundChanger(): React.ReactElement {
               {finalBlob && (
                 <button
                   onClick={handleDownload}
-                  className="flex-1 min-w-[160px] px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"
+                  className="flex-1 min-w-[160px] px-6 py-3 gradient-cta shine-effect text-white font-semibold rounded-xl flex items-center justify-center gap-2"
                 >
                   <Download className="w-4 h-4" />
                   Download PNG
@@ -623,6 +624,15 @@ export function BackgroundChanger(): React.ReactElement {
         )}
       </div>
 
+      {finalBlob && (
+        <div className="mt-4">
+          <PostToolUpsell
+            blob={finalBlob}
+            fileName="background-changed.png"
+            toolId="background-changer"
+          />
+        </div>
+      )}
       {/* Info Footer */}
       <div className="mt-4 text-center text-sm text-muted-foreground">
         <p>

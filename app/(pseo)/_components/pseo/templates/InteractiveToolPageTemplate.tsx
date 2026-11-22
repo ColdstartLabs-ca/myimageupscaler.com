@@ -115,7 +115,7 @@ function PostToolCTA({ slug }: { slug: string }): ReactElement | null {
   if (aiPages.includes(slug)) return null;
 
   return (
-    <div className="mt-8 p-5 bg-surface-light border border-border rounded-xl flex flex-col sm:flex-row items-start sm:items-center gap-4">
+    <div className="mt-8 p-5 rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/10 via-surface to-tertiary/10 shadow-lg shadow-accent/10 flex flex-col sm:flex-row items-start sm:items-center gap-4">
       <div className="flex-1">
         <p className="text-sm font-semibold text-primary">Want sharper, larger images?</p>
         <p className="text-sm text-muted-foreground mt-0.5">
@@ -124,7 +124,7 @@ function PostToolCTA({ slug }: { slug: string }): ReactElement | null {
       </div>
       <a
         href="/?signup=1"
-        className="shrink-0 inline-flex items-center gap-2 px-4 py-2 bg-accent text-white text-sm font-medium rounded-lg hover:bg-accent/90 transition-colors"
+        className="gradient-cta shine-effect shrink-0 inline-flex items-center gap-2 px-5 py-2.5 text-white text-sm font-semibold rounded-xl"
       >
         Try AI Upscaler Free →
       </a>

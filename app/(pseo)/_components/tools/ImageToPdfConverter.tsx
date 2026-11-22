@@ -19,6 +19,7 @@ import {
   GripVertical,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { PostToolUpsell } from './PostToolUpsell';
 
 type PageSize = 'a4' | 'letter' | 'fit';
 type MarginSize = 'none' | 'small' | 'medium' | 'large';
@@ -409,7 +410,7 @@ export function ImageToPdfConverter({
             <p className="text-sm text-muted-foreground mb-4">
               Supports JPEG, PNG, WebP up to {MAX_FILE_MB}MB each &middot; max {MAX_IMAGES} images
             </p>
-            <div className="inline-block px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors">
+            <div className="inline-block px-6 py-3 gradient-cta shine-effect text-white font-semibold rounded-xl">
               Select Images
             </div>
           </div>
@@ -576,7 +577,7 @@ export function ImageToPdfConverter({
             <button
               onClick={convertToPdf}
               disabled={isConverting}
-              className="flex-1 px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-3 gradient-cta shine-effect text-white font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isConverting ? (
                 <>
@@ -612,6 +613,11 @@ export function ImageToPdfConverter({
         )}
       </div>
 
+      {pdfBlob && (
+        <div className="mt-4">
+          <PostToolUpsell toolId="image-to-pdf" />
+        </div>
+      )}
       {/* Info Footer */}
       <div className="mt-4 text-center text-sm text-muted-foreground">
         <p>

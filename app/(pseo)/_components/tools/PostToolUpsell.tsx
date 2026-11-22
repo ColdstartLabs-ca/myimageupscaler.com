@@ -15,8 +15,9 @@ import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
 import { saveToolHandoffImage } from '@client/utils/tool-image-handoff';
 
 export interface IPostToolUpsellProps {
-  blob: Blob;
-  fileName: string;
+  /** Image result to hand off. Omit for tools whose output is not an image. */
+  blob?: Blob;
+  fileName?: string;
   toolId: string;
 }
 
@@ -32,21 +33,22 @@ export function PostToolUpsell({
   const handleClick = async (): Promise<void> => {
     setIsSaving(true);
     try {
-      await saveToolHandoffImage(blob, fileName, toolId);
+      if (blob) await saveToolHandoffImage(blob, fileName ?? 'image', toolId);
       analytics.track('post_tool_upsell_clicked', {
         tool: toolId,
-        outputType: blob.type,
-        outputBytes: blob.size,
+        outputType: blob?.type ?? 'none',
+        outputBytes: blob?.size ?? 0,
       });
 
+      const returnTo = blob ? '/dashboard?handoff=tool' : '/dashboard';
       if (isAuthenticated) {
-        router.push('/dashboard?handoff=tool');
+        router.push(returnTo);
         return;
       }
 
       // Keep the intent through the register modal: the post-auth handler
       // consumes auth_redirect_intent and lands the new user on the returnTo.
-      prepareAuthRedirect('tool_upsell', { returnTo: '/dashboard?handoff=tool' });
+      prepareAuthRedirect('tool_upsell', { returnTo });
       router.push('/?signup=1');
     } finally {
       setIsSaving(false);
@@ -62,7 +64,10 @@ export function PostToolUpsell({
         <div className="min-w-0 flex-1 text-center sm:text-left">
           <p className="text-sm font-semibold text-primary">Want it sharper and bigger?</p>
           <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
-            Send this result to the AI upscaler. Free to start, no credit card required.
+            {blob
+              ? 'Send this result to the AI upscaler.'
+              : 'Enlarge photos and recover detail with AI.'}{' '}
+            Free to start, no credit card required.
           </p>
         </div>
         <button
@@ -71,7 +76,7 @@ export function PostToolUpsell({
           disabled={isSaving}
           className="gradient-cta shine-effect group inline-flex w-full flex-shrink-0 items-center justify-center gap-2 rounded-xl px-6 py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
         >
-          Upscale This Image 4× with AI
+          {blob ? 'Upscale This Image 4× with AI' : 'Upscale Your Images with AI'}
           <ArrowRight
             className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
             aria-hidden="true"

@@ -22,6 +22,7 @@ import {
 import JSZip from 'jszip';
 import Link from 'next/link';
 import { CREDIT_COSTS } from '@shared/config/credits.config';
+import { PostToolUpsell } from './PostToolUpsell';
 
 interface ICompressOptions {
   quality: number;
@@ -335,7 +336,7 @@ export function BulkImageCompressor(): React.ReactElement {
             </p>
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors"
+              className="px-6 py-3 gradient-cta shine-effect text-white font-semibold rounded-xl"
             >
               Select Images
             </button>
@@ -544,7 +545,7 @@ export function BulkImageCompressor(): React.ReactElement {
               <button
                 onClick={processAllImages}
                 disabled={isProcessingAll}
-                className="flex-1 px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                className="flex-1 px-6 py-3 gradient-cta shine-effect text-white font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {isProcessingAll ? (
                   <>
@@ -574,6 +575,15 @@ export function BulkImageCompressor(): React.ReactElement {
               <RefreshCw className="w-4 h-4" />
               Clear All
             </button>
+          </div>
+        )}
+        {allProcessed && images.find(img => img.compressedBlob) && (
+          <div className="mt-4">
+            <PostToolUpsell
+              blob={images.find(img => img.compressedBlob)!.compressedBlob!}
+              fileName={images.find(img => img.compressedBlob)!.file.name}
+              toolId="bulk-image-compressor"
+            />
           </div>
         )}
       </div>
@@ -639,7 +649,7 @@ export function BulkImageCompressor(): React.ReactElement {
             <div className="space-y-3">
               <Link
                 href="/?signup=1"
-                className="w-full px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"
+                className="w-full px-6 py-3 gradient-cta shine-effect text-white font-semibold rounded-xl flex items-center justify-center gap-2"
               >
                 <Zap className="w-4 h-4" />
                 Try AI Upscaler Free

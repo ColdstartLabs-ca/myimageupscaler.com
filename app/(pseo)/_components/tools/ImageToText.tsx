@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { PostToolUpsell } from './PostToolUpsell';
 
 type OcrStatus = 'idle' | 'loading' | 'recognizing' | 'done' | 'error';
 
@@ -306,7 +307,7 @@ export function ImageToText(): React.ReactElement {
               <p className="text-sm text-muted-foreground mb-4">
                 Supports JPEG, PNG, WebP, BMP, TIFF up to 20MB
               </p>
-              <div className="inline-block px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors">
+              <div className="inline-block px-6 py-3 gradient-cta shine-effect text-white font-semibold rounded-xl">
                 Choose Image
               </div>
             </div>
@@ -453,7 +454,7 @@ export function ImageToText(): React.ReactElement {
               <div className="flex flex-wrap gap-3">
                 <button
                   onClick={handleCopy}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors"
+                  className="flex items-center gap-2 px-5 py-2.5 gradient-cta shine-effect text-white font-semibold rounded-xl"
                 >
                   {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                   {copied ? 'Copied!' : 'Copy to Clipboard'}
@@ -495,6 +496,11 @@ export function ImageToText(): React.ReactElement {
         )}
       </div>
 
+      {extractedText && (
+        <div className="mt-4">
+          <PostToolUpsell toolId="image-to-text" />
+        </div>
+      )}
       {/* Info Footer */}
       <div className="mt-4 text-center text-sm text-muted-foreground">
         <p>

@@ -20,6 +20,7 @@ import {
 import JSZip from 'jszip';
 import Link from 'next/link';
 import { CREDIT_COSTS } from '@shared/config/credits.config';
+import { PostToolUpsell } from './PostToolUpsell';
 
 interface IResizeOptions {
   width: number;
@@ -706,7 +707,7 @@ export function BulkImageResizer({
               <button
                 onClick={processAllImages}
                 disabled={isProcessingAll || anyProcessing}
-                className="flex-1 px-6 py-3 bg-accent text-text-primary font-medium rounded-lg hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                className="flex-1 px-6 py-3 gradient-cta shine-effect text-white font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {isProcessingAll || anyProcessing ? (
                   <>
@@ -736,6 +737,15 @@ export function BulkImageResizer({
               <RefreshCw className="w-4 h-4" />
               Reset
             </button>
+          </div>
+        )}
+        {allProcessed && images.find(img => img.processedBlob) && (
+          <div className="mt-4">
+            <PostToolUpsell
+              blob={images.find(img => img.processedBlob)!.processedBlob!}
+              fileName={images.find(img => img.processedBlob)!.file.name}
+              toolId="bulk-image-resizer"
+            />
           </div>
         )}
       </div>
@@ -798,7 +808,7 @@ export function BulkImageResizer({
             <div className="space-y-3">
               <Link
                 href="/?signup=1"
-                className="w-full px-6 py-3 bg-accent text-text-primary font-medium rounded-lg hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"
+                className="w-full px-6 py-3 gradient-cta shine-effect text-white font-semibold rounded-xl flex items-center justify-center gap-2"
               >
                 <Zap className="w-4 h-4" />
                 Try AI Upscaler Free
