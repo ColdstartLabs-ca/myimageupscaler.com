@@ -41,7 +41,7 @@ describe('pSEO Force Static Configuration', () => {
       const source = readFileSync(pagePath, 'utf-8');
 
       expect(source).toContain("export const dynamic = 'force-static'");
-      expect(source).toContain('export const revalidate = 86400');
+      expect(source).toContain('export const revalidate = false');
       expect(source).toContain('SUPPORTED_LOCALES.map(locale => ({ locale }))');
     });
   });
@@ -76,7 +76,7 @@ describe('pSEO Force Static Configuration', () => {
         const filePath = join(PSEO_DIR, page);
         const result = checkFileExports(filePath, [
           "export const dynamic = 'force-static'",
-          'export const revalidate = 86400',
+          'export const revalidate = false',
         ]);
         results.push({ file: page, result });
       }
@@ -109,7 +109,7 @@ describe('pSEO Force Static Configuration', () => {
         const filePath = join(PSEO_DIR, page);
         const result = checkFileExports(filePath, [
           "export const dynamic = 'force-static'",
-          'export const revalidate = 86400',
+          'export const revalidate = false',
         ]);
         results.push({ file: page, result });
       }

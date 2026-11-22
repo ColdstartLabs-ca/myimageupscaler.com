@@ -10,7 +10,7 @@ import { clientEnv } from '@shared/config/env';
 // Force static rendering for Cloudflare Workers 10ms CPU limit
 // Prevents SSR timeouts on Googlebot requests
 export const dynamic = 'force-static';
-export const revalidate = 86400; // 24 hours
+export const revalidate = false; // Content changes only at deploy.
 
 interface IFormatPageProps {
   params: Promise<{ slug: string }>;

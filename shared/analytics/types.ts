@@ -71,6 +71,10 @@ export function sanitizeGa4Params(
   const params: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(properties)) {
+    // GA4 rejects a null param with VALUE_INVALID and drops the whole event,
+    // while the Measurement Protocol still answers 2xx.
+    if (value === null || value === undefined) continue;
+
     const alias =
       GA4_TRAFFIC_SOURCE_ALIASES[key] ??
       (name === 'web_vitals' && key === 'value' ? 'metric_value' : undefined);

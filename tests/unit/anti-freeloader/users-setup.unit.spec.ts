@@ -1,11 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 
-const { mockClaimFreeCreditGrant, mockTrackServerEvent, mockWaitUntil } = vi.hoisted(() => ({
-  mockClaimFreeCreditGrant: vi.fn(),
-  mockTrackServerEvent: vi.fn(),
-  mockWaitUntil: vi.fn(),
-}));
+const { mockClaimFreeCreditGrant, mockTrackServerEvent, mockWaitUntil, mockGetUserById } =
+  vi.hoisted(() => ({
+    mockClaimFreeCreditGrant: vi.fn(),
+    mockTrackServerEvent: vi.fn(),
+    mockWaitUntil: vi.fn(),
+    mockGetUserById: vi.fn(),
+  }));
 
 vi.mock('@opennextjs/cloudflare', () => ({
   getCloudflareContext: () => ({ ctx: { waitUntil: mockWaitUntil } }),
@@ -22,6 +24,7 @@ vi.mock('@server/analytics', () => ({
 vi.mock('@server/supabase/supabaseAdmin', () => ({
   supabaseAdmin: {
     from: vi.fn(),
+    auth: { admin: { getUserById: mockGetUserById } },
   },
 }));
 
@@ -48,9 +51,14 @@ function makeRequest(
     ip?: string;
     userAgent?: string;
     attribution?: Record<string, unknown>;
+    provider?: string | null;
   } = {}
 ): NextRequest {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (options.provider !== null) {
+    const claims = { app_metadata: { provider: options.provider ?? 'email' } };
+    headers.Authorization = `Bearer h.${btoa(JSON.stringify(claims)).replace(/=+$/, '')}.s`;
+  }
   if (options.userId !== undefined && options.userId !== null)
     headers['X-User-Id'] = options.userId;
   if (options.country) headers['x-test-country'] = options.country;
@@ -86,6 +94,23 @@ function mockProfile(profile = makeProfile()): void {
   });
 }
 
+function mockAuthUserCreatedAt(createdAt: string | null): void {
+  mockGetUserById.mockResolvedValue({
+    data: { user: createdAt === null ? null : { created_at: createdAt } },
+    error: null,
+  });
+}
+
+/** Same outcome as the real RPC: a unique user row gives exactly one winner. */
+function mockSingleWinnerGrant(): void {
+  let claimed = false;
+  mockClaimFreeCreditGrant.mockImplementation(async () => {
+    const existingGrant = claimed;
+    claimed = true;
+    return { grantedCredits: 5, existingGrant, matchedAccountCount: 0, newTotalBalance: 5 };
+  });
+}
+
 describe('POST /api/users/setup', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -97,6 +122,7 @@ describe('POST /api/users/setup', () => {
       newTotalBalance: 5,
     });
     mockTrackServerEvent.mockResolvedValue(true);
+    mockAuthUserCreatedAt(new Date(Date.now() - 5_000).toISOString());
   });
 
   it('returns 401 without an authenticated user', async () => {
@@ -335,5 +361,223 @@ describe('POST /api/users/setup', () => {
       }),
       expect.objectContaining({ userId: 'user-direct' })
     );
+  });
+
+  describe('new-account signal for the browser sign_up conversion', () => {
+    const userId = '00000000-0000-4000-8000-000000000009';
+    const LEGACY_CREATED_AT = '2026-02-20T10:00:00.000Z';
+    const accountCreatedMethod = (): unknown =>
+      mockTrackServerEvent.mock.calls.find(([name]) => name === 'account_created')?.[1]?.method;
+    const setup = async (
+      provider: string | null = 'google'
+    ): Promise<{ status: number; body: Record<string, unknown> }> => {
+      const res = await POST(makeRequest({ userId, country: 'US', provider }));
+      return { status: res.status, body: await res.json() };
+    };
+
+    describe('genuinely new account', () => {
+      it('reports it with the real auth provider', async () => {
+        const { body } = await setup('google');
+
+        expect(body.accountCreated).toBe(true);
+        expect(body.signupMethod).toBe('google');
+        expect(body.signupUserId).toBe(userId);
+        expect(accountCreatedMethod()).toBe('google');
+      });
+
+      it('keeps email signups labeled email', async () => {
+        const { body } = await setup('email');
+
+        expect(body.signupMethod).toBe('email');
+        expect(accountCreatedMethod()).toBe('email');
+      });
+
+      it('labels an unreadable token unknown instead of guessing email', async () => {
+        const { body } = await setup(null);
+
+        expect(body.signupMethod).toBe('unknown');
+        expect(accountCreatedMethod()).toBe('unknown');
+      });
+
+      it('reads creation from the auth user of this request', async () => {
+        await setup();
+
+        expect(mockGetUserById).toHaveBeenCalledWith(userId);
+      });
+    });
+
+    describe('returning accounts', () => {
+      it('does not report a legacy free user with no region and no grant', async () => {
+        mockAuthUserCreatedAt(LEGACY_CREATED_AT);
+
+        const { status, body } = await setup();
+
+        expect(status).toBe(200);
+        expect(mockClaimFreeCreditGrant).toHaveBeenCalled();
+        expect(body.accountCreated).toBeUndefined();
+        expect(body.signupMethod).toBeUndefined();
+        expect(body.signupUserId).toBeUndefined();
+      });
+
+      it('does not report a legacy paid user, who has no grant path', async () => {
+        mockAuthUserCreatedAt(LEGACY_CREATED_AT);
+        mockProfile(makeProfile({ subscription_tier: 'pro', subscription_status: 'active' }));
+
+        const { status, body } = await setup();
+
+        expect(status).toBe(200);
+        expect(mockClaimFreeCreditGrant).not.toHaveBeenCalled();
+        expect(body.accountCreated).toBeUndefined();
+      });
+
+      it('does not report a new paid user without a single-winner grant', async () => {
+        mockProfile(makeProfile({ subscription_tier: 'pro', subscription_status: 'active' }));
+
+        const { body } = await setup();
+
+        expect(body.accountCreated).toBeUndefined();
+      });
+
+      it('does not report a classified login', async () => {
+        mockAuthUserCreatedAt(LEGACY_CREATED_AT);
+        mockProfile(makeProfile({ region_tier: 'standard', signup_country: 'US' }));
+        mockClaimFreeCreditGrant.mockResolvedValue({
+          grantedCredits: 5,
+          existingGrant: true,
+          matchedAccountCount: 0,
+          newTotalBalance: 5,
+        });
+
+        const { body } = await setup();
+
+        expect(body.accountCreated).toBeUndefined();
+        expect(mockGetUserById).not.toHaveBeenCalled();
+      });
+
+      it('does not report an account past the first-session window', async () => {
+        mockAuthUserCreatedAt(new Date(Date.now() - 301_000).toISOString());
+
+        const { body } = await setup();
+
+        expect(body.accountCreated).toBeUndefined();
+      });
+    });
+
+    describe('unknown creation evidence fails closed and never blocks setup', () => {
+      it.each([
+        ['a missing user', { data: { user: null }, error: null }],
+        ['a lookup error', { data: { user: null }, error: { message: 'boom' } }],
+        ['no creation time', { data: { user: {} }, error: null }],
+        ['an invalid creation time', { data: { user: { created_at: 'never' } }, error: null }],
+        [
+          'a creation time in the future',
+          { data: { user: { created_at: '2099-01-01T00:00:00.000Z' } }, error: null },
+        ],
+      ])('%s', async (_label, result) => {
+        mockGetUserById.mockResolvedValue(result);
+
+        const { status, body } = await setup();
+
+        expect(status).toBe(200);
+        expect(body.setupStatus).toBe('complete');
+        expect(body.accountCreated).toBeUndefined();
+      });
+
+      it('a lookup that hangs does not stall setup', async () => {
+        mockGetUserById.mockReturnValue(new Promise(() => {}));
+        const startedAt = Date.now();
+
+        const { status, body } = await setup();
+
+        expect(Date.now() - startedAt).toBeLessThan(2_500);
+        expect(status).toBe(200);
+        expect(body.setupStatus).toBe('complete');
+        expect(body.accountCreated).toBeUndefined();
+      }, 4_000);
+
+      it('a lookup that throws before returning a promise', async () => {
+        mockGetUserById.mockImplementation(() => {
+          throw new Error('client error');
+        });
+
+        const { status, body } = await setup();
+
+        expect(status).toBe(200);
+        expect(body.setupStatus).toBe('complete');
+        expect(body.accountCreated).toBeUndefined();
+      });
+
+      it('a lookup that throws', async () => {
+        mockGetUserById.mockRejectedValue(new Error('network'));
+
+        const { status, body } = await setup();
+
+        expect(status).toBe(200);
+        expect(body.setupStatus).toBe('complete');
+        expect(body.accountCreated).toBeUndefined();
+      });
+    });
+
+    describe('grant outcomes', () => {
+      it('does not report a failed grant, then reports the retry that wins it', async () => {
+        mockClaimFreeCreditGrant.mockRejectedValueOnce(new Error('rpc down'));
+
+        const failed = await setup();
+        expect(failed.body.creditGrantDeferred).toBe(true);
+        expect(failed.body.accountCreated).toBeUndefined();
+
+        mockProfile(makeProfile({ region_tier: 'standard', signup_country: 'US' }));
+        mockSingleWinnerGrant();
+
+        expect((await setup()).body.accountCreated).toBe(true);
+        expect((await setup()).body.accountCreated).toBeUndefined();
+      });
+
+      it('does not report a legacy retry after a failed grant', async () => {
+        mockAuthUserCreatedAt(LEGACY_CREATED_AT);
+        mockClaimFreeCreditGrant.mockRejectedValueOnce(new Error('rpc down'));
+        await setup();
+        mockSingleWinnerGrant();
+
+        expect((await setup()).body.accountCreated).toBeUndefined();
+      });
+
+      it('does not report a pending setup', async () => {
+        const res = await POST(makeRequest({ userId, provider: 'google' }));
+        const body = await res.json();
+
+        expect(res.status).toBe(202);
+        expect(body.setupStatus).toBe('pending');
+        expect(body.accountCreated).toBeUndefined();
+      });
+
+      it('does not report a missing profile', async () => {
+        mockProfile(null as unknown as Record<string, unknown>);
+
+        const { body } = await setup();
+
+        expect(body.creditGrantDeferred).toBe(true);
+        expect(body.accountCreated).toBeUndefined();
+      });
+    });
+
+    describe('single winner', () => {
+      it('reports one of two repeated setups', async () => {
+        mockSingleWinnerGrant();
+
+        const results = [await setup(), await setup()];
+
+        expect(results.filter(r => r.body.accountCreated === true)).toHaveLength(1);
+      });
+
+      it('reports one of five overlapping callbacks', async () => {
+        mockSingleWinnerGrant();
+
+        const results = await Promise.all([setup(), setup(), setup(), setup(), setup()]);
+
+        expect(results.map(r => r.status)).toEqual([200, 200, 200, 200, 200]);
+        expect(results.filter(r => r.body.accountCreated === true)).toHaveLength(1);
+      });
+    });
   });
 });

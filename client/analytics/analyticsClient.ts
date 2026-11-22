@@ -530,7 +530,7 @@ export const analytics = {
    * Get current consent status.
    */
   getConsent(): IConsentStatus {
-    return consentStatus;
+    return consentStatus === 'pending' ? getStoredConsent() : consentStatus;
   },
 
   /**

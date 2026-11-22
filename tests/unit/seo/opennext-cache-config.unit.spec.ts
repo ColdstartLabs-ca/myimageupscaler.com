@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { QueueMessage } from '@opennextjs/aws/types/overrides';
 import doQueue from '@opennextjs/cloudflare/overrides/queue/do-queue';
@@ -81,6 +83,22 @@ afterEach(() => {
 });
 
 describe('OpenNext incremental cache configuration', () => {
+  it('should mark hashed build assets immutable, because Workers assets default to max-age=0', () => {
+    const headers = readFileSync(join(process.cwd(), 'public/_headers'), 'utf-8');
+
+    expect(headers).toMatch(
+      /^\/_next\/static\/\*\n\s+Cache-Control: public, max-age=31536000, immutable$/m
+    );
+  });
+
+  it('should keep the per-colo HTML copy for 30 days when a page has no revalidate value', () => {
+    const incrementalCache = cloudflareConfig.default?.override?.incrementalCache as () => {
+      opts: { defaultLongLivedTtlSec?: number };
+    };
+
+    expect(incrementalCache().opts.defaultLongLivedTtlSec).toBe(2592000);
+  });
+
   it('should configure an incremental cache for the Cloudflare adapter', () => {
     const incrementalCache = cloudflareConfig.default?.override?.incrementalCache;
     expect(incrementalCache).toBeTypeOf('function');

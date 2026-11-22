@@ -10,6 +10,18 @@ Maintenance rules:
 - Full pre-rollup detail for 2026-05 → 2026-10-19 stays in git: `git show 3bdb8f1e:docs/SEO/maintenance/seo-changes-backlog.md`.
 - Link related reports, PRDs, or follow-up backlog files instead of pasting long analysis.
 
+## 2026-11-21
+
+### Squash `release/miu-recovery-20261101` onto `master` (local, awaiting deploy)
+
+- **Why:** Reconciled and landed the remaining unshipped Nov 1 recovery commits on `master` alongside Nov 2–19 cache, sitemap, and `fetchPriority` work so the next production deploy ships all pending SEO, attribution, and static-caching fixes together.
+- **Changes landed:**
+  1. **Homepage King-3 subhead (`locales/en/common.json`):** English `heroSubtitle` `"Upscale images to 4K in seconds."` and `heroDescription` `"AI image upscaler that"` (title, H1, CTA, region-tiered free offer, and other locales unchanged; Oct 22–Nov 18 baseline for `image upscaler` on `/`: `416` clicks / `18,989` imp / `2.19%` CTR / pos `9.9`).
+  2. **GA4 organic `sign_up` attribution & auth race hardening (`app/api/users/setup/route.ts`, `client/analytics/signup-conversion.ts`, `client/components/analytics/AnalyticsProvider.tsx`, `client/utils/account-setup.ts`, `shared/analytics/types.ts`):** `sanitizeGa4Params` strips `null`/`undefined`; `/api/users/setup` extracts verified JWT provider and new-account signal; browser emits `signup_completed` → GA4 `sign_up` once bound to account owner without delaying redirect.
+  3. **Static pSEO/homepage caching (`app/(pseo)/**`, `app/[locale]/page.tsx`, `app/[locale]/blog/[slug]/page.tsx`, `open-next.config.ts`, `public/\_headers`):** `revalidate = false` on 29 static pSEO/homepage routes (`604800`on`/blog/[slug]`), `defaultLongLivedTtlSec: 2592000`in`open-next.config.ts`(preserving Nov 13 non-blocking DO queue & direct cache purge), immutable`Cache-Control`on`/\_next/static/\*`.
+  4. **E2E guard (`tests/e2e/pseo-new-categories.e2e.spec.ts`, `tests/e2e/landing-page-seo.e2e.spec.ts`):** HTTP hub-link checks + King-3 hero/cache unit test coverage.
+- **Follow-up (post-deploy):** Deploy `master` (also ships Nov 16 `6f9e1a46` LCP `fetchPriority="high"` + 2× navbar logo), confirm GA4 `sign_up` within 48h, run `node scripts/perf/psi-profile.mjs https://myimageupscaler.com/` (`LCP ≤ 2.5s`), manually request indexing for `/`, and read back `image upscaler` after 14 complete GSC days. See [2026-11-21 traffic recovery report](../reports/2026-11-21-traffic-recovery-report.md) and [traffic-recovery-2026-11 PRD suite](../../PRDs/seo/traffic-recovery-2026-11/README.md).
+
 ## 2026-11-19
 
 ### Three Kings — public-exposure blockers cleared; Photoshop post-repair crawl resolved

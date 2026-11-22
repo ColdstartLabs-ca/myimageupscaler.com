@@ -498,6 +498,8 @@ describe('Homepage Performance — Post-Audit Fixes', () => {
       expect(source).toContain('<Image');
       expect(source).toContain('src={HERO_COMPARISON_IMAGES.after}');
       expect(source).toContain('priority');
+      // next/image 16 priority no longer sets this attribute on its own.
+      expect(source).toContain('fetchPriority="high"');
       expect(source).toContain('sizes="(max-width: 1023px) 100vw, 50vw"');
       expect(heroAssetsSource).toMatch(/after:\s*['"]\/before-after\/hero\/.+\.webp['"]/);
     });

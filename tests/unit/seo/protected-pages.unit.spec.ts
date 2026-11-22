@@ -42,7 +42,13 @@ interface IFaqItem {
 
 interface ILocaleCommon {
   meta: { homepage: { title: string; description: string } };
-  homepage: { faq3Question: string; faq3Answer: string; faqItems: IFaqItem[] };
+  homepage: {
+    heroSubtitle: string;
+    heroDescription: string;
+    faq3Question: string;
+    faq3Answer: string;
+    faqItems: IFaqItem[];
+  };
 }
 
 const localeCommon = (locale: string): ILocaleCommon =>
@@ -73,6 +79,14 @@ describe('protected pages keep the terms their top queries match', () => {
     expect(homepage.faq3Question).toMatch(/upscale images for free/i);
     const rendered = homepage.faqItems.find(item => item.question === homepage.faq3Question);
     expect(rendered?.answer).toBe(homepage.faq3Answer);
+  });
+
+  // Three Kings, King 3: "image upscaler" (25.9K imps, pos 9.2) and "upscaler" (10.7K, pos 9.0)
+  // were missing from the text under the H1 (2026-10-23 GSC readback).
+  it('puts "upscale" and "image upscaler" in the English homepage hero text under the H1', () => {
+    const { homepage } = localeCommon('en');
+    expect(homepage.heroSubtitle).toMatch(/upscale/i);
+    expect(homepage.heroDescription).toMatch(/image upscaler/i);
   });
 
   // de/fr titles are unbranded today; adding the brand there is a separate single-page test.

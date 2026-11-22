@@ -20,7 +20,7 @@ import commonTranslations from '@/locales/en/common.json';
 // The landing page is public HTML. Keep it in the OpenNext incremental cache so
 // anonymous requests do not render the full page inside the Worker each time.
 export const dynamic = 'force-static';
-export const revalidate = 86400;
+export const revalidate = false; // Content changes only at deploy.
 
 export function generateStaticParams() {
   return SUPPORTED_LOCALES.map(locale => ({ locale }));

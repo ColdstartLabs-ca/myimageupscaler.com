@@ -79,7 +79,7 @@ test.describe('Landing Page SEO', () => {
       // Wait for page to load
       await page.waitForLoadState('domcontentloaded');
 
-      // Look for H2 with enhancement messaging (actual content: "Enhance image quality to 4K in seconds")
+      // Look for H2 with enhancement messaging (actual content: "Upscale images to 4K in seconds")
       const h2WithEnhancement = page
         .locator('h2')
         .filter({ hasText: /enhance|4K|seconds|quality/i })

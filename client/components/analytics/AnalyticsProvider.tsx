@@ -5,6 +5,7 @@ import { useReportWebVitals } from 'next/web-vitals';
 import { type ReactNode, useEffect, Suspense } from 'react';
 import { loadAnalytics } from '@client/utils/loadAnalytics';
 import { reportWebVital, flushWebVitals } from '@client/analytics/webVitals';
+import { flushSignupConversion } from '@client/analytics/signup-conversion';
 import { clientEnv, isDevelopment } from '@shared/config/env';
 
 interface IAnalyticsProviderProps {
@@ -23,7 +24,10 @@ function PageViewTracker(): null {
     // Track page view on route change
     const url = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '');
     void loadAnalytics()
-      .then(analytics => analytics.trackPageView(url))
+      .then(analytics => {
+        analytics.trackPageView(url);
+        void flushSignupConversion(analytics);
+      })
       .catch(() => {});
   }, [pathname, searchParams]);
 

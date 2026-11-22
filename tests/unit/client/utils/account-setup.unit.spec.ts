@@ -1,5 +1,73 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { completeAccountSetup } from '@client/utils/account-setup';
+
+vi.mock('@shared/utils/supabase/client', () => ({
+  createClient: () => ({
+    auth: {
+      getSession: async () => ({ data: { session: { user: { id: 'user-a' } } }, error: null }),
+      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: vi.fn() } } }),
+    },
+  }),
+}));
+
+const PENDING_KEY = 'miu_pending_signup_conversion';
+
+const setupResponse = (body: Record<string, unknown>, status = 200): Response =>
+  new Response(JSON.stringify(body), { status });
+
+beforeEach(() => {
+  window.sessionStorage.clear();
+});
+
+describe('completeAccountSetup sign_up conversion marker', () => {
+  it('marks the conversion only when the server reports a created account', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(
+      setupResponse({
+        success: true,
+        setupStatus: 'complete',
+        accountCreated: true,
+        signupMethod: 'google',
+        signupUserId: 'user-a',
+      })
+    );
+
+    await expect(completeAccountSetup('token', fetchImpl)).resolves.toEqual({
+      success: true,
+      setupStatus: 'complete',
+    });
+    const pending = JSON.parse(window.sessionStorage.getItem(PENDING_KEY) as string);
+    expect(pending.method).toBe('google');
+    expect(pending.userId).toBe('user-a');
+    expect(Object.keys(pending).sort()).toEqual(['expiresAt', 'method', 'userId']);
+  });
+
+  it('does not mark a returning login', async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValue(
+        setupResponse({ success: true, setupStatus: 'complete', alreadySetup: true })
+      );
+
+    await completeAccountSetup('token', fetchImpl);
+    expect(window.sessionStorage.getItem(PENDING_KEY)).toBeNull();
+  });
+
+  it('does not mark a failed setup', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(setupResponse({ error: 'Failed' }, 500));
+
+    await expect(completeAccountSetup('token', fetchImpl, async () => {})).rejects.toThrow();
+    expect(window.sessionStorage.getItem(PENDING_KEY)).toBeNull();
+  });
+
+  it('does not mark a pending setup', async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValue(setupResponse({ success: false, setupStatus: 'pending' }, 202));
+
+    await completeAccountSetup('token', fetchImpl, async () => {});
+    expect(window.sessionStorage.getItem(PENDING_KEY)).toBeNull();
+  });
+});
 
 describe('completeAccountSetup', () => {
   it('should treat HTTP 500 as setup failure even when fetch resolves', async () => {

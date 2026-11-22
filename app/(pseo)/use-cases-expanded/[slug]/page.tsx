@@ -8,7 +8,7 @@ import { GenericPSEOPageTemplate } from '@/app/(pseo)/_components/pseo/templates
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
 
 export const dynamic = 'force-static';
-export const revalidate = 86400;
+export const revalidate = false; // Content changes only at deploy.
 
 type IUseCasesExpandedRawPage = PSEOPage & {
   benefits?: unknown[];

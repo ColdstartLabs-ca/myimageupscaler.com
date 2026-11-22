@@ -30,7 +30,7 @@ import { buildFallbackBlogFaq, buildFaqJsonLd } from '@lib/blog/blog-faq';
 
 // Blog content is public and cacheable; keep database-backed pages off the request path.
 export const dynamic = 'force-static';
-export const revalidate = 86400;
+export const revalidate = 604800; // Edits revalidate on demand. This is the safety net.
 
 // Convert MDX Callout components to blockquotes with type markers
 function preprocessContent(content: string): string {

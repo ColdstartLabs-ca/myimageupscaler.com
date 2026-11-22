@@ -1,3 +1,5 @@
+import { markSignupConversion, openSignupFence } from '@client/analytics/signup-conversion';
+
 export interface IAccountSetupResult {
   success: boolean;
   /**
@@ -96,6 +98,7 @@ export async function completeAccountSetup(
 ): Promise<IAccountSetupResult> {
   let lastError: Error | undefined;
   let lastPending: IAccountSetupResult | undefined;
+  const signupFence = openSignupFence();
 
   for (let attempt = 1; attempt <= MAX_SETUP_ATTEMPTS; attempt += 1) {
     try {
@@ -112,12 +115,19 @@ export async function completeAccountSetup(
         throw new Error(`Account setup returned HTTP ${response.status}`);
       }
 
-      const result = (await response.json()) as Partial<IAccountSetupResult>;
+      const result = (await response.json()) as Partial<IAccountSetupResult> & {
+        accountCreated?: boolean;
+        signupMethod?: string;
+        signupUserId?: string;
+      };
       if (!isSetupStatus(result.setupStatus)) {
         throw new Error('Account setup did not return a terminal decision');
       }
 
       if (result.setupStatus === 'complete') {
+        if (result.accountCreated === true && result.signupUserId) {
+          await markSignupConversion(result.signupMethod, result.signupUserId, signupFence);
+        }
         return { success: result.success === true, setupStatus: 'complete' };
       }
 

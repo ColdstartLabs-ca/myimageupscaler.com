@@ -23,6 +23,8 @@ const nonBlockingDoQueue: typeof doQueue = {
 export default defineCloudflareConfig({
   incrementalCache: withRegionalCache(r2IncrementalCache, {
     mode: 'long-lived',
+    // Pages with revalidate = false would otherwise leave the per-colo copy after 30 minutes.
+    defaultLongLivedTtlSec: 2592000,
     // Regional hits skip the tag DO; revalidatePath purges them by cache-tag via cachePurge below.
     bypassTagCacheOnCacheHit: true,
     // cachePurge flips this default to false; keep refreshing each region from R2 on hits

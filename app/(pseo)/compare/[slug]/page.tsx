@@ -10,7 +10,7 @@ import { generateComparisonSchema } from '@/lib/seo/schema-generator';
 // Force static rendering for Cloudflare Workers 10ms CPU limit
 // Prevents SSR timeouts on Googlebot requests
 export const dynamic = 'force-static';
-export const revalidate = 86400; // 24 hours
+export const revalidate = false; // Content changes only at deploy.
 
 interface IComparisonPageProps {
   params: Promise<{ slug: string }>;

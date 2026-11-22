@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { generateCategoryMetadata } from '@/lib/seo/metadata-factory';
 
 export const dynamic = 'force-static';
-export const revalidate = 86400;
+export const revalidate = false; // Content changes only at deploy.
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateCategoryMetadata('ai-photo-editor', 'en');
