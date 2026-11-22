@@ -171,6 +171,22 @@ export function shouldSubmit(
   return isWithinGracePeriod(effectiveLastUpdated, effectiveNow);
 }
 
+/**
+ * Whether a locale twin may be named as a hreflang alternate (HTML and sitemap).
+ * Uses the snapshot record only, with no grace period: a translated twin joins
+ * hreflang once it earns demand, so an alternate never names a page that
+ * renders noindex. Leaving a new indexable twin out of hreflang is harmless.
+ */
+export function isHreflangEligible(category: string, slug: string, locale: string): boolean {
+  if (locale === 'en') return true;
+  const pageKey = `${category}/${slug}`;
+  if (category === 'blog' || PINNED_SLUGS.has(pageKey) || REDIRECT_OWNER_KEYS.has(pageKey)) {
+    return true;
+  }
+  const performance = getPerformanceRecord(category, slug, locale);
+  return performance !== undefined && hasDemand(performance, locale);
+}
+
 export function getPagePerformance(
   category: string,
   slug: string,

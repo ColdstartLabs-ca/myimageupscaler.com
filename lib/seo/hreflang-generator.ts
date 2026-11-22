@@ -10,6 +10,7 @@ import { clientEnv } from '@shared/config/env';
 import type { PSEOCategory } from './url-utils';
 import { isClusterOwner } from './intent-ownership';
 import { isTranslatedPair } from './localization-config';
+import { getPathIdentity, isHreflangEligible } from './page-eligibility';
 
 /**
  * Get available locales for a category
@@ -377,9 +378,12 @@ export function generateSitemapHreflangLinks(
   const categoryLocales = category
     ? SUPPORTED_LOCALES.filter(locale => isTranslatedPair(category, locale))
     : SUPPORTED_LOCALES;
-  const localesToInclude = availableLocales
-    ? categoryLocales.filter(locale => availableLocales.includes(locale))
-    : categoryLocales;
+  const identity = getPathIdentity(normalizedPath);
+  const localesToInclude = (
+    availableLocales
+      ? categoryLocales.filter(locale => availableLocales.includes(locale))
+      : categoryLocales
+  ).filter(locale => !identity || isHreflangEligible(identity.category, identity.slug, locale));
 
   // Generate xhtml:link for each available locale
   for (const locale of localesToInclude) {

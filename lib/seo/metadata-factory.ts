@@ -16,7 +16,7 @@ import {
   generateHreflangAlternates,
 } from './hreflang-generator';
 import { enforceMetaLengths } from './meta-generator';
-import { shouldSubmit } from './page-eligibility';
+import { isHreflangEligible, shouldSubmit } from './page-eligibility';
 import { isTranslatedPair } from './localization-config';
 import type { Locale } from '../../i18n/config';
 
@@ -66,7 +66,7 @@ export function generateMetadata(
       ([hreflang]) =>
         hreflang === 'en' ||
         hreflang === 'x-default' ||
-        shouldSubmit(category, page.slug, hreflang, page.lastUpdated)
+        isHreflangEligible(category, page.slug, hreflang)
     )
   );
 
