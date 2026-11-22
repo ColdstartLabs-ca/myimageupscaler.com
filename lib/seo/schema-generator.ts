@@ -153,6 +153,40 @@ export function generateHowToSchema(params: {
   };
 }
 
+export interface IImageObjectParams {
+  contentUrl: string;
+  name: string;
+  caption: string;
+  width?: number;
+  height?: number;
+}
+
+/**
+ * Generate an ImageObject for an image the page actually renders.
+ * Relative paths are expanded against BASE_URL so the output stays absolute.
+ */
+export function generateImageObjectSchema(params: IImageObjectParams): object {
+  const contentUrl = params.contentUrl.startsWith('http')
+    ? params.contentUrl
+    : `${BASE_URL}${params.contentUrl.startsWith('/') ? '' : '/'}${params.contentUrl}`;
+
+  return {
+    '@type': 'ImageObject',
+    '@id': `${contentUrl}#image`,
+    contentUrl,
+    url: contentUrl,
+    name: params.name,
+    caption: params.caption,
+    creator: { '@id': `${BASE_URL}#organization` },
+    ...(params.width != null && {
+      width: { '@type': 'QuantitativeValue', value: params.width },
+    }),
+    ...(params.height != null && {
+      height: { '@type': 'QuantitativeValue', value: params.height },
+    }),
+  };
+}
+
 /**
  * Generate Review schema for comparison pages
  * Creates Review schemas for each product being compared
@@ -270,6 +304,15 @@ export function generateToolSchema(
                 },
               })),
             },
+          ]
+        : []),
+      ...(tool.beforeAfterImages
+        ? [
+            generateImageObjectSchema({
+              contentUrl: tool.beforeAfterImages.after,
+              name: `${tool.title} before and after`,
+              caption: tool.beforeAfterImages.afterLabel ?? `${tool.title} upscaled with AI`,
+            }),
           ]
         : []),
       {
@@ -837,7 +880,10 @@ function getHomepageHowToSchema(locale: Locale = 'en'): object | null {
  *
  * @param locale - The locale for this page instance (default: 'en')
  */
-export function generateHomepageSchema(locale: Locale = 'en'): Record<string, unknown> {
+export function generateHomepageSchema(
+  locale: Locale = 'en',
+  heroImage?: IImageObjectParams
+): Record<string, unknown> {
   const canonicalUrl = BASE_URL;
   const language = getLanguageCode(locale);
   const organizationRef = { '@id': `${BASE_URL}#organization` };
@@ -884,6 +930,11 @@ export function generateHomepageSchema(locale: Locale = 'en'): Record<string, un
   // Add HowTo schema if available
   if (howToSchema) {
     graphItems.push(howToSchema);
+  }
+
+  // The hero after-image is rendered in the initial HTML on every locale
+  if (heroImage) {
+    graphItems.push(generateImageObjectSchema(heroImage));
   }
 
   // Speakable: tells AI engines (Google AI Overviews, ChatGPT Search) which content to extract

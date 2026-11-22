@@ -6,10 +6,13 @@
  */
 
 import { describe, it, expect, vi } from 'vitest';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import {
   generateFAQSchema,
   generateHowToSchema,
   generateHomepageSchema,
+  generateImageObjectSchema,
   generateToolSchema,
 } from '@lib/seo/schema-generator';
 import type { IFAQSchema, IHowToStep, IToolPage } from '@lib/seo';
@@ -324,5 +327,109 @@ describe('Speakable schema (AEO)', () => {
       expect(breadcrumb.itemListElement[2].item).toBe(canonicalUrl);
       expect(webPage!['@id']).toBe(`${canonicalUrl}#webpage`);
     });
+  });
+});
+
+describe('ImageObject schema', () => {
+  it('should generate an ImageObject with an absolute https contentUrl', () => {
+    const schema = generateImageObjectSchema({
+      contentUrl: '/before-after/hero/hero-image-regular.webp',
+      name: 'AI-enhanced mountain photo',
+      caption: 'AI-enhanced mountain photo after upscaling',
+    }) as Record<string, unknown>;
+
+    expect(schema['@type']).toBe('ImageObject');
+    expect(schema.contentUrl).toBe(
+      'https://myimageupscaler.com/before-after/hero/hero-image-regular.webp'
+    );
+    expect(schema.name).toBeTruthy();
+    expect(schema.caption).toBeTruthy();
+    expect(schema.creator).toEqual({ '@id': 'https://myimageupscaler.com#organization' });
+  });
+
+  it('should keep absolute URLs and include optional dimensions', () => {
+    const schema = generateImageObjectSchema({
+      contentUrl: 'https://cdn.example.com/image.webp',
+      name: 'Example',
+      caption: 'Example caption',
+      width: 1448,
+      height: 1086,
+    }) as Record<string, unknown>;
+
+    expect(schema.contentUrl).toBe('https://cdn.example.com/image.webp');
+    expect(schema.width).toEqual({ '@type': 'QuantitativeValue', value: 1448 });
+    expect(schema.height).toEqual({ '@type': 'QuantitativeValue', value: 1086 });
+  });
+
+  it('should add the hero after-image ImageObject to the homepage graph', () => {
+    const schema = generateHomepageSchema('en', {
+      contentUrl: '/before-after/hero/hero-image-regular.webp',
+      name: 'AI-enhanced mountain photo',
+      caption: 'AI-enhanced mountain photo after upscaling',
+      width: 1448,
+      height: 1086,
+    }) as { '@graph': Record<string, unknown>[] };
+
+    const image = schema['@graph'].find(node => node['@type'] === 'ImageObject');
+
+    expect(image).toBeDefined();
+    expect(image!.contentUrl).toMatch(/^https:\/\//);
+    expect(image!.name).toBeTruthy();
+    expect(image!.caption).toBeTruthy();
+  });
+
+  it('should add an ImageObject to the tool graph when the page renders before/after images', () => {
+    const tool: IToolPage = {
+      slug: 'ai-image-upscaler',
+      title: 'AI Image Upscaler',
+      primaryKeyword: 'ai image upscaler',
+      category: 'upscale',
+      metaTitle: 'AI Image Upscaler',
+      metaDescription: 'Upscale images with AI',
+      heroTitle: 'AI Image Upscaler',
+      heroSubtitle: 'Upscale images',
+      features: [],
+      faq: [],
+      beforeAfterImages: {
+        before: '/before-after/girl-before.webp',
+        after: '/before-after/girl-after.webp',
+        afterLabel: 'After (4x Upscaled)',
+      },
+    };
+
+    const schema = generateToolSchema(tool, 'en') as { '@graph': Record<string, unknown>[] };
+    const image = schema['@graph'].find(node => node['@type'] === 'ImageObject');
+
+    expect(image).toBeDefined();
+    expect(image!.contentUrl).toBe('https://myimageupscaler.com/before-after/girl-after.webp');
+    expect(image!.name).toBeTruthy();
+    expect(image!.caption).toBe('After (4x Upscaled)');
+  });
+
+  it('should omit the ImageObject when a tool page renders no image', () => {
+    const tool: IToolPage = {
+      slug: 'remove-bg',
+      title: 'Remove Background',
+      primaryKeyword: 'remove background',
+      category: 'remove',
+      metaTitle: 'Remove Background',
+      metaDescription: 'Remove image backgrounds',
+      heroTitle: 'Remove Background',
+      heroSubtitle: 'Remove backgrounds',
+      features: [],
+      faq: [],
+    };
+
+    const schema = generateToolSchema(tool, 'en') as { '@graph': Record<string, unknown>[] };
+
+    expect(schema['@graph'].some(node => node['@type'] === 'ImageObject')).toBe(false);
+  });
+
+  it('should wire the scale page ImageObject to the before/after image it renders', () => {
+    const source = readFileSync(join(process.cwd(), 'app/(pseo)/scale/[slug]/page.tsx'), 'utf-8');
+
+    expect(source).toContain('generateImageObjectSchema');
+    expect(source).toMatch(/scale\.beforeAfterImages\.after/);
+    expect(source).toMatch(/graphItems\.push\([\s\S]*?ImageObject/);
   });
 });

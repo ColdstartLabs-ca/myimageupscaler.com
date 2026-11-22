@@ -117,6 +117,30 @@ describe('Homepage Performance — Phase 1', () => {
       expect(source).not.toContain("t('heroSubtitle')");
     });
 
+    it('page.tsx should not statically import CreatorsSection', () => {
+      const pagePath = join(ROOT, 'app/[locale]/page.tsx');
+      const source = readFileSync(pagePath, 'utf-8');
+
+      expect(source).not.toMatch(/^import\s+CreatorsSection\s+from/m);
+      expect(source).not.toContain("from '@client/components/features/landing/CreatorsSection'");
+    });
+
+    it('page.tsx should render CreatorsSection through the deferred lazy path', () => {
+      const pagePath = join(ROOT, 'app/[locale]/page.tsx');
+      const source = readFileSync(pagePath, 'utf-8');
+      const wrapperPath = join(ROOT, 'client/components/landing/DeferredCreatorsSection.tsx');
+      const wrapper = readFileSync(wrapperPath, 'utf-8');
+
+      expect(source).toContain('<DeferredCreatorsSection />');
+      expect(wrapper).toMatch(/^['"]use client['"]/m);
+      expect(wrapper).toContain('DeferredSection');
+      expect(wrapper).toContain('lazy(');
+      expect(wrapper).toMatch(
+        /import\(\s*['"]@client\/components\/features\/landing\/CreatorsSection['"]\s*\)/
+      );
+      expect(wrapper).toMatch(/fallback=\{<CreatorsFallback\s*\/>\}/);
+    });
+
     it('page.tsx should render HeroSection outside of Suspense (immediately visible)', () => {
       const pagePath = join(ROOT, 'app/[locale]/page.tsx');
       const source = readFileSync(pagePath, 'utf-8');
@@ -571,7 +595,9 @@ describe('Homepage — hero section blend', () => {
     const source = readFileSync(pagePath, 'utf-8');
 
     expect(source).toContain('LandingHeroShell');
-    expect(source).toMatch(/<LandingHeroShell>[\s\S]*<HeroSection \/>[\s\S]*<CreatorsSection \/>/);
+    expect(source).toMatch(
+      /<LandingHeroShell>[\s\S]*<HeroSection \/>[\s\S]*<DeferredCreatorsSection \/>/
+    );
   });
 
   it('should blend the creators section from the hero background', () => {

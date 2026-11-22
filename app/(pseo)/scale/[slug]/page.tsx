@@ -5,6 +5,7 @@ import { generateMetadata as generatePageMetadata } from '@/lib/seo/metadata-fac
 import { getRelatedPages } from '@/lib/seo/related-pages';
 import { ScalePageTemplate } from '@/app/(pseo)/_components/pseo/templates/ScalePageTemplate';
 import { SchemaMarkup } from '@/app/(pseo)/_components/seo/SchemaMarkup';
+import { generateImageObjectSchema } from '@/lib/seo';
 import { clientEnv } from '@shared/config/env';
 
 // Force static rendering for Cloudflare Workers 10ms CPU limit
@@ -73,6 +74,17 @@ export default async function ScalePage({ params }: IScalePageProps) {
         },
       })),
     });
+  }
+
+  // Add the before/after image the template renders, when present
+  if (scale.beforeAfterImages) {
+    graphItems.push(
+      generateImageObjectSchema({
+        contentUrl: scale.beforeAfterImages.after,
+        name: `${scale.title} before and after`,
+        caption: scale.beforeAfterImages.afterLabel ?? `${scale.resolution} upscaled with AI`,
+      })
+    );
   }
 
   // Add BreadcrumbList schema
