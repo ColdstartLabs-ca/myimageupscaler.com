@@ -12,10 +12,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createRequire } from 'node:module';
-import {
-  BLOCKED_BLOG_SLUGS,
-  isNoindexBlogSlug,
-} from '@shared/constants/blocked-blog-slugs';
+import { BLOCKED_BLOG_SLUGS, isNoindexBlogSlug } from '@shared/constants/blocked-blog-slugs';
 import consolidation from '@shared/constants/blog-consolidation.json';
 
 const require = createRequire(import.meta.url);
@@ -46,9 +43,7 @@ function loadNextRedirects(): IRedirect[] {
 
 describe('blog consolidation file', () => {
   it('points at the 2026-11-21 index-bloat manifest', () => {
-    expect(consolidation.source).toBe(
-      'docs/SEO/reports/2026-11-21-index-bloat-manifest.json'
-    );
+    expect(consolidation.source).toBe('docs/SEO/reports/2026-11-21-index-bloat-manifest.json');
   });
 
   it('carries every MERGE_301 redirect and NOINDEX_UNPUBLISH slug', () => {
@@ -71,9 +66,7 @@ describe('blog consolidation redirects', () => {
   it('registers every redirect in next.config.js as a plain and locale-prefixed 301', () => {
     for (const [slug, target] of Object.entries(consolidation.redirects)) {
       const plain = redirects.find(entry => entry.source === `/blog/${slug}`);
-      const locale = redirects.find(
-        entry => entry.source === `/${LOCALE_PATTERN}/blog/${slug}`
-      );
+      const locale = redirects.find(entry => entry.source === `/${LOCALE_PATTERN}/blog/${slug}`);
 
       expect(plain, `missing plain redirect for ${slug}`).toBeDefined();
       expect(plain?.destination).toBe(target);
@@ -86,9 +79,7 @@ describe('blog consolidation redirects', () => {
 
   it('never redirects to a destination that redirects again', () => {
     const sources = new Set(redirects.map(entry => entry.source));
-    const chains = Object.values(consolidation.redirects).filter(target =>
-      sources.has(target)
-    );
+    const chains = Object.values(consolidation.redirects).filter(target => sources.has(target));
 
     expect(chains, `redirect chains: ${chains.join(', ')}`).toEqual([]);
   });
@@ -102,9 +93,7 @@ describe('blog consolidation redirects', () => {
       const slug = target.slice('/blog/'.length);
 
       if (GUARDED_SLUGS.includes(slug)) {
-        expect(ownerTargets, `${target} is guarded but not an owner target`).toContain(
-          target
-        );
+        expect(ownerTargets, `${target} is guarded but not an owner target`).toContain(target);
       }
       expect(consolidation.redirects, `${target} is itself a redirect source`).not.toHaveProperty(
         slug
@@ -116,10 +105,7 @@ describe('blog consolidation redirects', () => {
 
 describe('blog consolidation blocked slugs', () => {
   it('blocks every redirect and noindex slug from sitemaps and lists', () => {
-    const slugs = [
-      ...Object.keys(consolidation.redirects),
-      ...consolidation.noindex,
-    ];
+    const slugs = [...Object.keys(consolidation.redirects), ...consolidation.noindex];
 
     for (const slug of slugs) {
       expect(BLOCKED_BLOG_SLUGS, `missing blocked slug: ${slug}`).toContain(slug);

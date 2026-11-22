@@ -24,7 +24,10 @@ function gscRow(path: string, clicks: number, impressions = 0) {
   return { page: `${BASE}${path}`, clicks, impressions };
 }
 
-function manifestInputs(blogRows: ReturnType<typeof gscRow>[], posts: Array<{ slug: string; lastmod: string }>) {
+function manifestInputs(
+  blogRows: ReturnType<typeof gscRow>[],
+  posts: Array<{ slug: string; lastmod: string }>
+) {
   const sitemapPosts = [
     ...OWNER_BLOG_SLUGS.map((slug: string) => ({ slug, lastmod: '2026-01-01' })),
     ...posts,
@@ -39,7 +42,7 @@ function manifestInputs(blogRows: ReturnType<typeof gscRow>[], posts: Array<{ sl
       fetchedAt: '2026-11-21',
       urls: [
         { loc: `${BASE}/blog`, lastmod: '2026-11-21' },
-        ...sitemapPosts.map((post) => ({
+        ...sitemapPosts.map(post => ({
           loc: `${BASE}/blog/${post.slug}`,
           lastmod: post.lastmod,
         })),
@@ -63,7 +66,12 @@ describe('audit-index-bloat normalizeUrl', () => {
 describe('audit-index-bloat blog rule order', () => {
   it('guards listed slugs even with zero clicks', () => {
     const result = classifyBlogPost(
-      { slug: 'tiktok-profile-picture-ideas', clicks180: 0, impressions180: 0, lastmod: '2026-01-01' },
+      {
+        slug: 'tiktok-profile-picture-ideas',
+        clicks180: 0,
+        impressions180: 0,
+        lastmod: '2026-01-01',
+      },
       OPTIONS
     );
     expect(result).toEqual({ disposition: 'DEFER_GUARDED' });
@@ -167,7 +175,10 @@ describe('audit-index-bloat buildManifest', () => {
     expect(manifest.blog.map((row: { slug: string }) => row.slug)).toEqual(
       [...manifest.blog.map((row: { slug: string }) => row.slug)].sort()
     );
-    expect(manifest.pseo.map((row: { slug: string }) => row.slug)).toEqual(['midjourney-upscaler-png', 'vs-bigjpg']);
+    expect(manifest.pseo.map((row: { slug: string }) => row.slug)).toEqual([
+      'midjourney-upscaler-png',
+      'vs-bigjpg',
+    ]);
 
     const zebra = manifest.blog.find((row: { slug: string }) => row.slug === 'zebra-post');
     expect(zebra).toEqual({
@@ -178,17 +189,19 @@ describe('audit-index-bloat buildManifest', () => {
       lastmod: '2026-01-01',
       disposition: 'KEEP',
     });
-    expect(manifest.blog.find((row: { slug: string }) => row.slug === 'alpha-post').disposition).toBe(
-      'NOINDEX_UNPUBLISH'
-    );
+    expect(
+      manifest.blog.find((row: { slug: string }) => row.slug === 'alpha-post').disposition
+    ).toBe('NOINDEX_UNPUBLISH');
     expect(manifest.blog.length).toBe(OWNER_BLOG_SLUGS.length + 2);
 
-    const pseoKeep = manifest.pseo.find((row: { slug: string }) => row.slug === 'midjourney-upscaler-png');
+    const pseoKeep = manifest.pseo.find(
+      (row: { slug: string }) => row.slug === 'midjourney-upscaler-png'
+    );
     expect(pseoKeep.url).toBe(`${BASE}/platform-format/midjourney-upscaler-png`);
     expect(pseoKeep.disposition).toBe('NOINDEX_UNPUBLISH');
-    expect(manifest.pseo.find((row: { slug: string }) => row.slug === 'vs-bigjpg').disposition).toBe(
-      'DEFER_GUARDED'
-    );
+    expect(
+      manifest.pseo.find((row: { slug: string }) => row.slug === 'vs-bigjpg').disposition
+    ).toBe('DEFER_GUARDED');
 
     const counts: Record<string, number> = {};
     for (const row of manifest.blog) counts[row.disposition] = (counts[row.disposition] ?? 0) + 1;
@@ -198,9 +211,10 @@ describe('audit-index-bloat buildManifest', () => {
   });
 
   it('flags off-topic posts and keeps them under normal rules', () => {
-    const inputs = manifestInputs([gscRow('/blog/windows-11-snap-layouts', 1, 843)], [
-      { slug: 'windows-11-snap-layouts', lastmod: '2026-01-01' },
-    ]);
+    const inputs = manifestInputs(
+      [gscRow('/blog/windows-11-snap-layouts', 1, 843)],
+      [{ slug: 'windows-11-snap-layouts', lastmod: '2026-01-01' }]
+    );
     const row = buildManifest(inputs, OPTIONS).blog.find(
       (entry: { slug: string }) => entry.slug === 'windows-11-snap-layouts'
     );
@@ -219,7 +233,10 @@ describe('audit-index-bloat buildManifest', () => {
 });
 
 describe('committed index-bloat manifest', () => {
-  const manifestPath = resolve(process.cwd(), 'docs/SEO/reports/2026-11-21-index-bloat-manifest.json');
+  const manifestPath = resolve(
+    process.cwd(),
+    'docs/SEO/reports/2026-11-21-index-bloat-manifest.json'
+  );
   const inputPath = resolve(
     process.cwd(),
     'docs/SEO/reports/inputs/2026-11-21-index-bloat/sitemap-blog.json'

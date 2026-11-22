@@ -72,13 +72,7 @@ function loadAlternatives(): IAlternativesData {
 }
 
 // Priority pages that must have full benchmark data
-const PRIORITY_SLUGS = [
-  'vs-topaz',
-  'vs-bigjpg',
-  'vs-waifu2x',
-  'vs-imgupscaler',
-  'vs-letsenhance',
-];
+const PRIORITY_SLUGS = ['vs-topaz', 'vs-bigjpg', 'vs-waifu2x', 'vs-imgupscaler', 'vs-letsenhance'];
 
 describe('pSEO Alternatives Quality', () => {
   const data = loadAlternatives();
@@ -92,10 +86,7 @@ describe('pSEO Alternatives Quality', () => {
     PRIORITY_SLUGS.forEach(slug => {
       const page = data.pages.find(p => p.slug === slug);
       expect(page, `Page "${slug}" not found in alternatives.json`).toBeDefined();
-      expect(
-        page!.benchmarks,
-        `Page "${slug}" is missing the benchmarks field`
-      ).toBeDefined();
+      expect(page!.benchmarks, `Page "${slug}" is missing the benchmarks field`).toBeDefined();
     });
   });
 
@@ -106,13 +97,28 @@ describe('pSEO Alternatives Quality', () => {
       const b = page!.benchmarks;
       expect(b, `"${slug}" missing benchmarks`).toBeDefined();
       expect(b!.processingTime, `"${slug}" missing benchmarks.processingTime`).toBeDefined();
-      expect(b!.processingTime.myimageupscaler, `"${slug}" missing benchmarks.processingTime.myimageupscaler`).toBeTruthy();
-      expect(b!.processingTime.competitor, `"${slug}" missing benchmarks.processingTime.competitor`).toBeTruthy();
+      expect(
+        b!.processingTime.myimageupscaler,
+        `"${slug}" missing benchmarks.processingTime.myimageupscaler`
+      ).toBeTruthy();
+      expect(
+        b!.processingTime.competitor,
+        `"${slug}" missing benchmarks.processingTime.competitor`
+      ).toBeTruthy();
       expect(b!.qualityScore, `"${slug}" missing benchmarks.qualityScore`).toBeDefined();
       expect(b!.fileFormatSupport, `"${slug}" missing benchmarks.fileFormatSupport`).toBeDefined();
-      expect(b!.fileFormatSupport.myimageupscaler, `"${slug}" missing benchmarks.fileFormatSupport.myimageupscaler`).toBeInstanceOf(Array);
-      expect(b!.fileFormatSupport.competitor, `"${slug}" missing benchmarks.fileFormatSupport.competitor`).toBeInstanceOf(Array);
-      expect(b!.maxOutputResolution, `"${slug}" missing benchmarks.maxOutputResolution`).toBeDefined();
+      expect(
+        b!.fileFormatSupport.myimageupscaler,
+        `"${slug}" missing benchmarks.fileFormatSupport.myimageupscaler`
+      ).toBeInstanceOf(Array);
+      expect(
+        b!.fileFormatSupport.competitor,
+        `"${slug}" missing benchmarks.fileFormatSupport.competitor`
+      ).toBeInstanceOf(Array);
+      expect(
+        b!.maxOutputResolution,
+        `"${slug}" missing benchmarks.maxOutputResolution`
+      ).toBeDefined();
     });
   });
 
@@ -161,7 +167,7 @@ describe('pSEO Alternatives Quality', () => {
       expect(
         stringifiedPage.includes('10x faster'),
         `Page "${page.slug}" contains unsubstantiated "10x faster" claim. ` +
-        'Replace with specific timing data in the benchmarks.processingTime field.'
+          'Replace with specific timing data in the benchmarks.processingTime field.'
       ).toBe(false);
     });
   });

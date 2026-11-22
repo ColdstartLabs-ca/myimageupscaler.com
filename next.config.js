@@ -7,9 +7,9 @@ const require = createRequire(import.meta.url);
 require('tsx/cjs');
 const { LEGACY_REDIRECTS } = require('./lib/seo/legacy-redirects.ts');
 const { getCdnCgiDevRewrites } = require('./lib/dev/cdn-cgi-rewrite.ts');
-const { redirects: BLOG_CONSOLIDATION_REDIRECTS } = require(
-  './shared/constants/blog-consolidation.json'
-);
+const {
+  redirects: BLOG_CONSOLIDATION_REDIRECTS,
+} = require('./shared/constants/blog-consolidation.json');
 
 const LOCALE_PREFIX = '/:locale(en|fr|de|es|it|ja|pt)';
 

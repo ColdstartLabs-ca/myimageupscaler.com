@@ -94,22 +94,22 @@ Use `.claude/skills/reddit-seo-response/SKILL.md`. Do not post anything from an 
 
 ## 3. Inputs and owners
 
-| Input | Owner | Use | Status |
-| ----- | ----- | --- | ------ |
-| Ahrefs referring-domains export with spam flags | João | Build the disavow review list | TO PROVIDE |
-| GSC links export (`968` external, `503` to `/`) | João | Cross-check the disavow list and editorial targets | TO PROVIDE |
-| 5-image benchmark captures | João | Flagship edit after Nov 26 | BLOCKED on Nov 26 |
-| Editorial target list and contacts | Agent draft, João approval | Pitch workflow | NOT STARTED |
-| Reopen decision, COGS sign-off, Turnstile plus IP limit | João | Guest trial reopen only | CLOSED |
-| `yarn db:backup`, `yarn db:backups`, `gzip -t` | Agent runs, João signs off | Any blog edit apply | PENDING |
+| Input                                                   | Owner                      | Use                                                | Status            |
+| ------------------------------------------------------- | -------------------------- | -------------------------------------------------- | ----------------- |
+| Ahrefs referring-domains export with spam flags         | João                       | Build the disavow review list                      | TO PROVIDE        |
+| GSC links export (`968` external, `503` to `/`)         | João                       | Cross-check the disavow list and editorial targets | TO PROVIDE        |
+| 5-image benchmark captures                              | João                       | Flagship edit after Nov 26                         | BLOCKED on Nov 26 |
+| Editorial target list and contacts                      | Agent draft, João approval | Pitch workflow                                     | NOT STARTED       |
+| Reopen decision, COGS sign-off, Turnstile plus IP limit | João                       | Guest trial reopen only                            | CLOSED            |
+| `yarn db:backup`, `yarn db:backups`, `gzip -t`          | Agent runs, João signs off | Any blog edit apply                                | PENDING           |
 
 **Checkpoints from the README:**
 
-| Date | Checkpoint |
-| ---- | ---------- |
-| Nov 23 | Topaz recrawl |
-| Nov 26 | Confirm flagship Nov 11–18 drop |
-| Nov 27 | TikTok verdict |
-| Nov 30 | Nov 2 4-page pSEO prune readback |
-| Dec 7 | Topaz verdict and `/` hero readback |
+| Date      | Checkpoint                                                  |
+| --------- | ----------------------------------------------------------- |
+| Nov 23    | Topaz recrawl                                               |
+| Nov 26    | Confirm flagship Nov 11–18 drop                             |
+| Nov 27    | TikTok verdict                                              |
+| Nov 30    | Nov 2 4-page pSEO prune readback                            |
+| Dec 7     | Topaz verdict and `/` hero readback                         |
 | Dec 15–22 | Mobile CWV field validation and PRD-01/PRD-02 CTR readbacks |

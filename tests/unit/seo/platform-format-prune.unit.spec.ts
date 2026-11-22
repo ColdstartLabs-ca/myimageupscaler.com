@@ -14,8 +14,9 @@ interface IRow {
 }
 
 const pages = (platformFormat as { pages: IRow[] }).pages;
-const manifestRows = (manifest as { pseo: { category: string; slug: string; disposition: string }[] })
-  .pseo;
+const manifestRows = (
+  manifest as { pseo: { category: string; slug: string; disposition: string }[] }
+).pseo;
 
 describe('platform-format zero-click prune', () => {
   const pruned = new Set(

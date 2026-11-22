@@ -33,7 +33,12 @@ const BLOG_TOOL_LINK_RULES: readonly IBlogToolLinkRule[] = [
   },
   {
     match: slug => /adobe|photoshop/.test(slug),
-    links: [{ href: '/alternatives/vs-adobe-express', anchor: 'Adobe Express image upscaler alternative' }],
+    links: [
+      {
+        href: '/alternatives/vs-adobe-express',
+        anchor: 'Adobe Express image upscaler alternative',
+      },
+    ],
   },
   {
     match: slug => slug === 'image-upscaler-8x',

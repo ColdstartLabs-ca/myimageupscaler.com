@@ -28,10 +28,10 @@ const REPORT_REFRESH = {
     slug: 'vs-adobe-express',
     metaTitle: 'Adobe Express Image Upscaler: Limits & Free Alternative',
     metaDescription:
-      "Adobe Express image upscaler limits at a glance: limited free features and basic resizing vs. dedicated AI detail recovery with free credits. Compare both.",
+      'Adobe Express image upscaler limits at a glance: limited free features and basic resizing vs. dedicated AI detail recovery with free credits. Compare both.',
     h1: 'Adobe Express Image Upscaler vs MyImageUpscaler',
     intro:
-      "At a glance: Adobe Express gives limited free features and design-suite resizing, while MyImageUpscaler gives new accounts free credits for dedicated AI detail recovery. The Adobe Express image upscaler is built for quick resizing, not for soft, compressed, or print-bound photos. Here is how its limits compare, and when the extra detail matters.",
+      'At a glance: Adobe Express gives limited free features and design-suite resizing, while MyImageUpscaler gives new accounts free credits for dedicated AI detail recovery. The Adobe Express image upscaler is built for quick resizing, not for soft, compressed, or print-bound photos. Here is how its limits compare, and when the extra detail matters.',
   },
 } as const;
 

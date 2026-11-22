@@ -55,7 +55,10 @@ describe('blog contextual tool links', () => {
 
   it('applies the first matching rule', () => {
     const links = getBlogContextualToolLinks('transparent-upscale-resolution-guide');
-    expect(links.map(link => link.href)).toEqual(['/tools/remove-bg', '/tools/make-image-transparent']);
+    expect(links.map(link => link.href)).toEqual([
+      '/tools/remove-bg',
+      '/tools/make-image-transparent',
+    ]);
 
     const exactSlugLinks = getBlogContextualToolLinks('image-upscaler-8x');
     expect(exactSlugLinks).toHaveLength(1);
@@ -89,10 +92,9 @@ describe('blog contextual tool links', () => {
       if (href.startsWith('/tools/')) {
         expect(toolSlugs.has(href.replace('/tools/', '')), `${href} must exist`).toBe(true);
       } else if (href.startsWith('/alternatives/')) {
-        expect(
-          alternativeSlugs.has(href.replace('/alternatives/', '')),
-          `${href} must exist`
-        ).toBe(true);
+        expect(alternativeSlugs.has(href.replace('/alternatives/', '')), `${href} must exist`).toBe(
+          true
+        );
       } else {
         expect(href, 'homepage fallback').toBe('/');
       }

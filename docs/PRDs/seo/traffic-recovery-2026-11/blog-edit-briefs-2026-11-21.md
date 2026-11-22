@@ -12,12 +12,12 @@
 
 ### Current live state (fetched 2026-11-21)
 
-| Item | Current value | Length |
-| ---- | ------------- | -----: |
-| Title | `Free AI Image Upscaler No Watermark: No Signup Test \| MyImageUpscaler` | 69 |
-| Meta description | `Need a free AI image upscaler with no watermark? Compare clean exports, no-signup options, hidden limits, 4K/8K output, and quality tradeoffs.` | 142 |
-| H1 | `Best Free AI Image Upscaler 2026: No Watermark` | — |
-| First paragraph | `This guide compares the best free AI image upscaler options in 2026 that avoid watermarks, signup friction, hidden limits, and low-quality exports. We tested which tools give you clean enlarged images and which ones hide the useful download behind limits.` | — |
+| Item             | Current value                                                                                                                                                                                                                                                     | Length |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -----: |
+| Title            | `Free AI Image Upscaler No Watermark: No Signup Test \| MyImageUpscaler`                                                                                                                                                                                          |     69 |
+| Meta description | `Need a free AI image upscaler with no watermark? Compare clean exports, no-signup options, hidden limits, 4K/8K output, and quality tradeoffs.`                                                                                                                  |    142 |
+| H1               | `Best Free AI Image Upscaler 2026: No Watermark`                                                                                                                                                                                                                  |      — |
+| First paragraph  | `This guide compares the best free AI image upscaler options in 2026 that avoid watermarks, signup friction, hidden limits, and low-quality exports. We tested which tools give you clean enlarged images and which ones hide the useful download behind limits.` |      — |
 
 **Why edit:** Page fell from `98 → 3` clicks since July (`35 → 3` in the 28-day window, `Oct 22–Nov 18`). The title splits intent across "no watermark" and "no signup test" and wastes pixels on a brand suffix.
 
@@ -25,12 +25,12 @@
 
 ### Ready-to-apply brief
 
-| Field | New value | Chars |
-| ----- | --------- | ----: |
-| Title (`seo_title`) | `Free AI Image Upscaler No Watermark: 2026 Test` | 46 |
-| Meta description (`seo_description`) | `Compare free AI image upscalers with no watermark. See clean exports, signup limits, 4K/8K output, and which tools hide the download behind a paywall. Try free now.` | 155 |
-| H1 | `Free AI Image Upscaler Without Watermark: 2026 Test` | — |
-| First paragraph | `Most free upscalers add a watermark, cap the download, or ask for an account. This guide tests the free AI image upscalers that return a clean file with no watermark, and shows which ones hide the real limit until you upload. You get the test result for each tool and a free path to try the workflow now.` | — |
+| Field                                | New value                                                                                                                                                                                                                                                                                                          | Chars |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----: |
+| Title (`seo_title`)                  | `Free AI Image Upscaler No Watermark: 2026 Test`                                                                                                                                                                                                                                                                   |    46 |
+| Meta description (`seo_description`) | `Compare free AI image upscalers with no watermark. See clean exports, signup limits, 4K/8K output, and which tools hide the download behind a paywall. Try free now.`                                                                                                                                             |   155 |
+| H1                                   | `Free AI Image Upscaler Without Watermark: 2026 Test`                                                                                                                                                                                                                                                              |     — |
+| First paragraph                      | `Most free upscalers add a watermark, cap the download, or ask for an account. This guide tests the free AI image upscalers that return a clean file with no watermark, and shows which ones hide the real limit until you upload. You get the test result for each tool and a free path to try the workflow now.` |     — |
 
 **Rules:** Keep "free" in title, H1, meta, and first paragraph. Do not hardcode "5 free credits"; credits are region-tiered (`5 / 3 / 0`). Do not claim a new benchmark number. Do not remove the existing tool comparison structure.
 
@@ -40,12 +40,12 @@
 
 ### Current live state (fetched 2026-11-21)
 
-| Item | Current value | Length |
-| ---- | ------------- | -----: |
-| Title | `How to Upscale DALL-E Images to 4K+ Free [2026] \| MyImageUpscaler` | 65 |
-| Meta description | `DALL-E outputs 1024x1024 max. Upscale DALL-E 2 and DALL-E 3 images to 4K or 8K with AI — no quality loss, no signup. Try free now.` | 130 |
-| H1 | `How to Upscale DALL-E Images: Fix Pixelation in AI Art [2026]` | — |
-| First paragraph | `DALL-E 3 is one of the best AI image generators out there — but every image it creates tops out at 1024x1024 pixels. That is fine for a social post. Try to print it, crop it, or use it in a client presentation, and suddenly you are staring at soft edges and visible artifacts. A dedicated DALL-E upscaler fixes that in seconds.` | — |
+| Item             | Current value                                                                                                                                                                                                                                                                                                                             | Length |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -----: |
+| Title            | `How to Upscale DALL-E Images to 4K+ Free [2026] \| MyImageUpscaler`                                                                                                                                                                                                                                                                      |     65 |
+| Meta description | `DALL-E outputs 1024x1024 max. Upscale DALL-E 2 and DALL-E 3 images to 4K or 8K with AI — no quality loss, no signup. Try free now.`                                                                                                                                                                                                      |    130 |
+| H1               | `How to Upscale DALL-E Images: Fix Pixelation in AI Art [2026]`                                                                                                                                                                                                                                                                           |      — |
+| First paragraph  | `DALL-E 3 is one of the best AI image generators out there — but every image it creates tops out at 1024x1024 pixels. That is fine for a social post. Try to print it, crop it, or use it in a client presentation, and suddenly you are staring at soft edges and visible artifacts. A dedicated DALL-E upscaler fixes that in seconds.` |      — |
 
 **Why edit:** Page sits at position `4.1` with `0.74%` CTR and only `10%` title keyword overlap. It misses the "ChatGPT" query, even though users now ask how to upscale images from the ChatGPT image generator.
 
@@ -53,12 +53,12 @@
 
 ### Ready-to-apply brief
 
-| Field | New value | Chars |
-| ----- | --------- | ----: |
-| Title (`seo_title`) | `Upscale ChatGPT and DALL-E Images to 4K Free [2026]` | 51 |
-| Meta description (`seo_description`) | `DALL-E and ChatGPT images top out at 1024x1024. Upscale them to 4K or 8K with AI, keep the detail, and avoid soft edges in print or crops. Try it free.` | 152 |
-| H1 | `How to Upscale ChatGPT and DALL-E Images to 4K [2026]` | — |
-| First paragraph | `Images from ChatGPT and DALL-E 3 start at 1024x1024 pixels. That is enough for a social post, but not for print, a crop, or a client deck. This guide shows how to upscale DALL-E 2, DALL-E 3, and ChatGPT images to 4K with AI, keep the clean lines, and fix pixelation before it shows.` | — |
+| Field                                | New value                                                                                                                                                                                                                                                                                    | Chars |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----: |
+| Title (`seo_title`)                  | `Upscale ChatGPT and DALL-E Images to 4K Free [2026]`                                                                                                                                                                                                                                        |    51 |
+| Meta description (`seo_description`) | `DALL-E and ChatGPT images top out at 1024x1024. Upscale them to 4K or 8K with AI, keep the detail, and avoid soft edges in print or crops. Try it free.`                                                                                                                                    |   152 |
+| H1                                   | `How to Upscale ChatGPT and DALL-E Images to 4K [2026]`                                                                                                                                                                                                                                      |     — |
+| First paragraph                      | `Images from ChatGPT and DALL-E 3 start at 1024x1024 pixels. That is enough for a social post, but not for print, a crop, or a client deck. This guide shows how to upscale DALL-E 2, DALL-E 3, and ChatGPT images to 4K with AI, keep the clean lines, and fix pixelation before it shows.` |     — |
 
 **Rules:** Add "ChatGPT" to title, H1, and first paragraph. Keep "free" in title and meta. Keep the DALL-E 2 vs DALL-E 3 section. Do not attribute to ChatGPT a pixel size that the live page does not state. Do not hardcode "5 free credits".
 
@@ -88,13 +88,13 @@ Do not apply while `/blog/topaz-labs-free-trial` (until Dec 7) or `/blog/tiktok-
 
 Each cell holds four capture fields: `100% crop`, `time (s)`, `free limit`, `watermark y/n`. Every field starts as `TO CAPTURE`.
 
-| Input image | MyImageUpscaler | Upscale.media | Upscayl | Krea | Pixelcut | Bigjpg | Adobe Firefly |
-| ----------- | --------------- | ------------- | ------- | ---- | -------- | ------ | ------------- |
-| Portrait | crop: TO CAPTURE<br>time (s): TO CAPTURE<br>free limit: TO CAPTURE<br>watermark: TO CAPTURE | crop: TO CAPTURE<br>time: TO CAPTURE<br>free limit: TO CAPTURE<br>watermark: TO CAPTURE | crop: TO CAPTURE<br>time: TO CAPTURE<br>free limit: TO CAPTURE<br>watermark: TO CAPTURE | crop: TO CAPTURE<br>time: TO CAPTURE<br>free limit: TO CAPTURE<br>watermark: TO CAPTURE | crop: TO CAPTURE<br>time: TO CAPTURE<br>free limit: TO CAPTURE<br>watermark: TO CAPTURE | crop: TO CAPTURE<br>time: TO CAPTURE<br>free limit: TO CAPTURE<br>watermark: TO CAPTURE | crop: TO CAPTURE<br>time: TO CAPTURE<br>free limit: TO CAPTURE<br>watermark: TO CAPTURE |
-| Blurry text / logo | TO CAPTURE | TO CAPTURE | TO CAPTURE | TO CAPTURE | TO CAPTURE | TO CAPTURE | TO CAPTURE |
-| Anime / line art | TO CAPTURE | TO CAPTURE | TO CAPTURE | TO CAPTURE | TO CAPTURE | TO CAPTURE | TO CAPTURE |
-| Product shot | TO CAPTURE | TO CAPTURE | TO CAPTURE | TO CAPTURE | TO CAPTURE | TO CAPTURE | TO CAPTURE |
-| 300-DPI print | TO CAPTURE | TO CAPTURE | TO CAPTURE | TO CAPTURE | TO CAPTURE | TO CAPTURE | TO CAPTURE |
+| Input image        | MyImageUpscaler                                                                             | Upscale.media                                                                           | Upscayl                                                                                 | Krea                                                                                    | Pixelcut                                                                                | Bigjpg                                                                                  | Adobe Firefly                                                                           |
+| ------------------ | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Portrait           | crop: TO CAPTURE<br>time (s): TO CAPTURE<br>free limit: TO CAPTURE<br>watermark: TO CAPTURE | crop: TO CAPTURE<br>time: TO CAPTURE<br>free limit: TO CAPTURE<br>watermark: TO CAPTURE | crop: TO CAPTURE<br>time: TO CAPTURE<br>free limit: TO CAPTURE<br>watermark: TO CAPTURE | crop: TO CAPTURE<br>time: TO CAPTURE<br>free limit: TO CAPTURE<br>watermark: TO CAPTURE | crop: TO CAPTURE<br>time: TO CAPTURE<br>free limit: TO CAPTURE<br>watermark: TO CAPTURE | crop: TO CAPTURE<br>time: TO CAPTURE<br>free limit: TO CAPTURE<br>watermark: TO CAPTURE | crop: TO CAPTURE<br>time: TO CAPTURE<br>free limit: TO CAPTURE<br>watermark: TO CAPTURE |
+| Blurry text / logo | TO CAPTURE                                                                                  | TO CAPTURE                                                                              | TO CAPTURE                                                                              | TO CAPTURE                                                                              | TO CAPTURE                                                                              | TO CAPTURE                                                                              | TO CAPTURE                                                                              |
+| Anime / line art   | TO CAPTURE                                                                                  | TO CAPTURE                                                                              | TO CAPTURE                                                                              | TO CAPTURE                                                                              | TO CAPTURE                                                                              | TO CAPTURE                                                                              | TO CAPTURE                                                                              |
+| Product shot       | TO CAPTURE                                                                                  | TO CAPTURE                                                                              | TO CAPTURE                                                                              | TO CAPTURE                                                                              | TO CAPTURE                                                                              | TO CAPTURE                                                                              | TO CAPTURE                                                                              |
+| 300-DPI print      | TO CAPTURE                                                                                  | TO CAPTURE                                                                              | TO CAPTURE                                                                              | TO CAPTURE                                                                              | TO CAPTURE                                                                              | TO CAPTURE                                                                              | TO CAPTURE                                                                              |
 
 Rows 2–5 use the same four-field cell format as row 1.
 

@@ -617,9 +617,7 @@ describe('POST /api/upscale synchronous failure recording', () => {
       }
     );
 
-    const response = await POST(
-      request(undefined, '_ga=GA1.1.111.222; _ga_ABC=GS1.1.333.1.0.0')
-    );
+    const response = await POST(request(undefined, '_ga=GA1.1.111.222; _ga_ABC=GS1.1.333.1.0.0'));
 
     expect(response.status).toBe(200);
     expect(mocks.track).toHaveBeenCalledWith(

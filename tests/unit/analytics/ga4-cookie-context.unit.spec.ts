@@ -9,9 +9,9 @@ describe('parseGa4CookieContext', () => {
   });
 
   test('extracts session_id from a GS1 _ga_ cookie', () => {
-    expect(
-      parseGa4CookieContext('_ga_ABC123=GS1.1.1700000001.3.0.0')
-    ).toEqual({ gaSessionId: '1700000001' });
+    expect(parseGa4CookieContext('_ga_ABC123=GS1.1.1700000001.3.0.0')).toEqual({
+      gaSessionId: '1700000001',
+    });
   });
 
   test('extracts session_id from a GS2 _ga_ cookie', () => {
@@ -21,8 +21,7 @@ describe('parseGa4CookieContext', () => {
   });
 
   test('combines client_id and session_id from separate cookies', () => {
-    const header =
-      'theme=dark; _ga=GA1.1.111.222; _ga_ABC123=GS1.1.333.1.0.0; locale=en';
+    const header = 'theme=dark; _ga=GA1.1.111.222; _ga_ABC123=GS1.1.333.1.0.0; locale=en';
     expect(parseGa4CookieContext(header)).toEqual({
       gaClientId: '111.222',
       gaSessionId: '333',

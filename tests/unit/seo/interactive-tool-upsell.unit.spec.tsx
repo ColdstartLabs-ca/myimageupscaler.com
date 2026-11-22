@@ -48,7 +48,9 @@ function renderTool(outputType: string) {
 async function processImage(outputType = 'image/png') {
   renderTool(outputType);
   fireEvent.click(screen.getByRole('button', { name: 'Process Image' }));
-  await waitFor(() => expect(mockTrack).toHaveBeenCalledWith('interactive_tool_processed', expect.anything()));
+  await waitFor(() =>
+    expect(mockTrack).toHaveBeenCalledWith('interactive_tool_processed', expect.anything())
+  );
 }
 
 describe('interactive tool upsell handoff', () => {
