@@ -181,6 +181,57 @@ describe('PaymentHandler - MEDIUM-14: Verify credits from price config', () => {
       );
     });
 
+    test('threads GA4 cookie context from checkout metadata into analytics options', async () => {
+      const session = {
+        id: mockSessionId,
+        mode: 'payment' as const,
+        payment_status: 'paid',
+        customer: mockCustomerId as string | Stripe.Customer,
+        payment_intent: 'pi_test_123' as string | Stripe.PaymentIntent,
+        amount_total: 2000,
+        currency: 'usd',
+        payment_method_types: ['card'],
+        metadata: {
+          user_id: mockUserId,
+          pack_key: 'standard_100',
+          credits: '100',
+          ga_client_id: '1234567890.1700000000',
+          ga_session_id: '1700000001',
+        },
+        line_items: {
+          data: [
+            {
+              price: {
+                id: 'price_pack_100',
+              },
+            },
+          ],
+        },
+      } as Stripe.Checkout.Session;
+
+      MockedSupabaseAdmin.from.mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            maybeSingle: vi.fn().mockResolvedValue({
+              data: { id: mockUserId },
+              error: null,
+            }),
+          }),
+        }),
+      } as never);
+
+      await PaymentHandler.handleCheckoutSessionCompleted(session);
+
+      expect(MockedTrackServerEvent).toHaveBeenCalledWith(
+        'purchase_confirmed',
+        expect.anything(),
+        expect.objectContaining({
+          gaClientId: '1234567890.1700000000',
+          gaSessionId: '1700000001',
+        })
+      );
+    });
+
     test('records experiment reward on purchase', async () => {
       const session = {
         id: mockSessionId,

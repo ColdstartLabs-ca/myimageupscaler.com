@@ -30,6 +30,8 @@ function trackPurchaseConfirmed(params: {
   priceId?: string;
   sourceObjectId?: string;
   lifecycleAction?: string;
+  gaClientId?: string;
+  gaSessionId?: string;
 }): void {
   const { userId, planKey, amountCents, purchaseType, currency } = params;
   const sourceObjectId = params.sourceObjectId || params.invoiceId;
@@ -57,6 +59,8 @@ function trackPurchaseConfirmed(params: {
       sourceObjectId,
       lifecycleAction,
       deduplicate: true,
+      ...(params.gaClientId ? { gaClientId: params.gaClientId } : {}),
+      ...(params.gaSessionId ? { gaSessionId: params.gaSessionId } : {}),
     }
   )
     .then(success => {
@@ -195,6 +199,10 @@ export class InvoiceHandler {
   static async handleInvoicePaymentSucceeded(invoice: Stripe.Invoice): Promise<void> {
     const invoiceWithSub = invoice as Stripe.Invoice & {
       subscription?: string | Stripe.Subscription | null;
+      subscription_details?: { metadata?: Stripe.Metadata | null } | null;
+      parent?: {
+        subscription_details?: { metadata?: Stripe.Metadata | null } | null;
+      } | null;
       billing_reason?: string | null;
       lines?: {
         data: Array<{
@@ -214,6 +222,20 @@ export class InvoiceHandler {
     if (!subscriptionId) {
       return; // Not a subscription invoice
     }
+
+    const subscriptionMetadata =
+      invoiceWithSub.parent?.subscription_details?.metadata ??
+      invoiceWithSub.subscription_details?.metadata;
+    const gaContext = {
+      ...(subscriptionMetadata?.ga_client_id
+        ? { gaClientId: subscriptionMetadata.ga_client_id }
+        : {}),
+      ...(subscriptionMetadata?.ga_session_id
+        ? { gaSessionId: subscriptionMetadata.ga_session_id }
+        : {}),
+    };
+    // Renewals happen weeks after checkout: keep the GA client, not the old session.
+    const gaClientContext = gaContext.gaClientId ? { gaClientId: gaContext.gaClientId } : {};
     await recordRetentionBillingEvent({
       subscriptionId,
       sourceId: invoice.id,
@@ -276,6 +298,7 @@ export class InvoiceHandler {
             subscriptionId,
             sourceObjectId: initialSourceObjectId,
             lifecycleAction: 'purchase_initial',
+            ...gaContext,
           });
           await trackRevenueSafely(
             {
@@ -579,6 +602,7 @@ export class InvoiceHandler {
           sourceObjectId: invoice.id,
           lifecycleAction: 'subscription_renewal',
           deduplicate: true,
+          ...gaClientContext,
         }
       );
 
@@ -594,6 +618,7 @@ export class InvoiceHandler {
         priceId: basePriceId,
         sourceObjectId: invoice.id,
         lifecycleAction: 'subscription_renewal',
+        ...gaClientContext,
       });
 
       await trackRevenueSafely(
@@ -614,6 +639,7 @@ export class InvoiceHandler {
           sourceObjectId: invoice.id,
           lifecycleAction: 'subscription_renewal',
           deduplicate: true,
+          ...gaClientContext,
         }
       );
     } else if (billingReason === 'subscription_create' && hasRecognizedCharge) {
@@ -630,6 +656,7 @@ export class InvoiceHandler {
         priceId: basePriceId,
         sourceObjectId: initialSourceObjectId,
         lifecycleAction: 'purchase_initial',
+        ...gaContext,
       });
       await trackRevenueSafely(
         {
@@ -649,6 +676,7 @@ export class InvoiceHandler {
           sourceObjectId: initialSourceObjectId,
           lifecycleAction: 'purchase_initial',
           deduplicate: true,
+          ...gaContext,
         }
       );
     }

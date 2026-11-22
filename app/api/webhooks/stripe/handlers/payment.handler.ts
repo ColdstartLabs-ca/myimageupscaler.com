@@ -63,11 +63,15 @@ export class PaymentHandler {
     const deviceId = metadata?.amplitude_device_id;
     const rawSessionId = metadata?.amplitude_session_id;
     const sessionId = rawSessionId ? parseInt(rawSessionId, 10) : undefined;
+    const gaClientId = metadata?.ga_client_id;
+    const gaSessionId = metadata?.ga_session_id;
     return {
       apiKey: serverEnv.AMPLITUDE_API_KEY,
       userId,
       ...(deviceId ? { deviceId } : {}),
       ...(sessionId !== undefined && !isNaN(sessionId) ? { sessionId } : {}),
+      ...(gaClientId ? { gaClientId } : {}),
+      ...(gaSessionId ? { gaSessionId } : {}),
     };
   }
 

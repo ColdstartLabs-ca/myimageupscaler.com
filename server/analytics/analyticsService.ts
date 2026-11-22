@@ -42,6 +42,10 @@ export interface IServerTrackOptions {
   deviceId?: string;
   /** Amplitude session_id (Unix ms) — stitches server events to the browser session that triggered them */
   sessionId?: number;
+  /** GA4 client_id from the browser's first-party _ga cookie */
+  gaClientId?: string;
+  /** GA4 session_id from the browser's first-party _ga_<stream> cookie */
+  gaSessionId?: string;
   /** Stable provider object used to deduplicate billing telemetry. */
   sourceObjectId?: string;
   /** Stable lifecycle action paired with sourceObjectId. */
@@ -227,7 +231,16 @@ export async function trackServerEvent(
   properties: object,
   options: IServerTrackOptions
 ): Promise<boolean> {
-  const { apiKey, userId, deviceId, sessionId, sourceObjectId, lifecycleAction } = options;
+  const {
+    apiKey,
+    userId,
+    deviceId,
+    sessionId,
+    gaClientId,
+    gaSessionId,
+    sourceObjectId,
+    lifecycleAction,
+  } = options;
 
   if (!apiKey) {
     console.error('[Analytics] Missing Amplitude API key for server event', {
@@ -313,7 +326,12 @@ export async function trackServerEvent(
     }
 
     // Also send to GA4 Measurement Protocol (fire-and-forget, non-blocking)
-    trackGA4ServerEvent(name, eventProperties, { userId, deviceId }).catch(() => {});
+    trackGA4ServerEvent(name, eventProperties, {
+      userId,
+      deviceId,
+      gaClientId,
+      gaSessionId,
+    }).catch(() => {});
 
     return response.ok;
   } catch (err) {
@@ -332,7 +350,7 @@ export async function trackServerEvent(
 async function trackGA4ServerEvent(
   name: IAnalyticsEvent['name'],
   properties: Record<string, unknown>,
-  options: { userId?: string; deviceId?: string }
+  options: { userId?: string; deviceId?: string; gaClientId?: string; gaSessionId?: string }
 ): Promise<void> {
   const measurementId = serverEnv.GA_MEASUREMENT_ID;
   const apiSecret = serverEnv.GA4_API_SECRET;
@@ -359,6 +377,11 @@ async function trackGA4ServerEvent(
     if (properties.pack) ga4Params.item_name = properties.pack;
   }
 
+  if (options.gaSessionId) {
+    ga4Params.session_id = options.gaSessionId;
+    ga4Params.engagement_time_msec = 1;
+  }
+
   try {
     const response = await fetchAnalyticsWithTimeout(
       `https://www.google-analytics.com/mp/collect?measurement_id=${measurementId}&api_secret=${apiSecret}`,
@@ -366,7 +389,7 @@ async function trackGA4ServerEvent(
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          client_id: options.deviceId || `server-${Date.now()}`,
+          client_id: options.gaClientId || options.deviceId || `server-${Date.now()}`,
           user_id: options.userId || undefined,
           events: [{ name: ga4EventName, params: ga4Params }],
         }),

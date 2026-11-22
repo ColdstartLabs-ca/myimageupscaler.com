@@ -7,6 +7,7 @@ import { STRIPE_PRICES, assertKnownPriceId, resolvePlanOrPack } from '@shared/co
 import { getTrialConfig } from '@shared/config/subscription.config';
 import { getPricingRegion, getDiscountedPriceInCents } from '@shared/config/pricing-regions';
 import { PRICING_GEO_COOKIE_NAME, parsePricingGeoSession } from '@shared/utils/pricing-geo-session';
+import { parseGa4CookieContext } from '@shared/analytics/ga4-cookie-context';
 import {
   isDiscountValid,
   calculateStackedDiscount,
@@ -81,6 +82,8 @@ const RESERVED_CHECKOUT_METADATA_KEYS = new Set([
   'auto_top_up_consent_version',
   'auto_top_up_threshold',
   'auto_top_up_pack_key',
+  'ga_client_id',
+  'ga_session_id',
   ...Object.values(EXPERIMENT_CHECKOUT_METADATA_KEYS),
   ...Object.values(FUNNEL_CHECKOUT_METADATA_KEYS),
   // bandit_arm_id is intentionally NOT reserved: it comes from the client (via /api/geo)
@@ -776,6 +779,7 @@ export async function POST(request: NextRequest) {
       lineItems = [{ price: validatedPriceId, quantity: 1 }];
     }
 
+    const ga4Context = parseGa4CookieContext(request.headers.get('cookie'));
     const checkoutMetadata: Record<string, string> = {
       ...customMetadata,
       ...validatedExperimentMetadata,
@@ -785,6 +789,8 @@ export async function POST(request: NextRequest) {
       pricing_region: resolvedPricingRegion,
       discount_percent: regionalDiscountPercent.toString(),
       effective_discount_percent: effectiveDiscountPercent.toString(),
+      ...(ga4Context.gaClientId ? { ga_client_id: ga4Context.gaClientId } : {}),
+      ...(ga4Context.gaSessionId ? { ga_session_id: ga4Context.gaSessionId } : {}),
       // Track engagement discount for webhook redemption
       ...(engagementDiscountPercent > 0
         ? {
@@ -839,6 +845,8 @@ export async function POST(request: NextRequest) {
           plan_key: unifiedMetadata?.key || '',
           ...validatedFunnelMetadata,
           ...validatedExperimentMetadata,
+          ...(ga4Context.gaClientId ? { ga_client_id: ga4Context.gaClientId } : {}),
+          ...(ga4Context.gaSessionId ? { ga_session_id: ga4Context.gaSessionId } : {}),
         },
       };
 

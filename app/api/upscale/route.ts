@@ -5,6 +5,7 @@ import {
   readBoundedJsonBody,
 } from '@server/http/read-bounded-json-body';
 import { trackServerEvent } from '@server/analytics';
+import { parseGa4CookieContext } from '@shared/analytics/ga4-cookie-context';
 import { normalizeCoreEventProperties } from '@server/analytics/core-event-contract';
 import { createLogger } from '@server/monitoring/logger';
 import { upscaleRateLimit } from '@server/rateLimit';
@@ -247,6 +248,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   let processingProvider: string | undefined;
   let coreTerminalEventEmitted = false;
   const requestId = req.headers.get('x-request-id') || req.headers.get('cf-ray') || undefined;
+  const ga4Context = parseGa4CookieContext(req.headers.get('cookie'));
+  const ga4EventContext = {
+    ...(ga4Context.gaClientId ? { gaClientId: ga4Context.gaClientId } : {}),
+    ...(ga4Context.gaSessionId ? { gaSessionId: ga4Context.gaSessionId } : {}),
+  };
   let creditsRefunded = false;
   let asyncHandoff = false;
   let replayError: AsyncUpscaleError | undefined;
@@ -343,7 +349,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             ...properties,
           }),
         },
-        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId, ...ga4EventContext }
       );
     } catch {
       logger.warn('Failed to track processing_failed event', {
@@ -360,7 +366,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       await trackServerEvent(
         'image_upscaled',
         { ...normalizeCoreEventProperties('image_upscaled', properties) },
-        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId, ...ga4EventContext }
       );
     } catch {
       logger.warn('Failed to track image_upscaled event', {
@@ -579,7 +585,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           windowMs: 60000,
           retryAfter: Math.ceil((reset - Date.now()) / 1000),
         },
-        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId, ...ga4EventContext }
       );
 
       const retryAfter = Math.ceil((reset - Date.now()) / 1000);
@@ -1316,7 +1322,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         qualityTier: resolvedTier,
         modelUsed: resolvedModelId,
       },
-      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId, ...ga4EventContext }
     );
 
     // Add delay between AI analysis and image processing to avoid Replicate rate limits
@@ -1493,7 +1499,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           : undefined,
         success: true,
       },
-      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+      { apiKey: serverEnv.AMPLITUDE_API_KEY, userId, ...ga4EventContext }
     );
 
     // Get the actual model config for display name
@@ -1749,7 +1755,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             success: false,
             errorType: `replicate_${error.code}`,
           },
-          { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+          { apiKey: serverEnv.AMPLITUDE_API_KEY, userId, ...ga4EventContext }
         );
         await trackProcessingFailure({
           errorType: `replicate_${error.code}`,
@@ -1804,7 +1810,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             success: false,
             errorType: `ai_generation_${error.finishReason}`,
           },
-          { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+          { apiKey: serverEnv.AMPLITUDE_API_KEY, userId, ...ga4EventContext }
         );
         await trackProcessingFailure({
           errorType: `ai_generation_${error.finishReason}`,
@@ -1850,7 +1856,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           success: false,
           errorType: 'unexpected_internal_error',
         },
-        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+        { apiKey: serverEnv.AMPLITUDE_API_KEY, userId, ...ga4EventContext }
       );
       await trackProcessingFailure({
         errorType: 'unexpected_internal_error',

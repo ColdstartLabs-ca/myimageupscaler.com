@@ -120,12 +120,16 @@ describe('POST /api/checkout price alignment', () => {
   const discountValidMock = vi.mocked(isDiscountValid);
   const trackServerEventMock = vi.mocked(trackServerEvent);
 
-  function createRequest(body: Record<string, unknown>): NextRequest {
+  function createRequest(
+    body: Record<string, unknown>,
+    extraHeaders: Record<string, string> = {}
+  ): NextRequest {
     return new NextRequest('https://example.com/api/checkout', {
       method: 'POST',
       headers: {
         authorization: 'Bearer jwt_token_checkout_alignment',
         'content-type': 'application/json',
+        ...extraHeaders,
       },
       body: JSON.stringify(body),
     });
@@ -283,6 +287,26 @@ describe('POST /api/checkout price alignment', () => {
       expect.anything(),
       expect.anything()
     );
+  });
+
+  test('passes server-owned GA4 cookie context into checkout metadata', async () => {
+    const response = await POST(
+      createRequest(
+        {
+          priceId: STRIPE_PRICES.MEDIUM_CREDITS,
+          metadata: { ga_client_id: 'client-supplied', ga_session_id: '999' },
+        },
+        {
+          cookie: '_ga=GA1.1.1234567890.1700000000; _ga_ABC=GS1.1.1700000001.4.0.0',
+        }
+      )
+    );
+
+    expect(response.status).toBe(200);
+    expect(getCreatedSessionParams().metadata).toMatchObject({
+      ga_client_id: '1234567890.1700000000',
+      ga_session_id: '1700000001',
+    });
   });
 
   test('persists explicit Small/Medium auto top-up consent and retains payment method', async () => {
