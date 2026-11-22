@@ -25,6 +25,7 @@ import { BlogCTA, parseCTAMarker } from '@client/components/blog/BlogCTA';
 import { buildBlogAboutEntities, buildBlogBreadcrumbJsonLd } from '@lib/seo/blog-template-signals';
 import { BLOG_SPECIALIST_PROFILE } from '@lib/blog/specialist-profile';
 import { getRelatedPostsForSlug } from '@lib/seo/seo-equity';
+import { getBlogContextualToolLinks } from '@lib/seo/blog-tool-links';
 import { getPageIntent } from '@lib/seo/page-intent';
 import { BlogFaqSection } from '@client/components/blog/BlogFaqSection';
 import { buildFallbackBlogFaq, buildFaqJsonLd } from '@lib/blog/blog-faq';
@@ -304,6 +305,7 @@ export default async function BlogPostPage({ params }: IPageProps) {
   const aboveFoldCta =
     pageIntent === 'informational' ? INFORMATIONAL_CTA_DESTINATIONS[slug] : undefined;
   const readingTime = post.readingTime ?? '5 min read';
+  const toolLinks = getBlogContextualToolLinks(slug);
   const schemaOrg = { appName: clientEnv.APP_NAME, baseUrl: clientEnv.BASE_URL };
   const quickVerdict = getQuickVerdict(post);
 
@@ -593,6 +595,30 @@ export default async function BlogPostPage({ params }: IPageProps) {
                 </div>
                 <BlogFaqSection items={fallbackFaqItems} />
                 <BlogSpecialistSection specialist={BLOG_SPECIALIST_PROFILE} />
+                {toolLinks.length > 0 && (
+                  <section
+                    aria-labelledby="blog-try-it-heading"
+                    className="not-prose mt-12 border-t border-border/50 pt-10"
+                  >
+                    <div className="rounded-2xl border border-border bg-surface/70 p-5 sm:p-6">
+                      <h2
+                        id="blog-try-it-heading"
+                        className="text-lg font-semibold text-primary"
+                      >
+                        Try it
+                      </h2>
+                      <ul className="mt-3 space-y-2">
+                        {toolLinks.map(toolLink => (
+                          <li key={toolLink.href}>
+                            <Link href={toolLink.href} className="text-accent hover:underline">
+                              {toolLink.anchor}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </section>
+                )}
               </div>
 
               <aside className="hidden lg:sticky lg:top-20 lg:block">

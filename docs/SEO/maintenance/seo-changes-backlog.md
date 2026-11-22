@@ -12,6 +12,14 @@ Maintenance rules:
 
 ## 2026-11-21
 
+### Blog contextual links to intent-owning tool pages
+
+- **Why:** Route blog traffic to the tool or alternative page that owns the intent (PRD-TR-2026-11-02 AC-4) without editing Supabase blog content.
+- **Changes:** New `getBlogContextualToolLinks` maps a post slug through an ordered rule list (background/transparent/cutout → remove-bg + make-image-transparent; adobe/photoshop → vs-adobe-express; image-upscaler-8x → ai-image-upscaler; upscale/resolution/enlarge → homepage), max 2 links, with 4 open experiment slugs excluded. Blog post page renders a server-only "Try it" box after the article body and before related posts.
+- **Files:** `lib/seo/blog-tool-links.ts`, `app/[locale]/blog/[slug]/page.tsx`, `tests/unit/seo/internal-links-funnel.unit.spec.ts`.
+- **Validation:** `tests/unit/seo/internal-links-funnel.unit.spec.ts` 10/10; full `tests/unit/seo/` 1,722/1,722 pass; `tsc --noEmit` clean.
+- **Follow-up:** Read back outbound click and tool-page sessions from the 4 mapped blog clusters after 14 days.
+
 ### Index-bloat consolidation — 66 blog 301s, 14 noindex, list filtering
 
 - **Why:** Execute the Phase 2 dispositions in the 2026-11-21 index-bloat manifest so duplicate-intent posts stop competing and zero-demand posts leave the index.
