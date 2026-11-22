@@ -31,9 +31,7 @@ function parseSessionId(value: string): string | undefined {
  * Reads the GA4 client_id and session_id from first-party Google Analytics cookies
  * so server-side Measurement Protocol events join the browser's own session.
  */
-export function parseGa4CookieContext(
-  cookieHeader: string | null | undefined
-): IGa4CookieContext {
+export function parseGa4CookieContext(cookieHeader: string | null | undefined): IGa4CookieContext {
   const context: IGa4CookieContext = {};
   if (!cookieHeader) return context;
 

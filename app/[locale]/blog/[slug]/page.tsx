@@ -601,10 +601,7 @@ export default async function BlogPostPage({ params }: IPageProps) {
                     className="not-prose mt-12 border-t border-border/50 pt-10"
                   >
                     <div className="rounded-2xl border border-border bg-surface/70 p-5 sm:p-6">
-                      <h2
-                        id="blog-try-it-heading"
-                        className="text-lg font-semibold text-primary"
-                      >
+                      <h2 id="blog-try-it-heading" className="text-lg font-semibold text-primary">
                         Try it
                       </h2>
                       <ul className="mt-3 space-y-2">
