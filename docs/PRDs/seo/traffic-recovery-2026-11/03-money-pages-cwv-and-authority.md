@@ -34,7 +34,7 @@
 - [x] AC-1 [local]: Below-fold homepage/tool heavy client modules are dynamically deferred without regressing SSR hero LCP (`fetchPriority="high"`), `HeroBeforeAfter` interactivity, or `protected-pages` SEO contracts, and `ImageObject` structured data + descriptive WebP alt/filenames validate on `/`, `/tools/ai-image-upscaler`, and `/scale/*` — proof: `npx vitest run tests/unit/seo/homepage-performance.unit.spec.ts tests/unit/seo/mobile-psi-lcp-hints.unit.spec.ts tests/unit/seo/protected-pages.unit.spec.ts && yarn verify` — Evidence: `f22a00f3`; `CreatorsSection` deferred (no eager framer-motion on `/`), `ImageObject` on `/`, tool and scale pages with `beforeAfterImages`.
 - [x] AC-2 [local]: `/` above-fold capabilities (`2x/4x/8x/16x`, `JPEG/PNG/WebP/HEIC`, region-aware free offer), `/blog/free-ai-upscaler-no-watermark` + `/blog/how-to-upscale-dalle-images` edit briefs, and the 5-image benchmark schema/template component for `/blog/best-free-ai-image-upscaler-2026-tested-compared` pass SEO contract/schema/unit tests — proof: `npx vitest run tests/unit/seo/ && yarn verify` — Evidence: `7fe91f29` (`blog-edit-briefs-2026-11-21.md`: two Three Kings briefs + flagship 5-image template). Homepage above-fold capability copy deferred — see Decisions.
 - [x] AC-3 [local]: Guest 1-image 2× upscale trial architecture spec (Turnstile gate, IP rate-limit tier, COGS math, 4×/8× signup gate) and clean-authority disavow/editorial/Reddit outreach dossier exist with concrete verified inputs and no ungrounded claims — proof: `test -s docs/PRDs/seo/traffic-recovery-2026-11/guest-trial-and-authority-spec.md && yarn verify` — Evidence: `7fe91f29`. Guest trial recorded as closed by owner decision.
-- [ ] AC-4 [local]: Zero regressions across E2E homepage performance spec against production build (`fetchPriority="high"`, 2× navbar logo, below-fold deferral) — proof: `yarn build && npx playwright test tests/e2e/homepage-performance.e2e.spec.ts` — Evidence: pending.
+- [x] AC-4 [local]: Zero regressions across E2E homepage performance spec against production build (`fetchPriority="high"`, 2× navbar logo, below-fold deferral) — proof: `yarn build && npx playwright test tests/e2e/homepage-performance.e2e.spec.ts` — Evidence: 2026-11-21 on `c084cad9`: `yarn build` exit 0, `homepage-performance.e2e.spec.ts` 3/3 pass.
 
 ## Blocked on
 
@@ -45,12 +45,12 @@
 
 ## Integration Ledger
 
-| Capability                         | Reachable consumer/trigger                                                                                                                           | Replaces / disposition                                                     | Evidence                                                |
-| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------- |
-| Mobile CWV/INP client deferral     | `app/[locale]/page.tsx` + `client/components/pages/HomePageClient.tsx` + `client/components/landing/`                                                | Eager hydration of below-fold client bundles contributing to `INP > 200ms` | AC-1 (`f22a00f3`), AC-4 (pending: production-build E2E) |
-| Image Search `ImageObject` SEO     | `lib/seo/` schema builders + `client/components/landing/HeroSection.tsx:30` + `app/(pseo)/scale/[slug]/page.tsx`                                     | Generic image metadata missing explicit `ImageObject` structured signals   | AC-1 (`f22a00f3`)                                       |
-| Money-page copy & benchmark brief  | `locales/en/common.json` + `client/components/landing/` + blog API briefs (`free-ai-upscaler-no-watermark`, `how-to-upscale-dalle-images`, flagship) | Unsubstantiated comparisons & missing `ChatGPT` / `2x–16x` clarity         | AC-2 (`7fe91f29`, `0ce61ac0`)                           |
-| Guest 2× trial & authority dossier | `docs/PRDs/seo/traffic-recovery-2026-11/guest-trial-and-authority-spec.md`                                                                           | Undocumented compute/abuse assumptions and ad-hoc directory outreach       | AC-3 (`7fe91f29`, `da9e4685`)                           |
+| Capability                         | Reachable consumer/trigger                                                                                                                           | Replaces / disposition                                                     | Evidence                                         |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------ |
+| Mobile CWV/INP client deferral     | `app/[locale]/page.tsx` + `client/components/pages/HomePageClient.tsx` + `client/components/landing/`                                                | Eager hydration of below-fold client bundles contributing to `INP > 200ms` | AC-1 (`f22a00f3`), AC-4 (`c084cad9` build + E2E) |
+| Image Search `ImageObject` SEO     | `lib/seo/` schema builders + `client/components/landing/HeroSection.tsx:30` + `app/(pseo)/scale/[slug]/page.tsx`                                     | Generic image metadata missing explicit `ImageObject` structured signals   | AC-1 (`f22a00f3`)                                |
+| Money-page copy & benchmark brief  | `locales/en/common.json` + `client/components/landing/` + blog API briefs (`free-ai-upscaler-no-watermark`, `how-to-upscale-dalle-images`, flagship) | Unsubstantiated comparisons & missing `ChatGPT` / `2x–16x` clarity         | AC-2 (`7fe91f29`, `0ce61ac0`)                    |
+| Guest 2× trial & authority dossier | `docs/PRDs/seo/traffic-recovery-2026-11/guest-trial-and-authority-spec.md`                                                                           | Undocumented compute/abuse assumptions and ad-hoc directory outreach       | AC-3 (`7fe91f29`, `da9e4685`)                    |
 
 ## Decisions
 
@@ -64,11 +64,11 @@
 
 #### Phase 1: Mobile CWV/INP script deferral & Image Search schema pass
 
-**Status:** DONE in code; the production-build homepage performance E2E (AC-4) is still to run before deploy
+**Status:** DONE
 **Files:** `client/components/pages/HomePageClient.tsx`, below-fold `client/components/landing/*` sections, `lib/seo/` ImageObject schema helper, `tests/unit/seo/homepage-performance.unit.spec.ts`, `tests/e2e/homepage-performance.e2e.spec.ts`.
 **Implementation:** Use `next/dynamic` (with non-blocking placeholders preserving zero CLS `< 0.1`) for below-fold interactive modals/galleries/pricing previews on `/` and tool pages so main-thread hydration INP drops `< 200ms`; keep hero LCP untouched; attach descriptive WebP `ImageObject` JSON-LD + keyword-rich alt attributes to capture growing Google Image Search (`+32.3%`).
 
-- [ ] Below-fold client deferral, ImageObject schema, and production-build E2E homepage performance pass — proof: `yarn build && npx playwright test tests/e2e/homepage-performance.e2e.spec.ts && yarn verify` — covers AC-1, AC-4.
+- [x] Below-fold client deferral, ImageObject schema, and production-build E2E homepage performance pass — proof: `yarn build && npx playwright test tests/e2e/homepage-performance.e2e.spec.ts && yarn verify` — covers AC-1, AC-4.
 
 #### Phase 2: Money-page capability clarity, eligible blog refreshes & flagship benchmark scaffold
 
