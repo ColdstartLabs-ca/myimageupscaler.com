@@ -39,6 +39,24 @@ describe('published blog inventory', () => {
     );
   });
 
+  it('keeps consolidated and blocklisted posts out of list results', async () => {
+    const query = {
+      select: vi.fn(),
+      eq: vi.fn(),
+      order: vi.fn(),
+    };
+    query.select.mockReturnValue(query);
+    query.eq.mockReturnValue(query);
+    query.order.mockResolvedValue({ data: [], error: null });
+    from.mockReturnValue(query);
+
+    const { getAllPublishedPosts } = await import('@server/services/blog.service');
+    const slugs = (await getAllPublishedPosts()).map(post => post.slug);
+
+    expect(slugs).not.toContain('social-media-image-sizes-guide-2025');
+    expect(slugs).toContain('dalle-3-image-enhancement-guide');
+  });
+
   it('keeps static generation working when the database inventory is unavailable', async () => {
     const query = {
       select: vi.fn(),

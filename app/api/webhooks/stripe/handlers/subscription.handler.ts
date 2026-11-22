@@ -854,6 +854,17 @@ export class SubscriptionHandler {
           options.previousStatus === 'incomplete');
       const shouldEmitCreated =
         isAcceptedStatus && (lifecycleAction === 'created' || becameActiveFromIncomplete);
+      const gaContext = {
+        ...(subscription.metadata?.ga_client_id
+          ? { gaClientId: subscription.metadata.ga_client_id }
+          : {}),
+        ...(subscription.metadata?.ga_session_id
+          ? { gaSessionId: subscription.metadata.ga_session_id }
+          : {}),
+      };
+
+      // Later lifecycle events keep the GA client, not the checkout session.
+      const gaClientContext = gaContext.gaClientId ? { gaClientId: gaContext.gaClientId } : {};
 
       // Creation semantics come from Stripe's lifecycle action, not from whether another
       // webhook (usually checkout.session.completed) inserted the database row first.
@@ -874,6 +885,7 @@ export class SubscriptionHandler {
             sourceObjectId: subscription.id,
             lifecycleAction: 'subscription_created',
             deduplicate: true,
+            ...gaContext,
           }
         );
       } else if (isAcceptedStatus && lifecycleAction === 'updated') {
@@ -887,7 +899,7 @@ export class SubscriptionHandler {
             status: subscription.status,
             subscriptionId: subscription.id,
           },
-          { apiKey: serverEnv.AMPLITUDE_API_KEY, userId }
+          { apiKey: serverEnv.AMPLITUDE_API_KEY, userId, ...gaClientContext }
         );
 
         const isPlanChange = Boolean(
@@ -920,6 +932,7 @@ export class SubscriptionHandler {
               sourceObjectId: subscription.id,
               lifecycleAction: 'subscription_plan_change',
               deduplicate: true,
+              ...gaClientContext,
             }
           ).catch(error => {
             console.error('[ANALYTICS] Plan-change purchase tracking failed', {
@@ -943,6 +956,7 @@ export class SubscriptionHandler {
           userId,
           sourceObjectId: subscription.id,
           deduplicate: true,
+          ...gaClientContext,
         };
 
         if (subscription.cancel_at_period_end) {
@@ -1053,6 +1067,9 @@ export class SubscriptionHandler {
     }
     const cancellationReason = getCancellationReason(subscription, storedSubscription);
     const effectiveAt = resolveCancellationEffectiveAt(subscription, storedSubscription);
+    const gaContext = subscription.metadata?.ga_client_id
+      ? { gaClientId: subscription.metadata.ga_client_id }
+      : {};
 
     // Update subscription status
     const { error: subError } = await supabaseAdmin
@@ -1096,6 +1113,7 @@ export class SubscriptionHandler {
           sourceObjectId: subscription.id,
           lifecycleAction: 'subscription_canceled',
           deduplicate: true,
+          ...gaContext,
         }
       );
 

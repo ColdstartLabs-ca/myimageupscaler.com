@@ -12,6 +12,38 @@ Maintenance rules:
 
 ## 2026-11-21
 
+### pSEO prune, hreflang twins, ImageObject, homepage deferral, publishing freeze (PRD-TR-2026-11-02/03)
+
+- **Why:** Cut crawl spent on zero-click templates, stop hreflang pairs that point at noindex pages, give Image Search explicit image signals, and cut homepage hydration on mobile.
+- **Changes:** 35 zero-click `platform-format` pages get `noindex` (row flag, sitemap + meta); `content/pseo-performance.json` refreshed to Aug 21–Nov 18; pSEO hreflang alternates keep only `shouldSubmit` locale twins; `ImageObject` JSON-LD on `/`, tool and scale pages with before/after images; `CreatorsSection` hydrates through `DeferredSection`; `blog-opportunities-publisher` freezes new posts until PRD-TR-2026-11-02 closes.
+- **Files:** `app/seo/data/platform-format.json`, `content/pseo-performance.json`, `lib/seo/metadata-factory.ts`, `lib/seo/schema-generator.ts`, `app/[locale]/page.tsx`, `client/components/landing/DeferredCreatorsSection.tsx`, `.claude/skills/blog-opportunities-publisher/SKILL.md`.
+- **Validation:** `platform-format-prune`, `hreflang-indexable-pairs` (red: `vs-topaz → fr`, `remove-bg → pt`), `homepage-performance`, `schema-generator` unit specs.
+- **Follow-up:** After deploy, check GSC Page Indexing (`939` crawled-not-indexed baseline) at 30 and 60 days, and the CWV report from Dec 15.
+
+### Blog contextual links to intent-owning tool pages
+
+- **Why:** Route blog traffic to the tool or alternative page that owns the intent (PRD-TR-2026-11-02 AC-4) without editing Supabase blog content.
+- **Changes:** New `getBlogContextualToolLinks` maps a post slug through an ordered rule list (background/transparent/cutout → remove-bg + make-image-transparent; adobe/photoshop → vs-adobe-express; image-upscaler-8x → ai-image-upscaler; upscale/resolution/enlarge → homepage), max 2 links, with 4 open experiment slugs excluded. Blog post page renders a server-only "Try it" box after the article body and before related posts.
+- **Files:** `lib/seo/blog-tool-links.ts`, `app/[locale]/blog/[slug]/page.tsx`, `tests/unit/seo/internal-links-funnel.unit.spec.ts`.
+- **Validation:** `tests/unit/seo/internal-links-funnel.unit.spec.ts` 10/10; full `tests/unit/seo/` 1,722/1,722 pass; `tsc --noEmit` clean.
+- **Follow-up:** Read back outbound click and tool-page sessions from the 4 mapped blog clusters after 14 days.
+
+### Index-bloat consolidation — 66 blog 301s, 14 noindex, list filtering
+
+- **Why:** Execute the Phase 2 dispositions in the 2026-11-21 index-bloat manifest so duplicate-intent posts stop competing and zero-demand posts leave the index.
+- **Changes:** Generated `shared/constants/blog-consolidation.json` from the manifest (reproducible with `node scripts/seo/audit-index-bloat.cjs --emit-consolidation`); appended plain and locale-prefixed 301s in `next.config.js`; unioned redirect and noindex slugs into `BLOCKED_BLOG_SLUGS`; noindexed the 14 consolidation slugs in blog post metadata (follow stays true); filtered blocked slugs from `getAllPublishedPosts` and `server/blog.getPostsBySlugs`, keeping single-post reads available.
+- **Files:** `shared/constants/blog-consolidation.json`, `shared/constants/blocked-blog-slugs.ts`, `next.config.js`, `app/[locale]/blog/[slug]/page.tsx`, `server/services/blog.service.ts`, `server/blog.ts`, `scripts/seo/audit-index-bloat.cjs`, `scripts/seo/blog-indexation-report.ts`.
+- **Validation:** new RED-first assertions for redirect parity, no chains, guarded targets, blocked sets, noindex helper and list filtering; `tests/unit/seo/` 1,710/1,710 pass; `tsc --noEmit` clean.
+- **Follow-up:** After deploy, confirm 301 responses for the 66 sources and `noindex` on the 14 rendered posts in GSC URL Inspection.
+
+### SERP snippet repair for 5 pSEO pages and plain-link llms.txt
+
+- **Why:** Remove broken English and false promises from high-impression snippets, and align llms.txt with real product facts.
+- **Changes:** Rewrote `vs-iloveimg` title to "AI Upscaling Compared (2026)"; made `vs-adobe-express` meta description and intro open with an at-a-glance limits summary (limited free features vs. free credits for AI detail recovery), keeping the "Adobe Express image upscaler" keyword; rewrote `make-image-transparent`, `remove-bg`, and `image-cutout-tool` titles/descriptions around verified free, no-signup, no-watermark, in-browser processing; added free/account and upload FAQs to `make-image-transparent` and `image-cutout-tool`; removed every `utm_source=chatgpt` suffix from `/llms.txt`, corrected the max scale to 8x (`MODEL_COSTS.MAX_SCALE_PREMIUM`), and added a "Free Tools (No Signup)" list.
+- **Files:** `app/seo/data/alternatives.json`, `app/seo/data/tools.json`, `app/seo/data/interactive-tools.json`, `app/llms.txt/route.ts`.
+- **Validation:** new RED-first assertions in `tests/unit/seo/llms-txt.unit.spec.ts` and `tests/unit/seo/pseo-alternatives-quality.unit.spec.ts`; full `tests/unit/seo/` suite 1,663/1,663 pass.
+- **Follow-up:** Read back GSC CTR for the 5 URLs after 14 complete days.
+
 ### Squash `release/miu-recovery-20261101` onto `master` (local, awaiting deploy)
 
 - **Why:** Reconciled and landed the remaining unshipped Nov 1 recovery commits on `master` alongside Nov 2–19 cache, sitemap, and `fetchPriority` work so the next production deploy ships all pending SEO, attribution, and static-caching fixes together.

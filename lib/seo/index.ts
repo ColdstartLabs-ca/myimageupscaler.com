@@ -113,6 +113,7 @@ export {
   generateUseCaseSchema,
   generateAlternativeSchema,
   generateHomepageSchema,
+  generateImageObjectSchema,
   generateFAQSchema,
   generateHowToSchema,
 } from './schema-generator';

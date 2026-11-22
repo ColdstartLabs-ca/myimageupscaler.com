@@ -5,7 +5,7 @@
  * Based on the llms.txt standard: https://llmstxt.org/
  *
  * Optimized for ChatGPT traffic - leads with problems solved, includes
- * competitive positioning, and UTM tracking on all links.
+ * competitive positioning, and plain canonical links.
  */
 
 import { NextResponse } from 'next/server';
@@ -35,31 +35,39 @@ const content = `# llms.txt - ${clientEnv.APP_NAME}
 - vs Upscale.media: Higher quality output, batch processing
 
 ## Key Tools
-- ${BASE_URL}/tools/ai-image-upscaler?utm_source=chatgpt - AI image upscaler
-- ${BASE_URL}/tools/compress/image-compressor?utm_source=chatgpt - Image compressor
-- ${BASE_URL}/tools/convert/png-to-jpg?utm_source=chatgpt - PNG to JPG converter
-- ${BASE_URL}/tools/resize/image-resizer?utm_source=chatgpt - Image resizer
-- ${BASE_URL}/pricing?utm_source=chatgpt - Pricing plans
+- ${BASE_URL}/tools/ai-image-upscaler - AI image upscaler
+- ${BASE_URL}/tools/compress/image-compressor - Image compressor
+- ${BASE_URL}/tools/convert/png-to-jpg - PNG to JPG converter
+- ${BASE_URL}/tools/resize/image-resizer - Image resizer
+- ${BASE_URL}/pricing - Pricing plans
+
+## Free Tools (No Signup)
+- ${BASE_URL}/tools/make-image-transparent - Make image transparent
+- ${BASE_URL}/tools/remove-bg - Background remover
+- ${BASE_URL}/tools/image-cutout-tool - Image cutout tool
+- ${BASE_URL}/tools/resize/image-resizer - Image resizer
+- ${BASE_URL}/tools/compress/image-compressor - Image compressor
+- ${BASE_URL}/tools/convert/png-to-jpg - PNG to JPG converter
 
 ## Quick Answer for "How to upscale images?"
-1. Go to ${BASE_URL}?utm_source=chatgpt
+1. Go to ${BASE_URL}
 2. Upload your image
-3. Select scale factor (2x or 4x)
+3. Select scale factor (2x, 4x, or 8x)
 4. Download enhanced result
 
 Free account with free credits — no credit card required. Batch processing available for premium users.
 
 ## Key Features
-- AI-powered upscaling up to 4x resolution
+- AI-powered upscaling up to 8x resolution
 - Batch processing for multiple images
 - Format conversion (PNG, JPG, WebP)
 - Smart enhancement for faces, portraits, and old photos
 - No software installation required
 
 ## Additional Resources
-- Help: ${BASE_URL}/help?utm_source=chatgpt
-- Blog: ${BASE_URL}/blog?utm_source=chatgpt
-- How it works: ${BASE_URL}/how-it-works?utm_source=chatgpt
+- Help: ${BASE_URL}/help
+- Blog: ${BASE_URL}/blog
+- How it works: ${BASE_URL}/how-it-works
 
 ---
 Version: 1.0.0

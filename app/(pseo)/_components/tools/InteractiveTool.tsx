@@ -5,9 +5,17 @@
  * Provides common UI and functionality for client-side image tools
  */
 
-import React, { useState, useCallback, ReactNode } from 'react';
+import React, { useState, useCallback, useMemo, ReactNode } from 'react';
 import { Download, RefreshCw, AlertCircle } from 'lucide-react';
 import { FileUpload } from '@/app/(pseo)/_components/ui/FileUpload';
+import { analytics } from '@client/analytics/analyticsClient';
+import { PostToolUpsell } from './PostToolUpsell';
+
+const MIME_TO_EXT: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+};
 
 export interface IInteractiveToolProps {
   title: string;
@@ -16,6 +24,8 @@ export interface IInteractiveToolProps {
   acceptedFormats?: string[];
   children: (props: IToolChildProps) => ReactNode;
   onProcess?: (file: File) => Promise<Blob>;
+  /** Stable tool identifier for analytics and the workspace handoff. */
+  toolId?: string;
 }
 
 export interface IToolChildProps {
@@ -34,6 +44,7 @@ export function InteractiveTool({
   acceptedFormats = ['image/jpeg', 'image/png', 'image/webp'],
   children,
   onProcess,
+  toolId,
 }: IInteractiveToolProps): React.ReactElement {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -41,6 +52,16 @@ export function InteractiveTool({
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isResultStale, setIsResultStale] = useState(false);
+
+  const resolvedToolId = useMemo(
+    () =>
+      toolId ??
+      title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, ''),
+    [toolId, title]
+  );
 
   const handleFileSelect = useCallback(
     (selectedFile: File) => {
@@ -81,12 +102,17 @@ export function InteractiveTool({
       const result = await onProcess(file);
       setProcessedBlob(result);
       setIsResultStale(false);
+      analytics.track('interactive_tool_processed', {
+        tool: resolvedToolId,
+        outputType: result.type,
+        outputBytes: result.size,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Processing failed');
     } finally {
       setIsProcessing(false);
     }
-  }, [file, onProcess]);
+  }, [file, onProcess, resolvedToolId]);
 
   const markResultStale = useCallback(() => {
     if (processedBlob) {
@@ -94,29 +120,37 @@ export function InteractiveTool({
     }
   }, [processedBlob]);
 
+  const getOutputFileName = useCallback(
+    (blob: Blob): string | null => {
+      if (!file) return null;
+      const ext = MIME_TO_EXT[blob.type] || 'jpg';
+      // Remove original extension and add correct one
+      const baseName = file.name.replace(/\.[^/.]+$/, '');
+      return `${baseName}-processed.${ext}`;
+    },
+    [file]
+  );
+
   const handleDownload = useCallback(() => {
-    if (!processedBlob || !file) return;
+    if (!processedBlob) return;
+    const outputFileName = getOutputFileName(processedBlob);
+    if (!outputFileName) return;
 
-    // Get correct extension from processed blob's MIME type
-    const mimeToExt: Record<string, string> = {
-      'image/jpeg': 'jpg',
-      'image/png': 'png',
-      'image/webp': 'webp',
-    };
-    const ext = mimeToExt[processedBlob.type] || 'jpg';
-
-    // Remove original extension and add correct one
-    const baseName = file.name.replace(/\.[^/.]+$/, '');
+    analytics.track('interactive_tool_downloaded', {
+      tool: resolvedToolId,
+      outputType: processedBlob.type,
+      outputBytes: processedBlob.size,
+    });
 
     const url = URL.createObjectURL(processedBlob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${baseName}-processed.${ext}`;
+    a.download = outputFileName;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  }, [processedBlob, file]);
+  }, [processedBlob, resolvedToolId, getOutputFileName]);
 
   const handleReset = useCallback(() => {
     if (previewUrl) {
@@ -207,6 +241,16 @@ export function InteractiveTool({
                 Start Over
               </button>
             </div>
+
+            {processedBlob && processedBlob.type.startsWith('image/') && (
+              <div className="mt-3">
+                <PostToolUpsell
+                  blob={processedBlob}
+                  fileName={getOutputFileName(processedBlob) ?? 'image-processed.jpg'}
+                  toolId={resolvedToolId}
+                />
+              </div>
+            )}
 
             {processedBlob && isResultStale && (
               <p className="mt-2 text-xs text-warning">

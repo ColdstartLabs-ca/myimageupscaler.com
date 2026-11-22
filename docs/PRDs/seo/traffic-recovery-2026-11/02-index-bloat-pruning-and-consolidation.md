@@ -1,6 +1,6 @@
 # PRD-TR-2026-11-02 — Index Bloat Pruning, Overlapping Blog Consolidation & Internal Link Funnels
 
-**Status:** NOT STARTED
+**Status:** CODE COMPLETE — blocked on deploy and 30–60d GSC readback
 **Priority:** P1 — Attacks the primary algorithmic drag correlated with the Sep 24–Oct 8 spam update: `939` "Crawled - currently not indexed" pages (more than double `446` on Oct 23), `592/1,000` zero-click pages, ~43 overlapping `"best / photo enhancer / upscaler"` blog posts, and `753` indexed vs `3,640` excluded URLs.
 **Complexity:** 7 (HIGH) — `Complexity: 7 → HIGH; risk override: URL noindex, 301 consolidation, and Supabase blog pruning carry traffic-loss risk if mis-scoped against active click earners or open Three Kings windows.`
 **Owner:** João (production DB backup / blog-API write sign-off, GSC Page Indexing monitoring); agent (audit manifest, code/redirect/sitemap/internal-link PRs, SEO unit tests).
@@ -29,10 +29,10 @@
 
 ## Acceptance Criteria
 
-- [ ] AC-1 [local]: Bloat audit script produces a deterministic JSON/Markdown disposition manifest classifying `0`-click blog posts, off-topic viral posts (with GA4 conversion cross-check), `platform-format`, `alternatives`, and zero-click localized pSEO URLs while excluding active Three Kings guardrails and `/tools/ai-image-upscaler` — proof: `npx vitest run tests/unit/seo/bloat-audit-manifest.unit.spec.ts` — Evidence: pending.
-- [ ] AC-2 [local]: Consolidated blog slugs and retired off-topic slugs have `301` redirects in `next.config.js`, matching entries in `BLOCKED_BLOG_SLUGS` (`shared/constants/blocked-blog-slugs.ts`), zero broken internal links, and pass redirect/sitemap parity tests — proof: `npx vitest run tests/unit/seo/blog-redirects-blocked-from-sitemap.unit.spec.ts tests/unit/seo/legacy-redirects.unit.spec.ts && yarn verify` — Evidence: pending.
-- [ ] AC-3 [local]: Zero-click `platform-format` and zero-click translated pSEO templates serve `noindex, follow`, are omitted from generated sitemaps, and inner-page `hreflang` tags match active indexable locales symmetrically — proof: `npx vitest run tests/unit/seo/sitemap-noindex-parity.unit.spec.ts tests/unit/seo/locale-retraction.unit.spec.ts tests/unit/seo/ && yarn verify` — Evidence: pending.
-- [ ] AC-4 [local]: Contextual internal link graph updates (`background` posts → `/tools/remove-bg` & `/tools/make-image-transparent`; `Adobe/Photoshop` posts → `/alternatives/vs-adobe-express`; `/blog/image-upscaler-8x` → `/tools/ai-image-upscaler`; post-cleanup `"image upscaler"` links → `/`) validate clean targets and no orphan/404 destinations — proof: `npx vitest run tests/unit/seo/internal-links-funnel.unit.spec.ts && yarn verify` — Evidence: pending.
+- [x] AC-1 [local]: Bloat audit script produces a deterministic JSON/Markdown disposition manifest classifying `0`-click blog posts, off-topic viral posts (with GA4 conversion cross-check), `platform-format`, `alternatives`, and zero-click localized pSEO URLs while excluding active Three Kings guardrails and `/tools/ai-image-upscaler` — proof: `npx vitest run tests/unit/seo/bloat-audit-manifest.unit.spec.ts` — Evidence: `1c662268`; manifest `docs/SEO/reports/2026-11-21-index-bloat-manifest.json` from committed GSC 180d + live sitemap inputs. Blog: 200 KEEP, 66 MERGE_301, 14 NOINDEX, 30 DEFER_RECENT, 11 DEFER_GUARDED.
+- [x] AC-2 [local]: Consolidated blog slugs and retired off-topic slugs have `301` redirects in `next.config.js`, matching entries in `BLOCKED_BLOG_SLUGS` (`shared/constants/blocked-blog-slugs.ts`), zero broken internal links, and pass redirect/sitemap parity tests — proof: `npx vitest run tests/unit/seo/blog-redirects-blocked-from-sitemap.unit.spec.ts tests/unit/seo/legacy-redirects.unit.spec.ts && yarn verify` — Evidence: `e35ba7f0`; 66 posts → 301 (plain + locale), 14 → `noindex, follow`, all out of sitemap/index/related lists. Code only, no DB writes.
+- [x] AC-3 [local]: Zero-click `platform-format` and zero-click translated pSEO templates serve `noindex, follow`, are omitted from generated sitemaps, and inner-page `hreflang` tags match active indexable locales symmetrically — proof: `npx vitest run tests/unit/seo/sitemap-noindex-parity.unit.spec.ts tests/unit/seo/locale-retraction.unit.spec.ts tests/unit/seo/ && yarn verify` — Evidence: `1c662268` (35 zero-click `platform-format` pages `noindex`; `content/pseo-performance.json` refreshed to Aug 21–Nov 18, which retracts zero-impression locale twins) and `d90706a4` (hreflang alternates only list indexable twins; red showed `vs-topaz → fr`, `remove-bg → pt`).
+- [x] AC-4 [local]: Contextual internal link graph updates (`background` posts → `/tools/remove-bg` & `/tools/make-image-transparent`; `Adobe/Photoshop` posts → `/alternatives/vs-adobe-express`; `/blog/image-upscaler-8x` → `/tools/ai-image-upscaler`; post-cleanup `"image upscaler"` links → `/`) validate clean targets and no orphan/404 destinations — proof: `npx vitest run tests/unit/seo/internal-links-funnel.unit.spec.ts && yarn verify` — Evidence: `5f366ecf`; code-level blog → tool link map, no Supabase content edits.
 
 ## Blocked on
 
@@ -54,28 +54,33 @@
 - 2026-11-21 (agent/plan): Keep `/tools/ai-image-upscaler`, `/scale/upscale-8x`, and active Three Kings pages out of `301` consolidation; consolidate only zero/low-click overlapping clones in measured batches so Aug 2026 GIF-301 losses do not repeat.
 - 2026-11-21 (agent/plan): Keep `/blog?page=` crawlable with `noindex, follow` + canonical `/blog` rather than adding `robots.txt` `Disallow` so the ~135 `/en/blog` URLs drain cleanly out of Google's index.
 
+- 2026-11-21 (agent): Merge only posts with 0 clicks in 180 days and sitemap `lastmod` before 2026-10-07; owners must earn clicks. Newer zero-click posts are `DEFER_RECENT` for the next batch.
+- 2026-11-21 (agent): Off-topic posts that still earn clicks (`animation-maker-for-minecraft` 288, `4-k-youtube-to-mp-4` 142, `convert-video-to-hd-1080-p-online-free` 51 clicks/180d) stay live, flagged `offTopic` in the manifest. Retiring them trades real clicks for topical focus: João decides.
+- 2026-11-21 (agent): 11 zero-click English `alternatives` pages are recorded as candidates only; the PRD keeps alternatives live.
+- 2026-11-21 (agent): Publishing freeze lives in `.claude/skills/blog-opportunities-publisher/SKILL.md` (the weekly Hermes job reads it from local `master`).
+
 ## Execution Phases
 
 #### Phase 1: Deterministic bloat manifest & `sitemap-static.xml` check
 
-**Status:** NOT STARTED
+**Status:** DONE
 **Files:** `scripts/seo/audit-index-bloat.cjs` (new), `tests/unit/seo/bloat-audit-manifest.unit.spec.ts` (new), `content/pseo-performance.json` (read-only input).
 **Implementation:** Correlate GSC 90d/180d pages, GA4 organic signups/sessions, Supabase blog posts, and `app/seo/data/*.json` to output exact `KEEP` / `MERGE_301` / `NOINDEX_UNPUBLISH` / `DEFER_GUARDED` lists for the ~352 unindexed English blog posts, ~43 overlapping enhancer posts, off-topic posts (`4-k-youtube-to-mp-4`, `animation-maker-for-minecraft`, `windows-11-snap-layouts`, `convert-video-to-hd-1080-p-online-free`), `platform-format`, `alternatives`, and localized pSEO pages. Inspect `app/sitemap-static.xml/route.ts` locally for causes of the `1` GSC warning.
 
-- [ ] Bloat manifest script classifies all candidate blog and pSEO URLs with guardrail exclusions and passes unit checks — proof: `npx vitest run tests/unit/seo/bloat-audit-manifest.unit.spec.ts` — covers AC-1.
+- [x] Bloat manifest script classifies all candidate blog and pSEO URLs with guardrail exclusions and passes unit checks — proof: `npx vitest run tests/unit/seo/bloat-audit-manifest.unit.spec.ts` — covers AC-1.
 
 #### Phase 2: Consolidate overlapping blog clones & retire off-topic drag
 
-**Status:** NOT STARTED
+**Status:** DONE
 **Files:** `next.config.js`, `shared/constants/blocked-blog-slugs.ts`, `tests/unit/seo/blog-redirects-blocked-from-sitemap.unit.spec.ts`, `tests/unit/seo/legacy-redirects.unit.spec.ts`, `docs/SEO/maintenance/seo-changes-backlog.md`.
 **Implementation:** Using the Phase 1 manifest (after João's `yarn db:backup` / unpublish approval for any Supabase row), map zero/low-click enhancer/upscaler duplicates into the `5–8` intent owners and add `301` redirects + `BLOCKED_BLOG_SLUGS` entries; prepare unpublish/redirect specs for zero-conversion off-topic posts. Enforce `blog-redirects-blocked-from-sitemap.unit.spec.ts`.
 
-- [ ] Consolidated and retired blog slugs pass redirect, sitemap exclusion, and full SEO verification — proof: `npx vitest run tests/unit/seo/blog-redirects-blocked-from-sitemap.unit.spec.ts tests/unit/seo/legacy-redirects.unit.spec.ts && yarn verify` — covers AC-2.
+- [x] Consolidated and retired blog slugs pass redirect, sitemap exclusion, and full SEO verification — proof: `npx vitest run tests/unit/seo/blog-redirects-blocked-from-sitemap.unit.spec.ts tests/unit/seo/legacy-redirects.unit.spec.ts && yarn verify` — covers AC-2.
 
 #### Phase 3: Prune zero-click pSEO templates, audit `hreflang`, & rewire internal links
 
-**Status:** NOT STARTED
+**Status:** DONE
 **Files:** `lib/seo/page-eligibility.ts`, `lib/seo/locale-sitemap-handler.ts`, `content/pseo-performance.json`, `app/seo/data/platform-format.json` (or eligibility rules), `lib/seo/related-pages.ts`, `tests/unit/seo/sitemap-noindex-parity.unit.spec.ts`, `tests/unit/seo/internal-links-funnel.unit.spec.ts`.
 **Implementation:** `noindex` + sitemap-exclude zero-click `platform-format` and zero-click translated template pages (`es/pt/de/fr/it/ja`) while retaining active `alternatives` (`vs-adobe-express`, `vs-bigjpg`, `vs-waifu2x`, `vs-iloveimg`); verify inner-page `hreflang` points only to indexable locales; prepare/apply contextual internal-link brief routing background posts → `/tools/remove-bg` & `/tools/make-image-transparent`, Adobe/Photoshop posts → `/alternatives/vs-adobe-express`, `/blog/image-upscaler-8x` → `/tools/ai-image-upscaler`, and `"image upscaler"` anchors → `/`.
 
-- [ ] Pruned pSEO templates, inner `hreflang` parity, and contextual internal-link targets pass unit and verify checks — proof: `npx vitest run tests/unit/seo/ && yarn verify` — covers AC-3, AC-4.
+- [x] Pruned pSEO templates, inner `hreflang` parity, and contextual internal-link targets pass unit and verify checks — proof: `npx vitest run tests/unit/seo/ && yarn verify` — covers AC-3, AC-4.

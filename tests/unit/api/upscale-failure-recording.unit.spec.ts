@@ -152,13 +152,14 @@ vi.mock('@shared/validation/upscale.schema', () => ({
 
 import { POST } from '@/app/api/upscale/route';
 
-function request(tailJobId?: string): NextRequest {
+function request(tailJobId?: string, cookie?: string): NextRequest {
   return new NextRequest('http://localhost/api/upscale', {
     method: 'POST',
     headers: {
       'X-User-Id': 'user-1',
       'content-type': 'application/json',
       ...(tailJobId ? { 'X-Upscale-Job-Id': tailJobId } : {}),
+      ...(cookie ? { cookie } : {}),
     },
     body: JSON.stringify({}),
   });
@@ -591,6 +592,38 @@ describe('POST /api/upscale synchronous failure recording', () => {
       'upscale_completed',
       expect.objectContaining({ modelUsed: 'real-esrgan-large' }),
       expect.anything()
+    );
+  });
+
+  it('forwards GA4 cookie context into upscale_completed analytics options', async () => {
+    mocks.processImage.mockImplementation(
+      async (
+        _userId: string,
+        _input: unknown,
+        options: { onCreditsDeducted?: (deduction: Record<string, unknown>) => void }
+      ) => {
+        options.onCreditsDeducted?.({
+          amount: 1,
+          subscriptionAmount: 1,
+          purchasedAmount: 0,
+          jobId: '11111111-1111-4111-8111-111111111111',
+        });
+        return {
+          imageUrl: 'https://output.test/result.png',
+          mimeType: 'image/png',
+          expiresAt: 1795737600000,
+          creditsRemaining: 4,
+        };
+      }
+    );
+
+    const response = await POST(request(undefined, '_ga=GA1.1.111.222; _ga_ABC=GS1.1.333.1.0.0'));
+
+    expect(response.status).toBe(200);
+    expect(mocks.track).toHaveBeenCalledWith(
+      'upscale_completed',
+      expect.anything(),
+      expect.objectContaining({ gaClientId: '111.222', gaSessionId: '333' })
     );
   });
 

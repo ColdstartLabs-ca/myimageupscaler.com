@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import CreatorsSection from '@client/components/features/landing/CreatorsSection';
 import { HomePageClient } from '@client/components/pages/HomePageClient';
 import { HeroSection } from '@client/components/landing/HeroSection';
+import { DeferredCreatorsSection } from '@client/components/landing/DeferredCreatorsSection';
 import { LandingHeroShell } from '@client/components/landing/LandingHeroShell';
 import { JsonLd } from '@client/components/seo/JsonLd';
 import { LandingBlogSection } from '@client/components/landing/LandingBlogSection';
+import { HERO_COMPARISON_IMAGES } from '@client/components/landing/heroAssets';
 import { generateHomepageSchema } from '@lib/seo/schema-generator';
 import { getHomepageBlogPicks } from '@lib/seo/seo-equity';
 import {
@@ -98,7 +99,13 @@ export async function generateMetadata({ params }: ILocaleHomePageProps): Promis
 
 export default async function LocaleHomePage({ params }: ILocaleHomePageProps) {
   const { locale } = await params;
-  const homepageSchema = generateHomepageSchema(locale);
+  const homepageSchema = generateHomepageSchema(locale, {
+    contentUrl: HERO_COMPARISON_IMAGES.after,
+    name: 'AI-enhanced mountain photo',
+    caption: 'AI-enhanced mountain photo after upscaling',
+    width: 1448,
+    height: 1086,
+  });
   const homepageBlogSlugs = getHomepageBlogPicks(undefined, 4);
 
   return (
@@ -107,7 +114,7 @@ export default async function LocaleHomePage({ params }: ILocaleHomePageProps) {
       <div className="flex-grow bg-main font-sans selection:bg-accent/20 selection:text-white">
         <LandingHeroShell>
           <HeroSection />
-          <CreatorsSection />
+          <DeferredCreatorsSection />
         </LandingHeroShell>
         {/* Below-fold interactive content */}
         <Suspense fallback={<div className="h-screen" />}>

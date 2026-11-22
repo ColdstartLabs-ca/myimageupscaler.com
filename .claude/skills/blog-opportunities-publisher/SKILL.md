@@ -5,6 +5,14 @@ description: Find new blog topic opportunities from Google Search Console and SE
 
 # Blog Opportunities Publisher
 
+## Publishing Freeze (PRD-TR-2026-11-02, from 2026-11-21)
+
+Do NOT publish new posts while the freeze is active. Google indexes 753 pages and leaves 939 as "Crawled - currently not indexed"; 110 of 321 posts earned 0 clicks in 180 days. New posts add to that bloat.
+
+- Active until João lifts it, or until PRD-TR-2026-11-02 moves to `docs/PRDs/done/` (only after its 30-60 day GSC indexing readback shows "Crawled - currently not indexed" below 300).
+- During the freeze, a run does only the no-publish maintenance work: refresh or internally link existing URLs that own the intent.
+- Check: if `docs/PRDs/seo/traffic-recovery-2026-11/02-index-bloat-pruning-and-consolidation.md` still exists at that path, the freeze is active.
+
 ## Overview
 
 Find new blog topics that can realistically win organic traffic, validate them against existing coverage and backlog files, run an anti-cannibalization gate, then use `.claude/skills/blog-publish/SKILL.md` only when a candidate is worth publishing. This skill is the opportunity discovery and selection layer; `blog-publish` is the writing and publishing layer.

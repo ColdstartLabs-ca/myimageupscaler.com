@@ -1,7 +1,7 @@
 # PRD-TR-2026-11-01 — Ship Unmerged Recovery Fixes, High-CTR Tool/Alternative Snippets, GEO & Interactive Tool Upsell
 
-**Status:** IN PROGRESS
-**Progress:** Phase 1 DONE (`eaa2325f`); Phases 2–3 NOT STARTED (scoped for same-day local execution `2026-11-21`).
+**Status:** CODE COMPLETE — blocked on deploy and GA4 Admin (João)
+**Progress:** Phases 1–3 DONE locally (`eaa2325f`, `92988632`, `0868a6a5`, `9cf5977f`; PR #135). Remaining items are in "Blocked on".
 **Priority:** P0 — Unblocks organic `sign_up` attribution (currently `0` in GA4), homepage `"AI image upscaler"` hero recovery (`pos 10.3`, `19,913` imp), `1.50s` stale pSEO TTFB (`/tools/ai-image-upscaler`), and monetization of `235+/mo` engaged zero-signup interactive-tool sessions.
 **Complexity:** 6 (MEDIUM) — `Complexity: 6 → MEDIUM; risk override: none` (`11+` files across Phase 1+2+3 = `+3`, client-to-workspace handoff/funnel state = `+2`, external GA4 Measurement Protocol attribution = `+1`).
 **Owner:** João (production deploy, GA4 Admin referral exclusions & bot filter, manual GSC indexing); agent (Phases 1–3 code, metadata, tests, `yarn verify`).
@@ -35,9 +35,9 @@
 ## Acceptance Criteria
 
 - [x] AC-1 [local]: `release/miu-recovery-20261101` attribution (`sign_up`), King-3 homepage subhead, static `revalidate = false` + `defaultLongLivedTtlSec: 2592000`, `public/_headers`, and E2E hub fix are squashed cleanly onto `master` alongside Nov 13/16 work without regressions — proof: `npx vitest run tests/unit/analytics/analytics-provider-signup.unit.spec.tsx tests/unit/analytics/signup-conversion.unit.spec.ts tests/unit/analytics/signup-identity-race.unit.spec.ts tests/unit/anti-freeloader/users-setup.unit.spec.ts tests/unit/client/utils/account-setup.unit.spec.ts tests/unit/seo/protected-pages.unit.spec.ts tests/unit/seo/blog-core-web-vitals.unit.spec.ts tests/unit/seo/force-static-config.unit.spec.ts tests/unit/seo/homepage-performance.unit.spec.ts tests/unit/seo/opennext-cache-config.unit.spec.ts tests/unit/seo/mobile-psi-lcp-hints.unit.spec.ts && yarn verify` — Evidence: `11/11` files (`187/187` tests) passed, `yarn verify` passed (0 errors), committed as `eaa2325f` on `master`.
-- [ ] AC-2 [local]: `/alternatives/vs-iloveimg`, `/alternatives/vs-adobe-express`, `/tools/make-image-transparent`, `/tools/image-cutout-tool`, `/tools/remove-bg`, and `/llms.txt` expose corrected SERP titles (`≤60` chars, no `"Better & Specialization"`), intent-matched meta/FAQs, and accurate `8x/16x` + free-tool capability copy without adding new pSEO slugs — proof: `npx vitest run tests/unit/seo/ && yarn verify` — Evidence: pending.
-- [ ] AC-3 [local]: Downloading/processing an image in `InteractiveTool.tsx` renders an inline `"Upscale This Image 4× with AI →"` CTA that hands off the processed image to the workspace, and emits `interactive_tool_processed`, `interactive_tool_downloaded`, and `post_tool_upsell_clicked` through `analytics.track` — proof: `npx vitest run tests/unit/seo/interactive-tool-upsell.unit.spec.tsx` — Evidence: pending.
-- [ ] AC-4 [local]: Server-side GA4 `purchase` and `upscale_completed` (`generate_lead`) Measurement Protocol payloads carry the originating browser GA4 `client_id` / `session_id` captured at checkout/session start instead of falling back to `server-${Date.now()}` when browser context exists — proof: `npx vitest run tests/unit/server/analytics/` — Evidence: pending.
+- [x] AC-2 [local]: `/alternatives/vs-iloveimg`, `/alternatives/vs-adobe-express`, `/tools/make-image-transparent`, `/tools/image-cutout-tool`, `/tools/remove-bg`, and `/llms.txt` expose corrected SERP titles (`≤60` chars, no `"Better & Specialization"`), intent-matched meta/FAQs, and accurate `8x/16x` + free-tool capability copy without adding new pSEO slugs — proof: `npx vitest run tests/unit/seo/ && yarn verify` — Evidence: `92988632`; `tests/unit/seo/` 1,663/1,663 at commit time. Max scale is `8x` (`MAX_SCALE_PREMIUM`), not `16x`.
+- [x] AC-3 [local]: Downloading/processing an image in `InteractiveTool.tsx` renders an inline `"Upscale This Image 4× with AI →"` CTA that hands off the processed image to the workspace, and emits `interactive_tool_processed`, `interactive_tool_downloaded`, and `post_tool_upsell_clicked` through `analytics.track` — proof: `npx vitest run tests/unit/seo/interactive-tool-upsell.unit.spec.tsx` — Evidence: `9cf5977f`; 6/6 pass, red first. Free users can pick 4× (`quick` tier scales `[2, 4]`).
+- [x] AC-4 [local]: Server-side GA4 `purchase` and `upscale_completed` (`generate_lead`) Measurement Protocol payloads carry the originating browser GA4 `client_id` / `session_id` captured at checkout/session start instead of falling back to `server-${Date.now()}` when browser context exists — proof: `npx vitest run tests/unit/analytics/ga4-cookie-context.unit.spec.ts tests/unit/analyticsService.unit.spec.ts` — Evidence: `0868a6a5`; 134/134 related tests pass. Server reads the first-party `_ga` / `_ga_<stream>` cookies; no client change.
 
 ## Blocked on
 
@@ -52,14 +52,17 @@
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ----------------- |
 | Organic `sign_up` & King-3 hero        | `app/api/users/setup/route.ts:87` → `client/utils/account-setup.ts` → `client/analytics/signup-conversion.ts:86` → `client/components/analytics/AnalyticsProvider.tsx:29` | Missing browser `sign_up`, null-dropped GA4 params, `"AI photo enhancer"` hero copy                | AC-1 (`eaa2325f`) |
 | Static pSEO & immutable assets         | `app/[locale]/page.tsx`, `app/(pseo)/**`, `open-next.config.ts:25`, `public/_headers`                                                                                     | `revalidate = 86400` causing `1.50s` TTFB / `STALE` pSEO hits                                      | AC-1 (`eaa2325f`) |
-| Tool/Alternative snippets & `llms.txt` | `app/(pseo)/alternatives/[slug]/page.tsx`, `app/(pseo)/tools/[slug]/page.tsx`, `app/llms.txt/route.ts`                                                                    | Broken `vs-iloveimg` title, generic tool snippets, outdated `4x` + hardcoded `?utm_source=chatgpt` | AC-2 (pending)    |
-| Post-download 4× upsell & telemetry    | `app/(pseo)/_components/tools/InteractiveTool.tsx:191` → handoff storage → workspace upload                                                                               | Disconnected `PostToolCTA` (`InteractiveToolPageTemplate.tsx:112`) with zero tool telemetry        | AC-3 (pending)    |
-| GA4 MP session stitching               | `app/api/checkout/route` + `server/analytics/analyticsService.ts:332`                                                                                                     | Synthetic `server-${Date.now()}` client ID causing `19/19` `Unassigned` purchases                  | AC-4 (pending)    |
+| Tool/Alternative snippets & `llms.txt` | `app/(pseo)/alternatives/[slug]/page.tsx`, `app/(pseo)/tools/[slug]/page.tsx`, `app/llms.txt/route.ts`                                                                    | Broken `vs-iloveimg` title, generic tool snippets, outdated `4x` + hardcoded `?utm_source=chatgpt` | AC-2 (`92988632`) |
+| Post-download 4× upsell & telemetry    | `app/(pseo)/_components/tools/InteractiveTool.tsx:191` → handoff storage → workspace upload                                                                               | Disconnected `PostToolCTA` (`InteractiveToolPageTemplate.tsx:112`) with zero tool telemetry        | AC-3 (`9cf5977f`) |
+| GA4 MP session stitching               | `app/api/checkout/route` + `server/analytics/analyticsService.ts:332`                                                                                                     | Synthetic `server-${Date.now()}` client ID causing `19/19` `Unassigned` purchases                  | AC-4 (`0868a6a5`) |
 
 ## Decisions
 
 - 2026-11-21 (agent/plan): Squashed `release/miu-recovery-20261101` onto `master` while preserving Nov 13 `open-next.config.ts` (`bypassTagCacheOnCacheHit`, `cachePurge`, `nonBlockingDoQueue`) and Nov 16 `6f9e1a46` (`fetchPriority="high"`, 2× logo), and excluded `seo/lock-activation-20261101` (which deletes 10 active SEO specs).
 - 2026-11-21 (agent/plan): Excluded `remove background` Nov 16–18 (`13,530 imp / 8 clicks`) from growth forecasts as a phantom spike; `/tools/remove-bg` edits target verified human queries (`background remover`, `background remover free`).
+
+- 2026-11-21 (agent): GA4 `session_id` rides only on near-time events (checkout purchase, subscription created, upscale). Renewals, plan changes and cancellations send `client_id` only, so late events do not graft onto a dead session.
+- 2026-11-21 (agent): `vs-adobe-express` keeps its primary keyword and states limits without third-party prices.
 
 ## Execution Phases
 
@@ -73,16 +76,16 @@
 
 #### Phase 2: Fix high-CTR alternative/tool snippets and `app/llms.txt/route.ts`
 
-**Status:** NOT STARTED
+**Status:** DONE
 **Files:** `app/seo/data/alternatives.json` (`vs-iloveimg`, `vs-adobe-express`), `app/seo/data/interactive-tools.json` (`make-image-transparent`), `app/seo/data/tools.json` (`remove-bg`, `image-cutout-tool`), `app/llms.txt/route.ts`, `tests/unit/seo/tools-metadata.unit.spec.ts`, `tests/unit/seo/llms-txt.unit.spec.ts`, `docs/SEO/maintenance/seo-changes-backlog.md`.
 **Implementation:** Update existing slug metadata/FAQs/above-fold comparison tables (keeping exact slug count unchanged so `seo:indexation:gate` stays green); replace `4x` with `8x/16x`, add free interactive tools, remove forced `?utm_source=chatgpt`, and add plain capability summaries in `app/llms.txt/route.ts` for AI Mode citations.
 
-- [ ] Updated `alternatives`/`tools` metadata and `llms.txt` pass all SEO metadata/schema/indexation gates without adding new URLs — proof: `npx vitest run tests/unit/seo/ && yarn verify` — covers AC-2.
+- [x] Updated `alternatives`/`tools` metadata and `llms.txt` pass all SEO metadata/schema/indexation gates without adding new URLs — proof: `npx vitest run tests/unit/seo/ && yarn verify` — covers AC-2.
 
 #### Phase 3: Wire `InteractiveTool.tsx` post-download 4× AI Upscaler funnel & GA4 session stitching
 
-**Status:** NOT STARTED
+**Status:** DONE
 **Files:** `app/(pseo)/_components/tools/InteractiveTool.tsx`, workspace handoff helper (`client/utils/` or workspace mount hook), `shared/analytics/types.ts`, `server/analytics/analyticsService.ts`, checkout metadata caller, `tests/unit/seo/interactive-tool-upsell.unit.spec.tsx`, `tests/unit/server/analytics/`.
 **Implementation:** Add inline `"Upscale This Image 4× with AI →"` CTA beside `"Download Result"` in `InteractiveTool.tsx` storing `processedBlob` metadata for one-click preload in workspace, emit `interactive_tool_processed`, `interactive_tool_downloaded`, `post_tool_upsell_clicked` (using `sanitizeGa4Params` so no `source`/`medium` override occurs), and persist GA4 `client_id` / `session_id` through checkout so server-side `purchase` and `upscale_completed` events attribute back to Organic Search.
 
-- [ ] Post-download upsell handoff, interactive tool events, and server-side GA4 client/session stitching pass unit and verify checks — proof: `npx vitest run tests/unit/seo/interactive-tool-upsell.unit.spec.tsx tests/unit/server/analytics/ && yarn verify` — covers AC-3, AC-4.
+- [x] Post-download upsell handoff, interactive tool events, and server-side GA4 client/session stitching pass unit and verify checks — proof: `npx vitest run tests/unit/seo/interactive-tool-upsell.unit.spec.tsx tests/unit/server/analytics/ && yarn verify` — covers AC-3, AC-4.

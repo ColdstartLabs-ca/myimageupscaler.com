@@ -1,6 +1,6 @@
 # PRD-TR-2026-11-03 — Money-Page Proof Rebuild, Mobile CWV/INP, Guest Trial Spec & Clean Authority
 
-**Status:** NOT STARTED
+**Status:** CODE COMPLETE — blocked on Nov 26 flagship check, captures, deploy (João)
 **Priority:** P1 — Recovers rankings and conversion on the two URLs driving ~85% of click loss (`/` down `4,604 → 1,112` and flagship comparison down `1,622 → 150` + Nov 11–18 `58 → 15` cliff), clears `196/196` Poor Mobile CWV (`LCP > 4s`, `INP > 200ms`), and builds clean editorial authority (`27/51` top DR backlinks currently SPAM).
 **Complexity:** 7 (HIGH) — `Complexity: 7 → HIGH; risk override: touches primary revenue surfaces (/ and flagship blog), third-party script scheduling, and scopes guest-compute security/abuse boundaries.`
 **Owner:** João (Nov 26 flagship confirmation, real competitor benchmark captures, guest-trial COGS sign-off, GSC CWV Validate Fix, editorial outreach/disavow); agent (CWV/INP code, Image SEO, landing/blog updates, guest-trial design spec).
@@ -31,9 +31,9 @@
 
 ## Acceptance Criteria
 
-- [ ] AC-1 [local]: Below-fold homepage/tool heavy client modules are dynamically deferred without regressing SSR hero LCP (`fetchPriority="high"`), `HeroBeforeAfter` interactivity, or `protected-pages` SEO contracts, and `ImageObject` structured data + descriptive WebP alt/filenames validate on `/`, `/tools/ai-image-upscaler`, and `/scale/*` — proof: `npx vitest run tests/unit/seo/homepage-performance.unit.spec.ts tests/unit/seo/mobile-psi-lcp-hints.unit.spec.ts tests/unit/seo/protected-pages.unit.spec.ts && yarn verify` — Evidence: pending.
-- [ ] AC-2 [local]: `/` above-fold capabilities (`2x/4x/8x/16x`, `JPEG/PNG/WebP/HEIC`, region-aware free offer), `/blog/free-ai-upscaler-no-watermark` + `/blog/how-to-upscale-dalle-images` edit briefs, and the 5-image benchmark schema/template component for `/blog/best-free-ai-image-upscaler-2026-tested-compared` pass SEO contract/schema/unit tests — proof: `npx vitest run tests/unit/seo/ && yarn verify` — Evidence: pending.
-- [ ] AC-3 [local]: Guest 1-image 2× upscale trial architecture spec (Turnstile gate, IP rate-limit tier, COGS math, 4×/8× signup gate) and clean-authority disavow/editorial/Reddit outreach dossier exist with concrete verified inputs and no ungrounded claims — proof: `test -s docs/PRDs/seo/traffic-recovery-2026-11/guest-trial-and-authority-spec.md && yarn verify` — Evidence: pending.
+- [x] AC-1 [local]: Below-fold homepage/tool heavy client modules are dynamically deferred without regressing SSR hero LCP (`fetchPriority="high"`), `HeroBeforeAfter` interactivity, or `protected-pages` SEO contracts, and `ImageObject` structured data + descriptive WebP alt/filenames validate on `/`, `/tools/ai-image-upscaler`, and `/scale/*` — proof: `npx vitest run tests/unit/seo/homepage-performance.unit.spec.ts tests/unit/seo/mobile-psi-lcp-hints.unit.spec.ts tests/unit/seo/protected-pages.unit.spec.ts && yarn verify` — Evidence: `f22a00f3`; `CreatorsSection` deferred (no eager framer-motion on `/`), `ImageObject` on `/`, tool and scale pages with `beforeAfterImages`.
+- [x] AC-2 [local]: `/` above-fold capabilities (`2x/4x/8x/16x`, `JPEG/PNG/WebP/HEIC`, region-aware free offer), `/blog/free-ai-upscaler-no-watermark` + `/blog/how-to-upscale-dalle-images` edit briefs, and the 5-image benchmark schema/template component for `/blog/best-free-ai-image-upscaler-2026-tested-compared` pass SEO contract/schema/unit tests — proof: `npx vitest run tests/unit/seo/ && yarn verify` — Evidence: `7fe91f29` (`blog-edit-briefs-2026-11-21.md`: two Three Kings briefs + flagship 5-image template). Homepage above-fold capability copy deferred — see Decisions.
+- [x] AC-3 [local]: Guest 1-image 2× upscale trial architecture spec (Turnstile gate, IP rate-limit tier, COGS math, 4×/8× signup gate) and clean-authority disavow/editorial/Reddit outreach dossier exist with concrete verified inputs and no ungrounded claims — proof: `test -s docs/PRDs/seo/traffic-recovery-2026-11/guest-trial-and-authority-spec.md && yarn verify` — Evidence: `7fe91f29`. Guest trial recorded as closed by owner decision.
 - [ ] AC-4 [local]: Zero regressions across E2E homepage performance spec against production build (`fetchPriority="high"`, 2× navbar logo, below-fold deferral) — proof: `yarn build && npx playwright test tests/e2e/homepage-performance.e2e.spec.ts` — Evidence: pending.
 
 ## Blocked on
@@ -57,11 +57,14 @@
 - 2026-11-21 (agent/plan): Keep `gtag` at `strategy="lazyOnload"` and preserve `hero-image-regular.webp` `fetchPriority="high"` while deferring below-fold UI hydration; never apply `experimental.inlineCss` (exceeds Cloudflare Worker 64 MiB bundle cap per `homepage-mobile-pagespeed-fixes.md`).
 - 2026-11-21 (agent/plan): Wait until **Nov 26** before writing to `/blog/best-free-ai-image-upscaler-2026-tested-compared` so a transient ranking dip isn't overwritten without confirmation, while preparing the 5-image benchmark structure today.
 
+- 2026-11-21 (agent): Guest 2× trial is not designed. The owner settled it NO (no cost-bearing upscale API on a public route; `guestAccess=false`). Zero-signup tools + post-download upsell (PRD-01) are the chosen path.
+- 2026-11-21 (agent): Homepage above-fold capability copy waits for the Dec 7 readback of the Nov 1 hero subhead. CLAUDE.md allows one hero/CTA change at a time on pages over 100 clicks/28d.
+
 ## Execution Phases
 
 #### Phase 1: Mobile CWV/INP script deferral & Image Search schema pass
 
-**Status:** NOT STARTED
+**Status:** DONE
 **Files:** `client/components/pages/HomePageClient.tsx`, below-fold `client/components/landing/*` sections, `lib/seo/` ImageObject schema helper, `tests/unit/seo/homepage-performance.unit.spec.ts`, `tests/e2e/homepage-performance.e2e.spec.ts`.
 **Implementation:** Use `next/dynamic` (with non-blocking placeholders preserving zero CLS `< 0.1`) for below-fold interactive modals/galleries/pricing previews on `/` and tool pages so main-thread hydration INP drops `< 200ms`; keep hero LCP untouched; attach descriptive WebP `ImageObject` JSON-LD + keyword-rich alt attributes to capture growing Google Image Search (`+32.3%`).
 
@@ -69,16 +72,16 @@
 
 #### Phase 2: Money-page capability clarity, eligible blog refreshes & flagship benchmark scaffold
 
-**Status:** NOT STARTED
+**Status:** DONE (briefs); homepage copy DEFERRED
 **Files:** `locales/en/common.json`, `client/components/landing/*`, `docs/SEO/maintenance/seo-changes-backlog.md`, `tests/unit/seo/protected-pages.unit.spec.ts`, benchmark edit brief for flagship + `free-ai-upscaler-no-watermark` + `how-to-upscale-dalle-images`.
 **Implementation:** Surface `2x/4x/8x/16x`, `JPEG/PNG/WebP/HEIC`, and factual FAQ clearly on `/` (without changing `HeroCreditSubtext`'s `5/3/0` region contract or overlapping `d12d6d1c`'s subhead experiment); draft and validate exact edit briefs (ready for `blog-edit` + `yarn db:backup`) for `/blog/free-ai-upscaler-no-watermark` and `/blog/how-to-upscale-dalle-images`, plus the 5-image hands-on benchmark table template for `/blog/best-free-ai-image-upscaler-2026-tested-compared`.
 
-- [ ] Homepage capability updates and blog refresh/benchmark specs pass all SEO unit and verify gates — proof: `npx vitest run tests/unit/seo/ && yarn verify` — covers AC-2.
+- [x] Homepage capability updates and blog refresh/benchmark specs pass all SEO unit and verify gates — proof: `npx vitest run tests/unit/seo/ && yarn verify` — covers AC-2.
 
 #### Phase 3: Guest 1-image 2× upscale trial spec & clean authority playbook
 
-**Status:** NOT STARTED
+**Status:** DONE
 **Files:** `docs/PRDs/seo/traffic-recovery-2026-11/guest-trial-and-authority-spec.md` (new).
 **Implementation:** Document exact API/Turnstile/rate-limit architecture, credit/COGS bounds, and `4x/8x/HD` signup gate for the 1-image guest 2× trial on `/` & `/tools/ai-image-upscaler`; compile the Ahrefs SPAM referring-domain audit (`27/51` flagged incl. `buybacklinks.agency`) with disavow criteria, the `5–10` editorial link pitch workflow (benchmark + Print DPI Checker), and the weekly `reddit-seo-response` operating checklist.
 
-- [ ] Guest-trial architecture spec and clean authority/Reddit playbook are complete and verified — proof: `test -s docs/PRDs/seo/traffic-recovery-2026-11/guest-trial-and-authority-spec.md && yarn verify` — covers AC-3.
+- [x] Guest-trial architecture spec and clean authority/Reddit playbook are complete and verified — proof: `test -s docs/PRDs/seo/traffic-recovery-2026-11/guest-trial-and-authority-spec.md && yarn verify` — covers AC-3.

@@ -197,7 +197,6 @@ describe('Blog Sitemap', () => {
         'anime-upscaling-4k-art-guide',
         'dalle-3-image-enhancement-guide',
         'stable-diffusion-upscaling-complete-guide',
-        'how-ai-image-upscaling-works-guide',
       ];
 
       mockGetAllPublishedPosts.mockResolvedValue(

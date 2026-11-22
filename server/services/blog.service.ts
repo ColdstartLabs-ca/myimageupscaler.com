@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '../supabase/supabaseAdmin';
 import { serverEnv } from '@shared/config/env';
+import { BLOCKED_BLOG_SLUGS } from '@shared/constants/blocked-blog-slugs';
 import type {
   IBlogPost,
   IBlogPostMeta,
@@ -447,12 +448,16 @@ export async function getAllPublishedPosts(): Promise<IBlogPostMeta[]> {
     }
   }
 
+  // Keep redirected, noindex and otherwise blocked posts out of every list surface
+  // (blog index, category/tag lists, related posts). Single-post reads bypass this.
   // Sort by date (newest first)
-  return Array.from(postsMap.values()).sort((a, b) => {
-    const dateA = new Date(a.date).getTime();
-    const dateB = new Date(b.date).getTime();
-    return dateB - dateA;
-  });
+  return Array.from(postsMap.values())
+    .filter(post => !BLOCKED_BLOG_SLUGS.has(post.slug))
+    .sort((a, b) => {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      return dateB - dateA;
+    });
 }
 
 /**
