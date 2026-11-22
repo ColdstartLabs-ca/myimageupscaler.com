@@ -891,7 +891,7 @@ export const asyncUpscaleService = {
             qualityTier: input.resolvedTier,
             modelUsed: input.modelId,
           },
-          { apiKey: serverEnv.AMPLITUDE_API_KEY, userId: input.userId }
+          { apiKey: serverEnv.AMPLITUDE_API_KEY, userId: input.userId, ...input.ga4 }
         )
       ),
       ...(admitted.balance!.total <= 3

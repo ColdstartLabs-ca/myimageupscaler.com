@@ -54,7 +54,7 @@ export function parseGa4CookieContext(
         context.gaClientId = match[1];
       }
     } else if (name === ownStreamCookie) {
-      ownStreamSessionId = parseSessionId(value);
+      ownStreamSessionId ??= parseSessionId(value);
     } else if (name.startsWith('_ga_') && !context.gaSessionId) {
       const sessionId = parseSessionId(value);
       if (sessionId) context.gaSessionId = sessionId;

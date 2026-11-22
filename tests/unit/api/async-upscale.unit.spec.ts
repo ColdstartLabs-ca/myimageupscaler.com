@@ -1208,8 +1208,13 @@ describe('authenticated async upscale contract', () => {
     mocks.fetch.mockResolvedValueOnce(providerResponse(succeeded()));
     await route.GET(statusRequest());
 
-    const events = terminalEvents();
-    expect(events.map(([event]) => event).sort()).toEqual(['image_upscaled', 'upscale_completed']);
+    const started = mocks.track.mock.calls.filter(([event]) => event === 'image_upscale_started');
+    const events = [...terminalEvents(), ...started];
+    expect(events.map(([event]) => event).sort()).toEqual([
+      'image_upscale_started',
+      'image_upscaled',
+      'upscale_completed',
+    ]);
     for (const call of events) {
       expect(call[2]).toEqual(
         expect.objectContaining({ gaClientId: '123456789.1700000000', gaSessionId: '1700000001' })

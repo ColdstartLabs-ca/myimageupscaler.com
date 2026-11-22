@@ -22,12 +22,22 @@ import { generateMetadata } from '@/lib/seo/metadata-factory';
 import { generateSitemapHreflangLinks } from '@/lib/seo/hreflang-generator';
 import alternatives from '../../../app/seo/data/alternatives.json';
 import tools from '../../../app/seo/data/tools.json';
+import formats from '../../../app/seo/data/formats.json';
+import useCases from '../../../app/seo/data/use-cases.json';
+import deviceUse from '../../../app/seo/data/device-use.json';
+import formatScale from '../../../app/seo/data/format-scale.json';
+import platformFormat from '../../../app/seo/data/platform-format.json';
 
 type IPage = Parameters<typeof generateMetadata>[0];
 
 const cases: Array<[string, IPage[]]> = [
   ['alternatives', (alternatives as { pages: IPage[] }).pages],
   ['tools', (tools as { pages: IPage[] }).pages],
+  ['formats', (formats as { pages: IPage[] }).pages],
+  ['use-cases', (useCases as { pages: IPage[] }).pages],
+  ['device-use', (deviceUse as { pages: IPage[] }).pages],
+  ['format-scale', (formatScale as { pages: IPage[] }).pages],
+  ['platform-format', (platformFormat as { pages: IPage[] }).pages],
 ];
 
 function localizedPage(category: string, slug: string, locale: string): IPage | undefined {
@@ -74,7 +84,8 @@ describe('pSEO hreflang indexable pairs', () => {
         ).toBe(true);
       }
     }
-    expect(checked).toBeGreaterThan(0);
+    // Sanity: categories that still have earning twins must actually be exercised.
+    if (category === 'alternatives' || category === 'tools') expect(checked).toBeGreaterThan(0);
   });
 
   it.each(cases)('%s: every sitemap hreflang target renders as indexable', (category, pages) => {
@@ -91,7 +102,8 @@ describe('pSEO hreflang indexable pairs', () => {
         ).toBe(true);
       }
     }
-    expect(checked).toBeGreaterThan(0);
+    // Sanity: categories that still have earning twins must actually be exercised.
+    if (category === 'alternatives' || category === 'tools') expect(checked).toBeGreaterThan(0);
   });
 
   it('the known untranslated-mirror list does not hold stale entries', () => {

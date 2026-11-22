@@ -64,7 +64,7 @@
 
 #### Phase 1: Mobile CWV/INP script deferral & Image Search schema pass
 
-**Status:** DONE
+**Status:** DONE in code; the production-build homepage performance E2E (AC-4) is still to run before deploy
 **Files:** `client/components/pages/HomePageClient.tsx`, below-fold `client/components/landing/*` sections, `lib/seo/` ImageObject schema helper, `tests/unit/seo/homepage-performance.unit.spec.ts`, `tests/e2e/homepage-performance.e2e.spec.ts`.
 **Implementation:** Use `next/dynamic` (with non-blocking placeholders preserving zero CLS `< 0.1`) for below-fold interactive modals/galleries/pricing previews on `/` and tool pages so main-thread hydration INP drops `< 200ms`; keep hero LCP untouched; attach descriptive WebP `ImageObject` JSON-LD + keyword-rich alt attributes to capture growing Google Image Search (`+32.3%`).
 
