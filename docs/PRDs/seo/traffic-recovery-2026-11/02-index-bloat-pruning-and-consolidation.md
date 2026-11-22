@@ -55,7 +55,8 @@
 - 2026-11-21 (agent/plan): Keep `/blog?page=` crawlable with `noindex, follow` + canonical `/blog` rather than adding `robots.txt` `Disallow` so the ~135 `/en/blog` URLs drain cleanly out of Google's index.
 
 - 2026-11-21 (agent): Merge only posts with 0 clicks in 180 days and sitemap `lastmod` before 2026-10-07; owners must earn clicks. Newer zero-click posts are `DEFER_RECENT` for the next batch.
-- 2026-11-21 (agent): Off-topic posts that still earn clicks (`animation-maker-for-minecraft` 288, `4-k-youtube-to-mp-4` 142, `convert-video-to-hd-1080-p-online-free` 51 clicks/180d) stay live, flagged `offTopic` in the manifest. Retiring them trades real clicks for topical focus: João decides.
+- 2026-11-21 (agent): Off-topic posts are judged on GA4 conversions (90d, `docs/SEO/reports/inputs/2026-11-21-index-bloat/ga4-blog-landing-90d.json`), not clicks. `4-k-youtube-to-mp-4` (95 sessions, 0 conversions) and `windows-11-snap-layouts` (0 conversions) are now `noindex`. `animation-maker-for-minecraft` (8 conversions) and `convert-video-to-hd-1080-p-online-free` (4) stay live because they convert.
+- 2026-11-21 (agent): Translated pSEO twins (`es/pt/de/fr/it/ja`) now need clicks, not only impressions, to stay indexable (`lib/seo/page-eligibility.ts` `hasDemand`). This drops 30 zero-click `alternatives` twins (108 impressions total). English keeps the impressions rule. Test: `tests/unit/seo/translated-zero-click-noindex.unit.spec.ts`.
 - 2026-11-21 (agent): 11 zero-click English `alternatives` pages are recorded as candidates only; the PRD keeps alternatives live.
 - 2026-11-21 (agent): Publishing freeze lives in `.claude/skills/blog-opportunities-publisher/SKILL.md` (the weekly Hermes job reads it from local `master`).
 

@@ -36,6 +36,14 @@ Maintenance rules:
 - **Validation:** new RED-first assertions for redirect parity, no chains, guarded targets, blocked sets, noindex helper and list filtering; `tests/unit/seo/` 1,710/1,710 pass; `tsc --noEmit` clean.
 - **Follow-up:** After deploy, confirm 301 responses for the 66 sources and `noindex` on the 14 rendered posts in GSC URL Inspection.
 
+### Translated pSEO twins need clicks to stay indexable; homepage FAQ states capabilities; tool CTAs
+
+- **Why:** PRD-TR-2026-11-02 Phase 3 (zero-click translated templates) and PRD-TR-2026-11-03 Phase 2 (homepage capability clarity).
+- **Changes:** `lib/seo/page-eligibility.ts` `hasDemand`: non-English twins need clicks > 0, not only impressions. This drops 30 zero-click `alternatives` twins (108 impressions total) from sitemaps, adds `noindex`, and removes them from hreflang. The homepage FAQ adds "What scale factors and file formats are supported?" and "Is there a free option?" in 7 locales and in the FAQPage schema. Hero, H1 and CTAs are unchanged. Every tool widget shows the gradient AI-upscaler upsell after a result.
+- **Files:** `lib/seo/page-eligibility.ts`, `client/components/pages/HomePageClient.tsx`, `locales/*/common.json`, `app/(pseo)/_components/tools/*`.
+- **Validation:** `translated-zero-click-noindex`, `homepage-faq-capabilities`, `tool-page-ctas` (all red-first), plus the full `tests/unit/seo/` suite.
+- **Follow-up (post-deploy):** In GSC, check that `/fr/alternatives/vs-canva` and `/it/alternatives/vs-imgupscaler` drop out of the localized sitemaps. Track the homepage FAQ rich result. Track `post_tool_upsell_clicked` by `tool`.
+
 ### Off-topic blog posts with 0 GA4 conversions leave the index
 
 - **Why:** Phase 2 of the index-bloat PRD: off-topic posts that convert nothing should stop consuming crawl and index space.

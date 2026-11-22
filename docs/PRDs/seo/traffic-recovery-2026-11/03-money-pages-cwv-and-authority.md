@@ -57,8 +57,8 @@
 - 2026-11-21 (agent/plan): Keep `gtag` at `strategy="lazyOnload"` and preserve `hero-image-regular.webp` `fetchPriority="high"` while deferring below-fold UI hydration; never apply `experimental.inlineCss` (exceeds Cloudflare Worker 64 MiB bundle cap per `homepage-mobile-pagespeed-fixes.md`).
 - 2026-11-21 (agent/plan): Wait until **Nov 26** before writing to `/blog/best-free-ai-image-upscaler-2026-tested-compared` so a transient ranking dip isn't overwritten without confirmation, while preparing the 5-image benchmark structure today.
 
-- 2026-11-21 (agent): Guest 2× trial is not designed. The owner settled it NO (no cost-bearing upscale API on a public route; `guestAccess=false`). Zero-signup tools + post-download upsell (PRD-01) are the chosen path.
-- 2026-11-21 (agent): Homepage above-fold capability copy waits for the Dec 7 readback of the Nov 1 hero subhead. CLAUDE.md allows one hero/CTA change at a time on pages over 100 clicks/28d.
+- 2026-11-21 (agent): The guest 2× trial is specified as a reference spec only (`guest-trial-and-authority-spec.md` Section 1: route, Turnstile, IP and global caps, COGS table, acceptance tests). The owner decision stays NO (`guestAccess=false`). Implementation needs João's written approval and a COGS sign-off.
+- 2026-11-21 (agent): Homepage capabilities ship below the fold: 2 new FAQ items (2x/4x on every account, up to 8x on paid plans, JPEG/PNG/WebP/HEIC, region-based free credits) in all 7 locales, mirrored in the FAQPage schema. The hero, H1, subhead and CTAs are unchanged, because the Nov 1 hero subhead readback is due Dec 7. 16x is not offered (`MAX_SCALE_PREMIUM: 8`), so the copy does not claim it.
 
 ## Execution Phases
 
@@ -72,7 +72,7 @@
 
 #### Phase 2: Money-page capability clarity, eligible blog refreshes & flagship benchmark scaffold
 
-**Status:** DONE (briefs); homepage copy DEFERRED
+**Status:** DONE (briefs + homepage FAQ capabilities; above-fold copy waits for the Dec 7 readback)
 **Files:** `locales/en/common.json`, `client/components/landing/*`, `docs/SEO/maintenance/seo-changes-backlog.md`, `tests/unit/seo/protected-pages.unit.spec.ts`, benchmark edit brief for flagship + `free-ai-upscaler-no-watermark` + `how-to-upscale-dalle-images`.
 **Implementation:** Surface `2x/4x/8x/16x`, `JPEG/PNG/WebP/HEIC`, and factual FAQ clearly on `/` (without changing `HeroCreditSubtext`'s `5/3/0` region contract or overlapping `d12d6d1c`'s subhead experiment); draft and validate exact edit briefs (ready for `blog-edit` + `yarn db:backup`) for `/blog/free-ai-upscaler-no-watermark` and `/blog/how-to-upscale-dalle-images`, plus the 5-image hands-on benchmark table template for `/blog/best-free-ai-image-upscaler-2026-tested-compared`.
 
