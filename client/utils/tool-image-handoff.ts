@@ -6,6 +6,16 @@
  * a stale handoff never surprises the user.
  */
 
+import { QUALITY_TIER_SCALES, type IUpscaleConfig } from '@/shared/types/coreflow.types';
+
+/** The free-tool upsell promises 4x: apply it when the active tier offers 4x. */
+export const TOOL_HANDOFF_SCALE = 4;
+
+export function withToolHandoffScale(config: IUpscaleConfig): IUpscaleConfig {
+  const scales: readonly number[] = QUALITY_TIER_SCALES[config.qualityTier] ?? [];
+  return scales.includes(TOOL_HANDOFF_SCALE) ? { ...config, scale: TOOL_HANDOFF_SCALE } : config;
+}
+
 const DB_NAME = 'miu-tool-handoff';
 const DB_VERSION = 1;
 const STORE_NAME = 'handoff';

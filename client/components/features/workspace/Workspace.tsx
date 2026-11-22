@@ -38,7 +38,7 @@ import { getMaxPixelsForQualityTier } from '@shared/validation/upscale.schema';
 import { downloadSingle } from '@client/utils/download';
 import { getCheckoutUiMode } from '@client/utils/checkoutUiMode';
 import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
-import { takeToolHandoffImage } from '@client/utils/tool-image-handoff';
+import { takeToolHandoffImage, withToolHandoffScale } from '@client/utils/tool-image-handoff';
 import {
   CheckCircle2,
   CreditCard,
@@ -533,6 +533,7 @@ const Workspace: React.FC<IWorkspaceProps> = ({ faceEnhancementAvailable = true 
 
     void takeToolHandoffImage().then(handoffFile => {
       if (handoffFile) {
+        setConfig(withToolHandoffScale);
         handleFilesSelected([handoffFile], 'file_picker');
       }
       const url = new URL(window.location.href);
