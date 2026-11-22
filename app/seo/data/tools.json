@@ -553,8 +553,8 @@
     {
       "slug": "remove-bg",
       "title": "Remove Background Online Free",
-      "metaTitle": "Remove Background Online Free \u2014 Instant Remove BG",
-      "metaDescription": "Remove background from photos online for free. No signup or watermark \u2014 upload JPG, PNG, or WebP and download a transparent PNG in seconds.",
+      "metaTitle": "Remove Background Online Free - Background Remover",
+      "metaDescription": "Free background remover online. Remove background from photos with no signup and no watermark, right in your browser. Get a transparent PNG.",
       "h1": "Remove Background Online Free",
       "intro": "Remove background from photos online in seconds. Our free remove BG tool detects the subject automatically and gives you a clean transparent PNG with no signup.",
       "primaryKeyword": "remove background",
@@ -811,8 +811,8 @@
     {
       "slug": "image-cutout-tool",
       "title": "Image Cutout Tool - Cut Out Objects from Photos",
-      "metaTitle": "Image Cutout Tool \u2014 Extract Subjects From Photos",
-      "metaDescription": "Cut out objects and people from photos instantly. Free AI-powered tool for precise selections. No signup, batch processing, instant results. Free to start.",
+      "metaTitle": "Free Image Cutout Tool - No Signup, No Watermark",
+      "metaDescription": "Cut out people and objects from photos free. No signup, no watermark, and it runs in your browser, so your image stays private. Download a transparent PNG.",
       "h1": "Image Cutout Tool",
       "intro": "Cut out anything from your photos with precision. Our AI automatically detects and extracts subjects, people, products, and objects from any image.",
       "primaryKeyword": "image cutout tool",
@@ -901,6 +901,14 @@
         {
           "question": "Is this better than Photoshop?",
           "answer": "For most cutout tasks, our AI produces results comparable to manual Photoshop work but in seconds instead of minutes or hours."
+        },
+        {
+          "question": "Is the image cutout tool free, and do I need an account?",
+          "answer": "Yes, it is free. No account or signup is needed, and the transparent PNG has no watermark."
+        },
+        {
+          "question": "Is my image uploaded to a server?",
+          "answer": "No. The cutout runs in your browser, so your image never leaves your device."
         }
       ],
       "relatedTools": [

@@ -125,34 +125,40 @@ describe('llms.txt Route', () => {
     });
   });
 
-  describe('UTM tracking', () => {
-    it('should include utm_source=chatgpt on all internal links', async () => {
+  describe('Plain canonical links', () => {
+    it('should not use utm_source tracking anywhere', async () => {
       const { GET } = await import('@/app/llms.txt/route');
       const response = await GET();
       const content = await response.text();
+
+      expect(content).not.toContain('utm_source');
 
       // Extract all URLs from the content
       const urlMatches = content.matchAll(/https:\/\/myimageupscaler\.com[^\s\])]+/g);
       const urls = Array.from(urlMatches, match => match[0]);
 
-      // All internal URLs should have utm_source=chatgpt
-      const internalUrls = urls.filter(url => url.includes('myimageupscaler.com'));
-      for (const url of internalUrls) {
-        expect(url).toContain('utm_source=chatgpt');
-      }
-
-      // Should have at least some tracked URLs
-      expect(internalUrls.length).toBeGreaterThan(0);
+      expect(urls.length).toBeGreaterThan(0);
     });
 
-    it('should include UTM tracking on key tool links', async () => {
+    it('should link key tools with plain URLs', async () => {
       const { GET } = await import('@/app/llms.txt/route');
       const response = await GET();
       const content = await response.text();
 
-      expect(content).toContain('/tools/ai-image-upscaler?utm_source=chatgpt');
-      expect(content).toContain('/tools/compress/image-compressor?utm_source=chatgpt');
-      expect(content).toContain('/tools/convert/png-to-jpg?utm_source=chatgpt');
+      expect(content).toContain('/tools/ai-image-upscaler');
+      expect(content).toContain('/tools/compress/image-compressor');
+      expect(content).toContain('/tools/convert/png-to-jpg');
+    });
+
+    it('should state the real 8x max scale and list free no-signup tools', async () => {
+      const { GET } = await import('@/app/llms.txt/route');
+      const response = await GET();
+      const content = await response.text();
+
+      expect(content).toContain('8x');
+      expect(content).toContain('/tools/remove-bg');
+      expect(content).toContain('/tools/make-image-transparent');
+      expect(content).toContain('/tools/image-cutout-tool');
     });
   });
 

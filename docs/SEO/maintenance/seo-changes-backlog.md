@@ -12,6 +12,14 @@ Maintenance rules:
 
 ## 2026-11-21
 
+### SERP snippet repair for 5 pSEO pages and plain-link llms.txt
+
+- **Why:** Remove broken English and false promises from high-impression snippets, and align llms.txt with real product facts.
+- **Changes:** Rewrote `vs-iloveimg` title to "AI Upscaling Compared (2026)"; made `vs-adobe-express` meta description and intro open with an at-a-glance limits summary (limited free features vs. free credits for AI detail recovery), keeping the "Adobe Express image upscaler" keyword; rewrote `make-image-transparent`, `remove-bg`, and `image-cutout-tool` titles/descriptions around verified free, no-signup, no-watermark, in-browser processing; added free/account and upload FAQs to `make-image-transparent` and `image-cutout-tool`; removed every `utm_source=chatgpt` suffix from `/llms.txt`, corrected the max scale to 8x (`MODEL_COSTS.MAX_SCALE_PREMIUM`), and added a "Free Tools (No Signup)" list.
+- **Files:** `app/seo/data/alternatives.json`, `app/seo/data/tools.json`, `app/seo/data/interactive-tools.json`, `app/llms.txt/route.ts`.
+- **Validation:** new RED-first assertions in `tests/unit/seo/llms-txt.unit.spec.ts` and `tests/unit/seo/pseo-alternatives-quality.unit.spec.ts`; full `tests/unit/seo/` suite 1,663/1,663 pass.
+- **Follow-up:** Read back GSC CTR for the 5 URLs after 14 complete days.
+
 ### Squash `release/miu-recovery-20261101` onto `master` (local, awaiting deploy)
 
 - **Why:** Reconciled and landed the remaining unshipped Nov 1 recovery commits on `master` alongside Nov 2–19 cache, sitemap, and `fetchPriority` work so the next production deploy ships all pending SEO, attribution, and static-caching fixes together.

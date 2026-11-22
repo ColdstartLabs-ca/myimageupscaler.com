@@ -208,6 +208,35 @@ describe('pSEO Alternatives Quality', () => {
     ).toBe(processingTimes.length);
   });
 
+  it('the five SERP-rewritten slugs keep metaTitle <= 60 and metaDescription <= 160', () => {
+    const tools = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'tools.json'), 'utf-8')) as {
+      pages: IAlternativePage[];
+    };
+    const interactive = JSON.parse(
+      fs.readFileSync(path.join(DATA_DIR, 'interactive-tools.json'), 'utf-8')
+    ) as { pages: IAlternativePage[] };
+
+    const targets: Array<[string, IAlternativePage | undefined]> = [
+      ['vs-iloveimg', data.pages.find(p => p.slug === 'vs-iloveimg')],
+      ['vs-adobe-express', data.pages.find(p => p.slug === 'vs-adobe-express')],
+      ['make-image-transparent', interactive.pages.find(p => p.slug === 'make-image-transparent')],
+      ['remove-bg', tools.pages.find(p => p.slug === 'remove-bg')],
+      ['image-cutout-tool', tools.pages.find(p => p.slug === 'image-cutout-tool')],
+    ];
+
+    for (const [slug, page] of targets) {
+      expect(page, `Page "${slug}" not found`).toBeDefined();
+      expect(page!.metaTitle.length, `"${slug}" metaTitle is too long`).toBeLessThanOrEqual(60);
+      expect(
+        page!.metaDescription.length,
+        `"${slug}" metaDescription is too long`
+      ).toBeLessThanOrEqual(160);
+    }
+
+    const iloveimg = data.pages.find(p => p.slug === 'vs-iloveimg')!;
+    expect(iloveimg.metaTitle).not.toContain('Specialization');
+  });
+
   it('file format support arrays should be non-empty for priority pages', () => {
     PRIORITY_SLUGS.forEach(slug => {
       const page = data.pages.find(p => p.slug === slug);
