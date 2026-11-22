@@ -495,7 +495,7 @@ export function PdfToImageConverter({
             </div>
 
             {/* Convert Button */}
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={convertPages}
                 disabled={isConverting}

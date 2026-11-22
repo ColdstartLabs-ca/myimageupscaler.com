@@ -202,7 +202,7 @@ export function InteractiveTool({
             })}
 
             {/* Action Buttons */}
-            <div className="flex gap-3 mt-6">
+            <div className="flex flex-col sm:flex-row gap-3 mt-6">
               {onProcess && (
                 <button
                   onClick={handleProcess}

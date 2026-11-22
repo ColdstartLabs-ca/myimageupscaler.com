@@ -702,7 +702,7 @@ export function BulkImageResizer({
 
         {/* Action Buttons */}
         {images.length > 0 && (
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             {!allProcessed && (
               <button
                 onClick={processAllImages}

@@ -73,6 +73,18 @@ describe('tool page CTAs', () => {
     expect(source).not.toMatch(FLAT_PRIMARY);
   });
 
+  test.each([...LIVE_TOOLS, 'InteractiveTool'])(
+    '%s action rows stack on mobile so gradient buttons never clip their label',
+    name => {
+      // shine-effect sets overflow:hidden, so a squeezed flex-1 button cuts its text.
+      const source = read(path.join(TOOLS_DIR, `${name}.tsx`));
+      const squeezedRows = [...source.matchAll(/<div className="flex gap-3( mt-6)?">/g)].filter(
+        match => source.slice(match.index, match.index + 800).includes('gradient-cta')
+      );
+      expect(squeezedRows).toHaveLength(0);
+    }
+  );
+
   test('page-level PostToolCTA uses the gradient CTA style', () => {
     const source = read(TEMPLATE);
     const cta = source.slice(
