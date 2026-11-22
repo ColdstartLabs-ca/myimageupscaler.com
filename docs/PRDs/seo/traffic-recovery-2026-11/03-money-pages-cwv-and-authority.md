@@ -1,6 +1,6 @@
 # PRD-TR-2026-11-03 — Money-Page Proof Rebuild, Mobile CWV/INP, Guest Trial Spec & Clean Authority
 
-**Status:** CODE COMPLETE — blocked on Nov 26 flagship check, captures, deploy (João)
+**Status:** CODE COMPLETE except AC-4 (production-build E2E homepage performance run) — blocked on Nov 26 flagship check, captures, deploy (João)
 **Priority:** P1 — Recovers rankings and conversion on the two URLs driving ~85% of click loss (`/` down `4,604 → 1,112` and flagship comparison down `1,622 → 150` + Nov 11–18 `58 → 15` cliff), clears `196/196` Poor Mobile CWV (`LCP > 4s`, `INP > 200ms`), and builds clean editorial authority (`27/51` top DR backlinks currently SPAM).
 **Complexity:** 7 (HIGH) — `Complexity: 7 → HIGH; risk override: touches primary revenue surfaces (/ and flagship blog), third-party script scheduling, and scopes guest-compute security/abuse boundaries.`
 **Owner:** João (Nov 26 flagship confirmation, real competitor benchmark captures, guest-trial COGS sign-off, GSC CWV Validate Fix, editorial outreach/disavow); agent (CWV/INP code, Image SEO, landing/blog updates, guest-trial design spec).
@@ -45,12 +45,12 @@
 
 ## Integration Ledger
 
-| Capability                         | Reachable consumer/trigger                                                                                                                           | Replaces / disposition                                                     | Evidence             |
-| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------- |
-| Mobile CWV/INP client deferral     | `app/[locale]/page.tsx` + `client/components/pages/HomePageClient.tsx` + `client/components/landing/`                                                | Eager hydration of below-fold client bundles contributing to `INP > 200ms` | AC-1, AC-4 (pending) |
-| Image Search `ImageObject` SEO     | `lib/seo/` schema builders + `client/components/landing/HeroSection.tsx:30` + `app/(pseo)/scale/[slug]/page.tsx`                                     | Generic image metadata missing explicit `ImageObject` structured signals   | AC-1 (pending)       |
-| Money-page copy & benchmark brief  | `locales/en/common.json` + `client/components/landing/` + blog API briefs (`free-ai-upscaler-no-watermark`, `how-to-upscale-dalle-images`, flagship) | Unsubstantiated comparisons & missing `ChatGPT` / `2x–16x` clarity         | AC-2 (pending)       |
-| Guest 2× trial & authority dossier | `docs/PRDs/seo/traffic-recovery-2026-11/guest-trial-and-authority-spec.md`                                                                           | Undocumented compute/abuse assumptions and ad-hoc directory outreach       | AC-3 (pending)       |
+| Capability                         | Reachable consumer/trigger                                                                                                                           | Replaces / disposition                                                     | Evidence                                                |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Mobile CWV/INP client deferral     | `app/[locale]/page.tsx` + `client/components/pages/HomePageClient.tsx` + `client/components/landing/`                                                | Eager hydration of below-fold client bundles contributing to `INP > 200ms` | AC-1 (`f22a00f3`), AC-4 (pending: production-build E2E) |
+| Image Search `ImageObject` SEO     | `lib/seo/` schema builders + `client/components/landing/HeroSection.tsx:30` + `app/(pseo)/scale/[slug]/page.tsx`                                     | Generic image metadata missing explicit `ImageObject` structured signals   | AC-1 (`f22a00f3`)                                       |
+| Money-page copy & benchmark brief  | `locales/en/common.json` + `client/components/landing/` + blog API briefs (`free-ai-upscaler-no-watermark`, `how-to-upscale-dalle-images`, flagship) | Unsubstantiated comparisons & missing `ChatGPT` / `2x–16x` clarity         | AC-2 (`7fe91f29`, `0ce61ac0`)                           |
+| Guest 2× trial & authority dossier | `docs/PRDs/seo/traffic-recovery-2026-11/guest-trial-and-authority-spec.md`                                                                           | Undocumented compute/abuse assumptions and ad-hoc directory outreach       | AC-3 (`7fe91f29`, `da9e4685`)                           |
 
 ## Decisions
 
@@ -58,7 +58,7 @@
 - 2026-11-21 (agent/plan): Wait until **Nov 26** before writing to `/blog/best-free-ai-image-upscaler-2026-tested-compared` so a transient ranking dip isn't overwritten without confirmation, while preparing the 5-image benchmark structure today.
 
 - 2026-11-21 (agent): The guest 2× trial is specified as a reference spec only (`guest-trial-and-authority-spec.md` Section 1: route, Turnstile, IP and global caps, COGS table, acceptance tests). The owner decision stays NO (`guestAccess=false`). Implementation needs João's written approval and a COGS sign-off.
-- 2026-11-21 (agent): Homepage capabilities ship below the fold: 2 new FAQ items (2x/4x on every account, up to 8x on paid plans, JPEG/PNG/WebP/HEIC, region-based free credits) in all 7 locales, mirrored in the FAQPage schema. The hero, H1, subhead and CTAs are unchanged, because the Nov 1 hero subhead readback is due Dec 7. 16x is not offered (`MAX_SCALE_PREMIUM: 8`), so the copy does not claim it.
+- 2026-11-21 (agent): Homepage capabilities ship below the fold: 2 new FAQ items (2x/4x on every account, up to 8x on paid plans, JPEG/PNG/WebP/HEIC, region-based free credits) in all 7 locales. The English FAQPage schema lists the same items; other locales keep the pre-existing English default schema items (follow-up). The hero, H1, subhead and CTAs are unchanged, because the Nov 1 hero subhead readback is due Dec 7. 16x is not offered (`MAX_SCALE_PREMIUM: 8`), so the copy does not claim it.
 
 ## Execution Phases
 

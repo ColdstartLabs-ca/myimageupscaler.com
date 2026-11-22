@@ -10,7 +10,7 @@
  * - Consistency between llms.txt and llms-full.txt
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 // Mock clientEnv
 vi.mock('@shared/config/env', () => ({
