@@ -60,7 +60,15 @@ export function generateMetadata(
 ): Metadata {
   const path = `/${category}/${page.slug}`;
   const canonicalUrl = getCanonicalUrl(path, locale);
-  const hreflangAlternates = generateHreflangAlternates(path, category);
+  // Hreflang must only point at indexable locale twins; a pair with a noindex page is ignored.
+  const hreflangAlternates = Object.fromEntries(
+    Object.entries(generateHreflangAlternates(path, category)).filter(
+      ([hreflang]) =>
+        hreflang === 'en' ||
+        hreflang === 'x-default' ||
+        shouldSubmit(category, page.slug, hreflang, page.lastUpdated)
+    )
+  );
 
   // Enforce SEO best practice length limits
   const { title: truncatedTitle, description: truncatedDescription } = enforceMetaLengths(
