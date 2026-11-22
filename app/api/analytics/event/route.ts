@@ -99,6 +99,10 @@ const ALLOWED_EVENTS = [
   'pseo_internal_link_clicked',
   // Print-readiness checker (browser-side math, event only)
   'print_readiness_checked',
+  // Free interactive pSEO tools → AI upscaler handoff
+  'interactive_tool_processed',
+  'interactive_tool_downloaded',
+  'post_tool_upsell_clicked',
   // Homepage activation events
   'hero_upload_cta_clicked',
   // Checkout funnel events (Phase 1 - Checkout Friction Investigation)

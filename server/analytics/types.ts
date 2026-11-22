@@ -798,6 +798,10 @@ export type IAnalyticsEventName =
   | 'pseo_internal_link_clicked'
   // Print-readiness checker (PRD: seo-recovery-2026-09 / page recovery)
   | 'print_readiness_checked'
+  // Free interactive pSEO tools → AI upscaler handoff
+  | 'interactive_tool_processed'
+  | 'interactive_tool_downloaded'
+  | 'post_tool_upsell_clicked'
   // Onboarding events (PRD: first-time-user-activation)
   | 'onboarding_started'
   | 'onboarding_step_viewed'

@@ -38,6 +38,7 @@ import { getMaxPixelsForQualityTier } from '@shared/validation/upscale.schema';
 import { downloadSingle } from '@client/utils/download';
 import { getCheckoutUiMode } from '@client/utils/checkoutUiMode';
 import { prepareAuthRedirect } from '@client/utils/authRedirectManager';
+import { takeToolHandoffImage } from '@client/utils/tool-image-handoff';
 import {
   CheckCircle2,
   CreditCard,
@@ -522,6 +523,24 @@ const Workspace: React.FC<IWorkspaceProps> = ({ faceEnhancementAvailable = true 
     markFirstUploadStarted('upload');
     addFiles(files, source);
   };
+
+  // Free tools hand their processed image over through /dashboard?handoff=tool.
+  const handoffAppliedRef = React.useRef(false);
+  useEffect(() => {
+    if (handoffAppliedRef.current) return;
+    if (searchParams.get('handoff') !== 'tool') return;
+    handoffAppliedRef.current = true;
+
+    void takeToolHandoffImage().then(handoffFile => {
+      if (handoffFile) {
+        handleFilesSelected([handoffFile], 'file_picker');
+      }
+      const url = new URL(window.location.href);
+      url.searchParams.delete('handoff');
+      window.history.replaceState({}, '', url.toString());
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const handleSampleSelect = (sample: ISampleImage) => {
     setShowSamplesModal(false);
