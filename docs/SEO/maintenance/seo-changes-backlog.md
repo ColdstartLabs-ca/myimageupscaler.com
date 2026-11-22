@@ -12,6 +12,14 @@ Maintenance rules:
 
 ## 2026-11-21
 
+### pSEO prune, hreflang twins, ImageObject, homepage deferral, publishing freeze (PRD-TR-2026-11-02/03)
+
+- **Why:** Cut crawl spent on zero-click templates, stop hreflang pairs that point at noindex pages, give Image Search explicit image signals, and cut homepage hydration on mobile.
+- **Changes:** 35 zero-click `platform-format` pages get `noindex` (row flag, sitemap + meta); `content/pseo-performance.json` refreshed to Aug 21–Nov 18; pSEO hreflang alternates keep only `shouldSubmit` locale twins; `ImageObject` JSON-LD on `/`, tool and scale pages with before/after images; `CreatorsSection` hydrates through `DeferredSection`; `blog-opportunities-publisher` freezes new posts until PRD-TR-2026-11-02 closes.
+- **Files:** `app/seo/data/platform-format.json`, `content/pseo-performance.json`, `lib/seo/metadata-factory.ts`, `lib/seo/schema-generator.ts`, `app/[locale]/page.tsx`, `client/components/landing/DeferredCreatorsSection.tsx`, `.claude/skills/blog-opportunities-publisher/SKILL.md`.
+- **Validation:** `platform-format-prune`, `hreflang-indexable-pairs` (red: `vs-topaz → fr`, `remove-bg → pt`), `homepage-performance`, `schema-generator` unit specs.
+- **Follow-up:** After deploy, check GSC Page Indexing (`939` crawled-not-indexed baseline) at 30 and 60 days, and the CWV report from Dec 15.
+
 ### Blog contextual links to intent-owning tool pages
 
 - **Why:** Route blog traffic to the tool or alternative page that owns the intent (PRD-TR-2026-11-02 AC-4) without editing Supabase blog content.
