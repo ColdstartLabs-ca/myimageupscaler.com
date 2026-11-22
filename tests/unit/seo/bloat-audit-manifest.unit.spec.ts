@@ -24,9 +24,14 @@ function gscRow(path: string, clicks: number, impressions = 0) {
   return { page: `${BASE}${path}`, clicks, impressions };
 }
 
+function ga4Row(path: string, sessions: number, conversions: number) {
+  return { page: path, sessions, conversions };
+}
+
 function manifestInputs(
   blogRows: ReturnType<typeof gscRow>[],
-  posts: Array<{ slug: string; lastmod: string }>
+  posts: Array<{ slug: string; lastmod: string }>,
+  ga4Rows: ReturnType<typeof ga4Row>[] = []
 ) {
   const sitemapPosts = [
     ...OWNER_BLOG_SLUGS.map((slug: string) => ({ slug, lastmod: '2026-01-01' })),
@@ -48,6 +53,7 @@ function manifestInputs(
         })),
       ],
     },
+    ga4: { rows: ga4Rows },
     pseo: [
       { category: 'platform-format', pages: [{ slug: 'midjourney-upscaler-png' }] },
       { category: 'alternatives', pages: [{ slug: 'vs-bigjpg' }] },
@@ -130,6 +136,54 @@ describe('audit-index-bloat blog rule order', () => {
       )
     ).toEqual({ disposition: 'NOINDEX_UNPUBLISH' });
   });
+
+  it('noindexes off-topic posts with zero GA4 conversions even when they have clicks', () => {
+    expect(
+      classifyBlogPost(
+        {
+          slug: '4-k-youtube-to-mp-4',
+          clicks180: 142,
+          impressions180: 3232,
+          lastmod: '2026-06-09',
+          offTopic: true,
+          ga4Conversions90: 0,
+        },
+        OPTIONS
+      )
+    ).toEqual({ disposition: 'NOINDEX_UNPUBLISH', reason: 'off-topic, 0 GA4 conversions in 90d' });
+  });
+
+  it('keeps off-topic posts with GA4 conversions', () => {
+    expect(
+      classifyBlogPost(
+        {
+          slug: 'animation-maker-for-minecraft',
+          clicks180: 288,
+          impressions180: 21990,
+          lastmod: '2026-06-02',
+          offTopic: true,
+          ga4Conversions90: 8,
+        },
+        OPTIONS
+      )
+    ).toEqual({ disposition: 'KEEP' });
+  });
+
+  it('evaluates the guarded rule before the off-topic rule', () => {
+    expect(
+      classifyBlogPost(
+        {
+          slug: 'tiktok-profile-picture-ideas',
+          clicks180: 0,
+          impressions180: 0,
+          lastmod: '2026-01-01',
+          offTopic: true,
+          ga4Conversions90: 0,
+        },
+        OPTIONS
+      )
+    ).toEqual({ disposition: 'DEFER_GUARDED' });
+  });
 });
 
 describe('audit-index-bloat pSEO rules', () => {
@@ -186,6 +240,8 @@ describe('audit-index-bloat buildManifest', () => {
       url: `${BASE}/blog/zebra-post`,
       clicks180: 21,
       impressions180: 210,
+      ga4Sessions90: 0,
+      ga4Conversions90: 0,
       lastmod: '2026-01-01',
       disposition: 'KEEP',
     });
@@ -210,7 +266,36 @@ describe('audit-index-bloat buildManifest', () => {
     }
   });
 
-  it('flags off-topic posts and keeps them under normal rules', () => {
+  it('adds GA4 sessions and conversions, defaulting missing rows to zero', () => {
+    const inputs = manifestInputs(
+      [
+        gscRow('/blog/animation-maker-for-minecraft', 288, 21990),
+        gscRow('/blog/4-k-youtube-to-mp-4', 142, 3232),
+      ],
+      [
+        { slug: 'animation-maker-for-minecraft', lastmod: '2026-06-02' },
+        { slug: '4-k-youtube-to-mp-4', lastmod: '2026-06-09' },
+      ],
+      [ga4Row('/blog/animation-maker-for-minecraft', 153, 8)]
+    );
+    const manifest = buildManifest(inputs, OPTIONS);
+    const minecraft = manifest.blog.find(
+      (entry: { slug: string }) => entry.slug === 'animation-maker-for-minecraft'
+    );
+    expect(minecraft.ga4Sessions90).toBe(153);
+    expect(minecraft.ga4Conversions90).toBe(8);
+    expect(minecraft.disposition).toBe('KEEP');
+
+    const youtube = manifest.blog.find(
+      (entry: { slug: string }) => entry.slug === '4-k-youtube-to-mp-4'
+    );
+    expect(youtube.ga4Sessions90).toBe(0);
+    expect(youtube.ga4Conversions90).toBe(0);
+    expect(youtube.disposition).toBe('NOINDEX_UNPUBLISH');
+    expect(youtube.reason).toBe('off-topic, 0 GA4 conversions in 90d');
+  });
+
+  it('noindexes flagged off-topic posts that have no GA4 conversions', () => {
     const inputs = manifestInputs(
       [gscRow('/blog/windows-11-snap-layouts', 1, 843)],
       [{ slug: 'windows-11-snap-layouts', lastmod: '2026-01-01' }]
@@ -218,8 +303,8 @@ describe('audit-index-bloat buildManifest', () => {
     const row = buildManifest(inputs, OPTIONS).blog.find(
       (entry: { slug: string }) => entry.slug === 'windows-11-snap-layouts'
     );
-    expect(row.disposition).toBe('KEEP');
     expect(row.offTopic).toBe(true);
+    expect(row.disposition).toBe('NOINDEX_UNPUBLISH');
   });
 
   it('throws when an owner target is not KEEP in the data', () => {
@@ -284,6 +369,24 @@ describe('committed index-bloat manifest', () => {
     );
 
     expect(consolidation).toEqual(buildConsolidation(manifest));
+  });
+
+  it('applies the off-topic GA4 rule to the real off-topic posts', () => {
+    const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+    const rows = new Map<string, { disposition: string; ga4Conversions90: number }>(
+      manifest.blog.map((row: { slug: string; disposition: string; ga4Conversions90: number }) => [
+        row.slug,
+        row,
+      ])
+    );
+    expect(rows.get('4-k-youtube-to-mp-4')?.disposition).toBe('NOINDEX_UNPUBLISH');
+    expect(rows.get('4-k-youtube-to-mp-4')?.ga4Conversions90).toBe(0);
+    expect(rows.get('windows-11-snap-layouts')?.disposition).toBe('NOINDEX_UNPUBLISH');
+    expect(rows.get('windows-11-snap-layouts')?.ga4Conversions90).toBe(0);
+    expect(rows.get('animation-maker-for-minecraft')?.disposition).toBe('KEEP');
+    expect(rows.get('animation-maker-for-minecraft')?.ga4Conversions90).toBe(8);
+    expect(rows.get('convert-video-to-hd-1080-p-online-free')?.disposition).toBe('KEEP');
+    expect(rows.get('convert-video-to-hd-1080-p-online-free')?.ga4Conversions90).toBe(4);
   });
 
   it('builds pSEO urls from category and slug', () => {

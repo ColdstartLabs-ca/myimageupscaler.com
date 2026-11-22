@@ -6,6 +6,7 @@ const DEFAULT_RECENT_CUTOFF = '2026-10-07';
 const MANIFEST_RELATIVE_PATH = 'docs/SEO/reports/2026-11-21-index-bloat-manifest.json';
 const CONSOLIDATION_RELATIVE_PATH = 'shared/constants/blog-consolidation.json';
 const INPUT_DIR = 'docs/SEO/reports/inputs/2026-11-21-index-bloat';
+const GA4_BLOG_LANDING_RELATIVE_PATH = `${INPUT_DIR}/ga4-blog-landing-90d.json`;
 
 const OWNER_RULES = [
   { pattern: 'background|transparent|cutout|masking', target: '/tools/remove-bg' },
@@ -46,9 +47,12 @@ function normalizeUrl(url) {
   return String(url).split('#')[0].split('?')[0].replace(/\/+$/, '');
 }
 
-function classifyBlogPost({ slug, clicks180, lastmod }, opts = {}) {
+function classifyBlogPost({ slug, clicks180, lastmod, offTopic, ga4Conversions90 }, opts = {}) {
   const recentCutoff = opts.recentCutoff || DEFAULT_RECENT_CUTOFF;
   if (GUARDED_SLUGS.includes(slug)) return { disposition: 'DEFER_GUARDED' };
+  if (offTopic && (ga4Conversions90 ?? 0) === 0) {
+    return { disposition: 'NOINDEX_UNPUBLISH', reason: 'off-topic, 0 GA4 conversions in 90d' };
+  }
   if (clicks180 > 0) return { disposition: 'KEEP' };
   if (lastmod && lastmod >= recentCutoff) return { disposition: 'DEFER_RECENT' };
   const rule = OWNER_RULES.find((candidate) => new RegExp(candidate.pattern).test(slug));
@@ -70,6 +74,18 @@ function sumGscByUrl(rows) {
     const current = totals.get(key) || { clicks: 0, impressions: 0 };
     current.clicks += row.clicks || 0;
     current.impressions += row.impressions || 0;
+    totals.set(key, current);
+  }
+  return totals;
+}
+
+function sumGa4ByUrl(rows = []) {
+  const totals = new Map();
+  for (const row of rows) {
+    const key = normalizeUrl(row.page);
+    const current = totals.get(key) || { sessions: 0, conversions: 0 };
+    current.sessions += row.sessions || 0;
+    current.conversions += row.conversions || 0;
     totals.set(key, current);
   }
   return totals;
@@ -97,6 +113,7 @@ function assertOwnerTargetsKeep(totals) {
 function buildManifest(inputs, opts = {}) {
   const recentCutoff = opts.recentCutoff || DEFAULT_RECENT_CUTOFF;
   const totals = sumGscByUrl(inputs.gsc.rows);
+  const ga4Totals = sumGa4ByUrl(inputs.ga4 && inputs.ga4.rows);
   assertOwnerTargetsKeep(totals);
 
   const blog = [];
@@ -111,15 +128,29 @@ function buildManifest(inputs, opts = {}) {
     seenSlugs.add(slug);
     const clicks180 = (totals.get(`${BASE_URL}${marker}${slug}`) || { clicks: 0 }).clicks;
     const impressions180 = (totals.get(`${BASE_URL}${marker}${slug}`) || { impressions: 0 }).impressions;
+    const ga4 = ga4Totals.get(`${marker}${slug}`) || { sessions: 0, conversions: 0 };
+    const offTopic = OFF_TOPIC_SLUGS.includes(slug);
     const row = {
       slug,
       url: `${BASE_URL}${marker}${slug}`,
       clicks180,
       impressions180,
+      ga4Sessions90: ga4.sessions,
+      ga4Conversions90: ga4.conversions,
       lastmod: entry.lastmod || null,
-      ...classifyBlogPost({ slug, clicks180, impressions180, lastmod: entry.lastmod }, { recentCutoff }),
+      ...classifyBlogPost(
+        {
+          slug,
+          clicks180,
+          impressions180,
+          lastmod: entry.lastmod,
+          offTopic,
+          ga4Conversions90: ga4.conversions,
+        },
+        { recentCutoff }
+      ),
     };
-    if (OFF_TOPIC_SLUGS.includes(slug)) row.offTopic = true;
+    if (offTopic) row.offTopic = true;
     blog.push(row);
   }
   blog.sort((a, b) => (a.slug < b.slug ? -1 : a.slug > b.slug ? 1 : 0));
@@ -190,6 +221,7 @@ if (require.main === module) {
   const manifest = buildManifest({
     gsc: readJson(`${INPUT_DIR}/gsc-pages-180d.json`),
     sitemap: readJson(`${INPUT_DIR}/sitemap-blog.json`),
+    ga4: readJson(GA4_BLOG_LANDING_RELATIVE_PATH),
     pseo: [readJson('app/seo/data/platform-format.json'), readJson('app/seo/data/alternatives.json')].map(
       (data) => ({ category: data.category, pages: data.pages })
     ),

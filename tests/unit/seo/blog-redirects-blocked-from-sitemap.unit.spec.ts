@@ -48,7 +48,7 @@ describe('blog consolidation file', () => {
 
   it('carries every MERGE_301 redirect and NOINDEX_UNPUBLISH slug', () => {
     expect(Object.keys(consolidation.redirects)).toHaveLength(66);
-    expect(consolidation.noindex).toHaveLength(14);
+    expect(consolidation.noindex).toHaveLength(16);
     expect(Object.keys(consolidation.redirects)).toEqual(
       [...Object.keys(consolidation.redirects)].sort()
     );

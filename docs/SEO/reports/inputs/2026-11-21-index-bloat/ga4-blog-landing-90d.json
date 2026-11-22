@@ -1,0 +1,1020 @@
+{
+"source": "GA4 organic landing pages (ga-fetch.cjs --days=90), fetched 2026-11-21",
+"rows": [
+{
+"page": "/blog/16x-upscaling-does-it-work",
+"sessions": 3,
+"conversions": 1
+},
+{
+"page": "/blog/4-k-format-video",
+"sessions": 1,
+"conversions": 0
+},
+{
+"page": "/blog/4-k-picture-resolution",
+"sessions": 6,
+"conversions": 0
+},
+{
+"page": "/blog/4-k-video-upscaler",
+"sessions": 10,
+"conversions": 0
+},
+{
+"page": "/blog/4-k-youtube-to-mp-4",
+"sessions": 95,
+"conversions": 0
+},
+{
+"page": "/blog/4k-ai-image-upscaler-guide",
+"sessions": 1,
+"conversions": 0
+},
+{
+"page": "/blog/5-signs-your-images-need-upscaling",
+"sessions": 2,
+"conversions": 1
+},
+{
+"page": "/blog/ai-enhance-photo",
+"sessions": 4,
+"conversions": 2
+},
+{
+"page": "/blog/ai-frame-interpolation",
+"sessions": 74,
+"conversions": 3
+},
+{
+"page": "/blog/ai-image-extender",
+"sessions": 5,
+"conversions": 0
+},
+{
+"page": "/blog/ai-image-upscaler-for-etsy-sellers",
+"sessions": 6,
+"conversions": 1
+},
+{
+"page": "/blog/ai-image-upscaling-vs-sharpening-explained",
+"sessions": 17,
+"conversions": 0
+},
+{
+"page": "/blog/ai-increase-photo-resolution",
+"sessions": 5,
+"conversions": 0
+},
+{
+"page": "/blog/ai-model-comparison",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/ai-noise-reduction",
+"sessions": 4,
+"conversions": 1
+},
+{
+"page": "/blog/ai-photo-editor-for-free",
+"sessions": 31,
+"conversions": 4
+},
+{
+"page": "/blog/ai-photo-enhancer-reddit",
+"sessions": 3,
+"conversions": 0
+},
+{
+"page": "/blog/ai-prompts-for-image-generation",
+"sessions": 3,
+"conversions": 0
+},
+{
+"page": "/blog/ai-quality-enhancer",
+"sessions": 4,
+"conversions": 1
+},
+{
+"page": "/blog/ai-resolution-enhancer",
+"sessions": 2,
+"conversions": 1
+},
+{
+"page": "/blog/ai-upscaler-muryou-osusume",
+"sessions": 43,
+"conversions": 0
+},
+{
+"page": "/blog/animation-maker-for-minecraft",
+"sessions": 153,
+"conversions": 8
+},
+{
+"page": "/blog/anime-upscaling-4k-art-guide",
+"sessions": 8,
+"conversions": 1
+},
+{
+"page": "/blog/batch-edit-photos",
+"sessions": 4,
+"conversions": 0
+},
+{
+"page": "/blog/batch-image-processing-mac",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/batch-photo-editor-online-free",
+"sessions": 44,
+"conversions": 1
+},
+{
+"page": "/blog/best-ai-image-enhancer",
+"sessions": 4,
+"conversions": 0
+},
+{
+"page": "/blog/best-ai-image-quality-enhancer-free",
+"sessions": 84,
+"conversions": 12
+},
+{
+"page": "/blog/best-ai-photo-enhancer",
+"sessions": 8,
+"conversions": 0
+},
+{
+"page": "/blog/best-ai-photo-enhancer-reddit",
+"sessions": 117,
+"conversions": 16
+},
+{
+"page": "/blog/best-ai-upscaler",
+"sessions": 76,
+"conversions": 10
+},
+{
+"page": "/blog/best-app-for-unblurring-photos",
+"sessions": 184,
+"conversions": 34
+},
+{
+"page": "/blog/best-app-to-remove-photo-background",
+"sessions": 3,
+"conversions": 0
+},
+{
+"page": "/blog/best-app-to-restore-old-photos",
+"sessions": 6,
+"conversions": 0
+},
+{
+"page": "/blog/best-batch-photo-editing-software",
+"sessions": 1,
+"conversions": 0
+},
+{
+"page": "/blog/best-bulk-image-upscalers-2026",
+"sessions": 9,
+"conversions": 0
+},
+{
+"page": "/blog/best-file-type-for-printing-photos",
+"sessions": 2,
+"conversions": 1
+},
+{
+"page": "/blog/best-free-ai-image-upscaler-2026-tested-compared",
+"sessions": 880,
+"conversions": 181
+},
+{
+"page": "/blog/best-free-ai-photo-enhancer-online",
+"sessions": 145,
+"conversions": 29
+},
+{
+"page": "/blog/best-free-photo-restoration-services-online",
+"sessions": 109,
+"conversions": 25
+},
+{
+"page": "/blog/best-high-resolution-image-format",
+"sessions": 14,
+"conversions": 0
+},
+{
+"page": "/blog/best-image-upscaler",
+"sessions": 104,
+"conversions": 14
+},
+{
+"page": "/blog/best-photo-restoration-software",
+"sessions": 0,
+"conversions": 0
+},
+{
+"page": "/blog/best-video-upscaler",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/black-and-white-photo-restoration",
+"sessions": 1,
+"conversions": 0
+},
+{
+"page": "/blog/blow-up-images-to-poster-size",
+"sessions": 6,
+"conversions": 0
+},
+{
+"page": "/blog/blur-remover-online",
+"sessions": 3,
+"conversions": 0
+},
+{
+"page": "/blog/blurry-photo-fix-online-free",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/cartoon-to-realistic-ai",
+"sessions": 65,
+"conversions": 4
+},
+{
+"page": "/blog/change-frame-rate-video",
+"sessions": 14,
+"conversions": 0
+},
+{
+"page": "/blog/colorize-black-and-white-photos",
+"sessions": 6,
+"conversions": 0
+},
+{
+"page": "/blog/colorize-with-photoshop",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/combining-png-files",
+"sessions": 16,
+"conversions": 0
+},
+{
+"page": "/blog/convert-photo-to-pencil-sketch",
+"sessions": 1,
+"conversions": 0
+},
+{
+"page": "/blog/convert-picture-to-outline",
+"sessions": 11,
+"conversions": 0
+},
+{
+"page": "/blog/convert-video-to-hd-1080-p-online-free",
+"sessions": 51,
+"conversions": 4
+},
+{
+"page": "/blog/dalle-3-image-enhancement-guide",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/damaged-old-photographs",
+"sessions": 0,
+"conversions": 0
+},
+{
+"page": "/blog/denoiser-in-premiere",
+"sessions": 7,
+"conversions": 0
+},
+{
+"page": "/blog/does-upscaling-improve-picture-quality",
+"sessions": 4,
+"conversions": 0
+},
+{
+"page": "/blog/dpi-converter-online",
+"sessions": 0,
+"conversions": 0
+},
+{
+"page": "/blog/enhance-picture-quality-ai",
+"sessions": 3,
+"conversions": 2
+},
+{
+"page": "/blog/enhance-pictures-in-photoshop",
+"sessions": 15,
+"conversions": 0
+},
+{
+"page": "/blog/enhance-text-in-image",
+"sessions": 100,
+"conversions": 20
+},
+{
+"page": "/blog/fix-blurry-photos-ai-methods-guide",
+"sessions": 3,
+"conversions": 0
+},
+{
+"page": "/blog/fix-blurry-photos-iphone",
+"sessions": 0,
+"conversions": 0
+},
+{
+"page": "/blog/fix-blurry-photos-online",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/fix-overexposed-photo",
+"sessions": 1,
+"conversions": 0
+},
+{
+"page": "/blog/fix-pixelated-image",
+"sessions": 1,
+"conversions": 0
+},
+{
+"page": "/blog/fix-underexposed-photo",
+"sessions": 3,
+"conversions": 0
+},
+{
+"page": "/blog/fixing-pixelated-photos",
+"sessions": 7,
+"conversions": 2
+},
+{
+"page": "/blog/frame-rate-increaser",
+"sessions": 14,
+"conversions": 1
+},
+{
+"page": "/blog/free-ai-image-enlarger",
+"sessions": 0,
+"conversions": 0
+},
+{
+"page": "/blog/free-ai-upscaler-no-watermark",
+"sessions": 73,
+"conversions": 9
+},
+{
+"page": "/blog/free-online-image-enlarger",
+"sessions": 25,
+"conversions": 0
+},
+{
+"page": "/blog/free-photo-enhancer-no-signup",
+"sessions": 148,
+"conversions": 34
+},
+{
+"page": "/blog/free-photo-restoration-app",
+"sessions": 25,
+"conversions": 2
+},
+{
+"page": "/blog/gif-upscaler",
+"sessions": 151,
+"conversions": 25
+},
+{
+"page": "/blog/heic-iphone-photo-upscaling-guide",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/high-resolution-gif",
+"sessions": 15,
+"conversions": 1
+},
+{
+"page": "/blog/high-resolution-image-for-printing",
+"sessions": 17,
+"conversions": 0
+},
+{
+"page": "/blog/how-to-change-the-resolution-of-a-video",
+"sessions": 29,
+"conversions": 0
+},
+{
+"page": "/blog/how-to-clear-up-a-photo",
+"sessions": 52,
+"conversions": 10
+},
+{
+"page": "/blog/how-to-clear-up-blurry-pictures",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/how-to-convert-images-to-hd",
+"sessions": 1,
+"conversions": 0
+},
+{
+"page": "/blog/how-to-convert-png-to-4k",
+"sessions": 55,
+"conversions": 15
+},
+{
+"page": "/blog/how-to-digitize-photos",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/how-to-enhance-image-quality-with-ai",
+"sessions": 4,
+"conversions": 1
+},
+{
+"page": "/blog/how-to-enlarge-old-photographs",
+"sessions": 5,
+"conversions": 0
+},
+{
+"page": "/blog/how-to-enlarge-photo-without-losing-quality",
+"sessions": 4,
+"conversions": 1
+},
+{
+"page": "/blog/how-to-enlarge-photos-for-printing",
+"sessions": 33,
+"conversions": 1
+},
+{
+"page": "/blog/how-to-fix-blurry-photos-in-lightroom",
+"sessions": 12,
+"conversions": 0
+},
+{
+"page": "/blog/how-to-fix-blurry-photos-on-android",
+"sessions": 26,
+"conversions": 1
+},
+{
+"page": "/blog/how-to-fix-blurry-photos-with-ai",
+"sessions": 5,
+"conversions": 1
+},
+{
+"page": "/blog/how-to-fix-resolution",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/how-to-increase-dpi-of-image",
+"sessions": 9,
+"conversions": 0
+},
+{
+"page": "/blog/how-to-increase-picture-pixels",
+"sessions": 2,
+"conversions": 1
+},
+{
+"page": "/blog/how-to-make-high-quality-animated-gifs",
+"sessions": 10,
+"conversions": 0
+},
+{
+"page": "/blog/how-to-make-low-resolution-photo-high-resolution",
+"sessions": 4,
+"conversions": 0
+},
+{
+"page": "/blog/how-to-preserve-old-photographs",
+"sessions": 51,
+"conversions": 0
+},
+{
+"page": "/blog/how-to-restore-old-photos",
+"sessions": 12,
+"conversions": 0
+},
+{
+"page": "/blog/how-to-restore-old-photos-on-iphone",
+"sessions": 3,
+"conversions": 0
+},
+{
+"page": "/blog/how-to-sharpen-an-image",
+"sessions": 16,
+"conversions": 0
+},
+{
+"page": "/blog/how-to-sharpen-blurry-images",
+"sessions": 8,
+"conversions": 1
+},
+{
+"page": "/blog/how-to-upscale-4k-to-8k-images-with-ai",
+"sessions": 1,
+"conversions": 0
+},
+{
+"page": "/blog/how-to-upscale-a-logo-without-losing-quality",
+"sessions": 16,
+"conversions": 4
+},
+{
+"page": "/blog/how-to-upscale-anime-images-with-ai",
+"sessions": 13,
+"conversions": 3
+},
+{
+"page": "/blog/how-to-upscale-avif-images-without-losing-quality",
+"sessions": 26,
+"conversions": 4
+},
+{
+"page": "/blog/how-to-upscale-avif-tiff-bmp-image-formats",
+"sessions": 5,
+"conversions": 0
+},
+{
+"page": "/blog/how-to-upscale-dalle-images",
+"sessions": 21,
+"conversions": 1
+},
+{
+"page": "/blog/how-to-upscale-heic-images-iphone",
+"sessions": 26,
+"conversions": 3
+},
+{
+"page": "/blog/how-to-upscale-images-for-canva",
+"sessions": 21,
+"conversions": 2
+},
+{
+"page": "/blog/how-to-upscale-images-for-instagram",
+"sessions": 32,
+"conversions": 2
+},
+{
+"page": "/blog/how-to-upscale-images-without-losing-quality",
+"sessions": 3,
+"conversions": 0
+},
+{
+"page": "/blog/how-to-upscale-midjourney-images-for-print",
+"sessions": 29,
+"conversions": 1
+},
+{
+"page": "/blog/how-to-upscale-passport-photos-with-ai",
+"sessions": 22,
+"conversions": 5
+},
+{
+"page": "/blog/how-to-upscale-real-estate-photos-with-ai",
+"sessions": 3,
+"conversions": 1
+},
+{
+"page": "/blog/how-to-upscale-webp-images",
+"sessions": 12,
+"conversions": 0
+},
+{
+"page": "/blog/how-to-upscale-youtube-thumbnails",
+"sessions": 65,
+"conversions": 1
+},
+{
+"page": "/blog/ideas-for-vlogs",
+"sessions": 1,
+"conversions": 0
+},
+{
+"page": "/blog/image-enhancement-techniques",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/image-is-too-large",
+"sessions": 36,
+"conversions": 1
+},
+{
+"page": "/blog/image-noise-reduction-software",
+"sessions": 3,
+"conversions": 0
+},
+{
+"page": "/blog/image-out-of-focus",
+"sessions": 15,
+"conversions": 1
+},
+{
+"page": "/blog/image-resolution-for-printing-complete-guide",
+"sessions": 10,
+"conversions": 0
+},
+{
+"page": "/blog/image-resolution-guide-everything-you-need-to-know",
+"sessions": 62,
+"conversions": 0
+},
+{
+"page": "/blog/image-size-for-web",
+"sessions": 13,
+"conversions": 0
+},
+{
+"page": "/blog/image-to-line-art",
+"sessions": 25,
+"conversions": 0
+},
+{
+"page": "/blog/image-upscaler-8x",
+"sessions": 20,
+"conversions": 1
+},
+{
+"page": "/blog/improve-image-quality-ai",
+"sessions": 1,
+"conversions": 0
+},
+{
+"page": "/blog/improve-scan-quality",
+"sessions": 25,
+"conversions": 2
+},
+{
+"page": "/blog/increase-dpi-in-photoshop",
+"sessions": 3,
+"conversions": 0
+},
+{
+"page": "/blog/is-jpeg-or-png-better",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/jpeg-artifacts-removal",
+"sessions": 1,
+"conversions": 0
+},
+{
+"page": "/blog/jpg-vs-png-quality",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/keep-text-sharp-when-upscaling-product-photos",
+"sessions": 5,
+"conversions": 3
+},
+{
+"page": "/blog/large-format-printing",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/layer-pictures-app",
+"sessions": 5,
+"conversions": 0
+},
+{
+"page": "/blog/lens-distortion-correction",
+"sessions": 40,
+"conversions": 2
+},
+{
+"page": "/blog/lightroom-super-resolution",
+"sessions": 6,
+"conversions": 0
+},
+{
+"page": "/blog/lossless-image-enlargement",
+"sessions": 3,
+"conversions": 0
+},
+{
+"page": "/blog/low-resolution-photos-to-high-resolution",
+"sessions": 3,
+"conversions": 1
+},
+{
+"page": "/blog/masking-in-photography",
+"sessions": 3,
+"conversions": 0
+},
+{
+"page": "/blog/mejorar-calidad-imagen-ia-gratis",
+"sessions": 43,
+"conversions": 6
+},
+{
+"page": "/blog/noise-reducer-photoshop",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/noise-reduction-in-image",
+"sessions": 5,
+"conversions": 0
+},
+{
+"page": "/blog/noise-reduction-in-photos",
+"sessions": 10,
+"conversions": 1
+},
+{
+"page": "/blog/old-damaged-photos",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/old-photo-face-restoration",
+"sessions": 6,
+"conversions": 2
+},
+{
+"page": "/blog/outline-image-online",
+"sessions": 4,
+"conversions": 0
+},
+{
+"page": "/blog/photo-noise-removal-software",
+"sessions": 7,
+"conversions": 1
+},
+{
+"page": "/blog/photo-restoration-program",
+"sessions": 8,
+"conversions": 0
+},
+{
+"page": "/blog/photo-restoration-software",
+"sessions": 4,
+"conversions": 0
+},
+{
+"page": "/blog/photoshop-upscale-image",
+"sessions": 106,
+"conversions": 2
+},
+{
+"page": "/blog/photoshop-upscaler-vs-ai-tools",
+"sessions": 1,
+"conversions": 2
+},
+{
+"page": "/blog/picture-to-oil-painting-convert",
+"sessions": 10,
+"conversions": 0
+},
+{
+"page": "/blog/pixelcut-ai-photo-editor",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/png-hintergrund-transparent-machen-kostenlos",
+"sessions": 1,
+"conversions": 0
+},
+{
+"page": "/blog/poster-size-dimensions-pixels",
+"sessions": 398,
+"conversions": 10
+},
+{
+"page": "/blog/professional-photo-enlargement-software",
+"sessions": 0,
+"conversions": 0
+},
+{
+"page": "/blog/quality-control-images",
+"sessions": 6,
+"conversions": 0
+},
+{
+"page": "/blog/reduce-image-noise",
+"sessions": 6,
+"conversions": 1
+},
+{
+"page": "/blog/remove-blur-from-image",
+"sessions": 19,
+"conversions": 4
+},
+{
+"page": "/blog/remove-noise-in-photoshop",
+"sessions": 6,
+"conversions": 0
+},
+{
+"page": "/blog/restore-black-and-white-photo",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/restore-old-damaged-photos-online-free",
+"sessions": 4,
+"conversions": 0
+},
+{
+"page": "/blog/restore-old-photos-for-free",
+"sessions": 3,
+"conversions": 0
+},
+{
+"page": "/blog/restore-old-photos-in-photoshop",
+"sessions": 55,
+"conversions": 0
+},
+{
+"page": "/blog/restore-old-photos-near-me",
+"sessions": 0,
+"conversions": 0
+},
+{
+"page": "/blog/retouch-a-photo-online-free",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/retrieve-old-myspace-photos",
+"sessions": 28,
+"conversions": 0
+},
+{
+"page": "/blog/screenshot-upscaling-rescue-low-resolution-captures",
+"sessions": 3,
+"conversions": 0
+},
+{
+"page": "/blog/sharpen-a-video",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/stable-diffusion-upscaler",
+"sessions": 18,
+"conversions": 0
+},
+{
+"page": "/blog/stable-diffusion-upscaling-complete-guide",
+"sessions": 24,
+"conversions": 0
+},
+{
+"page": "/blog/sunset-camera-settings",
+"sessions": 10,
+"conversions": 0
+},
+{
+"page": "/blog/text-image-enhancer",
+"sessions": 51,
+"conversions": 8
+},
+{
+"page": "/blog/tiktok-profile-picture-ideas",
+"sessions": 67,
+"conversions": 0
+},
+{
+"page": "/blog/topaz-denoise-ai",
+"sessions": 9,
+"conversions": 0
+},
+{
+"page": "/blog/topaz-labs-free-trial",
+"sessions": 400,
+"conversions": 27
+},
+{
+"page": "/blog/topaz-video-upscaler",
+"sessions": 13,
+"conversions": 1
+},
+{
+"page": "/blog/turn-image-into-illustration",
+"sessions": 3,
+"conversions": 0
+},
+{
+"page": "/blog/unblur-image-ai",
+"sessions": 6,
+"conversions": 0
+},
+{
+"page": "/blog/unpixelate-image-free",
+"sessions": 12,
+"conversions": 4
+},
+{
+"page": "/blog/upscale-image-for-print-300-dpi-guide",
+"sessions": 129,
+"conversions": 18
+},
+{
+"page": "/blog/upscale-images-for-print-complete-guide",
+"sessions": 10,
+"conversions": 0
+},
+{
+"page": "/blog/upscale-logo",
+"sessions": 5,
+"conversions": 1
+},
+{
+"page": "/blog/upscale-midjourney-images-4k-8k-print-guide",
+"sessions": 14,
+"conversions": 0
+},
+{
+"page": "/blog/upscale-product-photos-amazon-etsy-guide",
+"sessions": 3,
+"conversions": 0
+},
+{
+"page": "/blog/upscaling-methods",
+"sessions": 8,
+"conversions": 0
+},
+{
+"page": "/blog/video-4-k-resolution",
+"sessions": 5,
+"conversions": 0
+},
+{
+"page": "/blog/video-enhancer-free",
+"sessions": 2,
+"conversions": 0
+},
+{
+"page": "/blog/video-upscaling-software",
+"sessions": 6,
+"conversions": 0
+},
+{
+"page": "/blog/videos-in-full-hd",
+"sessions": 12,
+"conversions": 0
+},
+{
+"page": "/blog/what-is-8k-image-resolution",
+"sessions": 17,
+"conversions": 4
+},
+{
+"page": "/blog/what-is-denoising",
+"sessions": 4,
+"conversions": 0
+},
+{
+"page": "/blog/what-is-pixelization",
+"sessions": 10,
+"conversions": 0
+},
+{
+"page": "/blog/what-resolution-for-print",
+"sessions": 117,
+"conversions": 5
+},
+{
+"page": "/blog/why-are-my-photos-blurry",
+"sessions": 4,
+"conversions": 0
+},
+{
+"page": "/blog/why-photos-blurry-when-printed",
+"sessions": 11,
+"conversions": 0
+},
+{
+"page": "/blog/why-upscaled-text-looks-blurry-how-to-fix",
+"sessions": 12,
+"conversions": 0
+},
+{
+"page": "/blog/windows-11-snap-layouts",
+"sessions": 10,
+"conversions": 0
+},
+{
+"page": "/blog/zoom-in-on-video",
+"sessions": 12,
+"conversions": 3
+}
+]
+}

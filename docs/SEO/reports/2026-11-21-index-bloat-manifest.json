@@ -41,11 +41,11 @@
   },
   "summary": {
     "blog": {
-      "KEEP": 200,
+      "KEEP": 198,
       "DEFER_GUARDED": 11,
       "DEFER_RECENT": 30,
       "MERGE_301": 66,
-      "NOINDEX_UNPUBLISH": 14
+      "NOINDEX_UNPUBLISH": 16
     },
     "pseo": {
       "KEEP": 12,
@@ -59,6 +59,8 @@
       "url": "https://myimageupscaler.com/blog/16x-upscaling-does-it-work",
       "clicks180": 1,
       "impressions180": 124,
+      "ga4Sessions90": 3,
+      "ga4Conversions90": 1,
       "lastmod": "2026-05-12",
       "disposition": "KEEP"
     },
@@ -67,6 +69,8 @@
       "url": "https://myimageupscaler.com/blog/4-k-format-video",
       "clicks180": 2,
       "impressions180": 892,
+      "ga4Sessions90": 1,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-16",
       "disposition": "KEEP"
     },
@@ -75,6 +79,8 @@
       "url": "https://myimageupscaler.com/blog/4-k-picture-resolution",
       "clicks180": 3,
       "impressions180": 1393,
+      "ga4Sessions90": 6,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-05",
       "disposition": "KEEP"
     },
@@ -83,6 +89,8 @@
       "url": "https://myimageupscaler.com/blog/4-k-video-upscaler",
       "clicks180": 20,
       "impressions180": 3014,
+      "ga4Sessions90": 10,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-15",
       "disposition": "KEEP"
     },
@@ -91,8 +99,11 @@
       "url": "https://myimageupscaler.com/blog/4-k-youtube-to-mp-4",
       "clicks180": 142,
       "impressions180": 3232,
+      "ga4Sessions90": 95,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-09",
-      "disposition": "KEEP",
+      "disposition": "NOINDEX_UNPUBLISH",
+      "reason": "off-topic, 0 GA4 conversions in 90d",
       "offTopic": true
     },
     {
@@ -100,6 +111,8 @@
       "url": "https://myimageupscaler.com/blog/4k-ai-image-upscaler-guide",
       "clicks180": 5,
       "impressions180": 154,
+      "ga4Sessions90": 1,
+      "ga4Conversions90": 0,
       "lastmod": "2026-02-18",
       "disposition": "KEEP"
     },
@@ -108,6 +121,8 @@
       "url": "https://myimageupscaler.com/blog/4k-upscaling-pc",
       "clicks180": 0,
       "impressions180": 228,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-10-26",
       "disposition": "DEFER_RECENT"
     },
@@ -116,6 +131,8 @@
       "url": "https://myimageupscaler.com/blog/5-signs-your-images-need-upscaling",
       "clicks180": 4,
       "impressions180": 345,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 1,
       "lastmod": "2026-02-13",
       "disposition": "KEEP"
     },
@@ -124,6 +141,8 @@
       "url": "https://myimageupscaler.com/blog/ai-enhance-photo",
       "clicks180": 2,
       "impressions180": 5447,
+      "ga4Sessions90": 4,
+      "ga4Conversions90": 2,
       "lastmod": "2026-05-01",
       "disposition": "KEEP"
     },
@@ -132,6 +151,8 @@
       "url": "https://myimageupscaler.com/blog/ai-frame-interpolation",
       "clicks180": 171,
       "impressions180": 10663,
+      "ga4Sessions90": 74,
+      "ga4Conversions90": 3,
       "lastmod": "2026-04-11",
       "disposition": "KEEP"
     },
@@ -140,6 +161,8 @@
       "url": "https://myimageupscaler.com/blog/ai-image-enhancement-ecommerce-guide",
       "clicks180": 0,
       "impressions180": 90,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2025-11-20",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-ai-photo-enhancer-online"
@@ -149,6 +172,8 @@
       "url": "https://myimageupscaler.com/blog/ai-image-extender",
       "clicks180": 9,
       "impressions180": 60,
+      "ga4Sessions90": 5,
+      "ga4Conversions90": 0,
       "lastmod": "2026-02-14",
       "disposition": "KEEP"
     },
@@ -157,6 +182,8 @@
       "url": "https://myimageupscaler.com/blog/ai-image-upscaler-for-etsy-sellers",
       "clicks180": 11,
       "impressions180": 506,
+      "ga4Sessions90": 6,
+      "ga4Conversions90": 1,
       "lastmod": "2026-02-17",
       "disposition": "KEEP"
     },
@@ -165,6 +192,8 @@
       "url": "https://myimageupscaler.com/blog/ai-image-upscaling-vs-sharpening-explained",
       "clicks180": 30,
       "impressions180": 7609,
+      "ga4Sessions90": 17,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-01",
       "disposition": "KEEP"
     },
@@ -173,6 +202,8 @@
       "url": "https://myimageupscaler.com/blog/ai-improve-picture-quality",
       "clicks180": 0,
       "impressions180": 0,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-11-18",
       "disposition": "DEFER_RECENT"
     },
@@ -181,6 +212,8 @@
       "url": "https://myimageupscaler.com/blog/ai-increase-photo-resolution",
       "clicks180": 1,
       "impressions180": 888,
+      "ga4Sessions90": 5,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-24",
       "disposition": "KEEP"
     },
@@ -189,6 +222,8 @@
       "url": "https://myimageupscaler.com/blog/ai-model-comparison",
       "clicks180": 3,
       "impressions180": 343,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-10",
       "disposition": "KEEP"
     },
@@ -197,6 +232,8 @@
       "url": "https://myimageupscaler.com/blog/ai-noise-reduction",
       "clicks180": 4,
       "impressions180": 650,
+      "ga4Sessions90": 4,
+      "ga4Conversions90": 1,
       "lastmod": "2026-07-10",
       "disposition": "KEEP"
     },
@@ -205,6 +242,8 @@
       "url": "https://myimageupscaler.com/blog/ai-photo-editor-for-free",
       "clicks180": 47,
       "impressions180": 3171,
+      "ga4Sessions90": 31,
+      "ga4Conversions90": 4,
       "lastmod": "2026-08-05",
       "disposition": "KEEP"
     },
@@ -213,6 +252,8 @@
       "url": "https://myimageupscaler.com/blog/ai-photo-editor-online",
       "clicks180": 0,
       "impressions180": 153,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-08-06",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-ai-photo-enhancer-online"
@@ -222,6 +263,8 @@
       "url": "https://myimageupscaler.com/blog/ai-photo-enhancer-reddit",
       "clicks180": 3,
       "impressions180": 466,
+      "ga4Sessions90": 3,
+      "ga4Conversions90": 0,
       "lastmod": "2026-08-18",
       "disposition": "KEEP"
     },
@@ -230,6 +273,8 @@
       "url": "https://myimageupscaler.com/blog/ai-photo-restoration",
       "clicks180": 0,
       "impressions180": 9,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-04",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-photo-restoration-services-online"
@@ -239,6 +284,8 @@
       "url": "https://myimageupscaler.com/blog/ai-photo-restoration-online-free",
       "clicks180": 0,
       "impressions180": 0,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-11-02",
       "disposition": "DEFER_RECENT"
     },
@@ -247,6 +294,8 @@
       "url": "https://myimageupscaler.com/blog/ai-photo-retouch",
       "clicks180": 2,
       "impressions180": 881,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-28",
       "disposition": "KEEP"
     },
@@ -255,6 +304,8 @@
       "url": "https://myimageupscaler.com/blog/ai-portrait-enhancer-online",
       "clicks180": 0,
       "impressions180": 26,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-10-24",
       "disposition": "DEFER_RECENT"
     },
@@ -263,6 +314,8 @@
       "url": "https://myimageupscaler.com/blog/ai-prompts-for-image-generation",
       "clicks180": 7,
       "impressions180": 4143,
+      "ga4Sessions90": 3,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-03",
       "disposition": "KEEP"
     },
@@ -271,6 +324,8 @@
       "url": "https://myimageupscaler.com/blog/ai-quality-enhancer",
       "clicks180": 2,
       "impressions180": 1820,
+      "ga4Sessions90": 4,
+      "ga4Conversions90": 1,
       "lastmod": "2026-04-30",
       "disposition": "KEEP"
     },
@@ -279,6 +334,8 @@
       "url": "https://myimageupscaler.com/blog/ai-resolution-enhancer",
       "clicks180": 2,
       "impressions180": 440,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 1,
       "lastmod": "2026-04-29",
       "disposition": "KEEP"
     },
@@ -287,6 +344,8 @@
       "url": "https://myimageupscaler.com/blog/ai-upscaler-muryou-osusume",
       "clicks180": 125,
       "impressions180": 3608,
+      "ga4Sessions90": 43,
+      "ga4Conversions90": 0,
       "lastmod": "2026-02-17",
       "disposition": "KEEP"
     },
@@ -295,6 +354,8 @@
       "url": "https://myimageupscaler.com/blog/animation-maker-for-minecraft",
       "clicks180": 288,
       "impressions180": 21990,
+      "ga4Sessions90": 153,
+      "ga4Conversions90": 8,
       "lastmod": "2026-06-02",
       "disposition": "KEEP",
       "offTopic": true
@@ -304,6 +365,8 @@
       "url": "https://myimageupscaler.com/blog/anime-upscaling-4k-art-guide",
       "clicks180": 16,
       "impressions180": 3234,
+      "ga4Sessions90": 8,
+      "ga4Conversions90": 1,
       "lastmod": "2025-01-05",
       "disposition": "KEEP"
     },
@@ -312,6 +375,8 @@
       "url": "https://myimageupscaler.com/blog/artificial-intelligence-and-image-processing",
       "clicks180": 1,
       "impressions180": 2236,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-10",
       "disposition": "KEEP"
     },
@@ -320,6 +385,8 @@
       "url": "https://myimageupscaler.com/blog/avif-vs-webp-vs-jpeg-which-upscales-best",
       "clicks180": 0,
       "impressions180": 172,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-02-17",
       "disposition": "MERGE_301",
       "target": "/blog/best-image-upscaler"
@@ -329,6 +396,8 @@
       "url": "https://myimageupscaler.com/blog/background-removal-ai",
       "clicks180": 0,
       "impressions180": 107,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-10-07",
       "disposition": "DEFER_RECENT"
     },
@@ -337,6 +406,8 @@
       "url": "https://myimageupscaler.com/blog/background-removal-photo",
       "clicks180": 0,
       "impressions180": 76,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-14",
       "disposition": "MERGE_301",
       "target": "/tools/remove-bg"
@@ -346,6 +417,8 @@
       "url": "https://myimageupscaler.com/blog/background-removal-tool",
       "clicks180": 0,
       "impressions180": 50,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-10-28",
       "disposition": "DEFER_RECENT"
     },
@@ -354,6 +427,8 @@
       "url": "https://myimageupscaler.com/blog/background-removal-website",
       "clicks180": 1,
       "impressions180": 2772,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-08-31",
       "disposition": "KEEP"
     },
@@ -362,6 +437,8 @@
       "url": "https://myimageupscaler.com/blog/batch-edit-photos",
       "clicks180": 1,
       "impressions180": 94,
+      "ga4Sessions90": 4,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-12",
       "disposition": "KEEP"
     },
@@ -370,6 +447,8 @@
       "url": "https://myimageupscaler.com/blog/batch-image-processing-mac",
       "clicks180": 2,
       "impressions180": 208,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-16",
       "disposition": "KEEP"
     },
@@ -378,6 +457,8 @@
       "url": "https://myimageupscaler.com/blog/batch-image-upscaler-ai",
       "clicks180": 0,
       "impressions180": 291,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-08-20",
       "disposition": "MERGE_301",
       "target": "/blog/best-image-upscaler"
@@ -387,6 +468,8 @@
       "url": "https://myimageupscaler.com/blog/batch-photo-editor-online-free",
       "clicks180": 46,
       "impressions180": 3716,
+      "ga4Sessions90": 44,
+      "ga4Conversions90": 1,
       "lastmod": "2026-08-18",
       "disposition": "KEEP"
     },
@@ -395,6 +478,8 @@
       "url": "https://myimageupscaler.com/blog/best-ai-image-enhancer",
       "clicks180": 16,
       "impressions180": 7092,
+      "ga4Sessions90": 4,
+      "ga4Conversions90": 0,
       "lastmod": "2026-04-23",
       "disposition": "KEEP"
     },
@@ -403,6 +488,8 @@
       "url": "https://myimageupscaler.com/blog/best-ai-image-quality-enhancer-free",
       "clicks180": 238,
       "impressions180": 11544,
+      "ga4Sessions90": 84,
+      "ga4Conversions90": 12,
       "lastmod": "2026-02-12",
       "disposition": "KEEP"
     },
@@ -411,6 +498,8 @@
       "url": "https://myimageupscaler.com/blog/best-ai-photo-enhancer",
       "clicks180": 19,
       "impressions180": 6913,
+      "ga4Sessions90": 8,
+      "ga4Conversions90": 0,
       "lastmod": "2026-04-27",
       "disposition": "KEEP"
     },
@@ -419,6 +508,8 @@
       "url": "https://myimageupscaler.com/blog/best-ai-photo-enhancer-reddit",
       "clicks180": 155,
       "impressions180": 17684,
+      "ga4Sessions90": 117,
+      "ga4Conversions90": 16,
       "lastmod": "2026-06-22",
       "disposition": "KEEP"
     },
@@ -427,6 +518,8 @@
       "url": "https://myimageupscaler.com/blog/best-ai-tools-for-photo-editing",
       "clicks180": 0,
       "impressions180": 1444,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-04-12",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-ai-photo-enhancer-online"
@@ -436,6 +529,8 @@
       "url": "https://myimageupscaler.com/blog/best-ai-upscaler",
       "clicks180": 132,
       "impressions180": 28261,
+      "ga4Sessions90": 76,
+      "ga4Conversions90": 10,
       "lastmod": "2026-03-05",
       "disposition": "KEEP"
     },
@@ -444,6 +539,8 @@
       "url": "https://myimageupscaler.com/blog/best-app-for-unblurring-photos",
       "clicks180": 249,
       "impressions180": 23169,
+      "ga4Sessions90": 184,
+      "ga4Conversions90": 34,
       "lastmod": "2026-05-29",
       "disposition": "DEFER_GUARDED"
     },
@@ -452,6 +549,8 @@
       "url": "https://myimageupscaler.com/blog/best-app-to-remove-photo-background",
       "clicks180": 2,
       "impressions180": 3815,
+      "ga4Sessions90": 3,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-29",
       "disposition": "KEEP"
     },
@@ -460,6 +559,8 @@
       "url": "https://myimageupscaler.com/blog/best-app-to-restore-old-photos",
       "clicks180": 11,
       "impressions180": 3256,
+      "ga4Sessions90": 6,
+      "ga4Conversions90": 0,
       "lastmod": "2026-04-09",
       "disposition": "KEEP"
     },
@@ -468,6 +569,8 @@
       "url": "https://myimageupscaler.com/blog/best-background-removal-software",
       "clicks180": 0,
       "impressions180": 748,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-11-10",
       "disposition": "DEFER_RECENT"
     },
@@ -476,6 +579,8 @@
       "url": "https://myimageupscaler.com/blog/best-batch-photo-editing-software",
       "clicks180": 5,
       "impressions180": 5846,
+      "ga4Sessions90": 1,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-21",
       "disposition": "KEEP"
     },
@@ -484,6 +589,8 @@
       "url": "https://myimageupscaler.com/blog/best-bulk-image-upscalers-2026",
       "clicks180": 19,
       "impressions180": 709,
+      "ga4Sessions90": 9,
+      "ga4Conversions90": 0,
       "lastmod": "2026-08-13",
       "disposition": "KEEP"
     },
@@ -492,6 +599,8 @@
       "url": "https://myimageupscaler.com/blog/best-file-type-for-printing-photos",
       "clicks180": 0,
       "impressions180": 175,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 1,
       "lastmod": "2026-09-10",
       "disposition": "MERGE_301",
       "target": "/blog/upscale-image-for-print-300-dpi-guide"
@@ -501,6 +610,8 @@
       "url": "https://myimageupscaler.com/blog/best-free-ai-image-upscaler-2026-tested-compared",
       "clicks180": 4569,
       "impressions180": 172807,
+      "ga4Sessions90": 880,
+      "ga4Conversions90": 181,
       "lastmod": "2026-03-25",
       "disposition": "DEFER_GUARDED"
     },
@@ -509,6 +620,8 @@
       "url": "https://myimageupscaler.com/blog/best-free-ai-photo-enhancer-online",
       "clicks180": 244,
       "impressions180": 16318,
+      "ga4Sessions90": 145,
+      "ga4Conversions90": 29,
       "lastmod": "2026-04-25",
       "disposition": "DEFER_GUARDED"
     },
@@ -517,6 +630,8 @@
       "url": "https://myimageupscaler.com/blog/best-free-photo-restoration-services-online",
       "clicks180": 64,
       "impressions180": 3474,
+      "ga4Sessions90": 109,
+      "ga4Conversions90": 25,
       "lastmod": "2026-04-25",
       "disposition": "DEFER_GUARDED"
     },
@@ -525,6 +640,8 @@
       "url": "https://myimageupscaler.com/blog/best-high-resolution-image-format",
       "clicks180": 6,
       "impressions180": 3277,
+      "ga4Sessions90": 14,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-18",
       "disposition": "KEEP"
     },
@@ -533,6 +650,8 @@
       "url": "https://myimageupscaler.com/blog/best-image-format-for-printing",
       "clicks180": 0,
       "impressions180": 0,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-11-16",
       "disposition": "DEFER_RECENT"
     },
@@ -541,6 +660,8 @@
       "url": "https://myimageupscaler.com/blog/best-image-formats-for-web",
       "clicks180": 1,
       "impressions180": 1591,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-04",
       "disposition": "KEEP"
     },
@@ -549,6 +670,8 @@
       "url": "https://myimageupscaler.com/blog/best-image-upscaler",
       "clicks180": 188,
       "impressions180": 42650,
+      "ga4Sessions90": 104,
+      "ga4Conversions90": 14,
       "lastmod": "2026-04-01",
       "disposition": "DEFER_GUARDED"
     },
@@ -557,6 +680,8 @@
       "url": "https://myimageupscaler.com/blog/best-photo-restoration-software",
       "clicks180": 0,
       "impressions180": 2556,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-02",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-photo-restoration-services-online"
@@ -566,6 +691,8 @@
       "url": "https://myimageupscaler.com/blog/best-video-upscaler",
       "clicks180": 2,
       "impressions180": 308,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2026-04-21",
       "disposition": "KEEP"
     },
@@ -574,6 +701,8 @@
       "url": "https://myimageupscaler.com/blog/better-landscape-photos",
       "clicks180": 0,
       "impressions180": 0,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-26",
       "disposition": "NOINDEX_UNPUBLISH"
     },
@@ -582,6 +711,8 @@
       "url": "https://myimageupscaler.com/blog/black-and-white-photo-restoration",
       "clicks180": 1,
       "impressions180": 41,
+      "ga4Sessions90": 1,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-08",
       "disposition": "KEEP"
     },
@@ -590,6 +721,8 @@
       "url": "https://myimageupscaler.com/blog/blow-up-images-to-poster-size",
       "clicks180": 0,
       "impressions180": 15,
+      "ga4Sessions90": 6,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-10",
       "disposition": "MERGE_301",
       "target": "/blog/upscale-image-for-print-300-dpi-guide"
@@ -599,6 +732,8 @@
       "url": "https://myimageupscaler.com/blog/blur-photo-editing-background",
       "clicks180": 0,
       "impressions180": 0,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-10-13",
       "disposition": "DEFER_RECENT"
     },
@@ -607,6 +742,8 @@
       "url": "https://myimageupscaler.com/blog/blur-reduction-software",
       "clicks180": 0,
       "impressions180": 22,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-21",
       "disposition": "MERGE_301",
       "target": "/blog/best-app-for-unblurring-photos"
@@ -616,6 +753,8 @@
       "url": "https://myimageupscaler.com/blog/blur-remover-online",
       "clicks180": 1,
       "impressions180": 88,
+      "ga4Sessions90": 3,
+      "ga4Conversions90": 0,
       "lastmod": "2026-10-03",
       "disposition": "KEEP"
     },
@@ -624,6 +763,8 @@
       "url": "https://myimageupscaler.com/blog/blurry-photo-fix-online-free",
       "clicks180": 3,
       "impressions180": 612,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2026-10-14",
       "disposition": "KEEP"
     },
@@ -632,6 +773,8 @@
       "url": "https://myimageupscaler.com/blog/bring-old-photos-to-life",
       "clicks180": 0,
       "impressions180": 2,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-08",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-photo-restoration-services-online"
@@ -641,6 +784,8 @@
       "url": "https://myimageupscaler.com/blog/bulk-background-remover",
       "clicks180": 0,
       "impressions180": 96,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-08-03",
       "disposition": "MERGE_301",
       "target": "/tools/remove-bg"
@@ -650,6 +795,8 @@
       "url": "https://myimageupscaler.com/blog/can-you-make-money-selling-photos-online",
       "clicks180": 0,
       "impressions180": 167,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-29",
       "disposition": "NOINDEX_UNPUBLISH"
     },
@@ -658,6 +805,8 @@
       "url": "https://myimageupscaler.com/blog/cartoon-to-realistic-ai",
       "clicks180": 143,
       "impressions180": 3424,
+      "ga4Sessions90": 65,
+      "ga4Conversions90": 4,
       "lastmod": "2026-04-25",
       "disposition": "KEEP"
     },
@@ -666,6 +815,8 @@
       "url": "https://myimageupscaler.com/blog/change-frame-rate-video",
       "clicks180": 8,
       "impressions180": 1828,
+      "ga4Sessions90": 14,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-05",
       "disposition": "KEEP"
     },
@@ -674,6 +825,8 @@
       "url": "https://myimageupscaler.com/blog/colorize-black-and-white-photos",
       "clicks180": 0,
       "impressions180": 191,
+      "ga4Sessions90": 6,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-09",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-photo-restoration-services-online"
@@ -683,6 +836,8 @@
       "url": "https://myimageupscaler.com/blog/colorize-with-photoshop",
       "clicks180": 2,
       "impressions180": 372,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-11",
       "disposition": "KEEP"
     },
@@ -691,6 +846,8 @@
       "url": "https://myimageupscaler.com/blog/combining-png-files",
       "clicks180": 21,
       "impressions180": 2118,
+      "ga4Sessions90": 16,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-18",
       "disposition": "KEEP"
     },
@@ -699,6 +856,8 @@
       "url": "https://myimageupscaler.com/blog/como-quitar-fondo-imagen-gratis-online",
       "clicks180": 2,
       "impressions180": 27,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-04-25",
       "disposition": "KEEP"
     },
@@ -707,6 +866,8 @@
       "url": "https://myimageupscaler.com/blog/content-creator-software",
       "clicks180": 0,
       "impressions180": 514,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-26",
       "disposition": "NOINDEX_UNPUBLISH"
     },
@@ -715,6 +876,8 @@
       "url": "https://myimageupscaler.com/blog/convert-photo-to-pencil-sketch",
       "clicks180": 1,
       "impressions180": 21,
+      "ga4Sessions90": 1,
+      "ga4Conversions90": 0,
       "lastmod": "2026-08-11",
       "disposition": "KEEP"
     },
@@ -723,6 +886,8 @@
       "url": "https://myimageupscaler.com/blog/convert-picture-to-outline",
       "clicks180": 15,
       "impressions180": 2074,
+      "ga4Sessions90": 11,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-25",
       "disposition": "KEEP"
     },
@@ -731,6 +896,8 @@
       "url": "https://myimageupscaler.com/blog/convert-video-to-4-k",
       "clicks180": 3,
       "impressions180": 141,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-04-20",
       "disposition": "KEEP"
     },
@@ -739,6 +906,8 @@
       "url": "https://myimageupscaler.com/blog/convert-video-to-hd-1080-p-online-free",
       "clicks180": 51,
       "impressions180": 1166,
+      "ga4Sessions90": 51,
+      "ga4Conversions90": 4,
       "lastmod": "2026-08-12",
       "disposition": "KEEP",
       "offTopic": true
@@ -748,6 +917,8 @@
       "url": "https://myimageupscaler.com/blog/credit-based-pricing",
       "clicks180": 0,
       "impressions180": 2,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-11-17",
       "disposition": "DEFER_RECENT"
     },
@@ -756,6 +927,8 @@
       "url": "https://myimageupscaler.com/blog/dalle-3-image-enhancement-guide",
       "clicks180": 5,
       "impressions180": 802,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2025-01-05",
       "disposition": "KEEP"
     },
@@ -764,6 +937,8 @@
       "url": "https://myimageupscaler.com/blog/damaged-old-photographs",
       "clicks180": 0,
       "impressions180": 1225,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-22",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-photo-restoration-services-online"
@@ -773,6 +948,8 @@
       "url": "https://myimageupscaler.com/blog/denoise-a-photo",
       "clicks180": 0,
       "impressions180": 55,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-19",
       "disposition": "MERGE_301",
       "target": "/blog/noise-reduction-in-photos"
@@ -782,6 +959,8 @@
       "url": "https://myimageupscaler.com/blog/denoiser-in-premiere",
       "clicks180": 6,
       "impressions180": 3191,
+      "ga4Sessions90": 7,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-25",
       "disposition": "KEEP"
     },
@@ -790,6 +969,8 @@
       "url": "https://myimageupscaler.com/blog/does-upscaling-improve-picture-quality",
       "clicks180": 1,
       "impressions180": 650,
+      "ga4Sessions90": 4,
+      "ga4Conversions90": 0,
       "lastmod": "2026-08-19",
       "disposition": "KEEP"
     },
@@ -798,6 +979,8 @@
       "url": "https://myimageupscaler.com/blog/dpi-converter-online",
       "clicks180": 0,
       "impressions180": 83,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-04-13",
       "disposition": "MERGE_301",
       "target": "/blog/upscale-image-for-print-300-dpi-guide"
@@ -807,6 +990,8 @@
       "url": "https://myimageupscaler.com/blog/dpi-of-image",
       "clicks180": 0,
       "impressions180": 820,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-23",
       "disposition": "MERGE_301",
       "target": "/blog/upscale-image-for-print-300-dpi-guide"
@@ -816,6 +1001,8 @@
       "url": "https://myimageupscaler.com/blog/enhance-picture-quality-ai",
       "clicks180": 3,
       "impressions180": 121,
+      "ga4Sessions90": 3,
+      "ga4Conversions90": 2,
       "lastmod": "2026-02-16",
       "disposition": "KEEP"
     },
@@ -824,6 +1011,8 @@
       "url": "https://myimageupscaler.com/blog/enhance-pictures-in-photoshop",
       "clicks180": 1,
       "impressions180": 250,
+      "ga4Sessions90": 15,
+      "ga4Conversions90": 0,
       "lastmod": "2026-04-16",
       "disposition": "KEEP"
     },
@@ -832,6 +1021,8 @@
       "url": "https://myimageupscaler.com/blog/enhance-text-in-image",
       "clicks180": 110,
       "impressions180": 4906,
+      "ga4Sessions90": 100,
+      "ga4Conversions90": 20,
       "lastmod": "2026-06-11",
       "disposition": "KEEP"
     },
@@ -840,6 +1031,8 @@
       "url": "https://myimageupscaler.com/blog/face-reconstruction-before-and-after",
       "clicks180": 0,
       "impressions180": 0,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-11-04",
       "disposition": "DEFER_RECENT"
     },
@@ -848,6 +1041,8 @@
       "url": "https://myimageupscaler.com/blog/fix-blurry-photos-ai",
       "clicks180": 0,
       "impressions180": 12,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-10-21",
       "disposition": "DEFER_RECENT"
     },
@@ -856,6 +1051,8 @@
       "url": "https://myimageupscaler.com/blog/fix-blurry-photos-ai-methods-guide",
       "clicks180": 8,
       "impressions180": 3590,
+      "ga4Sessions90": 3,
+      "ga4Conversions90": 0,
       "lastmod": "2025-01-05",
       "disposition": "KEEP"
     },
@@ -864,6 +1061,8 @@
       "url": "https://myimageupscaler.com/blog/fix-blurry-photos-iphone",
       "clicks180": 0,
       "impressions180": 365,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-04",
       "disposition": "MERGE_301",
       "target": "/blog/best-app-for-unblurring-photos"
@@ -873,6 +1072,8 @@
       "url": "https://myimageupscaler.com/blog/fix-blurry-photos-online",
       "clicks180": 1,
       "impressions180": 192,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-12",
       "disposition": "KEEP"
     },
@@ -881,6 +1082,8 @@
       "url": "https://myimageupscaler.com/blog/fix-overexposed-photo",
       "clicks180": 0,
       "impressions180": 757,
+      "ga4Sessions90": 1,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-02",
       "disposition": "NOINDEX_UNPUBLISH"
     },
@@ -889,6 +1092,8 @@
       "url": "https://myimageupscaler.com/blog/fix-pixelated-image",
       "clicks180": 5,
       "impressions180": 1437,
+      "ga4Sessions90": 1,
+      "ga4Conversions90": 0,
       "lastmod": "2026-02-27",
       "disposition": "KEEP"
     },
@@ -897,6 +1102,8 @@
       "url": "https://myimageupscaler.com/blog/fix-underexposed-photo",
       "clicks180": 4,
       "impressions180": 251,
+      "ga4Sessions90": 3,
+      "ga4Conversions90": 0,
       "lastmod": "2026-08-25",
       "disposition": "KEEP"
     },
@@ -905,6 +1112,8 @@
       "url": "https://myimageupscaler.com/blog/fixing-pixelated-photos",
       "clicks180": 35,
       "impressions180": 177678,
+      "ga4Sessions90": 7,
+      "ga4Conversions90": 2,
       "lastmod": "2026-03-19",
       "disposition": "KEEP"
     },
@@ -913,6 +1122,8 @@
       "url": "https://myimageupscaler.com/blog/frame-rate-increaser",
       "clicks180": 18,
       "impressions180": 1475,
+      "ga4Sessions90": 14,
+      "ga4Conversions90": 1,
       "lastmod": "2026-07-31",
       "disposition": "KEEP"
     },
@@ -921,6 +1132,8 @@
       "url": "https://myimageupscaler.com/blog/free-ai-image-enlarger",
       "clicks180": 2,
       "impressions180": 145,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-27",
       "disposition": "KEEP"
     },
@@ -929,6 +1142,8 @@
       "url": "https://myimageupscaler.com/blog/free-ai-upscaler-no-watermark",
       "clicks180": 313,
       "impressions180": 15786,
+      "ga4Sessions90": 73,
+      "ga4Conversions90": 9,
       "lastmod": "2026-03-16",
       "disposition": "KEEP"
     },
@@ -937,6 +1152,8 @@
       "url": "https://myimageupscaler.com/blog/free-background-removal-tool",
       "clicks180": 1,
       "impressions180": 1346,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-13",
       "disposition": "KEEP"
     },
@@ -945,6 +1162,8 @@
       "url": "https://myimageupscaler.com/blog/free-online-image-enlarger",
       "clicks180": 43,
       "impressions180": 9880,
+      "ga4Sessions90": 25,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-31",
       "disposition": "KEEP"
     },
@@ -953,6 +1172,8 @@
       "url": "https://myimageupscaler.com/blog/free-photo-enhancer-no-signup",
       "clicks180": 318,
       "impressions180": 3942,
+      "ga4Sessions90": 148,
+      "ga4Conversions90": 34,
       "lastmod": "2026-03-14",
       "disposition": "KEEP"
     },
@@ -961,6 +1182,8 @@
       "url": "https://myimageupscaler.com/blog/free-photo-restoration-app",
       "clicks180": 27,
       "impressions180": 2622,
+      "ga4Sessions90": 25,
+      "ga4Conversions90": 2,
       "lastmod": "2026-04-19",
       "disposition": "KEEP"
     },
@@ -969,6 +1192,8 @@
       "url": "https://myimageupscaler.com/blog/gif-upscaler",
       "clicks180": 228,
       "impressions180": 12101,
+      "ga4Sessions90": 151,
+      "ga4Conversions90": 25,
       "lastmod": "2026-03-10",
       "disposition": "KEEP"
     },
@@ -977,6 +1202,8 @@
       "url": "https://myimageupscaler.com/blog/graphic-design-tips",
       "clicks180": 0,
       "impressions180": 323,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-03",
       "disposition": "NOINDEX_UNPUBLISH"
     },
@@ -985,6 +1212,8 @@
       "url": "https://myimageupscaler.com/blog/heic-iphone-photo-upscaling-guide",
       "clicks180": 3,
       "impressions180": 829,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2025-01-05",
       "disposition": "KEEP"
     },
@@ -993,6 +1222,8 @@
       "url": "https://myimageupscaler.com/blog/high-resolution-gif",
       "clicks180": 10,
       "impressions180": 942,
+      "ga4Sessions90": 15,
+      "ga4Conversions90": 1,
       "lastmod": "2026-08-18",
       "disposition": "KEEP"
     },
@@ -1001,6 +1232,8 @@
       "url": "https://myimageupscaler.com/blog/high-resolution-image-for-printing",
       "clicks180": 2,
       "impressions180": 683,
+      "ga4Sessions90": 17,
+      "ga4Conversions90": 0,
       "lastmod": "2026-08-06",
       "disposition": "KEEP"
     },
@@ -1009,6 +1242,8 @@
       "url": "https://myimageupscaler.com/blog/how-ai-image-upscaling-works-guide",
       "clicks180": 0,
       "impressions180": 883,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2025-01-05",
       "disposition": "MERGE_301",
       "target": "/blog/best-image-upscaler"
@@ -1018,6 +1253,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-change-the-resolution-of-a-video",
       "clicks180": 20,
       "impressions180": 4991,
+      "ga4Sessions90": 29,
+      "ga4Conversions90": 0,
       "lastmod": "2026-04-06",
       "disposition": "KEEP"
     },
@@ -1026,6 +1263,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-clean-old-photographs",
       "clicks180": 0,
       "impressions180": 129,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-30",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-photo-restoration-services-online"
@@ -1035,6 +1274,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-clear-up-a-photo",
       "clicks180": 58,
       "impressions180": 8975,
+      "ga4Sessions90": 52,
+      "ga4Conversions90": 10,
       "lastmod": "2026-03-11",
       "disposition": "KEEP"
     },
@@ -1043,6 +1284,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-clear-up-blurry-pictures",
       "clicks180": 0,
       "impressions180": 106,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-16",
       "disposition": "MERGE_301",
       "target": "/blog/best-app-for-unblurring-photos"
@@ -1052,6 +1295,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-convert-images-to-hd",
       "clicks180": 0,
       "impressions180": 95,
+      "ga4Sessions90": 1,
+      "ga4Conversions90": 0,
       "lastmod": "2026-02-24",
       "disposition": "MERGE_301",
       "target": "/blog/best-image-upscaler"
@@ -1061,6 +1306,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-convert-png-to-4k",
       "clicks180": 141,
       "impressions180": 3480,
+      "ga4Sessions90": 55,
+      "ga4Conversions90": 15,
       "lastmod": "2026-02-21",
       "disposition": "KEEP"
     },
@@ -1069,6 +1316,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-digitize-photos",
       "clicks180": 3,
       "impressions180": 3274,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2026-02-26",
       "disposition": "KEEP"
     },
@@ -1077,6 +1326,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-enhance-a-picture-in-photoshop",
       "clicks180": 1,
       "impressions180": 181,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-04-17",
       "disposition": "KEEP"
     },
@@ -1085,6 +1336,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-enhance-image-quality-with-ai",
       "clicks180": 3,
       "impressions180": 1117,
+      "ga4Sessions90": 4,
+      "ga4Conversions90": 1,
       "lastmod": "2026-02-17",
       "disposition": "KEEP"
     },
@@ -1093,6 +1346,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-enhance-photo-quality-online",
       "clicks180": 1,
       "impressions180": 905,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-29",
       "disposition": "KEEP"
     },
@@ -1101,6 +1356,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-enhance-picture-quality-with-ai",
       "clicks180": 0,
       "impressions180": 157,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-02-15",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-ai-photo-enhancer-online"
@@ -1110,6 +1367,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-enlarge-old-photographs",
       "clicks180": 1,
       "impressions180": 626,
+      "ga4Sessions90": 5,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-21",
       "disposition": "KEEP"
     },
@@ -1118,6 +1377,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-enlarge-photo-without-losing-quality",
       "clicks180": 5,
       "impressions180": 5019,
+      "ga4Sessions90": 4,
+      "ga4Conversions90": 1,
       "lastmod": "2026-03-30",
       "disposition": "KEEP"
     },
@@ -1126,6 +1387,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-enlarge-photos-for-printing",
       "clicks180": 1,
       "impressions180": 1520,
+      "ga4Sessions90": 33,
+      "ga4Conversions90": 1,
       "lastmod": "2026-08-18",
       "disposition": "KEEP"
     },
@@ -1134,6 +1397,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-fix-a-grainy-photo",
       "clicks180": 0,
       "impressions180": 458,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-30",
       "disposition": "MERGE_301",
       "target": "/blog/noise-reduction-in-photos"
@@ -1143,6 +1408,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-fix-blurry-digital-photos",
       "clicks180": 0,
       "impressions180": 290,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-10-06",
       "disposition": "MERGE_301",
       "target": "/blog/best-app-for-unblurring-photos"
@@ -1152,6 +1419,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-fix-blurry-photos-in-lightroom",
       "clicks180": 2,
       "impressions180": 601,
+      "ga4Sessions90": 12,
+      "ga4Conversions90": 0,
       "lastmod": "2026-08-01",
       "disposition": "KEEP"
     },
@@ -1160,6 +1429,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-fix-blurry-photos-on-android",
       "clicks180": 4,
       "impressions180": 2216,
+      "ga4Sessions90": 26,
+      "ga4Conversions90": 1,
       "lastmod": "2026-08-07",
       "disposition": "KEEP"
     },
@@ -1168,6 +1439,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-fix-blurry-photos-with-ai",
       "clicks180": 5,
       "impressions180": 1325,
+      "ga4Sessions90": 5,
+      "ga4Conversions90": 1,
       "lastmod": "2026-02-17",
       "disposition": "KEEP"
     },
@@ -1176,6 +1449,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-fix-resolution",
       "clicks180": 1,
       "impressions180": 189,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-02",
       "disposition": "KEEP"
     },
@@ -1184,6 +1459,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-improve-photo-resolution-free",
       "clicks180": 0,
       "impressions180": 157,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-02-19",
       "disposition": "MERGE_301",
       "target": "/blog/best-image-upscaler"
@@ -1193,6 +1470,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-increase-dpi-of-image",
       "clicks180": 9,
       "impressions180": 2083,
+      "ga4Sessions90": 9,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-08",
       "disposition": "KEEP"
     },
@@ -1201,6 +1480,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-increase-picture-pixels",
       "clicks180": 0,
       "impressions180": 313,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 1,
       "lastmod": "2026-08-18",
       "disposition": "MERGE_301",
       "target": "/blog/best-image-upscaler"
@@ -1210,6 +1491,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-make-high-quality-animated-gifs",
       "clicks180": 8,
       "impressions180": 2283,
+      "ga4Sessions90": 10,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-18",
       "disposition": "KEEP"
     },
@@ -1218,6 +1501,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-make-low-resolution-photo-high-resolution",
       "clicks180": 4,
       "impressions180": 2697,
+      "ga4Sessions90": 4,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-09",
       "disposition": "KEEP"
     },
@@ -1226,6 +1511,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-make-photos-look-professional",
       "clicks180": 1,
       "impressions180": 1269,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-08",
       "disposition": "KEEP"
     },
@@ -1234,6 +1521,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-make-png-background-transparent-free",
       "clicks180": 0,
       "impressions180": 0,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-25",
       "disposition": "MERGE_301",
       "target": "/tools/remove-bg"
@@ -1243,6 +1532,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-optimize-images-for-web",
       "clicks180": 1,
       "impressions180": 1741,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-22",
       "disposition": "KEEP"
     },
@@ -1251,6 +1542,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-photograph-milky-way",
       "clicks180": 0,
       "impressions180": 19,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-01",
       "disposition": "NOINDEX_UNPUBLISH"
     },
@@ -1259,6 +1552,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-prepare-images-for-printing",
       "clicks180": 0,
       "impressions180": 34,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-11-06",
       "disposition": "DEFER_RECENT"
     },
@@ -1267,6 +1562,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-preserve-old-photographs",
       "clicks180": 1,
       "impressions180": 1204,
+      "ga4Sessions90": 51,
+      "ga4Conversions90": 0,
       "lastmod": "2026-04-08",
       "disposition": "KEEP"
     },
@@ -1275,6 +1572,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-remove-background-from-photo",
       "clicks180": 0,
       "impressions180": 673,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-04-24",
       "disposition": "MERGE_301",
       "target": "/tools/remove-bg"
@@ -1284,6 +1583,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-restore-old-photos",
       "clicks180": 0,
       "impressions180": 209,
+      "ga4Sessions90": 12,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-06",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-photo-restoration-services-online"
@@ -1293,6 +1594,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-restore-old-photos-on-iphone",
       "clicks180": 2,
       "impressions180": 269,
+      "ga4Sessions90": 3,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-17",
       "disposition": "KEEP"
     },
@@ -1301,6 +1604,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-restore-photos",
       "clicks180": 0,
       "impressions180": 36,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-01",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-photo-restoration-services-online"
@@ -1310,6 +1615,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-sharpen-an-image",
       "clicks180": 0,
       "impressions180": 260,
+      "ga4Sessions90": 16,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-09",
       "disposition": "MERGE_301",
       "target": "/blog/best-app-for-unblurring-photos"
@@ -1319,6 +1626,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-sharpen-blurry-images",
       "clicks180": 0,
       "impressions180": 82,
+      "ga4Sessions90": 8,
+      "ga4Conversions90": 1,
       "lastmod": "2026-04-02",
       "disposition": "MERGE_301",
       "target": "/blog/best-app-for-unblurring-photos"
@@ -1328,6 +1637,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-upscale-4k-to-8k-images-with-ai",
       "clicks180": 4,
       "impressions180": 392,
+      "ga4Sessions90": 1,
+      "ga4Conversions90": 0,
       "lastmod": "2026-02-20",
       "disposition": "KEEP"
     },
@@ -1336,6 +1647,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-upscale-a-logo-without-losing-quality",
       "clicks180": 14,
       "impressions180": 3178,
+      "ga4Sessions90": 16,
+      "ga4Conversions90": 4,
       "lastmod": "2026-03-02",
       "disposition": "KEEP"
     },
@@ -1344,6 +1657,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-upscale-anime-images-with-ai",
       "clicks180": 51,
       "impressions180": 5618,
+      "ga4Sessions90": 13,
+      "ga4Conversions90": 3,
       "lastmod": "2026-02-28",
       "disposition": "KEEP"
     },
@@ -1352,6 +1667,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-upscale-avif-images-without-losing-quality",
       "clicks180": 32,
       "impressions180": 1170,
+      "ga4Sessions90": 26,
+      "ga4Conversions90": 4,
       "lastmod": "2026-02-17",
       "disposition": "KEEP"
     },
@@ -1360,6 +1677,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-upscale-avif-tiff-bmp-image-formats",
       "clicks180": 2,
       "impressions180": 77,
+      "ga4Sessions90": 5,
+      "ga4Conversions90": 0,
       "lastmod": "2026-02-14",
       "disposition": "KEEP"
     },
@@ -1368,6 +1687,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-upscale-dalle-images",
       "clicks180": 26,
       "impressions180": 2161,
+      "ga4Sessions90": 21,
+      "ga4Conversions90": 1,
       "lastmod": "2026-03-11",
       "disposition": "KEEP"
     },
@@ -1376,6 +1697,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-upscale-heic-images-iphone",
       "clicks180": 38,
       "impressions180": 1977,
+      "ga4Sessions90": 26,
+      "ga4Conversions90": 3,
       "lastmod": "2026-03-07",
       "disposition": "KEEP"
     },
@@ -1384,6 +1707,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-upscale-images",
       "clicks180": 1,
       "impressions180": 924,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-02-14",
       "disposition": "KEEP"
     },
@@ -1392,6 +1717,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-upscale-images-for-canva",
       "clicks180": 19,
       "impressions180": 3371,
+      "ga4Sessions90": 21,
+      "ga4Conversions90": 2,
       "lastmod": "2026-03-04",
       "disposition": "KEEP"
     },
@@ -1400,6 +1727,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-upscale-images-for-ecommerce",
       "clicks180": 0,
       "impressions180": 275,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-02-25",
       "disposition": "MERGE_301",
       "target": "/blog/best-image-upscaler"
@@ -1409,6 +1738,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-upscale-images-for-instagram",
       "clicks180": 69,
       "impressions180": 4219,
+      "ga4Sessions90": 32,
+      "ga4Conversions90": 2,
       "lastmod": "2026-01-31",
       "disposition": "KEEP"
     },
@@ -1417,6 +1748,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-upscale-images-without-losing-quality",
       "clicks180": 10,
       "impressions180": 2288,
+      "ga4Sessions90": 3,
+      "ga4Conversions90": 0,
       "lastmod": "2025-11-21",
       "disposition": "KEEP"
     },
@@ -1425,6 +1758,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-upscale-midjourney-images-for-print",
       "clicks180": 49,
       "impressions180": 8876,
+      "ga4Sessions90": 29,
+      "ga4Conversions90": 1,
       "lastmod": "2026-02-26",
       "disposition": "KEEP"
     },
@@ -1433,6 +1768,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-upscale-old-photos-with-ai",
       "clicks180": 2,
       "impressions180": 84,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-02-17",
       "disposition": "KEEP"
     },
@@ -1441,6 +1778,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-upscale-passport-photos-with-ai",
       "clicks180": 28,
       "impressions180": 1237,
+      "ga4Sessions90": 22,
+      "ga4Conversions90": 5,
       "lastmod": "2026-03-13",
       "disposition": "KEEP"
     },
@@ -1449,6 +1788,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-upscale-real-estate-photos-with-ai",
       "clicks180": 3,
       "impressions180": 912,
+      "ga4Sessions90": 3,
+      "ga4Conversions90": 1,
       "lastmod": "2026-03-03",
       "disposition": "KEEP"
     },
@@ -1457,6 +1798,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-upscale-webp-images",
       "clicks180": 20,
       "impressions180": 902,
+      "ga4Sessions90": 12,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-06",
       "disposition": "KEEP"
     },
@@ -1465,6 +1808,8 @@
       "url": "https://myimageupscaler.com/blog/how-to-upscale-youtube-thumbnails",
       "clicks180": 258,
       "impressions180": 58027,
+      "ga4Sessions90": 65,
+      "ga4Conversions90": 1,
       "lastmod": "2026-02-17",
       "disposition": "KEEP"
     },
@@ -1473,6 +1818,8 @@
       "url": "https://myimageupscaler.com/blog/ideas-for-vlogs",
       "clicks180": 2,
       "impressions180": 357,
+      "ga4Sessions90": 1,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-04",
       "disposition": "KEEP"
     },
@@ -1481,6 +1828,8 @@
       "url": "https://myimageupscaler.com/blog/image-enhancement-techniques",
       "clicks180": 0,
       "impressions180": 2200,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-28",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-ai-photo-enhancer-online"
@@ -1490,6 +1839,8 @@
       "url": "https://myimageupscaler.com/blog/image-enlarger-vs-image-upscaler",
       "clicks180": 2,
       "impressions180": 274,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-02-14",
       "disposition": "KEEP"
     },
@@ -1498,6 +1849,8 @@
       "url": "https://myimageupscaler.com/blog/image-is-too-large",
       "clicks180": 23,
       "impressions180": 2819,
+      "ga4Sessions90": 36,
+      "ga4Conversions90": 1,
       "lastmod": "2026-07-19",
       "disposition": "KEEP"
     },
@@ -1506,6 +1859,8 @@
       "url": "https://myimageupscaler.com/blog/image-line-art",
       "clicks180": 0,
       "impressions180": 0,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-22",
       "disposition": "NOINDEX_UNPUBLISH"
     },
@@ -1514,6 +1869,8 @@
       "url": "https://myimageupscaler.com/blog/image-noise-reduction-software",
       "clicks180": 2,
       "impressions180": 224,
+      "ga4Sessions90": 3,
+      "ga4Conversions90": 0,
       "lastmod": "2026-10-31",
       "disposition": "KEEP"
     },
@@ -1522,6 +1879,8 @@
       "url": "https://myimageupscaler.com/blog/image-out-of-focus",
       "clicks180": 11,
       "impressions180": 1296,
+      "ga4Sessions90": 15,
+      "ga4Conversions90": 1,
       "lastmod": "2026-03-30",
       "disposition": "KEEP"
     },
@@ -1530,6 +1889,8 @@
       "url": "https://myimageupscaler.com/blog/image-resolution-for-printing-complete-guide",
       "clicks180": 6,
       "impressions180": 10051,
+      "ga4Sessions90": 10,
+      "ga4Conversions90": 0,
       "lastmod": "2025-12-20",
       "disposition": "KEEP"
     },
@@ -1538,6 +1899,8 @@
       "url": "https://myimageupscaler.com/blog/image-resolution-guide-everything-you-need-to-know",
       "clicks180": 8,
       "impressions180": 5825,
+      "ga4Sessions90": 62,
+      "ga4Conversions90": 0,
       "lastmod": "2026-01-31",
       "disposition": "KEEP"
     },
@@ -1546,6 +1909,8 @@
       "url": "https://myimageupscaler.com/blog/image-sharpening-software",
       "clicks180": 0,
       "impressions180": 140,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-08-06",
       "disposition": "MERGE_301",
       "target": "/blog/best-app-for-unblurring-photos"
@@ -1555,6 +1920,8 @@
       "url": "https://myimageupscaler.com/blog/image-size-for-web",
       "clicks180": 5,
       "impressions180": 3596,
+      "ga4Sessions90": 13,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-05",
       "disposition": "KEEP"
     },
@@ -1563,6 +1930,8 @@
       "url": "https://myimageupscaler.com/blog/image-to-line-art",
       "clicks180": 28,
       "impressions180": 2345,
+      "ga4Sessions90": 25,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-07",
       "disposition": "KEEP"
     },
@@ -1571,6 +1940,8 @@
       "url": "https://myimageupscaler.com/blog/image-upscaler-8x",
       "clicks180": 27,
       "impressions180": 1875,
+      "ga4Sessions90": 20,
+      "ga4Conversions90": 1,
       "lastmod": "2026-03-12",
       "disposition": "DEFER_GUARDED"
     },
@@ -1579,6 +1950,8 @@
       "url": "https://myimageupscaler.com/blog/images-for-masking",
       "clicks180": 0,
       "impressions180": 47,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-11-15",
       "disposition": "DEFER_RECENT"
     },
@@ -1587,6 +1960,8 @@
       "url": "https://myimageupscaler.com/blog/improve-image-quality-ai",
       "clicks180": 1,
       "impressions180": 2062,
+      "ga4Sessions90": 1,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-14",
       "disposition": "KEEP"
     },
@@ -1595,6 +1970,8 @@
       "url": "https://myimageupscaler.com/blog/improve-old-photo-quality",
       "clicks180": 2,
       "impressions180": 407,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-17",
       "disposition": "KEEP"
     },
@@ -1603,6 +1980,8 @@
       "url": "https://myimageupscaler.com/blog/improve-scan-quality",
       "clicks180": 13,
       "impressions180": 1891,
+      "ga4Sessions90": 25,
+      "ga4Conversions90": 2,
       "lastmod": "2026-06-26",
       "disposition": "KEEP"
     },
@@ -1611,6 +1990,8 @@
       "url": "https://myimageupscaler.com/blog/increase-dpi-in-photoshop",
       "clicks180": 3,
       "impressions180": 472,
+      "ga4Sessions90": 3,
+      "ga4Conversions90": 0,
       "lastmod": "2026-04-10",
       "disposition": "KEEP"
     },
@@ -1619,6 +2000,8 @@
       "url": "https://myimageupscaler.com/blog/is-4-k-upscaling-worth-it",
       "clicks180": 0,
       "impressions180": 77,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-17",
       "disposition": "MERGE_301",
       "target": "/blog/best-image-upscaler"
@@ -1628,6 +2011,8 @@
       "url": "https://myimageupscaler.com/blog/is-ai-upscaling-worth-it",
       "clicks180": 0,
       "impressions180": 75,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-11",
       "disposition": "MERGE_301",
       "target": "/blog/best-image-upscaler"
@@ -1637,6 +2022,8 @@
       "url": "https://myimageupscaler.com/blog/is-jpeg-or-png-better",
       "clicks180": 1,
       "impressions180": 412,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-13",
       "disposition": "KEEP"
     },
@@ -1645,6 +2032,8 @@
       "url": "https://myimageupscaler.com/blog/jpeg-artifacts-removal",
       "clicks180": 2,
       "impressions180": 349,
+      "ga4Sessions90": 1,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-07",
       "disposition": "KEEP"
     },
@@ -1653,6 +2042,8 @@
       "url": "https://myimageupscaler.com/blog/jpg-vs-png-quality",
       "clicks180": 2,
       "impressions180": 4072,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-13",
       "disposition": "KEEP"
     },
@@ -1661,6 +2052,8 @@
       "url": "https://myimageupscaler.com/blog/keep-text-sharp-when-upscaling-product-photos",
       "clicks180": 6,
       "impressions180": 847,
+      "ga4Sessions90": 5,
+      "ga4Conversions90": 3,
       "lastmod": "2025-11-18",
       "disposition": "KEEP"
     },
@@ -1669,6 +2062,8 @@
       "url": "https://myimageupscaler.com/blog/landscape-images-high-resolution",
       "clicks180": 0,
       "impressions180": 330,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-10",
       "disposition": "MERGE_301",
       "target": "/blog/best-image-upscaler"
@@ -1678,6 +2073,8 @@
       "url": "https://myimageupscaler.com/blog/landscape-photography-editing",
       "clicks180": 0,
       "impressions180": 12,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-10-27",
       "disposition": "DEFER_RECENT"
     },
@@ -1686,6 +2083,8 @@
       "url": "https://myimageupscaler.com/blog/large-format-printing",
       "clicks180": 1,
       "impressions180": 378,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-20",
       "disposition": "KEEP"
     },
@@ -1694,6 +2093,8 @@
       "url": "https://myimageupscaler.com/blog/layer-pictures-app",
       "clicks180": 7,
       "impressions180": 3035,
+      "ga4Sessions90": 5,
+      "ga4Conversions90": 0,
       "lastmod": "2026-08-02",
       "disposition": "KEEP"
     },
@@ -1702,6 +2103,8 @@
       "url": "https://myimageupscaler.com/blog/lens-distortion-correction",
       "clicks180": 12,
       "impressions180": 3365,
+      "ga4Sessions90": 40,
+      "ga4Conversions90": 2,
       "lastmod": "2026-07-13",
       "disposition": "KEEP"
     },
@@ -1710,6 +2113,8 @@
       "url": "https://myimageupscaler.com/blog/lightroom-super-resolution",
       "clicks180": 3,
       "impressions180": 1003,
+      "ga4Sessions90": 6,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-12",
       "disposition": "KEEP"
     },
@@ -1718,6 +2123,8 @@
       "url": "https://myimageupscaler.com/blog/lossless-image-enlargement",
       "clicks180": 3,
       "impressions180": 77,
+      "ga4Sessions90": 3,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-28",
       "disposition": "KEEP"
     },
@@ -1726,6 +2133,8 @@
       "url": "https://myimageupscaler.com/blog/low-resolution-photos-to-high-resolution",
       "clicks180": 2,
       "impressions180": 606,
+      "ga4Sessions90": 3,
+      "ga4Conversions90": 1,
       "lastmod": "2026-09-10",
       "disposition": "KEEP"
     },
@@ -1734,6 +2143,8 @@
       "url": "https://myimageupscaler.com/blog/low-to-high-resolution-photo",
       "clicks180": 0,
       "impressions180": 81,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-10-30",
       "disposition": "DEFER_RECENT"
     },
@@ -1742,6 +2153,8 @@
       "url": "https://myimageupscaler.com/blog/make-cartoon-of-self",
       "clicks180": 0,
       "impressions180": 89,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-19",
       "disposition": "NOINDEX_UNPUBLISH"
     },
@@ -1750,6 +2163,8 @@
       "url": "https://myimageupscaler.com/blog/make-image-bigger",
       "clicks180": 0,
       "impressions180": 177,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-03",
       "disposition": "MERGE_301",
       "target": "/blog/best-image-upscaler"
@@ -1759,6 +2174,8 @@
       "url": "https://myimageupscaler.com/blog/masking-in-photography",
       "clicks180": 1,
       "impressions180": 313,
+      "ga4Sessions90": 3,
+      "ga4Conversions90": 0,
       "lastmod": "2026-08-25",
       "disposition": "KEEP"
     },
@@ -1767,6 +2184,8 @@
       "url": "https://myimageupscaler.com/blog/mejorar-calidad-imagen-ia-gratis",
       "clicks180": 184,
       "impressions180": 2617,
+      "ga4Sessions90": 43,
+      "ga4Conversions90": 6,
       "lastmod": "2026-02-17",
       "disposition": "KEEP"
     },
@@ -1775,6 +2194,8 @@
       "url": "https://myimageupscaler.com/blog/noise-reducer-photoshop",
       "clicks180": 7,
       "impressions180": 880,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-12",
       "disposition": "KEEP"
     },
@@ -1783,6 +2204,8 @@
       "url": "https://myimageupscaler.com/blog/noise-reduction-for-photos",
       "clicks180": 0,
       "impressions180": 1960,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-20",
       "disposition": "MERGE_301",
       "target": "/blog/noise-reduction-in-photos"
@@ -1792,6 +2215,8 @@
       "url": "https://myimageupscaler.com/blog/noise-reduction-for-video",
       "clicks180": 1,
       "impressions180": 289,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-05",
       "disposition": "KEEP"
     },
@@ -1800,6 +2225,8 @@
       "url": "https://myimageupscaler.com/blog/noise-reduction-in-image",
       "clicks180": 4,
       "impressions180": 3382,
+      "ga4Sessions90": 5,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-17",
       "disposition": "KEEP"
     },
@@ -1808,6 +2235,8 @@
       "url": "https://myimageupscaler.com/blog/noise-reduction-in-images",
       "clicks180": 2,
       "impressions180": 2222,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-16",
       "disposition": "KEEP"
     },
@@ -1816,6 +2245,8 @@
       "url": "https://myimageupscaler.com/blog/noise-reduction-in-photos",
       "clicks180": 14,
       "impressions180": 5766,
+      "ga4Sessions90": 10,
+      "ga4Conversions90": 1,
       "lastmod": "2026-02-28",
       "disposition": "DEFER_GUARDED"
     },
@@ -1824,6 +2255,8 @@
       "url": "https://myimageupscaler.com/blog/old-damaged-photos",
       "clicks180": 4,
       "impressions180": 1873,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-30",
       "disposition": "KEEP"
     },
@@ -1832,6 +2265,8 @@
       "url": "https://myimageupscaler.com/blog/old-photo-face-restoration",
       "clicks180": 4,
       "impressions180": 551,
+      "ga4Sessions90": 6,
+      "ga4Conversions90": 2,
       "lastmod": "2026-08-25",
       "disposition": "KEEP"
     },
@@ -1840,6 +2275,8 @@
       "url": "https://myimageupscaler.com/blog/old-photo-restoration-ai",
       "clicks180": 0,
       "impressions180": 0,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-10",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-photo-restoration-services-online"
@@ -1849,6 +2286,8 @@
       "url": "https://myimageupscaler.com/blog/old-photo-restoration-app",
       "clicks180": 0,
       "impressions180": 104,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-25",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-photo-restoration-services-online"
@@ -1858,6 +2297,8 @@
       "url": "https://myimageupscaler.com/blog/online-photo-restoration",
       "clicks180": 1,
       "impressions180": 119,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-08",
       "disposition": "KEEP"
     },
@@ -1866,6 +2307,8 @@
       "url": "https://myimageupscaler.com/blog/outline-image-online",
       "clicks180": 8,
       "impressions180": 1528,
+      "ga4Sessions90": 4,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-10",
       "disposition": "KEEP"
     },
@@ -1874,6 +2317,8 @@
       "url": "https://myimageupscaler.com/blog/photo-background-remove-job",
       "clicks180": 0,
       "impressions180": 46,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-27",
       "disposition": "MERGE_301",
       "target": "/tools/remove-bg"
@@ -1883,6 +2328,8 @@
       "url": "https://myimageupscaler.com/blog/photo-editing-ai",
       "clicks180": 0,
       "impressions180": 1,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-10-16",
       "disposition": "DEFER_RECENT"
     },
@@ -1891,6 +2338,8 @@
       "url": "https://myimageupscaler.com/blog/photo-enhancement-software",
       "clicks180": 0,
       "impressions180": 137,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-10-19",
       "disposition": "DEFER_RECENT"
     },
@@ -1899,6 +2348,8 @@
       "url": "https://myimageupscaler.com/blog/photo-enhancement-tips",
       "clicks180": 0,
       "impressions180": 241,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-08-26",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-ai-photo-enhancer-online"
@@ -1908,6 +2359,8 @@
       "url": "https://myimageupscaler.com/blog/photo-enhancement-website",
       "clicks180": 1,
       "impressions180": 1095,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-10-12",
       "disposition": "KEEP"
     },
@@ -1916,6 +2369,8 @@
       "url": "https://myimageupscaler.com/blog/photo-enhancements-photoshop",
       "clicks180": 1,
       "impressions180": 116,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-08-18",
       "disposition": "KEEP"
     },
@@ -1924,6 +2379,8 @@
       "url": "https://myimageupscaler.com/blog/photo-into-sketch",
       "clicks180": 0,
       "impressions180": 245,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-06",
       "disposition": "NOINDEX_UNPUBLISH"
     },
@@ -1932,6 +2389,8 @@
       "url": "https://myimageupscaler.com/blog/photo-noise-reduce",
       "clicks180": 1,
       "impressions180": 540,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-21",
       "disposition": "KEEP"
     },
@@ -1940,6 +2399,8 @@
       "url": "https://myimageupscaler.com/blog/photo-noise-removal-software",
       "clicks180": 7,
       "impressions180": 1375,
+      "ga4Sessions90": 7,
+      "ga4Conversions90": 1,
       "lastmod": "2026-10-05",
       "disposition": "KEEP"
     },
@@ -1948,6 +2409,8 @@
       "url": "https://myimageupscaler.com/blog/photo-restoration-examples",
       "clicks180": 0,
       "impressions180": 0,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-11-03",
       "disposition": "DEFER_RECENT"
     },
@@ -1956,6 +2419,8 @@
       "url": "https://myimageupscaler.com/blog/photo-restoration-near-me",
       "clicks180": 0,
       "impressions180": 108,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-20",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-photo-restoration-services-online"
@@ -1965,6 +2430,8 @@
       "url": "https://myimageupscaler.com/blog/photo-restoration-program",
       "clicks180": 10,
       "impressions180": 19057,
+      "ga4Sessions90": 8,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-24",
       "disposition": "KEEP"
     },
@@ -1973,6 +2440,8 @@
       "url": "https://myimageupscaler.com/blog/photo-restoration-programs",
       "clicks180": 0,
       "impressions180": 228,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-22",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-photo-restoration-services-online"
@@ -1982,6 +2451,8 @@
       "url": "https://myimageupscaler.com/blog/photo-restoration-software",
       "clicks180": 4,
       "impressions180": 2521,
+      "ga4Sessions90": 4,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-07",
       "disposition": "KEEP"
     },
@@ -1990,6 +2461,8 @@
       "url": "https://myimageupscaler.com/blog/photo-upscaling-online",
       "clicks180": 0,
       "impressions180": 22,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-11-07",
       "disposition": "DEFER_RECENT"
     },
@@ -1998,6 +2471,8 @@
       "url": "https://myimageupscaler.com/blog/photoshop-upscale-image",
       "clicks180": 130,
       "impressions180": 32227,
+      "ga4Sessions90": 106,
+      "ga4Conversions90": 2,
       "lastmod": "2026-03-06",
       "disposition": "KEEP"
     },
@@ -2006,6 +2481,8 @@
       "url": "https://myimageupscaler.com/blog/photoshop-upscaler-vs-ai-tools",
       "clicks180": 5,
       "impressions180": 1436,
+      "ga4Sessions90": 1,
+      "ga4Conversions90": 2,
       "lastmod": "2026-03-05",
       "disposition": "KEEP"
     },
@@ -2014,6 +2491,8 @@
       "url": "https://myimageupscaler.com/blog/picture-noise-reduction-software",
       "clicks180": 0,
       "impressions180": 0,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-11-21",
       "disposition": "DEFER_RECENT"
     },
@@ -2022,6 +2501,8 @@
       "url": "https://myimageupscaler.com/blog/picture-restoration-software",
       "clicks180": 0,
       "impressions180": 616,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-23",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-photo-restoration-services-online"
@@ -2031,6 +2512,8 @@
       "url": "https://myimageupscaler.com/blog/picture-to-oil-painting-convert",
       "clicks180": 4,
       "impressions180": 624,
+      "ga4Sessions90": 10,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-14",
       "disposition": "KEEP"
     },
@@ -2039,6 +2522,8 @@
       "url": "https://myimageupscaler.com/blog/pictures-to-stencils",
       "clicks180": 0,
       "impressions180": 3,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-11-14",
       "disposition": "DEFER_RECENT"
     },
@@ -2047,6 +2532,8 @@
       "url": "https://myimageupscaler.com/blog/pictures-with-300-dpi",
       "clicks180": 1,
       "impressions180": 1037,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-10-27",
       "disposition": "KEEP"
     },
@@ -2055,6 +2542,8 @@
       "url": "https://myimageupscaler.com/blog/pixelcut-ai-photo-editor",
       "clicks180": 23,
       "impressions180": 7356,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-03",
       "disposition": "KEEP"
     },
@@ -2063,6 +2552,8 @@
       "url": "https://myimageupscaler.com/blog/png-hintergrund-transparent-machen-kostenlos",
       "clicks180": 4,
       "impressions180": 52,
+      "ga4Sessions90": 1,
+      "ga4Conversions90": 0,
       "lastmod": "2026-02-17",
       "disposition": "KEEP"
     },
@@ -2071,6 +2562,8 @@
       "url": "https://myimageupscaler.com/blog/poster-size-dimensions-pixels",
       "clicks180": 382,
       "impressions180": 204297,
+      "ga4Sessions90": 398,
+      "ga4Conversions90": 10,
       "lastmod": "2026-03-31",
       "disposition": "DEFER_GUARDED"
     },
@@ -2079,6 +2572,8 @@
       "url": "https://myimageupscaler.com/blog/product-photography-tips",
       "clicks180": 0,
       "impressions180": 43,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-08-25",
       "disposition": "NOINDEX_UNPUBLISH"
     },
@@ -2087,6 +2582,8 @@
       "url": "https://myimageupscaler.com/blog/professional-photo-enhancement",
       "clicks180": 0,
       "impressions180": 106,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-23",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-ai-photo-enhancer-online"
@@ -2096,6 +2593,8 @@
       "url": "https://myimageupscaler.com/blog/professional-photo-enlargement-software",
       "clicks180": 0,
       "impressions180": 1214,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-24",
       "disposition": "MERGE_301",
       "target": "/blog/best-image-upscaler"
@@ -2105,6 +2604,8 @@
       "url": "https://myimageupscaler.com/blog/quality-control-images",
       "clicks180": 3,
       "impressions180": 861,
+      "ga4Sessions90": 6,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-15",
       "disposition": "KEEP"
     },
@@ -2113,6 +2614,8 @@
       "url": "https://myimageupscaler.com/blog/real-estate-photo-enhancement-guide",
       "clicks180": 0,
       "impressions180": 192,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2025-01-05",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-ai-photo-enhancer-online"
@@ -2122,6 +2625,8 @@
       "url": "https://myimageupscaler.com/blog/real-time-artifact-free-image-upscaling",
       "clicks180": 0,
       "impressions180": 129,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-08-30",
       "disposition": "MERGE_301",
       "target": "/blog/best-image-upscaler"
@@ -2131,6 +2636,8 @@
       "url": "https://myimageupscaler.com/blog/reduce-image-noise",
       "clicks180": 5,
       "impressions180": 740,
+      "ga4Sessions90": 6,
+      "ga4Conversions90": 1,
       "lastmod": "2026-03-15",
       "disposition": "KEEP"
     },
@@ -2139,6 +2646,8 @@
       "url": "https://myimageupscaler.com/blog/reduce-noise-in-photos",
       "clicks180": 0,
       "impressions180": 1505,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-18",
       "disposition": "MERGE_301",
       "target": "/blog/noise-reduction-in-photos"
@@ -2148,6 +2657,8 @@
       "url": "https://myimageupscaler.com/blog/remove-background-from-logo",
       "clicks180": 1,
       "impressions180": 92,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-04-04",
       "disposition": "KEEP"
     },
@@ -2156,6 +2667,8 @@
       "url": "https://myimageupscaler.com/blog/remove-background-of-image",
       "clicks180": 0,
       "impressions180": 0,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-10-17",
       "disposition": "DEFER_RECENT"
     },
@@ -2164,6 +2677,8 @@
       "url": "https://myimageupscaler.com/blog/remove-background-svg-online-free",
       "clicks180": 2,
       "impressions180": 144,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-27",
       "disposition": "KEEP"
     },
@@ -2172,6 +2687,8 @@
       "url": "https://myimageupscaler.com/blog/remove-blur-from-image",
       "clicks180": 4,
       "impressions180": 487,
+      "ga4Sessions90": 19,
+      "ga4Conversions90": 4,
       "lastmod": "2026-08-21",
       "disposition": "KEEP"
     },
@@ -2180,6 +2697,8 @@
       "url": "https://myimageupscaler.com/blog/remove-image-background-ai",
       "clicks180": 0,
       "impressions180": 8,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-11-13",
       "disposition": "DEFER_RECENT"
     },
@@ -2188,6 +2707,8 @@
       "url": "https://myimageupscaler.com/blog/remove-image-background-google-slides",
       "clicks180": 0,
       "impressions180": 559,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-30",
       "disposition": "MERGE_301",
       "target": "/tools/remove-bg"
@@ -2197,6 +2718,8 @@
       "url": "https://myimageupscaler.com/blog/remove-image-background-online",
       "clicks180": 0,
       "impressions180": 0,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-10-20",
       "disposition": "DEFER_RECENT"
     },
@@ -2205,6 +2728,8 @@
       "url": "https://myimageupscaler.com/blog/remove-noise-from-a-photo",
       "clicks180": 0,
       "impressions180": 211,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-10-02",
       "disposition": "MERGE_301",
       "target": "/blog/noise-reduction-in-photos"
@@ -2214,6 +2739,8 @@
       "url": "https://myimageupscaler.com/blog/remove-noise-in-photoshop",
       "clicks180": 3,
       "impressions180": 883,
+      "ga4Sessions90": 6,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-11",
       "disposition": "KEEP"
     },
@@ -2222,6 +2749,8 @@
       "url": "https://myimageupscaler.com/blog/remove-photo-background-for-free",
       "clicks180": 0,
       "impressions180": 0,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-10-09",
       "disposition": "DEFER_RECENT"
     },
@@ -2230,6 +2759,8 @@
       "url": "https://myimageupscaler.com/blog/removing-background",
       "clicks180": 0,
       "impressions180": 951,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-08-06",
       "disposition": "MERGE_301",
       "target": "/tools/remove-bg"
@@ -2239,6 +2770,8 @@
       "url": "https://myimageupscaler.com/blog/removing-motion-blur",
       "clicks180": 0,
       "impressions180": 0,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-11-20",
       "disposition": "DEFER_RECENT"
     },
@@ -2247,6 +2780,8 @@
       "url": "https://myimageupscaler.com/blog/restoration-of-old-pictures",
       "clicks180": 0,
       "impressions180": 9,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-10-23",
       "disposition": "DEFER_RECENT"
     },
@@ -2255,6 +2790,8 @@
       "url": "https://myimageupscaler.com/blog/restore-black-and-white-photo",
       "clicks180": 0,
       "impressions180": 38,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-20",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-photo-restoration-services-online"
@@ -2264,6 +2801,8 @@
       "url": "https://myimageupscaler.com/blog/restore-old-damaged-photos",
       "clicks180": 0,
       "impressions180": 53,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-15",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-photo-restoration-services-online"
@@ -2273,6 +2812,8 @@
       "url": "https://myimageupscaler.com/blog/restore-old-damaged-photos-online-free",
       "clicks180": 6,
       "impressions180": 134,
+      "ga4Sessions90": 4,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-30",
       "disposition": "KEEP"
     },
@@ -2281,6 +2822,8 @@
       "url": "https://myimageupscaler.com/blog/restore-old-photos-ai",
       "clicks180": 0,
       "impressions180": 353,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-09",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-photo-restoration-services-online"
@@ -2290,6 +2833,8 @@
       "url": "https://myimageupscaler.com/blog/restore-old-photos-ai-enhancement-guide",
       "clicks180": 1,
       "impressions180": 268,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2025-12-15",
       "disposition": "KEEP"
     },
@@ -2298,6 +2843,8 @@
       "url": "https://myimageupscaler.com/blog/restore-old-photos-for-free",
       "clicks180": 6,
       "impressions180": 172,
+      "ga4Sessions90": 3,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-26",
       "disposition": "KEEP"
     },
@@ -2306,6 +2853,8 @@
       "url": "https://myimageupscaler.com/blog/restore-old-photos-in-photoshop",
       "clicks180": 3,
       "impressions180": 978,
+      "ga4Sessions90": 55,
+      "ga4Conversions90": 0,
       "lastmod": "2026-04-14",
       "disposition": "KEEP"
     },
@@ -2314,6 +2863,8 @@
       "url": "https://myimageupscaler.com/blog/restore-old-photos-near-me",
       "clicks180": 0,
       "impressions180": 51,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-15",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-photo-restoration-services-online"
@@ -2323,6 +2874,8 @@
       "url": "https://myimageupscaler.com/blog/restore-old-photos-service",
       "clicks180": 1,
       "impressions180": 70,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-30",
       "disposition": "KEEP"
     },
@@ -2331,6 +2884,8 @@
       "url": "https://myimageupscaler.com/blog/restore-old-photos-software",
       "clicks180": 0,
       "impressions180": 205,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-11-09",
       "disposition": "DEFER_RECENT"
     },
@@ -2339,6 +2894,8 @@
       "url": "https://myimageupscaler.com/blog/retouch-a-photo-online-free",
       "clicks180": 5,
       "impressions180": 579,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-14",
       "disposition": "KEEP"
     },
@@ -2347,6 +2904,8 @@
       "url": "https://myimageupscaler.com/blog/retrieve-old-myspace-photos",
       "clicks180": 7,
       "impressions180": 760,
+      "ga4Sessions90": 28,
+      "ga4Conversions90": 0,
       "lastmod": "2026-08-18",
       "disposition": "KEEP"
     },
@@ -2355,6 +2914,8 @@
       "url": "https://myimageupscaler.com/blog/screenshot-upscaling-rescue-low-resolution-captures",
       "clicks180": 2,
       "impressions180": 678,
+      "ga4Sessions90": 3,
+      "ga4Conversions90": 0,
       "lastmod": "2025-01-05",
       "disposition": "KEEP"
     },
@@ -2363,6 +2924,8 @@
       "url": "https://myimageupscaler.com/blog/sharpen-a-video",
       "clicks180": 5,
       "impressions180": 607,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2026-04-07",
       "disposition": "KEEP"
     },
@@ -2371,6 +2934,8 @@
       "url": "https://myimageupscaler.com/blog/social-media-image-sizes-guide-2025",
       "clicks180": 0,
       "impressions180": 1153,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2025-12-18",
       "disposition": "NOINDEX_UNPUBLISH"
     },
@@ -2379,6 +2944,8 @@
       "url": "https://myimageupscaler.com/blog/stable-diffusion-upscaler",
       "clicks180": 0,
       "impressions180": 184,
+      "ga4Sessions90": 18,
+      "ga4Conversions90": 0,
       "lastmod": "2026-02-27",
       "disposition": "MERGE_301",
       "target": "/blog/best-image-upscaler"
@@ -2388,6 +2955,8 @@
       "url": "https://myimageupscaler.com/blog/stable-diffusion-upscaling-complete-guide",
       "clicks180": 5,
       "impressions180": 5494,
+      "ga4Sessions90": 24,
+      "ga4Conversions90": 0,
       "lastmod": "2025-01-05",
       "disposition": "KEEP"
     },
@@ -2396,6 +2965,8 @@
       "url": "https://myimageupscaler.com/blog/star-photography-settings",
       "clicks180": 0,
       "impressions180": 454,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-21",
       "disposition": "NOINDEX_UNPUBLISH"
     },
@@ -2404,6 +2975,8 @@
       "url": "https://myimageupscaler.com/blog/sunset-camera-settings",
       "clicks180": 0,
       "impressions180": 1449,
+      "ga4Sessions90": 10,
+      "ga4Conversions90": 0,
       "lastmod": "2026-04-22",
       "disposition": "NOINDEX_UNPUBLISH"
     },
@@ -2412,6 +2985,8 @@
       "url": "https://myimageupscaler.com/blog/text-image-enhancer",
       "clicks180": 71,
       "impressions180": 8304,
+      "ga4Sessions90": 51,
+      "ga4Conversions90": 8,
       "lastmod": "2026-04-26",
       "disposition": "KEEP"
     },
@@ -2420,6 +2995,8 @@
       "url": "https://myimageupscaler.com/blog/tiktok-profile-picture-ideas",
       "clicks180": 69,
       "impressions180": 28399,
+      "ga4Sessions90": 67,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-06",
       "disposition": "DEFER_GUARDED"
     },
@@ -2428,6 +3005,8 @@
       "url": "https://myimageupscaler.com/blog/topaz-denoise-ai",
       "clicks180": 9,
       "impressions180": 6472,
+      "ga4Sessions90": 9,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-04",
       "disposition": "KEEP"
     },
@@ -2436,6 +3015,8 @@
       "url": "https://myimageupscaler.com/blog/topaz-labs-free-trial",
       "clicks180": 815,
       "impressions180": 103415,
+      "ga4Sessions90": 400,
+      "ga4Conversions90": 27,
       "lastmod": "2026-05-19",
       "disposition": "DEFER_GUARDED"
     },
@@ -2444,6 +3025,8 @@
       "url": "https://myimageupscaler.com/blog/topaz-video-upscaler",
       "clicks180": 37,
       "impressions180": 33892,
+      "ga4Sessions90": 13,
+      "ga4Conversions90": 1,
       "lastmod": "2026-04-15",
       "disposition": "KEEP"
     },
@@ -2452,6 +3035,8 @@
       "url": "https://myimageupscaler.com/blog/turn-image-into-illustration",
       "clicks180": 5,
       "impressions180": 722,
+      "ga4Sessions90": 3,
+      "ga4Conversions90": 0,
       "lastmod": "2026-05-16",
       "disposition": "KEEP"
     },
@@ -2460,6 +3045,8 @@
       "url": "https://myimageupscaler.com/blog/turn-my-photo-into-a-drawing",
       "clicks180": 1,
       "impressions180": 207,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-06",
       "disposition": "KEEP"
     },
@@ -2468,6 +3055,8 @@
       "url": "https://myimageupscaler.com/blog/types-of-batch-processing",
       "clicks180": 0,
       "impressions180": 142,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-10",
       "disposition": "NOINDEX_UNPUBLISH"
     },
@@ -2476,6 +3065,8 @@
       "url": "https://myimageupscaler.com/blog/unblur-image-ai",
       "clicks180": 4,
       "impressions180": 222,
+      "ga4Sessions90": 6,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-28",
       "disposition": "KEEP"
     },
@@ -2484,6 +3075,8 @@
       "url": "https://myimageupscaler.com/blog/unpixelate-image-free",
       "clicks180": 16,
       "impressions180": 1228,
+      "ga4Sessions90": 12,
+      "ga4Conversions90": 4,
       "lastmod": "2026-08-13",
       "disposition": "KEEP"
     },
@@ -2492,6 +3085,8 @@
       "url": "https://myimageupscaler.com/blog/upscale-image-for-print-300-dpi-guide",
       "clicks180": 226,
       "impressions180": 18914,
+      "ga4Sessions90": 129,
+      "ga4Conversions90": 18,
       "lastmod": "2026-02-17",
       "disposition": "DEFER_GUARDED"
     },
@@ -2500,6 +3095,8 @@
       "url": "https://myimageupscaler.com/blog/upscale-images-for-print-complete-guide",
       "clicks180": 2,
       "impressions180": 238,
+      "ga4Sessions90": 10,
+      "ga4Conversions90": 0,
       "lastmod": "2026-01-31",
       "disposition": "KEEP"
     },
@@ -2508,6 +3105,8 @@
       "url": "https://myimageupscaler.com/blog/upscale-logo",
       "clicks180": 8,
       "impressions180": 1140,
+      "ga4Sessions90": 5,
+      "ga4Conversions90": 1,
       "lastmod": "2026-06-14",
       "disposition": "KEEP"
     },
@@ -2516,6 +3115,8 @@
       "url": "https://myimageupscaler.com/blog/upscale-midjourney-images-4k-8k-print-guide",
       "clicks180": 14,
       "impressions180": 4012,
+      "ga4Sessions90": 14,
+      "ga4Conversions90": 0,
       "lastmod": "2025-01-05",
       "disposition": "KEEP"
     },
@@ -2524,6 +3125,8 @@
       "url": "https://myimageupscaler.com/blog/upscale-product-photos-amazon-etsy-guide",
       "clicks180": 4,
       "impressions180": 431,
+      "ga4Sessions90": 3,
+      "ga4Conversions90": 0,
       "lastmod": "2025-01-05",
       "disposition": "KEEP"
     },
@@ -2532,6 +3135,8 @@
       "url": "https://myimageupscaler.com/blog/upscale-product-photos-for-ecommerce",
       "clicks180": 1,
       "impressions180": 889,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-02-01",
       "disposition": "KEEP"
     },
@@ -2540,6 +3145,8 @@
       "url": "https://myimageupscaler.com/blog/upscaling-methods",
       "clicks180": 4,
       "impressions180": 550,
+      "ga4Sessions90": 8,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-12",
       "disposition": "KEEP"
     },
@@ -2548,6 +3155,8 @@
       "url": "https://myimageupscaler.com/blog/video-4-k-resolution",
       "clicks180": 4,
       "impressions180": 655,
+      "ga4Sessions90": 5,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-01",
       "disposition": "KEEP"
     },
@@ -2556,6 +3165,8 @@
       "url": "https://myimageupscaler.com/blog/video-enhancer-free",
       "clicks180": 4,
       "impressions180": 1119,
+      "ga4Sessions90": 2,
+      "ga4Conversions90": 0,
       "lastmod": "2026-03-30",
       "disposition": "KEEP"
     },
@@ -2564,6 +3175,8 @@
       "url": "https://myimageupscaler.com/blog/video-upscaling-software",
       "clicks180": 8,
       "impressions180": 4298,
+      "ga4Sessions90": 6,
+      "ga4Conversions90": 0,
       "lastmod": "2026-04-05",
       "disposition": "KEEP"
     },
@@ -2572,6 +3185,8 @@
       "url": "https://myimageupscaler.com/blog/videos-in-full-hd",
       "clicks180": 4,
       "impressions180": 534,
+      "ga4Sessions90": 12,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-18",
       "disposition": "KEEP"
     },
@@ -2580,6 +3195,8 @@
       "url": "https://myimageupscaler.com/blog/water-damaged-photos",
       "clicks180": 0,
       "impressions180": 0,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-23",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-photo-restoration-services-online"
@@ -2589,6 +3206,8 @@
       "url": "https://myimageupscaler.com/blog/web-based-photo-editor",
       "clicks180": 0,
       "impressions180": 45,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-09-13",
       "disposition": "MERGE_301",
       "target": "/blog/best-free-ai-photo-enhancer-online"
@@ -2598,6 +3217,8 @@
       "url": "https://myimageupscaler.com/blog/what-is-8k-image-resolution",
       "clicks180": 23,
       "impressions180": 6131,
+      "ga4Sessions90": 17,
+      "ga4Conversions90": 4,
       "lastmod": "2026-02-23",
       "disposition": "KEEP"
     },
@@ -2606,6 +3227,8 @@
       "url": "https://myimageupscaler.com/blog/what-is-denoising",
       "clicks180": 2,
       "impressions180": 2982,
+      "ga4Sessions90": 4,
+      "ga4Conversions90": 0,
       "lastmod": "2026-04-18",
       "disposition": "KEEP"
     },
@@ -2614,6 +3237,8 @@
       "url": "https://myimageupscaler.com/blog/what-is-hd-upscaling",
       "clicks180": 0,
       "impressions180": 77,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-11-11",
       "disposition": "DEFER_RECENT"
     },
@@ -2622,6 +3247,8 @@
       "url": "https://myimageupscaler.com/blog/what-is-noise-in-photos",
       "clicks180": 0,
       "impressions180": 261,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-04-03",
       "disposition": "MERGE_301",
       "target": "/blog/noise-reduction-in-photos"
@@ -2631,6 +3258,8 @@
       "url": "https://myimageupscaler.com/blog/what-is-photo-retouching",
       "clicks180": 1,
       "impressions180": 3318,
+      "ga4Sessions90": 0,
+      "ga4Conversions90": 0,
       "lastmod": "2026-08-04",
       "disposition": "KEEP"
     },
@@ -2639,6 +3268,8 @@
       "url": "https://myimageupscaler.com/blog/what-is-pixelization",
       "clicks180": 9,
       "impressions180": 1701,
+      "ga4Sessions90": 10,
+      "ga4Conversions90": 0,
       "lastmod": "2026-07-22",
       "disposition": "KEEP"
     },
@@ -2647,6 +3278,8 @@
       "url": "https://myimageupscaler.com/blog/what-resolution-for-print",
       "clicks180": 132,
       "impressions180": 42298,
+      "ga4Sessions90": 117,
+      "ga4Conversions90": 5,
       "lastmod": "2026-03-15",
       "disposition": "KEEP"
     },
@@ -2655,6 +3288,8 @@
       "url": "https://myimageupscaler.com/blog/why-are-my-photos-blurry",
       "clicks180": 0,
       "impressions180": 1171,
+      "ga4Sessions90": 4,
+      "ga4Conversions90": 0,
       "lastmod": "2026-02-25",
       "disposition": "MERGE_301",
       "target": "/blog/best-app-for-unblurring-photos"
@@ -2664,6 +3299,8 @@
       "url": "https://myimageupscaler.com/blog/why-photos-blurry-when-printed",
       "clicks180": 5,
       "impressions180": 1021,
+      "ga4Sessions90": 11,
+      "ga4Conversions90": 0,
       "lastmod": "2026-02-25",
       "disposition": "KEEP"
     },
@@ -2672,6 +3309,8 @@
       "url": "https://myimageupscaler.com/blog/why-upscaled-text-looks-blurry-how-to-fix",
       "clicks180": 15,
       "impressions180": 971,
+      "ga4Sessions90": 12,
+      "ga4Conversions90": 0,
       "lastmod": "2025-01-05",
       "disposition": "KEEP"
     },
@@ -2680,8 +3319,11 @@
       "url": "https://myimageupscaler.com/blog/windows-11-snap-layouts",
       "clicks180": 1,
       "impressions180": 843,
+      "ga4Sessions90": 10,
+      "ga4Conversions90": 0,
       "lastmod": "2026-06-07",
-      "disposition": "KEEP",
+      "disposition": "NOINDEX_UNPUBLISH",
+      "reason": "off-topic, 0 GA4 conversions in 90d",
       "offTopic": true
     },
     {
@@ -2689,6 +3331,8 @@
       "url": "https://myimageupscaler.com/blog/zoom-in-on-video",
       "clicks180": 13,
       "impressions180": 520,
+      "ga4Sessions90": 12,
+      "ga4Conversions90": 3,
       "lastmod": "2026-08-18",
       "disposition": "KEEP"
     }

@@ -36,6 +36,14 @@ Maintenance rules:
 - **Validation:** new RED-first assertions for redirect parity, no chains, guarded targets, blocked sets, noindex helper and list filtering; `tests/unit/seo/` 1,710/1,710 pass; `tsc --noEmit` clean.
 - **Follow-up:** After deploy, confirm 301 responses for the 66 sources and `noindex` on the 14 rendered posts in GSC URL Inspection.
 
+### Off-topic blog posts with 0 GA4 conversions leave the index
+
+- **Why:** Phase 2 of the index-bloat PRD: off-topic posts that convert nothing should stop consuming crawl and index space.
+- **Changes:** `audit-index-bloat.cjs` now reads `inputs/2026-11-21-index-bloat/ga4-blog-landing-90d.json`, adds `ga4Sessions90` and `ga4Conversions90` to every blog row, and noindexes off-topic posts with 0 GA4 conversions in 90 days, after the guarded rule and before the clicks KEEP rule. Regenerated the manifest and consolidation file (noindex 14 → 16).
+- **Files:** `scripts/seo/audit-index-bloat.cjs`, `docs/SEO/reports/2026-11-21-index-bloat-manifest.json`, `shared/constants/blog-consolidation.json`, `tests/unit/seo/bloat-audit-manifest.unit.spec.ts`, `tests/unit/seo/blog-redirects-blocked-from-sitemap.unit.spec.ts`.
+- **Validation:** new RED-first rule-order and real-slug assertions; 3 targeted SEO specs 50/50 pass; `tsc --noEmit` clean.
+- **Follow-up:** After deploy, confirm `noindex` on `4-k-youtube-to-mp-4` and `windows-11-snap-layouts` in GSC URL Inspection.
+
 ### SERP snippet repair for 5 pSEO pages and plain-link llms.txt
 
 - **Why:** Remove broken English and false promises from high-impression snippets, and align llms.txt with real product facts.
