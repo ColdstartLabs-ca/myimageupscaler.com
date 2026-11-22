@@ -207,7 +207,7 @@ export function InteractiveTool({
                 <button
                   onClick={handleProcess}
                   disabled={isProcessing}
-                  className="flex-1 px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                  className="gradient-cta shine-effect flex-1 px-6 py-3 text-white font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isProcessing ? (
                     <>
@@ -226,7 +226,7 @@ export function InteractiveTool({
                 <button
                   onClick={handleDownload}
                   disabled={isResultStale}
-                  className="flex-1 px-6 py-3 bg-success text-white font-medium rounded-lg hover:bg-success/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-3 bg-success text-white font-semibold rounded-xl shadow-md shadow-success/20 hover:bg-success/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                 >
                   <Download className="w-4 h-4" />
                   {isResultStale ? 'Reprocess to Download' : 'Download Result'}
@@ -235,15 +235,15 @@ export function InteractiveTool({
 
               <button
                 onClick={handleReset}
-                className="px-6 py-3 bg-surface-light text-muted-foreground font-medium rounded-lg hover:bg-surface-light transition-colors flex items-center justify-center gap-2"
+                className="px-6 py-3 border border-border bg-surface-light text-muted-foreground font-medium rounded-xl hover:border-accent/40 hover:text-primary transition-colors flex items-center justify-center gap-2"
               >
                 <RefreshCw className="w-4 h-4" />
                 Start Over
               </button>
             </div>
 
-            {processedBlob && processedBlob.type.startsWith('image/') && (
-              <div className="mt-3">
+            {processedBlob && !isResultStale && processedBlob.type.startsWith('image/') && (
+              <div className="mt-4">
                 <PostToolUpsell
                   blob={processedBlob}
                   fileName={getOutputFileName(processedBlob) ?? 'image-processed.jpg'}

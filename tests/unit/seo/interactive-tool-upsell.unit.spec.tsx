@@ -35,7 +35,11 @@ function renderTool(outputType: string) {
   const onProcess = vi.fn().mockResolvedValue(new Blob(['out'], { type: outputType }));
   render(
     <InteractiveTool title="Resize Your Image" description="Resize an image" onProcess={onProcess}>
-      {() => null}
+      {({ markResultStale }) => (
+        <button type="button" onClick={markResultStale}>
+          Change settings
+        </button>
+      )}
     </InteractiveTool>
   );
   const input = document.querySelector('input[type="file"]') as HTMLInputElement;
@@ -56,6 +60,16 @@ async function processImage(outputType = 'image/png') {
 describe('interactive tool upsell handoff', () => {
   beforeEach(() => {
     authState.isAuthenticated = false;
+  });
+
+  test('upsell hides while the result is stale and uses the gradient CTA style', async () => {
+    await processImage();
+    const upsell = screen.getByRole('button', { name: UPSELL_NAME });
+    expect(upsell.className).toContain('gradient-cta');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Change settings' }));
+
+    expect(screen.queryByRole('button', { name: UPSELL_NAME })).toBeNull();
   });
 
   test('upsell appears only after processing and fires processed event', async () => {
